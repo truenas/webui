@@ -1,5 +1,4 @@
 import { WebUiEnvironment } from 'environments/environment.interface';
-import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
 
 export const environment: WebUiEnvironment = {
   environmentVersion: '0.0.3',
@@ -7,5 +6,4 @@ export const environment: WebUiEnvironment = {
   buildYear: _BUILD_YEAR_,
   port: 4200,
   production: false,
-  sentryPublicDsn,
 };

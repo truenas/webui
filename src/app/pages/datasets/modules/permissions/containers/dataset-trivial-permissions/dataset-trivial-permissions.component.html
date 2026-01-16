@@ -16,13 +16,12 @@
     <form [formGroup]="form" (submit)="onSubmit()">
       <div class="owner-and-access">
         <ix-fieldset class="owner-fields" [title]="'Owner' | translate">
-          <ix-combobox
+          <ix-user-combobox
             formControlName="owner"
             [label]="'User' | translate"
             [tooltip]="tooltips.user | translate"
-            [provider]="userProvider"
             [required]="isToApplyUser"
-          ></ix-combobox>
+          ></ix-user-combobox>
 
           <ix-checkbox
             formControlName="applyUser"
@@ -30,13 +29,12 @@
             [tooltip]="tooltips.applyUser | translate"
           ></ix-checkbox>
 
-          <ix-combobox
+          <ix-group-combobox
             formControlName="ownerGroup"
             [label]="'Group' | translate"
             [tooltip]="tooltips.group | translate"
-            [provider]="groupProvider"
             [required]="isToApplyGroup"
-          ></ix-combobox>
+          ></ix-group-combobox>
 
           <ix-checkbox
             formControlName="applyGroup"

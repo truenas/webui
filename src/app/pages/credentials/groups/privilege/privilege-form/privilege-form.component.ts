@@ -1,8 +1,9 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject,
+  DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -17,11 +18,13 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -29,7 +32,6 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -47,6 +49,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxFieldsetComponent,
     IxInputComponent,
     IxChipsComponent,
+    IxGroupChipsComponent,
     IxSelectComponent,
     IxCheckboxComponent,
     FormActionsComponent,
@@ -63,7 +66,7 @@ export class PrivilegeFormComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
-  private userService = inject(UserService);
+  private dialog = inject(DialogService);
   slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -154,27 +157,6 @@ export class PrivilegeFormComponent implements OnInit {
 
         return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
-    );
-  };
-
-  /**
-   * Provider for directory service groups autocomplete.
-   *
-   * Uses ChipsProvider instead of GroupComboboxProvider for consistency with localGroupsProvider.
-   * See localGroupsProvider documentation for rationale.
-   *
-   * Uses UserService.groupQueryDsCache for proper handling of:
-   * - Domain-prefixed group names (e.g., "ACME\admin")
-   * - Case-insensitive regex search
-   * - Exact name match fallback
-   * - Proper backslash escaping
-   *
-   * Limited to 50 results for performance.
-   */
-  readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.userService.groupQueryDsCache(query || '', false, 0).pipe(
-      map((groups) => groups.slice(0, this.GROUP_QUERY_LIMIT)),
-      map((groups) => groups.map((group) => group.group)),
     );
   };
 

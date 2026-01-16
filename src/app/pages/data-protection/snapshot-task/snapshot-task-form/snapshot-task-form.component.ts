@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, switchMap, debounceTime, combineLatest, startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { Role } from 'app/enums/role.enum';
@@ -30,10 +32,10 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-task-form',
   templateUrl: './snapshot-task-form.component.html',
@@ -58,8 +60,10 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
+  private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   private taskService = inject(TaskService);
@@ -91,10 +95,13 @@ export class SnapshotTaskFormComponent implements OnInit {
     end: ['23:59', Validators.required],
     allow_empty: [true],
     enabled: [true],
+    fixate_removal_date: [false],
   });
 
   protected isLoading = signal(false);
   protected editingTask: PeriodicSnapshotTask | undefined;
+  protected affectedSnapshots = signal<string[]>([]);
+  protected retentionCheckError = signal(false);
 
   readonly labels = {
     dataset: helptextSnapshotForm.datasetLabel,
@@ -107,6 +114,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     end: helptextSnapshotForm.endLabel,
     allow_empty: helptextSnapshotForm.allowEmptyLabel,
     enabled: helptextSnapshotForm.enabledLabel,
+    fixate_removal_date: helptextSnapshotForm.fixateRemovalDateLabel,
   };
 
   readonly tooltips = {
@@ -118,6 +126,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     begin: helptextSnapshotForm.beginTooltip,
     end: helptextSnapshotForm.endTooltip,
     allow_empty: helptextSnapshotForm.allowEmptyTooltip,
+    fixate_removal_date: helptextSnapshotForm.fixateRemovalDateTooltip,
   };
 
   readonly datasetOptions$ = this.storageService.getDatasetNameOptions();
@@ -138,7 +147,66 @@ export class SnapshotTaskFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);
+      this.setupRetentionChangeDetection();
     }
+  }
+
+  private setupRetentionChangeDetection(): void {
+    if (!this.editingTask) {
+      return;
+    }
+
+    // Watch for changes in fields that affect retention
+    const relevantFields$ = combineLatest([
+      this.form.controls.naming_schema.valueChanges.pipe(startWith(this.form.controls.naming_schema.value)),
+      this.form.controls.schedule.valueChanges.pipe(startWith(this.form.controls.schedule.value)),
+      this.form.controls.lifetime_value.valueChanges.pipe(startWith(this.form.controls.lifetime_value.value)),
+      this.form.controls.lifetime_unit.valueChanges.pipe(startWith(this.form.controls.lifetime_unit.value)),
+      this.form.controls.begin.valueChanges.pipe(startWith(this.form.controls.begin.value)),
+      this.form.controls.end.valueChanges.pipe(startWith(this.form.controls.end.value)),
+    ]);
+
+    relevantFields$.pipe(
+      debounceTime(250),
+      switchMap(() => {
+        const values = this.form.value;
+        const {
+          begin,
+          end,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          fixate_removal_date,
+          ...restValues
+        } = values;
+        const params = {
+          ...restValues,
+          schedule: this.isTimeMode
+            ? {
+                begin,
+                end,
+                ...crontabToSchedule(this.form.getRawValue().schedule),
+              }
+            : crontabToSchedule(this.form.getRawValue().schedule),
+        };
+
+        return this.snapshotTaskService.checkUpdateWillChangeRetention(
+          this.editingTask.id,
+          params as PeriodicSnapshotTaskUpdate,
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (affectedSnapshots: string[]) => {
+        this.affectedSnapshots.set(affectedSnapshots);
+        this.retentionCheckError.set(false);
+      },
+      error: (error: unknown) => {
+        this.affectedSnapshots.set([]);
+        this.retentionCheckError.set(true);
+        // Log to console only - this is a non-critical background check
+        // that shouldn't create Sentry alerts or show error dialogs to users
+        console.error('[SnapshotTaskForm] Failed to check retention changes:', error);
+      },
+    });
   }
 
   protected get isTimeMode(): boolean {
@@ -156,32 +224,37 @@ export class SnapshotTaskFormComponent implements OnInit {
 
   protected onSubmit(): void {
     const values = this.form.value;
+    const {
+      begin, end, fixate_removal_date: fixateRemovalDate, ...restValues
+    } = values;
 
     const params = {
-      ...values,
+      ...restValues,
       schedule: this.isTimeMode
         ? {
-            begin: values.begin,
-            end: values.end,
+            begin,
+            end,
             ...crontabToSchedule(this.form.getRawValue().schedule),
           }
         : crontabToSchedule(this.form.getRawValue().schedule),
+      // Only include fixate_removal_date when updating (not creating)
+      ...(!this.isNew && { fixate_removal_date: fixateRemovalDate }),
     };
-    delete params.begin;
-    delete params.end;
 
     this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingTask) {
+      // cspell:ignore snapshottask
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);
     } else {
+      // cspell:ignore snapshottask
       request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));

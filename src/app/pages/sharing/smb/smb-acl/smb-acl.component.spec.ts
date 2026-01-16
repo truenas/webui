@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { User } from '@sentry/angular';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -86,7 +85,7 @@ describe('SmbAclComponent', () => {
         smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
           { username: 'trunk' },
-        ] as User[]),
+        ] as TnUser[]),
         smbGroupQueryDsCache: () => of([
           { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },

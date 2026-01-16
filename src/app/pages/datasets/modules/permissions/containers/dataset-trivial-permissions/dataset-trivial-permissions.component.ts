@@ -18,12 +18,11 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -32,7 +31,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
-import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +46,8 @@ import { UserService } from 'app/services/user.service';
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxCheckboxComponent,
     IxPermissionsComponent,
     RequiresRolesDirective,
@@ -70,7 +69,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private storageService = inject(StorageService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
-  private userService = inject(UserService);
   private validatorService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
 
@@ -98,9 +96,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   aclType: AclType;
   datasetPath: string;
   datasetId: string;
-
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   readonly tooltips = {
     user: helptextPermissions.userTooltip,
