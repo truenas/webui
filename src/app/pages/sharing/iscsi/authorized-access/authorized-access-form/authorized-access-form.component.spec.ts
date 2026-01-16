@@ -142,4 +142,51 @@ describe('AuthorizedAccessFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
+
+  describe('mutual CHAP validation', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('shows error when Mutual CHAP is selected without peer credentials', async () => {
+      await form.fillForm({
+        'Group ID': '113',
+        User: 'test-user',
+        Secret: '123456789012',
+        'Secret (Confirm)': '123456789012',
+        'Discovery Authentication': 'Mutual CHAP',
+      });
+
+      const discoveryAuthControl = await form.getControl('Discovery Authentication');
+      const errorText = await discoveryAuthControl.getErrorText();
+
+      expect(errorText).toBe('CHAP Mutual auth method requires Peer User and Peer Secret to be defined.');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
+    it('allows Mutual CHAP when peer credentials are provided', async () => {
+      await form.fillForm({
+        'Group ID': '113',
+        User: 'test-user',
+        Secret: '123456789012',
+        'Secret (Confirm)': '123456789012',
+        'Peer User': 'peer-user',
+        'Peer Secret': 'peer123456789012',
+        'Peer Secret (Confirm)': 'peer123456789012',
+        'Discovery Authentication': 'Mutual CHAP',
+      });
+
+      const discoveryAuthControl = await form.getControl('Discovery Authentication');
+      const errorText = await discoveryAuthControl.getErrorText();
+
+      expect(errorText).toBe('');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+  });
 });
