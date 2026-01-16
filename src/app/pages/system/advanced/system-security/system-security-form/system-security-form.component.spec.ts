@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, flush } from '@angular/core/testing';
+import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
@@ -769,8 +769,6 @@ describe('SystemSecurityFormComponent', () => {
 
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
-
-      flush();
 
       // Verify error modal was shown with the error
       expect(showErrorModalSpy).toHaveBeenCalledWith(error);
