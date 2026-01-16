@@ -144,4 +144,112 @@ describe('TrustedDomainsConfigComponent', () => {
       expect(emittedValue[1]).toEqual([]);
     });
   });
+
+  describe('dynamic validation based on backend', () => {
+    it('should be valid with RID backend when only base fields are filled', async () => {
+      let emittedValid: boolean | undefined;
+      spectator.component.isValid.subscribe((valid) => {
+        emittedValid = valid;
+      });
+
+      await form.fillForm({ 'Enable Trusted Domains': true });
+      spectator.detectChanges();
+
+      const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
+      await trustedDomainsList.pressAddButton();
+      spectator.detectChanges();
+
+      const listItem = await trustedDomainsList.getLastListItem();
+      await listItem.fillForm({
+        'IDMAP Backend': 'RID (Default - algorithmic mapping based on RID values)',
+        Name: 'test-domain',
+        'Range Low': '100000',
+        'Range High': '200000',
+      });
+
+      expect(emittedValid).toBe(true);
+    });
+
+    it('should be valid with AD backend when base fields and schema_mode are filled', async () => {
+      let emittedValid: boolean | undefined;
+      spectator.component.isValid.subscribe((valid) => {
+        emittedValid = valid;
+      });
+
+      await form.fillForm({ 'Enable Trusted Domains': true });
+      spectator.detectChanges();
+
+      const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
+      await trustedDomainsList.pressAddButton();
+      spectator.detectChanges();
+
+      const listItem = await trustedDomainsList.getLastListItem();
+      await listItem.fillForm({
+        'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
+        Name: 'test-domain',
+        'Range Low': '100000',
+        'Range High': '200000',
+        'Schema Mode': ActiveDirectorySchemaMode.Rfc2307,
+      });
+
+      expect(emittedValid).toBe(true);
+    });
+
+    it('should be invalid with AD backend when schema_mode is not filled', async () => {
+      let emittedValid: boolean | undefined;
+      spectator.component.isValid.subscribe((valid) => {
+        emittedValid = valid;
+      });
+
+      await form.fillForm({ 'Enable Trusted Domains': true });
+      spectator.detectChanges();
+
+      const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
+      await trustedDomainsList.pressAddButton();
+      spectator.detectChanges();
+
+      const listItem = await trustedDomainsList.getLastListItem();
+      await listItem.fillForm({
+        'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
+        Name: 'test-domain',
+        'Range Low': '100000',
+        'Range High': '200000',
+      });
+
+      expect(emittedValid).toBe(false);
+    });
+
+    it('should update validators when backend is changed from AD to RID', async () => {
+      let emittedValid: boolean | undefined;
+      spectator.component.isValid.subscribe((valid) => {
+        emittedValid = valid;
+      });
+
+      await form.fillForm({ 'Enable Trusted Domains': true });
+      spectator.detectChanges();
+
+      const trustedDomainsList = await loader.getHarness(IxListHarness.with({ label: 'Trusted Domains' }));
+      await trustedDomainsList.pressAddButton();
+      spectator.detectChanges();
+
+      const listItem = await trustedDomainsList.getLastListItem();
+
+      // First select AD backend without schema_mode - should be invalid
+      await listItem.fillForm({
+        'IDMAP Backend': 'AD (RFC2307/SFU attributes from Active Directory)',
+        Name: 'test-domain',
+        'Range Low': '100000',
+        'Range High': '200000',
+      });
+
+      expect(emittedValid).toBe(false);
+
+      // Now switch to RID backend - should become valid since schema_mode is no longer required
+      await listItem.fillForm({
+        'IDMAP Backend': 'RID (Default - algorithmic mapping based on RID values)',
+      });
+
+      expect(emittedValid).toBe(true);
+    });
+  });
 });
