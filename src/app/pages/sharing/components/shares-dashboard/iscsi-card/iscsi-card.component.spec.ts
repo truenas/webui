@@ -64,8 +64,7 @@ describe('IscsiCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
-    imports: [
-      IxTablePagerShowMoreComponent,
+    imports: [IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(
@@ -95,6 +94,11 @@ describe('IscsiCardComponent', () => {
         })),
       }),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectServices,

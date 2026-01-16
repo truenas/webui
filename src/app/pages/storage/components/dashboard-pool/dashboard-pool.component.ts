@@ -90,6 +90,7 @@ export class DashboardPoolComponent implements OnChanges {
 
   protected readonly requiredRoles = [Role.PoolWrite];
   protected readonly searchableElements = dashboardPoolElements;
+
   protected isOnline = computed(() => {
     return this.pool().status === PoolStatus.Online;
   });

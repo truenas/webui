@@ -15,6 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -66,6 +67,7 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     RouterLink,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
@@ -82,6 +84,7 @@ export class NfsCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
   protected readonly emptyConfig = nfsCardEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'nfs'];
 
   columns = createTable<NfsShare>([
     textColumn({
