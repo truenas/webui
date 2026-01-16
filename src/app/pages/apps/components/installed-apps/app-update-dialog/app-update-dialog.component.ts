@@ -16,6 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -62,9 +63,7 @@ export class AppUpdateDialog {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor() {
-    const data = this.data;
-
-    this.dialogConfig = data;
+    this.dialogConfig = this.data;
 
     this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {
       latest_version: this.dialogConfig.upgradeSummary.latest_version,
@@ -95,4 +94,6 @@ export class AppUpdateDialog {
   originalOrder(): number {
     return 0;
   }
+
+  getVersionLabel = formatVersionLabel;
 }
