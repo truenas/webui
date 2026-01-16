@@ -1,20 +1,22 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  Component, ChangeDetectionStrategy, OnInit, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
@@ -33,7 +35,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-privilege-form',
   templateUrl: './privilege-form.component.html',
@@ -56,12 +57,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class PrivilegeFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
-  private dialog = inject(DialogService);
   private userService = inject(UserService);
   slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
@@ -74,6 +75,10 @@ export class PrivilegeFormComponent implements OnInit {
   private readonly GROUP_QUERY_LIMIT = 50;
 
   protected isLoading = signal(false);
+  protected showDsAuthButton = signal(false);
+  protected isEnablingDsAuth = signal(false);
+  protected dsAuthEnabled = signal(false);
+  private dsStatus = signal<DirectoryServicesStatus | null>(null);
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -188,6 +193,28 @@ export class PrivilegeFormComponent implements OnInit {
         this.form.controls.roles.disable();
       }
     }
+
+    // Load current ds_auth status
+    this.store$.pipe(
+      waitForGeneralConfig,
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((generalConfig) => {
+      this.dsAuthEnabled.set(generalConfig.ds_auth);
+    });
+
+    // Load directory services status once on init (cache it)
+    this.api.call('directoryservices.status').pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((status) => {
+      this.dsStatus.set(status);
+    });
+
+    // Watch for DS groups being added and show inline button if needed
+    this.form.controls.ds_groups.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((dsGroups) => {
+      this.updateDsAuthButtonVisibility(dsGroups);
+    });
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {
@@ -200,6 +227,63 @@ export class PrivilegeFormComponent implements OnInit {
     });
   }
 
+  /**
+   * Updates the visibility of the ds_auth button based on:
+   * - Whether DS groups are present
+   * - Whether DS is actually enabled (cached from init)
+   * - Whether ds_auth is currently disabled
+   * - Enterprise mode
+   */
+  private updateDsAuthButtonVisibility(dsGroups: string[]): void {
+    // Hide button if no DS groups
+    if (!dsGroups?.length) {
+      this.showDsAuthButton.set(false);
+      return;
+    }
+
+    // Hide button in non-enterprise mode
+    if (!this.isEnterprise()) {
+      this.showDsAuthButton.set(false);
+      return;
+    }
+
+    // Hide button if ds_auth is already enabled
+    if (this.dsAuthEnabled()) {
+      this.showDsAuthButton.set(false);
+      return;
+    }
+
+    // Check if Directory Services are actually enabled (using cached status)
+    const status = this.dsStatus();
+    const shouldShow = Boolean(status?.type && status.status !== DirectoryServiceStatus.Disabled);
+    this.showDsAuthButton.set(shouldShow);
+  }
+
+  /**
+   * Enables DS authentication immediately when the button is clicked.
+   * This is a separate operation from saving the privilege.
+   */
+  enableDsAuth(): void {
+    this.isEnablingDsAuth.set(true);
+
+    this.api.call('system.general.update', [{ ds_auth: true }]).pipe(
+      finalize(() => {
+        this.isEnablingDsAuth.set(false);
+        this.store$.dispatch(generalConfigUpdated());
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => {
+        // Update local state to hide the button
+        this.dsAuthEnabled.set(true);
+        this.showDsAuthButton.set(false);
+      },
+      error: (error: unknown) => {
+        this.errorHandler.handleValidationErrors(error, this.form);
+      },
+    });
+  }
+
   onSubmit(): void {
     this.isLoading.set(true);
 
@@ -207,24 +291,19 @@ export class PrivilegeFormComponent implements OnInit {
     combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
         const values: PrivilegeUpdate = {
-          ...this.form.value,
+          name: this.form.value.name,
           local_groups: localGroups,
           ds_groups: dsGroups,
+          web_shell: this.form.value.web_shell,
+          roles: this.form.value.roles,
         };
 
         return this.existingPrivilege
           ? this.api.call('privilege.update', [this.existingPrivilege.id, values])
           : this.api.call('privilege.create', [values]);
       }),
-      switchMap(() => this.store$.pipe(waitForGeneralConfig)),
-      switchMap((generalConfig) => {
-        if (this.isEnterprise() && !generalConfig.ds_auth) {
-          return this.enableDsAuth();
-        }
-        return of(null);
-      }),
       finalize(() => this.isLoading.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.slideInRef.close({ response: true });
@@ -233,22 +312,6 @@ export class PrivilegeFormComponent implements OnInit {
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
-  }
-
-  private enableDsAuth(): Observable<unknown> {
-    return this.dialog.confirm({
-      title: this.translate.instant('Allow access'),
-      message: this.translate.instant('Allow Directory Service users to access WebUI?'),
-      buttonText: this.translate.instant('Allow'),
-    }).pipe(
-      switchMap((confirmed) => {
-        if (confirmed) {
-          return this.api.call('system.general.update', [{ ds_auth: true }])
-            .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
-        }
-        return of(null);
-      }),
-    );
   }
 
   /**

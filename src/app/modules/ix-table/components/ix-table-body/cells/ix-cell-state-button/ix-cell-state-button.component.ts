@@ -25,6 +25,7 @@ import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 interface RowState {
   state: {
@@ -142,7 +143,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     if (state.error) {
-      this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
+      const error: FailedJobError = new FailedJobError(this.job());
+      this.errorHandler.showErrorModal(error);
       return;
     }
 

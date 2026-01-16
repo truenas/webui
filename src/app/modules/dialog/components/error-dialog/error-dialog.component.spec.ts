@@ -186,7 +186,7 @@ describe('ErrorDialog', () => {
       const actionButton = await loader.getHarness(MatButtonHarness.with({ text: 'Network Settings' }));
       await actionButton.click();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/system/network']);
+      expect(router.navigate).toHaveBeenCalledWith(['/system/network'], { queryParams: undefined });
       expect(dialogRef.close).toHaveBeenCalled();
     });
 

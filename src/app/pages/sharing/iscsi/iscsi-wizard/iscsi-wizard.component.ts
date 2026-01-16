@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
+import { MatError } from '@angular/material/form-field';
 import {
   MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
@@ -13,6 +15,7 @@ import {
   lastValueFrom, forkJoin,
   of,
 } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -26,8 +29,8 @@ import {
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import {
   IscsiExtent,
   IscsiExtentUpdate,
@@ -70,6 +73,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   imports: [
     ModalHeaderComponent,
     MatCard,
+    MatError,
     ReactiveFormsModule,
     MatStepper,
     MatStep,
@@ -95,11 +99,14 @@ export class IscsiWizardComponent implements OnInit {
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private store$ = inject<Store<ServicesState>>(Store);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, IscsiTarget>>(SlideInRef);
 
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
   namesInUse = signal<string[]>([]);
+  fcHosts = signal<{ id: number; alias: string }[]>([]);
+  availableFcPorts = signal<string[]>([]);
 
   createdZvol: Dataset | undefined;
   createdExtent: IscsiExtent | undefined;
@@ -127,15 +134,16 @@ export class IscsiWizardComponent implements OnInit {
       volsize: new FormControl(null as number | null, [Validators.required]),
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
       product_id: [''],
+      ro: [false],
     }),
     options: this.fb.group({
       portal: new FormControl(null as typeof newOption | number | null, [Validators.required]),
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
-      fcport: this.fb.group({
-        port: [null as string | null],
-        host_id: new FormControl(null as number | null, [Validators.required]),
-      }),
+      fcPorts: this.fb.array<{
+        port: FormControl<string | null>;
+        host_id: FormControl<number | null>;
+      }>([]),
     }),
   }, {
     validators: [
@@ -146,6 +154,12 @@ export class IscsiWizardComponent implements OnInit {
       ),
     ],
   });
+
+  // Reactive snapshot of FC ports form array for use in computed signals
+  protected fcPortsSnapshot = createFormArraySnapshot<{ port: string | null; host_id: number | null }>(
+    this.form.controls.options.controls.fcPorts,
+    this.destroyRef,
+  );
 
   protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
@@ -183,7 +197,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get extentPayload(): IscsiExtentUpdate {
-    const value = this.form.value.extent;
+    const value = this.form.getRawValue().extent;
     const blocksizeDefault = 512;
     const blocksizeModernos = 4096;
     const extentPayload = {
@@ -208,6 +222,8 @@ export class IscsiWizardComponent implements OnInit {
       } else {
         extentPayload.disk = value.disk;
       }
+
+      extentPayload.ro = value.ro;
     }
     return extentPayload;
   }
@@ -267,6 +283,53 @@ export class IscsiWizardComponent implements OnInit {
     });
   }
 
+  protected addFcPort(): void {
+    this.form.controls.options.controls.fcPorts.push(
+      this.fb.group({
+        port: new FormControl(null as string | null),
+        host_id: new FormControl(null as number | null),
+      }),
+    );
+  }
+
+  protected deleteFcPort(index: number): void {
+    this.form.controls.options.controls.fcPorts.removeAt(index);
+  }
+
+  protected validateFcPorts(): string[] {
+    const ports = this.form.controls.options.controls.fcPorts.getRawValue();
+    const validation = this.fcService.validatePhysicalPortUniqueness(ports, this.fcHosts());
+
+    if (!validation.valid) {
+      return validation.duplicates.map((port) => this.translate.instant(
+        'Physical port {port} is used multiple times. Each target port must use a different physical FC port.',
+        { port },
+      ));
+    }
+
+    return [];
+  }
+
+  protected areFcPortsValid(): boolean {
+    return this.form.controls.options.controls.fcPorts.valid && this.validateFcPorts().length === 0;
+  }
+
+  // Array of used physical ports for each index (excluding that index)
+  protected usedPhysicalPortsByIndex = computed(() => {
+    const ports = this.fcPortsSnapshot();
+    const hosts = this.fcHosts();
+
+    return ports.map((_item, currentIndex) => ports
+      .filter((_port, idx) => idx !== currentIndex)
+      .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
+      .filter((port): port is string => port !== null));
+  });
+
+  // Function wrapper for child components that expect function interface
+  protected getUsedPhysicalPortsFn = (): ((index: number) => string[]) => {
+    return (index: number) => this.usedPhysicalPortsByIndex()[index] || [];
+  };
+
   ngOnInit(): void {
     this.form.controls.extent.controls.path.disable();
     this.form.controls.extent.controls.filesize.disable();
@@ -284,16 +347,38 @@ export class IscsiWizardComponent implements OnInit {
       }
     });
 
-    this.form.controls.target.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+    this.form.controls.target.controls.mode.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((mode) => {
       if (mode === IscsiTargetMode.Iscsi) {
         this.form.controls.options.controls.portal.enable();
         this.form.controls.options.controls.initiators.enable();
-        this.form.controls.options.controls.fcport.disable();
+        this.form.controls.options.controls.fcPorts.disable();
       } else {
+        // FC or Both mode
         this.form.controls.options.controls.portal.setValue(null);
         this.form.controls.options.controls.portal.disable();
         this.form.controls.options.controls.initiators.disable();
-        this.form.controls.options.controls.fcport.enable();
+        this.form.controls.options.controls.fcPorts.enable();
+
+        // Load FC hosts for validation
+        this.api.call('fc.fc_host.query').pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe((hosts) => {
+          this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
+        });
+
+        // Load available FC port choices
+        this.api.call('fcport.port_choices', [false]).pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe((portsData) => {
+          this.availableFcPorts.set(Object.keys(portsData));
+        });
+
+        // Auto-add first port when switching to FC mode (UX improvement)
+        if (this.form.controls.options.controls.fcPorts.length === 0) {
+          this.addFcPort();
+        }
       }
     });
   }
@@ -318,12 +403,11 @@ export class IscsiWizardComponent implements OnInit {
     return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
   }
 
-  private createTargetFiberChannel(
-    targetId: number,
-    port: string,
-    hostId: number,
-  ): Promise<FibreChannelPort | null | true> {
-    return lastValueFrom(this.fcService.linkFiberChannelToTarget(targetId, port, hostId));
+  private createTargetFiberChannel(targetId: number): Promise<unknown> {
+    const fcPortValues = this.form.controls.options.controls.fcPorts.getRawValue();
+    return lastValueFrom(
+      this.fcService.linkFiberChannelPortsToTarget(targetId, fcPortValues),
+    );
   }
 
   private createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
@@ -353,6 +437,20 @@ export class IscsiWizardComponent implements OnInit {
 
     if (this.createdTarget) {
       requests.push(this.api.call('iscsi.target.delete', [this.createdTarget.id]));
+    }
+
+    // CRITICAL: Cleanup FC ports if wizard fails after creating them
+    if (this.createdTarget && this.isFibreChannelMode) {
+      requests.push(
+        this.fcService.loadTargetPorts(this.createdTarget.id).pipe(
+          switchMap((ports) => {
+            if (ports.length === 0) return of(null);
+            return forkJoin(
+              ports.map((port) => this.api.call('fcport.delete', [port.id])),
+            );
+          }),
+        ),
+      );
     }
 
     if (this.createdTargetExtent) {
@@ -453,11 +551,8 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     if (this.isNewTarget && this.isFibreChannelMode) {
-      await this.createTargetFiberChannel(
-        this.createdTarget.id,
-        this.form.value.options.fcport.port,
-        this.form.value.options.fcport.host_id,
-      ).then(() => {}, (err: unknown) => this.handleError(err));
+      await this.createTargetFiberChannel(this.createdTarget.id)
+        .then(() => {}, (err: unknown) => this.handleError(err));
     }
 
     if (this.toStop()) {

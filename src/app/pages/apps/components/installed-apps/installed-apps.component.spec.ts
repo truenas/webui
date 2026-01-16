@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -132,11 +133,11 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('shows details', () => {
-    const router = spectator.inject(Router);
+    const installedAppsList = spectator.component.installedAppsList();
+    const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
     spectator.click(spectator.query('ix-app-row')!);
-    expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(router, [
-      '/apps/installed', 'test-catalog-train', 'ix-test-app',
-    ]);
+    expect(locationSpy).toHaveBeenCalledWith('/apps/installed/test-catalog-train/ix-test-app');
+    expect(installedAppsList.selectedApp).toEqual(app);
   });
 
   it('starts application', () => {

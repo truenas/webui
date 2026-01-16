@@ -121,6 +121,7 @@ describe('DeviceListComponent', () => {
       data: {
         device: devices[0],
         virtualMachineId: 76,
+        vmName: 'Test VM',
       },
     });
   });
