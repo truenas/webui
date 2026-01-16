@@ -33,20 +33,20 @@ describe('Version Formatting Utils', () => {
 
   describe('formatVersionLabel', () => {
     it('formats version label with both library and app versions', () => {
-      expect(formatVersionLabel('2.1.22', '32.0.3_2.1.22')).toBe('2.1.22 (32.0.3)');
-      expect(formatVersionLabel('1.0.2', '8.7.0_1.0.2')).toBe('1.0.2 (8.7.0)');
+      expect(formatVersionLabel('2.1.22', '32.0.3_2.1.22')).toBe('App Version: 32.0.3 / Version: 2.1.22');
+      expect(formatVersionLabel('1.0.2', '8.7.0_1.0.2')).toBe('App Version: 8.7.0 / Version: 1.0.2');
     });
 
     it('formats version label when versions are the same', () => {
-      expect(formatVersionLabel('1.0.0', '1.0.0')).toBe('1.0.0 (1.0.0)');
+      expect(formatVersionLabel('1.0.0', '1.0.0')).toBe('App Version: 1.0.0 / Version: 1.0.0');
     });
 
     it('formats version label with undefined human version', () => {
-      expect(formatVersionLabel('1.0.0', undefined)).toBe('1.0.0 (1.0.0)');
+      expect(formatVersionLabel('1.0.0', undefined)).toBe('App Version: 1.0.0 / Version: 1.0.0');
     });
 
     it('handles human version without suffix', () => {
-      expect(formatVersionLabel('2.1.22', '32.0.3')).toBe('2.1.22 (32.0.3)');
+      expect(formatVersionLabel('2.1.22', '32.0.3')).toBe('App Version: 32.0.3 / Version: 2.1.22');
     });
   });
 });

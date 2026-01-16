@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 /**
  * Extracts the upstream app version from a version string.
  * Handles the format "app_version_library_version" by removing the library version suffix.
@@ -29,14 +31,17 @@ export function extractAppVersion(humanVersion: string | undefined, libraryVersi
  *
  * @param libraryVersion - The internal library version (e.g., "2.1.22")
  * @param humanVersion - The human-readable version string or app version (e.g., "32.0.3_2.1.22" or "32.0.3")
- * @returns Formatted version string (e.g., "2.1.22 (32.0.3)")
+ * @returns Formatted version string (e.g., "App Version: 32.0.3 / Version: 2.1.22")
  *
  * @example
- * formatVersionLabel("2.1.22", "32.0.3_2.1.22") // Returns "2.1.22 (32.0.3)"
- * formatVersionLabel("1.0.0", "1.0.0") // Returns "1.0.0 (1.0.0)"
- * formatVersionLabel("1.0.0", undefined) // Returns "1.0.0 (1.0.0)"
+ * formatVersionLabel("2.1.22", "32.0.3_2.1.22") // Returns "App Version: 32.0.3 / Version: 2.1.22"
+ * formatVersionLabel("1.0.0", "1.0.0") // Returns "App Version: 1.0.0 / Version: 1.0.0"
+ * formatVersionLabel("1.0.0", undefined) // Returns "App Version: 1.0.0 / Version: 1.0.0"
  */
-export function formatVersionLabel(libraryVersion: string, humanVersion: string | undefined): string {
+export function formatVersionLabel(
+  libraryVersion: string,
+  humanVersion: string | undefined,
+): string {
   const appVersion = extractAppVersion(humanVersion, libraryVersion);
-  return `${libraryVersion} (${appVersion})`;
+  return `${T('App Version')}: ${appVersion} / ${T('Version')}: ${libraryVersion}`;
 }
