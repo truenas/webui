@@ -211,7 +211,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     if (!hasPeerDefined && isChapMutual) {
       return {
         chapMutualError: {
-          message: this.translate.instant('CHAP Mutual auth method requires Peer User and Peer Secret to be defined.'),
+          message: this.translate.instant(helptextIscsi.authaccess.chapMutualHelp),
         },
       };
     }

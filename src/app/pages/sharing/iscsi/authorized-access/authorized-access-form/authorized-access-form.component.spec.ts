@@ -159,8 +159,13 @@ describe('AuthorizedAccessFormComponent', () => {
         'Discovery Authentication': 'Mutual CHAP',
       });
 
-      expect(spectator.component.form.controls.discovery_auth.hasError('chapMutualError')).toBe(true);
-      expect(spectator.component.form.invalid).toBe(true);
+      const discoveryAuthControl = await form.getControl('Discovery Authentication');
+      const errorText = await discoveryAuthControl.getErrorText();
+
+      expect(errorText).toBe('CHAP Mutual auth method requires Peer User and Peer Secret to be defined.');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
     });
 
     it('allows Mutual CHAP when peer credentials are provided', async () => {
@@ -175,11 +180,13 @@ describe('AuthorizedAccessFormComponent', () => {
         'Discovery Authentication': 'Mutual CHAP',
       });
 
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
+      const discoveryAuthControl = await form.getControl('Discovery Authentication');
+      const errorText = await discoveryAuthControl.getErrorText();
 
-      expect(spectator.component.form.controls.discovery_auth.hasError('chapMutualError')).toBe(false);
-      expect(spectator.component.form.valid).toBe(true);
+      expect(errorText).toBe('');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
     });
   });
 });

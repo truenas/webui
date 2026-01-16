@@ -228,6 +228,9 @@ export const helptextIscsi = {
   },
 
   authaccess: {
+    chapMutualHelp: T(
+      'CHAP Mutual auth method requires Peer User and Peer Secret to be defined.',
+    ),
     tagTooltip: T(
       'Allow different groups to be configured\
  with different authentication profiles.\
