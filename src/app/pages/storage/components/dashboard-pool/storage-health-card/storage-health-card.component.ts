@@ -4,6 +4,7 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -21,7 +22,6 @@ import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -68,7 +68,6 @@ enum AutoTrimValue {
     TestDirective,
     MatCardContent,
     TranslateModule,
-    MapValuePipe,
     TooltipComponent,
     ActivePoolScanComponent,
     LastPoolScanComponent,
@@ -85,6 +84,7 @@ export class StorageHealthCardComponent implements OnChanges {
   private matDialog = inject(MatDialog);
   private store = inject(PoolsDashboardStore);
   private slideIn = inject(SlideIn);
+  private router = inject(Router);
 
   readonly pool = input.required<Pool>();
 
@@ -197,11 +197,47 @@ export class StorageHealthCardComponent implements OnChanges {
       });
   }
 
-  private calculateTotalZfsErrors(): void {
-    if (!this.pool().topology) {
-      return;
+  protected getErrorText(): string {
+    const vdevErrors = this.countVdevErrors();
+    const physErrors = this.countPhysDiskErrors();
+
+    const statusStr = this.translate.instant(this.pool().status);
+    let errorStr = '';
+    if (vdevErrors === 0 && physErrors === 0) {
+      errorStr = 'No errors.';
+    } else {
+      errorStr += vdevErrors === 0 ? 'no VDEV errors' : `${vdevErrors} VDEV errors`;
+      errorStr += ', ';
+      errorStr += physErrors === 0 ? 'no disk errors' : `${physErrors} disk errors.`;
     }
-    this.totalZfsErrors = Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: VDevItem[]) => {
+
+    return `${statusStr}, ${errorStr}`;
+  }
+
+  protected hasErrors(): boolean {
+    return (this.countPhysDiskErrors() + this.countPhysDiskErrors()) > 0;
+  }
+
+  protected goToDiskError(): void {
+    const poolId = this.pool().id;
+    const topo = Object.values(this.pool().topology);
+
+    const firstBadVdev = topo.flat()
+      .reduce((acc, item) => {
+        if (item?.children) {
+          return [...acc, ...item.children];
+        }
+        return [...acc, item];
+      }, [])
+      .find(
+        (item) => (item.stats.read_errors > 0) || (item.stats.write_errors > 0) || (item.stats.checksum_errors > 0),
+      );
+
+    this.router.navigate(['/storage', poolId.toString(), 'vdevs', firstBadVdev?.guid]);
+  }
+
+  private countVdevErrors(): number {
+    return Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: VDevItem[]) => {
       return totalErrors + vdevs.reduce((vdevCategoryErrors, vdev) => {
         return vdevCategoryErrors
           + (vdev.stats?.read_errors || 0)
@@ -209,5 +245,28 @@ export class StorageHealthCardComponent implements OnChanges {
           + (vdev.stats?.checksum_errors || 0);
       }, 0);
     }, 0);
+  }
+
+  private countPhysDiskErrors(): number {
+    const count = (items: VDevItem[]): number => {
+      return items.map((item): number => {
+        if (item?.children && item.children.length > 0) {
+          return count(item.children);
+        }
+
+        return (item?.stats?.read_errors ?? 0) + (item?.stats?.write_errors ?? 0) + (item?.stats?.checksum_errors ?? 0);
+      })
+        .reduce((acc, val) => acc + val, 0);
+    };
+    const topo = Object.values(this.pool().topology);
+
+    return topo.map(count).reduce((acc, counts) => acc + counts, 0);
+  }
+
+  private calculateTotalZfsErrors(): void {
+    if (!this.pool().topology) {
+      return;
+    }
+    this.totalZfsErrors = this.countVdevErrors();
   }
 }
