@@ -262,6 +262,7 @@ describe('ServiceWorkerService', () => {
 
   // Skipped: jsdom doesn't support mocking window.location
   // See note at top of file
+  // eslint-disable-next-line jest/no-disabled-tests
   describe.skip('service worker lifecycle', () => {
     it('should handle waiting service worker on page load', async () => {
       const mockReload = jest.fn();
