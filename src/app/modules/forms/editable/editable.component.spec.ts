@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
@@ -120,43 +120,40 @@ describe('EditableComponent', () => {
       expect(await input.getValue()).toBe('Robert');
     });
 
-    it('focuses on the first focusable element when switching to edit mode', fakeAsync(async () => {
+    it('focuses on the first focusable element when switching to edit mode', async () => {
       await editable.open();
-      tick();
 
       const input = await editable.getHarness(IxInputHarness);
       expect(await (await input.getMatInputHarness()).isFocused()).toBe(true);
-    }));
+    });
 
-    it('does not focus on the first focusable element when autoFocus is false', fakeAsync(async () => {
+    it('does not focus on the first focusable element when autoFocus is false', async () => {
       spectator.setHostInput({ autoFocus: false });
 
       await editable.open();
-      tick();
 
       const input = await editable.getHarness(IxInputHarness);
       expect(await (await input.getMatInputHarness()).isFocused()).toBe(false);
-    }));
+    });
 
-    it('scrolls edit slot into view when opening', fakeAsync(async () => {
+    it('scrolls edit slot into view when opening', async () => {
       const scrollIntoViewSpy = jest.spyOn(Element.prototype, 'scrollIntoView');
 
       await editable.open();
-      tick();
 
       expect(scrollIntoViewSpy).toHaveBeenCalledWith({
         behavior: 'smooth',
         block: 'center',
       });
-    }));
+    });
 
 
-    it('restores focus to previously focused element when closing', fakeAsync(async () => {
+    it('restores focus to previously focused element when closing', fakeAsync(() => {
       const focusedElement = document.createElement('input');
       document.body.appendChild(focusedElement);
       focusedElement.focus();
 
-      await editable.open();
+      spectator.component.open();
       spectator.component.tryToClose();
       tick(200);
 
@@ -208,7 +205,7 @@ describe('EditableComponent', () => {
   });
 
   describe('click outside functionality', () => {
-    it('closes editable when clicking outside', fakeAsync(async () => {
+    it('closes editable when clicking outside', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
@@ -224,12 +221,11 @@ describe('EditableComponent', () => {
 
       document.dispatchEvent(mousedownEvent);
       document.dispatchEvent(mouseupEvent);
-      tick();
 
       expect(await editable.isOpen()).toBe(false);
-    }));
+    });
 
-    it('does not close when clicking inside the editable', fakeAsync(async () => {
+    it('does not close when clicking inside the editable', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
@@ -244,12 +240,11 @@ describe('EditableComponent', () => {
 
       document.dispatchEvent(mousedownEvent);
       document.dispatchEvent(mouseupEvent);
-      tick();
 
       expect(await editable.isOpen()).toBe(true);
-    }));
+    });
 
-    it('does not close when text selection ends outside the input', fakeAsync(async () => {
+    it('does not close when text selection ends outside the input', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
@@ -269,23 +264,21 @@ describe('EditableComponent', () => {
 
       document.dispatchEvent(mousedownEvent);
       document.dispatchEvent(mouseupEvent);
-      tick();
 
       // Should remain open because mousedown was inside
       expect(await editable.isOpen()).toBe(true);
-    }));
+    });
 
-    it('removes click outside listener when closing', fakeAsync(async () => {
+    it('removes click outside listener when closing', async () => {
       const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
 
       await editable.open();
       spectator.component.tryToClose();
-      tick();
 
       // Should remove both mousedown and mouseup listeners
       expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function), { capture: true });
       expect(removeEventListenerSpy).toHaveBeenCalledWith('mouseup', expect.any(Function), { capture: true });
-    }));
+    });
 
     it('removes click outside listener on destroy', () => {
       // Open editable to create a subscription
@@ -304,18 +297,17 @@ describe('EditableComponent', () => {
   });
 
   describe('keyboard functionality', () => {
-    it('closes editable when Escape key is pressed', fakeAsync(async () => {
+    it('closes editable when Escape key is pressed', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
       const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
       document.dispatchEvent(escapeEvent);
-      tick();
 
       expect(await editable.isOpen()).toBe(false);
-    }));
+    });
 
-    it('stops propagation of Escape key event to prevent parent handlers from receiving it', fakeAsync(async () => {
+    it('stops propagation of Escape key event to prevent parent handlers from receiving it', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
@@ -326,15 +318,14 @@ describe('EditableComponent', () => {
       const stopPropagationSpy = jest.spyOn(escapeEvent, 'stopPropagation');
 
       document.dispatchEvent(escapeEvent);
-      tick();
 
       expect(stopPropagationSpy).toHaveBeenCalled();
       expect(await editable.isOpen()).toBe(false);
 
       document.removeEventListener('keydown', parentHandler);
-    }));
+    });
 
-    it('does not close when global search is open (prioritizes global search)', fakeAsync(async () => {
+    it('does not close when global search is open (prioritizes global search)', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
@@ -344,33 +335,30 @@ describe('EditableComponent', () => {
 
       const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
       document.dispatchEvent(escapeEvent);
-      tick();
 
       expect(await editable.isOpen()).toBe(true);
 
       document.body.removeChild(globalSearchOverlay);
-    }));
+    });
 
-    it('does not close when other keys are pressed', fakeAsync(async () => {
+    it('does not close when other keys are pressed', async () => {
       await editable.open();
       expect(await editable.isOpen()).toBe(true);
 
       const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
       document.dispatchEvent(enterEvent);
-      tick();
 
       expect(await editable.isOpen()).toBe(true);
-    }));
+    });
 
-    it('removes keydown listener when closing', fakeAsync(async () => {
+    it('removes keydown listener when closing', async () => {
       const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
 
       await editable.open();
       spectator.component.tryToClose();
-      tick();
 
       expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function), { capture: true });
-    }));
+    });
 
     it('removes keydown listener on destroy', () => {
       // Open editable to create a subscription
@@ -389,7 +377,7 @@ describe('EditableComponent', () => {
   });
 
   describe('validation error handling', () => {
-    it('auto-opens editable when validation error notification is received and control has errors', fakeAsync(async () => {
+    it('auto-opens editable when validation error notification is received and control has errors', fakeAsync(() => {
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Set an error on the form control
@@ -397,27 +385,26 @@ describe('EditableComponent', () => {
       nameControl.markAsTouched();
 
       // Ensure editable is closed
-      expect(await editable.isOpen()).toBe(false);
+      expect(spectator.component.isOpen()).toBe(false);
 
       // Trigger validation error notification
       validationService.notifyValidationError('name');
 
-      // Wait for the timer delay (50ms) and flush microtasks
+      // Wait for the timer delay (50ms)
       tick(50);
-      flushMicrotasks();
 
       // Should auto-open since control has errors
-      expect(await editable.isOpen()).toBe(true);
+      expect(spectator.component.isOpen()).toBe(true);
     }));
 
-    it('does not open editable when validation error notification is received but control has no errors', fakeAsync(async () => {
+    it('does not open editable when validation error notification is received but control has no errors', fakeAsync(() => {
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Ensure control has no errors
       nameControl.setErrors(null);
 
       // Ensure editable is closed
-      expect(await editable.isOpen()).toBe(false);
+      expect(spectator.component.isOpen()).toBe(false);
 
       // Trigger validation error notification
       validationService.notifyValidationError('name');
@@ -426,10 +413,10 @@ describe('EditableComponent', () => {
       tick(100);
 
       // Should not open since control has no errors
-      expect(await editable.isOpen()).toBe(false);
+      expect(spectator.component.isOpen()).toBe(false);
     }));
 
-    it('does not open editable when validation error notification is received and editable is already open', fakeAsync(async () => {
+    it('does not open editable when validation error notification is received and editable is already open', fakeAsync(() => {
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Set an error on the form control
@@ -437,8 +424,8 @@ describe('EditableComponent', () => {
       nameControl.markAsTouched();
 
       // Open the editable first
-      await editable.open();
-      expect(await editable.isOpen()).toBe(true);
+      spectator.component.open();
+      expect(spectator.component.isOpen()).toBe(true);
 
       // Spy on the open method to ensure it's not called again
       const openSpy = jest.spyOn(spectator.component, 'open');
@@ -451,17 +438,17 @@ describe('EditableComponent', () => {
 
       // Should not call open again since already open
       expect(openSpy).not.toHaveBeenCalled();
-      expect(await editable.isOpen()).toBe(true);
+      expect(spectator.component.isOpen()).toBe(true);
     }));
 
-    it('handles validation error notification gracefully when no controls have errors', fakeAsync(async () => {
+    it('handles validation error notification gracefully when no controls have errors', fakeAsync(() => {
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Ensure control has no errors
       nameControl.setErrors(null);
 
       // Ensure editable is closed
-      expect(await editable.isOpen()).toBe(false);
+      expect(spectator.component.isOpen()).toBe(false);
 
       // Trigger validation error notification
       validationService.notifyValidationError('someField');
@@ -470,7 +457,7 @@ describe('EditableComponent', () => {
       tick(100);
 
       // Should not open since no controls have errors
-      expect(await editable.isOpen()).toBe(false);
+      expect(spectator.component.isOpen()).toBe(false);
     }));
 
     it('handles empty field name in validation error notification', fakeAsync(async () => {

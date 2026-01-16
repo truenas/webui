@@ -70,7 +70,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  private detachOverlayAndFocusMainContent(event?: KeyboardEvent): void {
+  protected detachOverlayAndFocusMainContent(event?: Event): void {
     if (!this.overlayRef?.hasAttached()) {
       return;
     }

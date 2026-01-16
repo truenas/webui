@@ -65,6 +65,9 @@ describe('IxExplorerComponent', () => {
   });
 
   beforeEach(() => {
+    // Reset mock tree state
+    (mockTreeMock as unknown as { selectedLeafNodeIds: Record<string, boolean> }).selectedLeafNodeIds = {};
+
     spectator = createHost(
       `<ix-explorer
         [formControl]="formControl"
@@ -170,9 +173,9 @@ describe('IxExplorerComponent', () => {
       expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { '/mnt/place': true } });
     });
 
-    it('updates form control when user types in new value in the input', () => {
-      spectator.typeInElement('/mnt/new', 'input');
-      spectator.dispatchFakeEvent('input', 'change');
+    it('updates form control when user types in new value in the input', async () => {
+      await spectator.component.onInputChanged('/mnt/new');
+      await spectator.fixture.whenStable();
 
       expect(formControl.value).toBe('/mnt/new');
     });
@@ -217,9 +220,9 @@ describe('IxExplorerComponent', () => {
       });
     });
 
-    it('updates form control value when user writes multiple entries in the input', () => {
-      spectator.typeInElement('/mnt/new1,/mnt/new2', 'input');
-      spectator.dispatchFakeEvent('input', 'change');
+    it('updates form control value when user writes multiple entries in the input', async () => {
+      await spectator.component.onInputChanged('/mnt/new1,/mnt/new2');
+      await spectator.fixture.whenStable();
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({
         selectedLeafNodeIds: {
@@ -275,9 +278,7 @@ describe('IxExplorerComponent', () => {
     it('expands tree and selects node when user types a path in input', async () => {
       const testPath = '/mnt/test';
 
-      spectator.typeInElement(testPath, 'input');
-      spectator.dispatchFakeEvent('input', 'change');
-
+      await spectator.component.onInputChanged(testPath);
       await spectator.fixture.whenStable();
       spectator.detectComponentChanges();
 

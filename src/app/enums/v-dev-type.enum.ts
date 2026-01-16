@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-// eslint-disable-next-line no-restricted-imports
 import { helptextPoolCreation } from '../helptext/storage/volumes/pool-creation/pool-creation';
 
 // TODO: This may actually be several enums. Consider splitting.

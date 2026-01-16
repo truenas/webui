@@ -29,3 +29,22 @@
     width: 100px;
   }
 }
+
+.retention-warning {
+  background-color: var(--bg1);
+  border-radius: 4px;
+  margin-top: 16px;
+  padding: 12px 16px;
+
+  .warning-text {
+    color: var(--yellow);
+    font-size: 14px;
+    margin: 0 0 12px;
+  }
+
+  &.error {
+    .warning-text {
+      color: var(--red);
+    }
+  }
+}

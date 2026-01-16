@@ -150,7 +150,7 @@ export class TunableListComponent implements OnInit {
   protected doDelete(tunable: Tunable): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant('Delete Sysctl'),
+        title: this.translate.instant('Delete Tunable'),
         message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
         buttonText: this.translate.instant('Delete'),
         buttonColor: 'warn',
@@ -168,7 +168,7 @@ export class TunableListComponent implements OnInit {
             .pipe(
               tap(() => {
                 this.getTunables();
-                this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
+                this.snackbar.success(this.translate.instant('Tunable "{name}" deleted', { name: tunable.var }));
               }),
               this.errorHandler.withErrorHandler(),
             );

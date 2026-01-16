@@ -59,7 +59,7 @@ export class TunableFormComponent implements OnInit {
   }
 
   get title(): string {
-    return this.isNew ? this.translate.instant('Add Sysctl') : this.translate.instant('Edit Sysctl');
+    return this.isNew ? this.translate.instant('Add Tunable') : this.translate.instant('Edit Tunable');
   }
 
   protected isFormLoading = signal(false);

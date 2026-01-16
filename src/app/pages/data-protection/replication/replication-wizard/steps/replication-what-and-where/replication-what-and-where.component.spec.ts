@@ -21,6 +21,7 @@ import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -83,6 +84,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         confirm: jest.fn(() => of()),
       }),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(LocaleService),
     ],
   });
 

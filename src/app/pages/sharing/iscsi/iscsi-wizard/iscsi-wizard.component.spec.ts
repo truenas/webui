@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -11,6 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -20,6 +20,7 @@ import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface
 import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { newOption } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -141,8 +142,9 @@ describe('IscsiWizardComponent', () => {
     jest.spyOn(store$, 'dispatch');
   });
 
-  it('iSCSI: creates objects when wizard is submitted', fakeAsync(async () => {
-    spectator.tick(100);
+  it('iSCSI: creates objects when wizard is submitted', async () => {
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     await form.fillForm({
       Name: 'test-name',
@@ -164,7 +166,13 @@ describe('IscsiWizardComponent', () => {
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
-    tick();
+
+    // Wait for all async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
@@ -178,6 +186,7 @@ describe('IscsiWizardComponent', () => {
       insecure_tpc: true,
       name: 'test-name',
       product_id: null,
+      ro: false,
       rpm: 'SSD',
       type: 'DISK',
       xen: false,
@@ -212,9 +221,12 @@ describe('IscsiWizardComponent', () => {
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
-  }));
+  });
 
   it('fibre channel: creates objects when wizard is submitted', async () => {
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     await form.fillForm({
       Name: 'test-name',
       Device: 'Create New',
@@ -236,6 +248,13 @@ describe('IscsiWizardComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
+    // Wait for all async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
@@ -248,6 +267,7 @@ describe('IscsiWizardComponent', () => {
       insecure_tpc: true,
       name: 'test-name',
       product_id: null,
+      ro: false,
       rpm: 'SSD',
       type: 'DISK',
       xen: false,
@@ -397,6 +417,75 @@ describe('IscsiWizardComponent', () => {
 
       // Note: The form may still be invalid due to other required fields
       // but FC port validation specifically should pass
+    });
+  });
+
+  describe('extentPayload getter - snapshot handling', () => {
+    it('returns ro=true when disk is a ZFS snapshot (contains @)', () => {
+      const extentGroup = spectator.component.form.controls.extent;
+      extentGroup.controls.name.setValue('test-extent');
+      extentGroup.controls.type.setValue(IscsiExtentType.Disk);
+      extentGroup.controls.disk.setValue('zvol/tank/my-zvol@snapshot1');
+      extentGroup.controls.usefor.setValue(IscsiExtentUsefor.Vmware);
+      extentGroup.controls.product_id.setValue('');
+      extentGroup.controls.ro.setValue(true);
+
+      const payload = spectator.component.extentPayload;
+
+      expect(payload.ro).toBe(true);
+      expect(payload.disk).toBe('zvol/tank/my-zvol@snapshot1');
+    });
+
+    it('returns ro=false when disk is a regular zvol (no @)', () => {
+      const extentGroup = spectator.component.form.controls.extent;
+      extentGroup.controls.name.setValue('test-extent');
+      extentGroup.controls.type.setValue(IscsiExtentType.Disk);
+      extentGroup.controls.disk.setValue('zvol/tank/my-zvol');
+      extentGroup.controls.usefor.setValue(IscsiExtentUsefor.Vmware);
+      extentGroup.controls.product_id.setValue('');
+
+      const payload = spectator.component.extentPayload;
+
+      expect(payload.ro).toBe(false);
+      expect(payload.disk).toBe('zvol/tank/my-zvol');
+    });
+
+    it('returns ro=false when creating a new zvol', () => {
+      spectator.component.createdZvol = { id: 'tank/new-zvol' } as Dataset;
+      const extentGroup = spectator.component.form.controls.extent;
+      extentGroup.controls.name.setValue('test-extent');
+      extentGroup.controls.type.setValue(IscsiExtentType.Disk);
+      extentGroup.controls.disk.setValue(newOption);
+      extentGroup.controls.usefor.setValue(IscsiExtentUsefor.Vmware);
+      extentGroup.controls.product_id.setValue('');
+
+      const payload = spectator.component.extentPayload;
+
+      expect(payload.ro).toBe(false);
+      expect(payload.disk).toBe('zvol/tank/new-zvol');
+    });
+
+    it('correctly detects snapshot from disk path with @ symbol', () => {
+      const extentGroup = spectator.component.form.controls.extent;
+      extentGroup.controls.type.setValue(IscsiExtentType.Disk);
+      extentGroup.controls.disk.setValue('zvol/tank/my-zvol@snapshot1');
+      extentGroup.controls.ro.setValue(true);
+
+      const payload = spectator.component.extentPayload;
+
+      expect(payload.disk?.includes('@')).toBe(true);
+      expect(payload.ro).toBe(true);
+    });
+
+    it('correctly detects regular zvol without @ symbol', () => {
+      const extentGroup = spectator.component.form.controls.extent;
+      extentGroup.controls.type.setValue(IscsiExtentType.Disk);
+      extentGroup.controls.disk.setValue('zvol/tank/my-zvol');
+
+      const payload = spectator.component.extentPayload;
+
+      expect(payload.disk?.includes('@')).toBe(false);
+      expect(payload.ro).toBe(false);
     });
   });
 });

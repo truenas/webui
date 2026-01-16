@@ -40,12 +40,12 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -90,6 +90,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxSelectComponent,
     IxCheckboxComponent,
     IxChipsComponent,
+    IxGroupChipsComponent,
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
@@ -144,12 +145,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private wasStripAclWarningShown = false;
   private smbConfig = signal<SmbConfig | null>(null);
-
-  protected groupProvider: ChipsProvider = (query) => {
-    return this.userService.groupQueryDsCache(query).pipe(
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
 
   title: string = helptextSharingSmb.formTitleAdd;
 

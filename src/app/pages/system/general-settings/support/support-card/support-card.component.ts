@@ -1,14 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { format } from 'date-fns-tz';
 import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -21,10 +23,7 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
-import {
-  IxSlideToggleComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -48,7 +47,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-support-card',
   templateUrl: './support-card.component.html',
@@ -65,13 +63,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     ReactiveFormsModule,
     FormsModule,
     MatButton,
-    MatMenuTrigger,
-    IxIconComponent,
-    MatMenu,
-    MatMenuItem,
     MatTooltip,
     TranslateModule,
-    IxSlideToggleComponent,
     SaveDebugButtonComponent,
   ],
 })
@@ -85,6 +78,8 @@ export class SupportCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
+  private readonly destroyRef = inject(DestroyRef);
+  private localeService = inject(LocaleService);
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly Role = Role;
@@ -94,10 +89,13 @@ export class SupportCardComponent implements OnInit {
   hasLicense = false;
   productImageSrc = signal<string | null>(null);
   licenseInfo: LicenseInfoInSupport | null = null;
-  links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
   isProactiveSupportAvailable = signal(false);
+  isProactiveSupportEnabled = signal(false);
+  isContractExpiringSoon = signal(false);
+
+  private readonly expirationWarningDays = 14;
 
   protected readonly isProductionControl = new FormControl(false, { nonNullable: true });
 
@@ -106,17 +104,16 @@ export class SupportCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, takeUntilDestroyed(this.destroyRef)).subscribe((systemInfo) => {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
-
-      this.setupProductImage(systemInfo);
 
       if (systemInfo.license) {
         this.hasLicense = true;
         this.licenseInfo = { ...systemInfo.license };
         this.parseLicenseInfo(this.licenseInfo);
         this.checkProactiveSupportAvailability();
+        this.setupProductImage(systemInfo);
       }
       this.cdr.markForCheck();
     });
@@ -137,7 +134,8 @@ export class SupportCardComponent implements OnInit {
       licenseInfo.featuresString = licenseInfo.features.join(', ');
     }
     const expDateConverted = new Date(licenseInfo.contract_end.$value);
-    licenseInfo.expiration_date = licenseInfo.contract_end.$value;
+    const userDateFormat = this.localeService.getPreferredDateFormat();
+    licenseInfo.expiration_date = format(expDateConverted, userDateFormat);
 
     if (licenseInfo.addhw_detail.length === 0) {
       licenseInfo.add_hardware = 'NONE';
@@ -147,6 +145,10 @@ export class SupportCardComponent implements OnInit {
     const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
     licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
+
+    this.isContractExpiringSoon.set(
+      licenseInfo.daysLeftinContract >= 0 && licenseInfo.daysLeftinContract <= this.expirationWarningDays,
+    );
   }
 
   private daysTillExpiration(now: Date, then: Date): number {
@@ -198,14 +200,14 @@ export class SupportCardComponent implements OnInit {
           }),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe();
   }
 
   private loadProductionStatus(): void {
     this.api.call('truenas.is_production')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isProduction) => {
         this.isProductionControl.setValue(isProduction, { emitEvent: false });
         this.cdr.markForCheck();
@@ -214,7 +216,7 @@ export class SupportCardComponent implements OnInit {
 
   private saveProductionStatusOnChange(): void {
     this.isProductionControl.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newStatus) => this.updateProductionStatus(newStatus));
   }
 
@@ -222,10 +224,26 @@ export class SupportCardComponent implements OnInit {
     this.api.call('support.is_available')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((isAvailable) => {
         this.isProactiveSupportAvailable.set(isAvailable);
+        this.cdr.markForCheck();
+
+        if (isAvailable) {
+          this.checkProactiveSupportEnabled();
+        }
+      });
+  }
+
+  private checkProactiveSupportEnabled(): void {
+    this.api.call('support.is_available_and_enabled')
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((isEnabled) => {
+        this.isProactiveSupportEnabled.set(isEnabled);
         this.cdr.markForCheck();
       });
   }
