@@ -26,8 +26,13 @@
   <mat-card-content class="card-content">
     <div class="details-item">
       <div class="label status">
-        {{ '{status}, {errorCount, plural, =0 {no errors} other {# errors}}.' | translate:{ status: (pool().status | mapValue: poolStatusLabels | translate), errorCount: totalZfsErrors } }}
+        {{ getErrorText() }}
       </div>
+      @if (hasErrors()) {
+        <a (click)="goToDiskError()">
+          {{ 'Show me' | translate }}
+        </a>
+      }
     </div>
 
     <div
