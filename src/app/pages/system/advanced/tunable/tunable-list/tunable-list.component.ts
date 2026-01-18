@@ -30,8 +30,8 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
+import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
+import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -148,9 +148,10 @@ export class TunableListComponent implements OnInit {
   }
 
   protected doDelete(tunable: Tunable): void {
+    const type = tunable.type?.toUpperCase() || '';
     this.dialogService
       .confirm({
-        title: this.translate.instant('Delete Tunable'),
+        title: this.translate.instant('Delete Tunable ({type})', { type }),
         message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
         buttonText: this.translate.instant('Delete'),
         buttonColor: 'warn',

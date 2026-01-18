@@ -13,7 +13,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 
 describe('TunableFormComponent', () => {
   let spectator: Spectator<TunableFormComponent>;

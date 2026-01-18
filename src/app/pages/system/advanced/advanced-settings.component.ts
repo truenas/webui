@@ -33,9 +33,9 @@ import { NvidiaDriversCardComponent } from './nvidia-drivers/nvidia-drivers-card
 import { ReplicationSettingsCardComponent } from './replication/replication-settings-card/replication-settings-card.component';
 import { SelfEncryptingDriveCardComponent } from './self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
 import { StorageCardComponent } from './storage/storage-card/storage-card.component';
-import { SysctlCardComponent } from './sysctl/sysctl-card/sysctl-card.component';
 import { SyslogCardComponent } from './syslog/syslog-card/syslog-card.component';
 import { SystemSecurityCardComponent } from './system-security/system-security-card/system-security-card.component';
+import { TunableCardComponent } from './tunable/tunable-card/tunable-card.component';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
     KernelCardComponent,
     CronCardComponent,
     InitShutdownCardComponent,
-    SysctlCardComponent,
+    TunableCardComponent,
     StorageCardComponent,
     ReplicationSettingsCardComponent,
     AccessCardComponent,

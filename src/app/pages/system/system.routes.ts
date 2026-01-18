@@ -11,7 +11,7 @@ import { GeneralSettingsComponent } from 'app/pages/system/general-settings/gene
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
+import { TunableListComponent } from './advanced/tunable/tunable-list/tunable-list.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
@@ -78,14 +78,6 @@ export const systemRoutes: Routes = [
           path: '',
           component: TunableListComponent,
           data: { title: T('Tunables'), breadcrumb: null },
-        }],
-      }, {
-        path: 'sysctl',
-        data: { title: T('Sysctl'), breadcrumb: null },
-        children: [{
-          path: '',
-          component: TunableListComponent,
-          data: { title: T('Sysctl'), breadcrumb: null },
         }],
       },
       {

@@ -62,9 +62,7 @@ export class AppUpdateDialog {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor() {
-    const data = this.data;
-
-    this.dialogConfig = data;
+    this.dialogConfig = this.data;
 
     this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {
       latest_version: this.dialogConfig.upgradeSummary.latest_version,

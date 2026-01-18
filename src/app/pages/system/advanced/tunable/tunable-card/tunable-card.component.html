@@ -1,16 +1,16 @@
-<mat-card [ixUiSearch]="searchableElements.elements.sysctl">
+<mat-card [ixUiSearch]="searchableElements.elements.tunable">
   <mat-toolbar-row>
     <a
-      [ixTest]="['sysctl', 'open-in-new']"
-      [routerLink]="['/system', 'sysctl']"
-      [matTooltip]="'Open Sysctl list in full page' | translate"
+      [ixTest]="['tunable', 'open-in-new']"
+      [routerLink]="['/system', 'tunable']"
+      [matTooltip]="'Open Tunable list in full page' | translate"
     >
       <h3 class="card-title">
-        {{ 'Sysctl' | translate }}
+        {{ 'Tunable' | translate }}
         <ix-icon
           name="open_in_new"
           class="title-icon"
-          [attr.aria-label]="'Open Sysctl list in full page' | translate"
+          [attr.aria-label]="'Open Tunable list in full page' | translate"
         ></ix-icon>
       </h3>
     </a>
@@ -18,8 +18,8 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
-        [ixTest]="['sysctl', 'add']"
-        [ixUiSearch]="searchableElements.elements.addSysctl"
+        [ixTest]="['tunable', 'add']"
+        [ixUiSearch]="searchableElements.elements.addTunable"
         (click)="onAdd()"
       >
         {{ 'Add' | translate }}

@@ -13,18 +13,19 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SysctlCardComponent } from './sysctl-card.component';
+import { TunableCardComponent } from './tunable-card.component';
 
-describe('SysctlCardComponent', () => {
-  let spectator: Spectator<SysctlCardComponent>;
+describe('TunableCardComponent', () => {
+  let spectator: Spectator<TunableCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
   const items = [
     {
       id: 1,
+      type: 'ZFS',
       var: 'zfs_arc_max',
       comment: 'Max ZFS ARC size',
       enabled: true,
@@ -32,6 +33,7 @@ describe('SysctlCardComponent', () => {
     },
     {
       id: 2,
+      type: 'ZFS',
       var: 'vfs.zfs.arc_min',
       comment: 'Min ZFS ARC size',
       enabled: true,
@@ -40,7 +42,7 @@ describe('SysctlCardComponent', () => {
   ] as Tunable[];
 
   const createComponent = createComponentFactory({
-    component: SysctlCardComponent,
+    component: TunableCardComponent,
     imports: [
     ],
     providers: [
@@ -91,7 +93,7 @@ describe('SysctlCardComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('shows form to edit a sysctl variable when Edit button is pressed', async () => {
+  it('shows form to edit a tunable variable when Edit button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
     await editButton.click();
 
@@ -101,7 +103,7 @@ describe('SysctlCardComponent', () => {
     );
   });
 
-  it('deletes a sysctl variable with confirmation when Delete button is pressed', async () => {
+  it('deletes a tunable variable with confirmation when Delete button is pressed', async () => {
     const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 4);
     await deleteIcon.click();
 
