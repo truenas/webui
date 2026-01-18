@@ -221,6 +221,7 @@
     "@markuplint/ml-core": "~4.13.1",
     "@typescript-eslint/types": "~8.41.0",
     "@typescript-eslint/utils": "~8.41.0",
+    "postcss-scss": "~4.0.9",
     "prettier": "~3.6.2"
   }
 }

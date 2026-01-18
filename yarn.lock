@@ -16174,7 +16174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-scss@npm:^4.0.9":
+"postcss-scss@npm:^4.0.9, postcss-scss@npm:~4.0.9":
   version: 4.0.9
   resolution: "postcss-scss@npm:4.0.9"
   peerDependencies:
@@ -18454,6 +18454,7 @@ __metadata:
     ngx-translate-messageformat-compiler: "npm:~7.0.0"
     ngx-webstorage: "npm:~18.0.0"
     postcss: "npm:~8.5.6"
+    postcss-scss: "npm:~4.0.9"
     prettier: "npm:~3.6.2"
     rimraf: "npm:~6.0.1"
     rxjs: "npm:~7.8.1"
