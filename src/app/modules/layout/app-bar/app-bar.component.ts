@@ -78,16 +78,18 @@ export class AppBarComponent implements OnInit {
   }
 
   onItemClick(item: AppBarItem): void {
-    this.store.dispatch(appBarOpened({
-      item: {
-        name: item.name,
-        icon: item.icon,
-        iconActive: item.iconActive,
-        state: item.state,
-        status: 'open',
-      },
-    }));
-
     this.router.navigate(this.getRouterLink(item.state));
+
+    setTimeout(() => {
+      this.store.dispatch(appBarOpened({
+        item: {
+          name: item.name,
+          icon: item.icon,
+          iconActive: item.iconActive,
+          state: item.state,
+          status: 'open',
+        },
+      }));
+    });
   }
 }
