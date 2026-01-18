@@ -3,11 +3,13 @@
 :host {
   background-color: var(--bg2);
   height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight
-  width: 480px;
+  max-width: 960px;
+  width: min(960px, calc(100vw - 32px));
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
-  left: 50%;
-  margin-left: -400px; // half of max-width (800px)
-  position: absolute;
+  position: fixed;
+  top: 48px;
+  right: 50%;
+  transform: translateX(150%);
   border-radius: 24px;
   overflow: hidden;
 
@@ -20,12 +22,12 @@
   }
 
   &.slide-in-hidden {
-    transform: translateX(100%);
+    transform: translateX(150%);
     transition: transform 150ms ease-in;
   }
 
   &.slide-in-visible {
-    transform: translateX(0);
+    transform: translateX(50%);
     transition: transform 150ms ease-out;
   }
 }
@@ -33,7 +35,9 @@
 // When debug panel is open, adjust the slide-in position
 body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   :host {
-    right: var(--debug-panel-width, 550px); // Use dynamic debug panel width
+    right: calc(
+      50% + var(--debug-panel-width, 550px) / 2
+    ); // shift origin when debug panel is open
   }
 }
 

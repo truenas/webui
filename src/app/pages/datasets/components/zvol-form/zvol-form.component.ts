@@ -63,7 +63,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
-  styleUrls: ['./zvol-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
