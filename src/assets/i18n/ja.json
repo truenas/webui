@@ -1,8 +1,8 @@
 {
   "0": "0",
   "": "",
-  "TrueNAS Catalog Version": "",
-  "Upstream Application Version": "",
+  "TrueNAS Catalog Version": "TrueNAS カタログのバージョン",
+  "Upstream Application Version": "上流アプリケーションのバージョン",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              セッションが{lifetime}秒以上アクティブでないようです。<br>\n              セキュリティ上の理由から、{time}でログアウトします。\n            ",
   " as of {dateTime}": " {dateTime} 現在",
   " bytes.": "バイト。",
