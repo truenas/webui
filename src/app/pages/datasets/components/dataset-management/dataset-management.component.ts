@@ -49,6 +49,7 @@ import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -86,6 +87,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TreeNodeToggleDirective,
     NgTemplateOutlet,
     PageHeaderComponent,
+    PageContentComponent,
   ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {

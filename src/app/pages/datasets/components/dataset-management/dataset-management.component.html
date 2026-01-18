@@ -1,145 +1,146 @@
 <ix-page-header [pageTitle]="'Datasets' | translate" ></ix-page-header>
 
-@if (!isLoading && dataSource.data.length === 0) {
-  <ng-container [ngTemplateOutlet]="empty"></ng-container>
-} @else {
-  <div class="container">
-    <div class="table-container">
-      @if (!showMobileDetails) {
-        <ix-fake-progress-bar
-          class="loader-bar"
-          [loading]="!!(isLoading$ | async)"
-        ></ix-fake-progress-bar>
-      }
-      <div class="item-search">
-        <ix-basic-search
-          [query]="searchQuery()"
-          (queryChange)="onListFiltered($event)"
-        ></ix-basic-search>
-      </div>
-
-      <div
-        #ixTreeHeader
-        class="sticky-header"
-        (scroll)="treeHeaderScrolled()"
-      >
-        <div class="tree-header" [style.width.px]="ixTreeHeaderWidth">
-          <div>
-            <span class="name-header">
-              {{ 'Dataset' | translate }}
-            </span>
-          </div>
-          <div>
-            {{ 'Used' | translate }}
-            /
-            {{ 'Available' | translate }}
-          </div>
-          <div>{{ 'Encryption' | translate }}</div>
-          <div>{{ 'Usage' | translate }}</div>
-        </div>
-      </div>
-
-      <div
-        #ixTree
-        class="tree-wrapper"
-      >
-        <div class="tree-inner">
-
-          @if (searchQuery() && !dataSource.filteredData.length && !isLoading) {
-            <ng-container [ngTemplateOutlet]="empty"></ng-container>
-          } @else {
-            <ix-tree-virtual-scroll-view
-              [ixDataSource]="dataSource"
-              [ixTreeControl]="treeControl"
-              [ixItemSize]="52"
-              [ixMinBufferPx]="52"
-              [ixMaxBufferPx]="52"
-              [trackBy]="trackById"
-              (viewportScrolled)="datasetTreeScrolled($event)"
-              (viewportResized)="datasetTreeWidthChanged($event)"
-            >
-              <ix-tree-node
-                *treeNodeDef="let dataset; dataSource: dataSource"
-                routerLinkActive="selected"
-                cdkTreeNodePadding
-                [cdkTreeNodePaddingIndent]="40"
-                [treeNodeDefDataSource]="dataSource"
-                [routerLink]="['/datasets', dataset.id]"
-                (click)="viewDetails(dataset)"
-                (keydown.enter)="viewDetails(dataset)"
-              >
-                <span class="spacer"></span>
-                <ix-dataset-node
-                  [dataset]="dataset"
-                  [isSystemDataset]="isSystemDataset(dataset)"
-                ></ix-dataset-node>
-                <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
-              </ix-tree-node>
-
-              <ix-tree-node
-                *treeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
-                routerLinkActive="selected"
-                cdkTreeNodePadding
-                [cdkTreeNodePaddingIndent]="40"
-                [treeNodeDefDataSource]="dataSource"
-                [routerLink]="['/datasets', dataset.id]"
-                (click)="viewDetails(dataset)"
-                (keydown.enter)="viewDetails(dataset)"
-              >
-                <button
-                  mat-icon-button
-                  treeNodeToggle
-                  [ixTest]="['toggle-row', dataset.name]"
-                  [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
-                  (keydown.enter)="$event.stopPropagation()"
-                >
-                  <ix-icon
-                    class="mat-icon-rtl-mirror"
-                    [name]="treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
-                  ></ix-icon>
-                </button>
-
-                <ix-dataset-node
-                  [dataset]="dataset"
-                  [isSystemDataset]="isSystemDataset(dataset)"
-                ></ix-dataset-node>
-
-                <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
-              </ix-tree-node>
-            </ix-tree-virtual-scroll-view>
-          }
-        </div>
-      </div>
-    </div>
-
-    @let dataset = selectedDataset$ | async;
-    @let showDetails = !searchQuery() || dataset.name.toLowerCase().includes(searchQuery().toLowerCase());
-
-    @if (dataset && showDetails) {
-      <div
-        ixDetailsHeight
-        class="details-container"
-        [class.details-container-mobile]="showMobileDetails"
-      >
-        @if (showMobileDetails) {
+<ix-page-content>
+  @if (!isLoading && dataSource.data.length === 0) {
+    <ng-container [ngTemplateOutlet]="empty"></ng-container>
+  } @else {
+    <div class="rounded-2xl border overflow-hidden bg-background flex flex-wrap gap-10 p-5">
+      <div class="table-container">
+        @if (!showMobileDetails) {
           <ix-fake-progress-bar
             class="loader-bar"
             [loading]="!!(isLoading$ | async)"
           ></ix-fake-progress-bar>
         }
-        <ix-dataset-details-panel
-          [dataset]="dataset"
-          [systemDataset]="systemDataset()"
-          (closeMobileDetails)="closeMobileDetails()"
-        ></ix-dataset-details-panel>
-      </div>
-    }
-  </div>
-}
 
-<ng-template #empty>
-  <ix-empty
-    [conf]="emptyConfig()"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
-</ng-template>
+        <ix-basic-search
+          [query]="searchQuery()"
+          (queryChange)="onListFiltered($event)"
+        ></ix-basic-search>
+
+        <div
+          #ixTreeHeader
+          class="sticky-header"
+          (scroll)="treeHeaderScrolled()"
+        >
+          <div class="tree-header" [style.width.px]="ixTreeHeaderWidth">
+            <div>
+              <span class="name-header">
+                {{ 'Dataset' | translate }}
+              </span>
+            </div>
+            <div>
+              {{ 'Used' | translate }}
+              /
+              {{ 'Available' | translate }}
+            </div>
+            <div>{{ 'Encryption' | translate }}</div>
+            <div>{{ 'Usage' | translate }}</div>
+          </div>
+        </div>
+
+        <div
+          #ixTree
+          class="tree-wrapper"
+        >
+          <div class="tree-inner">
+
+            @if (searchQuery() && !dataSource.filteredData.length && !isLoading) {
+              <ng-container [ngTemplateOutlet]="empty"></ng-container>
+            } @else {
+              <ix-tree-virtual-scroll-view
+                [ixDataSource]="dataSource"
+                [ixTreeControl]="treeControl"
+                [ixItemSize]="52"
+                [ixMinBufferPx]="52"
+                [ixMaxBufferPx]="52"
+                [trackBy]="trackById"
+                (viewportScrolled)="datasetTreeScrolled($event)"
+                (viewportResized)="datasetTreeWidthChanged($event)"
+              >
+                <ix-tree-node
+                  *treeNodeDef="let dataset; dataSource: dataSource"
+                  routerLinkActive="selected"
+                  cdkTreeNodePadding
+                  [cdkTreeNodePaddingIndent]="40"
+                  [treeNodeDefDataSource]="dataSource"
+                  [routerLink]="['/datasets', dataset.id]"
+                  (click)="viewDetails(dataset)"
+                  (keydown.enter)="viewDetails(dataset)"
+                >
+                  <span class="spacer"></span>
+                  <ix-dataset-node
+                    [dataset]="dataset"
+                    [isSystemDataset]="isSystemDataset(dataset)"
+                  ></ix-dataset-node>
+                  <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
+                </ix-tree-node>
+
+                <ix-tree-node
+                  *treeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
+                  routerLinkActive="selected"
+                  cdkTreeNodePadding
+                  [cdkTreeNodePaddingIndent]="40"
+                  [treeNodeDefDataSource]="dataSource"
+                  [routerLink]="['/datasets', dataset.id]"
+                  (click)="viewDetails(dataset)"
+                  (keydown.enter)="viewDetails(dataset)"
+                >
+                  <button
+                    mat-icon-button
+                    treeNodeToggle
+                    [ixTest]="['toggle-row', dataset.name]"
+                    [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
+                    (keydown.enter)="$event.stopPropagation()"
+                  >
+                    <ix-icon
+                      class="mat-icon-rtl-mirror"
+                      [name]="treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
+                    ></ix-icon>
+                  </button>
+
+                  <ix-dataset-node
+                    [dataset]="dataset"
+                    [isSystemDataset]="isSystemDataset(dataset)"
+                  ></ix-dataset-node>
+
+                  <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
+                </ix-tree-node>
+              </ix-tree-virtual-scroll-view>
+            }
+          </div>
+        </div>
+      </div>
+
+      @let dataset = selectedDataset$ | async;
+      @let showDetails = !searchQuery() || dataset.name.toLowerCase().includes(searchQuery().toLowerCase());
+
+      @if (dataset && showDetails) {
+        <div
+          ixDetailsHeight
+          class="details-container"
+          [class.details-container-mobile]="showMobileDetails"
+        >
+          @if (showMobileDetails) {
+            <ix-fake-progress-bar
+              class="loader-bar"
+              [loading]="!!(isLoading$ | async)"
+            ></ix-fake-progress-bar>
+          }
+          <ix-dataset-details-panel
+            [dataset]="dataset"
+            [systemDataset]="systemDataset()"
+            (closeMobileDetails)="closeMobileDetails()"
+          ></ix-dataset-details-panel>
+        </div>
+      }
+    </div>
+  }
+
+  <ng-template #empty>
+    <ix-empty
+      [conf]="emptyConfig()"
+      [requiredRoles]="requiredRoles"
+    ></ix-empty>
+  </ng-template>
+</ix-page-content>
