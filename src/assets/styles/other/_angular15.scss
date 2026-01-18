@@ -37,13 +37,13 @@ body .mat-mdc-icon-button {
     }
   }
 
-  .mat-mdc-button-touch-target,
-  .mat-mdc-button-persistent-ripple,
-  .mat-mdc-focus-indicator,
-  .mat-ripple {
-    height: $button-size !important;
-    width: $button-size !important;
-  }
+  // .mat-mdc-button-touch-target,
+  // .mat-mdc-button-persistent-ripple,
+  // .mat-mdc-focus-indicator,
+  // .mat-ripple {
+  //   height: $button-size !important;
+  //   width: $button-size !important;
+  // }
 }
 
 table td .mdc-icon-button {

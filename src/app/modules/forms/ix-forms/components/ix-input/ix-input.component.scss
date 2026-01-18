@@ -94,14 +94,8 @@
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, "inline");
     opacity: var(--disabled-opacity);
-  }
-
-  .toggle_pw ix-icon {
-    height: 18px;
     position: relative;
-    right: 0;
-    top: -8px;
-    width: 18px;
+    top: -1px;
   }
 }
 
