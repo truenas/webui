@@ -7,6 +7,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -150,7 +151,7 @@ describe('AuthorizedAccessFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
     });
 
-    it('shows error when Mutual CHAP is selected without peer credentials', async () => {
+    it('makes peer fields required when Mutual CHAP is selected', async () => {
       await form.fillForm({
         'Group ID': '113',
         User: 'test-user',
@@ -159,10 +160,17 @@ describe('AuthorizedAccessFormComponent', () => {
         'Discovery Authentication': 'Mutual CHAP',
       });
 
-      const discoveryAuthControl = await form.getControl('Discovery Authentication');
-      const errorText = await discoveryAuthControl.getErrorText();
+      const peerUserControl = await form.getControl('Peer User');
+      const peerSecretControl = await form.getControl('Peer Secret');
+      const peerSecretConfirmControl = await form.getControl('Peer Secret (Confirm)');
 
-      expect(errorText).toBe('CHAP Mutual auth method requires Peer User and Peer Secret to be defined.');
+      const peerUserError = await peerUserControl.getErrorText();
+      const peerSecretError = await peerSecretControl.getErrorText();
+      const peerSecretConfirmError = await peerSecretConfirmControl.getErrorText();
+
+      expect(peerUserError).toBe('Peer User is required');
+      expect(peerSecretError).toContain('required');
+      expect(peerSecretConfirmError).toBe('Peer Secret (Confirm) is required');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
@@ -180,12 +188,55 @@ describe('AuthorizedAccessFormComponent', () => {
         'Discovery Authentication': 'Mutual CHAP',
       });
 
-      const discoveryAuthControl = await form.getControl('Discovery Authentication');
-      const errorText = await discoveryAuthControl.getErrorText();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
 
-      expect(errorText).toBe('');
+    it('removes required validator from peer fields when switching from Mutual CHAP to another auth method', async () => {
+      await form.fillForm({
+        'Discovery Authentication': 'Mutual CHAP',
+      });
+
+      // we use `getMatInputHarness` below, but `getControl` returns a generic harness.
+      // we're confident that each of these controls is an `ix-input`, though, so
+      // we can make this type assertion safely.
+      const peerUserControl = await form.getControl('Peer User') as IxInputHarness;
+      const peerSecretControl = await form.getControl('Peer Secret') as IxInputHarness;
+      const peerSecretConfirmControl = await form.getControl('Peer Secret (Confirm)') as IxInputHarness;
+
+      let peerUserInput = await peerUserControl.getMatInputHarness();
+      let peerSecretInput = await peerSecretControl.getMatInputHarness();
+      let peerSecretConfirmInput = await peerSecretConfirmControl.getMatInputHarness();
+
+      // each control should have its `required` attribute be present, but that value
+      // will just be the empty string. this is okay, because a nonexistent key would have
+      // value `null`.
+      expect(await (await peerUserInput.host()).getAttribute('required')).not.toBeNull();
+      expect(await (await peerSecretInput.host()).getAttribute('required')).not.toBeNull();
+      expect(await (await peerSecretConfirmInput.host()).getAttribute('required')).not.toBeNull();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // switch to regular CHAP (not mutual)
+      await form.fillForm({
+        'Group ID': '113',
+        User: 'test-user',
+        Secret: '123456789012',
+        'Secret (Confirm)': '123456789012',
+        'Discovery Authentication': 'CHAP',
+      });
+
+      // so we should now expect all the controls to have their required values be `null`.
+      peerUserInput = await peerUserControl.getMatInputHarness();
+      peerSecretInput = await peerSecretControl.getMatInputHarness();
+      peerSecretConfirmInput = await peerSecretConfirmControl.getMatInputHarness();
+
+      expect(await (await peerUserInput.host()).getAttribute('required')).toBeNull();
+      expect(await (await peerSecretInput.host()).getAttribute('required')).toBeNull();
+      expect(await (await peerSecretConfirmInput.host()).getAttribute('required')).toBeNull();
+
+      // now form should be valid without peer credentials.
       expect(await saveButton.isDisabled()).toBe(false);
     });
   });

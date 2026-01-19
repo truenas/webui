@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder, ValidationErrors } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  debounceTime, merge, Observable, of,
+  Observable, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
@@ -56,8 +56,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
   private validatorService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
 
-  private chapValidatorFn = this.chapValidator.bind(this);
-
   get isNew(): boolean {
     return !this.editingAccess;
   }
@@ -80,14 +78,14 @@ export class AuthorizedAccessFormComponent implements OnInit {
     peeruser: [''],
     peersecret: ['', [
       this.validatorService.validateOnCondition(
-        () => this.isPeerUserSet(),
+        () => this.isPeerRequired(),
         Validators.required,
       ),
       Validators.minLength(12),
       Validators.maxLength(16),
     ]],
     peersecret_confirm: [''],
-    discovery_auth: [IscsiAuthMethod.None, this.chapValidatorFn],
+    discovery_auth: [IscsiAuthMethod.None],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -149,11 +147,27 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    merge(
-      this.form.controls.peeruser.valueChanges,
-      this.form.controls.peersecret.valueChanges,
-    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
-      this.form.controls.discovery_auth.updateValueAndValidity();
+    // list of controls related to the peer user and their credentials
+    const peerControls = [
+      this.form.controls.peeruser,
+      this.form.controls.peersecret,
+      this.form.controls.peersecret_confirm,
+    ];
+
+    // when the discovery auth method is `CHAP Mutual`, we need to *require*
+    // the peer controls be filled out.
+    this.form.controls.discovery_auth.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe((newValue) => {
+      if (newValue === IscsiAuthMethod.ChapMutual) {
+        // so, we add the `required` validator.
+        peerControls.forEach((control) => control.addValidators(Validators.required));
+      } else {
+        // otherwise, remove the `required` validator from them.
+        peerControls.forEach((control) => control.removeValidators(Validators.required));
+      }
+
+      peerControls.forEach((control) => control.updateValueAndValidity());
     });
 
     if (this.editingAccess) {
@@ -161,8 +175,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
     }
   }
 
-  protected isPeerUserSet(): boolean {
-    return Boolean(this.form?.value?.peeruser);
+  protected isPeerRequired(): boolean {
+    return Boolean(
+      this.form?.value?.peeruser
+      || this.form?.controls?.discovery_auth.value === IscsiAuthMethod.ChapMutual,
+    );
   }
 
   private setAccessForEdit(access: IscsiAuthAccess): void {
@@ -199,23 +216,5 @@ export class AuthorizedAccessFormComponent implements OnInit {
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
-  }
-
-  private chapValidator(control: AbstractControl): ValidationErrors | null {
-    const hasPeerDefined = this.form?.value.peeruser && this.form?.value.peersecret;
-    const isChapMutual = control.value === IscsiAuthMethod.ChapMutual;
-
-    // users are allowed to set CHAP Mutual *only* when they have a peer user set.
-    // so, if the auth method is chap mutual *and* they don't have a peer defined, then
-    // we need to invalidate the form.
-    if (!hasPeerDefined && isChapMutual) {
-      return {
-        chapMutualError: {
-          message: this.translate.instant(helptextIscsi.authaccess.chapMutualHelp),
-        },
-      };
-    }
-
-    return null;
   }
 }

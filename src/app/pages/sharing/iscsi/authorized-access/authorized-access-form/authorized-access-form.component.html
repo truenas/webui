@@ -54,13 +54,14 @@
           formControlName="peeruser"
           [label]="'Peer User' | translate"
           [tooltip]="tooltips.peeruser | translate"
+          [required]="isPeerRequired()"
         ></ix-input>
 
         <ix-input
           formControlName="peersecret"
           type="password"
           [label]="'Peer Secret' | translate"
-          [required]="isPeerUserSet()"
+          [required]="isPeerRequired()"
           [tooltip]="tooltips.peersecret | translate"
         ></ix-input>
 
@@ -68,7 +69,7 @@
           formControlName="peersecret_confirm"
           type="password"
           [label]="'Peer Secret (Confirm)' | translate"
-          [required]="isPeerUserSet()"
+          [required]="isPeerRequired()"
         ></ix-input>
       </ix-fieldset>
 
