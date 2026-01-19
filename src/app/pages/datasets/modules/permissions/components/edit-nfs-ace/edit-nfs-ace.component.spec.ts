@@ -210,4 +210,41 @@ describe('EditNfsAceComponent', () => {
     const checkboxes = await advancedFlagChecklist.getCheckboxes();
     expect(checkboxes).toHaveLength(5);
   });
+
+  describe('validation', () => {
+    it('reports invalid when ace input changes to User tag with no user selected', () => {
+      spectator.setInput('ace', {
+        tag: NfsAclTag.User,
+        who: undefined,
+        type: NfsAclType.Allow,
+        perms: { BASIC: NfsBasicPermission.FullControl },
+        flags: { BASIC: NfsBasicFlag.Inherit },
+      } as NfsAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(false);
+    });
+
+    it('reports invalid when ace input changes to Group tag with no group selected', () => {
+      spectator.setInput('ace', {
+        tag: NfsAclTag.UserGroup,
+        who: undefined,
+        type: NfsAclType.Allow,
+        perms: { BASIC: NfsBasicPermission.FullControl },
+        flags: { BASIC: NfsBasicFlag.Inherit },
+      } as NfsAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(false);
+    });
+
+    it('reports valid when ace input changes to owner@ tag (no user/group required)', () => {
+      spectator.setInput('ace', {
+        tag: NfsAclTag.Owner,
+        type: NfsAclType.Allow,
+        perms: { BASIC: NfsBasicPermission.FullControl },
+        flags: { BASIC: NfsBasicFlag.Inherit },
+      } as NfsAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+  });
 });
