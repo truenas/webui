@@ -270,6 +270,19 @@ describe('UpdateComponent', () => {
       );
     });
 
+    it('stops update flow when save config dialog returns false (error or cancel)', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      jest.spyOn(matDialog, 'open').mockReturnValue({
+        afterClosed: () => of(false),
+      } as MatDialogRef<SaveConfigDialog>);
+
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      await installButton.click();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
+    });
+
     it('uses failover.upgrade for HA systems', async () => {
       const mockStore$ = spectator.inject(MockStore);
       mockStore$.overrideSelector(selectIsHaLicensed, true);

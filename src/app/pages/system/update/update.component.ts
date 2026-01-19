@@ -250,7 +250,7 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  private offerToSaveConfiguration(): Observable<unknown> {
+  private offerToSaveConfiguration(): Observable<true> {
     return this.matDialog.open(SaveConfigDialog, {
       data: {
         title: this.translate.instant('Save configuration settings from this machine before updating?'),
@@ -258,7 +258,8 @@ export class UpdateComponent implements OnInit {
         cancelButton: this.translate.instant('Do not save'),
       } as Partial<SaveConfigDialogMessages>,
     })
-      .afterClosed();
+      .afterClosed()
+      .pipe(filter((result): result is true => result === true));
   }
 
   private confirmUpdate(): Observable<true> {
