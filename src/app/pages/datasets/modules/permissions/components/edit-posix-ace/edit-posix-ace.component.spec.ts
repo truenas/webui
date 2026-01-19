@@ -190,5 +190,35 @@ describe('EditPosixAceComponent', () => {
 
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
     });
+
+    it('reports valid when ace input changes to User tag with a user selected', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.User,
+        who: 'root',
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+
+    it('reports valid when ace input changes to Group tag with a group selected', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.Group,
+        who: 'wheel',
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
   });
 });
