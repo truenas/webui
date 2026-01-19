@@ -146,7 +146,7 @@ describe('StorageHealthCardComponent', () => {
 
     it('shows pool status string', () => {
       const statusEl = spectator.query('.status');
-      expect(statusEl).toHaveText('Online, 3 errors.');
+      expect(statusEl).toHaveText('Online, 3 VDEV errors, no disk errors.');
     });
   });
 

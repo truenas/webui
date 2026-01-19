@@ -17,6 +17,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
@@ -50,6 +51,37 @@ enum AutoTrimValue {
   On = 'on',
   Off = 'off',
 }
+
+/**
+ * helper function to count errors in a disk topology.
+ * @param pred predicate that determines whether not a particular topology item should have
+ *        its errors counted.
+ * @param items (flattened) topology to count errors within.
+ * @returns the sum of read, write, and checksum errors in all devices satisfying `pred`.
+ */
+const countErrors = (pred: (arg0: VDevItem) => boolean, items: VDevItem[]): number => {
+  return items.reduce((totalErrors: number, item: VDevItem) => {
+    // check if the current topology item is a VDEV
+    const doCount = pred(item);
+
+    // if it is, sum its errors, otherwise it effectively has 0 errors.
+    const itemErrors = doCount
+      ? (
+          (item.stats?.read_errors || 0)
+          + (item.stats?.write_errors || 0)
+          + (item.stats?.checksum_errors || 0)
+        )
+      : 0;
+
+    // if it *is* a VDEV, it may have sub-VDEVs, so recursively count those errors too.
+    const childErrors = (item.type !== TopologyItemType.Disk && item?.children)
+      ? countErrors(pred, item.children)
+      : 0;
+
+    // accumulate all errors so far
+    return totalErrors + itemErrors + childErrors;
+  }, 0);
+};
 
 @UntilDestroy()
 @Component({
@@ -201,28 +233,36 @@ export class StorageHealthCardComponent implements OnChanges {
     const vdevErrors = this.countVdevErrors();
     const physErrors = this.countPhysDiskErrors();
 
-    const statusStr = this.translate.instant(this.pool().status);
-    let errorStr = '';
+    const statusStr = this.translate.instant(poolStatusLabels.get(this.pool().status));
+
     if (vdevErrors === 0 && physErrors === 0) {
-      errorStr = 'No errors.';
-    } else {
-      errorStr += vdevErrors === 0 ? 'no VDEV errors' : `${vdevErrors} VDEV errors`;
-      errorStr += ', ';
-      errorStr += physErrors === 0 ? 'no disk errors' : `${physErrors} disk errors.`;
+      return this.translate.instant('{status}, no errors.', { status: statusStr });
     }
 
-    return `${statusStr}, ${errorStr}`;
+    const vdevErrorStr = vdevErrors === 0
+      ? this.translate.instant('no VDEV errors')
+      : this.translate.instant('{count} VDEV errors', { count: vdevErrors });
+
+    const physErrorStr = physErrors === 0
+      ? this.translate.instant('no disk errors')
+      : this.translate.instant('{count} disk errors', { count: physErrors });
+
+    return this.translate.instant('{status}, {vdevErrors}, {diskErrors}.', {
+      status: statusStr,
+      vdevErrors: vdevErrorStr,
+      diskErrors: physErrorStr,
+    });
   }
 
   protected hasErrors(): boolean {
-    return (this.countPhysDiskErrors() + this.countPhysDiskErrors()) > 0;
+    return (this.countPhysDiskErrors() + this.countVdevErrors()) > 0;
   }
 
   protected goToDiskError(): void {
     const poolId = this.pool().id;
     const topo = Object.values(this.pool().topology);
 
-    const firstBadVdev = topo.flat()
+    const firstBadVdev: VDevItem = topo.flat()
       .reduce((acc, item) => {
         if (item?.children) {
           return [...acc, ...item.children];
@@ -233,34 +273,32 @@ export class StorageHealthCardComponent implements OnChanges {
         (item) => (item.stats.read_errors > 0) || (item.stats.write_errors > 0) || (item.stats.checksum_errors > 0),
       );
 
-    this.router.navigate(['/storage', poolId.toString(), 'vdevs', firstBadVdev?.guid]);
+    const navPath = ['/storage', poolId.toString(), 'vdevs'];
+    if (firstBadVdev?.guid) {
+      navPath.push(firstBadVdev.guid.toString());
+    }
+
+    this.router.navigate(navPath);
   }
 
+  /**
+   * counts the number of errors on all VDEVs in the pool's topology. this
+   * explicitly does *not* include physical disks.
+   * @returns number of errors ZFS reports on the top-level VDEVs
+   */
   private countVdevErrors(): number {
-    return Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: VDevItem[]) => {
-      return totalErrors + vdevs.reduce((vdevCategoryErrors, vdev) => {
-        return vdevCategoryErrors
-          + (vdev.stats?.read_errors || 0)
-          + (vdev.stats?.write_errors || 0)
-          + (vdev.stats?.checksum_errors || 0);
-      }, 0);
-    }, 0);
+    const topo = Object.values(this.pool().topology);
+    return countErrors((item) => item.type !== TopologyItemType.Disk, topo.flat());
   }
 
+  /**
+   * companion function to `countVdevErrors` which returns *only* the number of
+   * physical disk errors and ignores all VDEV components.
+   * @returns number of errors ZFS reports on the physical disks themselves.
+   */
   private countPhysDiskErrors(): number {
-    const count = (items: VDevItem[]): number => {
-      return items.map((item): number => {
-        if (item?.children && item.children.length > 0) {
-          return count(item.children);
-        }
-
-        return (item?.stats?.read_errors ?? 0) + (item?.stats?.write_errors ?? 0) + (item?.stats?.checksum_errors ?? 0);
-      })
-        .reduce((acc, val) => acc + val, 0);
-    };
     const topo = Object.values(this.pool().topology);
-
-    return topo.map(count).reduce((acc, counts) => acc + counts, 0);
+    return countErrors((item) => item.type === TopologyItemType.Disk, topo.flat());
   }
 
   private calculateTotalZfsErrors(): void {
