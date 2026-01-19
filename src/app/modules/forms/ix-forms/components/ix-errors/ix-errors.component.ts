@@ -84,6 +84,18 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     invalidRcloneBandwidthLimit: (value: string) => this.translate.instant('Invalid Rclone bandwidth limit: {value}', { value }),
     selectionMustBeFile: () => this.translate.instant('Selected path must be a file and not a directory'),
     empty: () => this.translate.instant('Value cannot be empty or whitespace only'),
+    minArrayLength: (minLength: number) => {
+      const message = minLength === 1
+        ? T('List should have at least {minLength} item')
+        : T('List should have at least {minLength} items');
+      return this.translate.instant(message, { minLength });
+    },
+    maxArrayLength: (maxLength: number) => {
+      const message = maxLength === 1
+        ? T('List should have no more than {maxLength} item')
+        : T('List should have no more than {maxLength} items');
+      return this.translate.instant(message, { maxLength });
+    },
   };
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -224,6 +236,10 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         return this.defaultErrMessages.selectionMustBeFile();
       case DefaultValidationError.Empty:
         return this.defaultErrMessages.empty();
+      case DefaultValidationError.MinArrayLength:
+        return this.defaultErrMessages.minArrayLength((errors.minArrayLength as SomeError).requiredLength as number);
+      case DefaultValidationError.MaxArrayLength:
+        return this.defaultErrMessages.maxArrayLength((errors.maxArrayLength as SomeError).requiredLength as number);
       default:
         return '';
     }
