@@ -1,6 +1,14 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
+ * Error structure returned by array length validators.
+ */
+export interface ArrayLengthValidationError {
+  requiredLength: number;
+  actualLength: number;
+}
+
+/**
  * Validates that a FormArray has at least the specified number of items.
  *
  * This validator is specifically designed for FormArray controls in the Apps form schema.
@@ -17,8 +25,11 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  */
 export function minArrayLengthValidator(minLength: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    // Skip validation for null, undefined, or non-array values
-    // This allows the validator to be used safely on controls that may not be arrays yet
+    // Skip validation for null, undefined, or non-array values.
+    // This follows Angular's validator pattern (e.g., Validators.min returns null for non-numeric values)
+    // and allows safe composition with other validators. The validator assumes it's applied to
+    // FormArray controls - applying it to other control types will silently pass validation.
+    // Use in combination with type guards or schema validation if type safety is critical.
     if (control.value === null || control.value === undefined || !Array.isArray(control.value)) {
       return null;
     }
@@ -55,8 +66,11 @@ export function minArrayLengthValidator(minLength: number): ValidatorFn {
  */
 export function maxArrayLengthValidator(maxLength: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    // Skip validation for null, undefined, or non-array values
-    // This allows the validator to be used safely on controls that may not be arrays yet
+    // Skip validation for null, undefined, or non-array values.
+    // This follows Angular's validator pattern (e.g., Validators.max returns null for non-numeric values)
+    // and allows safe composition with other validators. The validator assumes it's applied to
+    // FormArray controls - applying it to other control types will silently pass validation.
+    // Use in combination with type guards or schema validation if type safety is critical.
     if (control.value === null || control.value === undefined || !Array.isArray(control.value)) {
       return null;
     }

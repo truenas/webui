@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validators/array-length-validation/array-length-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type SomeError = Record<string, unknown>;
@@ -237,9 +238,13 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
       case DefaultValidationError.Empty:
         return this.defaultErrMessages.empty();
       case DefaultValidationError.MinArrayLength:
-        return this.defaultErrMessages.minArrayLength((errors.minArrayLength as SomeError).requiredLength as number);
+        return this.defaultErrMessages.minArrayLength(
+          (errors.minArrayLength as ArrayLengthValidationError).requiredLength,
+        );
       case DefaultValidationError.MaxArrayLength:
-        return this.defaultErrMessages.maxArrayLength((errors.maxArrayLength as SomeError).requiredLength as number);
+        return this.defaultErrMessages.maxArrayLength(
+          (errors.maxArrayLength as ArrayLengthValidationError).requiredLength,
+        );
       default:
         return '';
     }
