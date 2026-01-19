@@ -246,5 +246,29 @@ describe('EditNfsAceComponent', () => {
 
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
     });
+
+    it('reports valid when ace input changes to User tag with a user selected', () => {
+      spectator.setInput('ace', {
+        tag: NfsAclTag.User,
+        who: 'root',
+        type: NfsAclType.Allow,
+        perms: { BASIC: NfsBasicPermission.FullControl },
+        flags: { BASIC: NfsBasicFlag.Inherit },
+      } as NfsAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+
+    it('reports valid when ace input changes to Group tag with a group selected', () => {
+      spectator.setInput('ace', {
+        tag: NfsAclTag.UserGroup,
+        who: 'wheel',
+        type: NfsAclType.Allow,
+        perms: { BASIC: NfsBasicPermission.FullControl },
+        flags: { BASIC: NfsBasicFlag.Inherit },
+      } as NfsAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
   });
 });
