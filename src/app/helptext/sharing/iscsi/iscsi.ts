@@ -228,9 +228,6 @@ export const helptextIscsi = {
   },
 
   authaccess: {
-    chapMutualHelp: T(
-      'CHAP Mutual auth method requires Peer User and Peer Secret to be defined.',
-    ),
     tagTooltip: T(
       'Allow different groups to be configured\
  with different authentication profiles.\
@@ -242,6 +239,11 @@ export const helptextIscsi = {
     userTooltip: T(
       'User account to create for CHAP authentication with the user on the\
  remote system. Many initiators use the initiator name as the user name.',
+    ),
+
+    secretTooltip: T(
+      'Secret password for CHAP authentication. Must be between 12 and 16\
+ characters for compatibility with most initiators.',
     ),
 
     peeruserTooltip: T(
