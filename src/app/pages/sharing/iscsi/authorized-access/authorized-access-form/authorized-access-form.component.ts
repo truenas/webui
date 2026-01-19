@@ -56,6 +56,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
   private validatorService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
 
+  private peerRequiredValidator = this.validatorService.validateOnCondition(
+    this.isPeerRequired.bind(this),
+    Validators.required,
+  );
+
   get isNew(): boolean {
     return !this.editingAccess;
   }
@@ -75,16 +80,13 @@ export class AuthorizedAccessFormComponent implements OnInit {
       Validators.required,
     ]],
     secret_confirm: ['', Validators.required],
-    peeruser: [''],
+    peeruser: ['', this.peerRequiredValidator],
     peersecret: ['', [
-      this.validatorService.validateOnCondition(
-        () => this.isPeerRequired(),
-        Validators.required,
-      ),
+      this.peerRequiredValidator,
       Validators.minLength(12),
       Validators.maxLength(16),
     ]],
-    peersecret_confirm: [''],
+    peersecret_confirm: ['', this.peerRequiredValidator],
     discovery_auth: [IscsiAuthMethod.None],
   }, {
     validators: [
@@ -147,29 +149,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // list of controls related to the peer user and their credentials
-    const peerControls = [
-      this.form.controls.peeruser,
-      this.form.controls.peersecret,
-      this.form.controls.peersecret_confirm,
-    ];
-
-    // when the discovery auth method is `CHAP Mutual`, we need to *require*
-    // the peer controls be filled out.
-    this.form.controls.discovery_auth.valueChanges.pipe(
-      untilDestroyed(this),
-    ).subscribe((newValue) => {
-      if (newValue === IscsiAuthMethod.ChapMutual) {
-        // so, we add the `required` validator.
-        peerControls.forEach((control) => control.addValidators(Validators.required));
-      } else {
-        // otherwise, remove the `required` validator from them.
-        peerControls.forEach((control) => control.removeValidators(Validators.required));
-      }
-
-      peerControls.forEach((control) => control.updateValueAndValidity());
-    });
-
     if (this.editingAccess) {
       this.setAccessForEdit(this.editingAccess);
     }
