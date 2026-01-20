@@ -39,7 +39,7 @@ describe('SaveConfigDialogComponent', () => {
         ],
       }),
       mockProvider(DownloadService, {
-        downloadUrl: jest.fn(() => of(undefined)),
+        coreDownload: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
@@ -65,7 +65,7 @@ describe('SaveConfigDialogComponent', () => {
       fileName: expect.any(String),
       mimeType: 'application/x-sqlite3',
     });
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('saves configuration together with password seed when dialog is submitted with Export checkbox', async () => {
