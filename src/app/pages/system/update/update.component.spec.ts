@@ -270,10 +270,28 @@ describe('UpdateComponent', () => {
       );
     });
 
-    it('stops update flow when save config dialog returns false (error or cancel)', async () => {
+    it('continues update flow when save config dialog returns false (Do Not Save)', async () => {
       const matDialog = spectator.inject(MatDialog);
       const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
         afterClosed: () => of(false),
+      } as MatDialogRef<SaveConfigDialog>);
+
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      await installButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
+
+      openSpy.mockReturnValue({
+        close: jest.fn(),
+        afterClosed: () => of(true),
+      } as unknown as MatDialogRef<SaveConfigDialog>);
+    });
+
+    it('stops update flow when save config dialog returns undefined (error or dismissed)', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
+        afterClosed: () => of(undefined),
       } as MatDialogRef<SaveConfigDialog>);
 
       const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
@@ -351,10 +369,30 @@ describe('UpdateComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
     });
 
-    it('stops manual update flow when save config dialog returns false (error or cancel)', async () => {
+    it('continues manual update flow when save config dialog returns false (Do Not Save)', async () => {
       const matDialog = spectator.inject(MatDialog);
       const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
         afterClosed: () => of(false),
+      } as MatDialogRef<SaveConfigDialog>);
+
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install', ancestor: '.manual-update' }));
+      await installManualButton.click();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
+
+      openSpy.mockReturnValue({
+        close: jest.fn(),
+        afterClosed: () => of(true),
+      } as unknown as MatDialogRef<SaveConfigDialog>);
+    });
+
+    it('stops manual update flow when save config dialog returns undefined (error or dismissed)', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      const openSpy = jest.spyOn(matDialog, 'open').mockReturnValue({
+        afterClosed: () => of(undefined),
       } as MatDialogRef<SaveConfigDialog>);
 
       const router = spectator.inject(Router);

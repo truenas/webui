@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -14,6 +14,7 @@ import {
   SaveConfigDialog,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import { DownloadService } from 'app/services/download.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('SaveConfigDialogComponent', () => {
@@ -42,6 +43,7 @@ describe('SaveConfigDialogComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -76,5 +78,16 @@ describe('SaveConfigDialogComponent', () => {
       method: 'config.save',
       arguments: [{ secretseed: true }],
     });
+  });
+
+  it('shows error modal and closes dialog without result when config save fails', async () => {
+    const downloadService = spectator.inject(DownloadService);
+    jest.spyOn(downloadService, 'coreDownload').mockReturnValue(throwError(() => new Error('Download failed')));
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith();
   });
 });
