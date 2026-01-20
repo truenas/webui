@@ -60,7 +60,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.columns?.firstChange) {
-      this.defaultColumns = changes.columns.currentValue;
+      this.defaultColumns = cloneDeep(changes.columns.currentValue);
     }
   }
 
@@ -91,12 +91,20 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.columns().forEach((column) => {
         if (column instanceof IxCellActionsComponent || column instanceof IxCellActionsWithMenuComponent) return;
 
+        // Skip columns without a title - they're not user-selectable
+        // and should keep their default visibility
+        if (!column.title) return;
+
         column.hidden = !displayedColumns.columns.includes(column.title);
 
         if (column.hidden) {
           this.hiddenColumns.select(column);
         }
       });
+
+      // Enable reset button when loading from saved preferences
+      // since user may want to return to defaults
+      this.isResetToDefaultDisabled.set(false);
 
       if (displayedColumns.columns.every((column) => !this.columns().some((col) => col.title === column))) {
         this.hiddenColumns.clear();
