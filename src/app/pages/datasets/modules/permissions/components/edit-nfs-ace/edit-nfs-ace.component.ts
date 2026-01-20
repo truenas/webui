@@ -130,6 +130,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private onFormStatusUpdated(): void {
+    // Don't update validation status while async validators are pending
+    // This prevents the "flash of invalid" during async validation
+    if (this.form.pending) {
+      return;
+    }
     this.store.updateSelectedAceValidation(this.form.valid);
   }
 
@@ -177,23 +182,29 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private updateFormValues(): void {
+    // Use ace input values directly here, not the form getters
+    // The getters read from this.form.value which hasn't been patched yet
+    const aceTag = this.ace().tag;
+    const isUserTag = aceTag === NfsAclTag.User;
+    const isGroupTag = aceTag === NfsAclTag.UserGroup;
+
     const userField = this.form.controls.user;
     const groupField = this.form.controls.group;
 
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) {
+    if (isUserTag) {
       userField.addValidators(Validators.required);
-    } else if (this.isGroupTag) {
+    } else if (isGroupTag) {
       groupField.addValidators(Validators.required);
     }
 
     const formValues = {
-      tag: this.ace().tag,
+      tag: aceTag,
       type: this.ace().type,
-      user: this.isUserTag ? this.ace().who : null,
-      group: this.isGroupTag ? this.ace().who : null,
+      user: isUserTag ? this.ace().who : null,
+      group: isGroupTag ? this.ace().who : null,
     } as EditNfsAceComponent['form']['value'];
 
     const permissions = this.ace().perms;
@@ -221,6 +232,10 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     }
 
     this.form.patchValue(formValues, { emitEvent: false });
+    // Force status recalculation and event emission after patchValue
+    // This ensures statusChanges fires when async validators complete
+    userField.updateValueAndValidity({ onlySelf: true });
+    groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
 
     this.onFormStatusUpdated();
