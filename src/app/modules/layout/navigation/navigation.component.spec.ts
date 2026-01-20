@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { MatNavListItemHarness } from '@angular/material/list/testing';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -69,38 +68,38 @@ describe('NavigationComponent', () => {
   }
 
   describe('SlideOut item highlighting', () => {
-    it('highlights Credentials when user navigates to a route under that section', fakeAsync(async () => {
-      router.navigate(['/credentials/users']);
-      tick();
+    it('highlights Credentials when user navigates to a route under that section', async () => {
+      await router.navigate(['/credentials/users']);
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       expect(await isNavItemHighlighted('Credentials')).toBe(true);
-    }));
+    });
 
-    it('does not highlight Credentials when user navigates elsewhere', fakeAsync(async () => {
-      router.navigate(['/dashboard']);
-      tick();
+    it('does not highlight Credentials when user navigates elsewhere', async () => {
+      await router.navigate(['/dashboard']);
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       expect(await isNavItemHighlighted('Credentials')).toBe(false);
-    }));
+    });
   });
 
   describe('Link item highlighting', () => {
-    it('highlights Dashboard when user navigates to dashboard', fakeAsync(async () => {
-      router.navigate(['/dashboard']);
-      tick();
+    it('highlights Dashboard when user navigates to dashboard', async () => {
+      await router.navigate(['/dashboard']);
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       expect(await isNavItemHighlighted('Dashboard')).toBe(true);
-    }));
+    });
 
-    it('does not highlight Dashboard when user navigates elsewhere', fakeAsync(async () => {
-      router.navigate(['/credentials/users']);
-      tick();
+    it('does not highlight Dashboard when user navigates elsewhere', async () => {
+      await router.navigate(['/credentials/users']);
+      await spectator.fixture.whenStable();
       spectator.detectChanges();
 
       expect(await isNavItemHighlighted('Dashboard')).toBe(false);
-    }));
+    });
   });
 });

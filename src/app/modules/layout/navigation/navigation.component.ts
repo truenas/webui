@@ -63,7 +63,7 @@ export class NavigationComponent {
     this.menuClosed.emit();
   }
 
-  isSlideOutActive(state: string): boolean {
+  protected isSlideOutActive(state: string): boolean {
     return this.router.isActive(state, {
       paths: 'subset',
       queryParams: 'ignored',
@@ -72,7 +72,7 @@ export class NavigationComponent {
     });
   }
 
-  isMenuExpanded(state: string): boolean {
+  protected isMenuExpanded(state: string): boolean {
     return this.sidenavService.isOpenSecondaryMenu && this.sidenavService.menuName === state;
   }
 
