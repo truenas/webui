@@ -84,6 +84,12 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     invalidRcloneBandwidthLimit: (value: string) => this.translate.instant('Invalid Rclone bandwidth limit: {value}', { value }),
     selectionMustBeFile: () => this.translate.instant('Selected path must be a file and not a directory'),
     empty: () => this.translate.instant('Value cannot be empty or whitespace only'),
+    exactLength: (requiredLength: number, actualLength: number) => this.translate.instant(
+      this.label()
+        ? T('The length of {field} must be exactly {requiredLength} (current length: {actualLength})')
+        : T('The length must be exactly {requiredLength} (current length: {actualLength})'),
+      { field: this.label(), requiredLength, actualLength },
+    ),
   };
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -224,6 +230,11 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         return this.defaultErrMessages.selectionMustBeFile();
       case DefaultValidationError.Empty:
         return this.defaultErrMessages.empty();
+      case DefaultValidationError.ExactLength:
+        return this.defaultErrMessages.exactLength(
+          (errors.exactLength as SomeError).requiredLength as number,
+          (errors.exactLength as SomeError).actualLength as number,
+        );
       default:
         return '';
     }
