@@ -145,7 +145,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.store$.dispatch(preferredColumnsUpdated({
         tableDisplayedColumns: [{
           title: this.columnPreferencesKey(),
-          columns: this.columns().filter((column) => !column.hidden).map((column) => column.title),
+          columns: this.columns().filter((column) => !column.hidden && column.title).map((column) => column.title),
         }],
       }));
     }
