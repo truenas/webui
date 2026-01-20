@@ -18,7 +18,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import {
   doesNotEqualFgValidator,
   matchOthersFgValidator,
@@ -53,13 +52,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
-  private validatorService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
-
-  private peerRequiredValidator = this.validatorService.validateOnCondition(
-    this.isPeerRequired.bind(this),
-    Validators.required,
-  );
 
   get isNew(): boolean {
     return !this.editingAccess;
@@ -80,13 +73,12 @@ export class AuthorizedAccessFormComponent implements OnInit {
       Validators.required,
     ]],
     secret_confirm: ['', Validators.required],
-    peeruser: ['', this.peerRequiredValidator],
+    peeruser: [''],
     peersecret: ['', [
-      this.peerRequiredValidator,
       Validators.minLength(12),
       Validators.maxLength(16),
     ]],
-    peersecret_confirm: ['', this.peerRequiredValidator],
+    peersecret_confirm: [''],
     discovery_auth: [IscsiAuthMethod.None],
   }, {
     validators: [
@@ -152,13 +144,44 @@ export class AuthorizedAccessFormComponent implements OnInit {
     if (this.editingAccess) {
       this.setAccessForEdit(this.editingAccess);
     }
+
+    this.form.controls.discovery_auth.valueChanges.subscribe((newValue) => {
+      // if the user selects `Mutual CHAP`, the form will update to show all the peer controls.
+      // we want to mark them as required internally to the component too.
+      if (newValue === IscsiAuthMethod.ChapMutual) {
+        this.form.controls.peeruser.setValidators([Validators.required]);
+        this.form.controls.peersecret.addValidators([
+          Validators.required,
+          Validators.minLength(12),
+          Validators.maxLength(16),
+        ]);
+        this.form.controls.peersecret_confirm.addValidators([Validators.required]);
+      } else {
+        // first, empty all the fields so the validators will be happy once we set them.
+        this.form.patchValue({
+          peeruser: '',
+          peersecret: '',
+          peersecret_confirm: '',
+        });
+
+        // otherwise, remove the `required` validator and reset all their values so they don't get submitted.
+        // we use `setValidators` here instead of `removeValidators` so the validation re-triggers immediately.
+        this.form.controls.peeruser.setValidators([]);
+        this.form.controls.peersecret.setValidators([
+          Validators.minLength(12),
+          Validators.maxLength(16),
+        ]);
+        this.form.controls.peersecret_confirm.setValidators([]);
+
+        this.form.controls.peeruser.updateValueAndValidity();
+        this.form.controls.peersecret.updateValueAndValidity();
+        this.form.controls.peersecret_confirm.updateValueAndValidity();
+      }
+    });
   }
 
-  protected isPeerRequired(): boolean {
-    return Boolean(
-      this.form?.value?.peeruser
-      || this.form?.controls?.discovery_auth.value === IscsiAuthMethod.ChapMutual,
-    );
+  protected isMutualChap(): boolean {
+    return this.form?.controls?.discovery_auth.value === IscsiAuthMethod.ChapMutual;
   }
 
   private setAccessForEdit(access: IscsiAuthAccess): void {

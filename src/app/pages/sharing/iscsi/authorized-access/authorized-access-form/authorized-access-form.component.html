@@ -49,29 +49,31 @@
         ></ix-input>
       </ix-fieldset>
 
-      <ix-fieldset [title]="'Peer User' | translate">
-        <ix-input
-          formControlName="peeruser"
-          [label]="'Peer User' | translate"
-          [tooltip]="tooltips.peeruser | translate"
-          [required]="isPeerRequired()"
-        ></ix-input>
+      @if (isMutualChap()) {
+        <ix-fieldset [title]="'Peer User' | translate">
+          <ix-input
+            formControlName="peeruser"
+            [label]="'Peer User' | translate"
+            [tooltip]="tooltips.peeruser | translate"
+            [required]="true"
+          ></ix-input>
 
-        <ix-input
-          formControlName="peersecret"
-          type="password"
-          [label]="'Peer Secret' | translate"
-          [required]="isPeerRequired()"
-          [tooltip]="tooltips.peersecret | translate"
-        ></ix-input>
+          <ix-input
+            formControlName="peersecret"
+            type="password"
+            [label]="'Peer Secret' | translate"
+            [required]="true"
+            [tooltip]="tooltips.peersecret | translate"
+          ></ix-input>
 
-        <ix-input
-          formControlName="peersecret_confirm"
-          type="password"
-          [label]="'Peer Secret (Confirm)' | translate"
-          [required]="isPeerRequired()"
-        ></ix-input>
-      </ix-fieldset>
+          <ix-input
+            formControlName="peersecret_confirm"
+            type="password"
+            [label]="'Peer Secret (Confirm)' | translate"
+            [required]="true"
+          ></ix-input>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button
