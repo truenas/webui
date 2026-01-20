@@ -113,14 +113,16 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   }
 
   toggleAll(): void {
+    const selectableColumns = this.columns().filter((col) => !!col.title);
+
     if (this.isAllSelected) {
-      this.hiddenColumns.deselect(...this.columns());
-      this.toggle(this.columns()[0]);
+      this.hiddenColumns.deselect(...selectableColumns);
+      this.toggle(selectableColumns[0]);
     } else {
-      this.hiddenColumns.select(...this.columns());
+      this.hiddenColumns.select(...selectableColumns);
     }
 
-    this.columns().forEach((_cell, index) => this.toggle(this.columns()[index]));
+    selectableColumns.forEach((column) => this.toggle(column));
     this.emitColumnsChange();
   }
 

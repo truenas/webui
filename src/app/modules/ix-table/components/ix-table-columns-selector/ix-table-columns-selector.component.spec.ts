@@ -94,6 +94,19 @@ describe('IxTableColumnsSelectorComponent', () => {
     expect(columnsChangeSpy).toHaveBeenCalled();
   });
 
+  it('does not affect checkbox column visibility when toggling all', async () => {
+    const checkboxCol = spectator.component.columns().find((col) => !col.title);
+    expect(checkboxCol?.hidden).toBe(false);
+
+    // Initially not all selected (Description is hidden), so "Select All" shows
+    await menu.clickItem({ text: 'Select All' });
+    expect(checkboxCol?.hidden).toBe(false);
+
+    // Now all are selected, so "Unselect All" shows
+    await menu.clickItem({ text: 'Unselect All' });
+    expect(checkboxCol?.hidden).toBe(false);
+  });
+
   it('"Reset to Defaults" is disabled initially', async () => {
     jest.spyOn(spectator.component, 'resetToDefaults').mockImplementation();
     await menu.clickItem({ text: 'Reset to Defaults' });
@@ -151,7 +164,7 @@ describe('IxTableColumnsSelectorComponent', () => {
 
     it('preserves checkbox column visibility when loading saved preferences', () => {
       const checkboxCol = spectator.component.columns().find((col) => !col.title);
-      expect(checkboxCol?.hidden).toBeFalsy();
+      expect(checkboxCol?.hidden).toBe(false);
     });
 
     it('enables Reset to Defaults button when preferences are loaded', async () => {
