@@ -1,35 +1,35 @@
 # TrueNAS UI Component Library Integration
 
-This document describes the integration of the `truenas-ui` component library into the TrueNAS WebUI project.
+This document describes the integration of the `@truenas/ui-components` component library into the TrueNAS WebUI project.
 
 ## Installation
 
-The library is already added to `package.json`:
+The library is published on npm and added to `package.json`:
 
 ```json
-"truenas-ui": "git@github.com:iXsystems/truenas-ui-components.git#d23f550c4d99ba23efed8f4aea833e0d0b378386"
+"@truenas/ui-components": "~0.1.2"
 ```
 
 ## Configuration
 
-### 1. Styles Configuration (angular.json:47-49)
+### 1. Styles Configuration (angular.json)
 
 Added the theme CSS to the build configuration:
 
 ```json
 "styles": [
   "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
-  "node_modules/truenas-ui/dist/truenas-ui/src/styles/themes.css",
+  "node_modules/@truenas/ui-components/styles/themes.css",
   "src/assets/styles/index.scss"
 ]
 ```
 
-### 2. Theme Compatibility Layer (src/app/modules/theme/theme.service.ts:7,22,62-93)
+### 2. Theme Compatibility Layer (src/app/modules/theme/theme.service.ts)
 
 Implemented automatic theme synchronization between the webui's theme system and the component library:
 
 ```typescript
-import { TnThemeService, TnTheme } from 'truenas-ui';
+import { TnThemeService, TnTheme } from '@truenas/ui-components';
 
 @Injectable({
   providedIn: 'root',
@@ -79,7 +79,7 @@ export class ThemeService {
 - This ensures components from both systems are always styled consistently
 - No manual intervention required - the synchronization is automatic
 
-### 3. Icon Assets Configuration (angular.json:30-38)
+### 3. Icon Assets Configuration (angular.json)
 
 Configured the build to copy the component library's icon sprite:
 
@@ -89,7 +89,7 @@ Configured the build to copy the component library's icon sprite:
   "src/sw.js",
   {
     "glob": "**/*",
-    "input": "node_modules/truenas-ui/dist/truenas-ui/assets/tn-icons",
+    "input": "node_modules/@truenas/ui-components/assets/tn-icons",
     "output": "assets/tn-icons"
   }
 ]
@@ -144,7 +144,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnInputComponent,
-} from 'truenas-ui';
+} from '@truenas/ui-components';
 
 @Component({
   selector: 'app-example',
@@ -205,7 +205,7 @@ Both systems coexist during the migration period.
 <tn-icon name="folder" library="mdi"></tn-icon>
 <tn-icon name="server" library="mdi"></tn-icon>
 
-<!-- Library custom icons (from truenas-ui) -->
+<!-- Library custom icons (from @truenas/ui-components) -->
 <tn-icon name="tn-dataset"></tn-icon>
 <tn-icon name="tn-hdd"></tn-icon>
 
@@ -224,7 +224,7 @@ Both systems coexist during the migration period.
 When icon names can't be detected from templates (e.g., computed from strings, stored in objects/arrays, or from API responses), use `tnIconMarker()`:
 
 ```typescript
-import { tnIconMarker } from 'truenas-ui';
+import { tnIconMarker } from '@truenas/ui-components';
 
 // Example: Icons determined by runtime logic
 const statusIcons = {
@@ -292,7 +292,7 @@ The library ships with these TrueNAS-specific icons:
 - `enclosure`, `replication`, `two-factor-auth`
 - And more...
 
-See the full list in: `node_modules/truenas-ui/dist/truenas-ui/assets/tn-icons/sprite-config.json`
+See the full list in: `node_modules/@truenas/ui-components/assets/tn-icons/sprite-config.json`
 
 ## Component Library Features
 
@@ -305,10 +305,8 @@ See the full list in: `node_modules/truenas-ui/dist/truenas-ui/assets/tn-icons/s
 
 ## Additional Resources
 
-- [Library README](../truenas-ui-components/README.md)
-- [Contributing Guide](../truenas-ui-components/CONTRIBUTE.md)
-- [Component Documentation](../truenas-ui-components/docs/)
-- [Storybook](https://storybook.js.org/docs) - Run `yarn run sb` in the library directory
+- [npm package](https://www.npmjs.com/package/@truenas/ui-components)
+- [GitHub Repository](https://github.com/truenas/webui-components)
 
 ## Build Information
 
