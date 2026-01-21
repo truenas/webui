@@ -235,4 +235,68 @@ describe('StorageHealthCardComponent', () => {
     const detailsItem = spectator.query(byText('Deduplication Table:'));
     expect(detailsItem).not.toExist();
   });
+
+  describe('error messages', () => {
+    it('shows detailed error message with VDEV and disk error counts', () => {
+      const statusElement = spectator.query('.status');
+      expect(statusElement).toHaveText('Online, 3 VDEV errors, no disk errors.');
+    });
+
+    it('shows "no errors" message when pool has no errors', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        topology: {
+          data: [
+            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
+            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
+          ],
+        },
+      });
+      spectator.detectChanges();
+
+      const statusElement = spectator.query('.status');
+      expect(statusElement).toHaveText('Online, no errors.');
+    });
+
+    it('shows error count for both VDEV and disk errors when both present', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        topology: {
+          data: [
+            {
+              type: 'MIRROR',
+              stats: { read_errors: 1, checksum_errors: 0, write_errors: 0 },
+              children: [
+                { type: 'DISK', stats: { read_errors: 2, checksum_errors: 1, write_errors: 0 } },
+              ],
+            },
+          ],
+        },
+      });
+      spectator.detectChanges();
+
+      const statusElement = spectator.query('.status');
+      expect(statusElement).toHaveText('Online, 1 VDEV errors, 3 disk errors.');
+    });
+
+    it('shows "Show me" link when there are errors', () => {
+      const showMeLink = spectator.query(byText('Show me'));
+      expect(showMeLink).toBeTruthy();
+    });
+
+    it('does not show "Show me" link when there are no errors', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        topology: {
+          data: [
+            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
+          ],
+        },
+      });
+      spectator.detectChanges();
+
+      const showMeLink = spectator.query(byText('Show me'));
+      expect(showMeLink).toBeFalsy();
+    });
+  });
 });

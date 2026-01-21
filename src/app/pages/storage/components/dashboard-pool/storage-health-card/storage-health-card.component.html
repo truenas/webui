@@ -25,6 +25,7 @@
 
   <mat-card-content class="card-content">
     <div class="details-item">
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
       <div class="label status">
         {{ getErrorText() }}
       </div>
@@ -39,12 +40,12 @@
       class="details-item"
       [ixUiSearch]="searchableElements.elements.scheduledScrub"
     >
+      <ix-tooltip
+        class="scrub-tooltip"
+        [message]="helptextVolumes.scrubTooltip | translate"
+      ></ix-tooltip>
       <div class="label">
         {{ 'Scheduled Scrub' | translate }}:
-        <ix-tooltip
-          class="scrub-tooltip"
-          [message]="helptextVolumes.scrubTooltip | translate"
-        ></ix-tooltip>
       </div>
 
       @if (scrub()?.enabled) {

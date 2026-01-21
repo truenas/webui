@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject, Signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -50,6 +50,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 enum AutoTrimValue {
   On = 'on',
   Off = 'off',
+}
+
+interface StatusIconData {
+  tooltip: string;
+  icon: PoolCardIconType;
 }
 
 /**
@@ -138,31 +143,33 @@ export class StorageHealthCardComponent implements OnChanges {
   protected readonly wasScanInitiated = computed(() => this.scan()?.state === PoolScanState.Scanning);
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);
 
-  protected iconType = computed(() => {
-    if (!this.pool().healthy) {
-      return PoolCardIconType.Error;
+  protected iconData: Signal<StatusIconData> = computed(() => {
+    const pool = this.pool();
+    let tooltip: string;
+    let icon: PoolCardIconType;
+
+    if (!pool.healthy && pool.status === PoolStatus.Online) {
+      tooltip = this.translate.instant('Pool is online with errors');
+      icon = PoolCardIconType.Warn;
+    } else if (pool.status === PoolStatus.Degraded || pool.status === PoolStatus.Faulted) {
+      tooltip = this.translate.instant('Pool status is {status}', { status: this.pool().status });
+      icon = pool.status === PoolStatus.Degraded ? PoolCardIconType.Warn : PoolCardIconType.Error;
+    } else if (!pool.healthy) {
+      tooltip = this.translate.instant('Pool is not healthy');
+      icon = PoolCardIconType.Error;
+    } else {
+      tooltip = this.translate.instant('Everything is fine');
+      icon = PoolCardIconType.Safe;
     }
-    if (this.pool().status === PoolStatus.Degraded) {
-      return PoolCardIconType.Warn;
-    }
-    if (this.pool().status === PoolStatus.Faulted) {
-      return PoolCardIconType.Faulted;
-    }
-    return PoolCardIconType.Safe;
+
+    return {
+      tooltip,
+      icon,
+    };
   });
 
-  protected iconTooltip = computed(() => {
-    if (!this.pool().healthy) {
-      return this.translate.instant('Pool is not healthy');
-    }
-    if (this.pool().status === PoolStatus.Degraded) {
-      return this.translate.instant('Pool status is {status}', { status: this.pool().status });
-    }
-    if (this.pool().status === PoolStatus.Faulted) {
-      return this.translate.instant('Pool status is {status}', { status: this.pool().status });
-    }
-    return this.translate.instant('Everything is fine');
-  });
+  protected iconType = computed(() => this.iconData().icon);
+  protected iconTooltip = computed(() => this.iconData().tooltip);
 
   ngOnChanges(): void {
     this.scan.set(this.pool().scan);
