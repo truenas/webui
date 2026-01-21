@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, effect, input, output, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, effect, input, output, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -43,7 +43,6 @@ import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-lis
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-csr-list',
   templateUrl: './csr-list.component.html',
@@ -71,6 +70,7 @@ export class CertificateSigningRequestsListComponent {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
   protected emptyService = inject(EmptyService);
   private download = inject(DownloadService);
   private dialogService = inject(DialogService);
@@ -152,7 +152,7 @@ export class CertificateSigningRequestsListComponent {
   doAdd(): void {
     this.slideIn.open(CsrAddComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.csrsUpdated.emit();
     });
@@ -164,7 +164,7 @@ export class CertificateSigningRequestsListComponent {
       data: certificate,
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.csrsUpdated.emit();
     });
@@ -192,7 +192,7 @@ export class CertificateSigningRequestsListComponent {
         return jobDialogRef.afterClosed();
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('CSR deleted'));
@@ -214,7 +214,7 @@ export class CertificateSigningRequestsListComponent {
     })
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
 
@@ -226,7 +226,7 @@ export class CertificateSigningRequestsListComponent {
     })
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -234,7 +234,7 @@ export class CertificateSigningRequestsListComponent {
   private doCreateAcmeCert(csr: Certificate): void {
     this.slideIn.open(CertificateAcmeAddComponent, { data: csr }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.csrsUpdated.emit();
     });
