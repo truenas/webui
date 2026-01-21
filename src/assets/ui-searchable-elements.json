@@ -4970,24 +4970,6 @@
   {
     "hierarchy": [
       "Credentials",
-      "KMIP"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "kmip"
-    ],
-    "routerLink": null,
-    "anchor": "kmip",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups",
       "Privileges",
       "Add Privilege"
     ],
@@ -5002,7 +4984,6 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
-      "groups",
       "privileges"
     ],
     "routerLink": null,
@@ -5013,7 +4994,6 @@
   {
     "hierarchy": [
       "Credentials",
-      "Groups",
       "Privileges"
     ],
     "synonyms": [
@@ -5026,11 +5006,27 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
-      "groups",
       "privileges"
     ],
     "routerLink": null,
     "anchor": "privileges-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "KMIP"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "kmip"
+    ],
+    "routerLink": null,
+    "anchor": "kmip",
     "triggerAnchor": null,
     "section": "ui"
   },
