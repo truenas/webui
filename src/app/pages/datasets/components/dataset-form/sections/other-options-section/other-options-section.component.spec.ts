@@ -497,7 +497,7 @@ describe('OtherOptionsSectionComponent', () => {
       expect(payload.special_small_block_size).toBe(16777216); // 16 MiB in bytes
     });
 
-    it('shows customize button when set to On', async () => {
+    it('shows threshold field when set to On', async () => {
       spectator.setInput({
         parent: parentDataset,
       });
@@ -506,26 +506,6 @@ describe('OtherOptionsSectionComponent', () => {
         'Use Metadata (Special) VDEVs': 'On',
       });
 
-      expect(spectator.query('.customize-link')).toExist();
-      expect(spectator.query('.customize-link')).toHaveText('Set Threshold');
-    });
-
-    it('shows custom value field when customize is clicked', async () => {
-      spectator.setInput({
-        parent: parentDataset,
-      });
-
-      await form.fillForm({
-        'Use Metadata (Special) VDEVs': 'On',
-      });
-
-      const customizeButton = spectator.query('.customize-link');
-      expect(customizeButton).toExist();
-
-      spectator.click(customizeButton);
-      spectator.detectChanges();
-
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
       expect(spectator.query('ix-input[formControlName="special_small_block_size_custom"]')).toExist();
     });
 
@@ -538,7 +518,6 @@ describe('OtherOptionsSectionComponent', () => {
         special_small_block_size: OnOff.On,
         special_small_block_size_custom: 131072, // 128 KiB
       });
-      spectator.component.showCustomizeSpecialSmallBlockSize = true;
 
       const payload = spectator.component.getPayload();
       expect(payload.special_small_block_size).toBe(131072);
@@ -560,7 +539,6 @@ describe('OtherOptionsSectionComponent', () => {
         });
 
         expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.Off);
-        expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
       });
 
       it('shows On with custom value when existing dataset has special_small_block_size set to 128K', () => {
@@ -579,7 +557,6 @@ describe('OtherOptionsSectionComponent', () => {
 
         expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
         expect(spectator.component.form.value.special_small_block_size_custom).toBe(131072);
-        expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
       });
 
       it('sends inherit when changing from local value to Inherit', () => {
@@ -624,8 +601,6 @@ describe('OtherOptionsSectionComponent', () => {
 
         expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
         expect(spectator.component.form.value.special_small_block_size_custom).toBe(16777216);
-        // Customize section should be hidden since it matches the default
-        expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
       });
     });
   });

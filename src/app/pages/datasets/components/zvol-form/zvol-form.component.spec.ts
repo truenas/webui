@@ -527,21 +527,6 @@ describe('ZvolFormComponent', () => {
       expect(payload.special_small_block_size).toBe(16777216); // 16 MiB in bytes
     });
 
-    it('allows toggling customize section', () => {
-      spectator.component.form.patchValue({
-        special_small_block_size: OnOff.On,
-      });
-
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
-
-      spectator.component.toggleCustomizeSpecialSmallBlockSize();
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
-      expect(spectator.component.form.value.special_small_block_size_custom).toBe(16777216); // Default 16 MiB
-
-      spectator.component.toggleCustomizeSpecialSmallBlockSize();
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
-    });
-
     it('sends custom value when specified', async () => {
       await form.fillForm({
         Name: 'zvol1',
@@ -552,7 +537,6 @@ describe('ZvolFormComponent', () => {
         special_small_block_size: OnOff.On,
         special_small_block_size_custom: 262144, // 256 KiB
       });
-      spectator.component.showCustomizeSpecialSmallBlockSize = true;
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -562,30 +546,6 @@ describe('ZvolFormComponent', () => {
       const payload = callArgs[1][0];
 
       expect(payload.special_small_block_size).toBe(262144);
-    });
-
-    it('preserves custom value even when customize section is collapsed', async () => {
-      await form.fillForm({
-        Name: 'zvol1',
-        Size: '1 GiB',
-      });
-
-      // Simulate loading an existing zvol with custom value
-      spectator.component.form.patchValue({
-        special_small_block_size: OnOff.On,
-        special_small_block_size_custom: 65536, // 64 KiB
-      });
-      spectator.component.showCustomizeSpecialSmallBlockSize = false; // Collapsed
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.create');
-      const payload = callArgs[1][0];
-
-      // Should preserve the custom value, not default to 16 MiB
-      expect(payload.special_small_block_size).toBe(65536);
     });
 
     // Note: Editing zvol form value reading tests are not included here due to complexity
