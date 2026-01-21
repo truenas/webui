@@ -37,7 +37,7 @@ import {
   CustomUntypedFormField,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
-import { maxArrayLengthValidator, minArrayLengthValidator } from 'app/modules/forms/ix-forms/validators/array-length-validation/array-length-validation';
+import { maxArrayLengthValidator, minArrayLengthValidator } from 'app/modules/forms/ix-forms/validators/array-length-validation';
 import { cronValidator } from 'app/modules/forms/ix-forms/validators/cron-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
