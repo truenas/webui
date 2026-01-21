@@ -7,7 +7,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -24,7 +24,7 @@ import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
 import { StorageService } from 'app/services/storage.service';
 
-const certificates = Array.from({ length: 10 }).map((_, index) => ({
+const csrs = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
   type: 8,
   name: `cert_default_${index}`,
@@ -56,7 +56,6 @@ describe('CertificateSigningRequestsListComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
       ]),
       mockProvider(DialogService, {
@@ -80,7 +79,12 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        csrs,
+        isLoading: false,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
   });
@@ -103,7 +107,7 @@ describe('CertificateSigningRequestsListComponent', () => {
     await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateEditComponent, {
-      data: certificates[0],
+      data: csrs[0],
       wide: true,
     });
   });
@@ -115,7 +119,7 @@ describe('CertificateSigningRequestsListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete Certificate',
-      message: `Are you sure you want to delete "${certificates[0].name}"?`,
+      message: `Are you sure you want to delete "${csrs[0].name}"?`,
       hideCheckbox: true,
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Force',

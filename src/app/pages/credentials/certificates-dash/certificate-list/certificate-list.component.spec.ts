@@ -7,7 +7,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -60,7 +60,6 @@ describe('CertificateListComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
         mockJob('certificate.update', fakeSuccessfulJob()),
       ]),
@@ -87,7 +86,12 @@ describe('CertificateListComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        certificates,
+        isLoading: false,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
   });

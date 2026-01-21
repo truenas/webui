@@ -1,22 +1,23 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, effect, input, output, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  filter, map, switchMap, tap,
-} from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -66,7 +67,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
   ],
 })
-export class CertificateSigningRequestsListComponent implements OnInit {
+export class CertificateSigningRequestsListComponent {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
@@ -76,13 +77,16 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
 
-  protected certificateCreated = output();
+  readonly csrs = input<Certificate[]>([]);
+  readonly isLoading = input<boolean>(false);
+
+  readonly csrsUpdated = output();
 
   protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly searchableElements = csrListElements;
 
-  dataProvider: AsyncDataProvider<Certificate>;
-  certificates: Certificate[] = [];
+  dataProvider = new ArrayDataProvider<Certificate>();
+
   columns = createTable<Certificate>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -123,22 +127,21 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('CSR')],
   });
 
-  ngOnInit(): void {
-    const certificates$ = this.api.call('certificate.query').pipe(
-      map((certificates) => certificates.filter((certificate) => certificate.CSR !== null)),
-      tap((certificates) => this.certificates = certificates),
-      untilDestroyed(this),
-    );
-    this.dataProvider = new AsyncDataProvider<Certificate>(certificates$);
+  constructor() {
     this.setDefaultSort();
-    this.getCertificates();
+
+    effect(() => {
+      const csrs = this.csrs();
+      this.dataProvider.setRows(csrs);
+      if (this.isLoading()) {
+        this.dataProvider.setEmptyType(EmptyType.Loading);
+      } else {
+        this.dataProvider.setEmptyType(csrs.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
+      }
+    });
   }
 
-  getCertificates(): void {
-    this.dataProvider.load();
-  }
-
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -151,7 +154,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.getCertificates();
+      this.csrsUpdated.emit();
     });
   }
 
@@ -163,7 +166,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.getCertificates();
+      this.csrsUpdated.emit();
     });
   }
 
@@ -193,7 +196,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('CSR deleted'));
-        this.getCertificates();
+        this.csrsUpdated.emit();
       },
     });
   }
@@ -233,8 +236,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.certificateCreated.emit();
-      this.getCertificates();
+      this.csrsUpdated.emit();
     });
   }
 }
