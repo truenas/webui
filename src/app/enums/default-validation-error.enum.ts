@@ -20,4 +20,6 @@ export enum DefaultValidationError {
   InvalidRcloneBandwidthLimit = 'invalidRcloneBandwidthLimit',
   SelectionMustBeFile = 'selectionMustBeFile',
   Empty = 'empty',
+  MinArrayLength = 'minArrayLength',
+  MaxArrayLength = 'maxArrayLength',
 }
