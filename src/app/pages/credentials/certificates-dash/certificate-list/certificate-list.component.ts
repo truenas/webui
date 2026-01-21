@@ -30,6 +30,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -75,6 +76,7 @@ export class CertificateListComponent {
   private download = inject(DownloadService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
 
   readonly certificates = input<Certificate[]>([]);
   readonly isLoading = input<boolean>(false);
@@ -190,8 +192,11 @@ export class CertificateListComponent {
       }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.certificatesUpdated.emit();
+    ).subscribe({
+      next: () => {
+        this.snackbar.success(this.translate.instant('Certificate deleted'));
+        this.certificatesUpdated.emit();
+      },
     });
   }
 

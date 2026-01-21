@@ -19,6 +19,7 @@ import {
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { ImportCertificateComponent } from 'app/pages/credentials/certificates-dash/import-certificate/import-certificate.component';
@@ -81,6 +82,7 @@ describe('CertificateListComponent', () => {
         })),
       }),
       mockProvider(StorageService),
+      mockProvider(SnackbarService),
       mockAuth(),
     ],
   });
@@ -182,7 +184,7 @@ describe('CertificateListComponent', () => {
     expect(certificatesUpdatedSpy).toHaveBeenCalled();
   });
 
-  it('emits certificatesUpdated when delete succeeds', async () => {
+  it('emits certificatesUpdated and shows snackbar when delete succeeds', async () => {
     const certificatesUpdatedSpy = jest.fn();
     spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
 
@@ -191,6 +193,7 @@ describe('CertificateListComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: /Delete/ });
 
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Certificate deleted');
     expect(certificatesUpdatedSpy).toHaveBeenCalled();
   });
 });
