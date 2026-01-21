@@ -135,7 +135,6 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           }),
         );
       }),
-      takeUntilDestroyed(this.destroyRef),
     );
   });
 

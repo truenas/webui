@@ -93,6 +93,13 @@ describe('ContainersStore', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
   });
 
+  it('should make API call when reload is called even while loading', () => {
+    spectator.service.patchState({ isLoading: true });
+    spectator.service.reload();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
+  });
+
   it('should select container when method is called', () => {
     spectator.service.initialize();
     spectator.service.selectContainer(1);
