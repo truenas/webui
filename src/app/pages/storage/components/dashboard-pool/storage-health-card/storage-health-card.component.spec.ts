@@ -153,7 +153,7 @@ describe('StorageHealthCardComponent', () => {
   describe('scrub tasks', () => {
     it('shows if scrub task is set along with a link to view all scrub tasks', () => {
       const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('At 03:00 PM, only on Sunday');
+      expect(detailsItem.querySelector('.value')).toHaveText('At 15:00 (03:00 PM), only on Sunday');
     });
 
     it('opens the form to create/edit scrub task when Configure link is pressed', () => {

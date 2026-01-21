@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
-import { format, parse } from 'date-fns';
 import { CronPreset } from 'app/modules/scheduler/interfaces/cron-preset.interface';
+import { formatTimeWith12Hour } from 'app/modules/scheduler/utils/time-format.utils';
 
 export enum CronPresetValue {
   Hourly = '0 * * * *',
@@ -11,8 +11,7 @@ export enum CronPresetValue {
 
 export function getDefaultCrontabPresets(translate: TranslateService): CronPreset[] {
   const midnight24h = '00:00';
-  const midnight12h = format(parse('00:00', 'HH:mm', new Date()), 'hh:mm aa');
-  const midnightBoth = `${midnight24h} (${midnight12h})`;
+  const midnightBoth = formatTimeWith12Hour(midnight24h);
 
   return [
     {
