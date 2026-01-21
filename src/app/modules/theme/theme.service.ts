@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
-import { TnThemeService, TnTheme } from '@ixsystems/truenas-ui';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TnThemeService, TnTheme } from '@truenas/ui-components';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';

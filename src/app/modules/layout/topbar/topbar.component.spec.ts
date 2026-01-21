@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { TnIconHarness } from '@ixsystems/truenas-ui';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -77,6 +77,9 @@ function createTopbarComponent(options: ComponentOptions = {}): {
 
   const factory = createComponentFactory({
     component: TopbarComponent,
+    imports: [
+      TnIconComponent,
+    ],
     declarations: [
       MockComponents(
         CheckinIndicatorComponent,
@@ -99,6 +102,13 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       mockApi([]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
+      }),
+      mockProvider(TnSpriteLoaderService, {
+        ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+        getIconUrl: jest.fn(),
+        getSafeIconUrl: jest.fn(),
+        isSpriteLoaded: jest.fn(() => true),
+        getSpriteConfig: jest.fn(),
       }),
       provideMockStore({
         initialState: {

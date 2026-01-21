@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { tnIconMarker } from '@ixsystems/truenas-ui';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { tnIconMarker } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';

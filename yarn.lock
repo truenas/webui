@@ -3014,31 +3014,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ixsystems/truenas-ui@npm:0.1.1":
-  version: 0.1.1
-  resolution: "@ixsystems/truenas-ui@npm:0.1.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40ixsystems%2Ftruenas-ui%2F0.1.1%2F0c34eb2bec47475479966980abd851b63b083585"
-  dependencies:
-    "@material-design-icons/svg": "npm:~0.14.13"
-    "@mdi/svg": "npm:~7.4.47"
-    "@types/svg-sprite": "npm:~0.0.39"
-    "@types/vinyl": "npm:~2.0.12"
-    cheerio: "npm:~1.0.0"
-    svg-sprite: "npm:~2.0.4"
-    tslib: "npm:^2.3.0"
-    tsx: "npm:~4.19.1"
-    vinyl: "npm:~3.0.0"
-  peerDependencies:
-    "@angular/cdk": ^19.2.7
-    "@angular/common": ^19.1.0
-    "@angular/core": ^19.1.0
-    "@mdi/angular-material": ^7.2.96
-    "@mdi/js": ^7.4.47
-  bin:
-    truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/72bcb774b314145f3414b337b0b92f790dca3b1d8e2664235f91cdc92b3fb54ca6cf64d4893b333b416d27c08a24d200d872f0687742d91a125ded6abd70a906
-  languageName: node
-  linkType: hard
-
 "@jest/console@npm:30.2.0":
   version: 30.2.0
   resolution: "@jest/console@npm:30.2.0"
@@ -5500,6 +5475,31 @@ __metadata:
   peerDependencies:
     jest: "*"
   checksum: 10/7a982aefe4f305cf6644a2070e2cf479a32e9d9ca6321072b02befc8363e5620835e6444fde49c177493afdf16cf377a089d6cf71e2f5cc4390bec3e6f8ebefb
+  languageName: node
+  linkType: hard
+
+"@truenas/ui-components@npm:~0.1.2":
+  version: 0.1.2
+  resolution: "@truenas/ui-components@npm:0.1.2"
+  dependencies:
+    "@material-design-icons/svg": "npm:~0.14.13"
+    "@mdi/svg": "npm:~7.4.47"
+    "@types/svg-sprite": "npm:~0.0.39"
+    "@types/vinyl": "npm:~2.0.12"
+    cheerio: "npm:~1.0.0"
+    svg-sprite: "npm:~2.0.4"
+    tslib: "npm:^2.3.0"
+    tsx: "npm:~4.19.1"
+    vinyl: "npm:~3.0.0"
+  peerDependencies:
+    "@angular/cdk": ^21.0.0
+    "@angular/common": ^21.0.0
+    "@angular/core": ^21.0.0
+    "@mdi/angular-material": ^7.2.96
+    "@mdi/js": ^7.4.47
+  bin:
+    truenas-icons: scripts/icon-sprite/cli.js
+  checksum: 10/05f2fbd43c8affeb0a5278c42b6d35f1ddeeef4c6dc61ae6aa1bc55e25494180025c2daa28642f05fc34c2fab21092e2c9bea9c50ffcc24a209bda6769f5e5cd
   languageName: node
   linkType: hard
 
@@ -18543,7 +18543,6 @@ __metadata:
     "@eslint/compat": "npm:~1.2.1"
     "@eslint/eslintrc": "npm:~3.1.0"
     "@eslint/js": "npm:~9.13.0"
-    "@ixsystems/truenas-ui": "npm:0.1.1"
     "@lezer/common": "npm:~1.2.1"
     "@lezer/generator": "npm:~1.7.1"
     "@lezer/lr": "npm:~1.4.2"
@@ -18570,6 +18569,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
+    "@truenas/ui-components": "npm:~0.1.2"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
