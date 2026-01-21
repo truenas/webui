@@ -112,18 +112,23 @@ export class WebSocketDebugEffects {
   ), { dispatch: false });
 
   showDuplicateNotification$ = createEffect(() => this.duplicateTracker.duplicateCall$.pipe(
-    withLatestFrom(this.store$.select(selectDuplicateNotificationsEnabled)),
+    withLatestFrom(
+      this.store$.select(selectDuplicateNotificationsEnabled),
+      this.store$.select(selectIsPanelOpen),
+    ),
     filter(([, enabled]) => enabled),
-    tap(([method]) => {
+    tap(([method, , isPanelOpen]) => {
       this.snackbar.open({
         message: ignoreTranslation(`Duplicate API call: "${method}"`),
         icon: iconMarker('mdi-alert'),
         iconCssColor: 'var(--orange)',
         duration: 5000,
-        button: {
-          title: ignoreTranslation('View'),
-          action: () => this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen: true })),
-        },
+        button: isPanelOpen
+          ? undefined
+          : {
+              title: ignoreTranslation('View'),
+              action: () => this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen: true })),
+            },
       });
     }),
   ), { dispatch: false });
