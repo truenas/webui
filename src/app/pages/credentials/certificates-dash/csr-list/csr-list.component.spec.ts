@@ -19,6 +19,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { CertificateAcmeAddComponent } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
@@ -102,9 +103,10 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Edit/ });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateEditComponent, {
       data: csrs[0],
@@ -113,9 +115,10 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('deletes the CSR when Delete is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Delete/ });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete Certificate',
@@ -127,7 +130,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [1, false]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.delete', [csrs[0].id, false]);
   });
 
   it('should show table rows', async () => {
@@ -141,5 +144,58 @@ describe('CertificateSigningRequestsListComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('emits csrsUpdated when add succeeds', async () => {
+    const csrsUpdatedSpy = jest.fn();
+    spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(csrsUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits csrsUpdated when edit succeeds', async () => {
+    const csrsUpdatedSpy = jest.fn();
+    spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Edit/ });
+
+    expect(csrsUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits csrsUpdated when delete succeeds', async () => {
+    const csrsUpdatedSpy = jest.fn();
+    spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Delete/ });
+
+    expect(csrsUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits csrsUpdated when ACME cert creation succeeds', async () => {
+    const csrsUpdatedSpy = jest.fn();
+    spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Create ACME Certificate/ });
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateAcmeAddComponent, { data: csrs[0] });
+    expect(csrsUpdatedSpy).toHaveBeenCalled();
   });
 });

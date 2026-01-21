@@ -109,9 +109,10 @@ describe('CertificateListComponent', () => {
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Edit/ });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateEditComponent, {
       data: certificates[0],
@@ -124,9 +125,10 @@ describe('CertificateListComponent', () => {
       afterClosed: () => of({ force: true }),
     } as MatDialogRef<unknown>);
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Delete/ });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete Certificate',
@@ -152,5 +154,43 @@ describe('CertificateListComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('emits certificatesUpdated when import succeeds', async () => {
+    const certificatesUpdatedSpy = jest.fn();
+    spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+    await addButton.click();
+
+    expect(certificatesUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits certificatesUpdated when edit succeeds', async () => {
+    const certificatesUpdatedSpy = jest.fn();
+    spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Edit/ });
+
+    expect(certificatesUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits certificatesUpdated when delete succeeds', async () => {
+    const certificatesUpdatedSpy = jest.fn();
+    spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Delete/ });
+
+    expect(certificatesUpdatedSpy).toHaveBeenCalled();
   });
 });
