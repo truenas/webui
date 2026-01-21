@@ -13,10 +13,10 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { Params } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, map, of, tap, zip,
+  filter, finalize, map, of, tap, zip, forkJoin,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
@@ -26,7 +26,6 @@ import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -55,6 +54,8 @@ const slideInAnimationDuration = 600;
  * and their fulfillment status.
  */
 interface StigEnablementRequirements {
+  /** the current user can't be root, since the root user's password must be disabled */
+  currentUserIsNotRoot: boolean;
   /** two factor auth must be globally enabled in advanced system settings */
   twoFactorAuthGloballyEnabled: boolean;
   /** two factor auth must be required for SSH globally in advanced system settings */
@@ -72,10 +73,13 @@ interface StigEnablementRequirements {
    */
   allUsersHave2fa: boolean;
   /**
-   * the currently logged-in user must have logged in with 2FA. so in the case where they've
-   * just enabled it but haven't re-logged in, STIG mode can't be enabled.
+   * the currently logged-in user has a 2FA secret configured.
    */
   currentUserIs2fa: boolean;
+  /**
+   * the currently logged-in user's session was initiated with 2FA.
+   */
+  currentSessionIs2fa: boolean;
 }
 
 /**
@@ -84,12 +88,12 @@ interface StigEnablementRequirements {
  * not be shown in the requirements list.
  */
 interface MissingStigRequirement {
+  /** what text to display on the action/navigation link */
+  configureTitle: string;
   /** message to display when requirement is unfulfilled */
   message: string;
   /** route to navgiate to when clicking the configure button. */
   navigateTo?: string[];
-  /** query parameters to apply on navigation */
-  queryParameters?: Params;
   /** element to highlight when navigating */
   highlightElement?: string;
   /** the action to perform upon navigation */
@@ -130,6 +134,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
   private window = inject<Window>(WINDOW);
+  private router = inject(Router);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
 
   protected readonly stigRequirements = stigPasswordRequirements;
@@ -246,10 +251,18 @@ export class SystemSecurityFormComponent implements OnInit {
         allUsersHave2fa: user2faConfig.length === 0,
       })),
     );
-    const userAuthDetails$ = this.api.call('auth.sessions').pipe(
-      map((sessionsList): AuthSession | undefined => sessionsList.find((session) => session.current)),
+    const userAuthDetails$ = forkJoin([
+      this.api.call('auth.me'),
+      this.api.call('auth.sessions'),
+    ]).pipe(
+      map(([myUser, sessionsList]) => ({
+        user: myUser,
+        session: sessionsList.find((session) => session.current),
+      })),
       map((me): Partial<StigEnablementRequirements> => ({
-        currentUserIs2fa: me?.credentials === CredentialType.TwoFactor,
+        currentUserIsNotRoot: me.user.pw_name !== 'root' && me.user.pw_name !== 'truenas_admin',
+        currentUserIs2fa: me.user.two_factor_config.secret_configured,
+        currentSessionIs2fa: me.session.credentials === CredentialType.TwoFactor,
       })),
     );
 
@@ -276,8 +289,17 @@ export class SystemSecurityFormComponent implements OnInit {
       const requirements: MissingStigRequirement[] = [];
       const warnings: MissingStigRequirement[] = [];
 
+      if (!enablementRequirements?.currentUserIsNotRoot) {
+        requirements.push({
+          configureTitle: 'Log out',
+          message: 'You must log in as a user other than root with admin access, because root must have its password disabled.',
+          action: this.logout.bind(this),
+        });
+      }
+
       if (!enablementRequirements?.twoFactorAuthGloballyEnabled) {
         requirements.push({
+          configureTitle: 'Enable',
           message: 'Global Two-Factor Authentication must be enabled.',
           action: this.openGlobalTwoFactorForm.bind(this, 'global'),
         });
@@ -285,6 +307,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
       if (!enablementRequirements.twoFactorSshGloballyEnabled) {
         requirements.push({
+          configureTitle: 'Enable',
           message: 'SSH Two-Factor Authentication must be enabled.',
           action: this.openGlobalTwoFactorForm.bind(this, 'ssh'),
         });
@@ -292,6 +315,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
       if (!enablementRequirements.dockerServiceDisabled) {
         requirements.push({
+          configureTitle: 'Disable',
           message: 'The apps service must be disabled and the pool unset.',
           navigateTo: ['/apps'],
           highlightElement: 'app-settings',
@@ -300,6 +324,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
       if (!enablementRequirements.rootPasswordDisabled[0]) {
         requirements.push({
+          configureTitle: 'Disable',
           message: 'The root user must have their password disabled.',
           action: this.openUserEditForm.bind(this, enablementRequirements.rootPasswordDisabled[1]),
         });
@@ -307,20 +332,35 @@ export class SystemSecurityFormComponent implements OnInit {
 
       if (!enablementRequirements.adminPasswordDisabled[0]) {
         requirements.push({
+          configureTitle: 'Disable',
           message: 'The truenas_admin user must have their password disabled.',
           action: this.openUserEditForm.bind(this, enablementRequirements.adminPasswordDisabled[1]),
         });
       }
 
-      if (!enablementRequirements.currentUserIs2fa) {
+      if (!enablementRequirements.currentUserIs2fa && !enablementRequirements.currentSessionIs2fa) {
         requirements.push({
-          message: 'The current user must be logged in with 2FA. If you have configured 2FA in the current session, you will need to log out and then back in.',
+          configureTitle: 'Configure 2FA',
+          message: 'The current user must be logged in with 2FA. After configuring 2FA, you will have to log out and log back in again.',
           navigateTo: ['/two-factor-auth'],
+        });
+      } else if (!enablementRequirements.currentUserIs2fa) {
+        requirements.push({
+          configureTitle: 'Configure 2FA',
+          message: 'You must have 2FA configured for your user.',
+          navigateTo: ['/two-factor-auth'],
+        });
+      } else if (!enablementRequirements.currentSessionIs2fa) {
+        requirements.push({
+          configureTitle: 'Log out',
+          message: 'You must be logged in with 2FA. If you have already configured 2FA, you will have to log out and back in again.',
+          action: this.logout.bind(this),
         });
       }
 
       if (!enablementRequirements.allUsersHave2fa) {
         warnings.push({
+          configureTitle: 'Configure',
           message: 'All users must have 2FA enabled and setup.',
           navigateTo: ['/credentials/users'],
         });
@@ -627,7 +667,6 @@ export class SystemSecurityFormComponent implements OnInit {
       this.navigateAndHighlightService.navigateAndHighlight(
         requirement.navigateTo,
         requirement?.highlightElement,
-        requirement.queryParameters,
       );
     } else if (requirement.action) {
       requirement.action();
@@ -645,6 +684,14 @@ export class SystemSecurityFormComponent implements OnInit {
         this.navigateAndHighlightService.scrollIntoView(htmlElement);
       }
     }, slideInAnimationDuration);
+  }
+
+  private logout(): void {
+    this.authService.logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.router.navigate(['/signin']);
+      });
   }
 
   private openGlobalTwoFactorForm(highlight: 'global' | 'ssh'): void {
