@@ -13,6 +13,13 @@ describe('formatTimeWith12Hour', () => {
     expect(formatTimeWith12Hour('13:12')).toBe('13:12 (01:12 PM)');
     expect(formatTimeWith12Hour('23:59')).toBe('23:59 (11:59 PM)');
   });
+
+  it('handles invalid time format gracefully', () => {
+    jest.spyOn(console, 'warn').mockImplementation();
+    expect(formatTimeWith12Hour('invalid')).toBe('invalid');
+    expect(console.warn).toHaveBeenCalledWith('Invalid time format: invalid');
+    jest.restoreAllMocks();
+  });
 });
 
 describe('addTwelveHourTimeFormat', () => {
