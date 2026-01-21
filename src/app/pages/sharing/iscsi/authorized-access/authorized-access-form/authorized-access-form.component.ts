@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  debounceTime, merge, Observable, of,
+  Observable, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
@@ -18,7 +18,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import {
   doesNotEqualFgValidator,
   matchOthersFgValidator,
@@ -53,7 +52,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
-  private validatorService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
 
   get isNew(): boolean {
@@ -77,10 +75,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
     secret_confirm: ['', Validators.required],
     peeruser: [''],
     peersecret: ['', [
-      this.validatorService.validateOnCondition(
-        () => this.isPeerUserSet(),
-        Validators.required,
-      ),
       Validators.minLength(12),
       Validators.maxLength(16),
     ]],
@@ -107,10 +101,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
   });
 
   protected isLoading = signal(false);
-  discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]>;
-  protected editingAccess: IscsiAuthAccess | undefined;
-
-  readonly defaultDiscoveryAuthOptions = [
+  discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]> = of([
     {
       label: 'NONE',
       value: IscsiAuthMethod.None,
@@ -119,12 +110,18 @@ export class AuthorizedAccessFormComponent implements OnInit {
       label: 'CHAP',
       value: IscsiAuthMethod.Chap,
     },
-  ];
+    {
+      label: 'Mutual CHAP',
+      value: IscsiAuthMethod.ChapMutual,
+    },
+  ]);
+
+  protected editingAccess: IscsiAuthAccess | undefined;
 
   readonly tooltips = {
     tag: helptextIscsi.authaccess.tagTooltip,
     user: helptextIscsi.authaccess.userTooltip,
-    secret: helptextIscsi.authaccess.userTooltip,
+    secret: helptextIscsi.authaccess.secretTooltip,
     peeruser: helptextIscsi.authaccess.peeruserTooltip,
     peersecret: helptextIscsi.authaccess.peersecretTooltip,
     discovery_auth: helptextIscsi.portal.discoveryAuthMethodTooltip,
@@ -144,38 +141,47 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
-
-    merge(
-      this.form.controls.peeruser.valueChanges,
-      this.form.controls.peersecret.valueChanges,
-    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
-      if (this.form.value.peeruser && this.form.value.peersecret) {
-        this.discoveryAuthOptions$ = of([
-          ...this.defaultDiscoveryAuthOptions,
-          {
-            label: 'Mutual CHAP',
-            value: IscsiAuthMethod.ChapMutual,
-          },
-        ]);
-        if (this.form.value.discovery_auth === IscsiAuthMethod.ChapMutual) {
-          this.form.controls.discovery_auth.setValue(IscsiAuthMethod.ChapMutual);
-        }
-      } else {
-        this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
-        if (this.form.value.discovery_auth === IscsiAuthMethod.ChapMutual) {
-          this.form.controls.discovery_auth.setValue(IscsiAuthMethod.None);
-        }
-      }
-    });
-
     if (this.editingAccess) {
       this.setAccessForEdit(this.editingAccess);
     }
+
+    this.form.controls.discovery_auth.valueChanges.subscribe((newValue) => {
+      // if the user selects `Mutual CHAP`, the form will update to show all the peer controls.
+      // we want to mark them as required internally to the component too.
+      if (newValue === IscsiAuthMethod.ChapMutual) {
+        this.form.controls.peeruser.setValidators([Validators.required]);
+        this.form.controls.peersecret.addValidators([
+          Validators.required,
+          Validators.minLength(12),
+          Validators.maxLength(16),
+        ]);
+        this.form.controls.peersecret_confirm.addValidators([Validators.required]);
+      } else {
+        // first, empty all the fields so the validators will be happy once we set them.
+        this.form.patchValue({
+          peeruser: '',
+          peersecret: '',
+          peersecret_confirm: '',
+        });
+
+        // otherwise, remove the `required` validator and reset all their values so they don't get submitted.
+        // we use `setValidators` here instead of `removeValidators` so the validation re-triggers immediately.
+        this.form.controls.peeruser.setValidators([]);
+        this.form.controls.peersecret.setValidators([
+          Validators.minLength(12),
+          Validators.maxLength(16),
+        ]);
+        this.form.controls.peersecret_confirm.setValidators([]);
+
+        this.form.controls.peeruser.updateValueAndValidity();
+        this.form.controls.peersecret.updateValueAndValidity();
+        this.form.controls.peersecret_confirm.updateValueAndValidity();
+      }
+    });
   }
 
-  protected isPeerUserSet(): boolean {
-    return Boolean(this.form?.value?.peeruser);
+  protected isMutualChap(): boolean {
+    return this.form?.controls?.discovery_auth.value === IscsiAuthMethod.ChapMutual;
   }
 
   private setAccessForEdit(access: IscsiAuthAccess): void {
