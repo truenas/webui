@@ -108,5 +108,4 @@ src/assets/scripts/ie-support/ie-polyfills.min.js
 # jest cache
 .jest
 
-# Sentry Config File
-.sentryclirc
+src/app/testing-configs/*

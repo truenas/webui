@@ -17,6 +17,17 @@ import { ErrorReport, ErrorDetails, traceDetailLabel } from 'app/interfaces/erro
 import { Job } from 'app/interfaces/job.interface';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
+const httpStatusTexts: Record<number, string> = {
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  409: 'Conflict',
+  500: 'Internal Server Error',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -185,10 +196,26 @@ export class ErrorParserService {
       return this.parseJobWithArrayExtra(job);
     }
 
+    let message: string;
+    if (job.error) {
+      message = `<pre>${job.error}</pre>`;
+    } else if (job.exception) {
+      message = `<pre>${job.exception}</pre>`;
+    } else {
+      message = this.translate.instant('Unknown error');
+    }
+
     return {
       title: job.state,
-      message: job.error || job.exception || this.translate.instant('Unknown error'),
+      message,
       stackTrace: job.logs_excerpt || job.exception,
+      // display a `View Details` button and `Download Logs` button on any failed job dialogs
+      actions: [{
+        label: this.translate.instant('View Details'),
+        route: '/jobs',
+        params: { jobId: job.id },
+      }],
+      logs: job.logs_excerpt ? job : undefined,
     };
   }
 
@@ -274,7 +301,7 @@ export class ErrorParserService {
       case 403:
       case 404: {
         return {
-          title: error.statusText,
+          title: httpStatusTexts[error.status] ?? `HTTP ${error.status}`,
           message: error.message,
         };
       }

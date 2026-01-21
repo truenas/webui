@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
-import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel.interface';
+import { FcPortFormValue, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -10,42 +10,135 @@ export class FibreChannelService {
   private api = inject(ApiService);
 
 
-  loadTargetPort(targetId: number): Observable<FibreChannelPort | undefined> {
-    return this.api.call('fcport.query', [[['target.id', '=', targetId]]]).pipe(
-      map((ports) => ports[0]),
-    );
+  /**
+   * Load all FC ports associated with a target.
+   * @param targetId Target ID.
+   * @returns Observable of FibreChannelPort array.
+   */
+  loadTargetPorts(targetId: number): Observable<FibreChannelPort[]> {
+    return this.api.call('fcport.query', [[['target.id', '=', targetId]]]);
   }
 
   /**
-   * Specifies the association between target and fiber channel.
-   * @param targetId Target ID.
-   * @param port Fiber channel port. May not be specified when hostId is present.
-   * @param hostId Host ID. Must be specified to create a new virtual port when port is not specified.
+   * Extracts the physical port identifier from a port form value.
+   * @param portForm The port form value containing either a port string or host_id
+   * @param hosts Array of FC hosts for looking up host aliases when creating virtual ports
+   * @returns The physical port identifier (e.g., "fc0" from "fc0/1"), or null if undetermined
    */
-  linkFiberChannelToTarget(
+  getPhysicalPort(
+    portForm: FcPortFormValue,
+    hosts: { id: number; alias: string }[] = [],
+  ): string | null {
+    if (portForm.port) {
+      // Existing port: extract physical port from port string
+      // Example: "fc0/1" → "fc0", "fc1" → "fc1"
+      return portForm.port.split('/')[0];
+    }
+
+    if (portForm.host_id) {
+      // New virtual port: look up physical port from host_id
+      const hostMap = new Map(hosts.map((host) => [host.id, host.alias]));
+      return hostMap.get(portForm.host_id) || null;
+    }
+
+    return null;
+  }
+
+  /**
+   * Validates that all ports in the array use different physical ports.
+   * @param ports Array of port form values to validate.
+   * @param hosts Array of FC hosts (required for validating host_id entries).
+   * @returns Validation result with list of duplicate ports if any.
+   */
+  validatePhysicalPortUniqueness(
+    ports: FcPortFormValue[],
+    hosts: { id: number; alias: string }[] = [],
+  ): { valid: boolean; duplicates: string[] } {
+    const physicalPorts = new Set<string>();
+    const duplicates = new Set<string>();
+
+    ports.forEach((portForm) => {
+      const physicalPort = this.getPhysicalPort(portForm, hosts);
+
+      if (!physicalPort) {
+        return; // Skip if we couldn't determine the physical port
+      }
+
+      if (physicalPorts.has(physicalPort)) {
+        duplicates.add(physicalPort);
+      } else {
+        physicalPorts.add(physicalPort);
+      }
+    });
+
+    return {
+      valid: duplicates.size === 0,
+      duplicates: Array.from(duplicates),
+    };
+  }
+
+  /**
+   * Links multiple FC ports to a target for MPIO support.
+   * Compares desired ports with existing ports and performs create/delete operations as needed.
+   * @param targetId Target ID.
+   * @param desiredPorts Array of port form values (port string or host_id for virtual port creation).
+   * @returns Observable that completes when all port operations are done.
+   */
+  linkFiberChannelPortsToTarget(
     targetId: number,
-    port: string | null,
-    hostId?: number,
-  ): Observable<FibreChannelPort | null | true> {
-    const fcPort$ = hostId ? this.createNewPort(hostId) : of(port);
+    desiredPorts: FcPortFormValue[],
+  ): Observable<unknown> {
+    return this.loadTargetPorts(targetId).pipe(
+      switchMap((existingPorts) => {
+        const operations: Observable<unknown>[] = [];
 
-    return forkJoin([
-      fcPort$,
-      this.loadTargetPort(targetId),
-    ]).pipe(
-      switchMap(([desiredPort, existingPort]) => {
-        const existingPortId = existingPort?.id || null;
-        if (port === (existingPort?.port || null)) {
-          return of(null);
-        }
-        if (port === null && existingPortId) {
-          return this.api.call('fcport.delete', [existingPortId]);
-        }
+        // Build map of existing ports by port string
+        const existingMap = new Map(
+          existingPorts.map((port) => [port.port, port.id]),
+        );
 
-        const payload = { port: desiredPort, target_id: targetId } as FibreChannelPortUpdate;
-        return existingPortId
-          ? this.api.call('fcport.update', [existingPortId, payload])
-          : this.api.call('fcport.create', [payload]);
+        // Resolve desired ports (handle host_id → port string conversion)
+        const resolvedPorts$ = forkJoin(
+          desiredPorts.length > 0
+            ? desiredPorts.map((portForm) => (
+                portForm.host_id ? this.createNewPort(portForm.host_id) : of(portForm.port)
+              ))
+            : [of(null)],
+        );
+
+        return resolvedPorts$.pipe(
+          switchMap((resolvedPorts) => {
+            const desiredSet = new Set(resolvedPorts.filter((portString) => portString !== null) as string[]);
+
+            // Delete ports that are no longer desired
+            existingPorts.forEach((existing) => {
+              if (!desiredSet.has(existing.port)) {
+                operations.push(
+                  this.api.call('fcport.delete', [existing.id]),
+                );
+              }
+            });
+
+            // Create new ports
+            resolvedPorts.forEach((port) => {
+              if (port && !existingMap.has(port)) {
+                operations.push(
+                  this.api.call('fcport.create', [{
+                    port,
+                    target_id: targetId,
+                  }]),
+                );
+              }
+            });
+
+            // If no operations, return success
+            if (operations.length === 0) {
+              return of(true);
+            }
+
+            return forkJoin(operations);
+          }),
+        );
       }),
     );
   }

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -14,10 +15,10 @@ import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -30,6 +31,7 @@ import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/dis
 @Component({
   selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
+  styleUrl: 'disk-bulk-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -37,11 +39,12 @@ import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/dis
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxChipsComponent,
+    IxIconComponent,
     IxSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
+    MatTooltip,
     TestDirective,
     TranslateModule,
     TranslateOptionsPipe,
@@ -69,7 +72,9 @@ export class DiskBulkEditComponent {
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulkEdit;
   readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
-  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
+  readonly advpowermgmtOptions$ = of(
+    helptextDisks.advancedPowerManagementOptions,
+  );
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -130,8 +135,10 @@ export class DiskBulkEditComponent {
       { n: req.length },
     );
     this.isLoading = true;
-    this.api.job('core.bulk', ['disk.update', req])
-      .pipe(untilDestroyed(this)).subscribe({
+    this.api
+      .job('core.bulk', ['disk.update', req])
+      .pipe(untilDestroyed(this))
+      .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {
             return;

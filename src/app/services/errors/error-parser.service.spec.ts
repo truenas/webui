@@ -105,12 +105,51 @@ describe('ErrorParserService', () => {
     });
 
     it('parses a failed job', () => {
-      const errorReport = spectator.service.parseError(new FailedJobError(failedJob));
+      const job1 = failedJob;
+      const job2 = {
+        ...failedJob,
+        error: undefined,
+      } as Job;
+      const job3 = {
+        ...failedJob,
+        error: undefined,
+        exception: undefined,
+      } as Job;
 
-      expect(errorReport).toEqual({
+      expect(spectator.service.parseError(new FailedJobError(job1))).toEqual({
         title: 'FAILED',
-        message: 'DUMMY_ERROR',
+        message: '<pre>DUMMY_ERROR</pre>',
         stackTrace: 'LOGS',
+        actions: [{
+          label: 'View Details',
+          route: '/jobs',
+          params: { jobId: failedJob.id },
+        }],
+        logs: job1,
+      });
+
+      expect(spectator.service.parseError(new FailedJobError(job2))).toEqual({
+        title: 'FAILED',
+        message: '<pre>EXCEPTION</pre>',
+        stackTrace: 'LOGS',
+        actions: [{
+          label: 'View Details',
+          route: '/jobs',
+          params: { jobId: failedJob.id },
+        }],
+        logs: job2,
+      });
+
+      expect(spectator.service.parseError(new FailedJobError(job3))).toEqual({
+        title: 'FAILED',
+        message: 'Unknown error',
+        stackTrace: 'LOGS',
+        actions: [{
+          label: 'View Details',
+          route: '/jobs',
+          params: { jobId: failedJob.id },
+        }],
+        logs: job3,
       });
     });
 

@@ -34,7 +34,7 @@ export class TargetDetailsComponent {
 
   readonly target = input.required<IscsiTarget>();
 
-  targetPort = signal<FibreChannelPort | null>(null);
+  targetPorts = signal<FibreChannelPort[]>([]);
   isLoading = signal<boolean>(false);
 
   connections = toSignal(this.api.call('fcport.status'), { initialValue: [] });
@@ -52,15 +52,15 @@ export class TargetDetailsComponent {
   constructor() {
     effect(() => {
       const targetId = this.target().id;
-      this.targetPort.set(null);
+      this.targetPorts.set([]);
 
       if (targetId) {
-        this.getPortByTargetId(targetId);
+        this.getPortsByTargetId(targetId);
       }
     });
   }
 
-  private getPortByTargetId(id: number): void {
+  private getPortsByTargetId(id: number): void {
     this.isLoading.set(true);
 
     this.api.call('fcport.query', [[['target.id', '=', id]]])
@@ -70,7 +70,7 @@ export class TargetDetailsComponent {
         untilDestroyed(this),
       )
       .subscribe((ports) => {
-        this.targetPort.set(ports[0] || null);
+        this.targetPorts.set(ports);
       });
   }
 }

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
   input,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -19,6 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormatDateTimePipe,
+    MatTooltip,
     NgxSkeletonLoaderModule,
     OrNotAvailablePipe,
     TranslateModule,

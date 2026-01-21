@@ -8,7 +8,6 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { LanguageService } from 'app/modules/language/language.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-// eslint-disable-next-line no-restricted-imports
 import { getLanguageFiles } from '../../../../scripts/language/get-language-files';
 
 describe('LanguageService', () => {

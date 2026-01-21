@@ -20,6 +20,7 @@ import {
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -47,6 +48,10 @@ describe('NvmeOfConfigurationComponent', () => {
         selectors: [
           {
             selector: selectIsHaLicensed,
+            value: true,
+          },
+          {
+            selector: selectIsEnterprise,
             value: true,
           },
           {
@@ -111,7 +116,9 @@ describe('NvmeOfConfigurationComponent', () => {
 
   it('disables RDMA control if RDMA support is missing from the system', async () => {
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
-    spectator.component.ngOnInit();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
@@ -121,8 +128,9 @@ describe('NvmeOfConfigurationComponent', () => {
 
   it('disables ANA for systems without HA license', async () => {
     spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, false);
-    spectator.inject(MockStore).refreshState();
-    spectator.component.ngOnInit();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
@@ -138,12 +146,44 @@ describe('NvmeOfConfigurationComponent', () => {
       enable: true,
       pids: [1234],
     } as Service]);
-    spectator.inject(MockStore).refreshState();
-    spectator.component.ngOnInit();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
       'Implementation (Experimental)': true,
     });
+  });
+
+  it('hides Implementation field on non-enterprise systems', async () => {
+    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+
+    const formValues = await form.getValues();
+    expect(formValues).toEqual({
+      'Base NQN': 'iqn.2005-10.org.freenas:ctl',
+      'Enable Asymmetric Namespace Access (ANA)': true,
+      'Enable Remote Direct Memory Access (RDMA)': true,
+    });
+  });
+
+  it('does not include kernel in payload when saving on non-enterprise systems', async () => {
+    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+    spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(true));
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
+      ana: true,
+      basenqn: 'iqn.2005-10.org.freenas:ctl',
+      rdma: true,
+    }]);
   });
 });

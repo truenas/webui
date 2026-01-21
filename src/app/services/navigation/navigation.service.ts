@@ -60,6 +60,7 @@ export class NavigationService {
       sub: [
         { name: T('Users'), state: 'users' },
         { name: T('Groups'), state: 'groups' },
+        { name: T('Privileges'), state: 'privileges' },
         { name: T('Directory Services'), state: 'directory-services' },
         { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'certificates' },

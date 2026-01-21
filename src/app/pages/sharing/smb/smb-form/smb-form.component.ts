@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { isEqual } from 'lodash-es';
 import {
   endWith, forkJoin, Observable, of,
 } from 'rxjs';
@@ -41,12 +40,12 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -91,6 +90,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxSelectComponent,
     IxCheckboxComponent,
     IxChipsComponent,
+    IxGroupChipsComponent,
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
@@ -146,12 +146,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private wasStripAclWarningShown = false;
   private smbConfig = signal<SmbConfig | null>(null);
 
-  protected groupProvider: ChipsProvider = (query) => {
-    return this.userService.groupQueryDsCache(query).pipe(
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
-
   title: string = helptextSharingSmb.formTitleAdd;
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
@@ -186,74 +180,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
 
-  get hasAddedAllowDenyHosts(): boolean {
-    const hostsAllow = this.form.controls.hostsallow.value ?? [];
-    const hostsDeny = this.form.controls.hostsdeny.value ?? [];
-
-    const hasHosts = hostsAllow.length > 0 || hostsDeny.length > 0;
-
-    return (this.isNew && hasHosts) || (!this.isNew && this.hasHostAllowDenyChanged(hostsAllow, hostsDeny));
-  }
-
-  private hasHostAllowDenyChanged(hostsAllow: string[], hostsDeny: string[]): boolean {
-    if (!this.existingSmbShare) {
-      return false;
-    }
-
-    const existingShareOptions = this.existingSmbShare.options as LegacySmbShareOptions;
-    const existingAllow = existingShareOptions.hostsallow ?? [];
-    const existingDeny = existingShareOptions.hostsdeny ?? [];
-
-    return !isEqual(existingAllow, hostsAllow) || !isEqual(existingDeny, hostsDeny);
-  }
-
   get isRestartRequired(): boolean {
-    return this.isNewTimeMachineShare || this.isNewHomeShare || this.wasPathChanged || this.hasAddedAllowDenyHosts;
-  }
-
-  private isFieldEnabledForPurpose(fieldName: string, purpose: SmbSharePurpose): boolean {
-    return presetEnabledFields[purpose]?.includes(fieldName as never) ?? false;
-  }
-
-  get isNewTimeMachineShare(): boolean {
-    const currentPurpose = this.form.controls.purpose.value;
-
-    // For new shares, check if Time Machine will be enabled
-    if (this.isNew) {
-      // Time Machine is enabled if purpose is TimeMachineShare OR if timemachine field is enabled and checked
-      const isTimeMachinePurpose = currentPurpose === SmbSharePurpose.TimeMachineShare;
-      const hasTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
-      return isTimeMachinePurpose || hasTimeMachineField;
-    }
-
-    // For existing shares, only trigger restart if Time Machine functionality actually changes
-    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
-    const existingIsTimeMachine = this.existingSmbShare?.purpose === SmbSharePurpose.TimeMachineShare
-      || !!existingTimeMachine;
-
-    const hasCurrentTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
-    const currentIsTimeMachine = currentPurpose === SmbSharePurpose.TimeMachineShare || hasCurrentTimeMachineField;
-
-    return existingIsTimeMachine !== currentIsTimeMachine;
-  }
-
-  get isNewHomeShare(): boolean {
-    const homeShare = this.form.controls.home.value;
-    const existingHomeShare = (this.existingSmbShare?.options as LegacySmbShareOptions)?.home;
-
-    return typeof homeShare === 'boolean'
-      && ((this.isNew && homeShare) || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
-  }
-
-  get wasPathChanged(): boolean {
-    if (this.isNew || !this.existingSmbShare?.path) {
-      return false;
-    }
-
-    const currentPath = this.form.controls.path.value?.replace(/\/$/, '') || '';
-    const existingPath = this.existingSmbShare.path.replace(/\/$/, '') || '';
-
-    return currentPath !== existingPath;
+    return this.isNew || this.form.dirty;
   }
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
@@ -805,15 +733,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.matDialog.open(RestartSmbDialog, {
-            data: {
-              timemachine: this.isNewTimeMachineShare,
-              homeshare: this.isNewHomeShare,
-              path: this.wasPathChanged,
-              hosts: this.hasAddedAllowDenyHosts,
-              isNew: this.isNew,
-            },
-          }).afterClosed();
+          return this.matDialog.open(RestartSmbDialog).afterClosed();
         }
         return of(false);
       }),

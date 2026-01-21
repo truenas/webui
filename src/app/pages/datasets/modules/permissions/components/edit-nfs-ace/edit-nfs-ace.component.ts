@@ -21,16 +21,14 @@ import {
   BasicNfsPermissions,
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { UserService } from 'app/services/user.service';
 import {
   NfsFormFlagsType,
   nfsFormFlagsTypeLabels,
@@ -48,7 +46,8 @@ import {
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxRadioGroupComponent,
     IxCheckboxListComponent,
     TranslateModule,
@@ -57,7 +56,6 @@ import {
 export class EditNfsAceComponent implements OnChanges, OnInit {
   private formBuilder = inject(FormBuilder);
   private store = inject(DatasetAclEditorStore);
-  private userService = inject(UserService);
   private translate = inject(TranslateService);
 
   readonly ace = input.required<NfsAclItem>();
@@ -97,9 +95,6 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     advancedFlags: helptextAcl.flagsTooltip,
   };
 
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
-
   get isUserTag(): boolean {
     return this.form.value.tag === NfsAclTag.User;
   }
@@ -135,6 +130,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private onFormStatusUpdated(): void {
+    // Don't update validation status while async validators are pending
+    // This prevents the "flash of invalid" during async validation
+    if (this.form.pending) {
+      return;
+    }
     this.store.updateSelectedAceValidation(this.form.valid);
   }
 
@@ -182,23 +182,29 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   }
 
   private updateFormValues(): void {
+    // Use ace input values directly here, not the form getters
+    // The getters read from this.form.value which hasn't been patched yet
+    const aceTag = this.ace().tag;
+    const isUserTag = aceTag === NfsAclTag.User;
+    const isGroupTag = aceTag === NfsAclTag.UserGroup;
+
     const userField = this.form.controls.user;
     const groupField = this.form.controls.group;
 
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) {
+    if (isUserTag) {
       userField.addValidators(Validators.required);
-    } else if (this.isGroupTag) {
+    } else if (isGroupTag) {
       groupField.addValidators(Validators.required);
     }
 
     const formValues = {
-      tag: this.ace().tag,
+      tag: aceTag,
       type: this.ace().type,
-      user: this.isUserTag ? this.ace().who : null,
-      group: this.isGroupTag ? this.ace().who : null,
+      user: isUserTag ? this.ace().who : null,
+      group: isGroupTag ? this.ace().who : null,
     } as EditNfsAceComponent['form']['value'];
 
     const permissions = this.ace().perms;
@@ -226,6 +232,10 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     }
 
     this.form.patchValue(formValues, { emitEvent: false });
+    // Force status recalculation and event emission after patchValue
+    // This ensures statusChanges fires when async validators complete
+    userField.updateValueAndValidity({ onlySelf: true });
+    groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
 
     this.onFormStatusUpdated();

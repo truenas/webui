@@ -1,0 +1,45 @@
+.disk-list-label {
+  align-items: center;
+  color: var(--fg2);
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 4px;
+  margin-bottom: 8px;
+
+  .tooltip-icon {
+    color: var(--fg2);
+    cursor: help;
+    font-size: 16px;
+  }
+}
+
+.disk-list {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--bg1);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.disk-item {
+  display: flex;
+  width: 25%;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.disk-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.disk-name {
+  color: var(--fg1);
+  font-size: 14px;
+  font-weight: 500;
+}

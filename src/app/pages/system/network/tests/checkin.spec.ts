@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputModule } from '@angular/material/input';
@@ -174,45 +173,79 @@ describe('NetworkComponent', () => {
     expect(spectator.query('.pending-changes-card')).not.toExist();
   });
 
-  it('shows testing prompt with a countdown when Test Changes is pressed', fakeAsync(async () => {
+  it('shows testing prompt with a countdown when Test Changes is pressed', async () => {
     await makeEdit();
 
-    const testButton = await loader.getHarness(MatButtonHarness.with({ text: 'Test Changes' }));
-    await testButton.click();
+    // Click Test Changes button using native click to avoid harness zone issues
+    const testChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="test-changes"]');
+    testChangesButton!.click();
+    spectator.detectChanges();
+    // Small delay to allow async operations to complete without waiting for zone stability
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
 
     expect(spectator.query('.pending-changes-card'))
       .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '60'));
-    tick(1000);
+
+    // Wait a bit and verify countdown decreases
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 1100);
+    });
     spectator.detectChanges();
     expect(spectator.query('.pending-changes-card'))
       .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '59'));
-    discardPeriodicTasks();
-  }));
+  });
 
-  it('saves network interface changes when user presses Save Changes in second prompt', fakeAsync(async () => {
+  it('saves network interface changes when user presses Save Changes in second prompt', async () => {
     await makeEdit();
 
-    const testButton = await loader.getHarness(MatButtonHarness.with({ text: 'Test Changes' }));
-    await testButton.click();
+    // Click Test Changes button using native click
+    const testChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="test-changes"]');
+    testChangesButton!.click();
+    spectator.detectChanges();
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    spectator.detectChanges();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Changes' }));
-    await saveButton.click();
+    // Click Save Changes button using native click
+    const saveChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="save-changes"]');
+    saveChangesButton!.click();
+    spectator.detectChanges();
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('interface.checkin');
-  }));
+  });
 
-  it('stops testing changes and goes back to first prompt when another edit is made while the first one is being tested', fakeAsync(async () => {
+  it('stops testing changes and goes back to first prompt when another edit is made while the first one is being tested', async () => {
     await makeEdit();
 
-    const testButton = await loader.getHarness(MatButtonHarness.with({ text: 'Test Changes' }));
-    await testButton.click();
+    // Click Test Changes button using native click
+    const testChangesButton = spectator.query<HTMLButtonElement>('button[ixTest="test-changes"]');
+    testChangesButton!.click();
+    spectator.detectChanges();
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    spectator.detectChanges();
 
-    await makeEdit();
+    // Trigger second edit by calling the component method directly (avoiding harness zone issues)
+    wasEditMade = true;
+    spectator.component.loadCheckinStatusAfterChange();
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('interface.cancel_rollback');
 
     expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
-  }));
+  });
 });

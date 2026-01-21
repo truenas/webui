@@ -38,6 +38,8 @@ describe('EditPosixAceComponent', () => {
           { group: 'wheel' },
           { group: 'vip' },
         ]),
+        getUserByName: (username: string) => of({ username } as User),
+        getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
     ],
   });
@@ -140,6 +142,82 @@ describe('EditPosixAceComponent', () => {
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith(
         expect.objectContaining({ who: 'AD\\administrator' }),
       );
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+  });
+
+  describe('validation', () => {
+    it('reports invalid when ace input changes to User tag with no user selected', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.User,
+        who: undefined,
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(false);
+    });
+
+    it('reports invalid when ace input changes to Group tag with no group selected', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.Group,
+        who: undefined,
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(false);
+    });
+
+    it('reports valid when ace input changes to Mask tag (no user/group required)', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.Mask,
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+
+    it('reports valid when ace input changes to User tag with a user selected', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.User,
+        who: 'root',
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
+      expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
+    });
+
+    it('reports valid when ace input changes to Group tag with a group selected', () => {
+      spectator.setInput('ace', {
+        tag: PosixAclTag.Group,
+        who: 'wheel',
+        perms: {
+          [PosixPermission.Read]: true,
+          [PosixPermission.Write]: false,
+          [PosixPermission.Execute]: false,
+        },
+        default: false,
+      } as PosixAclItem);
+
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAceValidation).toHaveBeenLastCalledWith(true);
     });
   });

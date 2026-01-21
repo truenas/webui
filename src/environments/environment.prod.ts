@@ -1,5 +1,4 @@
 import { enableProdMode } from '@angular/core';
-import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
 import { WebUiEnvironment, environmentVersion, remote } from './environment.interface';
 
 export const environment: WebUiEnvironment = {
@@ -7,7 +6,6 @@ export const environment: WebUiEnvironment = {
   remote,
   buildYear: 2026,
   production: true,
-  sentryPublicDsn,
   debugPanel: {
     enabled: false,
     defaultMessageLimit: 100,

@@ -15,7 +15,7 @@ import {
   PreloadAllModules,
   withComponentInputBinding,
   withNavigationErrorHandler,
-  NavigationError, Router,
+  NavigationError,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -23,7 +23,6 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -31,7 +30,6 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
-import { enableSentry } from 'sentry';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
@@ -48,7 +46,6 @@ import { CustomRouterStateSerializer } from 'app/store/router/custom-router-seri
 
 if (environment.production) {
   enableProdMode();
-  enableSentry();
 }
 
 bootstrapApplication(AppComponent, {
@@ -88,7 +85,9 @@ bootstrapApplication(AppComponent, {
         strictActionImmutability: true,
         strictStateSerializability: true,
         strictActionSerializability: true,
-        strictActionWithinNgZone: true,
+        // Disabled due to Angular 21 zone handling changes causing false positives
+        // with conditionally loaded feature states (debug panel)
+        strictActionWithinNgZone: false,
         strictActionTypeUniqueness: true,
       },
     }),
@@ -118,13 +117,6 @@ bootstrapApplication(AppComponent, {
       provide: MatIconRegistry,
       useClass: IxIconRegistry,
     },
-    {
-      provide: Sentry.TraceService,
-      deps: [Router],
-    },
-    provideAppInitializer(() => {
-      inject(Sentry.TraceService);
-    }),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

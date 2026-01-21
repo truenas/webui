@@ -1,8 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import {
-  fakeAsync, flush, flushMicrotasks, tick,
-} from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -69,10 +66,10 @@ describe('ReportsGlobalControlsComponent', () => {
     ],
   });
 
-  beforeEach(fakeAsync(() => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  }));
+  });
 
   describe('report selector', () => {
     it('shows a list of available reports', async () => {
@@ -115,22 +112,24 @@ describe('ReportsGlobalControlsComponent', () => {
       expect(await devices.getValue()).toEqual(['sda']);
     });
 
-    it('emits (diskOptionsChanged) when user changes disk or disk metric selection', fakeAsync(async () => {
+    it('emits (diskOptionsChanged) when user changes disk or disk metric selection', async () => {
       jest.spyOn(spectator.component.diskOptionsChanged, 'emit');
 
       const devices = await loader.getHarness(IxSelectHarness.with({ label: 'Devices' }));
       await devices.setValue(['sdb']);
 
-      flush(1);
-      flushMicrotasks();
-
-      tick(1000);
+      // Wait for debounce
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 1100);
+      });
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(spectator.component.diskOptionsChanged.emit).toHaveBeenCalledWith({
         devices: ['sdb'],
         metrics: ['disk', 'disktemp'],
       });
-    }));
+    });
   });
 
   describe('Auto Refresh toggle', () => {
