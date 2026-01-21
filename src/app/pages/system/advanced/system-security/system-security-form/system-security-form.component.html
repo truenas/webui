@@ -36,7 +36,7 @@
                     class="link-button"
                     role="button"
                     tabindex="0"
-                    [attr.aria-label]="'Configure: ' + requirement.message"
+                    [attr.aria-label]="requirement.configureTitle + ': ' + requirement.message"
                     (click)="handleRequirementAction(requirement)"
                     (keydown.enter)="handleRequirementAction(requirement)"
                     (keydown.space)="handleRequirementAction(requirement)"
@@ -59,11 +59,11 @@
                     class="link-button"
                     role="button"
                     tabindex="0"
-                    [attr.aria-label]="'Configure: ' + requirement.message"
+                    [attr.aria-label]="requirement.configureTitle + ': ' + requirement.message"
                     (click)="handleRequirementAction(requirement)"
                     (keydown.enter)="handleRequirementAction(requirement)"
                     (keydown.space)="handleRequirementAction(requirement)"
-                  >{{ 'Configure' | translate }}</span>
+                  >{{ requirement.configureTitle }}</span>
                 }
               </li>
             }
