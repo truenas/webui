@@ -4,7 +4,7 @@
       {{ 'GPU Devices' | translate }}
     </h3>
 
-    <ix-add-gpu-device-menu></ix-add-gpu-device-menu>
+    <ix-add-gpu-device-menu [gpuChoices]="gpuChoices()"></ix-add-gpu-device-menu>
   </mat-card-header>
 
   @if (hasNvidiaGpusWithoutDrivers()) {

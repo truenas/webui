@@ -5,7 +5,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { catchError, of } from 'rxjs';
+import { catchError, of, shareReplay } from 'rxjs';
 import { ContainerDeviceType, ContainerGpuType, ContainerStatus } from 'app/enums/container.enum';
 import {
   ContainerDevice,
@@ -62,12 +62,12 @@ export class ContainerGpuDevicesComponent {
     ),
   );
 
-  private readonly gpuChoices = toSignal(
-    this.api.call('container.device.gpu_choices').pipe(
-      catchError(() => of({} as Record<string, ContainerGpuType>)),
-    ),
-    { initialValue: null },
+  private readonly gpuChoices$ = this.api.call('container.device.gpu_choices').pipe(
+    catchError(() => of({} as Record<string, ContainerGpuType>)),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  protected readonly gpuChoices = toSignal(this.gpuChoices$, { initialValue: null });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly isContainerRunning = computed(() => {

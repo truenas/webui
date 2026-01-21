@@ -7,6 +7,8 @@ import {
   filter,
   map,
   Observable,
+  distinctUntilChanged,
+  take,
 } from 'rxjs';
 import { Container, ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -42,23 +44,8 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
         }
       }),
       filter(Boolean),
-      switchMap((container) => {
-        this.patchState({ isLoading: true });
-        return this.api.call('container.device.query', [[['container', '=', container.id]]]).pipe(
-          map((containerDevices) => containerDeviceEntriesToDevices(containerDevices)),
-          tap((devices) => {
-            this.patchState({
-              devices,
-              isLoading: false,
-            });
-          }),
-          catchError((error: unknown) => {
-            this.patchState({ isLoading: false, devices: [] });
-            this.errorHandler.showErrorModal(error);
-            return EMPTY;
-          }),
-        );
-      }),
+      distinctUntilChanged((prev, curr) => prev.id === curr.id),
+      switchMap((container) => this.fetchDevicesForContainer(container)),
     );
   });
 
@@ -74,8 +61,26 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
   reload(): void {
     const container = this.selectedContainer();
     if (container) {
-      this.loadDevices(container);
+      this.fetchDevicesForContainer(container).pipe(take(1)).subscribe();
     }
+  }
+
+  private fetchDevicesForContainer(container: Container): Observable<ContainerDevice[]> {
+    this.patchState({ isLoading: true });
+    return this.api.call('container.device.query', [[['container', '=', container.id]]]).pipe(
+      map((containerDevices) => containerDeviceEntriesToDevices(containerDevices)),
+      tap((devices) => {
+        this.patchState({
+          devices,
+          isLoading: false,
+        });
+      }),
+      catchError((error: unknown) => {
+        this.patchState({ isLoading: false, devices: [] });
+        this.errorHandler.showErrorModal(error);
+        return EMPTY;
+      }),
+    );
   }
 
   /**
