@@ -31,16 +31,16 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { sysctlCardElements } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.elements';
-import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
+import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-sysctl-card',
-  templateUrl: './sysctl-card.component.html',
-  styleUrls: ['./sysctl-card.component.scss'],
+  selector: 'ix-tunable-card',
+  templateUrl: './tunable-card.component.html',
+  styleUrls: ['./tunable-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -60,7 +60,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     AsyncPipe,
   ],
 })
-export class SysctlCardComponent implements OnInit {
+export class TunableCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
@@ -71,7 +71,7 @@ export class SysctlCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
-  protected readonly searchableElements = sysctlCardElements;
+  protected readonly searchableElements = tunableCardElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
 
@@ -108,8 +108,8 @@ export class SysctlCardComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'sysctl-' + row.var + '-' + row.value,
-    ariaLabels: (row) => [row.var, this.translate.instant('Sysctl')],
+    uniqueRowTag: (row) => 'tunable-' + row.var + '-' + row.value,
+    ariaLabels: (row) => [row.var, this.translate.instant('Tunable')],
   });
 
   ngOnInit(): void {
@@ -127,23 +127,26 @@ export class SysctlCardComponent implements OnInit {
   }
 
   onDelete(row: Tunable): void {
+    const type = row.type?.toUpperCase() || '';
     this.dialog.confirm({
-      title: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete Sysctl Variable {variable}?', {
-        variable: row.var,
+      title: this.translate.instant('Delete Tunable ({type})', { type }),
+      message: this.translate.instant('Are you sure you want to delete "{name}"?', {
+        name: row.var,
       }),
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.job('tunable.delete', [row.id])),
-        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe({
-        complete: () => {
+        next: () => {
           this.snackbar.success(this.translate.instant('Variable deleted.'));
           this.loadItems();
+        },
+        error: (error: unknown) => {
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
