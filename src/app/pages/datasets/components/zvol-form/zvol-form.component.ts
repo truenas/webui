@@ -139,7 +139,7 @@ export class ZvolFormComponent implements OnInit {
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
     comments: [''],
-    volsize: ['', Validators.required],
+    volsize: ['', [Validators.required, Validators.min(1)]],
     force_size: [false],
     sync: [null as string | null, Validators.required],
     compression: [null as string | null, Validators.required],
