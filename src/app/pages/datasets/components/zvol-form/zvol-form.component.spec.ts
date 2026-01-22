@@ -223,6 +223,18 @@ describe('ZvolFormComponent', () => {
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
+
+    it('does not allow creating zvol with zero size', async () => {
+      await form.fillForm({
+        Name: 'new zvol',
+        Size: '0',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.form.invalid).toBe(true);
+      expect(spectator.component.form.controls.volsize.hasError('min')).toBe(true);
+    });
   });
 
   describe('adds a new zvol with encrypted parent', () => {
