@@ -9,6 +9,7 @@ import { RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
@@ -17,8 +18,6 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -48,7 +47,7 @@ import {
     TestDirective,
     MatSidenavContainer,
     MatSidenav,
-    IxIconComponent,
+    TnIconComponent,
     NavigationComponent,
     SecondaryMenuComponent,
     MatTooltip,
@@ -73,7 +72,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
-  protected readonly iconMarker = iconMarker;
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
