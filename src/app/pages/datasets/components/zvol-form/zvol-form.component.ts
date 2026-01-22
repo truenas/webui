@@ -130,7 +130,6 @@ export class ZvolFormComponent implements OnInit {
   protected inheritEncryption = true;
   protected generateKey = true;
   protected minimumRecommendedBlockSize: DatasetRecordSize;
-  showCustomizeSpecialSmallBlockSize = false;
   private originalReadonlyValue: string;
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
@@ -230,6 +229,10 @@ export class ZvolFormComponent implements OnInit {
           Validators.min(specialVdevMinThreshold),
           Validators.max(specialVdevMaxThreshold),
         ]);
+        // Set default threshold if not already set
+        if (!customControl.value) {
+          customControl.setValue(specialVdevDefaultThreshold);
+        }
       } else {
         customControl.clearValidators();
       }
@@ -333,8 +336,6 @@ export class ZvolFormComponent implements OnInit {
         // Any value > 0 means ON
         this.form.controls.special_small_block_size.setValue(OnOff.On);
         this.form.controls.special_small_block_size_custom.setValue(specialSmallBlockSize);
-        // Only show customize section if value differs from default
-        this.showCustomizeSpecialSmallBlockSize = (specialSmallBlockSize !== specialVdevDefaultThreshold);
       }
     }
   }
@@ -904,15 +905,6 @@ export class ZvolFormComponent implements OnInit {
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading.set(false);
     this.slideInRef.close({ response: dataset });
-  }
-
-  toggleCustomizeSpecialSmallBlockSize(): void {
-    this.showCustomizeSpecialSmallBlockSize = !this.showCustomizeSpecialSmallBlockSize;
-    if (this.showCustomizeSpecialSmallBlockSize && !this.form.value.special_small_block_size_custom) {
-      // Set a sensible default when opening customize (16 MiB)
-      this.form.patchValue({ special_small_block_size_custom: specialVdevDefaultThreshold });
-    }
-    this.cdr.markForCheck();
   }
 
   private alignVolsizeToBlocksize(volsize: number, blocksize: number): number {
