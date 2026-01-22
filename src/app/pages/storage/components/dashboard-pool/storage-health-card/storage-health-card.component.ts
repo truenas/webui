@@ -303,6 +303,7 @@ export class StorageHealthCardComponent implements OnChanges {
       .map((item: VDevItem) => ({
         guid: item.guid.toString(),
         name: getDiskName(item),
+        kind: item.type === TopologyItemType.Disk ? 'physical' : 'vdev',
         errorCount: {
           read: item.stats?.read_errors || 0,
           write: item.stats?.write_errors || 0,

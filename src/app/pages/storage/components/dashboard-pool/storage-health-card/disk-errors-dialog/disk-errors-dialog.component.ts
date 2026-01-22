@@ -10,6 +10,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export interface DiskErrorItem {
   guid: string;
   name: string;
+  kind: 'vdev' | 'physical';
   errorCount: {
     read: number;
     write: number;

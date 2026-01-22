@@ -30,6 +30,9 @@
 }
 
 .disk-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 500;
   font-size: 12px;
 }
@@ -37,6 +40,25 @@
 .disk-path {
   font-family: monospace;
   text-wrap: wrap;
+}
+
+.disk-badge {
+  background-color: var(--bg1);
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  user-select: none;
+  white-space: nowrap;
+
+  &.badge-vdev {
+    color: var(--red);
+  }
+
+  &.badge-physical {
+    color: var(--orange);
+  }
 }
 
 .disk-link {

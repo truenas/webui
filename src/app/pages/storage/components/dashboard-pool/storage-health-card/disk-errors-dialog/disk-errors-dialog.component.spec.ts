@@ -20,6 +20,7 @@ describe('DiskErrorsDialogComponent', () => {
       {
         guid: '123456789',
         name: '/dev/sda',
+        kind: 'physical',
         errorCount: {
           read: 5,
           write: 3,
@@ -29,6 +30,7 @@ describe('DiskErrorsDialogComponent', () => {
       {
         guid: '987654321',
         name: '/dev/sdb',
+        kind: 'physical',
         errorCount: {
           read: 0,
           write: 10,

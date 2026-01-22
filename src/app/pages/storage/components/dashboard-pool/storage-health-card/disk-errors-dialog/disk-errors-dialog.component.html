@@ -9,6 +9,13 @@
         <div class="disk-info">
           <div class="disk-name">
             <span class="disk-path">{{ disk.name }}</span>
+            <span
+              class="disk-badge"
+              [class.badge-vdev]="disk.kind === 'vdev'"
+              [class.badge-physical]="disk.kind === 'physical'"
+            >
+              {{ disk.kind === 'vdev' ? ('VDEV' | translate) : ('Physical' | translate) }}
+            </span>
           </div>
           <div class="error-count">
             {{ getErrorText(disk) }}
