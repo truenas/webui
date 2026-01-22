@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -62,8 +61,16 @@ describe('StorageHealthCardComponent', () => {
     scan: completedScrub,
     topology: {
       data: [
-        { stats: { read_errors: 0, checksum_errors: 0, write_errors: 1 } },
-        { stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 } },
+        {
+          guid: '123456789',
+          disk: 'sda',
+          stats: { read_errors: 0, checksum_errors: 0, write_errors: 1 },
+        },
+        {
+          guid: '987654321',
+          disk: 'sdb',
+          stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
+        },
       ],
     },
   } as Pool;
@@ -230,12 +237,12 @@ describe('StorageHealthCardComponent', () => {
       expect(statusElement).toHaveText('Online, 1 VDEV errors, 3 disk errors.');
     });
 
-    it('shows "Show me" link when there are errors', () => {
-      const showMeLink = spectator.query(byText('Show me'));
-      expect(showMeLink).toBeTruthy();
+    it('shows "View" link when there are errors', () => {
+      const viewLink = spectator.query(byText('View'));
+      expect(viewLink).toBeTruthy();
     });
 
-    it('does not show "Show me" link when there are no errors', () => {
+    it('does not show "View" link when there are no errors', () => {
       spectator.setInput('pool', {
         ...pool,
         topology: {
@@ -246,21 +253,36 @@ describe('StorageHealthCardComponent', () => {
       });
       spectator.detectChanges();
 
-      const showMeLink = spectator.query(byText('Show me'));
-      expect(showMeLink).toBeFalsy();
+      const viewLink = spectator.query(byText('View'));
+      expect(viewLink).toBeFalsy();
     });
 
-    it('navigates to the correct disk when clicking "Show me"', () => {
-      const router = spectator.inject(Router);
-      const navSpy = jest.spyOn(router, 'navigate');
-      navSpy.mockImplementation(jest.fn());
-      const showMeLink = spectator.query(byText('Show me'));
-      expect(showMeLink).toBeTruthy();
+    it('opens disk errors dialog when clicking "View"', () => {
+      const matDialog = spectator.inject(MatDialog);
+      const viewLink = spectator.query(byText('View'));
+      expect(viewLink).toBeTruthy();
 
-      spectator.click(showMeLink);
+      spectator.click(viewLink);
 
-      expect(navSpy).toHaveBeenCalledWith(
-        ['/storage', pool.id.toString(), 'vdevs'],
+      expect(matDialog.open).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          data: expect.objectContaining({
+            poolId: 45,
+            poolName: 'tank',
+            disks: expect.arrayContaining([
+              expect.objectContaining({
+                guid: expect.any(String),
+                name: expect.any(String),
+                errorCount: expect.objectContaining({
+                  read: expect.any(Number),
+                  write: expect.any(Number),
+                  checksum: expect.any(Number),
+                }),
+              }),
+            ]),
+          }),
+        }),
       );
     });
   });

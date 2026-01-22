@@ -61,6 +61,23 @@ interface StatusIconData {
 }
 
 /**
+ * helper function to flatten a disk topology recursively.
+ * @param topo the topology to flatten.
+ * @returns a `VDevItem[]` with all children of all items concatenated.
+ */
+const flattenDiskTopology = (topo: VDevItem[] | VDevItem[][]): VDevItem[] => {
+  const extraFlat = topo.flat();
+  return extraFlat.reduce((allItems: VDevItem[], item: VDevItem) => {
+    const children = (item.type !== TopologyItemType.Disk && item?.children)
+      ? flattenDiskTopology(item.children)
+      : [];
+
+    // accumulate all errors so far
+    return [...allItems, item, ...children];
+  }, []);
+};
+
+/**
  * helper function to count errors in a disk topology.
  * @param pred predicate that determines whether not a particular topology item should have
  *        its errors counted.
@@ -68,26 +85,14 @@ interface StatusIconData {
  * @returns the sum of read, write, and checksum errors in all devices satisfying `pred`.
  */
 const countErrors = (pred: (arg0: VDevItem) => boolean, items: VDevItem[]): number => {
-  return items.reduce((totalErrors: number, item: VDevItem) => {
-    // check if the current topology item is a VDEV
-    const doCount = pred(item);
+  const flattened = flattenDiskTopology(items);
+  return flattened.reduce((count: number, item: VDevItem): number => {
+    const stats = item?.stats;
+    if (pred(item) && stats) {
+      return count + stats.read_errors + stats.write_errors + stats.checksum_errors;
+    }
 
-    // if it is, sum its errors, otherwise it effectively has 0 errors.
-    const itemErrors = doCount
-      ? (
-          (item.stats?.read_errors || 0)
-          + (item.stats?.write_errors || 0)
-          + (item.stats?.checksum_errors || 0)
-        )
-      : 0;
-
-    // if it *is* a VDEV, it may have sub-VDEVs, so recursively count those errors too.
-    const childErrors = (item.type !== TopologyItemType.Disk && item?.children)
-      ? countErrors(pred, item.children)
-      : 0;
-
-    // accumulate all errors so far
-    return totalErrors + itemErrors + childErrors;
+    return count + 0;
   }, 0);
 };
 
@@ -283,17 +288,10 @@ export class StorageHealthCardComponent implements OnChanges {
         return `/dev/${disk.disk}`;
       }
 
-      return disk.path;
+      return disk.path || disk.name;
     };
 
-    // Flatten topology and collect all items with errors
-    const disksWithErrors = topo.flat()
-      .reduce((acc: VDevItem[], item: VDevItem) => {
-        if (item?.children) {
-          return [...acc, ...item.children];
-        }
-        return [...acc, item];
-      }, [])
+    const disksWithErrors = flattenDiskTopology(topo.flat())
       .filter((item: VDevItem) => {
         const stats: TopologyItemStats | undefined = item?.stats;
         if (!stats) {
