@@ -6,9 +6,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
@@ -25,7 +25,7 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   imports: [
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

@@ -7,9 +7,9 @@ import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -25,7 +25,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     RouterLinkActive,
     RouterLink,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

@@ -18,7 +18,7 @@
           {{ user.pw_name }}
         </span>
       }
-      <ix-icon name="account_circle"></ix-icon>
+      <tn-icon size="lg" name="account-circle" library="mdi"></tn-icon>
     </button>
 
     <mat-menu #userMenu="matMenu">
@@ -30,7 +30,7 @@
           [ixUiSearch]="searchableElements.elements.changePassword"
           (click)="openChangePasswordDialog()"
         >
-          <ix-icon name="dialpad"></ix-icon>
+          <tn-icon size="lg" name="dialpad" library="mdi"></tn-icon>
           {{ 'Change Password' | translate }}
         </button>
       }
@@ -42,7 +42,7 @@
           ixTest="2fa"
           (click)="onTwoFactorAuth()"
         >
-          <ix-icon name="ix-two-factor-auth"></ix-icon>
+          <tn-icon size="lg" name="tn-two-factor-auth"></tn-icon>
           {{ 'Two-Factor Authentication' | translate }}
         </button>
       }
@@ -55,7 +55,7 @@
         [queryParams]="{ userName: user.pw_name }"
         [ixUiSearch]="searchableElements.elements.myApiKeys"
       >
-        <ix-icon name="mdi-laptop"></ix-icon>
+        <tn-icon size="lg" name="laptop" library="mdi"></tn-icon>
         {{ 'My API Keys' | translate }}
       </a>
 
@@ -67,7 +67,7 @@
         ixTest="guide"
         [ixUiSearch]="searchableElements.elements.guide"
       >
-        <ix-icon name="library_books"></ix-icon>
+        <tn-icon size="lg" name="book-multiple" library="mdi"></tn-icon>
         {{ 'Guide' | translate }}
       </a>
 
@@ -81,7 +81,7 @@
         [ixUiSearch]="searchableElements.elements.logOut"
         (click)="onSignOut()"
       >
-        <ix-icon name="exit_to_app"></ix-icon>
+        <tn-icon size="lg" name="logout" library="mdi"></tn-icon>
         {{ 'Log Out' | translate }}
       </button>
     </mat-menu>

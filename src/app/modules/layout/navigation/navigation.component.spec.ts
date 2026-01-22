@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatNavListItemHarness } from '@angular/material/list/testing';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconComponent, TnSpriteLoaderService } from '@truenas/ui-components';
 import { MenuItemType } from 'app/interfaces/menu-item.interface';
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
@@ -15,7 +16,17 @@ describe('NavigationComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NavigationComponent,
+    imports: [
+      TnIconComponent,
+    ],
     providers: [
+      mockProvider(TnSpriteLoaderService, {
+        ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+        getIconUrl: jest.fn(),
+        getSafeIconUrl: jest.fn(),
+        isSpriteLoaded: jest.fn(() => true),
+        getSpriteConfig: jest.fn(),
+      }),
       provideRouter([
         { path: 'dashboard', children: [] },
         {
