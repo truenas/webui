@@ -291,6 +291,7 @@ import {
 import {
   WebShareConfig, WebShareConfigUpdate, WebShare, WebShareUpdate,
 } from 'app/interfaces/webshare-config.interface';
+import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -519,6 +520,10 @@ export interface ApiCallDirectory {
   'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
+  'filesystem.rename': { params: [{ src: string; dst: string }]; response: boolean };
+  'filesystem.copy': { params: [{ src: string; dst: string; options?: { recursive?: boolean; preserve_attrs?: boolean } }]; response: boolean };
+  'filesystem.delete': { params: [{ path: string; options?: { recursive?: boolean } }]; response: boolean };
+  'filesystem.mkdir': { params: [{ path: string; options?: { mode?: string; raise_chmod_error?: boolean } }]; response: FileRecord };
 
   // FTP
   'ftp.config': { params: void; response: FtpConfig };
@@ -986,6 +991,12 @@ export interface ApiCallDirectory {
   // WebShare
   'webshare.config': { params: void; response: WebShareConfig };
   'webshare.update': { params: [WebShareConfigUpdate]; response: WebShareConfig };
+
+  // USB Drive
+  'usb.drive.query': { params: void; response: UsbDrive[] };
+  'usb.drive.mount': { params: [{ id: string }]; response: string };
+  'usb.drive.unmount': { params: [{ id: string; force?: boolean }]; response: boolean };
+  'usb.drive.eject': { params: [{ id: string }]; response: boolean };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
