@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -96,4 +96,36 @@ export class AppUpdateDialog {
   }
 
   getVersionLabel = formatVersionLabel;
+
+  getLatestAppVersion(): string {
+    // Use latest_app_version if available, otherwise extract from latest_human_version
+    return this.dialogConfig.upgradeSummary.latest_app_version
+      || extractAppVersion(
+        this.dialogConfig.upgradeSummary.latest_human_version,
+        this.dialogConfig.upgradeSummary.latest_version,
+      );
+  }
+
+  hasAppVersionChange(): boolean {
+    // Use dialogConfig.upgradeSummary directly to avoid timing issues with selectedVersion
+    const currentAppVersion = extractAppVersion(
+      this.dialogConfig.appInfo.human_version,
+      this.dialogConfig.appInfo.version,
+    );
+    // Use the latest_app_version field from the API if available
+    const latestAppVersion = this.dialogConfig.upgradeSummary.latest_app_version;
+
+    // If backend provides latest_app_version, use it for comparison
+    // Otherwise, extract from latest_human_version as fallback
+    if (latestAppVersion !== undefined) {
+      return currentAppVersion !== latestAppVersion;
+    }
+
+    // Fallback: extract from latest_human_version
+    const extractedLatestAppVersion = extractAppVersion(
+      this.dialogConfig.upgradeSummary.latest_human_version,
+      this.dialogConfig.upgradeSummary.latest_version,
+    );
+    return currentAppVersion !== extractedLatestAppVersion;
+  }
 }

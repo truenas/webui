@@ -16,7 +16,7 @@
 }
 
 @if (hasUpdate()) {
-  <span>{{ 'Update available' | translate }}</span>
+  <span>{{ getUpdateMessage() }}</span>
 } @else {
   <span>{{ 'Up to date' | translate }}</span>
 }

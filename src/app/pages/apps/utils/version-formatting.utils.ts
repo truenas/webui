@@ -1,4 +1,3 @@
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 /**
  * Extracts the upstream app version from a version string.
@@ -27,21 +26,33 @@ export function extractAppVersion(humanVersion: string | undefined, libraryVersi
 }
 
 /**
- * Formats a version display string to show both library version and app version.
+ * Formats a version display string, emphasizing app version over revision.
+ * Can show just app version or include revision for uniqueness.
  *
  * @param libraryVersion - The internal library version (e.g., "2.1.22")
  * @param humanVersion - The human-readable version string or app version (e.g., "32.0.3_2.1.22" or "32.0.3")
- * @returns Formatted version string (e.g., "App Version: 32.0.3 / Version: 2.1.22")
+ * @param options - Optional configuration
+ * @param options.showRevision - Whether to show revision in parentheses (default: true)
+ * @returns Formatted version string
  *
  * @example
- * formatVersionLabel("2.1.22", "32.0.3_2.1.22") // Returns "App Version: 32.0.3 / Version: 2.1.22"
- * formatVersionLabel("1.0.0", "1.0.0") // Returns "App Version: 1.0.0 / Version: 1.0.0"
- * formatVersionLabel("1.0.0", undefined) // Returns "App Version: 1.0.0 / Version: 1.0.0"
+ * formatVersionLabel("2.1.22", "32.0.3_2.1.22") // Returns "32.0.3 (2.1.22)"
+ * formatVersionLabel("2.1.22", "32.0.3_2.1.22", { showRevision: false }) // Returns "32.0.3"
+ * formatVersionLabel("1.0.0", "1.0.0") // Returns "1.0.0 (1.0.0)"
  */
 export function formatVersionLabel(
   libraryVersion: string,
   humanVersion: string | undefined,
+  options: { showRevision?: boolean } = {},
 ): string {
+  const { showRevision = true } = options;
   const appVersion = extractAppVersion(humanVersion, libraryVersion);
-  return `${T('App Version')}: ${appVersion} / ${T('Version')}: ${libraryVersion}`;
+
+  // If showRevision is false (e.g., app version is changing), show only app version
+  if (!showRevision) {
+    return appVersion;
+  }
+
+  // Otherwise show app version with revision in parentheses for uniqueness
+  return `${appVersion} (${libraryVersion})`;
 }
