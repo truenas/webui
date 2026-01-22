@@ -107,6 +107,10 @@
     ix-job-item {
       margin: 0 -12px;
     }
+
+    .loading-placeholder {
+      padding: 12px 16px;
+    }
   }
 
   .app-version {
@@ -120,7 +124,7 @@
     background-repeat: no-repeat;
     background-size: contain;
     height: 32px;
-    margin-right: 16px;
+    margin-left: 16px;
     max-width: 64px;
     min-width: 32px;
     pointer-events: none;

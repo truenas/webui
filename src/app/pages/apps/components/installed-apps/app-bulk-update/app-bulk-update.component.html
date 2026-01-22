@@ -10,22 +10,12 @@
     @for (bulkItem of bulkItems | keyvalue: originalOrder; track trackByKey($index, bulkItem)) {
       <mat-expansion-panel (afterExpand)="onExpand(bulkItem)">
         <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-          <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
+          <ix-fake-progress-bar [loading]="loadingMap().get(bulkItem.key)"></ix-fake-progress-bar>
           <mat-panel-title>
             <ix-bulk-list-item [item]="bulkItem.value">
               @let versionParts = bulkItem.value.item.human_version.split('_');
               <span class="app-name-text">{{ bulkItem.key }}</span>
               <span class="app-version">{{ versionParts[0] }}</span>
-
-              <div class="version">
-                <span>{{ versionParts[1] || versionParts[0] }}</span>
-                <ix-icon name="mdi-arrow-right-thin"></ix-icon>
-                @if (isItemExpanded(bulkItem)){
-                  <span>{{ form.get(bulkItem.key)?.value }}</span>
-                } @else {
-                  <span>{{ bulkItem.value.item.latest_version }}</span>
-                }
-              </div>
 
               <div class="logo">
                 <img
@@ -39,33 +29,44 @@
 
         <div class="expansion-content">
           @if(isItemExpanded(bulkItem)) {
-            @let versionInfo = getVersionInfo(bulkItem.value.item, bulkItem.key);
-
-            <div class="version-info">
-              <div class="version-row">
-                <span class="version-label">{{ 'App Version' | translate }}:</span>
-                <span class="version-value">
-                  {{ versionInfo.currentAppVersion }}
-                  <ix-icon name="mdi-arrow-right"></ix-icon>
-                  {{ versionInfo.latestAppVersion }}
-                </span>
+            @if (loadingMap().get(bulkItem.key)) {
+              <div class="loading-placeholder">
+                <ngx-skeleton-loader></ngx-skeleton-loader>
               </div>
-              <div class="version-row">
-                <span class="version-label">{{ 'Version' | translate }}:</span>
-                <span class="version-value">
-                  {{ versionInfo.currentCatalogVersion }}
-                  <ix-icon name="mdi-arrow-right"></ix-icon>
-                  {{ versionInfo.latestCatalogVersion }}
-                </span>
-              </div>
-            </div>
+            } @else if (upgradeSummaryMap.has(bulkItem.key)) {
+              @let versionInfo = getVersionInfo(bulkItem.value.item, bulkItem.key);
 
-            <ix-select
-              [formControlName]="bulkItem.key"
-              [label]="'Version to be updated to' | translate"
-              [required]="true"
-              [options]="optionsMap.get(bulkItem.key)"
-            ></ix-select>
+              <div class="version-info">
+                @if (versionInfo.hasAppVersionChange) {
+                  <div class="version-row">
+                    <span class="version-label">{{ 'Version' | translate }}:</span>
+                    <span class="version-value">
+                      {{ versionInfo.currentAppVersion }}
+                      <ix-icon name="mdi-arrow-right"></ix-icon>
+                      {{ versionInfo.latestAppVersion }}
+                    </span>
+                  </div>
+                } @else {
+                  <div class="version-row">
+                    <span class="version-label">{{ 'Revision' | translate }}:</span>
+                    <span class="version-value">
+                      {{ versionInfo.currentCatalogVersion }}
+                      <ix-icon name="mdi-arrow-right"></ix-icon>
+                      {{ versionInfo.latestCatalogVersion }}
+                    </span>
+                  </div>
+                }
+              </div>
+
+              @if (hasMultipleVersionOptions(bulkItem.key)) {
+                <ix-select
+                  [formControlName]="bulkItem.key"
+                  [label]="'Version to be updated to' | translate"
+                  [required]="true"
+                  [options]="optionsMap.get(bulkItem.key)"
+                ></ix-select>
+              }
+            }
           }
 
           @if (hasErrors(bulkItem.key)) {

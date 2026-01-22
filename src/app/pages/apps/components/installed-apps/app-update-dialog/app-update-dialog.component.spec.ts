@@ -25,14 +25,17 @@ const fakeUpgradeSummary = {
     {
       version: '1.0.2',
       human_version: '8.7.0_1.0.2',
+      app_version: '8.7.0',
     },
     {
       version: '1.0.3',
       human_version: '8.7.1_1.0.3',
+      app_version: '8.7.1',
     },
   ],
   image_update_available: false,
   latest_version: '1.0.2',
+  latest_app_version: '8.7.0',
   upgrade_version: '1.0.2',
   latest_human_version: '8.7.0_1.0.2',
   upgrade_human_version: '8.7.0_1.0.2',
@@ -73,17 +76,12 @@ describe('AppUpdateDialog', () => {
       expect(versionInfo).toBeTruthy();
 
       const versionRows = spectator.queryAll('.version-row');
-      expect(versionRows).toHaveLength(2);
+      expect(versionRows).toHaveLength(1);
 
-      // Check app version (first row)
-      expect(versionRows[0].textContent).toContain('App Version');
-      expect(versionRows[0].textContent).toContain('8.7.0');
-      expect(versionRows[0].textContent).toContain('8.7.0_1.0.2');
-
-      // Check catalog version (second row)
-      expect(versionRows[1].textContent).toContain('Version');
-      expect(versionRows[1].textContent).toContain('1.0.1');
-      expect(versionRows[1].textContent).toContain('1.0.2');
+      // Check that only revision row is shown (only library version changed, app version stayed the same)
+      expect(versionRows[0].textContent).toContain('Revision');
+      expect(versionRows[0].textContent).toContain('1.0.1');
+      expect(versionRows[0].textContent).toContain('1.0.2');
     });
 
     it('displays changelog link when changelog_url is present', () => {

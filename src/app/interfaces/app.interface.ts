@@ -72,6 +72,10 @@ export interface App {
   state: AppState;
   upgrade_available: boolean;
   latest_version: string;
+  /**
+   * Latest upstream app version available. Provided by backend for version comparison.
+   */
+  latest_app_version?: string;
   human_version: string;
   metadata: AppMetadata;
   notes: string;

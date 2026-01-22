@@ -150,6 +150,6 @@ describe('AppBulkUpdateComponent', () => {
 
     expect(nativeElement).toHaveText('test-app-three');
     expect(nativeElement).toHaveText('1.2.9');
-    expect(nativeElement).toHaveText('1.2.10');
+    // Note: latest_version (1.2.10) is no longer shown in the header, only in expanded view
   });
 });

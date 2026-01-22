@@ -1,10 +1,11 @@
 import {
   ChangeDetectionStrategy, Component, computed,
+  inject,
   input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -25,6 +26,8 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
   ],
 })
 export class AppCardComponent {
+  private translate = inject(TranslateService);
+
   readonly app = input.required<AvailableApp>();
 
   protected readonly description = computed(() => {
@@ -33,8 +36,8 @@ export class AppCardComponent {
   });
 
   protected readonly versionTooltip = computed(() => {
-    const appVersion = this.app().latest_app_version || 'N/A';
-    const catalogVersion = this.app().latest_version || 'N/A';
-    return `Upstream Application Version: ${appVersion}\nTrueNAS Catalog Version: ${catalogVersion}`;
+    const version = this.app().latest_app_version || 'N/A';
+    const revision = this.app().latest_version || 'N/A';
+    return `${this.translate.instant('Upstream Application Version')}: ${version}\n${this.translate.instant('TrueNAS Catalog Revision')}: ${revision}`;
   });
 }
