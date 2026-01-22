@@ -9,7 +9,9 @@ import {
   Observable,
   distinctUntilChanged,
   take,
+  of,
 } from 'rxjs';
+import { ContainerGpuType } from 'app/enums/container.enum';
 import { Container, ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -19,11 +21,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export interface ContainerDeviceState {
   isLoading: boolean;
   devices: ContainerDevice[];
+  gpuChoices: Record<string, ContainerGpuType> | null;
+  isLoadingGpuChoices: boolean;
 }
 
 const initialState: ContainerDeviceState = {
   isLoading: false,
   devices: [],
+  gpuChoices: null,
+  isLoadingGpuChoices: false,
 };
 
 @Injectable()
@@ -34,6 +40,8 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
+  readonly gpuChoices = computed(() => this.state().gpuChoices);
+  readonly isLoadingGpuChoices = computed(() => this.state().isLoadingGpuChoices);
   private readonly selectedContainer = this.containersStore.selectedContainer;
 
   readonly loadDevices = this.effect((container$: Observable<Container | undefined>) => {
@@ -52,6 +60,23 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
   constructor() {
     super(initialState);
     this.loadDevices(toObservable(this.selectedContainer));
+    this.loadGpuChoices();
+  }
+
+  private loadGpuChoices(): void {
+    this.patchState({ isLoadingGpuChoices: true });
+    this.api.call('container.device.gpu_choices').pipe(
+      take(1),
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of({} as Record<string, ContainerGpuType>);
+      }),
+    ).subscribe((gpuChoices) => {
+      this.patchState({
+        gpuChoices,
+        isLoadingGpuChoices: false,
+      });
+    });
   }
 
   /**

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -45,8 +45,6 @@ interface GpuMenuItem {
 export class AddGpuDeviceMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
-  readonly gpuChoices = input<Record<string, ContainerGpuType> | null>(null);
-
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -65,12 +63,12 @@ export class AddGpuDeviceMenuComponent {
 
   protected readonly isLoading = computed(() => {
     const devicesLoading = this.devicesStore.isLoading();
-    const gpuChoices = this.gpuChoices();
-    return devicesLoading || gpuChoices === null;
+    const gpuChoicesLoading = this.devicesStore.isLoadingGpuChoices();
+    return devicesLoading || gpuChoicesLoading;
   });
 
   protected readonly availableGpuDevices = computed(() => {
-    const gpuChoices = this.gpuChoices();
+    const gpuChoices = this.devicesStore.gpuChoices();
     const nvidiaEnabled = this.nvidiaDriversEnabled()?.nvidia ?? false;
 
     if (!gpuChoices) {

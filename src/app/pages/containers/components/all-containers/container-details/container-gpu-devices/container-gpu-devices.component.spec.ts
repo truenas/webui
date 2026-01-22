@@ -50,10 +50,6 @@ describe('ContainerGpuDevicesComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('container.device.gpu_choices', {
-          '0000:19:00.0': ContainerGpuType.Nvidia,
-          '0000:1a:00.0': ContainerGpuType.Amd,
-        }),
         mockCall('system.advanced.update'),
       ]),
       mockProvider(LoaderService, {
@@ -69,6 +65,10 @@ describe('ContainerGpuDevicesComponent', () => {
       mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
         devices: () => devices,
+        gpuChoices: () => ({
+          '0000:19:00.0': ContainerGpuType.Nvidia,
+          '0000:1a:00.0': ContainerGpuType.Amd,
+        }),
         loadDevices: jest.fn(),
       }),
       provideMockStore({

@@ -56,6 +56,8 @@ describe('AddGpuDeviceMenuComponent', () => {
             pci_address: '0000:19:00.0',
           } as ContainerDevice,
         ] as ContainerDevice[],
+        gpuChoices: () => gpuChoices,
+        isLoadingGpuChoices: () => false,
         reload: jest.fn(),
         isLoading: () => false,
       }),
@@ -64,9 +66,7 @@ describe('AddGpuDeviceMenuComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: { gpuChoices },
-    });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
