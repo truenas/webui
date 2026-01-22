@@ -64,6 +64,7 @@ describe('ContainersStore', () => {
       containers: undefined,
       metrics: {},
     });
+    expect(spectator.service.hasLoaded()).toBe(false);
   });
 
   it('should load containers when initialize is called', () => {
@@ -141,6 +142,10 @@ describe('ContainersStore', () => {
 
     it('containers - returns containers part of the state', () => {
       expect(spectator.service.containers()).toEqual(containers);
+    });
+
+    it('hasLoaded - returns true after containers are loaded', () => {
+      expect(spectator.service.hasLoaded()).toBe(true);
     });
   });
 

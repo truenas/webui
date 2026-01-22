@@ -45,6 +45,13 @@ export class ContainersStore extends ComponentStore<ContainersState> {
     return this.state().containers?.filter((container) => !!container) ?? [];
   });
 
+  /**
+   * Returns true if containers have been loaded at least once.
+   * Use this to differentiate between "not loaded yet" (hasLoaded=false, containers=[])
+   * and "loaded with no data" (hasLoaded=true, containers=[]).
+   */
+  readonly hasLoaded = computed(() => this.state().containers !== undefined);
+
   readonly metrics = computed(() => this.state().metrics);
 
   constructor() {
