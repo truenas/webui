@@ -1,0 +1,33 @@
+<h1 matDialogTitle>
+  {{ 'Disk Errors in {pool}' | translate: { pool: data.poolName } }}
+</h1>
+
+<mat-dialog-content>
+  <div class="disk-errors-list">
+    @for (disk of data.disks; track disk.guid) {
+      <div class="disk-error-item">
+        <div class="disk-info">
+          <div class="disk-name">
+            <span class="disk-path">{{ disk.name }}</span>
+          </div>
+          <div class="error-count">
+            {{ getErrorText(disk) }}
+          </div>
+        </div>
+        <a
+          class="disk-link"
+          ixTest="view-disk"
+          (click)="onNavigateToDisk(disk)"
+        >
+          {{ 'View Disk' | translate }}
+        </a>
+      </div>
+    }
+  </div>
+</mat-dialog-content>
+
+<div class="actions">
+  <button mat-button type="button" ixTest="close" [matDialogClose]="false">
+    {{ 'Close' | translate }}
+  </button>
+</div>

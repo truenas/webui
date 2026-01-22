@@ -20,7 +20,7 @@ import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { VDevItem } from 'app/interfaces/storage.interface';
+import { VDevItem, TopologyItemStats } from 'app/interfaces/storage.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -40,6 +40,9 @@ import {
 import {
   DeduplicationStatsComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/deduplication-stats/deduplication-stats.component';
+import {
+  DiskErrorsDialogComponent,
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/disk-errors-dialog/disk-errors-dialog.component';
 import {
   LastPoolScanComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/last-pool-scan/last-pool-scan.component';
@@ -266,27 +269,56 @@ export class StorageHealthCardComponent implements OnChanges {
     return (this.countPhysDiskErrors() + this.countVdevErrors()) > 0;
   }
 
-  protected goToDiskError(): void {
+  /**
+   * opens a dialog `DiskErrorsDialogComponent` with all the current
+   * disk errors listed for the user.
+   */
+  protected openDiskErrorDialog(): void {
     const poolId = this.pool().id;
+    const poolName = this.pool().name;
     const topo = Object.values(this.pool().topology);
 
-    const firstBadVdev: VDevItem = topo.flat()
-      .reduce((acc, item) => {
+    const getDiskName = (disk: VDevItem): string => {
+      if (disk.disk) {
+        return `/dev/${disk.disk}`;
+      }
+
+      return disk.path;
+    };
+
+    // Flatten topology and collect all items with errors
+    const disksWithErrors = topo.flat()
+      .reduce((acc: VDevItem[], item: VDevItem) => {
         if (item?.children) {
           return [...acc, ...item.children];
         }
         return [...acc, item];
       }, [])
-      .find(
-        (item) => (item.stats.read_errors > 0) || (item.stats.write_errors > 0) || (item.stats.checksum_errors > 0),
-      );
+      .filter((item: VDevItem) => {
+        const stats: TopologyItemStats | undefined = item?.stats;
+        if (!stats) {
+          return false;
+        }
+        const sum = stats.read_errors + stats.write_errors + stats.checksum_errors;
+        return sum > 0;
+      })
+      .map((item: VDevItem) => ({
+        guid: item.guid.toString(),
+        name: getDiskName(item),
+        errorCount: {
+          read: item.stats?.read_errors || 0,
+          write: item.stats?.write_errors || 0,
+          checksum: item.stats?.checksum_errors || 0,
+        },
+      }));
 
-    const navPath = ['/storage', poolId.toString(), 'vdevs'];
-    if (firstBadVdev?.guid) {
-      navPath.push(firstBadVdev.guid.toString());
-    }
-
-    this.router.navigate(navPath);
+    this.matDialog.open(DiskErrorsDialogComponent, {
+      data: {
+        poolId,
+        poolName,
+        disks: disksWithErrors,
+      },
+    });
   }
 
   /**

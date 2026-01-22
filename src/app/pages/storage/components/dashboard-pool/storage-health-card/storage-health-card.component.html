@@ -30,8 +30,8 @@
         {{ getErrorText() }}
       </div>
       @if (hasErrors()) {
-        <a (click)="goToDiskError()">
-          {{ 'Show me' | translate }}
+        <a (click)="openDiskErrorDialog()">
+          {{ 'View' | translate }}
         </a>
       }
     </div>
