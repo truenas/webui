@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -139,14 +140,128 @@ describe('StorageHealthCardComponent', () => {
   });
 
   describe('health indication', () => {
+    const degradedPool = {
+      ...pool,
+      status: PoolStatus.Degraded,
+    } as Pool;
+
+    const faultedPool = {
+      ...pool,
+      status: PoolStatus.Faulted,
+    };
+
+    const unhealthyPool = {
+      ...pool,
+      healthy: false,
+    } as Pool;
+
     it('shows an icon for pool status', () => {
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Safe);
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Everything is fine');
     });
 
-    it('shows pool status string', () => {
+    it('shows the correct icon/tooltip for unhealthy/degraded/faulted pools', () => {
+      // degraded pool should show warning
+      spectator.setInput('pool', degradedPool);
+      spectator.detectChanges();
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe(
+        'Pool status is Degraded',
+      );
+
+      // faulted pool should show error
+      spectator.setInput('pool', faultedPool);
+      spectator.detectChanges();
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe(
+        'Pool status is Faulted',
+      );
+
+      // unhealthy pool that's still online should show warning
+      spectator.setInput('pool', unhealthyPool);
+      spectator.detectChanges();
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe(
+        'Pool is Online with errors',
+      );
+    });
+  });
+
+  describe('error display and navigation', () => {
+    it('shows pool status string with error counts', () => {
       const statusEl = spectator.query('.status');
       expect(statusEl).toHaveText('Online, 3 VDEV errors, no disk errors.');
+    });
+
+    it('shows "no errors" message when pool has no errors', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        topology: {
+          data: [
+            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
+            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
+          ],
+        },
+      });
+      spectator.detectChanges();
+
+      const statusElement = spectator.query('.status');
+      expect(statusElement).toHaveText('Online, no errors.');
+    });
+
+    it('shows error count for both VDEV and disk errors when both present', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        topology: {
+          data: [
+            {
+              type: 'MIRROR',
+              stats: { read_errors: 1, checksum_errors: 0, write_errors: 0 },
+              children: [
+                { type: 'DISK', stats: { read_errors: 2, checksum_errors: 1, write_errors: 0 } },
+              ],
+            },
+          ],
+        },
+      });
+      spectator.detectChanges();
+
+      const statusElement = spectator.query('.status');
+      expect(statusElement).toHaveText('Online, 1 VDEV errors, 3 disk errors.');
+    });
+
+    it('shows "Show me" link when there are errors', () => {
+      const showMeLink = spectator.query(byText('Show me'));
+      expect(showMeLink).toBeTruthy();
+    });
+
+    it('does not show "Show me" link when there are no errors', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        topology: {
+          data: [
+            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
+          ],
+        },
+      });
+      spectator.detectChanges();
+
+      const showMeLink = spectator.query(byText('Show me'));
+      expect(showMeLink).toBeFalsy();
+    });
+
+    it('navigates to the correct disk when clicking "Show me"', () => {
+      const router = spectator.inject(Router);
+      const navSpy = jest.spyOn(router, 'navigate');
+      navSpy.mockImplementation(jest.fn());
+      const showMeLink = spectator.query(byText('Show me'));
+      expect(showMeLink).toBeTruthy();
+
+      spectator.click(showMeLink);
+
+      expect(navSpy).toHaveBeenCalledWith(
+        ['/storage', pool.id.toString(), 'vdevs'],
+      );
     });
   });
 
@@ -231,72 +346,10 @@ describe('StorageHealthCardComponent', () => {
     });
   });
 
-  it('does not show deduplication line if there are no deduplication stats', () => {
-    const detailsItem = spectator.query(byText('Deduplication Table:'));
-    expect(detailsItem).not.toExist();
-  });
-
-  describe('error messages', () => {
-    it('shows detailed error message with VDEV and disk error counts', () => {
-      const statusElement = spectator.query('.status');
-      expect(statusElement).toHaveText('Online, 3 VDEV errors, no disk errors.');
-    });
-
-    it('shows "no errors" message when pool has no errors', () => {
-      spectator.setInput('pool', {
-        ...pool,
-        topology: {
-          data: [
-            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
-            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
-          ],
-        },
-      });
-      spectator.detectChanges();
-
-      const statusElement = spectator.query('.status');
-      expect(statusElement).toHaveText('Online, no errors.');
-    });
-
-    it('shows error count for both VDEV and disk errors when both present', () => {
-      spectator.setInput('pool', {
-        ...pool,
-        topology: {
-          data: [
-            {
-              type: 'MIRROR',
-              stats: { read_errors: 1, checksum_errors: 0, write_errors: 0 },
-              children: [
-                { type: 'DISK', stats: { read_errors: 2, checksum_errors: 1, write_errors: 0 } },
-              ],
-            },
-          ],
-        },
-      });
-      spectator.detectChanges();
-
-      const statusElement = spectator.query('.status');
-      expect(statusElement).toHaveText('Online, 1 VDEV errors, 3 disk errors.');
-    });
-
-    it('shows "Show me" link when there are errors', () => {
-      const showMeLink = spectator.query(byText('Show me'));
-      expect(showMeLink).toBeTruthy();
-    });
-
-    it('does not show "Show me" link when there are no errors', () => {
-      spectator.setInput('pool', {
-        ...pool,
-        topology: {
-          data: [
-            { stats: { read_errors: 0, checksum_errors: 0, write_errors: 0 } },
-          ],
-        },
-      });
-      spectator.detectChanges();
-
-      const showMeLink = spectator.query(byText('Show me'));
-      expect(showMeLink).toBeFalsy();
+  describe('deduplication', () => {
+    it('does not show deduplication line if there are no deduplication stats', () => {
+      const detailsItem = spectator.query(byText('Deduplication Table:'));
+      expect(detailsItem).not.toExist();
     });
   });
 });

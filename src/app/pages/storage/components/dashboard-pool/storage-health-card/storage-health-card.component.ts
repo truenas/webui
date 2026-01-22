@@ -145,14 +145,15 @@ export class StorageHealthCardComponent implements OnChanges {
 
   protected iconData: Signal<StatusIconData> = computed(() => {
     const pool = this.pool();
+    const statusStr = this.translate.instant(this.poolStatusLabels.get(pool.status));
     let tooltip: string;
     let icon: PoolCardIconType;
 
     if (!pool.healthy && pool.status === PoolStatus.Online) {
-      tooltip = this.translate.instant('Pool is online with errors');
+      tooltip = this.translate.instant('Pool is {status} with errors', { status: statusStr });
       icon = PoolCardIconType.Warn;
     } else if (pool.status === PoolStatus.Degraded || pool.status === PoolStatus.Faulted) {
-      tooltip = this.translate.instant('Pool status is {status}', { status: this.pool().status });
+      tooltip = this.translate.instant('Pool status is {status}', { status: statusStr });
       icon = pool.status === PoolStatus.Degraded ? PoolCardIconType.Warn : PoolCardIconType.Error;
     } else if (!pool.healthy) {
       tooltip = this.translate.instant('Pool is not healthy');
