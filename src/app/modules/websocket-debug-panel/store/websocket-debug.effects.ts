@@ -2,22 +2,30 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import {
-  tap, switchMap, withLatestFrom,
+  filter, tap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
+import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 import { exportFilePrefix, storageKeys } from 'app/modules/websocket-debug-panel/constants';
 import {
   MockConfig, MockResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { safeGetItem, safeSetItem } from 'app/modules/websocket-debug-panel/utils/local-storage-utils';
 import * as WebSocketDebugActions from './websocket-debug.actions';
-import { selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig } from './websocket-debug.selectors';
+import {
+  selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig, selectDuplicateNotificationsEnabled,
+} from './websocket-debug.selectors';
 
 @Injectable()
 export class WebSocketDebugEffects {
   private actions$ = inject(Actions);
   private store$ = inject(Store);
+  private duplicateTracker = inject(DuplicateCallTrackerService);
+  private snackbar = inject(SnackbarService);
 
   loadMockConfigs$ = createEffect(() => this.actions$.pipe(
     ofType(WebSocketDebugActions.loadMockConfigs),
@@ -102,4 +110,45 @@ export class WebSocketDebugEffects {
       safeSetItem(storageKeys.ENCLOSURE_MOCK_CONFIG, config);
     }),
   ), { dispatch: false });
+
+  showDuplicateNotification$ = createEffect(() => this.duplicateTracker.duplicateCall$.pipe(
+    withLatestFrom(
+      this.store$.select(selectDuplicateNotificationsEnabled),
+      this.store$.select(selectIsPanelOpen),
+    ),
+    filter(([, enabled]) => enabled),
+    tap(([method, , isPanelOpen]) => {
+      this.snackbar.open({
+        message: ignoreTranslation(`Duplicate API call: "${method}"`),
+        icon: iconMarker('mdi-alert'),
+        iconCssColor: 'var(--orange)',
+        duration: 5000,
+        button: isPanelOpen
+          ? undefined
+          : {
+              title: ignoreTranslation('View'),
+              action: () => this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen: true })),
+            },
+      });
+    }),
+  ), { dispatch: false });
+
+  persistDuplicateNotificationsSetting$ = createEffect(() => this.actions$.pipe(
+    ofType(
+      WebSocketDebugActions.toggleDuplicateNotifications,
+      WebSocketDebugActions.setDuplicateNotificationsEnabled,
+    ),
+    withLatestFrom(this.store$.select(selectDuplicateNotificationsEnabled)),
+    tap(([, enabled]) => {
+      safeSetItem(storageKeys.DUPLICATE_NOTIFICATIONS_ENABLED, enabled);
+    }),
+  ), { dispatch: false });
+
+  loadDuplicateNotificationsSetting$ = createEffect(() => this.actions$.pipe(
+    ofType(WebSocketDebugActions.loadMockConfigs),
+    switchMap(() => {
+      const enabled = safeGetItem<boolean>(storageKeys.DUPLICATE_NOTIFICATIONS_ENABLED, false);
+      return [WebSocketDebugActions.setDuplicateNotificationsEnabled({ enabled })];
+    }),
+  ));
 }

@@ -1,4 +1,4 @@
-import { JsonPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject, DestroyRef,
 } from '@angular/core';
@@ -15,8 +15,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
-import { clearMessages, createMockFromResponse, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
-import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { clearMessages, createMockFromResponse, toggleDuplicateNotifications, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
+import { selectDuplicateNotificationsEnabled, selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 
 interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
   formattedTime: string;
@@ -32,6 +32,7 @@ interface JsonRpcSuccessResponse {
   selector: 'ix-message-list',
   standalone: true,
   imports: [
+    AsyncPipe,
     JsonPipe,
     FormsModule,
     MatButtonModule,
@@ -52,6 +53,7 @@ export class MessageListComponent implements AfterViewInit {
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
   messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
+  protected duplicateNotificationsEnabled$ = this.store$.select(selectDuplicateNotificationsEnabled);
   autoScroll = true;
   protected hasMessages = false;
   protected formattedMessagesArray: FormattedWebSocketDebugMessage[] = [];
@@ -90,6 +92,10 @@ export class MessageListComponent implements AfterViewInit {
 
   protected clearMessages(): void {
     this.store$.dispatch(clearMessages());
+  }
+
+  protected toggleDuplicateNotifications(): void {
+    this.store$.dispatch(toggleDuplicateNotifications());
   }
 
   protected copyMessage(message: WebSocketDebugMessage): void {

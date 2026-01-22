@@ -84,6 +84,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   }
 
   private onFormStatusUpdated(): void {
+    // Don't update validation status while async validators are pending
+    // This prevents the "flash of invalid" during async validation
+    if (this.form.pending) {
+      return;
+    }
     this.store.updateSelectedAceValidation(this.form.valid);
   }
 
@@ -115,22 +120,28 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   }
 
   private updateFormValues(): void {
+    // Use ace input values directly here, not the form getters
+    // The getters read from this.form.value which hasn't been patched yet
+    const aceTag = this.ace().tag;
+    const isUserTag = aceTag === PosixAclTag.User;
+    const isGroupTag = aceTag === PosixAclTag.Group;
+
     const userField = this.form.controls.user;
     const groupField = this.form.controls.group;
 
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) {
+    if (isUserTag) {
       userField.addValidators(Validators.required);
-    } else if (this.isGroupTag) {
+    } else if (isGroupTag) {
       groupField.addValidators(Validators.required);
     }
 
     const formValues = {
-      tag: this.ace().tag,
-      user: this.isUserTag ? this.ace().who : null,
-      group: this.isGroupTag ? this.ace().who : null,
+      tag: aceTag,
+      user: isUserTag ? this.ace().who : null,
+      group: isGroupTag ? this.ace().who : null,
       default: this.ace().default,
       permissions: Object.entries(this.ace().perms)
         .filter(([, isOn]: [string, boolean]) => isOn)
@@ -138,6 +149,10 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     };
 
     this.form.patchValue(formValues, { emitEvent: false });
+    // Force status recalculation and event emission after patchValue
+    // This ensures statusChanges fires when async validators complete
+    userField.updateValueAndValidity({ onlySelf: true });
+    groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
 
     this.onFormStatusUpdated();

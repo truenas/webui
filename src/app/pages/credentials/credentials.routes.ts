@@ -24,6 +24,12 @@ export const credentialsRoutes: Routes = [{
       data: { title: T('Groups'), breadcrumb: T('Groups') },
       loadChildren: () => import('app/pages/credentials/groups/group.routes').then((module) => module.groupRoutes),
     },
+    {
+      path: 'privileges',
+      loadComponent: () => import('app/pages/credentials/privileges/privilege-list/privilege-list.component')
+        .then((module) => module.PrivilegeListComponent),
+      data: { title: T('Privileges'), breadcrumb: T('Privileges') },
+    },
     // TODO: Temporary dashboards attached to accounts for now
     {
       path: 'directory-services',

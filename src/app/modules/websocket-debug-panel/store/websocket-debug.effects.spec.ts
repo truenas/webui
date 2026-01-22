@@ -1,18 +1,23 @@
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { WebSocketDebugEffects } from './websocket-debug.effects';
-import { selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig } from './websocket-debug.selectors';
+import {
+  selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig, selectDuplicateNotificationsEnabled,
+} from './websocket-debug.selectors';
 
 describe('WebSocketDebugEffects', () => {
   let effects: WebSocketDebugEffects;
   let actions$: Observable<unknown>;
   let store$: MockStore;
+  let duplicateCallSubject$: Subject<string>;
 
   const mockConfigs: MockConfig[] = [
     {
@@ -57,6 +62,8 @@ describe('WebSocketDebugEffects', () => {
     };
     jest.spyOn(document, 'createElement').mockReturnValue(mockLink as unknown as HTMLElement);
 
+    duplicateCallSubject$ = new Subject<string>();
+
     TestBed.configureTestingModule({
       providers: [
         WebSocketDebugEffects,
@@ -66,8 +73,21 @@ describe('WebSocketDebugEffects', () => {
             { selector: selectMockConfigs, value: mockConfigs },
             { selector: selectIsPanelOpen, value: false },
             { selector: selectEnclosureMockConfig, value: mockEnclosureConfig },
+            { selector: selectDuplicateNotificationsEnabled, value: false },
           ],
         }),
+        {
+          provide: DuplicateCallTrackerService,
+          useValue: {
+            duplicateCall$: duplicateCallSubject$.asObservable(),
+          },
+        },
+        {
+          provide: SnackbarService,
+          useValue: {
+            open: jest.fn(),
+          },
+        },
       ],
     });
 

@@ -21,4 +21,6 @@ export enum DefaultValidationError {
   SelectionMustBeFile = 'selectionMustBeFile',
   Empty = 'empty',
   ExactLength = 'exactLength',
+  MinArrayLength = 'minArrayLength',
+  MaxArrayLength = 'maxArrayLength',
 }

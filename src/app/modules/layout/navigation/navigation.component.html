@@ -9,11 +9,10 @@
         <mat-list-item
           class="sidebar-list-item sidenav-link"
           role="listitem"
-          routerLinkActive="highlighted"
+          [routerLinkActive]="item.type === MenuItemType.Link ? 'highlighted' : ''"
           [id]="'nav-' + i"
           [class.has-submenu]="item.type === MenuItemType.SlideOut"
-          [class.highlighted]="isHighlighted === item.state"
-          (click)="updateHighlightedClass(item.state)"
+          [class.highlighted]="item.type === MenuItemType.SlideOut && isSlideOutActive(item.state)"
         >
           @if (item.type === MenuItemType.Link) {
             <a
@@ -34,7 +33,7 @@
               matTooltipPosition="right"
               [ixTest]="getItemName(item)"
               [name]="getItemName(item)"
-              [attr.aria-expanded]="isHighlighted === item.state"
+              [attr.aria-expanded]="isMenuExpanded(item.state)"
               [attr.aria-label]="(item.name | translate) + ' submenu'"
               [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="toggleMenu(item.state, item.sub || [])"

@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validators/array-length-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type SomeError = Record<string, unknown>;
@@ -90,6 +91,18 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         : T('The length must be exactly {requiredLength} (current length: {actualLength})'),
       { field: this.label(), requiredLength, actualLength },
     ),
+    minArrayLength: (minLength: number) => {
+      const message = minLength === 1
+        ? T('List should have at least {minLength} item')
+        : T('List should have at least {minLength} items');
+      return this.translate.instant(message, { minLength });
+    },
+    maxArrayLength: (maxLength: number) => {
+      const message = maxLength === 1
+        ? T('List should have no more than {maxLength} item')
+        : T('List should have no more than {maxLength} items');
+      return this.translate.instant(message, { maxLength });
+    },
   };
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -234,6 +247,14 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         return this.defaultErrMessages.exactLength(
           (errors.exactLength as SomeError).requiredLength as number,
           (errors.exactLength as SomeError).actualLength as number,
+        );
+      case DefaultValidationError.MinArrayLength:
+        return this.defaultErrMessages.minArrayLength(
+          (errors.minArrayLength as ArrayLengthValidationError).requiredLength,
+        );
+      case DefaultValidationError.MaxArrayLength:
+        return this.defaultErrMessages.maxArrayLength(
+          (errors.maxArrayLength as ArrayLengthValidationError).requiredLength,
         );
       default:
         return '';

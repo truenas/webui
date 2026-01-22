@@ -129,4 +129,34 @@ describe('DuplicateCallTrackerService', () => {
       expect.any(String),
     );
   });
+
+  it('emits method name on duplicateCall$ when duplicate is detected', () => {
+    const emittedMethods: string[] = [];
+    spectator.service.duplicateCall$.subscribe((method) => emittedMethods.push(method));
+
+    spectator.service.trackCall('system.info', []);
+    spectator.service.trackCall('system.info', []);
+
+    expect(emittedMethods).toEqual(['system.info']);
+  });
+
+  it('does not emit on duplicateCall$ for first call', () => {
+    const emittedMethods: string[] = [];
+    spectator.service.duplicateCall$.subscribe((method) => emittedMethods.push(method));
+
+    spectator.service.trackCall('system.info', []);
+
+    expect(emittedMethods).toEqual([]);
+  });
+
+  it('does not emit on duplicateCall$ when disabled', () => {
+    const emittedMethods: string[] = [];
+    spectator.service.duplicateCall$.subscribe((method) => emittedMethods.push(method));
+
+    spectator.service.setEnabled(false);
+    spectator.service.trackCall('system.info', []);
+    spectator.service.trackCall('system.info', []);
+
+    expect(emittedMethods).toEqual([]);
+  });
 });
