@@ -68,6 +68,7 @@
 
     @if (pool().autotrim.value === AutoTrimValue.On) {
       <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
+        <span class="blank-spacer"></span>
         <div class="label">{{ 'Auto TRIM' | translate }}:</div>
         <div class="value">{{ 'On' | translate }}</div>
       </div>
