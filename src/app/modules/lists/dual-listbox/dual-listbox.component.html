@@ -22,7 +22,7 @@
             (keydown)="onItemKeydown('available', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <ix-icon [name]="icon"></ix-icon>
+              <tn-icon [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
@@ -44,7 +44,7 @@
       [disabled]="!hasAvailableSelection()"
       (click)="moveSelectedRight()"
     >
-      <ix-icon name="mdi-chevron-right"></ix-icon>
+      <tn-icon name="chevron-right" library="mdi"></tn-icon>
     </button>
 
     <button
@@ -58,7 +58,7 @@
       [matTooltip]="'Move all items to the right side list' | translate"
       (click)="moveAllRight()"
     >
-      <ix-icon name="mdi-chevron-double-right"></ix-icon>
+      <tn-icon name="chevron-double-right" library="mdi"></tn-icon>
     </button>
 
     <button
@@ -72,7 +72,7 @@
       [disabled]="!hasSelectedSelection()"
       (click)="moveSelectedLeft()"
     >
-      <ix-icon name="mdi-chevron-left"></ix-icon>
+      <tn-icon name="chevron-left" library="mdi"></tn-icon>
     </button>
 
     <button
@@ -86,7 +86,7 @@
       [disabled]="!canMoveAllLeft()"
       (click)="moveAllLeft()"
     >
-      <ix-icon name="mdi-chevron-double-left"></ix-icon>
+      <tn-icon name="chevron-double-left" library="mdi"></tn-icon>
     </button>
   </div>
 
@@ -113,7 +113,7 @@
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <ix-icon [name]="icon"></ix-icon>
+              <tn-icon [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>

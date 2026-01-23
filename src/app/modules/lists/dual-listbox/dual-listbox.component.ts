@@ -17,8 +17,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 
@@ -37,7 +37,7 @@ interface ListState<T> {
     NgClass,
     NgStyle,
     DragDropModule,
-    IxIconComponent,
+    TnIconComponent,
     MatIconButton,
     TestDirective,
     MatTooltip,
@@ -53,7 +53,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   // Inputs
   sourceName = input.required<string>();
   targetName = input.required<string>();
-  listItemIcon = input<MarkedIcon | null>(null);
+  listItemIcon = input<MarkedIcon | string | null>(null);
   source = input.required<T[]>();
   destination = model<T[]>([]);
   key = input<string>('id');
