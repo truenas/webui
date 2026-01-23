@@ -150,7 +150,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should display SSH access status', () => {
     const sshSection = spectator.query('.content-wrapper:nth-of-type(9)');
-    expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
+    expect(sshSection).toHaveText('SSH Key Authentication & Password Login Enabled  Download Public Key');
   });
 
   it('should display Shell Access status', () => {
@@ -233,8 +233,8 @@ describe('UserAccessCardComponent', () => {
       });
     });
 
-    it('downloads ssh key when Download Key link is clicked', () => {
-      const downloadLink = spectator.query(byText('Download Key'));
+    it('downloads public ssh key when Download Public Key link is clicked', () => {
+      const downloadLink = spectator.query(byText('Download Public Key'));
       spectator.click(downloadLink);
 
       expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
