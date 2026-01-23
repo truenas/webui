@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=35efee5328",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=04e4699ca1",
   "icons": [
     "dataset",
     "mdi-account-circle",
@@ -55,6 +55,7 @@
     "mdi-network",
     "mdi-package-variant-closed",
     "mdi-pencil",
+    "mdi-plus",
     "mdi-power",
     "mdi-refresh",
     "mdi-security",

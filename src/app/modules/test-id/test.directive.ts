@@ -86,6 +86,8 @@ export class TestDirective {
         return 'link';
       case 'ix-icon':
         return 'icon';
+      case 'tn-icon-button':
+        return 'button';
       case 'div':
       case 'p':
       case 'span':

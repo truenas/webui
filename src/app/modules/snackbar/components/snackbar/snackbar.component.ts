@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { SnackbarConfig } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -12,7 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./snackbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TestDirective,
     TranslateModule,
