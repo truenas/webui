@@ -35,9 +35,9 @@
           (click)="$event.stopPropagation(); onToggle(row)"
         >
           @if (isExpanded(row)) {
-            <ix-icon name="mdi-chevron-up"></ix-icon>
+            <tn-icon name="chevron-up" library="mdi"></tn-icon>
           } @else {
-            <ix-icon name="mdi-chevron-down"></ix-icon>
+            <tn-icon name="chevron-down" library="mdi"></tn-icon>
           }
         </button>
       </td>

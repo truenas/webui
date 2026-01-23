@@ -3,7 +3,7 @@ import { Role } from 'app/enums/role.enum';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 export interface IconActionConfig<T> {
-  iconName: MarkedIcon;
+  iconName: MarkedIcon | string;
   tooltip?: string;
   requiredRoles?: Role[];
   onClick: (row: T) => void;

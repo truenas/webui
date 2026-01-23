@@ -3,23 +3,24 @@
 
 **Branch:** `icon-revamp`
 **Created:** 2026-01-23
-**Last Updated:** 2026-01-23 (Session 4)
+**Last Updated:** 2026-01-23 (Session 5)
 
 ---
 
 ## 📊 Current Migration Status
 
-**Overall Progress:** ~32% complete (23 modules completed, 177 of 559 ix-icon usages migrated)
+**Overall Progress:** ~35% complete (24 modules completed, 194 of 559 ix-icon usages migrated)
 
-**Current Phase:** Phase 4 - Layout Module (partially complete), Phase 5B - ix-table Module (next target)
-**Last Completed Module:** dialog (completed 2026-01-23, Phase 5A)
-**Next Target Module:** ix-table (Phase 5B) or remaining Phase 4 topbar components
+**Current Phase:** Phase 4 - Layout Module (remaining topbar components), Phase 6 - Page Modules
+**Last Completed Module:** ix-table (completed 2026-01-23, Phase 5B)
+**Next Target Module:** Remaining Phase 4 topbar components or Phase 6 page modules
 
 **Statistics:**
-- ✅ **Completed:** ~23 modules (forms, interface-status-icon, Phase 1 all 6, Phase 2 all 6, Phase 3 all 3, Phase 4 partial 3/11, Phase 5A all 6)
-- ⏳ **Remaining:** 382 ix-icon usages (down from 559)
-- 🚫 **Deferred:** 14 files with [fullSize] input (Phase 7)
-- 📦 **Modules Remaining:** Phase 4 completion, Phase 5B, Phase 6, Phase 7, Phase 8
+- ✅ **Completed:** ~24 modules/areas (~110 files) - Phases 1, 2, 3, 5A, 5B complete; Phase 4 partial
+- ⏳ **Remaining:** 365 ix-icon usages (down from 559) - ~65% remaining
+- 🎯 **Progress:** ~35% complete (194 of 559 usages migrated)
+- 🚫 **Deferred:** 15 files with [fullSize] input (Phase 7)
+- 📦 **Modules Remaining:** Phase 4 completion, Phase 6, Phase 7, Phase 8
 
 **Quick Commands:**
 ```bash
@@ -118,6 +119,52 @@ yarn test:changed
 
 **Next Session Goals:**
 - Continue Phase 1 with scheduler module (Module 4)
+
+### Session 5: 2026-01-23 - Phase 5B Complete: ix-table Module Migration
+**Focus:** Migrating ix-table module components from ix-icon to tn-icon
+
+**Completed:**
+- ✅ Completed Phase 5B (7/8 components):
+  - ix-table-head (arrow-up, arrow-down icons)
+  - ix-table-body (chevron-up, chevron-down icons)
+  - ix-table-pager (page-first, page-last, chevron-left, chevron-right icons)
+  - ix-table-columns-selector (menu-down, minus-circle, check-circle, undo icons)
+  - ix-cell-actions (dynamic icon binding)
+  - ix-cell-actions-with-menu (dots-vertical, dynamic icon binding)
+  - ix-cell-state-button (alert icon with warnings)
+  - Deferred: ix-empty-row (uses [fullSize] - Phase 7)
+- ✅ Updated 2 spec files:
+  - ix-cell-actions.component.spec.ts (updated to use TnIconHarness and tnIconMarker)
+  - ix-cell-state-button.component.spec.ts (updated to use TnIconHarness)
+- ✅ All 14 tests passing
+- ✅ Linting passed for all files
+- ✅ Build succeeded, sprite generated with new icons
+
+**Icon Mappings Applied:**
+- `first_page` → `page-first` (Material Icons → MDI)
+- `last_page` → `page-last` (Material Icons → MDI)
+- `more_vert` → `dots-vertical` (Material Icons → MDI)
+- `remove` → `minus-circle` (Material Icons → MDI)
+- `check_circle` → `check-circle` (Material Icons → MDI)
+- All `mdi-*` icons → removed prefix and added `library="mdi"`
+
+**Key Learnings:**
+- TnIconHarness returns full marked icon name (e.g., `mdi-pencil`) not just the icon name
+- Icon buttons in tables: mat-icon-button + tn-icon pattern works well
+- Dynamic icon binding with `[name]` attribute works seamlessly with tnIconMarker()
+- ix-table is a critical module used throughout the application - all tests must pass
+
+**Progress Metrics:**
+- Started session with: 382 ix-icon usages remaining
+- Ended session with: 365 ix-icon usages remaining
+- Migrated: 17 usages (3% of original total)
+- Modules completed this session: 1 module (ix-table - 7 components)
+
+**Next Session Goals:**
+- Complete Phase 4: Remaining topbar components (topbar, ha-status-icon, jobs-indicator, checkin-indicator, resilvering-indicator, user-menu, power-menu, navigation)
+- OR proceed to Phase 6: Page modules (storage, datasets, apps, sharing, etc.)
+
+---
 
 ### Session 4: 2026-01-23 - Major Progress: Phases 1-3 Complete, Phase 4 & 5A Progress
 **Focus:** Completing Phases 1-3, partial Phase 4, and Phase 5A (dialog module)
@@ -918,8 +965,9 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | websocket-debug-panel | 5 | 2026-01-23 | 8350af3464 | Developer tool |
 | layout (partial) | 3 | 2026-01-23 | 3f2bab0e42, 4fbed6a546 | admin-layout, change-password-dialog, ha-status-popover |
 | dialog | 6 | 2026-01-23 | ec9d0ea070 | All dialog components, critical for UX |
+| ix-table | 7 | 2026-01-23 | (pending commit) | 7 components migrated, 1 deferred (ix-empty-row with fullSize) |
 
-**Total Completed:** ~23 modules/areas, ~94 files
+**Total Completed:** ~24 modules/areas, ~110 files
 
 ---
 
@@ -1004,19 +1052,19 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | error-template | ✅ Complete | 2026-01-23 | ec9d0ea070 | Multi-error dialog |
 | subsystem-partially-created | ✅ Complete | 2026-01-23 | ec9d0ea070 | warning → alert |
 
-#### Phase 5B: ix-table Module (8+ components) - ⏳ NEXT TARGET
+#### Phase 5B: ix-table Module (8 components) - ✅ COMPLETE
 | Component | Status | Completed | Commit | Notes |
 |-----------|--------|-----------|--------|-------|
-| ix-table-head | 📋 Queued | | | |
-| ix-table-body | 📋 Queued | | | |
-| ix-table-pager | 📋 Queued | | | |
-| ix-table-columns-selector | 📋 Queued | | | |
-| ix-cell-actions | 📋 Queued | | | Has tests |
-| ix-cell-actions-with-menu | 📋 Queued | | | |
-| ix-cell-state-button | 📋 Queued | | | Has tests |
-| ~~ix-empty-row~~ | 🚫 Check | | | May use [fullSize] |
+| ix-table-head | ✅ Complete | 2026-01-23 | (pending) | arrow-up, arrow-down icons |
+| ix-table-body | ✅ Complete | 2026-01-23 | (pending) | chevron-up, chevron-down icons |
+| ix-table-pager | ✅ Complete | 2026-01-23 | (pending) | page-first, page-last, chevrons |
+| ix-table-columns-selector | ✅ Complete | 2026-01-23 | (pending) | menu-down, minus-circle, check-circle, undo |
+| ix-cell-actions | ✅ Complete | 2026-01-23 | (pending) | Dynamic icon binding, tests updated |
+| ix-cell-actions-with-menu | ✅ Complete | 2026-01-23 | (pending) | dots-vertical, dynamic icons |
+| ix-cell-state-button | ✅ Complete | 2026-01-23 | (pending) | alert icon, tests updated |
+| ~~ix-empty-row~~ | 🚫 Deferred | | | Uses [fullSize] - Phase 7 |
 
-**Phase 5 Progress:** 6/14 components (43%) - Phase 5A Complete ✅
+**Phase 5 Progress:** 13/14 components (93%) - Phase 5A & 5B Complete ✅
 
 ---
 
@@ -1094,11 +1142,11 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase 3 | 3 modules | ✅ 3 | 100% ✅ |
 | Phase 4 | 11 components | ⏳ 3 | 27% |
 | Phase 5A | 6 components | ✅ 6 | 100% ✅ |
-| Phase 5B | 8 components | 📋 0 | 0% |
+| Phase 5B | 8 components | ✅ 7 | 88% ✅ |
 | Phase 6 | ~170 files | 📋 0 | 0% |
 | Phase 7 | 14 files | 🚫 0 | Blocked |
 | Phase 8 | 8 tasks | 📋 0 | 0% |
-| **TOTAL** | **~234 items** | **✅ 26** | **~32%** |
+| **TOTAL** | **~234 items** | **✅ 33** | **~35%** |
 
 **Legend:**
 - ✅ Complete

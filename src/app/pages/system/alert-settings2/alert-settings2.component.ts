@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -16,7 +17,6 @@ import { Role } from 'app/enums/role.enum';
 import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -182,5 +182,5 @@ export class AlertSettings2Component implements OnInit {
     }
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }

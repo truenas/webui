@@ -188,7 +188,6 @@
     "stylelint-config-standard": "^36.0.0",
     "svg-sprite": "~2.0.4",
     "text-security": "~3.2.1",
-    "truenas-webui": "/tmp/truenas-ui-components.tgz",
     "ts-jest": "~29.4.6",
     "tsconfig-paths": "~4.2.0",
     "tsx": "~4.19.1",

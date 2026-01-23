@@ -8,6 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, Observable, tap,
 } from 'rxjs';
@@ -19,7 +20,6 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
@@ -46,7 +46,7 @@ interface RowState {
     MatButton,
     NgClass,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     TestDirective,
     JobStateDisplayPipe,

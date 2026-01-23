@@ -12,6 +12,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   forkJoin,
 } from 'rxjs';
@@ -33,7 +34,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -122,7 +122,7 @@ export class DirectoryServicesComponent implements OnInit {
     title: this.translate.instant('Directory services are disabled.'),
     message: this.translate.instant('Configure directory services to see details.'),
     large: true,
-    icon: iconMarker('mdi-account-box'),
+    icon: tnIconMarker('account-box', 'mdi'),
   };
 
   constructor() {

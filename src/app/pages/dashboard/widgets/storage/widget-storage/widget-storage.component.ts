@@ -18,7 +18,6 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
@@ -132,7 +131,7 @@ export class WidgetStorageComponent {
 
   private getStatusItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Safe;
-    let icon: MarkedIcon = statusIcons.checkCircle;
+    let icon: string = statusIcons.checkCircle;
     let value: string = pool.status;
 
     switch (pool.status) {
@@ -269,7 +268,7 @@ export class WidgetStorageComponent {
 
   private getScanItemInfo(pool: Pool): ItemInfo {
     let level: StatusLevel;
-    let icon: MarkedIcon;
+    let icon: string;
     let value: string;
 
     const scanUpdate = this.scanState();
