@@ -278,8 +278,8 @@ export class SystemSecurityFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
-        this.errorHandler.withErrorHandler(),
         finalize(() => this.rebootInfoSuppression.unsuppress()),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
       .subscribe(() => {
