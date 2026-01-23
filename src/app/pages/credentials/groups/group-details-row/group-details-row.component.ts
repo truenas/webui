@@ -47,6 +47,7 @@ export class GroupDetailsRowComponent {
   readonly delete = output<number>();
 
   protected readonly deleteNotAllowedMsg = marker('Groups with privileges or members cannot be deleted.');
+  protected readonly immutableGroupMsg = marker('This group is immutable and its members cannot be changed.');
 
   protected readonly Role = Role;
 
@@ -59,6 +60,9 @@ export class GroupDetailsRowComponent {
   }
 
   openGroupMembersForm(): void {
+    if (this.group().immutable) {
+      return;
+    }
     this.router.navigate(['/', 'credentials', 'groups', this.group().id, 'members']);
   }
 
