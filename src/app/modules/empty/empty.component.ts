@@ -43,8 +43,8 @@ export class EmptyComponent {
     return this.conf().type === EmptyType.Loading;
   });
 
-  getIcon(): MarkedIcon | undefined {
-    let icon = iconMarker('ix-truenas-logo');
+  getIcon(): MarkedIcon | string | undefined {
+    let icon: MarkedIcon | string = iconMarker('ix-truenas-logo');
     const confIcon = this.conf().icon;
     if (confIcon) {
       icon = confIcon;

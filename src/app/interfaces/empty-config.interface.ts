@@ -8,7 +8,7 @@ export interface EmptyConfig {
   compact?: boolean;
   title: TranslatedString;
   message?: TranslatedString;
-  icon?: MarkedIcon;
+  icon?: MarkedIcon | string;
   button?: {
     label: TranslatedString;
     action: () => void;

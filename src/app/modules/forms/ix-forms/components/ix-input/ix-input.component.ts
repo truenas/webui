@@ -60,7 +60,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
-  readonly prefixIcon = input<MarkedIcon>();
+  readonly prefixIcon = input<MarkedIcon | string>();
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
