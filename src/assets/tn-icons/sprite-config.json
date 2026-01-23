@@ -1,11 +1,12 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=d464865a82",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=7434284f51",
   "icons": [
     "dataset",
     "mdi-account-circle",
     "mdi-alert",
     "mdi-alert-circle",
     "mdi-apps",
+    "mdi-arrow-up",
     "mdi-autorenew",
     "mdi-bell",
     "mdi-book-multiple",
@@ -14,6 +15,7 @@
     "mdi-check",
     "mdi-check-circle",
     "mdi-chevron-down",
+    "mdi-chevron-left",
     "mdi-chevron-right",
     "mdi-clipboard-text",
     "mdi-close",
