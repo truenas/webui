@@ -4,12 +4,12 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -43,8 +43,8 @@ export class EmptyComponent {
     return this.conf().type === EmptyType.Loading;
   });
 
-  getIcon(): MarkedIcon | string | undefined {
-    let icon: MarkedIcon | string = iconMarker('ix-truenas-logo');
+  getIcon(): string | undefined {
+    let icon: string = tnIconMarker('truenas-logo', 'custom');
     const confIcon = this.conf().icon;
     if (confIcon) {
       icon = confIcon;
@@ -56,22 +56,22 @@ export class EmptyComponent {
 
       switch (type) {
         case EmptyType.Loading:
-          icon = iconMarker('ix-truenas-logo');
+          icon = tnIconMarker('truenas-logo', 'custom');
           break;
         case EmptyType.FirstUse:
-          icon = iconMarker('mdi-rocket');
+          icon = tnIconMarker('rocket', 'mdi');
           break;
         case EmptyType.NoPageData:
-          icon = iconMarker('mdi-format-list-text');
+          icon = tnIconMarker('format-list-text', 'mdi');
           break;
         case EmptyType.Errors:
-          icon = iconMarker('mdi-alert-octagon');
+          icon = tnIconMarker('alert-octagon', 'mdi');
           break;
         case EmptyType.NoSearchResults:
-          icon = iconMarker('mdi-magnify-scan');
+          icon = tnIconMarker('magnify-scan', 'mdi');
           break;
         case EmptyType.None:
-          icon = iconMarker('');
+          icon = tnIconMarker('', 'mdi');
           break;
         default:
           assertUnreachable(type);

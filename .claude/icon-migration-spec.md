@@ -164,6 +164,88 @@ yarn test:changed
 - Complete Phase 4: Remaining topbar components (topbar, ha-status-icon, jobs-indicator, checkin-indicator, resilvering-indicator, user-menu, power-menu, navigation)
 - OR proceed to Phase 6: Page modules (storage, datasets, apps, sharing, etc.)
 
+**Additional Work (Continued Session 5): iconMarker Utility Removal**
+**Focus:** Complete removal of old iconMarker utility (except Phase 7 deferred files)
+
+**Completed:**
+- ✅ **Complete iconMarker() to tnIconMarker() conversion** across all 66 files (166 usages) in page modules
+  - Converted all data-protection pages (cloud-sync, replication, rsync, snapshots, vmware-snapshot)
+  - Converted all credentials pages (backup-credentials, certificates, kmip, ssh keypairs, ssh connections)
+  - Converted all sharing pages (iscsi, nfs, smb, webshare, shares-dashboard)
+  - Converted all system pages (acme-dns, advanced-settings, alerts, boot-pool, email, enclosure, failover, general-settings, services, support, system-update, tunable)
+  - Converted all storage pages (pools, disks, devices, snapshots, vms, vmware-snapshot)
+  - Converted all apps pages (apps, docker-images, docker-store, kubernetes-settings, charts)
+  - Converted dashboard pages (pools, interfaces widgets)
+- ✅ **Removed remaining iconMarker usages** from non-deferred files:
+  - `constants/empty-configs.ts` (15 usages) - empty state configurations
+  - `enums/app-state.enum.ts` (5 usages) - app state icon map
+  - `helptext/topbar.ts` (2 usages) - menu item icons
+  - `modules/empty/empty.component.ts` (7 usages) - empty state component icon logic
+  - `modules/websocket-debug-panel/store/websocket-debug.effects.ts` (1 usage) - debug notification
+  - `services/session-timeout.service.ts` (1 usage) - timeout notification
+- ✅ **Updated interface type definitions** from MarkedIcon to string:
+  - `interfaces/empty-config.interface.ts` - removed MarkedIcon import, changed icon to string
+  - `interfaces/menu-item.interface.ts` - removed MarkedIcon import, changed icon to string
+  - `modules/forms/ix-forms/components/ix-icon-group/icon-group-option.interface.ts` - changed icon to string
+  - `modules/forms/ix-forms/components/ix-input/ix-input.component.ts` - changed prefixIcon to string
+  - `modules/lists/dual-listbox/dual-listbox.component.ts` - changed listItemIcon to string
+- ✅ **Fixed custom icon prefix issue**:
+  - Corrected custom icon references from 'tn-' prefix to actual filenames
+  - Examples: 'tn-dataset-root' → 'dataset-root', 'tn-truenas-logo' → 'truenas-logo'
+  - System automatically adds 'app-' prefix when resolving custom icons
+- ✅ **Updated test file**: dual-listbox.component.spec.ts (changed ix-icon to tn-icon query)
+- ✅ All 32 tests passing for dual-listbox component
+- ✅ Build succeeded with all custom icons resolved correctly
+
+**Issues Encountered & Fixes:**
+1. **Issue**: Custom icons failing to build - looking for 'tn-dataset-root.svg'
+   - **Root Cause**: Used 'tn-' prefix in tnIconMarker() calls for custom icons
+   - **Fix**: Changed to actual filenames without prefix (e.g., 'dataset-root' not 'tn-dataset-root')
+   - **Learning**: Custom icons use actual SVG filename (without .svg), system adds 'app-' prefix automatically
+2. **Issue**: Missing library parameter in tnIconMarker() calls
+   - **Root Cause**: Initially converted without library argument
+   - **Fix**: Added library parameter to all calls (e.g., tnIconMarker('check-circle', 'mdi'))
+   - **Learning**: tnIconMarker() ALWAYS requires 2 parameters: name and library
+3. **Issue**: Test failing - looking for ix-icon instead of tn-icon
+   - **Root Cause**: dual-listbox spec still queried 'ix-icon' selector
+   - **Fix**: Changed selector from 'ix-icon' to 'tn-icon'
+
+**Remaining iconMarker Usages (Intentionally Kept):**
+- `icon-action-config.interface.ts` - Accepts both MarkedIcon and string during migration (backward compatibility)
+- `ix-empty-row.component.ts` - Deferred to Phase 7 (uses [fullSize] input)
+- `truenas-logo.component.ts` - Deferred to Phase 7 (uses [fullSize] input)
+
+**Key Learnings:**
+- **Custom icon naming**: Use actual SVG filename (without extension) in tnIconMarker()
+  - ✅ Correct: `tnIconMarker('dataset-root', 'custom')`
+  - ❌ Wrong: `tnIconMarker('tn-dataset-root', 'custom')`
+  - System resolves as: `app-dataset-root` for lookup
+- **tnIconMarker signature**: ALWAYS requires 2 parameters
+  - Parameter 1: Icon name (string)
+  - Parameter 2: Library ('mdi', 'material', 'custom', 'lucide')
+- **Icon prefixes by library**:
+  - MDI icons: Remove 'mdi-' prefix from old iconMarker calls
+  - Material icons: Keep as-is (e.g., 'apps', 'dns')
+  - Custom icons: Use actual filename without prefix
+- **Type migration**: MarkedIcon → string is safe throughout codebase
+
+**Files Changed (12 files):**
+- src/app/constants/empty-configs.ts
+- src/app/enums/app-state.enum.ts
+- src/app/helptext/topbar.ts
+- src/app/interfaces/empty-config.interface.ts
+- src/app/interfaces/menu-item.interface.ts
+- src/app/modules/empty/empty.component.ts
+- src/app/modules/forms/ix-forms/components/ix-icon-group/icon-group-option.interface.ts
+- src/app/modules/forms/ix-forms/components/ix-input/ix-input.component.ts
+- src/app/modules/lists/dual-listbox/dual-listbox.component.spec.ts
+- src/app/modules/lists/dual-listbox/dual-listbox.component.ts
+- src/app/modules/websocket-debug-panel/store/websocket-debug.effects.ts
+- src/app/services/session-timeout.service.ts
+
+**Next Commit:**
+- Ready to commit iconMarker utility removal changes (pending user approval)
+
 ---
 
 ### Session 4: 2026-01-23 - Major Progress: Phases 1-3 Complete, Phase 4 & 5A Progress
