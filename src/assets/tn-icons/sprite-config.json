@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=04e4699ca1",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=d464865a82",
   "icons": [
     "dataset",
     "mdi-account-circle",
@@ -39,6 +39,7 @@
     "mdi-folder-plus",
     "mdi-harddisk",
     "mdi-heart",
+    "mdi-help-circle-outline",
     "mdi-home",
     "mdi-hub",
     "mdi-information",

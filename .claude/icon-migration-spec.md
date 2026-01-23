@@ -3,23 +3,23 @@
 
 **Branch:** `icon-revamp`
 **Created:** 2026-01-23
-**Last Updated:** 2026-01-23 (Session 2)
+**Last Updated:** 2026-01-23 (Session 3)
 
 ---
 
 ## 📊 Current Migration Status
 
-**Overall Progress:** ~6% complete (4 of 50+ modules)
+**Overall Progress:** ~8% complete (5 of 50+ modules)
 
-**Current Phase:** Phase 1 - Single File Modules (2/6 complete)
-**Last Completed Module:** terminal (font-size) (completed 2026-01-23)
-**Next Target Module:** tooltip (Phase 1, Module 3)
+**Current Phase:** Phase 1 - Single File Modules (3/6 complete)
+**Last Completed Module:** tooltip (completed 2026-01-23)
+**Next Target Module:** scheduler (Phase 1, Module 4)
 
 **Statistics:**
-- ✅ **Completed:** 4 modules (~55 files)
-- ⏳ **Remaining:** 208 files with ~549 ix-icon usages
+- ✅ **Completed:** 5 modules (~59 files)
+- ⏳ **Remaining:** 204 files with ~547 ix-icon usages
 - 🚫 **Deferred:** 14 files with [fullSize] input (Phase 7)
-- 📦 **Modules Remaining:** 46+ modules across 8 phases
+- 📦 **Modules Remaining:** 45+ modules across 8 phases
 
 **Quick Commands:**
 ```bash
@@ -95,6 +95,30 @@ yarn test:changed
 **Next Session Goals:**
 - Continue Phase 1 with tooltip module (Module 3)
 
+### Session 3: 2026-01-23 - Tooltip Module Migration
+**Focus:** Phase 1 Module 3 - Tooltip module migration
+
+**Completed:**
+- ✅ Migrated tooltip module (4 files)
+  - Updated `tooltip.component.ts`: IxIconComponent → TnIconComponent
+  - Updated `tooltip.component.html`: ix-icon → tn-icon, fixed import order
+  - Migrated icons: `mdi-close` → `close`, `help_outline` → `help-circle-outline`
+  - No spec file to update (component has no tests)
+- ✅ Build succeeded, sprite generated with 107 icons
+- ✅ New icons auto-generated in sprite-config.json: `mdi-close`, `mdi-help-circle-outline`
+- ✅ Linting passed
+
+**Issues Encountered:**
+- Initial import order issue with @truenas/ui-components placement (fixed)
+
+**Key Learnings:**
+- Material Icons `help_outline` → MDI `help-circle-outline` (semantic equivalence maintained)
+- Build process continues to auto-generate icons reliably
+- Components without tests are simpler to migrate
+
+**Next Session Goals:**
+- Continue Phase 1 with scheduler module (Module 4)
+
 ---
 
 ## Executive Summary
@@ -102,8 +126,8 @@ yarn test:changed
 ### Current State Assessment
 
 **Progress:**
-- ✅ Completed: 2 modules (forms, interface-status-icon) - ~47 files
-- ⏳ Remaining: 216 files with 559 ix-icon usages
+- ✅ Completed: 5 modules (forms, interface-status-icon, snackbar, terminal, tooltip) - ~59 files
+- ⏳ Remaining: 204 files with ~547 ix-icon usages
 - 🚫 Blockers: 14 files using `[fullSize]` input (deferred to final phase)
 
 **Scope:**
@@ -807,8 +831,9 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | interface-status-icon | 1 | ~2026-01-20 | (before spec) | Network status indicators |
 | snackbar | 5 | 2026-01-23 | 679c9427a3 | Notification component with dynamic icons |
 | terminal (font-size) | 3 | 2026-01-23 | 679c9427a3 | Icon buttons for font size controls, used TnIconButtonComponent |
+| tooltip | 4 | 2026-01-23 | (pending) | Utility component, no spec file, Material Icons help_outline → MDI help-circle-outline |
 
-**Total Completed:** 4 modules, ~55 files
+**Total Completed:** 5 modules, ~59 files
 
 ---
 
@@ -819,12 +844,12 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 |---|--------|-------|--------|-----------|--------|-------|
 | 1 | snackbar | 5 | ✅ Complete | 2026-01-23 | 679c9427a3 | Dynamic icon from config, all tests pass |
 | 2 | terminal | 3 | ✅ Complete | 2026-01-23 | 679c9427a3 | Font size controls, used TnIconButtonComponent |
-| 3 | tooltip | 1 | ⏳ Next | | | Utility component |
-| 4 | scheduler | 1 | 📋 Queued | | | Preview column component |
+| 3 | tooltip | 4 | ✅ Complete | 2026-01-23 | (pending) | Utility component, no spec file |
+| 4 | scheduler | 1 | ⏳ Next | | | Preview column component |
 | 5 | ix-tree | 1 | 📋 Queued | | | Tree navigation |
 | 6 | slide-ins | 1 | 📋 Queued | | | Modal header (widely used) |
 
-**Phase 1 Progress:** 2/6 modules (33%)
+**Phase 1 Progress:** 3/6 modules (50%)
 
 ---
 
@@ -978,7 +1003,7 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase | Modules/Files | Completed | Progress |
 |-------|--------------|-----------|----------|
 | Pre-work | 2 modules | ✅ 2 | 100% |
-| Phase 1 | 6 modules | ⏳ 2 | 33% |
+| Phase 1 | 6 modules | ⏳ 3 | 50% |
 | Phase 2 | 6 modules | 📋 0 | 0% |
 | Phase 3 | 3 modules | 📋 0 | 0% |
 | Phase 4 | 11 components | 📋 0 | 0% |
@@ -986,7 +1011,7 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase 6 | ~170 files | 📋 0 | 0% |
 | Phase 7 | 14 files | 🚫 0 | Blocked |
 | Phase 8 | 8 tasks | 📋 0 | 0% |
-| **TOTAL** | **~224 items** | **✅ 4** | **~6%** |
+| **TOTAL** | **~224 items** | **✅ 5** | **~8%** |
 
 **Legend:**
 - ✅ Complete
