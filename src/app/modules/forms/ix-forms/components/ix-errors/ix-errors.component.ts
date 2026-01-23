@@ -6,12 +6,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validators/array-length-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type SomeError = Record<string, unknown>;
 
@@ -25,7 +25,7 @@ export const ixManualValidateError = 'ixManualValidateError';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatError,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     TranslateModule,
   ],

@@ -12,6 +12,7 @@ import {
   EditorView, keymap, placeholder,
 } from '@codemirror/view';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
 import { FilterPresetsComponent } from 'app/modules/forms/search-input/components/filter-presets/filter-presets.component';
@@ -20,7 +21,6 @@ import { QueryParserService } from 'app/modules/forms/search-input/services/quer
 import { QueryParsingError } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
@@ -32,7 +32,7 @@ const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     MatCard,
     MatCalendar,
     TestDirective,

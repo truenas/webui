@@ -32,6 +32,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
+import { TnIconComponent, TnIconTesting } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { MockComponent, MockProvider } from 'ng-mocks';
@@ -111,6 +112,7 @@ defineGlobalsInjections({
     MatSlideToggleModule,
     MatMenuModule,
     IxIconComponent,
+    TnIconComponent,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
@@ -209,6 +211,7 @@ defineGlobalsInjections({
     },
     { provide: IxIconRegistry, useClass: FakeMatIconRegistry },
     { provide: MatIconRegistry, useClass: FakeMatIconRegistry },
+    TnIconTesting.jest.providers(),
   ],
 });
 

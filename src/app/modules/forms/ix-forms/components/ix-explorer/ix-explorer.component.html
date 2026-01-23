@@ -42,17 +42,17 @@
           (keydown.space)="$event.preventDefault(); node?.toggleExpanded()"
         >
           @if (node.data.type === ExplorerNodeType.File) {
-            <ix-icon name="insert_drive_file"></ix-icon>
+            <tn-icon name="file" library="mdi"></tn-icon>
           } @else if (node.data.type === ExplorerNodeType.Symlink) {
-            <ix-icon name="mdi-database"></ix-icon>
+            <tn-icon name="database" library="mdi"></tn-icon>
           } @else {
             @if (node.data.isLock) {
-              <ix-icon name="mdi-folder-lock"></ix-icon>
+              <tn-icon name="folder-lock" library="mdi"></tn-icon>
             } @else {
               @if (node.data.isMountpoint) {
-                <ix-icon name="ix-dataset"></ix-icon>
+                <tn-icon name="tn-dataset"></tn-icon>
               } @else {
-                <ix-icon name="folder_open"></ix-icon>
+                <tn-icon name="folder" library="mdi"></tn-icon>
               }
             }
           }
