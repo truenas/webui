@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, map, of, switchMap,
+  filter, finalize, map, of, switchMap,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -279,22 +279,16 @@ export class SystemSecurityFormComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
+        finalize(() => this.rebootInfoSuppression.unsuppress()),
         untilDestroyed(this),
       )
-      .subscribe({
-        next: () => {
-          this.rebootInfoSuppression.unsuppress();
+      .subscribe(() => {
+        if (values.enable_gpos_stig) {
+          this.authService.clearAuthToken();
+        }
 
-          if (values.enable_gpos_stig) {
-            this.authService.clearAuthToken();
-          }
-
-          this.slideInRef.close({ response: true });
-          this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
-        },
-        error: () => {
-          this.rebootInfoSuppression.unsuppress();
-        },
+        this.slideInRef.close({ response: true });
+        this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
       });
   }
 
