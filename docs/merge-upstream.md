@@ -1,3 +1,7 @@
+## Merge Upstream TrueNAS Code
+
+### i18n JSON Files
+
 When merging upstream TrueNAS code with `git merge`, handle the i18n JSON files as follows:
 
 1. Accept all TrueNAS translation files in full.
@@ -9,3 +13,9 @@ The `i18n-merge.ts` script logic:
 2. Replaces any empty value with its key.
 3. Applies special handling for links such as forums, repositories, and documentation.
 4. Globally replaces “TrueNAS” with “HarborOS” in all values.
+
+### icon
+
+```bash
+yarn icons
+```
