@@ -38,6 +38,7 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -85,6 +86,7 @@ export class TopbarComponent implements OnInit {
   private translate = inject(TranslateService);
   private tnc = inject(TruenasConnectService);
   private apiService = inject<ApiService>(ApiService);
+  private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
 
   updateIsDone: Subscription;
 
@@ -226,6 +228,7 @@ export class TopbarComponent implements OnInit {
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
       filter(() => !this.shownDialog()),
+      filter(() => !this.updateIsRunning && !this.rebootInfoSuppression.isSuppressed()),
       tap(() => this.shownDialog.set(true)),
       switchMap(() => this.matDialog.open(RebootRequiredDialog, { minWidth: '400px' }).afterClosed()),
     );
