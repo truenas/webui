@@ -1,16 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { Observable, take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -22,9 +21,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./modal-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconButtonComponent,
     ReadOnlyComponent,
     MatProgressBar,
     AsyncPipe,
