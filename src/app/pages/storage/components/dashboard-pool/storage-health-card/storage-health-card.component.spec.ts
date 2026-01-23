@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -103,10 +103,8 @@ describe('StorageHealthCardComponent', () => {
       mockProvider(PoolsDashboardStore, {
         scrubForPool: jest.fn(() => scrubTask),
       }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of()),
-        })),
+      mockProvider(Router, {
+        navigate: jest.fn(),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -271,181 +269,99 @@ describe('StorageHealthCardComponent', () => {
       expect(viewLink).toBeFalsy();
     });
 
-    it('opens disk errors dialog when clicking "View"', () => {
-      const matDialog = spectator.inject(MatDialog);
+    it('navigates to the pool VDEVs page when clicking "View"', () => {
+      const router = spectator.inject(Router);
       const viewLink = spectator.query(byText('View'));
       expect(viewLink).toBeTruthy();
 
       spectator.click(viewLink);
 
-      expect(matDialog.open).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          data: expect.objectContaining({
-            poolId: 45,
-            poolName: 'tank',
-            disks: expect.arrayContaining([
-              expect.objectContaining({
-                guid: expect.any(String),
-                name: expect.any(String),
-                errorCount: expect.objectContaining({
-                  read: expect.any(Number),
-                  write: expect.any(Number),
-                  checksum: expect.any(Number),
-                }),
-              }),
-            ]),
-          }),
-        }),
-      );
+      expect(router.navigate).toHaveBeenCalledWith([
+        '/storage',
+        pool.id.toString(),
+        'vdevs',
+      ]);
     });
 
-    it('opens disk errors dialog with the correct disk name', () => {
-      const customPool = {
-        ...pool,
-        topology: {
-          data: [
-            // disk identified by `disk` string
-            {
-              guid: '1',
-              disk: 'sda',
-              stats: { read_errors: 0, checksum_errors: 0, write_errors: 1 },
-            },
-            // disk identified by path alone
-            {
-              guid: '2',
-              path: '/dev/disk/by-partuuid/asdf',
-              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
-            },
-            // disk identified by name alone
-            {
-              guid: '3',
-              name: 'nvme0n1',
-              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
-            },
-            // disk with only a GUID
-            {
-              guid: '4',
-              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
-            },
-            // disk with basically no identifying information (a wild edge case)
-            {
-              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
-            },
-          ],
-        },
-      } as Pool;
+    describe('scrub tasks', () => {
+      it('shows if scrub task is set along with a link to view all scrub tasks', () => {
+        const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
+        expect(detailsItem.querySelector('.value')).toHaveText('At 03:00 PM, only on Sunday');
+      });
 
-      spectator.setInput('pool', customPool);
-      spectator.detectChanges();
-      const matDialog = spectator.inject(MatDialog);
-      const viewLink = spectator.query(byText('View'));
-      expect(viewLink).toBeTruthy();
+      it('opens the form to create/edit scrub task when Configure link is pressed', () => {
+        const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
 
-      spectator.click(viewLink);
+        const link = detailsItem.querySelector('a')!;
+        expect(link).toHaveText('Configure');
 
-      expect(matDialog.open).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          data: expect.objectContaining({
-            disks: expect.arrayContaining([
-              expect.objectContaining({
-                name: '/dev/sda',
-              }),
-              expect.objectContaining({
-                name: '/dev/disk/by-partuuid/asdf',
-              }),
-              expect.objectContaining({
-                name: 'nvme0n1',
-              }),
-              expect.objectContaining({
-                name: '4',
-              }),
-            ]),
-          }),
-        }),
-      );
-    });
-  });
+        spectator.click(link);
 
-  describe('scrub tasks', () => {
-    it('shows if scrub task is set along with a link to view all scrub tasks', () => {
-      const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('At 03:00 PM, only on Sunday');
-    });
+        expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubFormComponent, {
+          data: {
+            poolId: pool.id,
+            existingScrubTask: scrubTask,
+          },
+        });
+      });
 
-    it('opens the form to create/edit scrub task when Configure link is pressed', () => {
-      const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
+      it('starts a scrub when Scrub Now is pressed', async () => {
+        const scrubButton = await loader.getHarness(MatButtonHarness.with({ text: 'Scrub Now' }));
+        await scrubButton.click();
 
-      const link = detailsItem.querySelector('a')!;
-      expect(link).toHaveText('Configure');
+        expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+        expect(api.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+      });
 
-      spectator.click(link);
+      it('shows information about an active scan task', () => {
+        const activeScrub = {
+          name: 'tank',
+          scan: {
+            state: PoolScanState.Scanning,
+            function: PoolScanFunction.Scrub,
+            percentage: 17.43,
+            total_secs_left: 574,
+          },
+        } as PoolScan;
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubFormComponent, {
-        data: {
-          poolId: pool.id,
-          existingScrubTask: scrubTask,
-        },
+        websocketSubscription$.next({
+          fields: activeScrub,
+        } as ApiEvent<PoolScan>);
+
+        spectator.detectChanges();
+
+        const activePoolScan = spectator.query(ActivePoolScanComponent);
+        expect(activePoolScan).toBeTruthy();
+        expect(activePoolScan.scan).toEqual(activeScrub.scan);
+        expect(activePoolScan.pool).toEqual(pool);
+      });
+
+      it('shows information about last scan results', () => {
+        const lastPoolScan = spectator.query(LastPoolScanComponent);
+        expect(lastPoolScan).toBeTruthy();
+        expect(lastPoolScan.scan).toEqual(completedScrub);
       });
     });
 
-    it('starts a scrub when Scrub Now is pressed', async () => {
-      const scrubButton = await loader.getHarness(MatButtonHarness.with({ text: 'Scrub Now' }));
-      await scrubButton.click();
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(api.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
-    });
-
-    it('shows information about an active scan task', () => {
-      const activeScrub = {
-        name: 'tank',
-        scan: {
-          state: PoolScanState.Scanning,
-          function: PoolScanFunction.Scrub,
-          percentage: 17.43,
-          total_secs_left: 574,
-        },
-      } as PoolScan;
-
-      websocketSubscription$.next({
-        fields: activeScrub,
-      } as ApiEvent<PoolScan>);
-
-      spectator.detectChanges();
-
-      const activePoolScan = spectator.query(ActivePoolScanComponent);
-      expect(activePoolScan).toBeTruthy();
-      expect(activePoolScan.scan).toEqual(activeScrub.scan);
-      expect(activePoolScan.pool).toEqual(pool);
-    });
-
-    it('shows information about last scan results', () => {
-      const lastPoolScan = spectator.query(LastPoolScanComponent);
-      expect(lastPoolScan).toBeTruthy();
-      expect(lastPoolScan.scan).toEqual(completedScrub);
-    });
-  });
-
-  describe('auto TRIM', () => {
-    it('shows current auto TRIM setting', () => {
-      const detailsItem = spectator.query(byText('Auto TRIM:'))!.parentElement!;
-      expect(detailsItem.querySelector('.value')).toHaveText('On');
-    });
-
-    it('shows Auto TRIM when enabled', () => {
-      expect(spectator.query(byText('Auto TRIM:'))).toBeTruthy();
-    });
-
-    it('hides Auto TRIM when disabled', () => {
-      spectator.setInput('pool', {
-        ...pool,
-        autotrim: { value: 'off' },
+    describe('auto TRIM', () => {
+      it('shows current auto TRIM setting', () => {
+        const detailsItem = spectator.query(byText('Auto TRIM:'))!.parentElement!;
+        expect(detailsItem.querySelector('.value')).toHaveText('On');
       });
-      spectator.detectChanges();
 
-      expect(spectator.query(byText('Auto TRIM:'))).toBeFalsy();
+      it('shows Auto TRIM when enabled', () => {
+        expect(spectator.query(byText('Auto TRIM:'))).toBeTruthy();
+      });
+
+      it('hides Auto TRIM when disabled', () => {
+        spectator.setInput('pool', {
+          ...pool,
+          autotrim: { value: 'off' },
+        });
+        spectator.detectChanges();
+
+        expect(spectator.query(byText('Auto TRIM:'))).toBeFalsy();
+      });
     });
   });
 
