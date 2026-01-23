@@ -3,23 +3,23 @@
 
 **Branch:** `icon-revamp`
 **Created:** 2026-01-23
-**Last Updated:** 2026-01-23 (Session 3)
+**Last Updated:** 2026-01-23 (Session 4)
 
 ---
 
 ## 📊 Current Migration Status
 
-**Overall Progress:** ~8% complete (5 of 50+ modules)
+**Overall Progress:** ~32% complete (23 modules completed, 177 of 559 ix-icon usages migrated)
 
-**Current Phase:** Phase 1 - Single File Modules (3/6 complete)
-**Last Completed Module:** tooltip (completed 2026-01-23)
-**Next Target Module:** scheduler (Phase 1, Module 4)
+**Current Phase:** Phase 4 - Layout Module (partially complete), Phase 5B - ix-table Module (next target)
+**Last Completed Module:** dialog (completed 2026-01-23, Phase 5A)
+**Next Target Module:** ix-table (Phase 5B) or remaining Phase 4 topbar components
 
 **Statistics:**
-- ✅ **Completed:** 5 modules (~59 files)
-- ⏳ **Remaining:** 204 files with ~547 ix-icon usages
+- ✅ **Completed:** ~23 modules (forms, interface-status-icon, Phase 1 all 6, Phase 2 all 6, Phase 3 all 3, Phase 4 partial 3/11, Phase 5A all 6)
+- ⏳ **Remaining:** 382 ix-icon usages (down from 559)
 - 🚫 **Deferred:** 14 files with [fullSize] input (Phase 7)
-- 📦 **Modules Remaining:** 45+ modules across 8 phases
+- 📦 **Modules Remaining:** Phase 4 completion, Phase 5B, Phase 6, Phase 7, Phase 8
 
 **Quick Commands:**
 ```bash
@@ -119,6 +119,76 @@ yarn test:changed
 **Next Session Goals:**
 - Continue Phase 1 with scheduler module (Module 4)
 
+### Session 4: 2026-01-23 - Major Progress: Phases 1-3 Complete, Phase 4 & 5A Progress
+**Focus:** Completing Phases 1-3, partial Phase 4, and Phase 5A (dialog module)
+
+**Completed:**
+- ✅ Completed ALL of Phase 1 (6/6 modules):
+  - scheduler (scheduler-preview-column.component)
+  - ix-tree (tree-virtual-scroll-view.component)
+  - slide-ins (modal-header.component)
+- ✅ Completed ALL of Phase 2 (6/6 modules):
+  - buttons (copy-button, mobile-back-button)
+  - feedback (feedback-dialog, similar-issues)
+  - jobs (jobs-panel, job-item) - Critical system feature
+  - alerts (alert, alerts-panel) - Critical user-facing feature
+  - truecommand (status modal)
+  - truenas-connect (status modal, status display)
+- ✅ Completed ALL of Phase 3 (3/3 modules):
+  - lists (dual-listbox, ordered-list, bulk-list-item)
+  - global-search (trigger, main, results) - High-visibility topbar feature
+  - websocket-debug-panel (5 components) - Developer tool
+- ✅ Completed Phase 4 (3/11 components):
+  - change-password-dialog (used TnIconButtonComponent)
+  - ha-status-popover (HA status indicators)
+  - Note: admin-layout was completed earlier
+  - Deferred: truenas-logo (uses [fullSize])
+- ✅ Completed ALL of Phase 5A (6/6 components):
+  - info-dialog.component (changed default icon: info → information)
+  - error-dialog.component (6 icon mappings including alert-circle, eye, eye-off)
+  - general-dialog.component (removed MarkedIcon type)
+  - job-progress-dialog.component (used TnIconButtonComponent)
+  - error-template.component (multi-error dialog icons)
+  - subsystem-partially-created-dialog.component (warning → alert)
+
+**Commits Made (Session 4):**
+- ae4ccd0827: Migrate modal-header from ix-icon to tn-icon
+- d65da66271: Migrate tree-virtual-scroll-view from ix-icon to tn-icon
+- 0e72020f36: Migrate scheduler-preview-column from ix-icon to tn-icon
+- aa993fab64: Migrate buttons module from ix-icon to tn-icon
+- b17bf7aeff: Migrate feedback module from ix-icon to tn-icon
+- 2d7ef1f310: Migrate jobs module from ix-icon to tn-icon
+- bc2029c7df: Migrate alerts module from ix-icon to tn-icon
+- 05d223615d: Migrate truecommand and truenas-connect modules from ix-icon to tn-icon
+- 2d2340ed54: Migrate lists module from ix-icon to tn-icon
+- de3a91bb89: Migrate global-search module from ix-icon to tn-icon
+- 8350af3464: Migrate websocket-debug-panel module from ix-icon to tn-icon
+- 3f2bab0e42: Migrate layout module topbar components from ix-icon to tn-icon
+- ec9d0ea070: Migrate dialog module from ix-icon to tn-icon
+
+**Test Updates:**
+- Updated all test files to use TnIconHarness and TnIconButtonHarness
+- Fixed test pattern: use `getHarnessOrNull()` for proper async handling
+- All 65+ tests passing across migrated modules
+
+**Key Learnings:**
+- Icon button pattern solidified: use TnIconButtonComponent for icon-only buttons
+- Test harness pattern: `await loader.getHarnessOrNull(TnIconButtonHarness.with({ name: 'icon-name' }))`
+- `TnIconButtonComponent` has built-in `tooltip` input (no need for matTooltip)
+- Removed `MarkedIcon` type references, replaced with plain `string`
+- Major icon mappings completed: warning→alert, error→alert-circle, visibility→eye, visibility_off→eye-off
+
+**Progress Metrics:**
+- Started session with: ~559 ix-icon usages remaining
+- Ended session with: 382 ix-icon usages remaining
+- Migrated: ~177 usages (32% of original total)
+- Modules completed this session: ~18 modules
+
+**Next Session Goals:**
+- Complete Phase 4: Remaining topbar components (topbar, jobs-indicator, checkin-indicator, resilvering-indicator, user-menu, power-menu, navigation)
+- OR proceed to Phase 5B: ix-table module (8+ components, high risk)
+- OR proceed to Phase 6: Page modules (storage, datasets, apps, etc.)
+
 ---
 
 ## Executive Summary
@@ -126,14 +196,16 @@ yarn test:changed
 ### Current State Assessment
 
 **Progress:**
-- ✅ Completed: 5 modules (forms, interface-status-icon, snackbar, terminal, tooltip) - ~59 files
-- ⏳ Remaining: 204 files with ~547 ix-icon usages
-- 🚫 Blockers: 14 files using `[fullSize]` input (deferred to final phase)
+- ✅ Completed: ~23 modules/areas (~94 files) - Phases 1, 2, 3 complete; Phase 4 & 5A partial
+- ⏳ Remaining: 382 ix-icon usages (down from 559) - ~68% remaining
+- 🎯 Progress: ~32% complete (177 of 559 usages migrated)
+- 🚫 Blockers: 14 files using `[fullSize]` input (deferred to Phase 7)
 
 **Scope:**
-- **Shared Modules:** 28 modules need migration
-- **Page Modules:** 15+ feature areas (dashboard, storage, datasets, apps, sharing, etc.)
-- **Total Estimated Effort:** 12-14 weeks following phased approach
+- **Shared Modules:** Most core shared modules completed (forms, snackbar, buttons, jobs, alerts, dialog, etc.)
+- **Remaining Shared:** Phase 4 completion (layout/topbar), Phase 5B (ix-table)
+- **Page Modules:** 15+ feature areas still queued (dashboard, storage, datasets, apps, sharing, etc.)
+- **Total Estimated Effort:** 12-14 weeks following phased approach (ahead of schedule)
 
 ### Success Criteria
 
@@ -827,73 +899,87 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 
 | Module | Files | Completed | Commit | Notes |
 |--------|-------|-----------|--------|-------|
-| forms | 46 | ~2026-01-15 | (before spec) | Large module, includes ix-input, ix-star-rating, etc. |
-| interface-status-icon | 1 | ~2026-01-20 | (before spec) | Network status indicators |
+| forms | 46 | ~2026-01-15 | e769107abf | Large module, includes ix-input, ix-star-rating, etc. |
+| interface-status-icon | 1 | ~2026-01-20 | 9e2be222f4 | Network status indicators |
 | snackbar | 5 | 2026-01-23 | 679c9427a3 | Notification component with dynamic icons |
-| terminal (font-size) | 3 | 2026-01-23 | 679c9427a3 | Icon buttons for font size controls, used TnIconButtonComponent |
-| tooltip | 4 | 2026-01-23 | (pending) | Utility component, no spec file, Material Icons help_outline → MDI help-circle-outline |
+| terminal (font-size) | 3 | 2026-01-23 | 679c9427a3 | Icon buttons for font size controls |
+| tooltip | 4 | 2026-01-23 | ad9e4c1903 | Utility component, help_outline → help-circle-outline |
+| scheduler | 1 | 2026-01-23 | 0e72020f36 | Preview column component |
+| ix-tree | 1 | 2026-01-23 | d65da66271 | Tree navigation |
+| slide-ins | 1 | 2026-01-23 | ae4ccd0827 | Modal header (widely used) |
+| buttons | 2 | 2026-01-23 | aa993fab64 | copy-button, mobile-back-button |
+| feedback | 2 | 2026-01-23 | b17bf7aeff | Feedback dialogs |
+| jobs | 2 | 2026-01-23 | 2d7ef1f310 | Job monitoring UI (critical) |
+| alerts | 2 | 2026-01-23 | bc2029c7df | Alert notifications (critical) |
+| truecommand | 1 | 2026-01-23 | 05d223615d | Enterprise feature |
+| truenas-connect | 2 | 2026-01-23 | 05d223615d | Enterprise feature |
+| lists | 3 | 2026-01-23 | 2d2340ed54 | Form list components |
+| global-search | 3 | 2026-01-23 | de3a91bb89 | Topbar search (high visibility) |
+| websocket-debug-panel | 5 | 2026-01-23 | 8350af3464 | Developer tool |
+| layout (partial) | 3 | 2026-01-23 | 3f2bab0e42, 4fbed6a546 | admin-layout, change-password-dialog, ha-status-popover |
+| dialog | 6 | 2026-01-23 | ec9d0ea070 | All dialog components, critical for UX |
 
-**Total Completed:** 5 modules, ~59 files
+**Total Completed:** ~23 modules/areas, ~94 files
 
 ---
 
 ### 🚀 Phase 1: Single File Modules (Week 1)
-**Status:** In Progress | **Target:** 6 modules
+**Status:** ✅ COMPLETE | **Target:** 6 modules
 
 | # | Module | Files | Status | Completed | Commit | Notes |
 |---|--------|-------|--------|-----------|--------|-------|
 | 1 | snackbar | 5 | ✅ Complete | 2026-01-23 | 679c9427a3 | Dynamic icon from config, all tests pass |
 | 2 | terminal | 3 | ✅ Complete | 2026-01-23 | 679c9427a3 | Font size controls, used TnIconButtonComponent |
-| 3 | tooltip | 4 | ✅ Complete | 2026-01-23 | (pending) | Utility component, no spec file |
-| 4 | scheduler | 1 | ⏳ Next | | | Preview column component |
-| 5 | ix-tree | 1 | 📋 Queued | | | Tree navigation |
-| 6 | slide-ins | 1 | 📋 Queued | | | Modal header (widely used) |
+| 3 | tooltip | 4 | ✅ Complete | 2026-01-23 | ad9e4c1903 | Utility component, no spec file |
+| 4 | scheduler | 1 | ✅ Complete | 2026-01-23 | 0e72020f36 | Preview column component |
+| 5 | ix-tree | 1 | ✅ Complete | 2026-01-23 | d65da66271 | Tree navigation |
+| 6 | slide-ins | 1 | ✅ Complete | 2026-01-23 | ae4ccd0827 | Modal header (widely used) |
 
-**Phase 1 Progress:** 3/6 modules (50%)
+**Phase 1 Progress:** 6/6 modules (100%) ✅
 
 ---
 
 ### 📦 Phase 2: Small Modules (Week 2)
-**Status:** Not Started | **Target:** 6 modules
+**Status:** ✅ COMPLETE | **Target:** 6 modules
 
 | # | Module | Files | Status | Completed | Commit | Notes |
 |---|--------|-------|--------|-----------|--------|-------|
-| 1 | buttons | 2 | 📋 Queued | | | copy-button, mobile-back-button |
-| 2 | feedback | 2 | 📋 Queued | | | Feedback dialogs |
-| 3 | jobs | 2 | 📋 Queued | | | Job monitoring UI (critical) |
-| 4 | alerts | 2 | 📋 Queued | | | Alert notifications (critical) |
-| 5 | truecommand | 1 | 📋 Queued | | | Enterprise feature |
-| 6 | truenas-connect | 2 | 📋 Queued | | | Enterprise feature |
+| 1 | buttons | 2 | ✅ Complete | 2026-01-23 | aa993fab64 | copy-button, mobile-back-button |
+| 2 | feedback | 2 | ✅ Complete | 2026-01-23 | b17bf7aeff | Feedback dialogs |
+| 3 | jobs | 2 | ✅ Complete | 2026-01-23 | 2d7ef1f310 | Job monitoring UI (critical) |
+| 4 | alerts | 2 | ✅ Complete | 2026-01-23 | bc2029c7df | Alert notifications (critical) |
+| 5 | truecommand | 1 | ✅ Complete | 2026-01-23 | 05d223615d | Enterprise feature |
+| 6 | truenas-connect | 2 | ✅ Complete | 2026-01-23 | 05d223615d | Enterprise feature |
 
-**Phase 2 Progress:** 0/6 modules (0%)
+**Phase 2 Progress:** 6/6 modules (100%) ✅
 
 ---
 
 ### 🔧 Phase 3: Medium Modules (Week 3)
-**Status:** Not Started | **Target:** 3 modules
+**Status:** ✅ COMPLETE | **Target:** 3 modules
 
 | # | Module | Files | Status | Completed | Commit | Notes |
 |---|--------|-------|--------|-----------|--------|-------|
-| 1 | lists | 3 | 📋 Queued | | | Form list components |
-| 2 | global-search | 3 | 📋 Queued | | | Topbar search (high visibility) |
-| 3 | websocket-debug-panel | 5 | 📋 Queued | | | Developer tool |
+| 1 | lists | 3 | ✅ Complete | 2026-01-23 | 2d2340ed54 | Form list components |
+| 2 | global-search | 3 | ✅ Complete | 2026-01-23 | de3a91bb89 | Topbar search (high visibility) |
+| 3 | websocket-debug-panel | 5 | ✅ Complete | 2026-01-23 | 8350af3464 | Developer tool |
 | - | ~~empty~~ | 1 | 🚫 Deferred | | | Uses [fullSize] - Phase 7 |
 
-**Phase 3 Progress:** 0/3 modules (0%)
+**Phase 3 Progress:** 3/3 modules (100%) ✅
 
 ---
 
 ### 🏗️ Phase 4: Layout Module (Week 4)
-**Status:** Not Started | **Target:** ~11 components
+**Status:** ⏳ IN PROGRESS | **Target:** ~11 components
 
 | Component | Status | Completed | Commit | Notes |
 |-----------|--------|-----------|--------|-------|
-| admin-layout | 📋 Queued | | | Already imports TnIconComponent |
+| admin-layout | ✅ Complete | ~2026-01-15 | 4fbed6a546 | Already imports TnIconComponent |
 | topbar | 📋 Queued | | | Main topbar component |
-| change-password-dialog | 📋 Queued | | | |
+| change-password-dialog | ✅ Complete | 2026-01-23 | 3f2bab0e42 | Used TnIconButtonComponent |
 | ha-status-icon | 📋 Queued | | | HA status indicators |
-| ha-status-popover | 📋 Queued | | | |
-| jobs-indicator | 📋 Queued | | | Depends on Phase 2 (jobs) |
+| ha-status-popover | ✅ Complete | 2026-01-23 | 3f2bab0e42 | HA status popover |
+| jobs-indicator | 📋 Queued | | | Depends on Phase 2 (jobs) - now complete |
 | checkin-indicator | 📋 Queued | | | |
 | resilvering-indicator | 📋 Queued | | | |
 | user-menu | 📋 Queued | | | |
@@ -901,24 +987,24 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | navigation | 📋 Queued | | | Sidebar navigation |
 | ~~truenas-logo~~ | 🚫 Deferred | | | Uses [fullSize] - Phase 7 |
 
-**Phase 4 Progress:** 0/11 components (0%)
+**Phase 4 Progress:** 3/11 components (27%)
 
 ---
 
 ### 🎯 Phase 5: Large Shared Modules (Weeks 5-6)
-**Status:** Not Started
+**Status:** Phase 5A Complete, Phase 5B Not Started
 
-#### Phase 5A: Dialog Module (6 components)
+#### Phase 5A: Dialog Module (6 components) - ✅ COMPLETE
 | Component | Status | Completed | Commit | Notes |
 |-----------|--------|-----------|--------|-------|
-| error-dialog | 📋 Queued | | | Critical for UX |
-| general-dialog | 📋 Queued | | | |
-| info-dialog | 📋 Queued | | | |
-| job-progress-dialog | 📋 Queued | | | |
-| error-template | 📋 Queued | | | Multi-error dialog |
-| subsystem-partially-created | 📋 Queued | | | |
+| error-dialog | ✅ Complete | 2026-01-23 | ec9d0ea070 | Critical for UX, 6 icon mappings |
+| general-dialog | ✅ Complete | 2026-01-23 | ec9d0ea070 | Removed MarkedIcon type |
+| info-dialog | ✅ Complete | 2026-01-23 | ec9d0ea070 | Changed default icon: info → information |
+| job-progress-dialog | ✅ Complete | 2026-01-23 | ec9d0ea070 | Used TnIconButtonComponent |
+| error-template | ✅ Complete | 2026-01-23 | ec9d0ea070 | Multi-error dialog |
+| subsystem-partially-created | ✅ Complete | 2026-01-23 | ec9d0ea070 | warning → alert |
 
-#### Phase 5B: ix-table Module (8+ components)
+#### Phase 5B: ix-table Module (8+ components) - ⏳ NEXT TARGET
 | Component | Status | Completed | Commit | Notes |
 |-----------|--------|-----------|--------|-------|
 | ix-table-head | 📋 Queued | | | |
@@ -930,7 +1016,7 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | ix-cell-state-button | 📋 Queued | | | Has tests |
 | ~~ix-empty-row~~ | 🚫 Check | | | May use [fullSize] |
 
-**Phase 5 Progress:** 0/14 components (0%)
+**Phase 5 Progress:** 6/14 components (43%) - Phase 5A Complete ✅
 
 ---
 
@@ -1003,15 +1089,16 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase | Modules/Files | Completed | Progress |
 |-------|--------------|-----------|----------|
 | Pre-work | 2 modules | ✅ 2 | 100% |
-| Phase 1 | 6 modules | ⏳ 3 | 50% |
-| Phase 2 | 6 modules | 📋 0 | 0% |
-| Phase 3 | 3 modules | 📋 0 | 0% |
-| Phase 4 | 11 components | 📋 0 | 0% |
-| Phase 5 | 14 components | 📋 0 | 0% |
+| Phase 1 | 6 modules | ✅ 6 | 100% ✅ |
+| Phase 2 | 6 modules | ✅ 6 | 100% ✅ |
+| Phase 3 | 3 modules | ✅ 3 | 100% ✅ |
+| Phase 4 | 11 components | ⏳ 3 | 27% |
+| Phase 5A | 6 components | ✅ 6 | 100% ✅ |
+| Phase 5B | 8 components | 📋 0 | 0% |
 | Phase 6 | ~170 files | 📋 0 | 0% |
 | Phase 7 | 14 files | 🚫 0 | Blocked |
 | Phase 8 | 8 tasks | 📋 0 | 0% |
-| **TOTAL** | **~224 items** | **✅ 5** | **~8%** |
+| **TOTAL** | **~234 items** | **✅ 26** | **~32%** |
 
 **Legend:**
 - ✅ Complete
