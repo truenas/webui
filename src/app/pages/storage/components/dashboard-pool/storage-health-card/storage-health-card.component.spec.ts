@@ -155,11 +155,17 @@ describe('StorageHealthCardComponent', () => {
     const faultedPool = {
       ...pool,
       status: PoolStatus.Faulted,
-    };
+    } as Pool;
 
     const unhealthyPool = {
       ...pool,
       healthy: false,
+    } as Pool;
+
+    const unhealthyUnknownPool = {
+      ...pool,
+      healthy: false,
+      status: PoolStatus.Unknown,
     } as Pool;
 
     it('shows an icon for pool status', () => {
@@ -191,13 +197,21 @@ describe('StorageHealthCardComponent', () => {
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe(
         'Pool is Online with errors',
       );
+
+      // unhealthy pool that has some other status should show error and say 'Pool is not healthy.'
+      spectator.setInput('pool', unhealthyUnknownPool);
+      spectator.detectChanges();
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe(
+        'Pool is not healthy',
+      );
     });
   });
 
   describe('error display and navigation', () => {
     it('shows pool status string with error counts', () => {
       const statusEl = spectator.query('.status');
-      expect(statusEl).toHaveText('Online, 3 VDEV errors, no disk errors.');
+      expect(statusEl).toHaveText('Online, 3 errors.');
     });
 
     it('shows "no errors" message when pool has no errors', () => {
@@ -234,7 +248,7 @@ describe('StorageHealthCardComponent', () => {
       spectator.detectChanges();
 
       const statusElement = spectator.query('.status');
-      expect(statusElement).toHaveText('Online, 1 VDEV errors, 3 disk errors.');
+      expect(statusElement).toHaveText('Online, 4 errors.');
     });
 
     it('shows "View" link when there are errors', () => {
@@ -279,6 +293,73 @@ describe('StorageHealthCardComponent', () => {
                   write: expect.any(Number),
                   checksum: expect.any(Number),
                 }),
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    it('opens disk errors dialog with the correct disk name', () => {
+      const customPool = {
+        ...pool,
+        topology: {
+          data: [
+            // disk identified by `disk` string
+            {
+              guid: '1',
+              disk: 'sda',
+              stats: { read_errors: 0, checksum_errors: 0, write_errors: 1 },
+            },
+            // disk identified by path alone
+            {
+              guid: '2',
+              path: '/dev/disk/by-partuuid/asdf',
+              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
+            },
+            // disk identified by name alone
+            {
+              guid: '3',
+              name: 'nvme0n1',
+              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
+            },
+            // disk with only a GUID
+            {
+              guid: '4',
+              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
+            },
+            // disk with basically no identifying information (a wild edge case)
+            {
+              stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
+            },
+          ],
+        },
+      } as Pool;
+
+      spectator.setInput('pool', customPool);
+      spectator.detectChanges();
+      const matDialog = spectator.inject(MatDialog);
+      const viewLink = spectator.query(byText('View'));
+      expect(viewLink).toBeTruthy();
+
+      spectator.click(viewLink);
+
+      expect(matDialog.open).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          data: expect.objectContaining({
+            disks: expect.arrayContaining([
+              expect.objectContaining({
+                name: '/dev/sda',
+              }),
+              expect.objectContaining({
+                name: '/dev/disk/by-partuuid/asdf',
+              }),
+              expect.objectContaining({
+                name: 'nvme0n1',
+              }),
+              expect.objectContaining({
+                name: '4',
               }),
             ]),
           }),

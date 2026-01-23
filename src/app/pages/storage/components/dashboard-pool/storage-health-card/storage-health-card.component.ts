@@ -84,7 +84,7 @@ const flattenDiskTopology = (topo: VDevItem[] | VDevItem[][]): VDevItem[] => {
  * @param items (flattened) topology to count errors within.
  * @returns the sum of read, write, and checksum errors in all devices satisfying `pred`.
  */
-const countErrors = (pred: (arg0: VDevItem) => boolean, items: VDevItem[]): number => {
+const countErrors = (pred: (arg0: VDevItem) => boolean, items: VDevItem[] | VDevItem[][]): number => {
   const flattened = flattenDiskTopology(items);
   return flattened.reduce((count: number, item: VDevItem): number => {
     const stats = item?.stats;
@@ -153,7 +153,7 @@ export class StorageHealthCardComponent implements OnChanges {
 
   protected iconData: Signal<StatusIconData> = computed(() => {
     const pool = this.pool();
-    const statusStr = this.translate.instant(this.poolStatusLabels.get(pool.status));
+    const statusStr = this.poolStatusLabels.get(pool.status);
     let tooltip: string;
     let icon: PoolCardIconType;
 
@@ -246,27 +246,18 @@ export class StorageHealthCardComponent implements OnChanges {
   }
 
   protected getErrorText(): string {
-    const vdevErrors = this.countVdevErrors();
-    const physErrors = this.countPhysDiskErrors();
+    const errorCount = this.countVdevErrors() + this.countPhysDiskErrors();
 
-    const statusStr = this.translate.instant(poolStatusLabels.get(this.pool().status));
+    const statusStr = poolStatusLabels.get(this.pool().status);
+    const errorStr = this.translate.instant('{count} errors', { count: errorCount });
 
-    if (vdevErrors === 0 && physErrors === 0) {
+    if (errorCount === 0) {
       return this.translate.instant('{status}, no errors.', { status: statusStr });
     }
 
-    const vdevErrorStr = vdevErrors === 0
-      ? this.translate.instant('no VDEV errors')
-      : this.translate.instant('{count} VDEV errors', { count: vdevErrors });
-
-    const physErrorStr = physErrors === 0
-      ? this.translate.instant('no disk errors')
-      : this.translate.instant('{count} disk errors', { count: physErrors });
-
-    return this.translate.instant('{status}, {vdevErrors}, {diskErrors}.', {
-      status: statusStr,
-      vdevErrors: vdevErrorStr,
-      diskErrors: physErrorStr,
+    return this.translate.instant('{statusStr}, {errorStr}.', {
+      statusStr,
+      errorStr,
     });
   }
 
@@ -288,10 +279,10 @@ export class StorageHealthCardComponent implements OnChanges {
         return `/dev/${disk.disk}`;
       }
 
-      return disk.path || disk.name;
+      return disk?.path || disk?.name || disk?.guid?.toString() || 'Unnamed disk';
     };
 
-    const disksWithErrors = flattenDiskTopology(topo.flat())
+    const disksWithErrors = flattenDiskTopology(topo)
       .filter((item: VDevItem) => {
         const stats: TopologyItemStats | undefined = item?.stats;
         if (!stats) {
@@ -301,7 +292,7 @@ export class StorageHealthCardComponent implements OnChanges {
         return sum > 0;
       })
       .map((item: VDevItem) => ({
-        guid: item.guid.toString(),
+        guid: item?.guid?.toString() || 'unknown',
         name: getDiskName(item),
         kind: item.type === TopologyItemType.Disk ? 'physical' : 'vdev',
         errorCount: {
@@ -327,7 +318,7 @@ export class StorageHealthCardComponent implements OnChanges {
    */
   private countVdevErrors(): number {
     const topo = Object.values(this.pool().topology);
-    return countErrors((item) => item.type !== TopologyItemType.Disk, topo.flat());
+    return countErrors((item) => item.type !== TopologyItemType.Disk, topo);
   }
 
   /**
