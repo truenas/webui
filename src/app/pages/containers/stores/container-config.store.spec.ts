@@ -57,6 +57,14 @@ describe('ContainerConfigStore', () => {
     });
   }));
 
+  it('should not make duplicate API calls when initialize is called while loading', fakeAsync(() => {
+    spectator.service.patchState({ isLoading: true });
+    spectator.service.initialize();
+    flush();
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+  }));
+
   describe('selectors', () => {
     beforeEach(fakeAsync(() => {
       spectator.service.initialize();

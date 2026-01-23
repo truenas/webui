@@ -6,13 +6,12 @@ import { Router } from '@angular/router';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { TnSpriteLoaderService } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
@@ -26,9 +25,6 @@ describe('UserMenuComponent', () => {
 
   const createComponent = createComponentFactory({
     component: UserMenuComponent,
-    declarations: [
-      MockComponent(IxIconComponent),
-    ],
     providers: [
       mockProvider(MatDialog),
       mockApi(),
@@ -36,6 +32,13 @@ describe('UserMenuComponent', () => {
         logout: jest.fn(() => of()),
         getGlobalTwoFactorConfig: jest.fn(() => globalTwoFactorConfig$),
         user$: of(dummyUser),
+      }),
+      mockProvider(TnSpriteLoaderService, {
+        ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+        getIconUrl: jest.fn(),
+        getSafeIconUrl: jest.fn(),
+        isSpriteLoaded: jest.fn(() => true),
+        getSpriteConfig: jest.fn(),
       }),
     ],
   });
@@ -106,12 +109,12 @@ describe('UserMenuComponent', () => {
           enabled: false,
         } as GlobalTwoFactorConfig);
 
-        const twoFactorAuth = await menu.getItems({ text: 'Two-Factor Authentication' });
+        const twoFactorAuth = await menu.getItems({ text: /Two-Factor Authentication$/ });
         expect(twoFactorAuth).toHaveLength(0);
       });
 
       it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {
-        const twoFactorAuth = await menu.getItems({ text: 'Two-Factor Authentication' });
+        const twoFactorAuth = await menu.getItems({ text: /Two-Factor Authentication$/ });
         const router = spectator.inject(Router);
         jest.spyOn(router, 'navigate');
 

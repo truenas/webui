@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { ContainerGpuType } from 'app/enums/container.enum';
 import { Container, ContainerDeviceEntry } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
@@ -27,11 +28,17 @@ describe('ContainerDevicesStore', () => {
     } as unknown as ContainerDeviceEntry,
   ] as ContainerDeviceEntry[];
 
+  const gpuChoices = {
+    '0000:19:00.0': ContainerGpuType.Nvidia,
+    '0000:1a:00.0': ContainerGpuType.Amd,
+  };
+
   const createService = createServiceFactory({
     service: ContainerDevicesStore,
     providers: [
       mockApi([
         mockCall('container.device.query', containerDevices),
+        mockCall('container.device.gpu_choices', gpuChoices),
       ]),
       mockProvider(ContainersStore, {
         containers: jest.fn(() => containers),
@@ -50,19 +57,23 @@ describe('ContainerDevicesStore', () => {
     expect(spectator.service.state()).toEqual({
       isLoading: false,
       devices: [],
+      gpuChoices,
+      isLoadingGpuChoices: false,
     });
   });
 
   it('should load devices when loadDevices is called', () => {
     spectator.service.reload();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.query', [[['container', '=', 1]]]);
     expect(spectator.service.state()).toEqual({
       devices: [
         { id: 1, name: 'device1' },
         { id: 2, name: 'device2' },
       ],
       isLoading: false,
+      gpuChoices,
+      isLoadingGpuChoices: false,
     });
   });
 
@@ -89,8 +100,16 @@ describe('ContainerDevicesStore', () => {
       expect(spectator.service.isLoading()).toBeFalsy();
     });
 
-    it('devices - returns flag showing whether devices are being loaded', () => {
+    it('devices - returns devices part of the state', () => {
       expect(spectator.service.devices()).toEqual([]);
+    });
+
+    it('gpuChoices - returns gpuChoices part of the state', () => {
+      expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
+    });
+
+    it('isLoadingGpuChoices - returns isLoadingGpuChoices part of the state', () => {
+      expect(spectator.service.isLoadingGpuChoices()).toBe(false);
     });
   });
 
@@ -197,6 +216,13 @@ describe('ContainerDevicesStore', () => {
 
       spectator.service.deviceDeleted(2);
       expect(spectator.service.devices()).toEqual([]);
+    });
+  });
+
+  describe('gpu choices', () => {
+    it('loads gpu choices in constructor', () => {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.gpu_choices');
+      expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
     });
   });
 });
