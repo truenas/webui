@@ -4,7 +4,7 @@ import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -14,7 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogTitle,
-    IxIconComponent,
+    TnIconComponent,
     MatDialogContent,
     MatDialogActions,
     MatButton,
@@ -27,6 +27,6 @@ export class InfoDialog {
 
   title: string;
   info: string;
-  icon = 'info';
+  icon = 'information';
   isHtml = false;
 }

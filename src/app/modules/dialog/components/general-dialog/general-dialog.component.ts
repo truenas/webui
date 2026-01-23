@@ -4,14 +4,13 @@ import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface GeneralDialogConfig {
   title?: string;
   message: string;
-  icon?: MarkedIcon | string;
+  icon?: string;
   is_html?: boolean;
   hideCancel?: boolean;
   cancelBtnMsg?: string;
@@ -32,7 +31,7 @@ export interface GeneralDialogConfig {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogTitle,
-    IxIconComponent,
+    TnIconComponent,
     MatDialogContent,
     MatDialogActions,
     MatButton,
