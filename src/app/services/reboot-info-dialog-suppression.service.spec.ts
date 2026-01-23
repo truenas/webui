@@ -27,4 +27,18 @@ describe('RebootInfoDialogSuppressionService', () => {
     spectator.service.unsuppress();
     expect(spectator.service.isSuppressed()).toBe(false);
   });
+
+  it('should handle multiple suppress() calls - last writer wins', () => {
+    spectator.service.suppress();
+    spectator.service.suppress();
+    expect(spectator.service.isSuppressed()).toBe(true);
+
+    spectator.service.unsuppress();
+    expect(spectator.service.isSuppressed()).toBe(false);
+  });
+
+  it('should handle unsuppress() when already unsuppressed', () => {
+    spectator.service.unsuppress();
+    expect(spectator.service.isSuppressed()).toBe(false);
+  });
 });
