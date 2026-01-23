@@ -3,23 +3,23 @@
 
 **Branch:** `icon-revamp`
 **Created:** 2026-01-23
-**Last Updated:** 2026-01-23
+**Last Updated:** 2026-01-23 (Session 2)
 
 ---
 
 ## 📊 Current Migration Status
 
-**Overall Progress:** ~2% complete (2 of 50+ modules)
+**Overall Progress:** ~6% complete (4 of 50+ modules)
 
-**Current Phase:** Planning Complete - Ready for Phase 1
-**Last Completed Module:** interface-status-icon (completed before 2026-01-23)
-**Next Target Module:** snackbar (Phase 1, Module 1)
+**Current Phase:** Phase 1 - Single File Modules (2/6 complete)
+**Last Completed Module:** terminal (font-size) (completed 2026-01-23)
+**Next Target Module:** tooltip (Phase 1, Module 3)
 
 **Statistics:**
-- ✅ **Completed:** 2 modules (~47 files)
-- ⏳ **Remaining:** 216 files with 559 ix-icon usages
+- ✅ **Completed:** 4 modules (~55 files)
+- ⏳ **Remaining:** 208 files with ~549 ix-icon usages
 - 🚫 **Deferred:** 14 files with [fullSize] input (Phase 7)
-- 📦 **Modules Remaining:** 48+ modules across 8 phases
+- 📦 **Modules Remaining:** 46+ modules across 8 phases
 
 **Quick Commands:**
 ```bash
@@ -57,10 +57,43 @@ yarn test:changed
 - Use systematic module-by-module approach
 - No commits without explicit user approval
 
+### Session 2: 2026-01-23 - Snackbar and Terminal Modules Migration
+**Focus:** Phase 1 Modules 1-2 - Snackbar and terminal modules migration
+
+**Completed:**
+- ✅ Migrated snackbar module (5 files)
+  - Updated `snackbar.component.ts`: IxIconComponent → TnIconComponent
+  - Updated `snackbar.component.html`: ix-icon → tn-icon
+  - Updated `snackbar-config.interface.ts`: MarkedIcon → string, updated JSDoc examples
+  - Updated `snackbar.service.ts`: iconMarker → tnIconMarker, removed mdi- prefixes
+  - Updated `snackbar.component.spec.ts`: Used TnIconHarness, updated test expectations
+  - All tests passing (3/3)
+- ✅ Migrated terminal font-size module (3 files)
+  - Updated `terminal-font-size.component.ts`: MatIconButton + IxIconComponent → TnIconButtonComponent
+  - Updated `terminal-font-size.component.html`: Replaced button with icon to tn-icon-button
+  - Updated `terminal-font-size.component.spec.ts`: Used TnIconButtonHarness with click() method
+  - All tests passing (5/5)
+- ✅ Updated TestDirective to support tn-icon-button element type
+- ✅ Updated @truenas/ui-components to v0.1.6 (includes TnIconButtonComponent and click() API)
+- ✅ Linting passed for all files
+- ✅ Committed changes: `679c9427a3`
+
+**Issues Encountered:**
+- TnIconHarness returns full icon name with `mdi-` prefix (e.g., `mdi-alert-circle`)
+- TnIconButtonComponent uses `name` attribute, not `icon`
+- TestDirective needed update to recognize `tn-icon-button` elements
+- Build process auto-generated mdi-plus in sprite-config.json
+
+**Key Learnings:**
+- TnIconComponent accepts marked icon strings directly via [name] binding
+- TnIconButtonComponent is the proper component for icon-only buttons
+- TnIconButtonHarness.with({ name: 'icon-name' }) filters by icon name
+- TnIconButtonHarness.click() method works for direct interaction
+- TestDirective maps `tn-icon-button` → `button` for test IDs
+- Sprite config is auto-generated at build time, no manual updates needed
+
 **Next Session Goals:**
-- Begin Phase 1 with snackbar module migration
-- Establish migration workflow and test it on simple module
-- Verify all tooling and commands work as expected
+- Continue Phase 1 with tooltip module (Module 3)
 
 ---
 
@@ -772,24 +805,26 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 |--------|-------|-----------|--------|-------|
 | forms | 46 | ~2026-01-15 | (before spec) | Large module, includes ix-input, ix-star-rating, etc. |
 | interface-status-icon | 1 | ~2026-01-20 | (before spec) | Network status indicators |
+| snackbar | 5 | 2026-01-23 | 679c9427a3 | Notification component with dynamic icons |
+| terminal (font-size) | 3 | 2026-01-23 | 679c9427a3 | Icon buttons for font size controls, used TnIconButtonComponent |
 
-**Total Completed:** 2 modules, ~47 files
+**Total Completed:** 4 modules, ~55 files
 
 ---
 
 ### 🚀 Phase 1: Single File Modules (Week 1)
-**Status:** Not Started | **Target:** 6 modules
+**Status:** In Progress | **Target:** 6 modules
 
 | # | Module | Files | Status | Completed | Commit | Notes |
 |---|--------|-------|--------|-----------|--------|-------|
-| 1 | snackbar | 1 | ⏳ Next | | | Dynamic icon from config |
-| 2 | terminal | 1 | 📋 Queued | | | Font size controls (minus/add icons) |
-| 3 | tooltip | 1 | 📋 Queued | | | Utility component |
+| 1 | snackbar | 5 | ✅ Complete | 2026-01-23 | 679c9427a3 | Dynamic icon from config, all tests pass |
+| 2 | terminal | 3 | ✅ Complete | 2026-01-23 | 679c9427a3 | Font size controls, used TnIconButtonComponent |
+| 3 | tooltip | 1 | ⏳ Next | | | Utility component |
 | 4 | scheduler | 1 | 📋 Queued | | | Preview column component |
 | 5 | ix-tree | 1 | 📋 Queued | | | Tree navigation |
 | 6 | slide-ins | 1 | 📋 Queued | | | Modal header (widely used) |
 
-**Phase 1 Progress:** 0/6 modules (0%)
+**Phase 1 Progress:** 2/6 modules (33%)
 
 ---
 
@@ -943,7 +978,7 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase | Modules/Files | Completed | Progress |
 |-------|--------------|-----------|----------|
 | Pre-work | 2 modules | ✅ 2 | 100% |
-| Phase 1 | 6 modules | ⏳ 0 | 0% |
+| Phase 1 | 6 modules | ⏳ 2 | 33% |
 | Phase 2 | 6 modules | 📋 0 | 0% |
 | Phase 3 | 3 modules | 📋 0 | 0% |
 | Phase 4 | 11 components | 📋 0 | 0% |
@@ -951,7 +986,7 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase 6 | ~170 files | 📋 0 | 0% |
 | Phase 7 | 14 files | 🚫 0 | Blocked |
 | Phase 8 | 8 tasks | 📋 0 | 0% |
-| **TOTAL** | **~224 items** | **✅ 2** | **~2%** |
+| **TOTAL** | **~224 items** | **✅ 4** | **~6%** |
 
 **Legend:**
 - ✅ Complete
