@@ -34,6 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +67,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
+  private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
 
   protected readonly stigRequirements = stigPasswordRequirements;
@@ -266,6 +268,8 @@ export class SystemSecurityFormComponent implements OnInit {
       };
     }
 
+    this.rebootInfoSuppression.suppress();
+
     this.dialogService.jobDialog(
       this.api.job('system.security.update', [values]),
       {
@@ -277,13 +281,20 @@ export class SystemSecurityFormComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        if (values.enable_gpos_stig) {
-          this.authService.clearAuthToken();
-        }
+      .subscribe({
+        next: () => {
+          this.rebootInfoSuppression.unsuppress();
 
-        this.slideInRef.close({ response: true });
-        this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
+          if (values.enable_gpos_stig) {
+            this.authService.clearAuthToken();
+          }
+
+          this.slideInRef.close({ response: true });
+          this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
+        },
+        error: () => {
+          this.rebootInfoSuppression.unsuppress();
+        },
       });
   }
 
