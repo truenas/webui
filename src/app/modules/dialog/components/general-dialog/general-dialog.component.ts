@@ -11,7 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export interface GeneralDialogConfig {
   title?: string;
   message: string;
-  icon?: MarkedIcon;
+  icon?: MarkedIcon | string;
   is_html?: boolean;
   hideCancel?: boolean;
   cancelBtnMsg?: string;
