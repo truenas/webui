@@ -22,7 +22,7 @@
             (keydown)="onItemKeydown('available', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon [name]="icon"></tn-icon>
+              <tn-icon style="margin-right: 4px" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
@@ -113,7 +113,7 @@
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon [name]="icon"></tn-icon>
+              <tn-icon style="margin-right: 4px" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
