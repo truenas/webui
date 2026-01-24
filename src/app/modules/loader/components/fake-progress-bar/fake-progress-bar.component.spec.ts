@@ -1,70 +1,74 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import {
-  discardPeriodicTasks, fakeAsync, tick,
-} from '@angular/core/testing';
-import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
+import { fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FakeProgressBarComponent } from './fake-progress-bar.component';
 
 describe('FakeProgressBarComponent', () => {
   let spectator: Spectator<FakeProgressBarComponent>;
-  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: FakeProgressBarComponent,
   });
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a progress bar when loading is true', fakeAsync(async () => {
+  it('shows a progress bar when loading is true', fakeAsync(() => {
     spectator.setInput('loading', true);
     tick(200);
+    spectator.detectChanges();
 
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
+    const progressBar = spectator.query('mat-progress-bar');
     expect(progressBar).toBeTruthy();
 
     discardPeriodicTasks();
   }));
 
-  it('imitates progress by increasing % as time passes, but does so in a way that will never reach 100%', fakeAsync(async () => {
+  it('imitates progress by increasing % as time passes, but does so in a way that will never reach 100%', fakeAsync(() => {
     spectator.setInput({
       duration: 2000,
       loading: true,
     });
     tick(200);
+    spectator.detectChanges();
 
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
     tick(500);
-    expect(Math.floor((await progressBar.getValue())!)).toBe(9);
+    spectator.detectChanges();
+    expect(Math.floor(spectator.component.progress())).toBe(9);
+
     tick(500);
-    expect(Math.floor((await progressBar.getValue())!)).toBe(28);
+    spectator.detectChanges();
+    expect(Math.floor(spectator.component.progress())).toBe(28);
+
     tick(500);
-    expect(Math.floor((await progressBar.getValue())!)).toBe(37);
+    spectator.detectChanges();
+    expect(Math.floor(spectator.component.progress())).toBe(37);
+
     tick(500);
-    expect(Math.floor((await progressBar.getValue())!)).toBe(47);
+    spectator.detectChanges();
+    expect(Math.floor(spectator.component.progress())).toBe(47);
 
     discardPeriodicTasks();
   }));
 
-  it('reaches 100% when loading is switched back to false', fakeAsync(async () => {
+  it('reaches 100% when loading is switched back to false', fakeAsync(() => {
     spectator.setInput('loading', true);
     tick(200);
+    spectator.detectChanges();
     spectator.setInput('loading', false);
+    spectator.detectChanges();
 
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
-    expect(await progressBar.getValue()).toBe(100);
+    expect(spectator.component.progress()).toBe(100);
   }));
 
-  it('hides progress bar when loading is set back to false', fakeAsync(async () => {
+  it('hides progress bar when loading is set back to false', fakeAsync(() => {
     spectator.setInput('loading', true);
     tick(200); // Wait for grace period
+    spectator.detectChanges();
     spectator.setInput('loading', false);
     tick(300); // Wait for animation
+    spectator.detectChanges();
 
-    const progressBar = await loader.getHarnessOrNull(MatProgressBarHarness);
-    expect(progressBar).toBeNull();
+    const progressBar = spectator.query('mat-progress-bar');
+    expect(progressBar).toBeFalsy();
   }));
 });

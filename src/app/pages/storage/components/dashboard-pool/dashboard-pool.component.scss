@@ -13,9 +13,11 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
+  padding-bottom: 5px;
   margin-bottom: 5px;
   margin-left: 5px;
   margin-right: 5px;
+  border-bottom: 1px solid var(--lines);
 }
 
 .pool-name {

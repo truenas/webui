@@ -7,11 +7,11 @@
     [matTooltip]="tooltips.connectingToTruecommand | translate"
     (click)="stopTrueCommandConnecting()"
   >
-    <ix-icon
-      class="truecommand-button-connecting-animation !size-5"
-      name="ix-truecommand-logo-mark"
-      [fullSize]="true"
-    ></ix-icon>
+    <tn-icon
+      size="lg"
+      class="truecommand-button-connecting-animation"
+      name="tn-truecommand-logo-mark"
+    ></tn-icon>
   </button>
 }
 
@@ -27,10 +27,6 @@
     [ixUiSearch]="searchableElements.elements.trueCommand"
     (click)="handleClick()"
   >
-    <ix-icon
-      class="!text-foreground !size-5"
-      name="ix-truecommand-logo-mark"
-      [fullSize]="true"
-    ></ix-icon>
+    <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
   </button>
 }

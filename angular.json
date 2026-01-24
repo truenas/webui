@@ -27,11 +27,18 @@
             "polyfills": [
               "src/polyfills.ts"
             ],
-            "assets": ["src/assets", "src/sw.js"],
+            "assets": [
+              "src/sw.js",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@truenas/ui-components/assets/tn-icons",
+                "output": "assets/tn-icons"
+              },
+              "src/assets"
+            ],
             "stylePreprocessorOptions": {
               "sass": {
                 "silenceDeprecations": [
-                  "mixed-decls",
                   "color-functions",
                   "global-builtin",
                   "import"
@@ -44,6 +51,7 @@
             },
             "styles": [
               "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
+              "node_modules/@truenas/ui-components/src/styles/themes.css",
               "src/assets/styles/index.scss"
             ],
             "scripts": [

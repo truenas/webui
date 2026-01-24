@@ -138,7 +138,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -174,7 +174,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingCdRom })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingCdRom, vmName: 'test-vm' })),
             }),
           ],
         });
@@ -230,7 +230,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -344,7 +344,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -386,7 +386,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingDisk })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingDisk, vmName: 'test-vm' })),
             }),
           ],
         });
@@ -449,7 +449,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -492,7 +492,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingRawFile })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingRawFile, vmName: 'test-vm' })),
             }),
           ],
         });
@@ -565,7 +565,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -611,7 +611,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -685,7 +685,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -801,7 +801,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -839,7 +839,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingPassthrough })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingPassthrough, vmName: 'test-vm' })),
             }),
 
           ],
@@ -922,7 +922,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingSpiceDisplay })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingSpiceDisplay, vmName: 'test-vm' })),
             }),
           ],
         });
@@ -998,7 +998,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingVncDisplay })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingVncDisplay, vmName: 'test-vm' })),
             }),
           ],
         });
@@ -1267,7 +1267,7 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -1304,7 +1304,7 @@ describe('DeviceFormComponent', () => {
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingUsb })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingUsb, vmName: 'test-vm' })),
             }),
           ],
         });

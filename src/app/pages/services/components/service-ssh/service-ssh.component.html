@@ -15,12 +15,11 @@
           [tooltip]="tooltips.tcpport | translate"
         ></ix-input>
 
-        <ix-chips
+        <ix-group-chips
           [formControl]="form.controls.password_login_groups"
           [label]="'Password Login Groups' | translate"
-          [autocompleteProvider]="groupProvider"
           [tooltip]="tooltips.password_login_groups | translate"
-        ></ix-chips>
+        ></ix-group-chips>
 
         <ix-checkbox
           formControlName="passwordauth"

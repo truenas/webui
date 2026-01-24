@@ -18,6 +18,8 @@ import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enu
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import {
   AclEditorListComponent,
@@ -87,6 +89,8 @@ describe('DatasetAclEditorComponent', () => {
     imports: [
       CastPipe,
       ReactiveFormsModule,
+      IxUserComboboxComponent,
+      IxGroupComboboxComponent,
     ],
     declarations: [
       MockComponent(EditPosixAceComponent),
@@ -110,6 +114,8 @@ describe('DatasetAclEditorComponent', () => {
       mockProvider(UserService, {
         userQueryDsCache: () => of(),
         groupQueryDsCache: () => of(),
+        getUserByName: (username: string) => of({ username } as { username: string }),
+        getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({

@@ -244,6 +244,9 @@ export class SlideIn {
       positionStrategy: this.cdkOverlay.position().global().top('48px').right(rightPosition),
       height: 'calc(100% - 48px)',
       panelClass: 'slide-in-panel',
+      // Disable native popover API so tooltips (which render outside CDK overlay) can appear above slide-ins.
+      // Native popovers use the browser's "top layer" which ignores z-index.
+      usePopover: false,
     });
   }
 

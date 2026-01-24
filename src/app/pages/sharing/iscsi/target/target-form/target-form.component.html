@@ -7,6 +7,41 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ng-template #fcPortsTemplate>
+        <ix-list
+          formArrayName="fcPorts"
+          [empty]="form.controls.fcPorts.length === 0"
+          [label]="'Fibre Channel Ports' | translate"
+          [formArray]="form.get('fcPorts')"
+          (add)="addFcPort()"
+        >
+          @if (form.controls.fcPorts.length >= 2) {
+            <ix-fc-mpio-info-banner></ix-fc-mpio-info-banner>
+          }
+
+          @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
+            <ix-list-item
+              [label]="'Port' | translate"
+              (delete)="deleteFcPort(i)"
+            >
+              <ix-fc-port-item-controls
+                [form]="form.controls.fcPorts.at(i)"
+                [isEdit]="!isNew"
+                [currentPort]="currentPorts()[i]"
+                [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
+                [availablePorts]="availableFcPorts()"
+              ></ix-fc-port-item-controls>
+            </ix-list-item>
+          }
+        </ix-list>
+
+        @if (fcPortValidationErrors().length > 0) {
+          <mat-error>
+            {{ fcPortValidationErrors().join(', ') }}
+          </mat-error>
+        }
+      </ng-template>
+
       <div class="columns">
         <div class="column">
           <ix-fieldset [title]="helptext.basicInfo | translate">
@@ -54,90 +89,67 @@
               }
             </ix-list>
 
-            @if (showPortControls) {
-              <ix-list
-                formArrayName="fcPorts"
-                [empty]="form.controls.fcPorts.length === 0"
-                [label]="'Fibre Channel Ports' | translate"
-                [formArray]="form.get('fcPorts')"
-                (add)="addFcPort()"
-              >
-                @if (form.controls.fcPorts.length >= 2) {
-                  <ix-fc-mpio-info-banner></ix-fc-mpio-info-banner>
-                }
-
-                @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
-                  <ix-list-item
-                    [label]="'Port' | translate"
-                    (delete)="deleteFcPort(i)"
-                  >
-                    <ix-fc-port-item-controls
-                      [form]="form.controls.fcPorts.at(i)"
-                      [isEdit]="!isNew"
-                      [currentPort]="currentPorts()[i]"
-                      [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
-                      [availablePorts]="availableFcPorts()"
-                    ></ix-fc-port-item-controls>
-                  </ix-list-item>
-                }
-              </ix-list>
-
-              @if (fcPortValidationErrors().length > 0) {
-                <mat-error>
-                  {{ fcPortValidationErrors().join(', ') }}
-                </mat-error>
-              }
+            @if (showPortControls && showGroupsControls) {
+              <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
             }
           </ix-fieldset>
         </div>
 
         <div class="column">
-          <ix-fieldset [title]="helptext.targetGroup | translate">
-            <ix-list
-              formArrayName="groups"
-              [formArray]="form.get('groups')"
-              [empty]="form.controls.groups.length === 0"
-              [label]="'Add groups' | translate"
-              (add)="addGroup()"
-            >
-              @for (entry of form.controls.groups.controls; track entry; let i = $index) {
-                <ix-list-item
-                  [label]="'Groups' | translate"
-                  [formGroupName]="i"
-                  (delete)="deleteGroup(i)"
-                >
-                  <ix-select
-                    formControlName="portal"
-                    [label]="helptext.target.portalGroupIdLabel | translate"
-                    [options]="portals$"
-                    [tooltip]="helptext.target.portalGroupIdTooltip | translate"
-                    [required]="true"
-                  ></ix-select>
+          @if (showPortControls && !showGroupsControls) {
+            <ix-fieldset [title]="'Fibre Channel Ports' | translate">
+              <ng-container *ngTemplateOutlet="fcPortsTemplate"></ng-container>
+            </ix-fieldset>
+          }
 
-                  <ix-select
-                    formControlName="initiator"
-                    [label]="helptext.target.initiatorGroupIdLabel | translate"
-                    [options]="initiators$"
-                    [tooltip]="helptext.target.initiatorGrouIpIdTooltip | translate"
-                  ></ix-select>
+          @if (showGroupsControls) {
+            <ix-fieldset [title]="helptext.targetGroup | translate">
+              <ix-list
+                formArrayName="groups"
+                [formArray]="form.get('groups')"
+                [empty]="form.controls.groups.length === 0"
+                [label]="'Add groups' | translate"
+                (add)="addGroup()"
+              >
+                @for (entry of form.controls.groups.controls; track entry; let i = $index) {
+                  <ix-list-item
+                    [label]="'Groups' | translate"
+                    [formGroupName]="i"
+                    (delete)="deleteGroup(i)"
+                  >
+                    <ix-select
+                      formControlName="portal"
+                      [label]="helptext.target.portalGroupIdLabel | translate"
+                      [options]="portals$"
+                      [tooltip]="helptext.target.portalGroupIdTooltip | translate"
+                      [required]="true"
+                    ></ix-select>
 
-                  <ix-select
-                    formControlName="authmethod"
-                    [label]="helptext.target.authenticationMethodLabel | translate"
-                    [options]="authmethods$ | translateOptions"
-                    [required]="true"
-                  ></ix-select>
+                    <ix-select
+                      formControlName="initiator"
+                      [label]="helptext.target.initiatorGroupIdLabel | translate"
+                      [options]="initiators$"
+                      [tooltip]="helptext.target.initiatorGrouIpIdTooltip | translate"
+                    ></ix-select>
 
-                  <ix-select
-                    formControlName="auth"
-                    [label]="helptext.target.authGroupNumberLabel | translate"
-                    [options]="auths$"
-                    [tooltip]="helptext.target.authGroupNumberTooltip | translate"
-                  ></ix-select>
-                </ix-list-item>
-              }
-            </ix-list>
-          </ix-fieldset>
+                    <ix-select
+                      formControlName="authmethod"
+                      [label]="helptext.target.authenticationMethodLabel | translate"
+                      [options]="authmethods$ | translateOptions"
+                      [required]="true"
+                    ></ix-select>
+
+                    <ix-select
+                      formControlName="auth"
+                      [label]="helptext.target.authGroupNumberLabel | translate"
+                      [options]="auths$"
+                      [tooltip]="helptext.target.authGroupNumberTooltip | translate"
+                    ></ix-select>
+                  </ix-list-item>
+                }
+              </ix-list>
+            </ix-fieldset>
+          }
         </div>
       </div>
 

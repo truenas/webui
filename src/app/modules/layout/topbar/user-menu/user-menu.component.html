@@ -1,7 +1,8 @@
-@if (loggedInUser$ | async; as user) {
+@if ((loggedInUser$ | async); as user) {
   <div class="user-menu-wrapper">
     <button
       name="Settings"
+      mat-icon-button
       class="topbar-button-right bg-background! h-[50px]! rounded-full! px-4 flex items-center"
       ixTest="user-menu"
       [matTooltip]="tooltips.settings | translate"
@@ -17,10 +18,7 @@
           {{ user.pw_name }}
         </span>
       }
-      <ix-icon
-        name="ix-account_circle"
-        class="!text-foreground size-[32px]"
-      ></ix-icon>
+      <ix-icon name="ix-account_circle" class="!text-foreground size-[32px]" ></ix-icon>
     </button>
 
     <mat-menu #userMenu="matMenu">
@@ -32,8 +30,8 @@
           [ixUiSearch]="searchableElements.elements.changePassword"
           (click)="openChangePasswordDialog()"
         >
-          <ix-icon name="dialpad"></ix-icon>
-          {{ "Change Password" | translate }}
+          <tn-icon size="lg" name="dialpad" library="mdi"></tn-icon>
+          {{ 'Change Password' | translate }}
         </button>
       }
 
@@ -44,8 +42,8 @@
           ixTest="2fa"
           (click)="onTwoFactorAuth()"
         >
-          <ix-icon name="ix-two-factor-auth"></ix-icon>
-          {{ "Two-Factor Authentication" | translate }}
+          <tn-icon size="lg" name="tn-two-factor-auth"></tn-icon>
+          {{ 'Two-Factor Authentication' | translate }}
         </button>
       }
 
@@ -57,8 +55,8 @@
         [queryParams]="{ userName: user.pw_name }"
         [ixUiSearch]="searchableElements.elements.myApiKeys"
       >
-        <ix-icon name="mdi-laptop"></ix-icon>
-        {{ "My API Keys" | translate }}
+        <tn-icon size="lg" name="laptop" library="mdi"></tn-icon>
+        {{ 'My API Keys' | translate }}
       </a>
 
       <a
@@ -69,12 +67,12 @@
         ixTest="guide"
         [ixUiSearch]="searchableElements.elements.guide"
       >
-        <ix-icon name="library_books"></ix-icon>
-        {{ "Guide" | translate }}
+        <tn-icon size="lg" name="book-multiple" library="mdi"></tn-icon>
+        {{ 'Guide' | translate }}
       </a>
 
       <!-- Inline styles because mat-menu contents are rendered outside of the component -->
-      <mat-divider style="margin: 5px 0"></mat-divider>
+      <mat-divider style="margin: 5px 0;"></mat-divider>
 
       <button
         name="power-log-out"
@@ -83,8 +81,8 @@
         [ixUiSearch]="searchableElements.elements.logOut"
         (click)="onSignOut()"
       >
-        <ix-icon name="exit_to_app"></ix-icon>
-        {{ "Log Out" | translate }}
+        <tn-icon size="lg" name="logout" library="mdi"></tn-icon>
+        {{ 'Log Out' | translate }}
       </button>
     </mat-menu>
   </div>

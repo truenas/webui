@@ -75,9 +75,8 @@ describe('SimilarIssuesComponent', () => {
       selector: '.issue-summary',
       text: 'Similar tickets screen',
     });
-    expect(similarIssues[0].querySelector('.issue-type-icon')).toHaveStyle({
-      'background-image': 'url(https://ixsystems.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10311?size=medium)',
-    });
+    const iconElement = similarIssues[0].querySelector('.issue-type-icon') as HTMLElement;
+    expect(iconElement.style.backgroundImage).toContain('https://ixsystems.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10311');
   }));
 
   it('should reset similar issues when query is empty', fakeAsync(() => {

@@ -1,10 +1,8 @@
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import {
   HaStatusPopoverComponent,
@@ -16,9 +14,6 @@ describe('HaStatusIconComponent', () => {
   let mockStore$: MockStore;
   const createComponent = createComponentFactory({
     component: HaStatusIconComponent,
-    declarations: [
-      MockComponent(IxIconComponent),
-    ],
     providers: [
       mockProvider(MatDialog),
       provideMockStore({
@@ -45,7 +40,7 @@ describe('HaStatusIconComponent', () => {
   });
 
   it('shows an icon when HA is enabled', () => {
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-ha-enabled');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-ha-enabled');
   });
 
   it('shows a reconnecting icon when HA disabled reason is NoSystemReady', () => {
@@ -56,7 +51,7 @@ describe('HaStatusIconComponent', () => {
     mockStore$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-ha-reconnecting');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-ha-reconnecting');
   });
 
   it('shows an HA disabled icon when HA is disabled', () => {
@@ -67,7 +62,7 @@ describe('HaStatusIconComponent', () => {
     mockStore$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'ix-ha-disabled');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'tn-ha-disabled');
   });
 
   it('opens status popover when icon is clicked', () => {

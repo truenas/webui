@@ -20,8 +20,8 @@ import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
   exportAs: 'ixIcon',
   host: {
     class: 'ix-icon',
-    '[attr.data-mat-icon-name]': '(_svgIcon && _svgName) || fontIcon',
-    '[attr.data-mat-icon-namespace]': '(_svgIcon && _svgNamespace) || fontSet',
+    '[attr.data-mat-icon-name]': 'svgIcon || fontIcon',
+    '[attr.data-mat-icon-namespace]': 'fontSet',
   },
   styleUrls: ['./ix-icon.component.scss'],
   templateUrl: 'ix-icon.component.html',

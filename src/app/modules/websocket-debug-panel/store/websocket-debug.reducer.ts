@@ -25,6 +25,7 @@ export interface WebSocketDebugState {
     expansionModels: EnclosureModel[];
     scenario: MockEnclosureScenario;
   };
+  duplicateNotificationsEnabled: boolean;
 }
 
 export const initialState: WebSocketDebugState = {
@@ -40,6 +41,7 @@ export const initialState: WebSocketDebugState = {
     expansionModels: [],
     scenario: MockEnclosureScenario.FillSomeSlots,
   },
+  duplicateNotificationsEnabled: false,
 };
 
 export const webSocketDebugReducer = createReducer(
@@ -127,5 +129,13 @@ export const webSocketDebugReducer = createReducer(
   on(WebSocketDebugActions.clearPrefilledMockConfig, (state) => ({
     ...state,
     prefilledMockConfig: null as PrefilledMockConfig | null,
+  })),
+  on(WebSocketDebugActions.toggleDuplicateNotifications, (state) => ({
+    ...state,
+    duplicateNotificationsEnabled: !state.duplicateNotificationsEnabled,
+  })),
+  on(WebSocketDebugActions.setDuplicateNotificationsEnabled, (state, { enabled }) => ({
+    ...state,
+    duplicateNotificationsEnabled: enabled,
   })),
 );

@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -13,9 +15,8 @@ import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
@@ -26,7 +27,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +41,7 @@ import { UserService } from 'app/services/user.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
-    IxChipsComponent,
+    IxGroupChipsComponent,
     IxCheckboxComponent,
     IxSelectComponent,
     IxTextareaComponent,
@@ -57,7 +57,6 @@ export class ServiceSshComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
-  private userService = inject(UserService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
@@ -66,12 +65,6 @@ export class ServiceSshComponent implements OnInit {
 
   protected isFormLoading = signal(false);
   isBasicMode = true;
-
-  groupProvider: ChipsProvider = (query) => {
-    return this.userService.groupQueryDsCache(query).pipe(
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
 
   form = this.fb.group({
     tcpport: [null as number | null],

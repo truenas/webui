@@ -10,6 +10,7 @@ import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -218,6 +219,204 @@ describe('ExtentFormComponent', () => {
           product_id: null,
         }),
       ]);
+    });
+  });
+
+  describe('snapshot readonly behavior - user perspective', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should show readonly checkbox as enabled and unchecked by default', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      expect(await roCheckbox.isDisabled()).toBe(false);
+      expect(await roCheckbox.getValue()).toBe(false);
+    });
+
+    it('should disable and check readonly checkbox when snapshot device is selected', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      // Simulate user selecting Device extent type
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+
+      // Simulate backend returning snapshot device and user selecting it
+      // Note: We can't use harness here because extent-form doesn't have snapshots in mock
+      // This simulates the backend returning a snapshot in the device list
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      // Verify readonly is checked and disabled (user can see this)
+      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('should show snapshot info banner when snapshot is selected', async () => {
+      // Initially no banner visible
+      let banner = spectator.query('.snapshot-info-box');
+      expect(banner).toBeFalsy();
+
+      // User selects Device type and snapshot
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      // User should now see banner
+      banner = spectator.query('.snapshot-info-box');
+      expect(banner).toBeTruthy();
+      expect(banner?.textContent).toContain('Snapshot Selected');
+      expect(banner?.textContent).toContain('Snapshots preserve data at a specific point in time');
+    });
+
+    it('should hide snapshot banner when switching to regular device', async () => {
+      // Start with snapshot selected
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      let banner = spectator.query('.snapshot-info-box');
+      expect(banner).toBeTruthy();
+
+      // User switches to regular device
+      spectator.component.form.controls.disk.setValue('zvol/tank/regular-vol');
+      spectator.detectChanges();
+
+      // Banner should disappear from view
+      banner = spectator.query('.snapshot-info-box');
+      expect(banner).toBeFalsy();
+    });
+
+    it('should re-enable readonly checkbox when switching from snapshot to regular device', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      // Start with snapshot
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      expect(await roCheckbox.isDisabled()).toBe(true);
+
+      // User switches to regular device
+      spectator.component.form.controls.disk.setValue('zvol/tank/regular-vol');
+      spectator.detectChanges();
+
+      // User can now interact with checkbox again
+      expect(await roCheckbox.isDisabled()).toBe(false);
+    });
+
+    it('should allow user to manually check readonly for regular devices', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/regular-vol');
+      spectator.detectChanges();
+
+      // User checks readonly
+      await form.fillForm({
+        'Read-only': true,
+      });
+
+      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isDisabled()).toBe(false);
+    });
+
+    it('should preserve user readonly selection when switching between regular devices', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      // User selects first device and checks readonly
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/vol1');
+      await form.fillForm({
+        'Read-only': true,
+      });
+      spectator.detectChanges();
+
+      expect(await roCheckbox.getValue()).toBe(true);
+
+      // User switches to another regular device
+      spectator.component.form.controls.disk.setValue('zvol/tank/vol2');
+      spectator.detectChanges();
+
+      // Readonly choice is preserved
+      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isDisabled()).toBe(false);
+    });
+
+    it('should force readonly when switching from regular device to snapshot', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      // User selects regular device and unchecks readonly
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/regular-vol');
+      await form.fillForm({
+        'Read-only': false,
+      });
+      spectator.detectChanges();
+
+      expect(await roCheckbox.getValue()).toBe(false);
+
+      // User switches to snapshot
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      // User sees readonly is now forced checked and disabled
+      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('should keep readonly disabled when switching between different snapshots', async () => {
+      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+
+      // User selects first snapshot
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isDisabled()).toBe(true);
+
+      // User switches to different snapshot
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot2');
+      spectator.detectChanges();
+
+      // Should remain checked and disabled
+      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('should include disabled ro field in form submission via getRawValue', async () => {
+      // Select snapshot (ro becomes disabled)
+      await form.fillForm({
+        'Extent Type': 'Device',
+      });
+      spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
+      spectator.detectChanges();
+
+      const roControl = spectator.component.form.controls.ro;
+      expect(roControl.disabled).toBe(true);
+      expect(roControl.value).toBe(true);
+
+      // getRawValue should include disabled fields for submission
+      const rawValue = spectator.component.form.getRawValue();
+      expect(rawValue.ro).toBe(true);
     });
   });
 });

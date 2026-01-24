@@ -1,4 +1,4 @@
-import { Injector, NgZone } from '@angular/core';
+import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
@@ -58,39 +58,28 @@ describe('ErrorHandlerService', () => {
     });
 
     jest.spyOn(console, 'error').mockImplementation();
-    jest.spyOn(spectator.inject(NgZone), 'runOutsideAngular').mockImplementation();
-  });
-
-  describe('disableSentry', () => {
-    it('disables Sentry error logging', () => {
-      spectator.service.disableSentry();
-
-      spectator.service.handleError(error);
-      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
-    });
   });
 
   describe('handleError', () => {
-    it('logs an error to console and sentry', () => {
+    it('logs an error to console', () => {
       spectator.service.handleError(error);
 
       expect(console.error).toHaveBeenCalledWith(error);
-      expect(spectator.inject(NgZone).runOutsideAngular).toHaveBeenCalled();
     });
 
-    it('does not log Websocket CloseEvent to Sentry', () => {
+    it('logs Websocket CloseEvent to console', () => {
       spectator.service.handleError(new CloseEvent('close'));
 
-      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalled();
     });
 
-    it('does not log call validation errors to Sentry', () => {
+    it('logs call validation errors to console', () => {
       spectator.service.handleError(validationError);
 
-      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalled();
     });
 
-    it('does not log job validation errors to Sentry', () => {
+    it('logs job validation errors to console', () => {
       spectator.service.handleError(new FailedJobError({
         id: 1,
         state: JobState.Failed,
@@ -100,7 +89,7 @@ describe('ErrorHandlerService', () => {
         },
       } as Job));
 
-      expect(spectator.inject(NgZone).runOutsideAngular).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalled();
     });
   });
 

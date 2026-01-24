@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -51,8 +50,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     MatSlideToggle,
     TestDirective,
     UiSearchDirective,
-    MatAnchor,
-    RouterLink,
     RequiresRolesDirective,
     MatButton,
     IxTableComponent,

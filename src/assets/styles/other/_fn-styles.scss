@@ -8,7 +8,8 @@
 
 /*---- Globals -----*/
 html {
-  font-size: 87.5% /* 14px */;
+  font-size: 87.5%
+    /* 14px */;
 }
 
 html,
@@ -204,6 +205,10 @@ body .mat-mdc-select-trigger {
   word-break: break-all;
 }
 
+[mat-menu-item] tn-icon {
+  margin-right: 16px;
+}
+
 .scrollbar {
   --sb-track-color: #fff;
   --sb-thumb-color: #6715ff;
@@ -231,10 +236,7 @@ body .mat-mdc-select-trigger {
 
 /*---- Main Sidenav -----*/
 .sidebar-panel.mat-sidenav {
-  box-shadow:
-    0 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   min-width: var(--sidenav-width);
   /*15rem;*/
   width: var(--sidenav-width);
@@ -255,10 +257,7 @@ body .mat-mdc-select-trigger {
   padding: 16px 0 0 16px;
 }
 
-.sidebar-panel.mat-sidenav
-  .mat-nav-list
-  .sidebar-list-item
-  .mat-mdc-list-item-unscoped-content {
+.sidebar-panel.mat-sidenav .mat-nav-list .sidebar-list-item .mat-mdc-list-item-unscoped-content {
   display: block;
   font-size: 0.875rem !important;
   height: auto;
@@ -273,7 +272,7 @@ body .mat-mdc-select-trigger {
   background: transparent;
 }
 
-.sidebar-list-item.open > .mat-mdc-list-item-unscoped-content {
+.sidebar-list-item.open>.mat-mdc-list-item-unscoped-content {
   background: rgba(0, 0, 0, 0.03);
 }
 
@@ -293,15 +292,17 @@ body .mat-mdc-select-trigger {
   z-index: 99;
 }
 
-.sidebar-panel.mat-sidenav .sidebar-list-item ix-icon:not(.menu-caret) {
+.sidebar-panel.mat-sidenav .sidebar-list-item ix-icon:not(.menu-caret),
+.sidebar-panel.mat-sidenav .sidebar-list-item tn-icon:not(.menu-caret) {
   line-height: 48px;
+  margin-bottom: 2px;
   margin-left: 12px;
   margin-right: 20px;
   text-align: center;
   z-index: 1;
 }
 
-.sidebar-panel.mat-sidenav .mat-mdc-list-item-unscoped-content > a,
+.sidebar-panel.mat-sidenav .mat-mdc-list-item-unscoped-content>a,
 .slide-in-nav-item a {
   align-items: center;
   box-direction: normal;
@@ -322,7 +323,7 @@ body .mat-mdc-select-trigger {
 }
 
 .sidebar-panel.mat-sidenav {
-  .sidebar-list-item.open > .mat-mdc-list-item-unscoped-content > .sub-menu {
+  .sidebar-list-item.open>.mat-mdc-list-item-unscoped-content>.sub-menu {
     max-height: 1000px;
   }
 
@@ -360,13 +361,13 @@ body .mat-mdc-select-trigger {
       width: 100% !important;
     }
 
-    .sidebar-list-item > .mat-mdc-list-item-unscoped-content > a {
+    .sidebar-list-item>.mat-mdc-list-item-unscoped-content>a {
       padding: 0;
       position: relative;
     }
 
     .navigation-hold,
-    .sidebar-list-item > .mat-mdc-list-item-unscoped-content {
+    .sidebar-list-item>.mat-mdc-list-item-unscoped-content {
       overflow: visible !important;
     }
 
@@ -385,10 +386,7 @@ body .mat-mdc-select-trigger {
 
     .sidebar-list-item.open .sub-menu {
       background: #fff;
-      box-shadow:
-        0 2px 1px -1px rgba(0, 0, 0, 0.2),
-        0 1px 1px 0 rgba(0, 0, 0, 0.14),
-        0 1px 3px 0 rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
       display: block;
       left: 47px;
       max-height: 600px !important;
@@ -403,11 +401,11 @@ body .mat-mdc-select-trigger {
       padding-left: 1rem;
     }
 
-    .mat-nav-list > div > .sidebar-list-item a .ix-icon {
+    .mat-nav-list>div>.sidebar-list-item a .ix-icon {
       margin: 0;
     }
 
-    .mat-nav-list > div > .sidebar-list-item a .menu-caret {
+    .mat-nav-list>div>.sidebar-list-item a .menu-caret {
       font-size: medium;
       left: 33px;
       position: absolute;

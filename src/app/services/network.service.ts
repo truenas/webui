@@ -1,15 +1,26 @@
 import { Injectable, inject } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {
+  filter, map, shareReplay, take,
+} from 'rxjs/operators';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Choices } from 'app/interfaces/choices.interface';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
-  protected api = inject(ApiService);
+  private api = inject(ApiService);
+  private store = inject(Store<AppState>);
+
+  private isHaEnabled$: Observable<boolean> | null = null;
+  private failoverStatus$: Observable<FailoverStatus> | null = null;
+  private failoverConfig$: Observable<FailoverConfig> | null = null;
 
   macRegex = /\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i;
 
@@ -72,13 +83,31 @@ export class NetworkService {
     );
   }
 
+  private getFailoverStatus(): Observable<FailoverStatus> {
+    if (!this.failoverStatus$) {
+      this.failoverStatus$ = this.api.call('failover.status').pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    }
+    return this.failoverStatus$;
+  }
+
+  private getFailoverConfig(): Observable<FailoverConfig> {
+    if (!this.failoverConfig$) {
+      this.failoverConfig$ = this.api.call('failover.config').pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    }
+    return this.failoverConfig$;
+  }
+
   getIsHaEnabled(): Observable<boolean> {
-    return combineLatest([
-      this.api.call('failover.licensed'),
-      this.api.call('failover.status'),
-      this.api.call('failover.config'),
-    ]).pipe(
-      map(([licensed, status, config]) => licensed && status !== FailoverStatus.Single && !config.disabled),
-    );
+    if (!this.isHaEnabled$) {
+      this.isHaEnabled$ = combineLatest([
+        this.store.select(selectIsHaLicensed).pipe(take(1)),
+        this.getFailoverStatus(),
+        this.getFailoverConfig(),
+      ]).pipe(
+        map(([licensed, status, config]) => licensed && status !== FailoverStatus.Single && !config.disabled),
+        shareReplay({ bufferSize: 1, refCount: false }),
+      );
+    }
+    return this.isHaEnabled$;
   }
 }

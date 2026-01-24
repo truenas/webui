@@ -100,12 +100,12 @@ describe('local-storage-utils', () => {
       expect(mockLocalStorage['boolean']).toBe('true');
     });
 
-    it('should throw LocalStorageError on write failure', async () => {
+    it('should log error and resolve on write failure', async () => {
       (localStorage.setItem as jest.Mock).mockImplementation(() => {
         throw new Error('Write error');
       });
 
-      await expect(safeSetItem('test-key', 'value')).rejects.toThrow(LocalStorageError);
+      await safeSetItem('test-key', 'value');
       expect(console.error).toHaveBeenCalledWith(
         'LocalStorage write error:',
         expect.any(LocalStorageError),
@@ -116,7 +116,7 @@ describe('local-storage-utils', () => {
       const circular: Record<string, unknown> = { a: 1 };
       circular.self = circular;
 
-      await expect(safeSetItem('circular', circular)).rejects.toThrow(LocalStorageError);
+      await safeSetItem('circular', circular);
       expect(console.error).toHaveBeenCalled();
     });
   });
@@ -131,12 +131,12 @@ describe('local-storage-utils', () => {
       expect(mockLocalStorage['test-key']).toBeUndefined();
     });
 
-    it('should throw LocalStorageError on remove failure', async () => {
+    it('should log error and resolve on remove failure', async () => {
       (localStorage.removeItem as jest.Mock).mockImplementation(() => {
         throw new Error('Remove error');
       });
 
-      await expect(safeRemoveItem('test-key')).rejects.toThrow(LocalStorageError);
+      await safeRemoveItem('test-key');
       expect(console.error).toHaveBeenCalledWith(
         'LocalStorage remove error:',
         expect.any(LocalStorageError),

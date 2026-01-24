@@ -14,6 +14,13 @@
         [(ngModel)]="autoScroll">
         Auto-scroll
       </mat-checkbox>
+      <mat-checkbox
+        ixTest="websocket-debug-duplicate-notifications"
+        matTooltip="Show snackbar when duplicate API calls are detected"
+        [checked]="duplicateNotificationsEnabled$ | async"
+        (change)="toggleDuplicateNotifications()">
+        Duplicate alerts
+      </mat-checkbox>
       <button mat-icon-button 
               matTooltip="Clear messages" 
               class="clear-button"

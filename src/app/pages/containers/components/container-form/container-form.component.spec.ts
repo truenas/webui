@@ -91,7 +91,7 @@ describe('ContainerFormComponent', () => {
         requireConfirmationWhen: jest.fn(),
       }),
       mockProvider(ContainersStore, {
-        initialize: jest.fn(),
+        reload: jest.fn(),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -295,7 +295,7 @@ describe('ContainerFormComponent', () => {
 
       expect(snackbar.success).toHaveBeenCalledWith('Container created');
       expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
-      expect(containersStore.initialize).toHaveBeenCalled();
+      expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
     });
   });

@@ -100,7 +100,6 @@ export class JobsPanelComponent {
   openJobDialog(job: Job): void {
     this.dialogRef.close();
     if (job.error) {
-      // Do not replace with showErrorModal, because it also reports to Sentry
       const errorReport = this.errorParser.parseError(new FailedJobError(job));
       this.dialog.error(errorReport || {
         title: this.translate.instant('Error'),

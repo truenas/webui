@@ -10,7 +10,12 @@ export function convertStringToId(inputString: string): string {
     result = result?.replace('undefined', '') || '';
   }
 
-  return result.toLowerCase().replace(/\s+/g, '-');
+  return result
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[/,#.[\]@!$%^&*()+={}|\\:;"'<>?`~]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 export function createTable<T>(

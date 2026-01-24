@@ -34,9 +34,9 @@ import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
-import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
+import { TunableCardComponent } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { LicenseService } from 'app/services/license.service';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
@@ -57,7 +57,7 @@ describe('AdvancedSettingsComponent', () => {
         KernelCardComponent,
         CronCardComponent,
         InitShutdownCardComponent,
-        SysctlCardComponent,
+        TunableCardComponent,
         StorageCardComponent,
         ReplicationSettingsCardComponent,
         AccessCardComponent,
@@ -101,7 +101,7 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(KernelCardComponent)).toExist();
     expect(spectator.query(CronCardComponent)).toExist();
     expect(spectator.query(InitShutdownCardComponent)).toExist();
-    expect(spectator.query(SysctlCardComponent)).toExist();
+    expect(spectator.query(TunableCardComponent)).toExist();
     expect(spectator.query(StorageCardComponent)).toExist();
     expect(spectator.query(ReplicationSettingsCardComponent)).toExist();
     expect(spectator.query(AccessCardComponent)).toExist();

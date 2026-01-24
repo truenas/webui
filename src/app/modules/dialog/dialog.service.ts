@@ -71,7 +71,7 @@ export class DialogService {
   }
 
   info(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.matDialog.open(InfoDialog);
+    const dialogRef = this.matDialog.open<InfoDialog>(InfoDialog);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -82,7 +82,7 @@ export class DialogService {
   }
 
   warn(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.matDialog.open(InfoDialog);
+    const dialogRef = this.matDialog.open<InfoDialog>(InfoDialog);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -149,7 +149,7 @@ export class DialogService {
       canMinimize?: boolean;
     } = {},
   ): JobProgressDialogRef<R> {
-    const matDialogRef = this.matDialog.open(JobProgressDialog<R>, {
+    const matDialogRef = this.matDialog.open<JobProgressDialog<R>>(JobProgressDialog<R>, {
       data: {
         job$,
         title,

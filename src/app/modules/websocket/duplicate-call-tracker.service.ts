@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
+import { Subject } from 'rxjs';
 
 interface TrackedCall {
   method: string;
@@ -22,6 +23,9 @@ export class DuplicateCallTrackerService {
   private enabled = !environment.production;
   private readonly windowMs = 50;
   private recentCalls: TrackedCall[] = [];
+
+  private duplicateDetected$ = new Subject<string>();
+  readonly duplicateCall$ = this.duplicateDetected$.asObservable();
 
   /**
    * Allows disabling tracking at runtime (useful for testing).
@@ -63,6 +67,7 @@ export class DuplicateCallTrackerService {
         '\nDuplicate call:',
         currentStack,
       );
+      this.duplicateDetected$.next(method);
     }
 
     // Track this call

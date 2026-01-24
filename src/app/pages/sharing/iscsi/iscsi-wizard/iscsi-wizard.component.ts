@@ -134,6 +134,7 @@ export class IscsiWizardComponent implements OnInit {
       volsize: new FormControl(null as number | null, [Validators.required]),
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
       product_id: [''],
+      ro: [false],
     }),
     options: this.fb.group({
       portal: new FormControl(null as typeof newOption | number | null, [Validators.required]),
@@ -196,7 +197,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get extentPayload(): IscsiExtentUpdate {
-    const value = this.form.value.extent;
+    const value = this.form.getRawValue().extent;
     const blocksizeDefault = 512;
     const blocksizeModernos = 4096;
     const extentPayload = {
@@ -221,6 +222,8 @@ export class IscsiWizardComponent implements OnInit {
       } else {
         extentPayload.disk = value.disk;
       }
+
+      extentPayload.ro = value.ro;
     }
     return extentPayload;
   }

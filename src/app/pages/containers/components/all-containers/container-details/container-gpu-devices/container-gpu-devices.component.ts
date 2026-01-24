@@ -62,12 +62,7 @@ export class ContainerGpuDevicesComponent {
     ),
   );
 
-  private readonly gpuChoices = toSignal(
-    this.api.call('container.device.gpu_choices').pipe(
-      catchError(() => of({} as Record<string, ContainerGpuType>)),
-    ),
-    { initialValue: null },
-  );
+  protected readonly gpuChoices = this.devicesStore.gpuChoices;
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly isContainerRunning = computed(() => {

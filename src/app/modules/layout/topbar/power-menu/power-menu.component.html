@@ -18,8 +18,8 @@
     [ixUiSearch]="searchableElements.elements.restart"
     (click)="onReboot()"
   >
-    <ix-icon name="replay"></ix-icon>
-    {{ "Restart" | translate }}
+    <tn-icon size="lg" name="refresh" library="mdi"></tn-icon>
+    {{ 'Restart' | translate }}
   </button>
 
   <button
@@ -31,6 +31,6 @@
     (click)="onShutdown()"
   >
     <ix-icon name="power_settings_new"></ix-icon>
-    {{ "Shut Down" | translate }}
+    {{ 'Shut Down' | translate }}
   </button>
 </mat-menu>

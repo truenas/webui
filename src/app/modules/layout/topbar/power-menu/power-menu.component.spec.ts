@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,6 +29,13 @@ describe('PowerMenuComponent', () => {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of('reason')),
         })),
+      }),
+      mockProvider(TnSpriteLoaderService, {
+        ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+        getIconUrl: jest.fn(),
+        getSafeIconUrl: jest.fn(),
+        isSpriteLoaded: jest.fn(() => true),
+        getSpriteConfig: jest.fn(),
       }),
     ],
   });

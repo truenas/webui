@@ -1,3 +1,4 @@
+// cspell:ignore ngneat snapshottask
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -134,6 +135,19 @@ describe('ZvolFormComponent', () => {
           'AES-192-GCM': 'AES-192-GCM',
           'AES-256-GCM': 'AES-256-GCM',
         }),
+        mockCall('pool.dataset.compression_choices', {
+          OFF: 'Off',
+          LZ4: 'lz4 (recommended)',
+          GZIP: 'gzip (default level, 6)',
+          'GZIP-1': 'gzip-1 (fastest)',
+          'GZIP-9': 'gzip-9 (maximum, slow)',
+          ZSTD: 'zstd (default level, 3)',
+          'ZSTD-5': 'zstd-5 (slow)',
+          'ZSTD-7': 'zstd-7 (very slow)',
+          'ZSTD-FAST': 'zstd-fast (default level, 1)',
+          ZLE: 'zle (runs of zeros)',
+          LZJB: 'lzjb (legacy, not recommended)',
+        }),
       ]),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
@@ -152,6 +166,7 @@ describe('ZvolFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
       form = await loader.getHarness(IxFormHarness);
       mainDetails = await loader.getHarness(DetailsTableHarness);
     });
@@ -189,7 +204,7 @@ describe('ZvolFormComponent', () => {
         name: 'parentId/new zvol',
         comments: 'comments text',
         compression: 'LZ4',
-        volsize: 2147500032,
+        volsize: 2147483648,
         force_size: false,
         sync: DatasetSync.Standard,
         deduplication: DeduplicationSetting.Verify,
@@ -207,6 +222,18 @@ describe('ZvolFormComponent', () => {
         type: DatasetType.Volume,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('does not allow creating zvol with zero size', async () => {
+      await form.fillForm({
+        Name: 'new zvol',
+        Size: '0',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.form.invalid).toBe(true);
+      expect(spectator.component.form.controls.volsize.hasError('min')).toBe(true);
     });
   });
 
@@ -251,6 +278,19 @@ describe('ZvolFormComponent', () => {
             'AES-128-GCM': 'AES-128-GCM',
             'AES-192-GCM': 'AES-192-GCM',
             'AES-256-GCM': 'AES-256-GCM',
+          }),
+          mockCall('pool.dataset.compression_choices', {
+            OFF: 'Off',
+            LZ4: 'lz4 (recommended)',
+            GZIP: 'gzip (default level, 6)',
+            'GZIP-1': 'gzip-1 (fastest)',
+            'GZIP-9': 'gzip-9 (maximum, slow)',
+            ZSTD: 'zstd (default level, 3)',
+            'ZSTD-5': 'zstd-5 (slow)',
+            'ZSTD-7': 'zstd-7 (very slow)',
+            'ZSTD-FAST': 'zstd-fast (default level, 1)',
+            ZLE: 'zle (runs of zeros)',
+            LZJB: 'lzjb (legacy, not recommended)',
           }),
         ]),
         mockProvider(DialogService),
@@ -348,6 +388,49 @@ describe('ZvolFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
+
+    it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
+      // Set up a zvol with original size of 1 GiB (1073741824 bytes)
+      (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
+
+      // Change size to 1.002 GiB (1075890585 bytes) - just above 0.1% threshold
+      await form.fillForm({
+        Size: '1.002 GiB',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall).toBeDefined();
+      // The size should be included in the payload and aligned to block size
+      expect(updateCall[1][1].volsize).toBeDefined();
+      // Should be aligned to 64K block size: 1075890585 + (65536 - 1075890585 % 65536) = 1075904512
+      expect(updateCall[1][1].volsize).toBe(1075904512);
+    });
+
+    it('preserves original size when change is below 0.1% threshold', async () => {
+      // Set up a zvol with original size of 1 GiB (1073741824 bytes)
+      (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
+
+      // Change size to 1.0001 GiB (1073848893 bytes) - below 0.1% threshold
+      // This simulates formatter precision causing small rounding
+      await form.fillForm({
+        Size: '1.0001 GiB',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall).toBeDefined();
+      // Should use original volsize to avoid precision loss
+      expect(updateCall[1][1].volsize).toBe(1073741824);
+    });
   });
 
   describe('Use Metadata (Special) VDEVs', () => {
@@ -364,6 +447,21 @@ describe('ZvolFormComponent', () => {
               }
               if (method === 'pool.dataset.recommended_zvol_blocksize') {
                 return of('16K');
+              }
+              if (method === 'pool.dataset.compression_choices') {
+                return of({
+                  OFF: 'Off',
+                  LZ4: 'lz4 (recommended)',
+                  GZIP: 'gzip (default level, 6)',
+                  'GZIP-1': 'gzip-1 (fastest)',
+                  'GZIP-9': 'gzip-9 (maximum, slow)',
+                  ZSTD: 'zstd (default level, 3)',
+                  'ZSTD-5': 'zstd-5 (slow)',
+                  'ZSTD-7': 'zstd-7 (very slow)',
+                  'ZSTD-FAST': 'zstd-fast (default level, 1)',
+                  ZLE: 'zle (runs of zeros)',
+                  LZJB: 'lzjb (legacy, not recommended)',
+                });
               }
               return of(null);
             }),
@@ -441,21 +539,6 @@ describe('ZvolFormComponent', () => {
       expect(payload.special_small_block_size).toBe(16777216); // 16 MiB in bytes
     });
 
-    it('allows toggling customize section', () => {
-      spectator.component.form.patchValue({
-        special_small_block_size: OnOff.On,
-      });
-
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
-
-      spectator.component.toggleCustomizeSpecialSmallBlockSize();
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
-      expect(spectator.component.form.value.special_small_block_size_custom).toBe(16777216); // Default 16 MiB
-
-      spectator.component.toggleCustomizeSpecialSmallBlockSize();
-      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
-    });
-
     it('sends custom value when specified', async () => {
       await form.fillForm({
         Name: 'zvol1',
@@ -466,7 +549,6 @@ describe('ZvolFormComponent', () => {
         special_small_block_size: OnOff.On,
         special_small_block_size_custom: 262144, // 256 KiB
       });
-      spectator.component.showCustomizeSpecialSmallBlockSize = true;
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -476,30 +558,6 @@ describe('ZvolFormComponent', () => {
       const payload = callArgs[1][0];
 
       expect(payload.special_small_block_size).toBe(262144);
-    });
-
-    it('preserves custom value even when customize section is collapsed', async () => {
-      await form.fillForm({
-        Name: 'zvol1',
-        Size: '1 GiB',
-      });
-
-      // Simulate loading an existing zvol with custom value
-      spectator.component.form.patchValue({
-        special_small_block_size: OnOff.On,
-        special_small_block_size_custom: 65536, // 64 KiB
-      });
-      spectator.component.showCustomizeSpecialSmallBlockSize = false; // Collapsed
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.create');
-      const payload = callArgs[1][0];
-
-      // Should preserve the custom value, not default to 16 MiB
-      expect(payload.special_small_block_size).toBe(65536);
     });
 
     // Note: Editing zvol form value reading tests are not included here due to complexity

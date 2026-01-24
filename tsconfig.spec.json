@@ -3,12 +3,13 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "esModuleInterop": true,
-    "target": "ES2016",
-    "module": "CommonJs",
+    "target": "ES2022",
+    "module": "ESNext",
+    "isolatedModules": true,
     "types": [
       "jest",
       "node"
-    ],
+    ]
   },
   "files": [
     "polyfills.ts"

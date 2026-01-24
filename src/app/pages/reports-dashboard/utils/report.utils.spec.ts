@@ -136,15 +136,15 @@ describe('formatData', () => {
     expect(result.aggregations.mean).toEqual([50]);
   });
 
-  it('reverses legend and data for CPU graphs', () => {
+  it('removes first column and reverses legend and data for CPU graphs', () => {
     const data = {
       name: ReportingGraphName.Cpu,
-      legend: ['time', 'user', 'system'],
+      legend: ['willBeRemoved', 'time', 'user', 'system'],
       data: [
-        [1, 20, 30],
-        [2, 25, 35],
+        [1, 0, 20, 30],
+        [2, 0, 25, 35],
       ],
-      aggregations: { min: [10, 15], max: [50, 55], mean: [30, 35] },
+      aggregations: { min: [10, 15, 0], max: [50, 55, 0], mean: [30, 35, 0] },
     } as ReportingData;
 
     const result = formatData(data);
@@ -156,6 +156,28 @@ describe('formatData', () => {
     expect(result.aggregations.min).toEqual([15, 10]);
     expect(result.aggregations.max).toEqual([55, 50]);
     expect(result.aggregations.mean).toEqual([35, 30]);
+  });
+
+  it('removes average data from CPU temp graph', () => {
+    const data = {
+      name: ReportingGraphName.CpuTemp,
+      legend: ['time', 'user', 'system', 'willBeRemoved'],
+      data: [
+        [1, 20, 30, 0],
+        [2, 25, 35, 0],
+      ],
+      aggregations: { min: [10, 15, 0], max: [50, 55, 0], mean: [30, 35, 0] },
+    } as ReportingData;
+
+    const result = formatData(data);
+    expect(result.legend).toEqual(['time', 'user', 'system']);
+    expect(result.data).toEqual([
+      [1, 20, 30],
+      [2, 25, 35],
+    ]);
+    expect(result.aggregations.min).toEqual([10, 15]);
+    expect(result.aggregations.max).toEqual([50, 55]);
+    expect(result.aggregations.mean).toEqual([30, 35]);
   });
 
   it('returns data unchanged for other graph names', () => {

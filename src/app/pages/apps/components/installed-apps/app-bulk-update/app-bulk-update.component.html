@@ -43,19 +43,19 @@
 
             <div class="version-info">
               <div class="version-row">
-                <span class="version-label">{{ 'Catalog Version' | translate }}:</span>
-                <span class="version-value">
-                  {{ versionInfo.currentCatalogVersion }}
-                  <ix-icon name="mdi-arrow-right"></ix-icon>
-                  {{ versionInfo.latestCatalogVersion }}
-                </span>
-              </div>
-              <div class="version-row">
                 <span class="version-label">{{ 'App Version' | translate }}:</span>
                 <span class="version-value">
                   {{ versionInfo.currentAppVersion }}
                   <ix-icon name="mdi-arrow-right"></ix-icon>
                   {{ versionInfo.latestAppVersion }}
+                </span>
+              </div>
+              <div class="version-row">
+                <span class="version-label">{{ 'Version' | translate }}:</span>
+                <span class="version-value">
+                  {{ versionInfo.currentCatalogVersion }}
+                  <ix-icon name="mdi-arrow-right"></ix-icon>
+                  {{ versionInfo.latestCatalogVersion }}
                 </span>
               </div>
             </div>

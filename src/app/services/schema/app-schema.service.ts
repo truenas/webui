@@ -37,6 +37,7 @@ import {
   CustomUntypedFormField,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { maxArrayLengthValidator, minArrayLengthValidator } from 'app/modules/forms/ix-forms/validators/array-length-validation';
 import { cronValidator } from 'app/modules/forms/ix-forms/validators/cron-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -822,15 +823,34 @@ export class AppSchemaService {
   private buildSchemaControlValidator(defaultValue: unknown, schema: ChartSchemaNodeConf): ValidatorFn[] {
     const nullValidator = Validators.nullValidator;
     const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
+    const isListType = schema.type === ChartSchemaType.List;
+
+    // For list types, use array length validators instead of numeric validators
+    const maxValidator = this.getMaxValidator(schema.max, isListType);
+    const minValidator = this.getMinValidator(schema.min, isListType);
 
     return [
       (schema.required || (!schema.empty && schema.empty !== undefined)) ? Validators.required : nullValidator,
-      schema.max ? Validators.max(schema.max) : nullValidator,
-      schema.min ? Validators.min(schema.min) : nullValidator,
+      maxValidator,
+      minValidator,
       schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
       schema.min_length ? Validators.minLength(schema.min_length) : nullValidator,
       schema.type === ChartSchemaType.Uri ? Validators.pattern(this.urlValidationService.urlRegex) : nullValidator,
       schema.type === ChartSchemaType.String && schema.default && isValidCrontab ? cronValidator() : nullValidator,
     ];
+  }
+
+  private getMaxValidator(max: number | undefined, isListType: boolean): ValidatorFn {
+    if (!max) {
+      return Validators.nullValidator;
+    }
+    return isListType ? maxArrayLengthValidator(max) : Validators.max(max);
+  }
+
+  private getMinValidator(min: number | undefined, isListType: boolean): ValidatorFn {
+    if (!min) {
+      return Validators.nullValidator;
+    }
+    return isListType ? minArrayLengthValidator(min) : Validators.min(min);
   }
 }

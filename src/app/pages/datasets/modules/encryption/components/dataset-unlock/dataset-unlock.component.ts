@@ -28,6 +28,7 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
@@ -164,7 +165,7 @@ export class DatasetUnlockComponent implements OnInit {
         } else {
           this.form.controls.datasets.push(this.formBuilder.group({
             name: [''],
-            key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
+            key: ['', exactLength(64)],
             file: [[] as File[]],
             is_passphrase: [false],
           }) as FormGroup<DatasetFormGroup>);

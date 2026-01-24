@@ -160,6 +160,7 @@ export class DeviceListComponent implements OnInit {
     this.slideIn.open(DeviceFormComponent, {
       data: {
         virtualMachineId: this.vmId,
+        vmName: this.vmName,
       },
     }).pipe(
       filter((response) => !!response.response),
@@ -174,6 +175,7 @@ export class DeviceListComponent implements OnInit {
       data: {
         device,
         virtualMachineId: this.vmId,
+        vmName: this.vmName,
       },
     }).pipe(
       filter((response) => !!response.response),

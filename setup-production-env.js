@@ -2,7 +2,6 @@ import fs from "fs";
 
 const productionFilePath = './src/environments/environment.prod.ts';
 const productionFileContent = `import { enableProdMode } from '@angular/core';
-import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
 import { WebUiEnvironment, environmentVersion, remote } from './environment.interface';
 
 export const environment: WebUiEnvironment = {
@@ -10,7 +9,6 @@ export const environment: WebUiEnvironment = {
   remote,
   buildYear: ${new Date().getFullYear()},
   production: true,
-  sentryPublicDsn,
   debugPanel: {
     enabled: false,
     defaultMessageLimit: 100,

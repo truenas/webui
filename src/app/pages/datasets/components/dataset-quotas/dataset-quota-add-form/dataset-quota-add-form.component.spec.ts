@@ -41,7 +41,21 @@ describe('DatasetQuotaAddFormComponent', () => {
           { username: 'john', roles: [] },
           { username: 'jill', roles: [] },
         ]),
-        groupQueryDsCache: () => of(),
+        groupQueryDsCache: () => of([
+          { group: 'test-group', gid: 1000 },
+        ]),
+        getGroupByName: jest.fn((groupName: string) => {
+          if (groupName === 'test-group') {
+            return of({ group: 'test-group', gid: 1000 });
+          }
+          return of(null);
+        }),
+        getUserByName: jest.fn((username: string) => {
+          if (username === 'john' || username === 'jill') {
+            return of({ username, uid: username === 'john' ? 1001 : 1002 });
+          }
+          return of(null);
+        }),
       }),
       mockProvider(SlideIn),
       mockProvider(DialogService),

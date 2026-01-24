@@ -1,5 +1,4 @@
 import fs from 'fs';
-// eslint-disable-next-line no-restricted-imports
 import { getCurrentConfig, updateEnvironment } from '../utils/save-environment';
 
 function normalizeUrl(url = ''): string {

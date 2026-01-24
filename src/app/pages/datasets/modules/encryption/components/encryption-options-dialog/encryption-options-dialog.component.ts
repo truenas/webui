@@ -25,6 +25,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -79,7 +80,7 @@ export class EncryptionOptionsDialog implements OnInit {
     inherit_encryption: [false],
     encryption_type: new FormControl(null as EncryptionType | null),
     generate_key: [false],
-    key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
+    key: ['', [Validators.required, exactLength(64)]],
     passphrase: ['', Validators.minLength(8)],
     confirm_passphrase: [''],
     pbkdf2iters: [350000, Validators.min(100000)],

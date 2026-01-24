@@ -4,10 +4,10 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { isEqual } from 'lodash-es';
 import {
-  of, switchMap, tap, EMPTY,
+  of, exhaustMap, tap, EMPTY,
 } from 'rxjs';
 import {
-  catchError, filter, map, startWith, distinctUntilChanged,
+  catchError, filter, map, startWith, distinctUntilChanged, switchMap,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
@@ -24,7 +24,7 @@ export interface ContainersState {
 }
 
 const initialState: ContainersState = {
-  isLoading: true,
+  isLoading: false,
   containers: undefined,
   selectedContainerId: null,
   selectedContainer: undefined,
@@ -45,21 +45,37 @@ export class ContainersStore extends ComponentStore<ContainersState> {
     return this.state().containers?.filter((container) => !!container) ?? [];
   });
 
+  /**
+   * Returns true if containers have been loaded at least once.
+   * Use this to differentiate between "not loaded yet" (hasLoaded=false, containers=[])
+   * and "loaded with no data" (hasLoaded=true, containers=[]).
+   */
+  readonly hasLoaded = computed(() => this.state().containers !== undefined);
+
   readonly metrics = computed(() => this.state().metrics);
 
   constructor() {
     super(initialState);
     this.listenForMetrics();
+    this.subscribeToContainerUpdates();
   }
 
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
-      switchMap(() => {
+      // exhaustMap ignores new triggers while a request is in progress,
+      // preventing duplicate API calls during rapid navigation
+      exhaustMap(() => {
+        // Skip if already loading
+        if (this.state().isLoading) {
+          return EMPTY;
+        }
+
+        this.patchState({ isLoading: true });
         return this.api.call('container.query').pipe(
           tap((containers) => {
             const selectedContainerId = this.selectedContainerId();
 
-            if (selectedContainerId) {
+            if (selectedContainerId && Number.isFinite(selectedContainerId)) {
               const updatedSelectedContainer = containers.find((container) => container.id === selectedContainerId);
               if (updatedSelectedContainer) {
                 this.patchState({ selectedContainer: updatedSelectedContainer });
@@ -78,11 +94,6 @@ export class ContainersStore extends ComponentStore<ContainersState> {
               isLoading: false,
             });
           }),
-          switchMap(() => {
-            return this.api.subscribe('container.query').pipe(
-              tap((event) => this.processContainerUpdateEvent(event)),
-            );
-          }),
           catchError((error: unknown) => {
             this.patchState({ isLoading: false, containers: [] });
             this.errorHandler.showErrorModal(error);
@@ -90,7 +101,47 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           }),
         );
       }),
-      takeUntilDestroyed(this.destroyRef),
+    );
+  });
+
+  private subscribeToContainerUpdates(): void {
+    this.api.subscribe('container.query')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => this.processContainerUpdateEvent(event));
+  }
+
+  /**
+   * Force reload containers, bypassing the initialization check.
+   * Use this after container creation/update operations.
+   */
+  readonly reload = this.effect((trigger$) => {
+    return trigger$.pipe(
+      exhaustMap(() => {
+        this.patchState({ isLoading: true });
+        return this.api.call('container.query').pipe(
+          tap((containers) => {
+            const selectedContainerId = this.selectedContainerId();
+            const updates: Partial<ContainersState> = {
+              containers,
+              isLoading: false,
+            };
+
+            if (selectedContainerId) {
+              const updatedSelectedContainer = containers.find((container) => container.id === selectedContainerId);
+              if (updatedSelectedContainer) {
+                updates.selectedContainer = updatedSelectedContainer;
+              }
+            }
+
+            this.patchState(updates);
+          }),
+          catchError((error: unknown) => {
+            this.patchState({ isLoading: false });
+            this.errorHandler.showErrorModal(error);
+            return of(undefined);
+          }),
+        );
+      }),
     );
   });
 
@@ -171,6 +222,12 @@ export class ContainersStore extends ComponentStore<ContainersState> {
 
   selectContainer(containerId: number): void {
     this.patchState({ selectedContainerId: containerId });
+
+    // If containers aren't loaded yet, just save the ID and let initialize() handle it
+    if (this.state().containers === undefined) {
+      return;
+    }
+
     const containers = this.containers();
     const selectedContainer = containers?.find((container) => container.id === containerId);
     if (!selectedContainer?.id) {

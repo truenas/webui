@@ -17,6 +17,7 @@ export const storageKeys = {
   ACTIVE_TAB: 'websocket-debug-active-tab',
   MESSAGE_LIMIT: 'websocket-debug-message-limit',
   ENCLOSURE_MOCK_CONFIG: 'websocket-debug-enclosure-mock-config',
+  DUPLICATE_NOTIFICATIONS_ENABLED: 'websocket-debug-duplicate-notifications',
 } as const;
 
 // Tab identifiers

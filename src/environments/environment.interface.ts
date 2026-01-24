@@ -4,7 +4,6 @@ export interface WebUiEnvironment {
   buildYear: number;
   port?: number;
   production: boolean;
-  sentryPublicDsn: string;
   debugPanel?: {
     enabled: boolean;
     defaultMessageLimit: number;

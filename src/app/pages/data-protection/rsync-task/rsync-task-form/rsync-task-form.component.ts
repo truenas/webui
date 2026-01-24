@@ -15,16 +15,15 @@ import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
@@ -38,7 +37,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +51,7 @@ import { UserService } from 'app/services/user.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
     IxSelectComponent,
     IxInputComponent,
     IxSlideToggleComponent,
@@ -74,7 +72,6 @@ export class RsyncTaskFormComponent implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
-  private userService = inject(UserService);
   private filesystemService = inject(FilesystemService);
   private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
@@ -145,7 +142,6 @@ export class RsyncTaskFormComponent implements OnInit {
     { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
   ]);
 
-  readonly userProvider = new UserComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
   private editingTask: RsyncTask | undefined;

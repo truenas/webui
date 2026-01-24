@@ -41,7 +41,7 @@ describe('CheckinIndicatorComponent', () => {
   });
 
   it('shows checkin indicator when there are pending network changes', () => {
-    expect(spectator.query('button ix-icon')).toBeTruthy();
+    expect(spectator.query('button tn-icon')).toBeTruthy();
   });
 
   it('shows pending changes prompt when indicator is pressed', () => {

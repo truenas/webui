@@ -33,7 +33,7 @@ Key state slices: systemConfig, preferences, services, jobs, alerts, networkInte
 - **ApiService** (`services/websocket/api.service.ts`): Central WebSocket API communication
 - **WebSocketHandlerService**: Low-level WebSocket connection management
 - **AuthService**: Authentication and authorization
-- **ErrorHandlerService**: Centralized error handling with Sentry
+- **ErrorHandlerService**: Centralized error handling
 - Domain services follow pattern: `services/[domain].service.ts`
 
 ### Data Flow Pattern
