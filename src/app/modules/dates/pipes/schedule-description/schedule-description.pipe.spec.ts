@@ -34,7 +34,7 @@ describe('ScheduleDescriptionPipe', () => {
       dom: '*',
       month: '*',
       dow: '*',
-    })).toBe('At 00:00, every day');
+    })).toBe('At 00:00 (12:00 AM), every day');
 
     expect(spectator.service.transform({
       minute: '0',
@@ -42,7 +42,7 @@ describe('ScheduleDescriptionPipe', () => {
       dom: '*',
       month: '*',
       dow: '1',
-    })).toBe('At 00:00, only on Monday');
+    })).toBe('At 00:00 (12:00 AM), only on Monday');
 
     expect(spectator.service.transform({
       minute: '0',
@@ -50,7 +50,7 @@ describe('ScheduleDescriptionPipe', () => {
       dom: '1',
       month: '*',
       dow: '*',
-    })).toBe('At 00:00, on day 1 of the month');
+    })).toBe('At 00:00 (12:00 AM), on day 1 of the month');
 
     expect(spectator.service.transform({
       minute: '0',
@@ -58,7 +58,7 @@ describe('ScheduleDescriptionPipe', () => {
       dom: '*',
       month: '1',
       dow: '*',
-    })).toBe('At 00:00, every day, only in January');
+    })).toBe('At 00:00 (12:00 AM), every day, only in January');
 
     expect(spectator.service.transform({
       minute: '20',
@@ -84,7 +84,7 @@ describe('ScheduleDescriptionPipe', () => {
       dom: '*',
       month: '*',
       dow: '*',
-    })).toBe('О 00:00, щоденно');
+    })).toBe('О 00:00 (12:00 AM), щоденно');
 
     expect(spectator.service.transform({
       minute: '20',
@@ -95,7 +95,7 @@ describe('ScheduleDescriptionPipe', () => {
     })).toBe('О 20 хвилині, кожні 2 годин, тільки в понеділок та вівторок');
   });
 
-  it("uses user's time 12/24h time format preference when describing the schedule", () => {
+  it('shows both 24-hour and 12-hour time formats when describing the schedule', () => {
     spectator = createPipe({
       providers: [
         mockProvider(LocaleService, {
@@ -110,7 +110,7 @@ describe('ScheduleDescriptionPipe', () => {
       dom: '*',
       month: '*',
       dow: '*',
-    })).toBe('At 02:45 PM, every day');
+    })).toBe('At 14:45 (02:45 PM), every day');
   });
 
   it('returns an empty string when invalid schedule is provided and logs console error', () => {
@@ -125,7 +125,7 @@ describe('ScheduleDescriptionPipe', () => {
   });
 
   describe('when `begin` and `end` are set', () => {
-    it('describes schedule with `begin` and `end` fields', () => {
+    it('describes schedule with `begin` and `end` fields showing both time formats', () => {
       spectator = createPipe();
 
       expect(spectator.service.transform({
@@ -136,10 +136,10 @@ describe('ScheduleDescriptionPipe', () => {
         dow: '*',
         begin: '02:15',
         end: '23:00',
-      })).toBe('Every hour, every day, from 02:15 to 23:00');
+      })).toBe('Every hour, every day, from 02:15 (02:15 AM) to 23:00 (11:00 PM)');
     });
 
-    it("uses user's time 12/24h time format preference for schedule with `begin` and `end`", () => {
+    it('shows both time formats for schedule with `begin` and `end` regardless of user preference', () => {
       spectator = createPipe({
         providers: [
           mockProvider(LocaleService, {
@@ -157,7 +157,7 @@ describe('ScheduleDescriptionPipe', () => {
         dow: '*',
         begin: '02:15',
         end: '23:00',
-      })).toBe('Every hour, every day, from 02:15 AM to 11:00 PM');
+      })).toBe('Every hour, every day, from 02:15 (02:15 AM) to 23:00 (11:00 PM)');
     });
   });
 });
