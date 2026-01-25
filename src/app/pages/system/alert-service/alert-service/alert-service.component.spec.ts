@@ -2,7 +2,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -200,7 +199,7 @@ describe('AlertServiceComponent', () => {
       form = await loader.getHarness(IxFormHarness);
     });
 
-    it('shows values for an existing alert service', fakeAsync(async () => {
+    it('shows values for an existing alert service', async () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Enabled: true,
@@ -208,11 +207,13 @@ describe('AlertServiceComponent', () => {
         Name: 'Existing Service',
         Type: 'AWS SNS',
       });
-      tick();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.setValues).toHaveBeenCalledWith(existingService.attributes);
-    }));
+    });
 
     it('updates an existing alert service when update form is submitted', async () => {
       await form.fillForm({

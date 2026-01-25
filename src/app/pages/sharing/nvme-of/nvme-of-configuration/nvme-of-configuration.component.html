@@ -14,14 +14,16 @@
           [tooltip]="helptext.baseNqnTooltip | translate"
         ></ix-input>
 
-        <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
-          <ix-radio-group
-            formControlName="kernel"
-            [label]="'Implementation (Experimental)' | translate"
-            [options]="implementationOptions$"
-            [tooltip]="helptext.implementationTooltip | translate"
-          ></ix-radio-group>
-        </div>
+        @if (isEnterprise()) {
+          <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
+            <ix-radio-group
+              formControlName="kernel"
+              [label]="'Implementation (Experimental)' | translate"
+              [options]="implementationOptions$"
+              [tooltip]="helptext.implementationTooltip | translate"
+            ></ix-radio-group>
+          </div>
+        }
 
         <ix-checkbox
           formControlName="ana"

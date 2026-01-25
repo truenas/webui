@@ -12,10 +12,9 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -36,7 +35,6 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { UserService } from 'app/services/user.service';
 import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-editor-save-controls.component';
 
 @UntilDestroy()
@@ -51,7 +49,8 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
     MatCardHeader,
     MatCardTitle,
     ReactiveFormsModule,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxCheckboxComponent,
     AclEditorListComponent,
     MatButton,
@@ -73,7 +72,6 @@ export class DatasetAclEditorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private matDialog = inject(MatDialog);
-  private userService = inject(UserService);
   private formBuilder = inject(NonNullableFormBuilder);
 
   datasetPath: string;
@@ -97,8 +95,6 @@ export class DatasetAclEditorComponent implements OnInit {
     return Boolean(this.route.snapshot.queryParams['homeShare']);
   }
 
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
   readonly helptext = helptextAcl;
 
   protected readonly Role = Role;

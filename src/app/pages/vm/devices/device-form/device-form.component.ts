@@ -91,6 +91,7 @@ export class DeviceFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     virtualMachineId?: number;
     device?: VmDevice;
+    vmName?: string;
   } | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
@@ -98,12 +99,7 @@ export class DeviceFormComponent implements OnInit {
 
 
   isLoading = false;
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Device')
-      : this.translate.instant('Edit Device');
-  }
+  protected vmName: string;
 
   get isNew(): boolean {
     return !this.existingDevice;
@@ -152,7 +148,7 @@ export class DeviceFormComponent implements OnInit {
   }
 
   existingDevice: VmDevice;
-  protected slideInData: { virtualMachineId?: number; device?: VmDevice } | undefined;
+  protected slideInData: { virtualMachineId?: number; device?: VmDevice; vmName?: string } | undefined;
 
   readonly rawFileExplorer = viewChild<IxExplorerComponent>('rawFileExplorer');
 
@@ -311,6 +307,7 @@ export class DeviceFormComponent implements OnInit {
       return of(this.typeSpecificForm.dirty);
     });
     this.slideInData = slideInRef.getData();
+    this.vmName = this.slideInData?.vmName;
   }
 
   ngOnInit(): void {

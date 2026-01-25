@@ -373,7 +373,7 @@ export class ContainerFormComponent implements OnInit {
           this.form.markAsPristine();
           this.snackbar.success(this.translate.instant('Container created'));
           this.slideInRef.close({ response: true, error: false });
-          this.containersStore?.initialize();
+          this.containersStore?.reload();
           if (container?.id) {
             this.router.navigate(['/containers', 'view', container.id]);
           }

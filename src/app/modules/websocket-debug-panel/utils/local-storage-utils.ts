@@ -44,7 +44,6 @@ export async function safeSetItem<T>(key: string, value: T): Promise<void> {
         writeError,
       );
       console.error('LocalStorage write error:', error);
-      throw error;
     }
   });
 }
@@ -61,7 +60,6 @@ export async function safeRemoveItem(key: string): Promise<void> {
         removeError,
       );
       console.error('LocalStorage remove error:', error);
-      throw error;
     }
   });
 }

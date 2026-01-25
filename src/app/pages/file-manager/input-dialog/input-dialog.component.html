@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>{{ config.title | translate }}</h1>
+<div mat-dialog-content>
+  @if (config.message) {
+    <p>{{ config.message | translate }}</p>
+  }
+  <mat-form-field appearance="outline" class="full-width">
+    @if (config.inputLabel) {
+      <mat-label>{{ config.inputLabel | translate }}</mat-label>
+    }
+    <input
+      matInput
+      cdkFocusInitial
+      [formControl]="inputControl"
+      (keyup.enter)="onConfirm()">
+  </mat-form-field>
+</div>
+<mat-dialog-actions align="end">
+  <button
+    mat-button
+    ixTest="cancel"
+    [mat-dialog-close]="null">
+    {{ (config.cancelText || 'Cancel') | translate }}
+  </button>
+  <button
+    mat-flat-button
+    color="primary"
+    ixTest="confirm"
+    [disabled]="inputControl.invalid"
+    (click)="onConfirm()">
+    {{ (config.confirmText || 'OK') | translate }}
+  </button>
+</mat-dialog-actions>

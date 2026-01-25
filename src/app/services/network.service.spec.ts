@@ -1,218 +1,130 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { BehaviorSubject, of } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
-import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { firstValueFrom, of } from 'rxjs';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkService } from 'app/services/network.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('NetworkService', () => {
   let spectator: SpectatorService<NetworkService>;
-  let scheduler: TestScheduler;
-  const licensed$ = new BehaviorSubject(false);
-  const status$ = new BehaviorSubject(FailoverStatus.Single);
-  const config$ = new BehaviorSubject<FailoverConfig>({
-    disabled: true,
-    id: 1,
-    master: false,
-    timeout: 3,
-  });
+  let store$: MockStore;
 
   const createService = createServiceFactory({
     service: NetworkService,
     providers: [
-      mockProvider(ApiService, {
-        call: jest.fn((method) => {
-          if (method === 'failover.licensed') {
-            return licensed$;
-          }
-
-          if (method === 'failover.status') {
-            return status$;
-          }
-
-          if (method === 'failover.config') {
-            return config$;
-          }
-          return of();
-        }),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsHaLicensed, value: false },
+        ],
       }),
+      mockProvider(ApiService),
     ],
   });
 
   beforeEach(() => {
     spectator = createService();
-    scheduler = getTestScheduler();
+    store$ = spectator.inject(MockStore);
   });
 
+  function setupMocks(licensed: boolean, status: FailoverStatus, config: FailoverConfig): void {
+    store$.overrideSelector(selectIsHaLicensed, licensed);
+    const api = spectator.inject(ApiService);
+    jest.spyOn(api, 'call').mockImplementation((method: string) => {
+      if (method === 'failover.status') {
+        return of(status);
+      }
+      if (method === 'failover.config') {
+        return of(config);
+      }
+      return of();
+    });
+  }
+
   describe('getIsHaEnabled', () => {
-    it('returns false when not licensed', () => {
-      licensed$.next(false);
-      status$.next(FailoverStatus.Master);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when not licensed', async () => {
+      setupMocks(false, FailoverStatus.Master, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns false when status is Single', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Single);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when status is Single', async () => {
+      setupMocks(true, FailoverStatus.Single, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns false when config is disabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Master);
-      config$.next({
-        disabled: true, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when config is disabled', async () => {
+      setupMocks(true, FailoverStatus.Master, { disabled: true } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns false when not licensed and status is Single', () => {
-      licensed$.next(false);
-      status$.next(FailoverStatus.Single);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when not licensed and status is Single', async () => {
+      setupMocks(false, FailoverStatus.Single, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns false when not licensed and config is disabled', () => {
-      licensed$.next(false);
-      status$.next(FailoverStatus.Master);
-      config$.next({
-        disabled: true, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when not licensed and config is disabled', async () => {
+      setupMocks(false, FailoverStatus.Master, { disabled: true } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns false when status is Single and config is disabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Single);
-      config$.next({
-        disabled: true, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when status is Single and config is disabled', async () => {
+      setupMocks(true, FailoverStatus.Single, { disabled: true } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns false when all conditions fail', () => {
-      licensed$.next(false);
-      status$.next(FailoverStatus.Single);
-      config$.next({
-        disabled: true, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns false when all conditions fail', async () => {
+      setupMocks(false, FailoverStatus.Single, { disabled: true } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: false,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(false);
     });
 
-    it('returns true when licensed with Master status and config enabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Master);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns true when licensed with Master status and config enabled', async () => {
+      setupMocks(true, FailoverStatus.Master, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: true,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(true);
     });
 
-    it('returns true when licensed with Backup status and config enabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Backup);
-      config$.next({
-        disabled: false, id: 1, master: false, timeout: 3,
-      } as FailoverConfig);
+    it('returns true when licensed with Backup status and config enabled', async () => {
+      setupMocks(true, FailoverStatus.Backup, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: true,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(true);
     });
 
-    it('returns true when licensed with Electing status and config enabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Electing);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns true when licensed with Electing status and config enabled', async () => {
+      setupMocks(true, FailoverStatus.Electing, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: true,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(true);
     });
 
-    it('returns true when licensed with Importing status and config enabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Importing);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns true when licensed with Importing status and config enabled', async () => {
+      setupMocks(true, FailoverStatus.Importing, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: true,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(true);
     });
 
-    it('returns true when licensed with Error status and config enabled', () => {
-      licensed$.next(true);
-      status$.next(FailoverStatus.Error);
-      config$.next({
-        disabled: false, id: 1, master: true, timeout: 3,
-      } as FailoverConfig);
+    it('returns true when licensed with Error status and config enabled', async () => {
+      setupMocks(true, FailoverStatus.Error, { disabled: false } as FailoverConfig);
 
-      scheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getIsHaEnabled()).toBe('a', {
-          a: true,
-        });
-      });
+      const result = await firstValueFrom(spectator.service.getIsHaEnabled());
+      expect(result).toBe(true);
     });
   });
 });

@@ -1,9 +1,9 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { format } from 'date-fns';
 import { Observable } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -32,14 +32,10 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     UiSearchDirective,
     TranslateModule,
   ],
-  providers: [
-    DatePipe,
-  ],
 })
 export class SaveDebugButtonComponent {
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
-  private datePipe = inject(DatePipe);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   private translate = inject(TranslateService);
@@ -69,7 +65,7 @@ export class SaveDebugButtonComponent {
       take(1),
       switchMap((systemInfo) => {
         const hostname = systemInfo.hostname.split('.')[0];
-        const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
+        const date = format(new Date(), 'yyyyMMddHHmmss');
         const mimeType = 'application/gzip';
         const fileName = `debug-${hostname}-${date}.tgz`;
 

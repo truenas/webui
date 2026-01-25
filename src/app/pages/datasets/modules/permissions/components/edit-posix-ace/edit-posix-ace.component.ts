@@ -9,15 +9,13 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -29,14 +27,14 @@ import { UserService } from 'app/services/user.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxCheckboxListComponent,
     IxCheckboxComponent,
     TranslateModule,
   ],
 })
 export class EditPosixAceComponent implements OnInit, OnChanges {
-  private userService = inject(UserService);
   private store = inject(DatasetAclEditorStore);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -58,9 +56,6 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     user: helptextAcl.userTooltip,
     group: helptextAcl.groupTooltip,
   };
-
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   get isUserTag(): boolean {
     return this.form.value.tag === PosixAclTag.User;
@@ -89,6 +84,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   }
 
   private onFormStatusUpdated(): void {
+    // Don't update validation status while async validators are pending
+    // This prevents the "flash of invalid" during async validation
+    if (this.form.pending) {
+      return;
+    }
     this.store.updateSelectedAceValidation(this.form.valid);
   }
 
@@ -120,22 +120,28 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   }
 
   private updateFormValues(): void {
+    // Use ace input values directly here, not the form getters
+    // The getters read from this.form.value which hasn't been patched yet
+    const aceTag = this.ace().tag;
+    const isUserTag = aceTag === PosixAclTag.User;
+    const isGroupTag = aceTag === PosixAclTag.Group;
+
     const userField = this.form.controls.user;
     const groupField = this.form.controls.group;
 
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) {
+    if (isUserTag) {
       userField.addValidators(Validators.required);
-    } else if (this.isGroupTag) {
+    } else if (isGroupTag) {
       groupField.addValidators(Validators.required);
     }
 
     const formValues = {
-      tag: this.ace().tag,
-      user: this.isUserTag ? this.ace().who : null,
-      group: this.isGroupTag ? this.ace().who : null,
+      tag: aceTag,
+      user: isUserTag ? this.ace().who : null,
+      group: isGroupTag ? this.ace().who : null,
       default: this.ace().default,
       permissions: Object.entries(this.ace().perms)
         .filter(([, isOn]: [string, boolean]) => isOn)
@@ -143,6 +149,10 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     };
 
     this.form.patchValue(formValues, { emitEvent: false });
+    // Force status recalculation and event emission after patchValue
+    // This ensures statusChanges fires when async validators complete
+    userField.updateValueAndValidity({ onlySelf: true });
+    groupField.updateValueAndValidity({ onlySelf: true });
     this.form.markAllAsTouched();
 
     this.onFormStatusUpdated();

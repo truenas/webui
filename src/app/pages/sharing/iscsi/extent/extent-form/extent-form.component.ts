@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { sortBy, startsWith } from 'lodash-es';
 import {
@@ -29,6 +31,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -38,7 +41,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-extent-form',
   templateUrl: './extent-form.component.html',
@@ -54,6 +56,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxCheckboxComponent,
     IxSelectComponent,
     IxExplorerComponent,
+    IxIconComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -71,6 +74,7 @@ export class ExtentFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   private filesystemService = inject(FilesystemService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<IscsiExtent | undefined, boolean>>(SlideInRef);
 
   get isNew(): boolean {
@@ -83,6 +87,11 @@ export class ExtentFormComponent implements OnInit {
 
   get isAvailableThreshold(): boolean {
     return startsWith(this.form.controls.disk.value, 'zvol');
+  }
+
+  get isSnapshot(): boolean {
+    const diskValue = this.form.controls.disk.value;
+    return this.isDevice && !!diskValue && diskValue.includes('@');
   }
 
   get title(): string {
@@ -150,7 +159,9 @@ export class ExtentFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
+    this.form.controls.type.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value: IscsiExtentType) => {
       if (value === IscsiExtentType.Disk) {
         this.form.controls.disk.enable();
         this.form.controls.path.disable();
@@ -160,6 +171,20 @@ export class ExtentFormComponent implements OnInit {
         this.form.controls.disk.disable();
         this.form.controls.path.enable();
         this.form.controls.filesize.enable();
+      }
+    });
+
+    // Handle snapshot selection - auto-set ro=true and disable checkbox
+    this.form.controls.disk.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((diskValue: string) => {
+      if (diskValue?.includes('@')) {
+        // Snapshot selected - must be read-only
+        this.form.controls.ro.setValue(true);
+        this.form.controls.ro.disable();
+      } else {
+        // Regular device - allow ro to be toggled
+        this.form.controls.ro.enable();
       }
     });
 
@@ -177,12 +202,16 @@ export class ExtentFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
+    // Use getRawValue to include disabled fields like 'ro' when a snapshot is selected
     const values = {
-      ...this.form.value,
+      ...this.form.getRawValue(),
     } as IscsiExtentUpdate;
 
     if (values.type === IscsiExtentType.Disk) {
       values.path = values.disk;
+      delete values.filesize;
+    } else {
+      delete values.disk;
     }
 
     if (values.type === IscsiExtentType.File && Number(values.filesize) !== 0) {
@@ -204,7 +233,7 @@ export class ExtentFormComponent implements OnInit {
       request$ = this.api.call('iscsi.extent.create', [values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close({ response: true });

@@ -129,3 +129,13 @@ export const enclosureMockConfigLoaded = createAction(
     scenario: MockEnclosureScenario;
   } | null; }>(),
 );
+
+// Duplicate Call Notification Actions
+export const toggleDuplicateNotifications = createAction(
+  `${actionPrefix} Toggle Duplicate Notifications`,
+);
+
+export const setDuplicateNotificationsEnabled = createAction(
+  `${actionPrefix} Set Duplicate Notifications Enabled`,
+  props<{ enabled: boolean }>(),
+);

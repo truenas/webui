@@ -291,6 +291,7 @@ import {
 import {
   WebShareConfig, WebShareConfigUpdate, WebShare, WebShareUpdate,
 } from 'app/interfaces/webshare-config.interface';
+import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -519,6 +520,10 @@ export interface ApiCallDirectory {
   'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
+  'filesystem.rename': { params: [{ src: string; dst: string }]; response: boolean };
+  'filesystem.copy': { params: [{ src: string; dst: string; options?: { recursive?: boolean; preserve_attrs?: boolean } }]; response: boolean };
+  'filesystem.delete': { params: [{ path: string; options?: { recursive?: boolean } }]; response: boolean };
+  'filesystem.mkdir': { params: [{ path: string; options?: { mode?: string; raise_chmod_error?: boolean } }]; response: FileRecord };
 
   // FTP
   'ftp.config': { params: void; response: FtpConfig };
@@ -730,9 +735,11 @@ export interface ApiCallDirectory {
   'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
   'pool.scrub.update': { params: [id: number, params: CreateScrubTask]; response: ScrubTask };
   'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
-  'pool.snapshottask.delete': { params: [id: number]; response: boolean };
+  'pool.snapshottask.delete': { params: [id: number, fixate_removal_date?: boolean]; response: boolean };
+  'pool.snapshottask.delete_will_change_retention_for': { params: [id: number]; response: Record<string, string[]> };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
+  'pool.snapshottask.update_will_change_retention_for': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: Record<string, string[]> };
   'pool.upgrade': { params: [id: number]; response: boolean };
   'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
@@ -986,6 +993,12 @@ export interface ApiCallDirectory {
   // WebShare
   'webshare.config': { params: void; response: WebShareConfig };
   'webshare.update': { params: [WebShareConfigUpdate]; response: WebShareConfig };
+
+  // USB Drive
+  'usb.drive.query': { params: void; response: UsbDrive[] };
+  'usb.drive.mount': { params: [{ id: string }]; response: string };
+  'usb.drive.unmount': { params: [{ id: string; force?: boolean }]; response: boolean };
+  'usb.drive.eject': { params: [{ id: string }]; response: boolean };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

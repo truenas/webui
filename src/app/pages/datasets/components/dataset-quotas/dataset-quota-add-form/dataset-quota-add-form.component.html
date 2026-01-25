@@ -28,13 +28,11 @@
         <ix-fieldset
           [title]="'Apply Quotas to Selected Users' | translate"
         >
-          <ix-chips
+          <ix-user-chips
             formControlName="users"
             [label]="'Apply To Users' | translate"
             [tooltip]="tooltips.users | translate"
-            [autocompleteProvider]="usersProvider"
-            [allowNewEntries]="false"
-          ></ix-chips>
+          ></ix-user-chips>
         </ix-fieldset>
       }
 
@@ -42,13 +40,12 @@
         <ix-fieldset
           [title]="'Apply Quotas to Selected Groups' | translate"
         >
-          <ix-chips
+          <ix-group-chips
             formControlName="groups"
             [label]="'Apply To Groups' | translate"
             [tooltip]="tooltips.groups | translate"
             [required]="true"
-            [autocompleteProvider]="groupProvider"
-          ></ix-chips>
+          ></ix-group-chips>
         </ix-fieldset>
       }
 

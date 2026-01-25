@@ -52,7 +52,7 @@ describe('ContainerGeneralInfoComponent', () => {
       mockProvider(ContainersStore, {
         selectedContainer: jest.fn(),
         containerUpdated: jest.fn(),
-        initialize: jest.fn(),
+        reload: jest.fn(),
       }),
       mockApi([
         mockCall('container.delete'),
@@ -107,7 +107,7 @@ describe('ContainerGeneralInfoComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ContainerFormComponent, { data: container });
-    expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(ContainersStore).reload).toHaveBeenCalled();
   });
 
   it('does not delete container when confirmation is cancelled', async () => {

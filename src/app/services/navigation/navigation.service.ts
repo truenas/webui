@@ -41,6 +41,14 @@ export class NavigationService {
       state: 'datasets',
     },
     {
+      name: T('File Manager'),
+      type: MenuItemType.Link,
+      tooltip: T('File Manager'),
+      icon: iconMarker('ix-desktop-file-manager'),
+      iconActive: iconMarker('ix-desktop-file-manager-active'),
+      state: 'file-manager',
+    },
+    {
       name: T('Shares'),
       type: MenuItemType.Link,
       tooltip: T('Shares'),

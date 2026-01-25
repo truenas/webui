@@ -13,13 +13,12 @@
             [nodeProvider]="treeNodeProvider"
           ></ix-explorer>
 
-          <ix-combobox
+          <ix-user-combobox
             formControlName="user"
             [label]="'User' | translate"
             [tooltip]="helptext.rsyncUserTooltip | translate"
             [required]="true"
-            [provider]="userProvider"
-          ></ix-combobox>
+          ></ix-user-combobox>
 
           <ix-select
             formControlName="direction"

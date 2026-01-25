@@ -45,7 +45,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
@@ -67,7 +66,6 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
     ReactiveFormsModule,
     IxSelectComponent,
     WarningComponent,
-    FileSizePipe,
   ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
@@ -113,8 +111,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     special_small_block_size: [inherit as WithInherit<OnOff>],
     special_small_block_size_custom: [null as number | null],
   });
-
-  showCustomizeSpecialSmallBlockSize = false;
 
   syncOptions$: Observable<Option[]>;
   compressionOptions$: Observable<Option[]>;
@@ -206,6 +202,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
           Validators.min(specialVdevMinThreshold),
           Validators.max(specialVdevMaxThreshold),
         ]);
+        // Set default threshold if not already set
+        if (!customControl.value) {
+          customControl.setValue(specialVdevDefaultThreshold);
+        }
       } else {
         customControl.clearValidators();
       }
@@ -247,15 +247,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
-  }
-
-  toggleCustomizeSpecialSmallBlockSize(): void {
-    this.showCustomizeSpecialSmallBlockSize = !this.showCustomizeSpecialSmallBlockSize;
-    if (this.showCustomizeSpecialSmallBlockSize && !this.form.value.special_small_block_size_custom) {
-      // Set a sensible default when opening customize (16 MiB)
-      this.form.patchValue({ special_small_block_size_custom: specialVdevDefaultThreshold });
-    }
-    this.cdr.markForCheck();
   }
 
   private checkIfDedupIsSupported(): void {
@@ -304,8 +295,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         // Any value > 0 means ON
         specialSmallBlockSizeValue = OnOff.On;
         customValue = sizeInBytes;
-        // Only show customize section if value differs from default
-        this.showCustomizeSpecialSmallBlockSize = (sizeInBytes !== specialVdevDefaultThreshold);
       }
     }
 

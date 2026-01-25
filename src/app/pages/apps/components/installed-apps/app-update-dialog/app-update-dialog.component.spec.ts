@@ -75,15 +75,15 @@ describe('AppUpdateDialog', () => {
       const versionRows = spectator.queryAll('.version-row');
       expect(versionRows).toHaveLength(2);
 
-      // Check catalog version
-      expect(versionRows[0].textContent).toContain('Catalog Version');
-      expect(versionRows[0].textContent).toContain('1.0.1');
-      expect(versionRows[0].textContent).toContain('1.0.2');
+      // Check app version (first row)
+      expect(versionRows[0].textContent).toContain('App Version');
+      expect(versionRows[0].textContent).toContain('8.7.0');
+      expect(versionRows[0].textContent).toContain('8.7.0_1.0.2');
 
-      // Check app version
-      expect(versionRows[1].textContent).toContain('App Version');
-      expect(versionRows[1].textContent).toContain('8.7.0');
-      expect(versionRows[1].textContent).toContain('8.7.0_1.0.2');
+      // Check catalog version (second row)
+      expect(versionRows[1].textContent).toContain('Version');
+      expect(versionRows[1].textContent).toContain('1.0.1');
+      expect(versionRows[1].textContent).toContain('1.0.2');
     });
 
     it('displays changelog link when changelog_url is present', () => {

@@ -61,24 +61,14 @@ export class AddGpuDeviceMenuComponent {
     ),
   );
 
-  private readonly gpuChoices = toSignal(
-    this.api.call('container.device.gpu_choices').pipe(
-      catchError((error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        return of({} as Record<string, ContainerGpuType>);
-      }),
-    ),
-    { initialValue: null },
-  );
-
   protected readonly isLoading = computed(() => {
     const devicesLoading = this.devicesStore.isLoading();
-    const gpuChoices = this.gpuChoices();
-    return devicesLoading || gpuChoices === null;
+    const gpuChoicesLoading = this.devicesStore.isLoadingGpuChoices();
+    return devicesLoading || gpuChoicesLoading;
   });
 
   protected readonly availableGpuDevices = computed(() => {
-    const gpuChoices = this.gpuChoices();
+    const gpuChoices = this.devicesStore.gpuChoices();
     const nvidiaEnabled = this.nvidiaDriversEnabled()?.nvidia ?? false;
 
     if (!gpuChoices) {

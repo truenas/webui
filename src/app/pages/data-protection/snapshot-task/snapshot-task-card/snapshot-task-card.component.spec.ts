@@ -13,6 +13,7 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -33,6 +34,8 @@ describe('SnapshotTaskCardComponent', () => {
   let spectator: Spectator<SnapshotTaskCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
+
+  const fiftySecondsAgoMs = 50 * 1000; // 50 seconds in milliseconds
 
   const snapshotTasks = [
     {
@@ -58,7 +61,7 @@ describe('SnapshotTaskCardComponent', () => {
       state: {
         state: 'PENDING',
         datetime: {
-          $date: new Date().getTime() - 50000,
+          $date: new Date().getTime() - fiftySecondsAgoMs,
         },
       },
       keepfor: '2 WEEK(S)',
@@ -98,10 +101,11 @@ describe('SnapshotTaskCardComponent', () => {
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),
+        mockCall('pool.snapshottask.delete_will_change_retention_for', {}),
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -166,9 +170,11 @@ describe('SnapshotTaskCardComponent', () => {
       message: 'Delete Periodic Snapshot Task <b>"APPS/test2 - auto-%Y-%m-%d_%H-%M"</b>?',
       buttonText: 'Delete',
       buttonColor: 'warn',
+      secondaryCheckbox: false, // No snapshots in mock
+      secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {

@@ -28,7 +28,6 @@ import {
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
@@ -47,7 +46,6 @@ export class FeedbackService {
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private systemGeneralService = inject(SystemGeneralService);
-  private sentryService = inject(SentryConfigurationService);
   private fileUpload = inject(UploadService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
@@ -165,13 +163,7 @@ export class FeedbackService {
   }
 
   addDebugInfoToMessage(message: string): Observable<string> {
-    return this.sentryService.sessionId$.pipe(
-      take(1),
-      map((sessionId) => {
-        const sessionText = `Session ID: ${sessionId}`;
-        return [message, sessionText].join('\n\n');
-      }),
-    );
+    return of(message);
   }
 
   showTicketSuccessMessage(ticketUrl: string): void {

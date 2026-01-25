@@ -258,12 +258,14 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected doDelete(bootenvs: BootEnvironmentUi[]): void {
-    bootenvs.forEach((bootenv) => delete bootenv.selected);
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.matDialog.open(BootPoolDeleteDialog, { data })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.refresh());
+      .subscribe(() => {
+        bootenvs.forEach((bootenv) => delete bootenv.selected);
+        this.refresh();
+      });
   }
 
   private doActivate(bootenv: BootEnvironmentUi): void {

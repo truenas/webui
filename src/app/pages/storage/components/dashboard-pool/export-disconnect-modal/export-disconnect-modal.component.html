@@ -1,5 +1,5 @@
 <h1 mat-dialog-title class="export-disconnect-modal-title">
-  {{ "Disconnect Pool: {pool}" | translate: { pool: pool.name } }}
+  {{ 'Disconnect Pool: {pool}' | translate: { pool: pool.name } }}
 </h1>
 
 @if (isFormLoading) {
@@ -13,17 +13,15 @@
 >
   <div mat-dialog-content class="export-disconnect-modal-content">
     <div class="disconnect-options">
-      <h4>{{ "Disconnect Options" | translate }}</h4>
+      <h4>{{ 'Disconnect Options' | translate }}</h4>
       <div class="option-cards">
         <div
           class="option-card export-option"
           [class.selected]="isExportSelected"
           (click)="selectOption(exportOption)"
         >
-          <h3>{{ "Export Pool" | translate }}</h3>
-          <p>
-            {{ "Do this to import pool on another TrueNAS system" | translate }}
-          </p>
+          <h3>{{ 'Export Pool' | translate }}</h3>
+          <p>{{ 'Do this to import pool on another TrueNAS system' | translate }}</p>
         </div>
 
         <div
@@ -31,8 +29,8 @@
           [class.selected]="isDeleteSelected"
           (click)="selectOption(deleteOption)"
         >
-          <h3>{{ "Delete Pool" | translate }}</h3>
-          <p>{{ "Wipes all data stored in the pool" | translate }}</p>
+          <h3>{{ 'Delete Pool' | translate }}</h3>
+          <p>{{ 'Wipes all data stored in the pool' | translate }}</p>
         </div>
       </div>
     </div>
@@ -42,149 +40,102 @@
         <div class="warnings-section">
           @if (isExportSelected) {
             <div class="warning export-warning">
-              <span class="warning-text"> {{ "WARNING" | translate }}: </span>
-              {{
-                "You will not be able to access the exported pool's data until you import it again. Back up critical data before exporting your pool!"
-                  | translate
-              }}
+              <span class="warning-text">
+                {{ 'WARNING' | translate }}:
+              </span>
+              {{ 'You will not be able to access the exported pool\'s data until you import it again. Back up critical data before exporting your pool!' | translate }}
             </div>
           }
 
           @if (isDeleteSelected) {
             <div class="warning delete-warning">
-              <span class="warning-text"> {{ "WARNING" | translate }}: </span>
-              {{
-                "All data will be deleted from the pool. Back up critical data before deleting your pool!"
-                  | translate
-              }}
+              <span class="warning-text">
+                {{ 'WARNING' | translate }}:
+              </span>
+              {{ 'All data will be deleted from the pool. Back up critical data before deleting your pool!' | translate }}
             </div>
           }
         </div>
 
         @if (isLastPoolInHaSystem()) {
-          <mat-expansion-panel
-            class="expansion-panel ha-warning-panel"
-            [expanded]="true"
-          >
+          <mat-expansion-panel class="expansion-panel ha-warning-panel" [expanded]="true">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <div class="warning-icon">
                   <ix-icon name="warning"></ix-icon>
                 </div>
-                {{
-                  "Critical: High Availability should be disabled" | translate
-                }}
+                {{ 'Critical: High Availability should be disabled' | translate }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
             <div class="expansion-content">
               <div class="ha-warning">
-                <p>
-                  <strong>{{
-                    "This is the last pool in your HA system." | translate
-                  }}</strong>
-                </p>
-                <p>
-                  {{
-                    "Removing this pool will leave no pools available for failover operations, effectively disabling High Availability functionality. Your system will continue to operate, but redundancy will be lost until another pool is added."
-                      | translate
-                  }}
-                </p>
-                <p>
-                  <strong>{{ "Action Required:" | translate }}</strong>
-                  {{
-                    "You must first disable High Availability before you can proceed with this operation."
-                      | translate
-                  }}
-                </p>
-                <p>
-                  <em>{{
-                    "The disconnect button will remain disabled until HA is turned off."
-                      | translate
-                  }}</em>
-                </p>
-                <p>
-                  {{
-                    "Please ensure you understand the implications before proceeding."
-                      | translate
-                  }}
-                </p>
+                <p><strong>{{ 'This is the last pool in your HA system.' | translate }}</strong></p>
+                <p>{{ 'Removing this pool will leave no pools available for failover operations, effectively disabling High Availability functionality. Your system will continue to operate, but redundancy will be lost until another pool is added.' | translate }}</p>
+                <p><strong>{{ 'Action Required:' | translate }}</strong> {{ 'You must first disable High Availability before you can proceed with this operation.' | translate }}</p>
+                <p><em>{{ 'The disconnect button will remain disabled until HA is turned off.' | translate }}</em></p>
+                <p>{{ 'Please ensure you understand the implications before proceeding.' | translate }}</p>
               </div>
             </div>
           </mat-expansion-panel>
         }
 
-        <mat-expansion-panel class="expansion-panel">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{ "System dataset will be moved off this pool" | translate }}
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-
-          <div class="expansion-content">
-            <p class="warning">
-              {{
-                "The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved off this pool to ensure system functionality."
-                  | translate
-              }}
-            </p>
-
-            @if (showSysDatasetWarning) {
-              <div class="warning system-dataset-warning">
-                <span
-                  [innerHTML]="
-                    helptext.exportDialog.warningSysDataset | translate
-                  "
-                ></span>
-              </div>
-            }
-
-            @if (showUnknownStatusDetachWarning) {
-              <div class="warning unknown-status-warning">
-                <span
-                  [innerHTML]="
-                    helptext.exportDialog.unknownState
-                      | translate: { pool: pool.name }
-                  "
-                ></span>
-              </div>
-            }
-          </div>
-        </mat-expansion-panel>
-
-        @if (
-          attachments.length ||
-          process.knownProcesses.length ||
-          process.unknownProcesses.length
-        ) {
+        @if (showSysDatasetWarning) {
           <mat-expansion-panel class="expansion-panel">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{
-                  "{count} services and processes depend on this pool"
-                    | translate: { count: dependencyCount }
-                }}
+                {{ 'System dataset will be moved off this pool' | translate }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="expansion-content">
+              <p class="warning">
+                {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved off this pool to ensure system functionality.' | translate }}
+              </p>
+
+              <div class="warning system-dataset-warning">
+                <span [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></span>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        }
+
+        @if (showUnknownStatusDetachWarning) {
+          <mat-expansion-panel class="expansion-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ 'Pool status is unknown' | translate }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="expansion-content">
+              <div class="warning unknown-status-warning">
+                <span [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"></span>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        }
+
+        @if (attachments.length || process.knownProcesses.length || process.unknownProcesses.length) {
+          <mat-expansion-panel class="expansion-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ '{count} services and processes depend on this pool' | translate: { count: dependencyCount } }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
             <div class="expansion-content">
               @if (attachments.length) {
                 <div class="attachments">
-                  {{
-                    "These services depend on pool {name} and will be disrupted if the pool is detached:"
-                      | translate: { name: pool.name }
-                  }}
+                  {{ 'These services depend on pool {name} and will be disrupted if the pool is detached:' | translate: { name: pool.name } }}
                   <ul class="services">
                     @for (service of attachments; track service) {
                       <li>
                         <span class="service-name">{{ service.type }}:</span>
                         <ul class="service-attachments">
-                          @for (
-                            attachment of service.attachments;
-                            track attachment
-                          ) {
-                            @for (item of attachment.split(","); track item) {
-                              <li>{{ item }}</li>
+                          @for (attachment of service.attachments; track attachment) {
+                            @for (item of attachment.split(','); track item) {
+                              <li> {{ item }}</li>
                             }
                           }
                         </ul>
@@ -196,13 +147,10 @@
 
               @if (process.knownProcesses.length) {
                 <div class="known-processes">
-                  {{
-                    "These running processes are using {name}:"
-                      | translate: { name: pool.name }
-                  }}
+                  {{ 'These running processes are using {name}:' | translate: { name: pool.name } }}
                   <ul>
                     @for (process of process.knownProcesses; track process) {
-                      <li>{{ process.name }}</li>
+                      <li> {{ process.name }}</li>
                     }
                   </ul>
                 </div>
@@ -210,9 +158,7 @@
 
               @if (process.unknownProcesses.length) {
                 <div class="unknown-processes">
-                  {{
-                    "These unknown processes are using the pool:" | translate
-                  }}
+                  {{ 'These unknown processes are using the pool:' | translate }}
                   <ul>
                     @for (process of process.unknownProcesses; track process) {
                       <li>
@@ -223,12 +169,9 @@
                   </ul>
                   <div class="process-will-be-terminated">
                     <span class="warning-text">
-                      {{ "WARNING" | translate }}:
+                      {{ 'WARNING' | translate }}:
                     </span>
-                    {{
-                      "These unknown processes will be terminated while exporting the pool."
-                        | translate
-                    }}
+                    {{ 'These unknown processes will be terminated while exporting the pool.' | translate }}
                   </div>
                 </div>
               }
@@ -268,9 +211,7 @@
           @if (isDeleteSelected && form.value.destroy) {
             <ix-input
               formControlName="nameInput"
-              [label]="
-                helptext.exportDialog.enterName | translate: { pool: pool.name }
-              "
+              [label]="helptext.exportDialog.enterName | translate: { pool: pool.name }"
             ></ix-input>
           }
         </ix-fieldset>
@@ -286,7 +227,7 @@
       ixTest="cancel"
       (click)="cancel()"
     >
-      {{ "Cancel" | translate }}
+      {{ 'Cancel' | translate }}
     </button>
     <button
       *ixRequiresRoles="[Role.PoolWrite]"
@@ -296,7 +237,7 @@
       [color]="isDeleteSelected ? 'warn' : 'primary'"
       [disabled]="!canProceed()"
     >
-      {{ "Disconnect" | translate }}
+      {{ 'Disconnect' | translate }}
     </button>
   </ix-form-actions>
 </form>

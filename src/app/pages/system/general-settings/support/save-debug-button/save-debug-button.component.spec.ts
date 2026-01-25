@@ -1,5 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DatePipe } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -50,11 +49,6 @@ describe('SaveDebugButtonComponent', () => {
       }),
       mockAuth(),
     ],
-    componentProviders: [
-      mockProvider(DatePipe, {
-        transform: () => '20220524160228',
-      }),
-    ],
   });
 
   beforeEach(() => {
@@ -68,11 +62,11 @@ describe('SaveDebugButtonComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('core.download', ['system.debug', [], 'debug-truenas-20220524160228.tgz', true]);
+      .toHaveBeenCalledWith('core.download', ['system.debug', [], expect.stringMatching(/^debug-truenas-\d{14}\.tgz$/), true]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(
       'http://localhost/download/url',
-      'debug-truenas-20220524160228.tgz',
+      expect.stringMatching(/^debug-truenas-\d{14}\.tgz$/),
       'application/gzip',
     );
   });

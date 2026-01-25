@@ -18,7 +18,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -80,9 +79,6 @@ describe('FeedbackService', () => {
       mockProvider(HttpClient, {
         post: jest.fn(() => of(newReview)),
       }),
-      mockProvider(SentryConfigurationService, {
-        sessionId$: of('testSessionId'),
-      }),
       mockProvider(SnackbarService),
       mockProvider(UploadService, {
         upload: jest.fn(() => ({
@@ -111,13 +107,11 @@ describe('FeedbackService', () => {
   });
 
   describe('addDebugInfoToMessage', () => {
-    it('appends sentry session id to the error message', async () => {
+    it('returns the message as is', async () => {
       const message = 'test message';
       const messageWithDebug = await lastValueFrom(spectator.service.addDebugInfoToMessage(message));
 
-      expect(messageWithDebug).toBe('test message\n'
-        + '\n'
-        + 'Session ID: testSessionId');
+      expect(messageWithDebug).toBe('test message');
     });
   });
 
@@ -143,7 +137,7 @@ describe('FeedbackService', () => {
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
-        body: 'Help me\n\nSession ID: testSessionId',
+        body: 'Help me',
         title: 'Cannot shutdown',
         token: 'test-token',
         type: TicketType.Bug,
@@ -166,7 +160,7 @@ describe('FeedbackService', () => {
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
-        body: 'Help me\n\nSession ID: testSessionId',
+        body: 'Help me',
         title: 'Cannot shutdown',
         token: 'test-token',
         type: TicketType.Bug,
@@ -198,7 +192,7 @@ describe('FeedbackService', () => {
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Suggestion, data));
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: false,
-        body: 'test msg\n\nSession ID: testSessionId',
+        body: 'test msg',
         title: 'test title',
         token: 'test-token',
         type: TicketType.Suggestion,
@@ -264,7 +258,7 @@ describe('FeedbackService', () => {
 
       const response = await lastValueFrom(spectator.service.createTicketLicensed(data));
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
-        body: 'New request\n\nSession ID: testSessionId',
+        body: 'New request',
         attach_debug: true,
         category: TicketCategory.Performance,
         cc: ['marcus@gmail.com'],

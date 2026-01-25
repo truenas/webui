@@ -24,6 +24,7 @@ describe('IxErrorsComponent', () => {
 
   it('announces validation errors', () => {
     control.setValidators([Validators.required]);
+    control.markAsTouched();
     control.updateValueAndValidity();
     spectator.detectComponentChanges();
 
@@ -36,6 +37,7 @@ describe('IxErrorsComponent', () => {
       manualValidateError: true,
       manualValidateErrorMsg: 'Custom error',
     });
+    control.markAsTouched();
     spectator.detectComponentChanges();
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Custom error');

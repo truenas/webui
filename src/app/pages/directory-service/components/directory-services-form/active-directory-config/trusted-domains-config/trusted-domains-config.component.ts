@@ -191,7 +191,6 @@ export class TrustedDomainsConfigComponent implements OnInit {
       ),
       schema_mode: new FormControl<ActiveDirectorySchemaMode>(
         (existingDomain as ActiveDirectoryIdmap)?.schema_mode ?? null,
-        Validators.required,
       ),
       unix_primary_group: this.fb.control<boolean>(
         (existingDomain as ActiveDirectoryIdmap)?.unix_primary_group ?? false,
@@ -201,19 +200,15 @@ export class TrustedDomainsConfigComponent implements OnInit {
       ),
       ldap_url: this.fb.control<string>(
         (existingDomain as LdapIdmap)?.ldap_url ?? null,
-        Validators.required,
       ),
       ldap_user_dn: this.fb.control<string>(
         (existingDomain as LdapIdmap)?.ldap_user_dn ?? null,
-        Validators.required,
       ),
       ldap_base_dn: this.fb.control<string>(
         (existingDomain as LdapIdmap)?.ldap_base_dn ?? null,
-        Validators.required,
       ),
       ldap_user_dn_password: this.fb.control<string>(
         (existingDomain as LdapIdmap)?.ldap_user_dn_password ?? null,
-        Validators.required,
       ),
       readonly: this.fb.control<boolean>(
         (existingDomain as LdapIdmap)?.readonly ?? false,
@@ -223,11 +218,9 @@ export class TrustedDomainsConfigComponent implements OnInit {
       ),
       bind_path_user: this.fb.control<string>(
         (existingDomain as Rfc2307Idmap)?.bind_path_user ?? null,
-        Validators.required,
       ),
       bind_path_group: this.fb.control<string>(
         (existingDomain as Rfc2307Idmap)?.bind_path_group ?? null,
-        Validators.required,
       ),
       user_cn: this.fb.control<boolean>(
         (existingDomain as Rfc2307Idmap)?.user_cn ?? false,
@@ -237,7 +230,53 @@ export class TrustedDomainsConfigComponent implements OnInit {
       ),
     });
 
+    this.setupBackendValidators(trustedDomainFg, existingDomain?.idmap_backend);
+    this.watchBackendChanges(trustedDomainFg);
+
     this.form.controls.trustedDomains.push(trustedDomainFg);
+  }
+
+  private setupBackendValidators(
+    formGroup: FormGroup<Controls<AllTrustedDomainsIdmapFieldsInterface>>,
+    backend: IdmapBackend | null | undefined,
+  ): void {
+    const controls = formGroup.controls;
+
+    controls.schema_mode.clearValidators();
+    controls.ldap_url.clearValidators();
+    controls.ldap_user_dn.clearValidators();
+    controls.ldap_base_dn.clearValidators();
+    controls.ldap_user_dn_password.clearValidators();
+    controls.bind_path_user.clearValidators();
+    controls.bind_path_group.clearValidators();
+
+    if (backend === IdmapBackend.Ad) {
+      controls.schema_mode.setValidators(Validators.required);
+    } else if (backend === IdmapBackend.Ldap) {
+      controls.ldap_url.setValidators(Validators.required);
+      controls.ldap_user_dn.setValidators(Validators.required);
+      controls.ldap_base_dn.setValidators(Validators.required);
+      controls.ldap_user_dn_password.setValidators(Validators.required);
+    } else if (backend === IdmapBackend.Rfc2307) {
+      controls.ldap_url.setValidators(Validators.required);
+      controls.ldap_user_dn.setValidators(Validators.required);
+      controls.ldap_user_dn_password.setValidators(Validators.required);
+      controls.bind_path_user.setValidators(Validators.required);
+      controls.bind_path_group.setValidators(Validators.required);
+    }
+
+    Object.values(controls).forEach((control) => control.updateValueAndValidity({ emitEvent: false }));
+    formGroup.updateValueAndValidity();
+  }
+
+  private watchBackendChanges(
+    formGroup: FormGroup<Controls<AllTrustedDomainsIdmapFieldsInterface>>,
+  ): void {
+    formGroup.controls.idmap_backend.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((backend) => {
+        this.setupBackendValidators(formGroup, backend);
+      });
   }
 
   protected removeTrustedDomain(index: number): void {

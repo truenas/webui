@@ -118,6 +118,7 @@ export interface ApiJobDirectory {
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
   // Filesystem
+  'filesystem.copy': { params: [{ src: string; dst: string; options?: { recursive?: boolean; preserve_attrs?: boolean } }]; response: boolean };
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.setacl': { params: [SetAcl]; response: void };
   'filesystem.setperm': { params: [FilesystemSetPermParams]; response: void };

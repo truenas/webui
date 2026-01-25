@@ -10,7 +10,7 @@ describe('rangeValidator', () => {
     expect(validate(new FormControl(20))).toBeNull();
   });
 
-  it('should return an error when value is in range', () => {
+  it('should return an error when value is out of range', () => {
     expect(validate(new FormControl(9))).toEqual({ range: true, rangeValue: { min: 10, max: 20 } });
     expect(validate(new FormControl(21))).toEqual({ range: true, rangeValue: { min: 10, max: 20 } });
   });

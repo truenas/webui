@@ -58,12 +58,13 @@ describe('ContainersStore', () => {
 
   it('should have initial state', () => {
     expect(spectator.service.state()).toEqual({
-      isLoading: true,
+      isLoading: false,
       selectedContainer: undefined,
       selectedContainerId: null,
       containers: undefined,
       metrics: {},
     });
+    expect(spectator.service.hasLoaded()).toBe(false);
   });
 
   it('should load containers when initialize is called', () => {
@@ -77,6 +78,27 @@ describe('ContainersStore', () => {
       isLoading: false,
       metrics: {},
     });
+  });
+
+  it('should not make duplicate API calls when initialize is called while loading', () => {
+    spectator.service.patchState({ isLoading: true });
+    spectator.service.initialize();
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
+  });
+
+  it('should make API call when reload is called after initialization', () => {
+    spectator.service.initialize();
+    spectator.service.reload();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(2);
+  });
+
+  it('should make API call when reload is called even while loading', () => {
+    spectator.service.patchState({ isLoading: true });
+    spectator.service.reload();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.query');
   });
 
   it('should select container when method is called', () => {
@@ -120,6 +142,31 @@ describe('ContainersStore', () => {
 
     it('containers - returns containers part of the state', () => {
       expect(spectator.service.containers()).toEqual(containers);
+    });
+
+    it('hasLoaded - returns true after containers are loaded', () => {
+      expect(spectator.service.hasLoaded()).toBe(true);
+    });
+  });
+
+  describe('container updates subscription', () => {
+    it('subscribes to container updates in constructor', () => {
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('container.query');
+    });
+
+    it('does not create duplicate subscriptions on multiple initialize calls', () => {
+      const initialSubscribeCalls = spectator.inject(ApiService).subscribe.mock.calls.filter(
+        (call: [string]) => call[0] === 'container.query',
+      ).length;
+
+      spectator.service.initialize();
+      spectator.service.initialize();
+
+      const currentSubscribeCalls = spectator.inject(ApiService).subscribe.mock.calls.filter(
+        (call: [string]) => call[0] === 'container.query',
+      ).length;
+
+      expect(currentSubscribeCalls).toBe(initialSubscribeCalls);
     });
   });
 
