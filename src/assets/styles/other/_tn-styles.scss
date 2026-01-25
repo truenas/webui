@@ -777,6 +777,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-mdc-select-panel,
   .mat-mdc-select-panel {
     max-height: 50vh !important; // values over 50vh will push last visible element out the screen
+    border-radius: 24px !important;
   }
 
   mat-hint {

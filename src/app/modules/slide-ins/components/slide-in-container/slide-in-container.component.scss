@@ -3,8 +3,8 @@
 :host {
   background-color: var(--bg2);
   height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight
-  max-width: 960px;
-  width: min(960px, calc(100vw - 32px));
+  max-width: 960px !important;
+  width: min(960px, calc(100vw - 32px)) !important;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
   position: fixed;
   top: 48px;

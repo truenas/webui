@@ -1,4 +1,4 @@
-@import 'scss-imports/variables';
+@import "scss-imports/variables";
 
 :host,
 :host-context(mat-dialog-container .ix-form-container) :host {
@@ -13,7 +13,6 @@
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-start;
-  margin: 0 10px;
 }
 
 :host-context(mat-vertical-stepper) :host {

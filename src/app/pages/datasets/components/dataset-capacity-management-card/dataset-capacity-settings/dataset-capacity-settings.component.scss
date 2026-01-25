@@ -1,7 +1,8 @@
-@import 'scss-imports/variables';
+@import "scss-imports/variables";
 
 .columns {
   display: flex;
+  gap: 20px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
