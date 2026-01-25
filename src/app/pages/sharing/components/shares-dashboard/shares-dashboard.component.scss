@@ -3,6 +3,8 @@
 .cards {
   display: grid;
   grid-template-columns: 50% 50%;
+  padding: 20px;
+  gap: 20px;
 
   @media #{$media-lt-lg} {
     grid-template-columns: 100%;
