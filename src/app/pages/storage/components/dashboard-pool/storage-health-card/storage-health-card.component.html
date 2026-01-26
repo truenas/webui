@@ -30,7 +30,7 @@
         {{ getErrorText() }}
       </div>
       @if (hasErrors()) {
-        <a (click)="goToVdevsPage()">
+        <a tabindex="0" (click)="goToVdevsPage()" (keydown.enter)="goToVdevsPage()">
           {{ 'View' | translate }}
         </a>
       }

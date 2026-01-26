@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject, Signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -57,7 +57,6 @@ interface StatusIconData {
   icon: PoolCardIconType;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-storage-health-card',
   templateUrl: './storage-health-card.component.html',
@@ -91,6 +90,7 @@ export class StorageHealthCardComponent implements OnChanges {
   private store = inject(PoolsDashboardStore);
   private slideIn = inject(SlideIn);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly pool = input.required<Pool>();
 
@@ -100,7 +100,6 @@ export class StorageHealthCardComponent implements OnChanges {
 
   protected scan = signal<PoolScanUpdate | null>(null);
 
-  totalZfsErrors = 0;
   poolScanSubscription: Subscription;
 
   protected readonly helptextVolumes = helptextVolumes;
@@ -145,7 +144,6 @@ export class StorageHealthCardComponent implements OnChanges {
     this.scan.set(this.pool().scan);
 
     this.subscribeToScan();
-    this.calculateTotalZfsErrors();
   }
 
   protected onStartScrub(): void {
@@ -160,7 +158,7 @@ export class StorageHealthCardComponent implements OnChanges {
         filter(Boolean),
         switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -169,7 +167,7 @@ export class StorageHealthCardComponent implements OnChanges {
     this.matDialog
       .open(AutotrimDialog, { data: this.pool() })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }
 
@@ -182,7 +180,7 @@ export class StorageHealthCardComponent implements OnChanges {
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool().name),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((scan) => {
         this.scan.set(scan.scan);
@@ -199,7 +197,7 @@ export class StorageHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter((result) => result?.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.store.loadDashboard();
@@ -210,7 +208,10 @@ export class StorageHealthCardComponent implements OnChanges {
     const errorCount = this.countVdevErrors() + this.countPhysDiskErrors();
 
     const statusStr = poolStatusLabels.get(this.pool().status);
-    const errorStr = this.translate.instant('{count} errors', { count: errorCount });
+    const errorStr = this.translate.instant(
+      '{count, plural, =0{no errors} one{# error} other{# errors}}',
+      { count: errorCount },
+    );
 
     if (errorCount === 0) {
       return this.translate.instant('{status}, no errors.', { status: statusStr });
@@ -246,12 +247,5 @@ export class StorageHealthCardComponent implements OnChanges {
    */
   private countPhysDiskErrors(): number {
     return countTopologyErrors((item) => item.type === TopologyItemType.Disk, this.pool().topology);
-  }
-
-  private calculateTotalZfsErrors(): void {
-    if (!this.pool().topology) {
-      return;
-    }
-    this.totalZfsErrors = this.countVdevErrors();
   }
 }

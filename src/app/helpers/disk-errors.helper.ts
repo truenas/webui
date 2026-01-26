@@ -38,7 +38,7 @@ export function flattenDiskTopology(topo: CountableDisks): VDevItem[] {
 export function getDisksWithErrors(topo: CountableDisks): VDevItem[] {
   const flattened = flattenDiskTopology(topo);
   return flattened.filter((item: VDevItem) => {
-    const stats = item.stats;
+    const stats = item?.stats;
     return (stats?.read_errors ?? 0) > 0
       || (stats?.write_errors ?? 0) > 0
       || (stats?.checksum_errors ?? 0) > 0;
