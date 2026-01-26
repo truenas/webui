@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
 import {
   debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
@@ -69,6 +70,8 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     MatButton,
     TestDirective,
     TranslateModule,
+    TnBannerComponent,
+    TnBannerActionDirective,
   ],
 })
 export class CloudBackupFormComponent implements OnInit {
@@ -146,6 +149,8 @@ export class CloudBackupFormComponent implements OnInit {
   protected readonly CloudSyncProviderName = CloudSyncProviderName;
 
   readonly helptext = helptextCloudBackup;
+  readonly storjAccountUrl = 'https://www.storj.io/get-started';
+  readonly documentationUrl = 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/';
 
   constructor() {
     const slideInRef = this.slideInRef;

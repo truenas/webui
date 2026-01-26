@@ -1,6 +1,11 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextCloudBackup = {
+  introHeading: T('Getting Started with TrueCloud Backup'),
+  introMessage: T('TrueCloud Backup backs up data to the decentralized storage network provided by Storj. Before configuring a backup task, you need a Storj account and cloud credentials set up in TrueNAS.'),
+  createStorjAccountLink: T('Create a Storj account'),
+  viewDocumentationLink: T('View documentation'),
+
   local: T('Local'),
   remote: T('Remote'),
   advancedOptions: T('Advanced Options'),
