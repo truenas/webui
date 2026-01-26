@@ -2,9 +2,10 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarHarness } from '@angular/material/datepicker/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { parse } from 'date-fns';
 import { MockComponent } from 'ng-mocks';
+import { LanguageService } from 'app/modules/language/language.service';
 import {
   SchedulerDateExamplesComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
@@ -23,6 +24,11 @@ describe('SchedulerPreviewColumnComponent', () => {
     declarations: [
       MockComponent(SchedulerDateExamplesComponent),
       CrontabExplanationPipe,
+    ],
+    providers: [
+      mockProvider(LanguageService, {
+        currentLanguage: 'en',
+      }),
     ],
   });
 
@@ -59,7 +65,7 @@ describe('SchedulerPreviewColumnComponent', () => {
 
   it('shows human friendly description of the schedule', () => {
     expect(spectator.query('.crontab-explanation'))
-      .toHaveExactText('At 02:00 AM, between day 24 and 25 of the month, and on Monday');
+      .toHaveExactText('At 02:00 (02:00 AM), between day 24 and 25 of the month, and on Monday');
   });
 
   it('shows calendar for current month with dates highlighted when task will be run', async () => {

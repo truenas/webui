@@ -9,6 +9,7 @@
   .topbar-mobile-footer {
     align-items: center;
     display: inline-flex;
+    margin-top: -3px;
     place-content: flex-end;
     width: inherit;
 
@@ -94,10 +95,10 @@ ix-truenas-logo {
     height: 48px !important;
   }
 
-  button .ix-icon,
+  button tn-icon,
   button span,
   .mat-icon-button,
-  .mat-icon-button .ix-icon.logo {
+  .mat-icon-button tn-icon.logo {
     color: var(--topbar-txt) !important;
   }
 

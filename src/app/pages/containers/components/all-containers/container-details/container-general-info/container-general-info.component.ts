@@ -69,7 +69,7 @@ export class ContainerGeneralInfoComponent {
         next: (result) => {
           // Reload the container data if the form was saved successfully
           if (result?.response) {
-            this.containersStore.initialize();
+            this.containersStore.reload();
           }
         },
       });

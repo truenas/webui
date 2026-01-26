@@ -7,7 +7,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -19,6 +19,7 @@ import {
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { ImportCertificateComponent } from 'app/pages/credentials/certificates-dash/import-certificate/import-certificate.component';
@@ -60,7 +61,6 @@ describe('CertificateListComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
         mockJob('certificate.update', fakeSuccessfulJob()),
       ]),
@@ -82,12 +82,18 @@ describe('CertificateListComponent', () => {
         })),
       }),
       mockProvider(StorageService),
+      mockProvider(SnackbarService),
       mockAuth(),
     ],
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        certificates,
+        isLoading: false,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
   });
@@ -105,9 +111,10 @@ describe('CertificateListComponent', () => {
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Edit/ });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateEditComponent, {
       data: certificates[0],
@@ -120,9 +127,10 @@ describe('CertificateListComponent', () => {
       afterClosed: () => of({ force: true }),
     } as MatDialogRef<unknown>);
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Delete/ });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete Certificate',
@@ -148,5 +156,44 @@ describe('CertificateListComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('emits certificatesUpdated when import succeeds', async () => {
+    const certificatesUpdatedSpy = jest.fn();
+    spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+    await addButton.click();
+
+    expect(certificatesUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits certificatesUpdated when edit succeeds', async () => {
+    const certificatesUpdatedSpy = jest.fn();
+    spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Edit/ });
+
+    expect(certificatesUpdatedSpy).toHaveBeenCalled();
+  });
+
+  it('emits certificatesUpdated and shows snackbar when delete succeeds', async () => {
+    const certificatesUpdatedSpy = jest.fn();
+    spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
+
+    const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
+    await menuButton.click();
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: /Delete/ });
+
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Certificate deleted');
+    expect(certificatesUpdatedSpy).toHaveBeenCalled();
   });
 });

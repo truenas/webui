@@ -8,12 +8,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatIconButton,
     MatTooltip,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     RouterLink,
