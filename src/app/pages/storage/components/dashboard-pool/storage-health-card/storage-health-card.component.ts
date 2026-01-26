@@ -18,9 +18,9 @@ import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { VDevItem } from 'app/interfaces/storage.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -56,42 +56,6 @@ interface StatusIconData {
   tooltip: string;
   icon: PoolCardIconType;
 }
-
-/**
- * helper function to flatten a disk topology recursively.
- * @param topo the topology to flatten.
- * @returns a `VDevItem[]` with all children of all items concatenated.
- */
-const flattenDiskTopology = (topo: VDevItem[] | VDevItem[][]): VDevItem[] => {
-  const extraFlat = topo.flat();
-  return extraFlat.reduce((allItems: VDevItem[], item: VDevItem) => {
-    const children = (item.type !== TopologyItemType.Disk && item?.children)
-      ? flattenDiskTopology(item.children)
-      : [];
-
-    // accumulate all errors so far
-    return [...allItems, item, ...children];
-  }, []);
-};
-
-/**
- * helper function to count errors in a disk topology.
- * @param pred predicate that determines whether not a particular topology item should have
- *        its errors counted.
- * @param items (flattened) topology to count errors within.
- * @returns the sum of read, write, and checksum errors in all devices satisfying `pred`.
- */
-const countErrors = (pred: (arg0: VDevItem) => boolean, items: VDevItem[] | VDevItem[][]): number => {
-  const flattened = flattenDiskTopology(items);
-  return flattened.reduce((count: number, item: VDevItem): number => {
-    const stats = item?.stats;
-    if (pred(item) && stats) {
-      return count + stats.read_errors + stats.write_errors + stats.checksum_errors;
-    }
-
-    return count + 0;
-  }, 0);
-};
 
 @UntilDestroy()
 @Component({
@@ -272,8 +236,7 @@ export class StorageHealthCardComponent implements OnChanges {
    * @returns number of errors ZFS reports on the top-level VDEVs
    */
   private countVdevErrors(): number {
-    const topo = Object.values(this.pool().topology);
-    return countErrors((item) => item.type !== TopologyItemType.Disk, topo);
+    return countTopologyErrors((item) => item.type !== TopologyItemType.Disk, this.pool().topology);
   }
 
   /**
@@ -282,8 +245,7 @@ export class StorageHealthCardComponent implements OnChanges {
    * @returns number of errors ZFS reports on the physical disks themselves.
    */
   private countPhysDiskErrors(): number {
-    const topo = Object.values(this.pool().topology);
-    return countErrors((item) => item.type === TopologyItemType.Disk, topo.flat());
+    return countTopologyErrors((item) => item.type === TopologyItemType.Disk, this.pool().topology);
   }
 
   private calculateTotalZfsErrors(): void {
