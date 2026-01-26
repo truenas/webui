@@ -61,4 +61,6 @@ export const helptextCloudBackup = {
 
   rateLimit: T('Rate Limit'),
   rateLimitTooltip: T('Rate limit for the backup process in KiB/s. Leave empty for no rate limit.'),
+
+  transferSetting: T('Transfer Setting'),
 };
