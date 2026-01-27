@@ -210,8 +210,13 @@ describe('SmbFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
 
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-    await advancedButton.click();
+    const advancedButton = await loader.getHarness(
+      MatButtonHarness.with({ selector: '[ixTest="toggle-advanced-options"]' }),
+    );
+    const advancedButtonText = await advancedButton.getText();
+    if (advancedButtonText.includes('Advanced Options')) {
+      await advancedButton.click();
+    }
   }
 
   const commonValues = {
@@ -573,6 +578,27 @@ describe('SmbFormComponent', () => {
       );
 
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('edit share with legacy audit logging', () => {
+    beforeEach(async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.DefaultShare,
+        audit: {
+          enable: true,
+          watch_list: [],
+          ignore_list: [],
+        },
+      });
+    });
+
+    it('disables save when audit logging has no groups', async () => {
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
     });
   });
 
