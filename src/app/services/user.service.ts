@@ -56,7 +56,19 @@ export class UserService {
 
   /**
    * Gets a group by exact name match using the cached query API.
-   * This method has the advantage of inserting into the directory services cache on positive result.
+   *
+   * This method inserts the result into the middleware directory services cache,
+   * reducing subsequent lookups across the UI. The cache is middleware-managed and
+   * persists for the duration of the middleware session.
+   *
+   * Use this instead of getGroupByName() to improve performance when validating
+   * group names in forms or displaying group information.
+   *
+   * @param groupname - Exact group name to look up
+   * @returns Observable of the group object
+   *
+   * Note: The `as unknown as Observable<Group>` cast is required because the API's
+   * type system doesn't distinguish between array and single-object returns when get: true.
    */
   getGroupByNameCached(groupname: string): Observable<Group> {
     const queryArgs: QueryFilter<Group>[] = [['name', '=', groupname]];
@@ -92,7 +104,19 @@ export class UserService {
 
   /**
    * Gets a user by exact name match using the cached query API.
-   * This method has the advantage of inserting into the directory services cache on positive result.
+   *
+   * This method inserts the result into the middleware directory services cache,
+   * reducing subsequent lookups across the UI. The cache is middleware-managed and
+   * persists for the duration of the middleware session.
+   *
+   * Use this instead of getUserByName() to improve performance when validating
+   * usernames in forms or displaying user information.
+   *
+   * @param username - Exact username to look up
+   * @returns Observable of the user object
+   *
+   * Note: The `as unknown as Observable<User>` cast is required because the API's
+   * type system doesn't distinguish between array and single-object returns when get: true.
    */
   getUserByNameCached(username: string): Observable<User> {
     const queryArgs: QueryFilter<User>[] = [['username', '=', username]];

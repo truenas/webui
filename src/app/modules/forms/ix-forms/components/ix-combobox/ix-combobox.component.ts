@@ -147,7 +147,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
 
     this.provider().fetch(filterValue).pipe(
-      catchError(() => {
+      catchError((error: unknown) => {
+        console.error('Combobox autocomplete fetch failed:', error);
         this.hasErrorInOptions = true;
         return EMPTY;
       }),
@@ -157,7 +158,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
       const selectedOptionFromLabel = this.options.find((option: Option) => option.label === filterValue);
       if (selectedOptionFromLabel) {
-        // Found matching option - use its value (typically an ID)
+        // User typed a label that exactly matches an option (e.g., typed "root" and found {label: "root", value: 0})
+        // Use the option's value (typically an ID like 0) rather than the label ("root")
         this.selectedOption = selectedOptionFromLabel;
         this.value = selectedOptionFromLabel.value;
         this.onChange(this.value);
@@ -169,7 +171,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           : { label: this.value as string, value: this.value };
 
         // If custom values allowed and user typed something not in options, update form control
-        // This is already debounced by filterChanged$ pipeline
+        // Note: This runs after the debounced fetch completes (debounceTime ms after last keystroke).
+        // Form validation may trigger before this completes if user submits/blurs immediately.
+        // The debounced pipeline ensures we don't spam API calls during typing.
         if (
           this.allowCustomValue() && filterValue
           && !this.options.some((option: Option) => option.value === filterValue)

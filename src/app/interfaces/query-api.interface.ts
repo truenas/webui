@@ -36,7 +36,15 @@ export interface QueryOptions<T> {
    * Has the advantage of inserting into the directory services cache on positive result.
    *
    * IMPORTANT: When get: true, the return type changes from T[] to T.
-   * You must cast the result: `as unknown as Observable<T>`
+   * The type cast `as unknown as Observable<T>` is required because TypeScript's
+   * type system doesn't currently support conditional return types based on option values.
+   *
+   * Future improvement: Consider adding method overloads to ApiService to eliminate
+   * the need for type casting:
+   * ```typescript
+   * call<T>(method: string, params: [QueryFilter<T>[], { get: true }]): Observable<T>;
+   * call<T>(method: string, params: [QueryFilter<T>[], QueryOptions<T>?]): Observable<T[]>;
+   * ```
    *
    * @example
    * ```typescript
