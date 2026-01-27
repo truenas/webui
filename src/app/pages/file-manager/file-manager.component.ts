@@ -10,6 +10,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -70,6 +71,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
 
   private destroy$ = new Subject<void>();
 
@@ -138,6 +140,29 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       const item = items.find((i) => i.path === path);
       return item && item.type !== FileType.Directory;
     });
+  });
+
+  // Check if /mnt directory is empty (no pools created)
+  isMntEmpty = computed(() => {
+    return this.currentPath() === '/mnt' && this.items().length === 0 && !this.isLoading();
+  });
+
+  // Check if inside a pool directory with no datasets
+  isPoolEmpty = computed(() => {
+    const path = this.currentPath();
+    // Check if path is /mnt/<poolname> (exactly 2 segments after /mnt/)
+    const pathParts = path.split('/').filter(Boolean);
+    return pathParts.length === 2 && pathParts[0] === 'mnt' && this.items().length === 0 && !this.isLoading();
+  });
+
+  // Get the current pool name from path
+  currentPoolName = computed(() => {
+    const path = this.currentPath();
+    const pathParts = path.split('/').filter(Boolean);
+    if (pathParts.length >= 2 && pathParts[0] === 'mnt') {
+      return pathParts[1];
+    }
+    return null;
   });
 
   // USB drives
@@ -710,6 +735,19 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       return partition.name;
     }
     return drive.name;
+  }
+
+  goToStoragePage(): void {
+    this.router.navigate(['/storage']);
+  }
+
+  goToDatasetsPage(): void {
+    const poolName = this.currentPoolName();
+    if (poolName) {
+      this.router.navigate(['/datasets', poolName]);
+    } else {
+      this.router.navigate(['/datasets']);
+    }
   }
 
   private getMimeType(filename: string): string {

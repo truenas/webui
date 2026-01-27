@@ -174,8 +174,26 @@
       } @else {
         @if (items().length === 0) {
           <div class="empty-state">
-            <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
-            <p>{{ "This folder is empty" | translate }}</p>
+            @if (isMntEmpty()) {
+              <ix-icon name="mdi-database-off" class="empty-icon"></ix-icon>
+              <p class="empty-title">{{ "No Pools" | translate }}</p>
+              <p class="empty-description">{{ "Create a storage pool first to start managing your files." | translate }}</p>
+              <button mat-flat-button color="primary" (click)="goToStoragePage()">
+                <ix-icon name="mdi-plus"></ix-icon>
+                <span>{{ "Go to Storage" | translate }}</span>
+              </button>
+            } @else if (isPoolEmpty()) {
+              <ix-icon name="mdi-database-outline" class="empty-icon"></ix-icon>
+              <p class="empty-title">{{ "No Datasets" | translate }}</p>
+              <p class="empty-description">{{ "This pool has no datasets. Create a dataset to start storing your files." | translate }}</p>
+              <button mat-flat-button color="primary" (click)="goToDatasetsPage()">
+                <ix-icon name="mdi-plus"></ix-icon>
+                <span>{{ "Go to Datasets" | translate }}</span>
+              </button>
+            } @else {
+              <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
+              <p>{{ "This folder is empty" | translate }}</p>
+            }
           </div>
         } @else {
           @if (viewMode() === "grid") {

@@ -466,6 +466,40 @@ $fm-transition-normal: 200ms ease;
     color: $fm-text-secondary;
     margin: 0;
   }
+
+  .empty-title {
+    font-size: 18px;
+    font-weight: $fm-font-weight-semibold;
+    color: $fm-text-primary;
+    margin: $fm-space-4 0 $fm-space-2 0;
+  }
+
+  .empty-description {
+    font-size: $fm-font-size-md;
+    color: $fm-text-secondary;
+    margin: 0 0 $fm-space-5 0;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: $fm-space-2;
+    padding: $fm-space-3 $fm-space-5;
+    border-radius: 10px;
+    font-weight: $fm-font-weight-medium;
+    transition: transform $fm-transition-fast, box-shadow $fm-transition-fast;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    ix-icon {
+      font-size: 18px;
+    }
+  }
 }
 
 @keyframes fadeIn {
