@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject, Signal, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, input, inject, Signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -7,8 +7,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -20,7 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -80,9 +79,8 @@ interface StatusIconData {
     DeduplicationStatsComponent,
   ],
 })
-export class StorageHealthCardComponent implements OnChanges {
+export class StorageHealthCardComponent {
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -90,7 +88,6 @@ export class StorageHealthCardComponent implements OnChanges {
   private store = inject(PoolsDashboardStore);
   private slideIn = inject(SlideIn);
   private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
 
   readonly pool = input.required<Pool>();
 
@@ -98,9 +95,19 @@ export class StorageHealthCardComponent implements OnChanges {
 
   protected readonly searchableElements = storageHealthCardElements;
 
-  protected scan = signal<PoolScanUpdate | null>(null);
+  private scanUpdates$ = toObservable(this.pool).pipe(
+    switchMap((pool) => this.api.subscribe('pool.scan').pipe(
+      map((apiEvent) => apiEvent.fields),
+      filter((scan) => scan.name === pool.name),
+      map((scan) => scan.scan),
+    )),
+    this.errorHandler.withErrorHandler(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-  poolScanSubscription: Subscription;
+  private latestScan = toSignal(this.scanUpdates$);
+
+  protected scan = computed(() => this.latestScan() ?? this.pool().scan);
 
   protected readonly helptextVolumes = helptextVolumes;
 
@@ -140,12 +147,6 @@ export class StorageHealthCardComponent implements OnChanges {
   protected iconType = computed(() => this.iconData().icon);
   protected iconTooltip = computed(() => this.iconData().tooltip);
 
-  ngOnChanges(): void {
-    this.scan.set(this.pool().scan);
-
-    this.subscribeToScan();
-  }
-
   protected onStartScrub(): void {
     const message = this.translate.instant('Start scrub on pool <i>{poolName}</i>?', { poolName: this.pool().name });
     this.dialogService.confirm({
@@ -158,7 +159,6 @@ export class StorageHealthCardComponent implements OnChanges {
         filter(Boolean),
         switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
         this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -167,25 +167,8 @@ export class StorageHealthCardComponent implements OnChanges {
     this.matDialog
       .open(AutotrimDialog, { data: this.pool() })
       .afterClosed()
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .pipe(filter(Boolean))
       .subscribe(() => this.store.loadDashboard());
-  }
-
-  private subscribeToScan(): void {
-    if (this.poolScanSubscription && !this.poolScanSubscription.closed) {
-      this.poolScanSubscription.unsubscribe();
-    }
-    this.poolScanSubscription = this.api.subscribe('pool.scan')
-      .pipe(
-        map((apiEvent) => apiEvent.fields),
-        filter((scan) => scan.name === this.pool().name),
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((scan) => {
-        this.scan.set(scan.scan);
-        this.cdr.markForCheck();
-      });
   }
 
   protected onConfigureScrub(): void {
@@ -197,7 +180,6 @@ export class StorageHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter((result) => result?.response),
-        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.store.loadDashboard();
