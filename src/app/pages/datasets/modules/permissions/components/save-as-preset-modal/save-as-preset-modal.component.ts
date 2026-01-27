@@ -17,7 +17,8 @@ import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
-import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import { Group } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -146,14 +147,14 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   loadIds(acl: Acl): Observable<Acl> {
-    const requests$: Observable<DsUncachedGroup | DsUncachedUser>[] = [];
+    const requests$: Observable<Group | User>[] = [];
     const userWhoToIds = new Map<string, number>();
     const groupWhoToIds = new Map<string, number>();
     for (const ace of acl.acl) {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag) && ace.who) {
         requests$.push(
-          this.userService.getUserByName(ace.who).pipe(
-            tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
+          this.userService.getUserByNameCached(ace.who).pipe(
+            tap((user) => userWhoToIds.set(ace.who, user.uid)),
             catchError((error: unknown) => {
               this.errorHandler.showErrorModal(error);
               return EMPTY;
@@ -163,8 +164,8 @@ export class SaveAsPresetModalComponent implements OnInit {
       }
       if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag) && ace.who) {
         requests$.push(
-          this.userService.getGroupByName(ace.who).pipe(
-            tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
+          this.userService.getGroupByNameCached(ace.who).pipe(
+            tap((group) => groupWhoToIds.set(ace.who, group.gid)),
             catchError((error: unknown) => {
               this.errorHandler.showErrorModal(error);
               return EMPTY;

@@ -77,11 +77,14 @@ describe('IxComboboxComponent', () => {
       expect(spectator.query('input')).toHaveValue('new value');
     });
 
-    it('form control value is set to custom value if [allowCustomValue] enabled', () => {
+    it('form control value is set to custom value if [allowCustomValue] enabled', fakeAsync(() => {
       spectator.setHostInput('allowCustomValue', true);
       spectator.typeInElement('/my-custom-1', 'input');
+
+      // Wait for debounced value update
+      tick(300);
       expect(formControl.value).toBe('/my-custom-1');
-    });
+    }));
 
     it('if [allowCustomValue] is disabled and user types custom value.', () => {
       spectator.setHostInput('allowCustomValue', false);
@@ -184,6 +187,27 @@ describe('IxComboboxComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
+      discardPeriodicTasks();
+    }));
+
+    it('respects custom debounceTime input', fakeAsync(() => {
+      const options = [
+        { label: 'Option 1', value: 'opt1' },
+        { label: 'Option 2', value: 'opt2' },
+      ];
+      const provider = new FakeProvider(options);
+      const fetchSpy = jest.spyOn(provider, 'fetch');
+
+      spectator.setHostInput('provider', provider);
+      spectator.setHostInput('debounceTime', 500);
+      spectator.component.ngOnInit();
+
+      spectator.typeInElement('test', 'input');
+
+      // Should call fetch after custom debounce time
+      tick(500);
+      expect(fetchSpy).toHaveBeenCalledWith('test');
+
       discardPeriodicTasks();
     }));
   });

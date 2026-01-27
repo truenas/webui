@@ -20,7 +20,7 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if all specified groups exist in the system.
    * Provides real-time feedback with debouncing to prevent excessive API calls.
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 500ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
    * @returns AsyncValidatorFn that validates group existence
    *
    * @example
@@ -30,7 +30,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateGroupsExist(debounceMs = 500): AsyncValidatorFn {
+  validateGroupsExist(debounceMs = 300): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const groups = control.value as string[];
 
@@ -43,7 +43,7 @@ export class UserGroupExistenceValidationService {
         debounceTime(debounceMs),
         switchMap((debouncedGroups) => {
           const groupChecks = debouncedGroups.map((groupName: string) => {
-            return this.userService.getGroupByName(groupName).pipe(
+            return this.userService.getGroupByNameCached(groupName).pipe(
               map(() => ({ name: groupName, exists: true })),
               catchError(() => of({ name: groupName, exists: false })),
             );
@@ -76,7 +76,7 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if all specified users exist in the system.
    * Provides real-time feedback with debouncing to prevent excessive API calls.
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 500ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
    * @returns AsyncValidatorFn that validates user existence
    *
    * @example
@@ -86,7 +86,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateUsersExist(debounceMs = 500): AsyncValidatorFn {
+  validateUsersExist(debounceMs = 300): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const users = control.value as string[];
 
@@ -99,7 +99,7 @@ export class UserGroupExistenceValidationService {
         debounceTime(debounceMs),
         switchMap((debouncedUsers) => {
           const userChecks = debouncedUsers.map((username: string) => {
-            return this.userService.getUserByName(username).pipe(
+            return this.userService.getUserByNameCached(username).pipe(
               map(() => ({ name: username, exists: true })),
               catchError(() => of({ name: username, exists: false })),
             );
@@ -132,7 +132,7 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if a single user exists in the system.
    * Used for combobox components where only one user can be selected.
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 500ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
    * @returns AsyncValidatorFn that validates single user existence
    *
    * @example
@@ -142,7 +142,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateUserExists(debounceMs = 500): AsyncValidatorFn {
+  validateUserExists(debounceMs = 300): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const username = control.value as string;
 
@@ -153,7 +153,7 @@ export class UserGroupExistenceValidationService {
       return of(username).pipe(
         debounceTime(debounceMs),
         switchMap((debouncedUsername): Observable<ValidationErrors | null> => {
-          return this.userService.getUserByName(debouncedUsername).pipe(
+          return this.userService.getUserByNameCached(debouncedUsername).pipe(
             map((): null => null),
             catchError((): Observable<ValidationErrors> => of({
               userDoesNotExist: {
@@ -173,7 +173,7 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if a single group exists in the system.
    * Used for combobox components where only one group can be selected.
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 500ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
    * @returns AsyncValidatorFn that validates single group existence
    *
    * @example
@@ -183,7 +183,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateGroupExists(debounceMs = 500): AsyncValidatorFn {
+  validateGroupExists(debounceMs = 300): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const groupName = control.value as string;
 
@@ -194,7 +194,7 @@ export class UserGroupExistenceValidationService {
       return of(groupName).pipe(
         debounceTime(debounceMs),
         switchMap((debouncedGroupName): Observable<ValidationErrors | null> => {
-          return this.userService.getGroupByName(debouncedGroupName).pipe(
+          return this.userService.getGroupByNameCached(debouncedGroupName).pipe(
             map((): null => null),
             catchError((): Observable<ValidationErrors> => of({
               groupDoesNotExist: {

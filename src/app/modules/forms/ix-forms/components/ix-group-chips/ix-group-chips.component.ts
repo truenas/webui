@@ -47,6 +47,7 @@ export class IxGroupChipsComponent implements AfterViewInit, ControlValueAccesso
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
+  readonly debounceTime = input<number>(300);
 
   private readonly ixChips = viewChild.required(IxChipsComponent);
 

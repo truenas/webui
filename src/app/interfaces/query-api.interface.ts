@@ -32,6 +32,12 @@ export interface QueryOptions<T> {
   count?: boolean;
 
   /**
+   * Get a single object instead of an array. Returns the first match or throws an error if not found.
+   * Has the advantage of inserting into the directory services cache on positive result.
+   */
+  get?: boolean;
+
+  /**
    * Limit the number of results returned.
    */
   limit?: number;

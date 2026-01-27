@@ -63,6 +63,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   readonly required = input<boolean>(false);
   readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
+  readonly debounceTime = input<number>(300);
 
   readonly provider = input.required<IxComboboxProvider>();
 
@@ -76,6 +77,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   loading = false;
 
   private filterChanged$ = new Subject<string>();
+  private valueChanged$ = new Subject<string>();
 
   value: string | number | null = '';
   isDisabled = false;
@@ -112,7 +114,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     }
 
     this.filterChanged$.pipe(
-      debounceTime(300),
+      debounceTime(this.debounceTime()),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((changedValue) => {
@@ -121,6 +123,18 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       }
       this.filterValue = changedValue;
       this.filterOptions(changedValue);
+    });
+
+    // Debounce form control value updates to prevent validation spam
+    this.valueChanged$.pipe(
+      debounceTime(this.debounceTime()),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((changedValue) => {
+      // Only update if value is not null (null is used to cancel pending updates)
+      if (changedValue !== null) {
+        this.onChange(changedValue);
+      }
     });
 
     this.filterChanged$.next('');
@@ -158,6 +172,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       if (selectedOptionFromLabel) {
         this.selectedOption = selectedOptionFromLabel;
         this.value = selectedOptionFromLabel.value;
+        // Clear any pending debounced value update since we found a match
+        this.valueChanged$.next(null);
         this.onChange(this.value);
       } else if (this.value !== null) {
         const selectedOptionFromValue = this.options.find((option: Option) => option.value === this.value);
@@ -243,8 +259,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
 
+    // Queue debounced form control update when allowing custom values
     if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
-      this.onChange(changedValue);
+      this.valueChanged$.next(changedValue);
     }
   }
 

@@ -62,6 +62,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
+  readonly debounceTime = input<number>(300);
   /**
    * A function that provides the options for the autocomplete dropdown.
    * This function is called when the user types into the input field,
@@ -247,7 +248,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       fromEvent(this.chipInput().nativeElement, 'input')
         .pipe(
           startWith(''),
-          debounceTime(100),
+          debounceTime(this.debounceTime()),
           distinctUntilChanged(),
         ),
       this.inputReset$,
