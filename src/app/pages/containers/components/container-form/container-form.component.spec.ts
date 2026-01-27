@@ -424,6 +424,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('sends empty string for pool when no pool is selected (uses preferred pool)', async () => {
+      const api = spectator.inject(ApiService);
       const dialogService = spectator.inject(DialogService);
 
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
@@ -439,17 +440,10 @@ describe('ContainerFormComponent', () => {
       await submitButton.click();
 
       expect(dialogService.jobDialog).toHaveBeenCalled();
-      const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
-      const jobObservable = jobDialogCall[0];
-
-      // Subscribe to get the actual job parameters
-      jobObservable.subscribe((job: { params: unknown[] }) => {
-        const payload = job.params[0];
-        expect(payload).toMatchObject({
-          pool: '',
-          name: 'new-container',
-        });
-      });
+      expect(api.job).toHaveBeenCalledWith('container.create', [expect.objectContaining({
+        pool: '',
+        name: 'new-container',
+      })]);
     });
   });
 

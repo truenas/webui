@@ -658,20 +658,24 @@ describe('ExportDisconnectModalComponent', () => {
 
       it('calls pool.export with restart_services=true when user confirms service restart', async () => {
         const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
-          afterClosed: () => throwError(() => {
-            return new FailedJobError({
-              error: 'Control services error',
-              exc_info: {
-                extra: {
-                  code: 'control_services',
-                  restart_services: ['cifs', 'iscsi'],
-                  stop_services: ['docker'],
-                } as Record<string, unknown>,
-              },
-            } as Job);
-          }) as Observable<Job>,
-        } as JobProgressDialogRef<unknown>);
+        jest.spyOn(dialog, 'jobDialog')
+          .mockReturnValueOnce({
+            afterClosed: () => throwError(() => {
+              return new FailedJobError({
+                error: 'Control services error',
+                exc_info: {
+                  extra: {
+                    code: 'control_services',
+                    restart_services: ['cifs', 'iscsi'],
+                    stop_services: ['docker'],
+                  } as Record<string, unknown>,
+                },
+              } as Job);
+            }) as Observable<Job>,
+          } as JobProgressDialogRef<unknown>)
+          .mockReturnValueOnce({
+            afterClosed: () => of(null),
+          } as JobProgressDialogRef<unknown>);
 
         jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
           afterClosed: () => of(true),

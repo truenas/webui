@@ -212,7 +212,7 @@ defineGlobalsInjections({
     },
     { provide: IxIconRegistry, useClass: FakeMatIconRegistry },
     { provide: MatIconRegistry, useClass: FakeMatIconRegistry },
-    TnIconTesting.jest.providers(),
+    ...TnIconTesting.jest.providers(),
   ],
 });
 
