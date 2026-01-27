@@ -20,6 +20,13 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if all specified groups exist in the system.
    * Provides real-time feedback with debouncing to prevent excessive API calls.
    *
+   * Note: This validator has its own debouncing even though the input components (ix-chips, ix-combobox)
+   * already debounce autocomplete fetches. This is intentional because:
+   * - Autocomplete debouncing optimizes UI responsiveness for suggestions
+   * - Validation debouncing optimizes API calls for existence checks
+   * - Users can type custom values not in autocomplete, which still need validation
+   * - The two operations have different lifecycles (suggestions vs. validation)
+   *
    * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
    * @returns AsyncValidatorFn that validates group existence
    *
@@ -75,6 +82,13 @@ export class UserGroupExistenceValidationService {
   /**
    * Creates an async validator that checks if all specified users exist in the system.
    * Provides real-time feedback with debouncing to prevent excessive API calls.
+   *
+   * Note: This validator has its own debouncing even though the input components (ix-chips, ix-combobox)
+   * already debounce autocomplete fetches. This is intentional because:
+   * - Autocomplete debouncing optimizes UI responsiveness for suggestions
+   * - Validation debouncing optimizes API calls for existence checks
+   * - Users can type custom values not in autocomplete, which still need validation
+   * - The two operations have different lifecycles (suggestions vs. validation)
    *
    * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
    * @returns AsyncValidatorFn that validates user existence

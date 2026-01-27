@@ -86,7 +86,7 @@ export type QueryComparator
     | 'in'
     | 'nin' // not in
     | 'rin' // x is not None and y in x
-    | 'rnin' // x is not None and y not in x
+    | 'rnin' // cspell:disable-line - x is not None and y not in x
     | '^' // x is not None and x.startswith(y)
     | '!^' // x is not None and not x.startswith(y)
     | '$' // x is not None and x.endswith(y)

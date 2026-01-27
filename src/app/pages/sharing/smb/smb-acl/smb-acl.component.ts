@@ -232,6 +232,11 @@ export class SmbAclComponent implements OnInit {
       if (ace.ae_who === NfsAclTag.Everyone) {
         result.ae_who_sid = 'S-1-1-0';
       } else {
+        // Explicit null check to fail fast with clear error instead of calling API with "null" string
+        if (!whoIdOrName && whoIdOrName !== 0) {
+          throw new Error(`ACE entry requires a user/group identifier but got: ${whoIdOrName}`);
+        }
+
         let id: number;
         if (isNumber(whoIdOrName)) {
           id = Number(whoIdOrName);

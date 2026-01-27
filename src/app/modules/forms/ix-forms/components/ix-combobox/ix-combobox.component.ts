@@ -1,4 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  input,
+  OnInit,
+  Signal,
+  viewChild,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor, NgControl,
   ReactiveFormsModule,
@@ -8,7 +20,6 @@ import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
@@ -17,7 +28,7 @@ import {
 } from 'rxjs';
 import {
   catchError,
-  debounceTime, distinctUntilChanged, map, takeUntil,
+  debounceTime, distinctUntilChanged, map,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
@@ -29,7 +40,6 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-combobox',
   templateUrl: './ix-combobox.component.html',
@@ -57,6 +67,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
@@ -115,7 +126,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.filterChanged$.pipe(
       debounceTime(this.debounceTime()),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((changedValue) => {
       if (this.filterValue === changedValue) {
         return;
@@ -152,7 +163,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         this.hasErrorInOptions = true;
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((options: Option[]) => {
       this.options = options;
 
@@ -203,8 +214,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         .pipe(
           debounceTime(300),
           map(() => (autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
-          takeUntil(autocompleteTrigger.panelClosingActions),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe(() => {
           const {
             scrollTop,
@@ -220,7 +230,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           this.loading = true;
           this.cdr.markForCheck();
           this.provider()?.nextPage(this.filterValue !== null && this.filterValue !== undefined ? this.filterValue : '')
-            .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+            .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();
               /**
