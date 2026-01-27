@@ -24,7 +24,7 @@ describe('DisksWithZfsErrorsComponent', () => {
     expect(spectator.query('ngx-skeleton-loader')).toBeTruthy();
   });
 
-  it('should number of disks with ZFS errors', () => {
+  it('should display number of disks with ZFS errors', () => {
     const mockPool = {
       topology: {
         data: [
