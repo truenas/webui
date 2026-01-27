@@ -24,15 +24,15 @@ describe('AddGpuDeviceMenuComponent', () => {
     id: 123,
     type: ContainerType.Container,
   });
+  const gpuChoices = {
+    '0000:19:00.0': ContainerGpuType.Nvidia,
+    '0000:1a:00.0': ContainerGpuType.Amd,
+  };
   const createComponent = createComponentFactory({
     component: AddGpuDeviceMenuComponent,
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('container.device.gpu_choices', {
-          '0000:19:00.0': ContainerGpuType.Nvidia,
-          '0000:1a:00.0': ContainerGpuType.Amd,
-        }),
         mockCall('container.device.create'),
       ]),
       provideMockStore({
@@ -56,7 +56,9 @@ describe('AddGpuDeviceMenuComponent', () => {
             pci_address: '0000:19:00.0',
           } as ContainerDevice,
         ] as ContainerDevice[],
-        loadDevices: jest.fn(),
+        gpuChoices: () => gpuChoices,
+        isLoadingGpuChoices: () => false,
+        reload: jest.fn(),
         isLoading: () => false,
       }),
       mockProvider(SnackbarService),

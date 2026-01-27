@@ -52,6 +52,7 @@ import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -153,7 +154,7 @@ export class ZvolFormComponent implements OnInit {
     encryption: [true],
     encryption_type: ['key', Validators.required],
     generate_key: [true],
-    key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
+    key: ['', [Validators.required, exactLength(64)]],
     passphrase: ['', [Validators.required, Validators.minLength(8)]],
     confirm_passphrase: ['', [Validators.required]],
     pbkdf2iters: [350000, [Validators.required, Validators.min(100000)]],
