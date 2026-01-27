@@ -1,6 +1,18 @@
 import { ENTER } from '@angular/cdk/keycodes';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  input,
+  OnChanges,
+  Signal,
+  viewChild,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import {
@@ -8,7 +20,6 @@ import {
 } from '@angular/material/chips';
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   fromEvent, merge, Observable, Subject,
 } from 'rxjs';
@@ -25,7 +36,6 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-chips',
   templateUrl: './ix-chips.component.html',
@@ -55,6 +65,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
@@ -189,7 +200,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     if (trigger?.panelOpen) {
       // If there's a typed value, process it after the panel closes
       if (inputValue.trim() && this.allowNewEntries() && !this.resolveValue()) {
-        trigger.panelClosingActions.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+        trigger.panelClosingActions.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           // Re-check the input value after panel closes, in case user selected an option
           const currentValue = this.chipInput().nativeElement.value;
           if (currentValue.trim()) {
@@ -201,7 +212,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
         });
       } else {
         // No value to process, but still need to trigger validation
-        trigger.panelClosingActions.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+        trigger.panelClosingActions.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           this.onTouch();
         });
       }
@@ -232,7 +243,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       return;
     }
 
-    this.resolveOptions()?.pipe(untilDestroyed(this)).subscribe((options) => {
+    this.resolveOptions()?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
       this.resolvedOptions = options;
     });
   }

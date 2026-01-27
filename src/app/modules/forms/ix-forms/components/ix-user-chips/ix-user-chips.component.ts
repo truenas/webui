@@ -2,7 +2,6 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, input, viewChild, inject,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -25,7 +24,6 @@ import { UserService } from 'app/services/user.service';
  * ></ix-user-chips>
  * ```
  */
-@UntilDestroy()
 @Component({
   selector: 'ix-user-chips',
   templateUrl: './ix-user-chips.component.html',

@@ -1,11 +1,13 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { cloneDeep, concat } from 'lodash-es';
 import {
@@ -30,7 +32,6 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-save-as-preset-modal',
   templateUrl: './save-as-preset-modal.component.html',
@@ -61,6 +62,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   private userService = inject(UserService);
   private dialogRef = inject<MatDialogRef<SaveAsPresetModalComponent>>(MatDialogRef);
   private store = inject(DatasetAclEditorStore);
+  private destroyRef = inject(DestroyRef);
   data = inject<SaveAsPresetModalConfig>(MAT_DIALOG_DATA);
 
   form = this.fb.group({
@@ -75,7 +77,7 @@ export class SaveAsPresetModalComponent implements OnInit {
     this.loadOptions();
 
     this.store.state$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         this.isFormLoading.set(state.isLoading);
         this.acl = state.acl;
@@ -97,7 +99,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((presets) => {
         this.presets = this.sortPresets(presets);
@@ -128,7 +130,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       }),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dialogRef.close();
     });
@@ -139,7 +141,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         this.loader.withLoader(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.loadOptions();

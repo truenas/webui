@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isNumber } from 'lodash-es';
 import {
@@ -51,7 +53,6 @@ interface FormAclEntry {
   both: NameOrId;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-smb-acl',
   templateUrl: './smb-acl.component.html',
@@ -82,6 +83,7 @@ export class SmbAclComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private userService = inject(UserService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<string, boolean>>(SlideInRef);
 
   form = this.formBuilder.group({
@@ -173,7 +175,7 @@ export class SmbAclComponent implements OnInit {
     of(undefined)
       .pipe(mergeMap(() => this.getAclEntriesFromForm()))
       .pipe(mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -189,7 +191,7 @@ export class SmbAclComponent implements OnInit {
   private loadSmbAcl(shareName: string): void {
     this.isLoading.set(true);
     this.api.call('sharing.smb.getacl', [{ share_name: shareName }])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (shareAcl) => {
           this.shareAclName = shareAcl.share_name;
@@ -271,7 +273,7 @@ export class SmbAclComponent implements OnInit {
           return this.initialValueDataFromAce(ace);
         }),
       )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((aceData: unknown[]) => {
         const initialOptions: Option[] = [];
 
