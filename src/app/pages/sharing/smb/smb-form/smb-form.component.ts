@@ -202,6 +202,29 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     return this.isNewTimeMachineShare || this.isNewHomeShare || this.wasPathChanged || this.hasAddedAllowDenyHosts;
   }
 
+  private readonly basicControlNames = new Set([
+    'purpose',
+    'path',
+    'name',
+    'comment',
+    'enabled',
+    'remote_path',
+  ]);
+
+  private hasAdvancedErrorsInternal(): boolean {
+    return Object.entries(this.form.controls).some(([controlName, control]) => {
+      if (this.basicControlNames.has(controlName)) {
+        return false;
+      }
+
+      if (control.disabled) {
+        return false;
+      }
+
+      return control.invalid;
+    });
+  }
+
   private isFieldEnabledForPurpose(fieldName: string, purpose: SmbSharePurpose): boolean {
     return presetEnabledFields[purpose]?.includes(fieldName as never) ?? false;
   }
@@ -271,6 +294,47 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
       return null;
     };
+  }
+
+  private setupAuditValidation(): void {
+    const auditGroup = this.form.controls.audit;
+    const enableControl = auditGroup.controls.enable;
+
+    enableControl.valueChanges.pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.updateAuditValidationState();
+      });
+
+    this.updateAuditValidationState();
+  }
+
+  private updateAuditValidationState(): void {
+    const auditGroup = this.form.controls.audit;
+    const watchList = auditGroup.controls.watch_list.value ?? [];
+    const ignoreList = auditGroup.controls.ignore_list.value ?? [];
+
+    auditGroup.updateValueAndValidity({ emitEvent: true });
+
+    if (auditGroup.controls.enable.value && watchList.length === 0 && ignoreList.length === 0) {
+      auditGroup.markAllAsTouched();
+    }
+  }
+
+  private openAdvancedOptionsIfInvalid(): void {
+    this.form.updateValueAndValidity({ emitEvent: false });
+
+    if (this.hasAdvancedErrorsInternal()) {
+      this.isAdvancedMode = true;
+      this.updateAuditValidationState();
+    }
+  }
+
+  protected toggleAdvancedMode(): void {
+    this.isAdvancedMode = !this.isAdvancedMode;
+
+    if (this.isAdvancedMode) {
+      this.updateAuditValidationState();
+    }
   }
 
   protected form = this.formBuilder.group({
@@ -381,12 +445,20 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.setupMangleWarning();
     this.setupPathControl();
     this.setupAclControl();
+    this.setupAuditValidation();
+    this.openAdvancedOptionsIfInvalid();
   }
 
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
       this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
+
+    // Ensure audit validation errors are visible after view init (edit mode included).
+    this.updateAuditValidationState();
+    if (this.hasAdvancedErrorsInternal()) {
+      this.isAdvancedMode = true;
+    }
   }
 
   private setupAclControl(): void {
@@ -629,6 +701,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   protected submit(): void {
+    if (this.form.invalid || this.isAsyncValidatorPending) {
+      this.form.markAllAsTouched();
+      if (this.hasAdvancedErrorsInternal()) {
+        this.isAdvancedMode = true;
+      }
+      return;
+    }
+
     const smbShare = { ...this.form.value } as SmbShare;
     const purpose = smbShare.purpose;
     const presetFields = presetEnabledFields[purpose] ?? [];
