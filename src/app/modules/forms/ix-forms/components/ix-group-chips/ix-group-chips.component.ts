@@ -68,7 +68,7 @@ export class IxGroupChipsComponent implements AfterViewInit, ControlValueAccesso
     const control = this.controlDirective.control;
     if (control) {
       control.addAsyncValidators([
-        this.existenceValidator.validateGroupsExist(),
+        this.existenceValidator.validateGroupsExist(this.debounceTime()),
       ]);
       // Don't call updateValueAndValidity() here to avoid showing validation errors
       // immediately on form load. Validation will run automatically when the user

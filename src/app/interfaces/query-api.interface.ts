@@ -34,6 +34,15 @@ export interface QueryOptions<T> {
   /**
    * Get a single object instead of an array. Returns the first match or throws an error if not found.
    * Has the advantage of inserting into the directory services cache on positive result.
+   *
+   * IMPORTANT: When get: true, the return type changes from T[] to T.
+   * You must cast the result: `as unknown as Observable<T>`
+   *
+   * @example
+   * ```typescript
+   * // Returns Observable<User> instead of Observable<User[]>
+   * return this.api.call('user.query', [filters, { get: true }]) as unknown as Observable<User>;
+   * ```
    */
   get?: boolean;
 
