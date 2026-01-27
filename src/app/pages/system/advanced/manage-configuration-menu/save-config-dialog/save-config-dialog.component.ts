@@ -111,7 +111,7 @@ export class SaveConfigDialog {
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.dialogRef.close(false);
+        this.dialogRef.close();
       },
     });
   }

@@ -105,6 +105,20 @@ describe('GroupDetailsRowComponent', () => {
       const membersButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Members' }));
       expect(membersButton).toBeNull();
     });
+
+    it('should disable Members button for immutable groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, immutable: true });
+
+      const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
+      expect(await membersButton.isDisabled()).toBe(true);
+    });
+
+    it('should not navigate to members form when clicking disabled Members button for immutable groups', () => {
+      spectator.setInput('group', { ...dummyGroup, immutable: true });
+      spectator.component.openGroupMembersForm();
+
+      expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
+    });
   });
 
   describe('Edit button', () => {

@@ -59,7 +59,11 @@ export class TunableFormComponent implements OnInit {
   }
 
   get title(): string {
-    return this.isNew ? this.translate.instant('Add Tunable') : this.translate.instant('Edit Tunable');
+    if (this.isNew) {
+      return this.translate.instant('Add Tunable');
+    }
+    const type = this.editingTunable?.type?.toUpperCase() || '';
+    return this.translate.instant('Edit Tunable ({type})', { type });
   }
 
   protected isFormLoading = signal(false);

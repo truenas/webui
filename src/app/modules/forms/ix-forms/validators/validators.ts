@@ -96,3 +96,38 @@ export function validateNotPoolRoot(errorMessage: string): ValidatorFn {
     return null;
   };
 }
+
+/**
+ * Validates that a string has an exact length.
+ * Provides a clearer error message than using minLength and maxLength together.
+ *
+ * @param length The exact required length
+ * @param errorMessage Optional custom error message. If not provided, uses default message.
+ * @returns ValidatorFn that returns null if valid, or ValidationErrors if invalid
+ *
+ * @example
+ * // Encryption key must be exactly 64 characters
+ * this.form = this.fb.group({
+ *   key: ['', exactLength(64, this.translate.instant('Key must be exactly 64 characters'))],
+ * });
+ */
+export function exactLength(length: number, errorMessage?: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value as string;
+    if (!value) {
+      return null; // Let required validator handle empty values
+    }
+
+    if (value.length !== length) {
+      return {
+        exactLength: {
+          requiredLength: length,
+          actualLength: value.length,
+          message: errorMessage,
+        },
+      };
+    }
+
+    return null;
+  };
+}

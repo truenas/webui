@@ -14,6 +14,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -54,7 +55,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     encryption: [true],
     encryption_type: [DatasetEncryptionType.Default],
     generate_key: [true],
-    key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
+    key: ['', exactLength(64)],
     passphrase: ['', Validators.minLength(8)],
     confirm_passphrase: [''],
     pbkdf2iters: [350000, Validators.min(100000)],

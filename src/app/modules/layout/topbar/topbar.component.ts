@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -24,7 +25,6 @@ import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-requi
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
@@ -39,6 +39,7 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -59,7 +60,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatToolbarRow,
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
@@ -87,6 +88,7 @@ export class TopbarComponent implements OnInit {
   private translate = inject(TranslateService);
   private tnc = inject(TruenasConnectService);
   private apiService = inject<ApiService>(ApiService);
+  private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
 
   updateIsDone: Subscription;
 
@@ -229,6 +231,7 @@ export class TopbarComponent implements OnInit {
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
       filter(() => !this.shownDialog()),
+      filter(() => !this.updateIsRunning && !this.rebootInfoSuppression.isSuppressed()),
       tap(() => this.shownDialog.set(true)),
       switchMap(() => this.matDialog.open(RebootRequiredDialog, { minWidth: '400px' }).afterClosed()),
     );

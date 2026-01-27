@@ -45,6 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 
 /** time to wait in milliseconds between opening a slidein and highlighting an element on it */
 const slideInAnimationDuration = 600;
@@ -135,6 +136,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
   private window = inject<Window>(WINDOW);
   private router = inject(Router);
+  private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
 
   protected readonly stigRequirements = stigPasswordRequirements;
@@ -563,6 +565,8 @@ export class SystemSecurityFormComponent implements OnInit {
       };
     }
 
+    this.rebootInfoSuppression.suppress();
+
     this.dialogService.jobDialog(
       this.api.job('system.security.update', [valuesToSave]),
       {
@@ -571,6 +575,7 @@ export class SystemSecurityFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
+        finalize(() => this.rebootInfoSuppression.unsuppress()),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )

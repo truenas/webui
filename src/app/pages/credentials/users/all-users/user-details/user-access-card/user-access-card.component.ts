@@ -86,10 +86,10 @@ export class UserAccessCardComponent {
 
   readonly sshAccessStatus = computed<string | null>(() => {
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {
-      return this.translate.instant('SSH Key Set & Password Login Enabled');
+      return this.translate.instant('SSH Key Authentication & Password Login Enabled');
     }
     if (this.user().sshpubkey) {
-      return this.translate.instant('SSH Key Set');
+      return this.translate.instant('SSH Key Authentication Enabled');
     }
     if (this.user().ssh_password_enabled) {
       return this.translate.instant('SSH Password Login Enabled');
