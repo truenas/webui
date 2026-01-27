@@ -6,6 +6,7 @@ export interface FileRecord {
   acl: boolean;
   gid: number;
   mode: number;
+  mtime: number;
   name: string;
   path: string;
   realpath: string;

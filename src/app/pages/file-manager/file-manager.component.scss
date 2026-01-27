@@ -430,8 +430,15 @@ $fm-transition-normal: 200ms ease;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .empty-state {
@@ -507,6 +514,7 @@ $fm-transition-normal: 200ms ease;
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -667,6 +675,13 @@ $fm-transition-normal: 200ms ease;
   font-variant-numeric: tabular-nums;
 }
 
+.col-modified {
+  flex: 0 0 160px;
+  text-align: right;
+  font-size: $fm-font-size-sm;
+  color: $fm-text-secondary;
+}
+
 .col-type {
   flex: 0 0 120px;
   text-align: right;
@@ -676,6 +691,7 @@ $fm-transition-normal: 200ms ease;
 }
 
 .list-item.selected {
+
   .col-size,
   .col-type {
     color: $fm-text-secondary;

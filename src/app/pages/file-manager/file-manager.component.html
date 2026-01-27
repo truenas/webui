@@ -218,6 +218,7 @@
             <div class="file-list">
               <div class="list-header">
                 <span class="col-name">Name</span>
+                <span class="col-modified">Modified</span>
                 <span class="col-size">Size</span>
                 <span class="col-type">Type</span>
               </div>
@@ -236,6 +237,7 @@
                     ></ix-icon>
                     {{ item.name }}
                   </span>
+                  <span class="col-modified">{{ formatDate(item.mtime) }}</span>
                   <span class="col-size">{{
                     isDirectory(item) ? "-" : formatSize(item.size)
                   }}</span>
