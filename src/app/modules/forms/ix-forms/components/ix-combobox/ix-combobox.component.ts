@@ -146,7 +146,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.loading = true;
     this.cdr.markForCheck();
 
-    this.provider()?.fetch(filterValue).pipe(
+    this.provider().fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions = true;
         return EMPTY;
@@ -254,10 +254,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     }
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
-
-    if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
-      this.onChange(changedValue);
-    }
   }
 
   resetInput(): void {

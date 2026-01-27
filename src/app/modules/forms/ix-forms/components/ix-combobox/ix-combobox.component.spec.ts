@@ -1,7 +1,7 @@
 import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { FormControl } from '@ngneat/reactive-forms'; // cspell:ignore ngneat
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
@@ -78,7 +78,9 @@ describe('IxComboboxComponent', () => {
     });
 
     it('form control value is set to custom value if [allowCustomValue] enabled', fakeAsync(() => {
+      spectator.component.ngOnInit();
       spectator.setHostInput('allowCustomValue', true);
+      spectator.setHostInput('provider', new SimpleComboboxProvider([]));
       spectator.typeInElement('/my-custom-1', 'input');
 
       // Wait for debounced value update
@@ -98,7 +100,7 @@ describe('IxComboboxComponent', () => {
         { label: 'test1', value: 'value1' },
         { label: 'test2', value: 'value2' },
         { label: 'test3', value: 'value3' },
-        { label: 'badtest', value: 'value4' },
+        { label: 'badtest', value: 'value4' }, // cspell:ignore badtest
       ];
 
       spectator.setHostInput('provider', new SimpleComboboxProvider(provider));
