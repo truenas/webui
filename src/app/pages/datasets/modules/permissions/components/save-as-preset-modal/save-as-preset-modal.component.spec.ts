@@ -28,7 +28,10 @@ describe('SaveAsPresetModalComponent', () => {
       DatasetAclEditorStore,
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockProvider(UserService),
+      mockProvider(UserService, {
+        getUserByNameCached: jest.fn(() => of({ username: 'testuser', uid: 1000 } as User)),
+        getGroupByNameCached: jest.fn(() => of({ group: 'testgroup', gid: 1000 } as Group)),
+      }),
       mockApi([
         mockCall('filesystem.acltemplate.by_path', [
           {

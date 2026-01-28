@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -18,15 +17,6 @@ export class UserService {
   protected groupQuery = 'group.query' as const;
   protected queryOptions = { limit: 50 };
 
-  private groupQueryDsCacheByName(name: string): Observable<Group[]> {
-    const trimmedName = name?.trim();
-    if (!trimmedName) {
-      return of([]);
-    }
-    const queryArgs: QueryFilter<Group>[] = [['name', '=', trimmedName]];
-    return this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions }]);
-  }
-
   groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     const trimmedSearch = search.trim();
     const queryArgs: QueryFilter<Group>[] = [];
@@ -38,14 +28,7 @@ export class UserService {
       queryArgs.push(['builtin', '=', false]);
     }
 
-    return combineLatest([
-      this.groupQueryDsCacheByName(trimmedSearch),
-      this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
-    ]).pipe(map(([groupSearchedByName, groups]) => {
-      const groupIds = new Set(groupSearchedByName.map((group) => group.id));
-      const filteredGroups = groups.filter((group) => !groupIds.has(group.id));
-      return [...filteredGroups, ...groupSearchedByName];
-    }));
+    return this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 
   smbGroupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
@@ -60,41 +43,45 @@ export class UserService {
       queryArgs.push(['builtin', '=', false]);
     }
 
-    return combineLatest([
-      this.groupQueryDsCacheByName(trimmedSearch),
-      this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
-    ]).pipe(map(([groupSearchedByName, groups]) => {
-      const groupIds = new Set(groupSearchedByName.map((group) => group.id));
-      const filteredGroups = groups.filter((group) => !groupIds.has(group.id));
-      return [...filteredGroups, ...groupSearchedByName];
-    }));
+    return this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 
+  /**
+   * Gets a group by exact name match using the uncached API.
+   * @deprecated Use getGroupByNameCached() instead to populate the directory services cache.
+   */
   getGroupByName(groupname: string): Observable<DsUncachedGroup> {
     return this.api.call(this.uncachedGroupQuery, [{ groupname }]);
   }
 
-  private userQueryDsCacheByName(name: string): Observable<User[]> {
-    const trimmedName = name?.trim();
-    if (!trimmedName) {
-      return of([]);
-    }
-    const queryArgs: QueryFilter<User>[] = [['username', '=', trimmedName]];
-    return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions }]);
+  /**
+   * Gets a group by exact name match using the cached query API.
+   *
+   * This method inserts the result into the middleware directory services cache,
+   * reducing subsequent lookups across the UI. The cache is middleware-managed and
+   * persists for the duration of the middleware session.
+   *
+   * Use this instead of getGroupByName() to improve performance when validating
+   * group names in forms or displaying group information.
+   *
+   * @param groupname - Exact group name to look up
+   * @returns Observable of the group object
+   *
+   * Note: The `as unknown as Observable<Group>` cast is required because the API's
+   * type system doesn't distinguish between array and single-object returns when get: true.
+   */
+  getGroupByNameCached(groupname: string): Observable<Group> {
+    const queryArgs: QueryFilter<Group>[] = [['name', '=', groupname]];
+    return this.api.call(this.groupQuery, [queryArgs, { get: true }]) as unknown as Observable<Group>;
   }
 
   /**
-   * Queries directory service users with enhanced search capabilities.
-   *
-   * Uses a dual-search strategy:
-   * 1. Exact name match - for finding specific users quickly
-   * 2. Case-insensitive regex - for broader pattern matching with proper backslash escaping
-   *
+   * Queries directory service users with case-insensitive regex search.
    * Handles domain-prefixed usernames (e.g., "ACME\admin") by escaping backslashes in the regex.
    *
    * @param search - Username or pattern to search for
-   * @param offset - Pagination offset for regex results
-   * @returns Observable of users, with exact matches appearing LAST for display prioritization
+   * @param offset - Pagination offset for results
+   * @returns Observable of users matching the search pattern
    */
   userQueryDsCache(search = '', offset = 0): Observable<User[]> {
     const trimmedSearch = search.trim();
@@ -104,33 +91,45 @@ export class UserService {
       queryArgs.push(['username', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
     }
 
-    return combineLatest([
-      this.userQueryDsCacheByName(trimmedSearch),
-      this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
-    ]).pipe(map(([userSearchedByName, users]) => {
-      const userIds = new Set(userSearchedByName.map((user) => user.id));
-      const filteredUsers = users.filter((user) => !userIds.has(user.id));
-      // Exact match comes last for better display prioritization
-      return [...filteredUsers, ...userSearchedByName];
-    }));
+    return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 
+  /**
+   * Gets a user by exact name match using the uncached API.
+   * @deprecated Use getUserByNameCached() instead to populate the directory services cache.
+   */
   getUserByName(username: string): Observable<DsUncachedUser> {
     return this.api.call(this.uncachedUserQuery, [{ username }]);
   }
 
   /**
-   * Queries SMB users with enhanced search capabilities.
+   * Gets a user by exact name match using the cached query API.
    *
-   * Uses a dual-search strategy:
-   * 1. Exact name match - for finding specific users quickly
-   * 2. Prefix match - for finding users that start with the search term
+   * This method inserts the result into the middleware directory services cache,
+   * reducing subsequent lookups across the UI. The cache is middleware-managed and
+   * persists for the duration of the middleware session.
    *
+   * Use this instead of getUserByName() to improve performance when validating
+   * usernames in forms or displaying user information.
+   *
+   * @param username - Exact username to look up
+   * @returns Observable of the user object
+   *
+   * Note: The `as unknown as Observable<User>` cast is required because the API's
+   * type system doesn't distinguish between array and single-object returns when get: true.
+   */
+  getUserByNameCached(username: string): Observable<User> {
+    const queryArgs: QueryFilter<User>[] = [['username', '=', username]];
+    return this.api.call(this.userQuery, [queryArgs, { get: true }]) as unknown as Observable<User>;
+  }
+
+  /**
+   * Queries SMB users with prefix matching.
    * Handles domain-prefixed usernames (e.g., "ACME\admin") by escaping backslashes.
    *
    * @param search - Username or pattern to search for
-   * @param offset - Pagination offset for prefix match results
-   * @returns Observable of SMB users, with exact matches appearing LAST for display prioritization
+   * @param offset - Pagination offset for results
+   * @returns Observable of SMB users matching the prefix
    */
   smbUserQueryDsCache(search = '', offset = 0): Observable<User[]> {
     const trimmedSearch = search.trim();
@@ -140,14 +139,6 @@ export class UserService {
       queryArgs.push(['username', '^', trimmedSearch.replaceAll('\\', '\\\\')]);
     }
 
-    return combineLatest([
-      this.userQueryDsCacheByName(trimmedSearch),
-      this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
-    ]).pipe(map(([userSearchedByName, users]) => {
-      const userIds = new Set(userSearchedByName.map((user) => user.id));
-      const filteredUsers = users.filter((user) => !userIds.has(user.id));
-      // Exact match comes last for better display prioritization
-      return [...filteredUsers, ...userSearchedByName];
-    }));
+    return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 }

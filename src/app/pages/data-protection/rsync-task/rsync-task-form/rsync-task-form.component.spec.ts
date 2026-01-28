@@ -92,6 +92,7 @@ describe('RsyncTaskFormComponent', () => {
           { username: 'steven' },
         ] as User[]),
         getUserByName: (username: string) => of({ username } as User),
+        getUserByNameCached: (username: string) => of({ username } as User),
       }),
       mockProvider(DialogService),
       provideMockStore({
