@@ -35,6 +35,7 @@ import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-com
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -78,9 +79,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
    * Debounce time in milliseconds for autocomplete suggestions.
    * Note: For specialized wrappers (ix-user-combobox, ix-group-combobox), this value is also
    * passed to validation, controlling both autocomplete fetch AND validation debouncing.
-   * @default 300
+   * @default defaultDebounceTimeMs (300)
    */
-  readonly debounceTime = input<number>(300);
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
 
   readonly provider = input.required<IxComboboxProvider>();
 
@@ -189,11 +190,12 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
         // If custom values allowed and user typed something not in options, update form control
         // Note: This runs after the debounced fetch completes (debounceTime ms after last keystroke).
-        // Form validation may trigger before this completes if user submits/blurs immediately.
-        // The debounced pipeline ensures we don't spam API calls during typing.
+        // If user already blurred, inputBlurred() will have set the value, so check before calling onChange again.
+        // This prevents double-calling onChange with the same value.
         if (
           this.allowCustomValue() && filterValue
           && !this.options.some((option: Option) => option.value === filterValue)
+          && this.value !== filterValue
         ) {
           this.onChange(filterValue);
         }

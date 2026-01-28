@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UserService } from 'app/services/user.service';
@@ -45,7 +46,7 @@ export class IxUserChipsComponent implements AfterViewInit, ControlValueAccessor
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly debounceTime = input<number>(300);
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
 
   private readonly ixChips = viewChild.required(IxChipsComponent);
 

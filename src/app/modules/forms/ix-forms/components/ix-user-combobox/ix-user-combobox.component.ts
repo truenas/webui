@@ -6,6 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UserService } from 'app/services/user.service';
@@ -47,7 +48,7 @@ export class IxUserComboboxComponent implements AfterViewInit, ControlValueAcces
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly allowCustomValue = input<boolean>(true);
-  readonly debounceTime = input<number>(300);
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
 
   private readonly ixCombobox = viewChild.required(IxComboboxComponent);
 

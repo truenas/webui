@@ -31,6 +31,7 @@ import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/ch
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -77,9 +78,9 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
    * Debounce time in milliseconds for autocomplete suggestions.
    * Note: For specialized wrappers (ix-user-chips, ix-group-chips), this value is also
    * passed to validation, controlling both autocomplete fetch AND validation debouncing.
-   * @default 300
+   * @default defaultDebounceTimeMs (300)
    */
-  readonly debounceTime = input<number>(300);
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
   /**
    * A function that provides the options for the autocomplete dropdown.
    * This function is called when the user types into the input field,

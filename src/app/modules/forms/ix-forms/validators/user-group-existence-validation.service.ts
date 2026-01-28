@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, forkJoin, map, of, switchMap,
 } from 'rxjs';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { UserService } from 'app/services/user.service';
 
 /**
@@ -27,7 +28,7 @@ export class UserGroupExistenceValidationService {
    * - Users can type custom values not in autocomplete, which still need validation
    * - The two operations have different lifecycles (suggestions vs. validation)
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to defaultDebounceTimeMs.
    * @returns AsyncValidatorFn that validates group existence
    *
    * @example
@@ -37,7 +38,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateGroupsExist(debounceMs = 300): AsyncValidatorFn {
+  validateGroupsExist(debounceMs = defaultDebounceTimeMs): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const groups = control.value as string[];
 
@@ -90,7 +91,7 @@ export class UserGroupExistenceValidationService {
    * - Users can type custom values not in autocomplete, which still need validation
    * - The two operations have different lifecycles (suggestions vs. validation)
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to defaultDebounceTimeMs.
    * @returns AsyncValidatorFn that validates user existence
    *
    * @example
@@ -100,7 +101,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateUsersExist(debounceMs = 300): AsyncValidatorFn {
+  validateUsersExist(debounceMs = defaultDebounceTimeMs): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const users = control.value as string[];
 
@@ -146,7 +147,7 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if a single user exists in the system.
    * Used for combobox components where only one user can be selected.
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to defaultDebounceTimeMs.
    * @returns AsyncValidatorFn that validates single user existence
    *
    * @example
@@ -156,7 +157,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateUserExists(debounceMs = 300): AsyncValidatorFn {
+  validateUserExists(debounceMs = defaultDebounceTimeMs): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const username = control.value as string;
 
@@ -187,7 +188,7 @@ export class UserGroupExistenceValidationService {
    * Creates an async validator that checks if a single group exists in the system.
    * Used for combobox components where only one group can be selected.
    *
-   * @param debounceMs - Debounce time in milliseconds. Defaults to 300ms.
+   * @param debounceMs - Debounce time in milliseconds. Defaults to defaultDebounceTimeMs.
    * @returns AsyncValidatorFn that validates single group existence
    *
    * @example
@@ -197,7 +198,7 @@ export class UserGroupExistenceValidationService {
    * ]);
    * ```
    */
-  validateGroupExists(debounceMs = 300): AsyncValidatorFn {
+  validateGroupExists(debounceMs = defaultDebounceTimeMs): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
       const groupName = control.value as string;
 
