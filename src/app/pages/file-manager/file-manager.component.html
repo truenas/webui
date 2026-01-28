@@ -36,15 +36,26 @@
     </div>
 
     <div class="toolbar-actions">
-      <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
+      <input #fileInput type="file" hidden multiple (change)="onFileSelected($event)" />
+      <input #folderInput type="file" hidden webkitdirectory (change)="onFolderSelected($event)" />
       <button
         mat-icon-button
         [disabled]="isUploading()"
-        [matTooltip]="'Upload File' | translate"
-        (click)="triggerUpload()"
+        [matTooltip]="'Upload' | translate"
+        [matMenuTriggerFor]="uploadMenu"
       >
         <ix-icon name="mdi-upload"></ix-icon>
       </button>
+      <mat-menu #uploadMenu="matMenu">
+        <button mat-menu-item (click)="triggerUpload()">
+          <ix-icon name="mdi-file-upload"></ix-icon>
+          <span>{{ "Upload Files" | translate }}</span>
+        </button>
+        <button mat-menu-item (click)="triggerFolderUpload()">
+          <ix-icon name="mdi-folder-upload"></ix-icon>
+          <span>{{ "Upload Folder" | translate }}</span>
+        </button>
+      </mat-menu>
       <button
         mat-icon-button
         [disabled]="!hasFileSelected() || isDownloading()"
@@ -83,9 +94,14 @@
   <!-- Upload Progress Bar -->
   @if (isUploading()) {
     <div class="upload-progress">
-      <span class="upload-filename"
-        >{{ "Uploading" | translate }}: {{ uploadFileName() }}</span
-      >
+      @if (uploadTotalFiles() > 1) {
+        <span class="upload-count">
+          {{ uploadCurrentIndex() }}/{{ uploadTotalFiles() }}
+        </span>
+      }
+      <span class="upload-filename">
+        {{ "Uploading" | translate }}: {{ uploadFileName() }}
+      </span>
       <mat-progress-bar
         mode="determinate"
         [value]="uploadProgress()"
@@ -277,6 +293,12 @@
       <button mat-menu-item (click)="downloadFile(contextMenuItem()!)">
         <ix-icon name="mdi-download"></ix-icon>
         <span>{{ "Download" | translate }}</span>
+      </button>
+    }
+    @if (isQuickLookSupported(contextMenuItem()!)) {
+      <button mat-menu-item (click)="openQuickLook(contextMenuItem()!)">
+        <ix-icon name="mdi-eye"></ix-icon>
+        <span>{{ "Quick Look" | translate }}</span>
       </button>
     }
     <button mat-menu-item (click)="renameItem(contextMenuItem()!)">

@@ -2,6 +2,7 @@ import { HttpEventType } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
+  HostListener,
   OnInit,
   OnDestroy,
   signal,
@@ -37,6 +38,7 @@ import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-dialog.component';
+import { QuickLookDialogComponent, QuickLookDialogData } from './quick-look-dialog/quick-look-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -61,6 +63,7 @@ import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-di
 })
 export class FileManagerComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
+  @ViewChild('folderInput') folderInput: ElementRef<HTMLInputElement>;
   @ViewChild('contextMenuTrigger') contextMenuTrigger: MatMenuTrigger;
 
   private api = inject(ApiService);
@@ -122,6 +125,8 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   isUploading = signal<boolean>(false);
   uploadProgress = signal<number>(0);
   uploadFileName = signal<string>('');
+  uploadTotalFiles = signal<number>(0);
+  uploadCurrentIndex = signal<number>(0);
 
   // Download state
   isDownloading = signal<boolean>(false);
@@ -131,6 +136,9 @@ export class FileManagerComponent implements OnInit, OnDestroy {
 
   // Context menu position
   contextMenuPosition = { x: 0, y: 0 };
+
+  // Quick Look dialog reference for toggle behavior
+  private quickLookDialogRef: import('@angular/material/dialog').MatDialogRef<QuickLookDialogComponent> | null = null;
 
   // Check if any file (non-directory) is selected
   hasFileSelected = computed(() => {
@@ -207,6 +215,68 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('document:keydown.space')
+  onSpacebarPress(): void {
+    // Don't trigger if user is typing in an input field
+    const target = document.activeElement as HTMLElement;
+    if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    // Check if exactly one item is selected
+    const selected = this.selectedItems();
+    if (selected.size !== 1) {
+      return;
+    }
+
+    const selectedPath = Array.from(selected)[0];
+    const item = this.items().find((i) => i.path === selectedPath);
+
+    if (!item || !this.isQuickLookSupported(item)) {
+      return;
+    }
+
+    this.toggleQuickLook(item);
+  }
+
+  toggleQuickLook(item: FileRecord): void {
+    // If dialog is already open, close it
+    if (this.quickLookDialogRef) {
+      this.quickLookDialogRef.close();
+      return;
+    }
+
+    // Open the dialog
+    this.openQuickLook(item);
+  }
+
+  isQuickLookSupported(item: FileRecord): boolean {
+    if (item.type === FileType.Directory) {
+      return false;
+    }
+
+    const ext = item.name.split('.').pop()?.toLowerCase() || '';
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'];
+    const videoExtensions = ['mp4'];
+    return imageExtensions.includes(ext) || videoExtensions.includes(ext);
+  }
+
+  openQuickLook(item: FileRecord): void {
+    this.quickLookDialogRef = this.matDialog.open(QuickLookDialogComponent, {
+      data: { fileItem: item } as QuickLookDialogData,
+      panelClass: 'quick-look-dialog-panel',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      width: '100vw',
+      height: '100vh',
+    });
+
+    // Clear the reference when dialog closes
+    this.quickLookDialogRef.afterClosed().subscribe(() => {
+      this.quickLookDialogRef = null;
+    });
   }
 
   loadDirectory(path: string): void {
@@ -389,15 +459,61 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     this.fileInput.nativeElement.click();
   }
 
+  triggerFolderUpload(): void {
+    this.folderInput.nativeElement.click();
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
-    const file = input.files[0];
-    const destinationPath = `${this.currentPath()}/${file.name}`;
+    const files = Array.from(input.files);
+    this.uploadFiles(files, input);
+  }
+
+  onFolderSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const files = Array.from(input.files);
+    this.uploadFiles(files, input, true);
+  }
+
+  private uploadFiles(files: File[], input: HTMLInputElement, preserveFolderStructure = false): void {
+    if (files.length === 0) return;
 
     this.isUploading.set(true);
+    this.uploadTotalFiles.set(files.length);
+    this.uploadCurrentIndex.set(0);
+
+    this.uploadFilesSequentially(files, input, preserveFolderStructure, 0);
+  }
+
+  private uploadFilesSequentially(
+    files: File[],
+    input: HTMLInputElement,
+    preserveFolderStructure: boolean,
+    index: number,
+  ): void {
+    if (index >= files.length) {
+      this.completeUpload(input, files.length);
+      return;
+    }
+
+    const file = files[index];
+    this.uploadCurrentIndex.set(index + 1);
     this.uploadProgress.set(0);
+
+    // Determine destination path
+    let destinationPath: string;
+    if (preserveFolderStructure && (file as File & { webkitRelativePath?: string }).webkitRelativePath) {
+      // Use relative path from folder selection
+      const relativePath = (file as File & { webkitRelativePath?: string }).webkitRelativePath;
+      destinationPath = `${this.currentPath()}/${relativePath}`;
+    } else {
+      destinationPath = `${this.currentPath()}/${file.name}`;
+    }
+
     this.uploadFileName.set(file.name);
 
     const { observable: upload$ } = this.uploadService.upload({
@@ -415,20 +531,32 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       },
       error: (error: unknown) => {
         console.error('Upload failed:', error);
-        this.isUploading.set(false);
-        this.uploadProgress.set(0);
-        this.uploadFileName.set('');
-        this.snackbar.error(this.translate.instant('Upload failed'));
+        this.snackbar.error(this.translate.instant('Upload failed: {name}', { name: file.name }));
+        // Continue with remaining files
+        this.uploadFilesSequentially(files, input, preserveFolderStructure, index + 1);
       },
       complete: () => {
-        this.isUploading.set(false);
-        this.uploadProgress.set(0);
-        this.uploadFileName.set('');
-        this.snackbar.success(this.translate.instant('File uploaded successfully'));
-        this.loadDirectory(this.currentPath());
-        input.value = '';
+        // Upload next file
+        this.uploadFilesSequentially(files, input, preserveFolderStructure, index + 1);
       },
     });
+  }
+
+  private completeUpload(input: HTMLInputElement, totalFiles: number): void {
+    this.isUploading.set(false);
+    this.uploadProgress.set(0);
+    this.uploadFileName.set('');
+    this.uploadTotalFiles.set(0);
+    this.uploadCurrentIndex.set(0);
+
+    if (totalFiles === 1) {
+      this.snackbar.success(this.translate.instant('File uploaded successfully'));
+    } else {
+      this.snackbar.success(this.translate.instant('{count} files uploaded successfully', { count: totalFiles }));
+    }
+
+    this.loadDirectory(this.currentPath());
+    input.value = '';
   }
 
   downloadFile(item: FileRecord): void {

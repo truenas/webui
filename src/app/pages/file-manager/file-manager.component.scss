@@ -217,6 +217,14 @@ $fm-transition-normal: 200ms ease;
   background-color: $fm-bg-canvas;
   border-bottom: 1px solid $fm-border-subtle;
 
+  .upload-count {
+    font-size: $fm-font-size-sm;
+    font-weight: $fm-font-weight-semibold;
+    color: $fm-icon-folder;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
   .upload-filename {
     font-size: $fm-font-size-base;
     color: $fm-text-primary;

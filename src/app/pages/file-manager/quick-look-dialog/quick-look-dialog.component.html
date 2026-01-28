@@ -1,0 +1,35 @@
+<div class="quick-look-container" (click)="close()">
+  <div class="quick-look-header">
+    <span class="file-name">{{ data.fileItem.name }}</span>
+    <button mat-icon-button class="close-button" (click)="close()">
+      <ix-icon name="mdi-close"></ix-icon>
+    </button>
+  </div>
+
+  <div class="quick-look-content" (click)="$event.stopPropagation()">
+    @if (isLoading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <span class="loading-text">{{ 'Loading...' | translate }}</span>
+      </div>
+    } @else if (error()) {
+      <div class="error-container">
+        <ix-icon name="mdi-alert-circle" class="error-icon"></ix-icon>
+        <span class="error-text">{{ error() }}</span>
+      </div>
+    } @else if (isVideo()) {
+      <video
+        [src]="mediaUrl()"
+        class="preview-video"
+        controls
+        autoplay
+      ></video>
+    } @else {
+      <img
+        [src]="mediaUrl()"
+        [alt]="data.fileItem.name"
+        class="preview-image"
+      />
+    }
+  </div>
+</div>
