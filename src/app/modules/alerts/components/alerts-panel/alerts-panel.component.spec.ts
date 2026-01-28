@@ -9,6 +9,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
@@ -135,8 +136,16 @@ describe('AlertsPanelComponent', () => {
     const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
     expect(unreadAlertComponents).toHaveLength(2);
-    expect(unreadAlertComponents[0].alert).toEqual({ ...unreadAlerts[1], duplicateCount: 1 });
-    expect(unreadAlertComponents[1].alert).toEqual({ ...unreadAlerts[0], duplicateCount: 1 });
+    expect(unreadAlertComponents[0].alert).toEqual({
+      ...unreadAlerts[1],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
+    expect(unreadAlertComponents[1].alert).toEqual({
+      ...unreadAlerts[0],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
   });
 
   it('shows a list of dismissed alerts', () => {
@@ -147,8 +156,16 @@ describe('AlertsPanelComponent', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
     expect(dismissedAlertComponents).toHaveLength(2);
-    expect(dismissedAlertComponents[0].alert).toEqual({ ...dismissedAlerts[0], duplicateCount: 1 });
-    expect(dismissedAlertComponents[1].alert).toEqual({ ...dismissedAlerts[1], duplicateCount: 1 });
+    expect(dismissedAlertComponents[0].alert).toEqual({
+      ...dismissedAlerts[0],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
+    expect(dismissedAlertComponents[1].alert).toEqual({
+      ...dismissedAlerts[1],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
