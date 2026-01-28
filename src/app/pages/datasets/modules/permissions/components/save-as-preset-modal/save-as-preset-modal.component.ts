@@ -152,30 +152,45 @@ export class SaveAsPresetModalComponent implements OnInit {
     const requests$: Observable<Group | User>[] = [];
     const userWhoToIds = new Map<string, number>();
     const groupWhoToIds = new Map<string, number>();
+
+    // Deduplicate users and groups to avoid redundant API calls
+    const uniqueUsers = new Set<string>();
+    const uniqueGroups = new Set<string>();
+
     for (const ace of acl.acl) {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag) && ace.who) {
-        requests$.push(
-          this.userService.getUserByNameCached(ace.who).pipe(
-            tap((user) => userWhoToIds.set(ace.who, user.uid)),
-            catchError((error: unknown) => {
-              this.errorHandler.showErrorModal(error);
-              return EMPTY;
-            }),
-          ),
-        );
+        uniqueUsers.add(ace.who);
       }
       if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag) && ace.who) {
-        requests$.push(
-          this.userService.getGroupByNameCached(ace.who).pipe(
-            tap((group) => groupWhoToIds.set(ace.who, group.gid)),
-            catchError((error: unknown) => {
-              this.errorHandler.showErrorModal(error);
-              return EMPTY;
-            }),
-          ),
-        );
+        uniqueGroups.add(ace.who);
       }
     }
+
+    // Make API calls only for unique users
+    uniqueUsers.forEach((who) => {
+      requests$.push(
+        this.userService.getUserByNameCached(who).pipe(
+          tap((user) => userWhoToIds.set(who, user.uid)),
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        ),
+      );
+    });
+
+    // Make API calls only for unique groups
+    uniqueGroups.forEach((who) => {
+      requests$.push(
+        this.userService.getGroupByNameCached(who).pipe(
+          tap((group) => groupWhoToIds.set(who, group.gid)),
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        ),
+      );
+    });
 
     const result$ = combineLatest(requests$).pipe(
       map(() => {

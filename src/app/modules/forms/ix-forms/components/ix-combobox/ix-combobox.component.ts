@@ -74,6 +74,12 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   readonly required = input<boolean>(false);
   readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
+  /**
+   * Debounce time in milliseconds for autocomplete suggestions.
+   * Note: For specialized wrappers (ix-user-combobox, ix-group-combobox), this value is also
+   * passed to validation, controlling both autocomplete fetch AND validation debouncing.
+   * @default 300
+   */
   readonly debounceTime = input<number>(300);
 
   readonly provider = input.required<IxComboboxProvider>();

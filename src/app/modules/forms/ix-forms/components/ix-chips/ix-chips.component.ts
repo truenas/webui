@@ -73,6 +73,12 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
+  /**
+   * Debounce time in milliseconds for autocomplete suggestions.
+   * Note: For specialized wrappers (ix-user-chips, ix-group-chips), this value is also
+   * passed to validation, controlling both autocomplete fetch AND validation debouncing.
+   * @default 300
+   */
   readonly debounceTime = input<number>(300);
   /**
    * A function that provides the options for the autocomplete dropdown.
