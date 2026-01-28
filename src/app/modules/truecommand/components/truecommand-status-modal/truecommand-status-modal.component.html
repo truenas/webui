@@ -3,22 +3,25 @@
 <div mat-dialog-content class="tc-dialog-content">
   <div id="status">
     @if (tc.status === TrueCommandStatus.Connected) {
-      <ix-icon
+      <tn-icon
         class="status-connected"
-        name="check_circle"
-      ></ix-icon>
+        name="check-circle"
+        library="mdi"
+      ></tn-icon>
     }
     @if (tc.status === TrueCommandStatus.Failed) {
-      <ix-icon
+      <tn-icon
         class="status-failed"
         name="cancel"
-      ></ix-icon>
+        library="mdi"
+      ></tn-icon>
     }
     @if (tc.status === TrueCommandStatus.Disabled) {
-      <ix-icon
+      <tn-icon
         class="status-disabled"
-        name="pause_circle_filled"
-      ></ix-icon>
+        name="pause-circle"
+        library="mdi"
+      ></tn-icon>
     }
     <span>{{ tc.status | translate }}</span>
   </div>
@@ -29,7 +32,7 @@
   }
   @if (tc.status === TrueCommandStatus.Connected && tc.remote_ip_address) {
     <div id="tc-ip">
-      <ix-icon name="ix-truecommand-logo-mark-color" class="tc-icon"></ix-icon>
+      <tn-icon name="tn-truecommand-logo-mark-color" class="tc-icon"></tn-icon>
       <span>{{ tc.remote_ip_address }}</span>
     </div>
   }

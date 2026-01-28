@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -52,11 +51,10 @@ describe('ModalHeader2Component', () => {
     });
 
     it('shows a working close button when only 1 component is in the queue', async () => {
-      const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
+      const closeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close' }));
       await closeButton.click();
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
-      const icon = spectator.query(IxIconComponent)!;
-      expect(icon.name()).toBe('cancel');
+      expect(await closeButton.getName()).toBe('close');
     });
   });
 
@@ -78,11 +76,10 @@ describe('ModalHeader2Component', () => {
     });
     it('shows a working back button when more than 1 component is in the queue', async () => {
       spectator.detectChanges();
-      const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
-      await closeButton.click();
+      const backButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-left' }));
+      await backButton.click();
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
-      const icon = spectator.query(IxIconComponent)!;
-      expect(icon.name()).toBe('mdi-chevron-left');
+      expect(await backButton.getName()).toBe('chevron-left');
     });
   });
 });

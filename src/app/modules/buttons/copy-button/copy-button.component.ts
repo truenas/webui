@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -13,10 +12,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./copy-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
+    TnIconButtonComponent,
     MatTooltip,
     TranslateModule,
-    IxIconComponent,
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,

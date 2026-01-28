@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { isVdev, VDevItem } from 'app/interfaces/storage.interface';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
@@ -24,17 +24,17 @@ export class TopologyItemIconComponent {
     }
     if (isVdev(this.topologyItem())) {
       if (this.disk().type === DiskType.Hdd) {
-        return iconMarker('ix-hdd-mirror');
+        return tnIconMarker('hdd-mirror', 'custom');
       }
       if (this.disk().type === DiskType.Ssd) {
-        return iconMarker('ix-ssd-mirror');
+        return tnIconMarker('ssd-mirror', 'custom');
       }
     } else {
       if (this.disk().type === DiskType.Hdd) {
-        return iconMarker('ix-hdd');
+        return tnIconMarker('hdd', 'custom');
       }
       if (this.disk().type === DiskType.Ssd) {
-        return iconMarker('ix-ssd');
+        return tnIconMarker('ssd', 'custom');
       }
     }
     return '';

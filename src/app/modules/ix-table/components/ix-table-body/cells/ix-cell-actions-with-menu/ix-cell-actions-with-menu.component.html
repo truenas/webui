@@ -10,7 +10,7 @@
           [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
           (click)="$event.stopPropagation(); action.onClick(row())"
         >
-          <ix-icon [name]="action.iconName"></ix-icon>
+          <tn-icon [name]="action.iconName"></tn-icon>
         </button>
       </div>
     }
@@ -24,7 +24,7 @@
       [matTooltip]="'Show Actions' | translate"
       (click)="$event.stopPropagation();"
     >
-      <ix-icon name="more_vert"></ix-icon>
+      <tn-icon name="dots-vertical" library="mdi"></tn-icon>
     </button>
     <mat-menu #actionMenu="matMenu">
       @for (action of visibleActions(); track action) {
@@ -35,7 +35,7 @@
           [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
           (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
         >
-          <ix-icon class="menu-icon" [name]="action.iconName"></ix-icon>
+          <tn-icon class="menu-icon" [name]="action.iconName"></tn-icon>
           <span>{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</span>
         </button>
       }

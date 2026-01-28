@@ -1,14 +1,12 @@
 import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-debug-panel-toggle',
   standalone: true,
-  imports: [MatButtonModule, MatTooltipModule, IxIconComponent],
+  imports: [TnIconButtonComponent],
   templateUrl: './debug-panel-toggle.component.html',
   styleUrls: ['./debug-panel-toggle.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

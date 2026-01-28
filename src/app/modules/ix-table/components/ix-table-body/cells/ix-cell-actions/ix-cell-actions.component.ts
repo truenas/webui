@@ -2,9 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatTooltip,
     RequiresRolesDirective,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TestDirective,
   ],

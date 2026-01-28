@@ -3,12 +3,12 @@ import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
@@ -22,7 +22,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
   standalone: true,
   imports: [
     MatButton,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,

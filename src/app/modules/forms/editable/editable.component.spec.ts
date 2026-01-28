@@ -4,11 +4,11 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconHarness } from '@truenas/ui-components';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 describe('EditableComponent', () => {
   let spectator: SpectatorHost<EditableComponent>;
@@ -88,8 +88,8 @@ describe('EditableComponent', () => {
     });
 
     it('shows a pencil icon', async () => {
-      const icon = await editable.getHarness(IxIconHarness);
-      expect(await icon.getName()).toBe('mdi-pencil');
+      const icon = await editable.getHarness(TnIconHarness);
+      expect(await icon.getName()).toBe('pencil');
     });
 
     it('switches to editable mode when view value is clicked', async () => {

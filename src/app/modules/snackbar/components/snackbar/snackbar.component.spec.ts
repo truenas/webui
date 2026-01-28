@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconHarness, tnIconMarker } from '@truenas/ui-components';
 import { SnackbarConfig } from './snackbar-config.interface';
 import { SnackbarComponent } from './snackbar.component';
 
@@ -15,15 +13,12 @@ describe('SnackbarComponent', () => {
   let spectator: Spectator<SnackbarComponent>;
   const createComponent = createComponentFactory({
     component: SnackbarComponent,
-    declarations: [
-      MockComponent(IxIconComponent),
-    ],
     providers: [
       {
         provide: MAT_SNACK_BAR_DATA,
         useValue: {
           message: 'Time to go to bed',
-          icon: iconMarker('error'),
+          icon: tnIconMarker('alert-circle', 'mdi'),
           button: {
             title: 'Test Button',
             action: fakeAction,
@@ -43,8 +38,9 @@ describe('SnackbarComponent', () => {
     expect(spectator.query('.message')).toHaveExactText('Time to go to bed');
   });
 
-  it('shows an icon when it is set in config', () => {
-    expect(spectator.query(IxIconComponent)!.name).toBe('error');
+  it('shows an icon when it is set in config', async () => {
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('mdi-alert-circle');
   });
 
   it('shows the button and executes the action when it is set in config', async () => {

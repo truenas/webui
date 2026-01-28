@@ -4,7 +4,7 @@
   [matMenuTriggerFor]="menu"
 >
   {{ 'Columns' | translate }}
-  <ix-icon name="mdi-menu-down"></ix-icon>
+  <tn-icon name="menu-down" library="mdi"></tn-icon>
 </button>
 
 <mat-menu #menu="matMenu" multiple overlapTrigger="false">
@@ -14,7 +14,7 @@
       [ixTest]="['toggle-all-columns']"
       (click)="toggleAll(); saveColumnPreferences(); enableResetButton();"
     >
-      <ix-icon [name]="!isAllSelected ? 'remove' : 'check_circle'"></ix-icon>
+      <tn-icon library="mdi" [name]="!isAllSelected ? 'minus-circle' : 'check-circle'"></tn-icon>
       @if (isAllSelected) {
         <span>{{ 'Unselect All' | translate }}</span>
       } @else {
@@ -31,7 +31,7 @@
           [ixTest]="['toggle-column', column.title]"
           (click)="toggle(column); saveColumnPreferences(); enableResetButton();"
         >
-          <ix-icon [name]="isSelected(column) ? 'remove' : 'check_circle'"></ix-icon>
+          <tn-icon library="mdi" [name]="isSelected(column) ? 'minus-circle' : 'check-circle'"></tn-icon>
           <span>{{ column.title | translate }}</span>
         </button>
       }
@@ -45,7 +45,7 @@
       [disabled]="isResetToDefaultDisabled()"
       (click)="resetToDefaults(); saveColumnPreferences()"
     >
-      <ix-icon name="mdi-undo"></ix-icon>
+      <tn-icon name="undo" library="mdi"></tn-icon>
       <span>{{ 'Reset to Defaults' | translate }}</span>
     </button>
   </div>

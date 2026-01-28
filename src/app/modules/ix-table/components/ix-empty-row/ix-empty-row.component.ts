@@ -55,8 +55,8 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
     return this.conf().type === EmptyType.Loading;
   }
 
-  getIcon(): MarkedIcon {
-    let icon = iconMarker('ix-truenas-logo');
+  getIcon(): MarkedIcon | string {
+    let icon: MarkedIcon | string = iconMarker('ix-truenas-logo');
     const conf = this.conf();
     if (conf.icon) {
       icon = conf.icon;

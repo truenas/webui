@@ -6,6 +6,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, firstValueFrom,
@@ -19,7 +20,6 @@ import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.inte
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -210,7 +210,7 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 
   protected handleError(errorMessage: TranslatedString): void {
     this.signinStore.setLoadingState(false);

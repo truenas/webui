@@ -8,6 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
@@ -17,7 +18,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
@@ -87,7 +87,7 @@ export class DashboardComponent implements OnInit {
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    icon: iconMarker('mdi-view-dashboard'),
+    icon: tnIconMarker('view-dashboard', 'mdi'),
     title: this.translate.instant('Your dashboard is currently empty!'),
     message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
   };

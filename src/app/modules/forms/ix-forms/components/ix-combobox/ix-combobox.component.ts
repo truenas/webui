@@ -10,6 +10,7 @@ import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY,
   fromEvent,
@@ -24,7 +25,6 @@ import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-com
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -40,7 +40,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     MatInput,
     MatAutocompleteTrigger,
     MatProgressSpinner,
-    IxIconComponent,
+    TnIconComponent,
     MatAutocomplete,
     MatOption,
     IxErrorsComponent,

@@ -9,6 +9,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, of, take, tap,
 } from 'rxjs';
@@ -24,7 +25,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -133,7 +133,7 @@ export class SmbListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
             this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } }).pipe(
@@ -144,7 +144,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: iconMarker('share'),
+          iconName: tnIconMarker('share-variant', 'mdi'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => {
             if (row.locked) {
@@ -171,7 +171,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: iconMarker('security'),
+          iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
@@ -188,7 +188,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {

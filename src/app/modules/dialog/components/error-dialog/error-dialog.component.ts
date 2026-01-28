@@ -6,10 +6,10 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { switchMap, tap } from 'rxjs';
 import { ErrorReport, ErrorReportAction, traceDetailLabel } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
@@ -23,7 +23,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatDialogTitle,
-    IxIconComponent,
+    TnIconComponent,
     MatDialogContent,
     CopyButtonComponent,
     MatDialogActions,

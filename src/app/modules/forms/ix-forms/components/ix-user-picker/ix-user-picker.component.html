@@ -32,11 +32,11 @@
       }
 
       @if (shouldShowResetInput() && !isValueFromOptions(ixInput.value)) {
-        <ix-icon
-          name="mdi-close-circle"
+        <tn-icon
+          name="close-circle" library="mdi"
           class="reset-icon"
           (click)="resetInput()"
-        ></ix-icon>
+        ></tn-icon>
       } @else {
         <span class="mat-mdc-select-arrow" (click)="ixInput.focus()">
           <svg viewBox="0 0 24 24" width="24px" height="24px" aria-hidden="true">

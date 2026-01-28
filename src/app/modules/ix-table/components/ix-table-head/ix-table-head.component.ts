@@ -2,7 +2,7 @@ import { NgClass, NgStyle } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { IxTableHeaderCellDirective } from 'app/modules/ix-table/directives/ix-header-cell.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -20,7 +20,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     NgClass,
     NgStyle,
     IxTableHeaderCellDirective,
-    IxIconComponent,
+    TnIconComponent,
     TestDirective,
     TooltipComponent,
     TranslateModule,

@@ -2,14 +2,13 @@
   <h3 class="alerts-title">{{ 'Alerts' | translate }}</h3>
 
   <div class="controls">
-    <button
-      mat-icon-button
+    <tn-icon-button
+      name="cog"
+      library="mdi"
       ixTest="settings-menu"
-      [title]="'Settings' | translate"
+      [tooltip]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
-    >
-      <ix-icon name="settings"></ix-icon>
-    </button>
+    ></tn-icon-button>
     <mat-menu #alertSettingsMenu="matMenu">
       <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}
@@ -25,14 +24,13 @@
         {{ 'Email' | translate }}
       </a>
     </mat-menu>
-    <button
-      mat-icon-button
+    <tn-icon-button
+      name="close"
+      library="mdi"
       ixTest="close-panel"
-      [title]="'Close panel' | translate"
+      [tooltip]="'Close panel' | translate"
       (click)="onPanelClosed()"
-    >
-      <ix-icon name="clear"></ix-icon>
-    </button>
+    ></tn-icon-button>
   </div>
 </div>
 
@@ -48,7 +46,7 @@
   <!-- TODO: Consider extracting into its own component -->
   @if (error$ | async; as error) {
     <div class="error">
-      <ix-icon class="icon" color="accent" name="cancel"></ix-icon>
+      <tn-icon class="icon" color="accent" name="close-circle" library="mdi"></tn-icon>
       <h4 class="message">
         <span class="error-word">{{ 'Error:' | translate }}</span>
         {{ error }}
@@ -59,7 +57,7 @@
   @let unreadAlerts = unreadAlerts$ | async;
   @if (!unreadAlerts?.length) {
     <div class="no-alerts">
-      <ix-icon class="icon" name="info"></ix-icon>
+      <tn-icon class="icon" name="information" library="mdi"></tn-icon>
       <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
     </div>
   } @else {

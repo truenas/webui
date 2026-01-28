@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { tnIconMarker } from '@truenas/ui-components';
 
 export const helptextTopbar = {
   haStatus: T('HA Status'),
@@ -47,7 +47,7 @@ Login or signup is required.'),
   tcDeregisterBtn: T('Deregister'),
   tcDeregisterDialog: {
     title: T('Deregister TrueCommand Cloud Service'),
-    icon: iconMarker('warning'),
+    icon: tnIconMarker('warning', 'material'),
     message: T('Are you sure you want to deregister TrueCommand Cloud Service?'),
     confirmBtnMsg: T('Confirm'),
   },
@@ -59,7 +59,7 @@ Login or signup is required.'),
 
   stopTCConnectingDialog: {
     title: T('Stop TrueCommand Cloud Connection'),
-    icon: iconMarker('warning'),
+    icon: tnIconMarker('warning', 'material'),
     message: T('Are you sure you want to stop connecting to the TrueCommand Cloud Service?'),
     confirmBtnMsg: T('Confirm'),
   },

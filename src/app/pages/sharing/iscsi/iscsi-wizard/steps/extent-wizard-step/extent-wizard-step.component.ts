@@ -4,6 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -18,7 +19,6 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -33,7 +33,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxInputComponent,
     IxSelectComponent,
     IxExplorerComponent,
-    IxIconComponent,
+    TnIconComponent,
     IxCheckboxComponent,
     TranslateModule,
     ExplorerCreateDatasetComponent,

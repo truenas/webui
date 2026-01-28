@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -75,9 +76,9 @@ describe('ErrorDialog', () => {
       expect(message).toHaveText(baseError.message);
     });
 
-    it('shows default error icon when no custom icon provided', () => {
-      const icon = spectator.query('ix-icon.error-warning-icon');
-      expect(icon).toExist();
+    it('shows default error icon when no custom icon provided', async () => {
+      const icon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'alert-circle' }));
+      expect(icon).not.toBeNull();
     });
 
     it('does not show hint section when not provided', () => {
@@ -116,7 +117,7 @@ describe('ErrorDialog', () => {
   });
 
   describe('custom icon', () => {
-    it('shows custom icon when provided', () => {
+    it('shows custom icon when provided', async () => {
       const errorWithIcon = {
         ...baseError,
         icon: 'ix-cloud-off',
@@ -130,12 +131,11 @@ describe('ErrorDialog', () => {
           },
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const icon = spectator.query('ix-icon.error-warning-icon');
-      expect(icon).toExist();
-      // Check that the component rendered with the custom icon
-      const title = spectator.query('.err-title');
-      expect(title.innerHTML).toContain('ix-cloud-off');
+      const icon = await loader.getHarnessOrNull(TnIconHarness);
+      expect(icon).not.toBeNull();
+      expect(await icon.getName()).toBe('ix-cloud-off');
     });
   });
 

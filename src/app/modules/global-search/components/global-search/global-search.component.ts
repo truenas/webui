@@ -5,6 +5,7 @@ import { MatInput } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   tap, debounceTime, filter, switchMap,
@@ -20,7 +21,6 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -36,7 +36,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CdkTrapFocus,
-    IxIconComponent,
+    TnIconComponent,
     MatInput,
     ReactiveFormsModule,
     TestDirective,

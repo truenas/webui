@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { tnIconMarker } from '@truenas/ui-components';
 
 export enum AppState {
   Running = 'RUNNING',
@@ -10,11 +10,11 @@ export enum AppState {
 }
 
 export const appStateIcons = new Map<AppState, string>([
-  [AppState.Running, iconMarker('mdi-check-circle')],
-  [AppState.Deploying, iconMarker('mdi-progress-wrench')],
-  [AppState.Stopped, iconMarker('mdi-stop-circle')],
-  [AppState.Stopping, iconMarker('mdi-progress-wrench')],
-  [AppState.Crashed, iconMarker('mdi-alert-circle')],
+  [AppState.Running, tnIconMarker('check-circle', 'mdi')],
+  [AppState.Deploying, tnIconMarker('progress-wrench', 'mdi')],
+  [AppState.Stopped, tnIconMarker('stop-circle', 'mdi')],
+  [AppState.Stopping, tnIconMarker('progress-wrench', 'mdi')],
+  [AppState.Crashed, tnIconMarker('alert-circle', 'mdi')],
 ]);
 
 export const appStateLabels = new Map<AppState, string>([

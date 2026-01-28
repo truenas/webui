@@ -14,7 +14,7 @@
 >
   @if (prefixIcon()) {
     <span class="prefix-icon">
-      <ix-icon [name]="prefixIcon()"></ix-icon>
+      <tn-icon [name]="prefixIcon()"></tn-icon>
     </span>
   }
 
@@ -78,7 +78,7 @@
 
   @if (shouldShowResetInput()) {
     <span class="reset-input">
-      <ix-icon name="mdi-close-circle" (click)="resetInput()"></ix-icon>
+      <tn-icon name="close-circle" library="mdi" (click)="resetInput()"></tn-icon>
     </span>
   }
 
@@ -93,15 +93,17 @@
       (keydown.enter)="$event.stopPropagation()"
     >
       @if (showPassword) {
-        <ix-icon
-          name="visibility"
+        <tn-icon
+          name="eye"
+          library="mdi"
           [matTooltip]="'Hide' | translate"
-        ></ix-icon>
+        ></tn-icon>
       } @else {
-        <ix-icon
-          name="visibility_off"
+        <tn-icon
+          name="eye-off"
+          library="mdi"
           [matTooltip]="'Show' | translate">
-        </ix-icon>
+        </tn-icon>
       }
     </button>
   }

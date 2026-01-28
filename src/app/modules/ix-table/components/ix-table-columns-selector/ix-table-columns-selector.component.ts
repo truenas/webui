@@ -5,10 +5,10 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { cloneDeep } from 'lodash-es';
 import { map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxCellActionsWithMenuComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -26,7 +26,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   imports: [
     MatButton,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     TranslateModule,
