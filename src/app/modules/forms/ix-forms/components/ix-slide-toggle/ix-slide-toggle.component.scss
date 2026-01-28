@@ -16,6 +16,11 @@
   }
 }
 
+.errors-row {
+  /* make sure the errors are on a newline */
+  flex-basis: 100%;
+}
+
 .tooltip {
   margin: 0 0 0 8px;
 }
