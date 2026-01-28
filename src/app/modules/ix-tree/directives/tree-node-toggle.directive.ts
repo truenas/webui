@@ -33,8 +33,8 @@ export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
    * This adds support for toggling all descendants when alt key is pressed.
    * Original `_toggle()` of the base class is also called.
    */
-  toggleWithAlt(event: PointerEvent): void {
-    if (event.altKey) {
+  toggleWithAlt(event: Event): void {
+    if ('altKey' in event && (event as PointerEvent | KeyboardEvent).altKey) {
       // Original `_toggle()` will open the tree, so we close it.
       this._tree.treeControl.toggle(this._treeNode.data);
       // And reopen again with descendants.

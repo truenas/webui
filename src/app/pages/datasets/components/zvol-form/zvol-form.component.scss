@@ -1,5 +1,3 @@
-@import '../../../../../assets/styles/mixins/buttons';
-
 .size-control {
   margin-bottom: 0;
 }
@@ -11,10 +9,6 @@
 
 .encryption-details {
   margin-top: 8px;
-}
-
-.customize-link {
-  @include customize-link-button;
 }
 
 .volsize-warning {

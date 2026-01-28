@@ -2,7 +2,7 @@ import { computed, DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import {
-  of, switchMap, tap,
+  of, exhaustMap, tap, EMPTY,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
@@ -35,7 +35,14 @@ export class ContainerConfigStore extends ComponentStore<ContainerConfigState> {
 
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
-      switchMap(() => {
+      // exhaustMap ignores new triggers while a request is in progress,
+      // preventing duplicate API calls during rapid navigation
+      exhaustMap(() => {
+        // Skip if already loading
+        if (this.state().isLoading) {
+          return EMPTY;
+        }
+
         this.patchState({ isLoading: true });
 
         return this.api.call('lxc.config').pipe(

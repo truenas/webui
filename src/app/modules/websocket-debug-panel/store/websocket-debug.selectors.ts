@@ -88,3 +88,8 @@ export const selectPrefilledMockConfig = createSelector(
   selectWebSocketDebugState,
   (state) => state.prefilledMockConfig,
 );
+
+export const selectDuplicateNotificationsEnabled = createSelector(
+  selectWebSocketDebugState,
+  (state) => state.duplicateNotificationsEnabled,
+);

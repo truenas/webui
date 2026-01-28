@@ -1,5 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { greaterThanFg, validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
+import { exactLength, greaterThanFg, validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 
 describe('ValidationService', () => {
   describe('greaterThanFg', () => {
@@ -149,6 +149,73 @@ describe('ValidationService', () => {
       expect(validator(new FormControl('  /mnt/tank  '))).toEqual({
         poolRoot: {
           message: errorMessage,
+        },
+      });
+    });
+  });
+
+  describe('exactLength', () => {
+    it('should accept empty values', () => {
+      const validator = exactLength(64);
+      expect(validator(new FormControl(''))).toBeNull();
+      expect(validator(new FormControl(null))).toBeNull();
+      expect(validator(new FormControl(undefined))).toBeNull();
+    });
+
+    it('should accept values with exact length', () => {
+      const validator = exactLength(64);
+      const sixtyFourChars = 'a'.repeat(64);
+      expect(validator(new FormControl(sixtyFourChars))).toBeNull();
+    });
+
+    it('should reject values shorter than required length', () => {
+      const validator = exactLength(64);
+      const fiftyChars = 'a'.repeat(50);
+      const result = validator(new FormControl(fiftyChars));
+      expect(result).toEqual({
+        exactLength: {
+          requiredLength: 64,
+          actualLength: 50,
+          message: undefined,
+        },
+      });
+    });
+
+    it('should reject values longer than required length', () => {
+      const validator = exactLength(64);
+      const seventyChars = 'a'.repeat(70);
+      const result = validator(new FormControl(seventyChars));
+      expect(result).toEqual({
+        exactLength: {
+          requiredLength: 64,
+          actualLength: 70,
+          message: undefined,
+        },
+      });
+    });
+
+    it('should include custom error message when provided', () => {
+      const customMessage = 'Key must be exactly 64 characters';
+      const validator = exactLength(64, customMessage);
+      const fiftyChars = 'a'.repeat(50);
+      const result = validator(new FormControl(fiftyChars));
+      expect(result).toEqual({
+        exactLength: {
+          requiredLength: 64,
+          actualLength: 50,
+          message: customMessage,
+        },
+      });
+    });
+
+    it('should work with different required lengths', () => {
+      const validator = exactLength(8);
+      expect(validator(new FormControl('12345678'))).toBeNull();
+      expect(validator(new FormControl('123'))).toEqual({
+        exactLength: {
+          requiredLength: 8,
+          actualLength: 3,
+          message: undefined,
         },
       });
     });

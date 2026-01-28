@@ -133,29 +133,6 @@
     ></ix-select>
 
     @if (form.value.special_small_block_size === OnOff.On) {
-      <button
-        type="button"
-        class="customize-link"
-        [attr.aria-label]="
-          showCustomizeSpecialSmallBlockSize
-            ? ('Hide special vdev threshold' | translate)
-            : form.value.special_small_block_size_custom
-              ? ('Set special vdev threshold, current value is ' + (form.value.special_small_block_size_custom | ixFileSize) | translate)
-              : ('Set special vdev threshold' | translate)
-        "
-        (click)="toggleCustomizeSpecialSmallBlockSize()"
-      >
-        @if (showCustomizeSpecialSmallBlockSize) {
-          {{ 'Hide Threshold' | translate }}
-        } @else if (form.value.special_small_block_size_custom) {
-          {{ 'Set Threshold' | translate }} ({{ form.value.special_small_block_size_custom | ixFileSize }})
-        } @else {
-          {{ 'Set Threshold' | translate }}
-        }
-      </button>
-    }
-
-    @if (form.value.special_small_block_size === OnOff.On && showCustomizeSpecialSmallBlockSize) {
       <ix-input
         formControlName="special_small_block_size_custom"
         [label]="'Threshold' | translate"

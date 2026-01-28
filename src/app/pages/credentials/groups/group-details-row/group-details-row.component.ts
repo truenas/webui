@@ -44,7 +44,6 @@ export class GroupDetailsRowComponent {
   readonly colspan = input<number>();
 
   readonly delete = output<number>();
-
   protected readonly Role = Role;
 
   doEdit(group: Group): void {
@@ -56,6 +55,9 @@ export class GroupDetailsRowComponent {
   }
 
   openGroupMembersForm(): void {
+    if (this.group().immutable) {
+      return;
+    }
     this.router.navigate(['/', 'credentials', 'groups', this.group().id, 'members']);
   }
 

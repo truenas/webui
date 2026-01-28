@@ -11,7 +11,7 @@
         [matTooltip]="tooltips.toggleCollapse | translate"
         (click)="onSidenavIndicatorPressed()"
       >
-        <ix-icon name="menu"></ix-icon>
+        <tn-icon size="lg" name="menu" library="mdi"></tn-icon>
       </button>
 
       <ix-global-search-trigger></ix-global-search-trigger>
@@ -29,7 +29,7 @@
             [ixUiSearch]="searchableElements.elements.sendFeedback"
             (click)="onFeedbackIndicatorPressed()"
           >
-            <ix-icon name="mdi-emoticon"></ix-icon>
+            <tn-icon size="lg" name="emoticon" library="mdi"></tn-icon>
           </button>
         </span>
 
@@ -46,7 +46,7 @@
             [matTooltip]="tooltips.rebootInfo | translate"
             (click)="showRebootInfoDialog()"
           >
-            <ix-icon class="movement" name="mdi-update"></ix-icon>
+            <tn-icon size="lg" class="movement" name="update" library="mdi"></tn-icon>
           </button>
         }
 
@@ -60,7 +60,7 @@
             [matTooltip]="tooltips.update | translate"
             (click)="showUpdateDialog()"
           >
-            <ix-icon class="movement" name="system_update_alt"></ix-icon>
+            <tn-icon size="lg" class="movement" name="download" library="mdi"></tn-icon>
           </button>
         }
         <ix-checkin-indicator></ix-checkin-indicator>
@@ -82,7 +82,7 @@
           [ixUiSearch]="searchableElements.elements.alerts"
           (click)="onAlertIndicatorPressed()"
         >
-          <ix-icon name="notifications"></ix-icon>
+          <tn-icon size="lg" name="bell" library="mdi"></tn-icon>
         </button>
 
         <ix-user-menu></ix-user-menu>

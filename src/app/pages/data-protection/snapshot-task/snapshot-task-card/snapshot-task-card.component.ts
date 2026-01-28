@@ -1,17 +1,21 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
+import { Observable, filter, map, switchMap } from 'rxjs';
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
+import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -33,6 +37,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -40,9 +45,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { snapshotTaskCardElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.elements';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-task-card',
   templateUrl: './snapshot-task-card.component.html',
@@ -70,12 +75,15 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskCardComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private taskService = inject(TaskService);
+  private snapshotTaskService = inject(SnapshotTaskService);
+  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
@@ -143,13 +151,12 @@ export class SnapshotTaskCardComponent implements OnInit {
   ngOnInit(): void {
     const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
-      untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
     this.getSnapshotTasks();
 
     this.api.subscribe('pool.snapshottask.query').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getSnapshotTasks();
@@ -162,35 +169,56 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
-      message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
-        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema}`,
-      }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
-      untilDestroyed(this),
+    this.snapshotTaskService.checkTaskHasSnapshots(snapshotTask.id).pipe(
+      this.loader.withLoader(),
+      switchMap((hasSnapshots) => this.confirmDelete(snapshotTask, hasSnapshots)),
+      filter((result) => result.confirmed),
+      switchMap((result) => this.deleteTask(snapshotTask.id, result.secondaryCheckbox)),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
+      next: () => {
+        this.getSnapshotTasks();
+      },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
       },
     });
   }
 
+  private confirmDelete(
+    task: PeriodicSnapshotTaskUi,
+    hasSnapshots: boolean,
+  ): Observable<DialogWithSecondaryCheckboxResult> {
+    const confirmOptions: ConfirmOptionsWithSecondaryCheckbox = {
+      title: this.translate.instant('Confirmation'),
+      message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
+        value: `${task.dataset} - ${task.naming_schema}`,
+      }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+      secondaryCheckbox: hasSnapshots,
+      secondaryCheckboxText: this.translate.instant(helptextSnapshotForm.keepSnapshotsLabel),
+    };
+
+    // TypeScript can't discriminate overloads when using extends, explicit cast needed
+    return this.dialogService.confirm(confirmOptions) as unknown as Observable<DialogWithSecondaryCheckboxResult>;
+  }
+
+  private deleteTask(taskId: number, fixateRemovalDate: boolean): Observable<boolean> {
+    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]);
+  }
+
   protected openForm(row?: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);

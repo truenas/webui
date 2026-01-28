@@ -3,8 +3,8 @@ import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
@@ -12,7 +12,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 @Component({
   selector: 'ix-truenas-connect-button',
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButtonModule,
     MatIconButton,
     MatTooltip,

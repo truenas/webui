@@ -7,7 +7,7 @@ export const userAccessCardElements = {
   elements: {
     viewApiKeys: { hierarchy: [T('View API Keys')] },
     addApiKey: { hierarchy: [T('Add API Key')] },
-    downloadKey: { hierarchy: [T('Download Key')] },
+    downloadKey: { hierarchy: [T('Download Public Key')] },
     toggleLock: {
       hierarchy: [T('Toggle Lock Status')],
       synonyms: [T('Lock User'), T('Unlock User')],
