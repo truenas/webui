@@ -220,10 +220,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
       // Move debounce BEFORE the API calls to prevent firing them on every keystroke
       return of(groups).pipe(
-        debounceTime(500),
+        debounceTime(300),
         switchMap((debouncedGroups) => {
           const groupChecks = debouncedGroups.map((groupName: string) => {
-            return this.userService.getGroupByName(groupName).pipe(
+            return this.userService.getGroupByNameCached(groupName).pipe(
               map(() => ({ groupName, exists: true })),
               catchError(() => of({ groupName, exists: false })),
             );

@@ -78,6 +78,13 @@ describe('ServiceSshComponent', () => {
           }
           return of(null);
         }),
+        getGroupByNameCached: jest.fn((groupName: string) => {
+          const existingGroup = fakeGroupDataSource.find((group) => group.group === groupName);
+          if (existingGroup) {
+            return of(existingGroup);
+          }
+          return of(null);
+        }),
         getUserByName: jest.fn(() => of(null)),
       }),
       mockAuth(),
