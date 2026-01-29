@@ -6,7 +6,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -95,7 +94,6 @@ export class StorageHealthCardComponent implements OnChanges {
   protected scan = signal<PoolScanUpdate | null>(null);
 
   totalZfsErrors = 0;
-  poolScanSubscription: Subscription;
 
   protected readonly helptextVolumes = helptextVolumes;
 
@@ -165,10 +163,8 @@ export class StorageHealthCardComponent implements OnChanges {
   }
 
   private subscribeToScan(): void {
-    if (this.poolScanSubscription && !this.poolScanSubscription.closed) {
-      this.poolScanSubscription.unsubscribe();
-    }
-    this.poolScanSubscription = this.api.subscribe('pool.scan')
+    // untilDestroyed() automatically handles cleanup when component is destroyed
+    this.api.subscribe('pool.scan')
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool().name),

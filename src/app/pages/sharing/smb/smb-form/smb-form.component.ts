@@ -292,14 +292,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private updateAuditValidationState(): void {
     const auditGroup = this.form.controls.audit;
-    const watchList = auditGroup.controls.watch_list.value ?? [];
-    const ignoreList = auditGroup.controls.ignore_list.value ?? [];
-
     auditGroup.updateValueAndValidity({ emitEvent: true });
-
-    if (auditGroup.controls.enable.value && watchList.length === 0 && ignoreList.length === 0) {
-      auditGroup.markAllAsTouched();
-    }
+    // Don't mark as touched here - let normal form interaction handle it
+    // The validator will still prevent submission
   }
 
   private openAdvancedOptionsIfInvalid(): void {
@@ -435,12 +430,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.form.controls.name.addAsyncValidators([
       this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
-
-    // Ensure audit validation errors are visible after view init (edit mode included).
-    this.updateAuditValidationState();
-    if (this.hasAdvancedErrorsInternal()) {
-      this.isAdvancedMode = true;
-    }
+    // Duplicate check removed - already handled in ngOnInit() via openAdvancedOptionsIfInvalid()
   }
 
   private setupAclControl(): void {
