@@ -5,7 +5,7 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import {
   formatValue, maxDecimals, inferUnits, convertKmgt, convertByKilobits,
-  convertByThousands, formatData, convertAggregations, optimizeLegend,
+  convertByThousands, formatData, convertAggregations, optimizeLegend, determineTimeUnit,
 } from 'app/pages/reports-dashboard/utils/report.utils';
 
 describe('optimizeLegend', () => {
@@ -331,7 +331,19 @@ describe('formatValue', () => {
   });
 
   it('returns value for Seconds', () => {
-    expect(formatValue(60 * 60 * 24 * 3, 'Seconds')).toBe('3 days');
+    expect(formatValue(123, 'Seconds')).toBe('123 s');
+  });
+
+  it('returns value for Minutes', () => {
+    expect(formatValue(6.5 * 60, 'Minutes')).toBe('6.5 m');
+  });
+
+  it('returns value for Hours', () => {
+    expect(formatValue(6.5 * 60 * 60, 'Hours')).toBe('6.5 h');
+  });
+
+  it('returns value for Days', () => {
+    expect(formatValue(6.5 * 60 * 60 * 24, 'Days')).toBe('6.5 d');
   });
 
   it('returns value for Mebibytes', () => {
@@ -352,5 +364,47 @@ describe('formatValue', () => {
 
   it('returns value for bytes', () => {
     expect(formatValue(500, 'bytes')).toBe('500 B');
+  });
+});
+
+describe('determineTimeUnit', () => {
+  it('returns "seconds" for values less than 2 minutes (120 seconds)', () => {
+    expect(determineTimeUnit([[0, 0], [1, 30], [2, 60], [3, 119]])).toBe('seconds');
+    expect(determineTimeUnit([[0, 0], [1, 10], [2, 50], [3, 100]])).toBe('seconds');
+  });
+
+  it('returns "minutes" for values between 2 minutes and 2 hours', () => {
+    expect(determineTimeUnit([[0, 0], [1, 120], [2, 180]])).toBe('minutes'); // 2 minutes
+    expect(determineTimeUnit([[0, 0], [1, 1800], [2, 3600]])).toBe('minutes'); // 30-60 minutes
+    expect(determineTimeUnit([[0, 0], [1, 5000], [2, 7199]])).toBe('minutes'); // Just under 2 hours
+  });
+
+  it('returns "hours" for values between 2 hours and 2 days', () => {
+    expect(determineTimeUnit([[0, 0], [1, 7200], [2, 10800]])).toBe('hours'); // 2-3 hours
+    expect(determineTimeUnit([[0, 0], [1, 36000], [2, 86399]])).toBe('hours'); // 10 hours to just under 1 day
+    expect(determineTimeUnit([[0, 0], [1, 100000], [2, 172799]])).toBe('hours'); // Just under 2 days
+  });
+
+  it('returns "days" for values 2 days or greater', () => {
+    expect(determineTimeUnit([[0, 0], [1, 172800], [2, 200000]])).toBe('days'); // 2 days
+    expect(determineTimeUnit([[0, 0], [1, 259200], [2, 345600]])).toBe('days'); // 3-4 days
+    expect(determineTimeUnit([[0, 0], [1, 604800], [2, 1000000]])).toBe('days'); // 7+ days
+  });
+
+  it('returns "seconds" for empty series', () => {
+    expect(determineTimeUnit([])).toBe('seconds');
+  });
+
+  it('returns "seconds" for series with all zero values', () => {
+    expect(determineTimeUnit([[0, 0], [1, 0], [2, 0]])).toBe('seconds');
+  });
+
+  it('correctly identifies max value in series', () => {
+    // Max value is in the middle
+    expect(determineTimeUnit([[0, 100], [1, 7200], [2, 50]])).toBe('hours');
+    // Max value is at the beginning
+    expect(determineTimeUnit([[0, 172800], [1, 100], [2, 50]])).toBe('days');
+    // Max value is at the end
+    expect(determineTimeUnit([[0, 50], [1, 100], [2, 500]])).toBe('minutes');
   });
 });

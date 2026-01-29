@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import {
   map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
-import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -27,7 +26,7 @@ export class ReportsService {
 
   constructor() {
     this.api.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
-      this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
+      this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith('ups'));
       this.reportingGraphs$.next(reportingGraphs);
     });
 

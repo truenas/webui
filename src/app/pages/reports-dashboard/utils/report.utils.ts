@@ -5,6 +5,14 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 
+type TimeAxisUnit = 'seconds' | 'minutes' | 'hours' | 'days';
+
+const timeConstants = {
+  minutes: 60,
+  hours: 60 * 60,
+  days: 60 * 60 * 24,
+};
+
 export function formatData(data: ReportingData): ReportingData {
   const formattedData: ReportingData = { ...data };
 
@@ -142,8 +150,6 @@ export function convertByThousands(input: number): { value: number; suffix: stri
 }
 
 export function formatValue(value: number, units: string): string {
-  const dayInSeconds = 60 * 60 * 24;
-  const days = value / dayInSeconds;
   const mebibytes = convertKmgt(value * MiB, 'bytes');
   const kibibytes = convertKmgt(value * KiB, 'bytes');
   const kilobits = convertByKilobits(value * 1000);
@@ -154,7 +160,13 @@ export function formatValue(value: number, units: string): string {
 
   switch (units.toLowerCase()) {
     case 'seconds':
-      return `${maxDecimals(days, 1)} days`;
+      return `${maxDecimals(value, 1)} s`;
+    case 'minutes':
+      return `${maxDecimals(value / timeConstants.minutes, 1)} m`;
+    case 'hours':
+      return `${maxDecimals(value / timeConstants.hours, 1)} h`;
+    case 'days':
+      return `${maxDecimals(value / timeConstants.days, 1)} d`;
     case 'mebibytes':
       return `${maxDecimals(mebibytes.value)} ${mebibytes.shortName}`;
     case 'kibibytes':
@@ -171,7 +183,10 @@ export function formatValue(value: number, units: string): string {
 
 export function convertAggregations(input: ReportingData, labelY: string): ReportingData {
   const output = { ...input };
-  const units = inferUnits(labelY);
+  let units = inferUnits(labelY);
+  if (input.identifier === ReportingGraphName.UpsRuntime.toString() && Array.isArray(input.data)) {
+    units = determineTimeUnit(input.data as [number, number][]);
+  }
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key: ReportingAggregationKeys) => {
@@ -228,4 +243,21 @@ export function optimizeLegend(input: ReportingData): ReportingData {
   }
 
   return output;
+}
+
+export function determineTimeUnit(series: [number, number][]): TimeAxisUnit {
+  const value = series.reduce((acc, [_, y]) => (acc < y ? y : acc), 0);
+  if (value >= 2 * timeConstants.days) {
+    return 'days';
+  }
+
+  if (value >= 2 * timeConstants.hours) {
+    return 'hours';
+  }
+
+  if (value >= 2 * timeConstants.minutes) {
+    return 'minutes';
+  }
+
+  return 'seconds';
 }
