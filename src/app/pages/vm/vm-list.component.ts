@@ -9,7 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { filter, take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -27,7 +27,6 @@ import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -67,7 +66,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     PageHeaderComponent,
     WithLoadingStateDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     BasicSearchComponent,
     IxTableColumnsSelectorComponent,

@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   IxTableExpandableRowComponent,
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -30,7 +30,7 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
     IxTableExpandableRowComponent,
     MatButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     TranslateModule,
     MatTooltip,
