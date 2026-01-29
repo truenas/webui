@@ -6,6 +6,7 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import {
   formatValue, maxDecimals, inferUnits, convertKmgt, convertByKilobits,
   convertByThousands, formatData, convertAggregations, optimizeLegend, determineTimeUnit,
+  isUpsRuntimeWithData,
 } from 'app/pages/reports-dashboard/utils/report.utils';
 
 describe('optimizeLegend', () => {
@@ -406,5 +407,54 @@ describe('determineTimeUnit', () => {
     expect(determineTimeUnit([[0, 172800], [1, 100], [2, 50]])).toBe('days');
     // Max value is at the end
     expect(determineTimeUnit([[0, 50], [1, 100], [2, 500]])).toBe('minutes');
+  });
+});
+
+describe('isUpsRuntimeWithData', () => {
+  it('returns true for UPS runtime graph with valid array data', () => {
+    const data = [[0, 100], [1, 200], [2, 300]];
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, data)).toBe(true);
+    expect(isUpsRuntimeWithData('upsruntime', data)).toBe(true);
+  });
+
+  it('returns false for UPS runtime graph with empty array', () => {
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, [])).toBe(false);
+    expect(isUpsRuntimeWithData('upsruntime', [])).toBe(false);
+  });
+
+  it('returns false for UPS runtime graph with non-array data', () => {
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, null)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, undefined)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, 'invalid')).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, { data: [] })).toBe(false);
+  });
+
+  it('returns false for non-UPS runtime graphs even with valid data', () => {
+    const data = [[0, 100], [1, 200], [2, 300]];
+    expect(isUpsRuntimeWithData(ReportingGraphName.Cpu, data)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsCharge, data)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.Memory, data)).toBe(false);
+    expect(isUpsRuntimeWithData('cpu', data)).toBe(false);
+  });
+
+  it('handles various graph identifier formats', () => {
+    const data = [[0, 100]];
+    // Exact enum value
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, data)).toBe(true);
+    // String representation
+    expect(isUpsRuntimeWithData('upsruntime', data)).toBe(true);
+    // Case sensitivity check
+    expect(isUpsRuntimeWithData('UpsRuntime', data)).toBe(false);
+    expect(isUpsRuntimeWithData('UPSRUNTIME', data)).toBe(false);
+  });
+
+  it('provides proper type narrowing when true', () => {
+    const data: unknown = [[0, 100], [1, 200]];
+    const typeNarrowResult = isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, data);
+    expect(typeNarrowResult).toBe(true);
+    // a little weird, but we can use `typeNarrowResult` to narrow the type of `data` inline
+    // and still get the value of it via the `&&` operator.
+    expect(typeNarrowResult && data[0][0]).toBe(0);
+    expect(typeNarrowResult && data[0][1]).toBe(100);
   });
 });

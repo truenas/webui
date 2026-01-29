@@ -184,8 +184,8 @@ export function formatValue(value: number, units: string): string {
 export function convertAggregations(input: ReportingData, labelY: string): ReportingData {
   const output = { ...input };
   let units = inferUnits(labelY);
-  if (input.identifier === ReportingGraphName.UpsRuntime.toString() && Array.isArray(input.data)) {
-    units = determineTimeUnit(input.data as [number, number][]);
+  if (isUpsRuntimeWithData(input.identifier, input.data)) {
+    units = determineTimeUnit(input.data);
   }
   const keys = Object.keys(output.aggregations);
 
@@ -260,4 +260,21 @@ export function determineTimeUnit(series: [number, number][]): TimeAxisUnit {
   }
 
   return 'seconds';
+}
+
+/**
+ * checks if the given data represents a UPS runtime graph with valid time-series data.
+ * UPS runtime graphs require dynamic time unit determination based on the data range.
+ *
+ * @param graphIdentifier - the graph name or identifier to check
+ * @param data - the reporting data to validate
+ * @returns true if this is a UPS runtime graph with valid array data and false otherwise
+ */
+export function isUpsRuntimeWithData(
+  graphIdentifier: string | ReportingGraphName,
+  data: unknown,
+): data is [number, number][] {
+  return graphIdentifier === ReportingGraphName.UpsRuntime.toString()
+    && Array.isArray(data)
+    && data.length > 0;
 }

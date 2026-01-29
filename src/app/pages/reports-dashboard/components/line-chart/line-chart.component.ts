@@ -17,7 +17,7 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
-import { determineTimeUnit } from '../../utils/report.utils';
+import { determineTimeUnit, isUpsRuntimeWithData } from '../../utils/report.utils';
 
 interface Conversion {
   value: number;
@@ -65,8 +65,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   render(update?: boolean): void {
     const data = this.data()?.data;
     this.units = this.inferUnits(this.labelY());
-    if (this.report().name === ReportingGraphName.UpsRuntime && !!data) {
-      this.units = stringToTitleCase(determineTimeUnit(data as [number, number][]));
+    if (isUpsRuntimeWithData(this.report().name, data)) {
+      this.units = stringToTitleCase(determineTimeUnit(data));
     }
     this.renderGraph(update);
   }
@@ -190,7 +190,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       return this.yLabelPrefix + '/s';
     }
 
-    if (this.report().name === ReportingGraphName.UpsRuntime && Array.isArray(data)) {
+    if (isUpsRuntimeWithData(this.report().name, data)) {
       return this.units;
     }
 
