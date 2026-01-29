@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';
@@ -52,7 +52,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -82,7 +81,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
     TranslateModule,
     TestDirective,
     ReactiveFormsModule,
-    IxIconComponent,
+    TnIconComponent,
     IxDynamicWizardComponent,
   ],
 })

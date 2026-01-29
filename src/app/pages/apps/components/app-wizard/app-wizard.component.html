@@ -54,7 +54,7 @@
             <div class="section" (click)="onSectionClick(section.name)">
               {{ section.name }}
               @if (checkSectionInvalid(section)) {
-                <ix-icon name="warning"></ix-icon>
+                <tn-icon name="alert" library="mdi"></tn-icon>
               }
             </div>
           }

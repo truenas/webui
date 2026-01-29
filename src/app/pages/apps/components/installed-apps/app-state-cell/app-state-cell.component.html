@@ -1,5 +1,5 @@
 @if (showIcon()) {
-  <ix-icon [name]="state() | mapValue: stateIcons"></ix-icon>
+  <tn-icon [name]="state() | mapValue: stateIcons"></tn-icon>
 }
 <span [matTooltip]="job()?.progress?.description">
   {{ state() | mapValue: stateLabels | translate }}

@@ -19,7 +19,7 @@
 
               <div class="version">
                 <span>{{ versionParts[1] || versionParts[0] }}</span>
-                <ix-icon name="mdi-arrow-right-thin"></ix-icon>
+                <tn-icon name="arrow-right-thin" library="mdi"></tn-icon>
                 @if (isItemExpanded(bulkItem)){
                   <span>{{ form.get(bulkItem.key)?.value }}</span>
                 } @else {
@@ -46,7 +46,7 @@
                 <span class="version-label">{{ 'App Version' | translate }}:</span>
                 <span class="version-value">
                   {{ versionInfo.currentAppVersion }}
-                  <ix-icon name="mdi-arrow-right"></ix-icon>
+                  <tn-icon name="arrow-right" library="mdi"></tn-icon>
                   {{ versionInfo.latestAppVersion }}
                 </span>
               </div>
@@ -54,7 +54,7 @@
                 <span class="version-label">{{ 'Version' | translate }}:</span>
                 <span class="version-value">
                   {{ versionInfo.currentCatalogVersion }}
-                  <ix-icon name="mdi-arrow-right"></ix-icon>
+                  <tn-icon name="arrow-right" library="mdi"></tn-icon>
                   {{ versionInfo.latestCatalogVersion }}
                 </span>
               </div>
@@ -82,7 +82,7 @@
                 [href]="bulkItem.value.item.metadata.changelog_url"
                 [attr.aria-label]="'View Upstream Release Notes (opens in new window)' | translate"
               >
-                <ix-icon name="mdi-open-in-new"></ix-icon>
+                <tn-icon name="open-in-new" library="mdi"></tn-icon>
                 {{ 'View Upstream Release Notes' | translate }}
               </a>
             </div>

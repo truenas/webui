@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   AddSubsystemNamespaceComponent,
@@ -107,7 +107,7 @@ describe('AddSubsystemNamespacesComponent', () => {
     spectator.setInput('namespacesControl', formControl);
     spectator.detectChanges();
 
-    const deleteButtons = await loader.getAllHarnesses(IxIconHarness.with({ name: 'clear' }));
+    const deleteButtons = await loader.getAllHarnesses(TnIconHarness.with({ name: 'close' }));
     expect(deleteButtons).toHaveLength(2);
 
     await deleteButtons[0].click();

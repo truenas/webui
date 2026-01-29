@@ -16,9 +16,9 @@ describe('FcMpioInfoBannerComponent', () => {
   });
 
   it('displays the information icon', () => {
-    const icon = spectator.query('ix-icon');
+    const icon = spectator.query('tn-icon');
     expect(icon).toExist();
-    expect(icon.getAttribute('name')).toBe('mdi-information-outline');
+    expect(icon.getAttribute('name')).toBe('information-outline');
   });
 
   it('displays the MPIO configuration title', () => {

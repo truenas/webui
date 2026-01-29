@@ -1,17 +1,19 @@
 @if (showIcon()) {
   @if (hasUpdate()) {
-    <ix-icon
+    <tn-icon
       class="icon"
       matTooltipPosition="above"
-      name="mdi-alert-circle"
+      name="alert-circle"
+      library="mdi"
       [matTooltip]="getVersionMsg()"
-    ></ix-icon>
+    ></tn-icon>
   } @else {
-    <ix-icon
+    <tn-icon
       matTooltipPosition="above"
-      name="mdi-check-circle"
+      name="check-circle"
+      library="mdi"
       [matTooltip]="'Up to date' | translate"
-    ></ix-icon>
+    ></tn-icon>
   }
 }
 

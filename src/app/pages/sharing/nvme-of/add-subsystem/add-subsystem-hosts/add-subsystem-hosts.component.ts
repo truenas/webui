@@ -3,9 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 
@@ -17,7 +17,7 @@ import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-m
   imports: [
     AddHostMenuComponent,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
     MatIconButton,
     MatTooltip,
     TestDirective,

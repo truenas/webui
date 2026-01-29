@@ -15,6 +15,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
@@ -29,7 +30,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -70,7 +70,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,
-    IxIconComponent,
+    TnIconComponent,
     MatSort,
     AsyncPipe,
     MatCheckbox,

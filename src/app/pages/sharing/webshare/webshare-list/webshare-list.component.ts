@@ -9,7 +9,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, switchMap, map,
 } from 'rxjs';
@@ -26,7 +26,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -79,7 +78,7 @@ import { selectService } from 'app/store/services/services.selectors';
     EmptyComponent,
     TranslateModule,
     AsyncPipe,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class WebShareListComponent implements OnInit {

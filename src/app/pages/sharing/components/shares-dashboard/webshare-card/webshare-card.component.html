@@ -4,7 +4,7 @@
       <a [ixTest]="['webshare', 'open-in-new']" [routerLink]="['/sharing', 'webshare']">
         <h3 class="card-title">
           {{ 'WebShare' | translate }}
-          <ix-icon name="open_in_new"></ix-icon>
+          <tn-icon name="open-in-new" library="mdi"></tn-icon>
         </h3>
       </a>
 
@@ -59,7 +59,7 @@
       (keydown.enter)="openTruenasConnectDialog()"
       (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
     >
-      <ix-icon name="info"></ix-icon>
+      <tn-icon name="information" library="mdi"></tn-icon>
       <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
     </div>
   }
@@ -74,7 +74,7 @@
       (keydown.enter)="navigateToUsers()"
       (keydown.space)="navigateToUsers(); $event.preventDefault()"
     >
-      <ix-icon name="info"></ix-icon>
+      <tn-icon name="information" library="mdi"></tn-icon>
       <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
     </div>
   }
