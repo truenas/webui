@@ -1,22 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-pool-card-icon',
   templateUrl: './pool-card-icon.component.html',
   styleUrls: ['./pool-card-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
-    MatTooltip,
-    TranslateModule,
+    TnIconComponent,
   ],
 })
 export class PoolCardIconComponent {

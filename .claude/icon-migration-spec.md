@@ -3,24 +3,24 @@
 
 **Branch:** `icon-revamp`
 **Created:** 2026-01-23
-**Last Updated:** 2026-01-23 (Session 5)
+**Last Updated:** 2026-01-29 (Session 6)
 
 ---
 
 ## 📊 Current Migration Status
 
-**Overall Progress:** ~35% complete (24 modules completed, 194 of 559 ix-icon usages migrated)
+**Overall Progress:** ~49% complete (~32 modules completed, 273 of 559 ix-icon usages migrated)
 
-**Current Phase:** Phase 4 - Layout Module (remaining topbar components), Phase 6 - Page Modules
-**Last Completed Module:** ix-table (completed 2026-01-23, Phase 5B)
-**Next Target Module:** Remaining Phase 4 topbar components or Phase 6 page modules
+**Current Phase:** Phase 6A - Storage & Datasets (COMPLETE), Phase 6B - Apps & Sharing (NEXT)
+**Last Completed Module:** Phase 6A Storage & Datasets + remaining shared modules (completed 2026-01-29)
+**Next Target Module:** Phase 6B - Apps & Sharing (~50 files)
 
 **Statistics:**
-- ✅ **Completed:** ~24 modules/areas (~110 files) - Phases 1, 2, 3, 5A, 5B complete; Phase 4 partial
-- ⏳ **Remaining:** 365 ix-icon usages (down from 559) - ~65% remaining
-- 🎯 **Progress:** ~35% complete (194 of 559 usages migrated)
+- ✅ **Completed:** ~32 modules/areas (~145 files) - Phases 1, 2, 3, 5A, 5B complete; Phase 4 partial; Phase 6A complete
+- ⏳ **Remaining:** 286 ix-icon usages (down from 559) - ~51% remaining
+- 🎯 **Progress:** ~49% complete (273 of 559 usages migrated)
 - 🚫 **Deferred:** 15 files with [fullSize] input (Phase 7)
-- 📦 **Modules Remaining:** Phase 4 completion, Phase 6, Phase 7, Phase 8
+- 📦 **Modules Remaining:** Phase 4 completion, Phase 6B-D, Phase 7, Phase 8
 
 **Quick Commands:**
 ```bash
@@ -248,6 +248,68 @@ yarn test:changed
 
 ---
 
+### Session 6: 2026-01-29 - Phase 6A Complete: Storage & Datasets + Remaining Shared Modules
+**Focus:** Migrating storage and datasets page modules, plus completing remaining shared modules
+
+**Completed:**
+- ✅ **Remaining Shared Modules (3 components):**
+  - `use-ix-icons-in-stepper.component` - warning, edit, check-circle icons
+  - `missing-access-wrapper.component` - lock icon
+  - `new-feature-indicator-wrapper.component` - circle icon
+
+- ✅ **Storage Components (~30 files):**
+  - dashboard-pool: export-disconnect-modal, vdevs-card, sed-locked-warning, pool-card-icon, dashboard-pool
+  - disks: disk-bulk-edit, disk-list, reset-sed-dialog
+  - pool-manager: manual-selection-disks, manual-selection-vdev, enclosure-wrapper, inventory, inspect-vdevs-dialog, pool-manager-wizard
+  - vdevs: vdevs-list, topology-item-icon
+  - import-pool: locked-sed-disks, unlock-sed-disks
+
+- ✅ **Datasets Components (~15 files):**
+  - dataset-management, dataset-icon
+  - permissions: dataset-acl-editor, view-nfs-permissions, permissions-item, acl-editor-list, save-as-preset-modal
+  - encryption: unlock-summary-dialog
+  - snapshots: snapshot-list
+  - dataset-encryption-cell
+
+- ✅ **Test Files Updated (7 files):**
+  - dataset-icon.component.spec.ts - TnIconHarness, expects `app-dataset-root`, `app-dataset`, `mdi-database`
+  - topology-item-icon.component.spec.ts - TnIconHarness, expects `app-hdd`, `app-ssd`, etc.
+  - permissions-item.component.spec.ts - TnIconHarness, expects `account-multiple`
+  - dataset-encryption-cell.component.spec.ts - TnIconHarness, expects `lock`, `lock-outline`, etc.
+  - vdevs-card.component.spec.ts - updated tn-icon selectors
+  - pool-card-icon.component.spec.ts - TnIconHarness
+
+**Icon Mappings Applied:**
+- `warning` → `alert` (Material Icons → MDI)
+- `edit` → `pencil` (Material Icons → MDI)
+- `check_circle` → `check-circle` (Material Icons → MDI)
+- `people` → `account-multiple` (Material Icons → MDI)
+- `person` → `account` (Material Icons → MDI)
+- `business` → `domain` (Material Icons → MDI)
+- `flash_off` → `flash-off` (Material Icons → MDI)
+- `storage` → `database` (Material Icons → MDI)
+- Custom icons: `dataset-root`, `dataset`, `hdd`, `ssd`, `hdd-mirror`, `ssd-mirror` (library="custom")
+
+**Key Learnings:**
+- TnIconHarness.getName() returns different formats based on how icon is specified:
+  - Dynamic icons (via tnIconMarker): returns with library prefix (`app-hdd`, `mdi-database`)
+  - Static MDI icons in templates: returns just the name (`account-multiple`)
+- For dynamic tooltip translations, use `[matTooltip]="warning | translate"` not `translate.instant()`
+- Custom icons use actual SVG filename with `library="custom"`, system adds `app-` prefix
+
+**Progress Metrics:**
+- Started session with: 365 ix-icon usages remaining
+- Ended session with: 286 ix-icon usages remaining
+- Migrated: 79 usages (14% of original total)
+- Cumulative progress: ~49% complete
+
+**Next Session Goals:**
+- Phase 6B: Apps & Sharing (~50 files)
+- Phase 6C: System & Dashboard (~35 files)
+- Phase 6D: Remaining Features (~35 files)
+
+---
+
 ### Session 4: 2026-01-23 - Major Progress: Phases 1-3 Complete, Phase 4 & 5A Progress
 **Focus:** Completing Phases 1-3, partial Phase 4, and Phase 5A (dialog module)
 
@@ -325,16 +387,16 @@ yarn test:changed
 ### Current State Assessment
 
 **Progress:**
-- ✅ Completed: ~23 modules/areas (~94 files) - Phases 1, 2, 3 complete; Phase 4 & 5A partial
-- ⏳ Remaining: 382 ix-icon usages (down from 559) - ~68% remaining
-- 🎯 Progress: ~32% complete (177 of 559 usages migrated)
+- ✅ Completed: ~32 modules/areas (~145 files) - Phases 1, 2, 3, 5A, 5B complete; Phase 4 partial; Phase 6A complete
+- ⏳ Remaining: 286 ix-icon usages (down from 559) - ~51% remaining
+- 🎯 Progress: ~49% complete (273 of 559 usages migrated)
 - 🚫 Blockers: 14 files using `[fullSize]` input (deferred to Phase 7)
 
 **Scope:**
-- **Shared Modules:** Most core shared modules completed (forms, snackbar, buttons, jobs, alerts, dialog, etc.)
-- **Remaining Shared:** Phase 4 completion (layout/topbar), Phase 5B (ix-table)
-- **Page Modules:** 15+ feature areas still queued (dashboard, storage, datasets, apps, sharing, etc.)
-- **Total Estimated Effort:** 12-14 weeks following phased approach (ahead of schedule)
+- **Shared Modules:** All core shared modules completed (forms, snackbar, buttons, jobs, alerts, dialog, ix-table, etc.)
+- **Remaining Shared:** Phase 4 completion (layout/topbar)
+- **Page Modules:** Storage & Datasets complete; Apps, Sharing, System, Dashboard queued
+- **Total Estimated Effort:** 12-14 weeks following phased approach (ahead of schedule - ~49% complete)
 
 ### Success Criteria
 
@@ -1151,23 +1213,23 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 ---
 
 ### 🌐 Phase 6: Page Modules (Weeks 7-10)
-**Status:** Not Started | **Target:** ~170 files
+**Status:** Phase 6A Complete | **Target:** ~170 files
 
-| Module Area | Files | Status | Notes |
-|-------------|-------|--------|-------|
-| storage & datasets | ~30 | 📋 Queued | 2 components with [fullSize] deferred |
-| apps & sharing | ~49 | 📋 Queued | High-traffic features |
-| system & dashboard | ~34 | 📋 Queued | 4+ components with [fullSize] deferred |
-| data-protection | ~10 | 📋 Queued | Backup, replication |
-| credentials | ~7 | 📋 Queued | Users, groups, certs |
-| containers | ~6 | 📋 Queued | Container management |
-| vm | ~4 | 📋 Queued | Virtual machines |
-| directory-service | ~3 | 📋 Queued | AD, LDAP |
-| services | ~2 | 📋 Queued | Service management |
-| ~~system-tasks~~ | 4 | 🚫 Deferred | All use [fullSize] - Phase 7 |
-| ~~signin~~ | 3 | 🚫 Deferred | Uses [fullSize] - Phase 7 |
+| Module Area | Files | Status | Completed | Notes |
+|-------------|-------|--------|-----------|-------|
+| storage & datasets | ~45 | ✅ Complete | 2026-01-29 | 2 components with [fullSize] deferred |
+| apps & sharing | ~49 | 📋 Queued | | High-traffic features |
+| system & dashboard | ~34 | 📋 Queued | | 4+ components with [fullSize] deferred |
+| data-protection | ~10 | 📋 Queued | | Backup, replication |
+| credentials | ~7 | 📋 Queued | | Users, groups, certs |
+| containers | ~6 | 📋 Queued | | Container management |
+| vm | ~4 | 📋 Queued | | Virtual machines |
+| directory-service | ~3 | 📋 Queued | | AD, LDAP |
+| services | ~2 | 📋 Queued | | Service management |
+| ~~system-tasks~~ | 4 | 🚫 Deferred | | All use [fullSize] - Phase 7 |
+| ~~signin~~ | 3 | 🚫 Deferred | | Uses [fullSize] - Phase 7 |
 
-**Phase 6 Progress:** 0/~170 files (0%)
+**Phase 6 Progress:** ~45/~170 files (26%)
 
 ---
 
@@ -1225,10 +1287,10 @@ jq '.icons | length' src/assets/tn-icons/sprite-config.json
 | Phase 4 | 11 components | ⏳ 3 | 27% |
 | Phase 5A | 6 components | ✅ 6 | 100% ✅ |
 | Phase 5B | 8 components | ✅ 7 | 88% ✅ |
-| Phase 6 | ~170 files | 📋 0 | 0% |
+| Phase 6 | ~170 files | ⏳ ~45 | 26% |
 | Phase 7 | 14 files | 🚫 0 | Blocked |
 | Phase 8 | 8 tasks | 📋 0 | 0% |
-| **TOTAL** | **~234 items** | **✅ 33** | **~35%** |
+| **TOTAL** | **~234 items** | **✅ ~78** | **~49%** |
 
 **Legend:**
 - ✅ Complete

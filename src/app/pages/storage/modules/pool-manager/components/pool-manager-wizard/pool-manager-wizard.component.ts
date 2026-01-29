@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -21,7 +22,6 @@ import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
@@ -64,7 +64,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     MatStep,
     StepActivationDirective,
     MatStepLabel,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     GeneralWizardStepComponent,
     EnclosureWizardStepComponent,
@@ -159,6 +159,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
     return this.topLevelWarningsForEachStep?.[step];
   }
+
 
   getTopLevelErrorForStep(step: PoolCreationWizardStep): string {
     return this.topLevelErrorsForEachStep?.[step] || '';

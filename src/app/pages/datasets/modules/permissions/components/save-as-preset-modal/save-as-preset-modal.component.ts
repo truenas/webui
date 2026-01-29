@@ -7,6 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { cloneDeep, concat } from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
@@ -20,7 +21,6 @@ import {
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -42,7 +42,7 @@ import { UserService } from 'app/services/user.service';
     NgClass,
     MatIconButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     IxInputComponent,
     FormActionsComponent,
     MatDialogActions,

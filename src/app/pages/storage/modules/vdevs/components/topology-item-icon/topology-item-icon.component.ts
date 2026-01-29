@@ -1,18 +1,17 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { isVdev, VDevItem } from 'app/interfaces/storage.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-topology-item-icon',
   templateUrl: './topology-item-icon.component.html',
   styleUrls: ['./topology-item-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IxIconComponent],
+  imports: [TnIconComponent],
 })
 export class TopologyItemIconComponent {
   readonly topologyItem = input.required<VDevItem>();

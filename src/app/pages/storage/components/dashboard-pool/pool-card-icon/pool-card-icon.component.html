@@ -1,37 +1,42 @@
 @switch (type()) {
   @case (poolCardIconType.Safe) {
-    <ix-icon
-      name="check_circle"
+    <tn-icon
+      name="check-circle"
+      library="mdi"
       class="pool-icon icon-online"
-      [matTooltip]="tooltip() | translate"
-    ></ix-icon>
+      [tooltip]="tooltip()"
+    ></tn-icon>
   }
   @case (poolCardIconType.Warn) {
-    <ix-icon
-      name="error"
+    <tn-icon
+      name="alert-circle"
+      library="mdi"
       class="pool-icon icon-warning"
-      [matTooltip]="tooltip() | translate"
-    ></ix-icon>
+      [tooltip]="tooltip()"
+    ></tn-icon>
   }
   @case (poolCardIconType.Faulted) {
-    <ix-icon
-      name="help"
+    <tn-icon
+      name="help-circle-outline"
+      library="mdi"
       class="pool-icon icon-faulted"
-      [matTooltip]="tooltip() | translate"
-    ></ix-icon>
+      [tooltip]="tooltip()"
+    ></tn-icon>
   }
   @case (poolCardIconType.Error) {
-    <ix-icon
-      name="cancel"
+    <tn-icon
+      name="close-circle"
+      library="mdi"
       class="pool-icon icon-error"
-      [matTooltip]="tooltip() | translate"
-    ></ix-icon>
+      [tooltip]="tooltip()"
+    ></tn-icon>
   }
   @default {
-    <ix-icon
-      name="cancel"
+    <tn-icon
+      name="close-circle"
+      library="mdi"
       class="pool-icon icon-error"
-      [matTooltip]="tooltip() | translate"
-    ></ix-icon>
+      [tooltip]="tooltip()"
+    ></tn-icon>
   }
 }

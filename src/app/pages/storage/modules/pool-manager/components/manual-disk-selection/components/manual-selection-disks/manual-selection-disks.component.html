@@ -53,12 +53,13 @@
           class="group-row"
           [class.group-row-empty]="!group.children.length"
         >
-          <ix-icon name="ix-enclosure" [title]="'Enclosure' | translate"></ix-icon>
+          <tn-icon name="enclosure" library="custom" [tooltip]="enclosureTooltip"></tn-icon>
           <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
           @if (group.children.length) {
-            <ix-icon
-              [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
-            ></ix-icon>
+            <tn-icon
+              library="mdi"
+              [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
+            ></tn-icon>
           }
         </div>
 

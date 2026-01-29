@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, TemplateRef, viewChildren, inject } from '@angular/core';
 import { MatStepper, MatStepperIcon, MatStepperIconContext } from '@angular/material/stepper';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 
 /**
  * Sets ixIcons to be used with mat-stepper.
@@ -10,7 +10,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   selector: 'ix-use-ix-icons-in-stepper',
   templateUrl: './use-ix-icons-in-stepper.component.html',
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatStepperIcon,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -48,10 +48,11 @@
               [topologyItem]="topologyItem | cast"
               [disk]="vDevsStore.getDisk(topologyItem)"
             ></ix-topology-item-node>
-            <ix-icon
-              name="mdi-chevron-right"
+            <tn-icon
+              name="chevron-right"
+              library="mdi"
               class="mobile-actions"
-            ></ix-icon>
+            ></tn-icon>
           </ix-tree-node>
 
           <ix-nested-tree-node
@@ -71,9 +72,10 @@
                   [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
                   (click)="$event.preventDefault()"
                 >
-                  <ix-icon
-                    [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
-                  ></ix-icon>
+                  <tn-icon
+                    library="mdi"
+                    [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
+                  ></tn-icon>
                 </button>
               </ix-vdev-group-node>
             </div>
@@ -103,9 +105,10 @@
                 (click)="$event.preventDefault()"
                 (keydown.enter)="$event.stopPropagation()"
               >
-                <ix-icon
-                  [name]="treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right'"
-                ></ix-icon>
+                <tn-icon
+                  library="mdi"
+                  [name]="treeControl.isExpanded(vdev) ? 'chevron-down' : 'chevron-right'"
+                ></tn-icon>
               </button>
 
               <ix-topology-item-node
@@ -113,10 +116,11 @@
                 [disk]="vDevsStore.getDisk(vdev.children[0])"
               ></ix-topology-item-node>
 
-              <ix-icon
-                name="mdi-chevron-right"
+              <tn-icon
+                name="chevron-right"
+                library="mdi"
                 class="mobile-actions"
-              ></ix-icon>
+              ></tn-icon>
             </div>
 
             @if (treeControl.isExpanded(vdev)) {
