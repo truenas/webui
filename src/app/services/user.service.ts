@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map, shareReplay, tap } from 'rxjs/operators';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -27,6 +27,11 @@ export class UserService {
   // Prevents repeated API calls for the same non-existent values.
   private nonExistentUserCache = new Set<string>();
   private nonExistentGroupCache = new Set<string>();
+
+  // In-flight request cache to prevent duplicate API calls for the same user/group
+  // while a request is already in progress (request deduplication)
+  private inFlightUserRequests = new Map<string, Observable<User>>();
+  private inFlightGroupRequests = new Map<string, Observable<Group>>();
 
   private readonly AUTOCOMPLETE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   private autocompleteCacheTimestamp = 0;
@@ -81,11 +86,14 @@ export class UserService {
   }
 
   /**
-   * Gets a group by exact name match using the cached query API.
+   * Gets a group by exact name match using the cached query API with request deduplication.
    *
    * This method inserts the result into the middleware directory services cache,
    * reducing subsequent lookups across the UI. The cache is middleware-managed and
    * persists for the duration of the middleware session.
+   *
+   * Request deduplication ensures that multiple simultaneous calls for the same group
+   * (e.g., from autocomplete and validation) share a single API request.
    *
    * Use this instead of getGroupByName() to improve performance when validating
    * group names in forms or displaying group information.
@@ -97,8 +105,29 @@ export class UserService {
    * type system doesn't distinguish between array and single-object returns when get: true.
    */
   getGroupByNameCached(groupname: string): Observable<Group> {
+    // Check if there's already an in-flight request for this group
+    const inFlight$ = this.inFlightGroupRequests.get(groupname);
+    if (inFlight$) {
+      return inFlight$; // Return shared Observable
+    }
+
     const queryArgs: QueryFilter<Group>[] = [['name', '=', groupname]];
-    return this.api.call(this.groupQuery, [queryArgs, { get: true }]) as unknown as Observable<Group>;
+    const request$ = (this.api.call(this.groupQuery, [queryArgs, { get: true }]) as unknown as Observable<Group>).pipe(
+      tap((group) => {
+        // Add to autocomplete cache when request succeeds
+        this.updateAutocompleteCache();
+        this.autocompleteGroupCache.add(group.group);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+      finalize(() => {
+        // Remove from in-flight cache when request completes (success or error)
+        this.inFlightGroupRequests.delete(groupname);
+      }),
+    );
+
+    // Store in-flight request
+    this.inFlightGroupRequests.set(groupname, request$);
+    return request$;
   }
 
   /**
@@ -135,11 +164,14 @@ export class UserService {
   }
 
   /**
-   * Gets a user by exact name match using the cached query API.
+   * Gets a user by exact name match using the cached query API with request deduplication.
    *
    * This method inserts the result into the middleware directory services cache,
    * reducing subsequent lookups across the UI. The cache is middleware-managed and
    * persists for the duration of the middleware session.
+   *
+   * Request deduplication ensures that multiple simultaneous calls for the same user
+   * (e.g., from autocomplete and validation) share a single API request.
    *
    * Use this instead of getUserByName() to improve performance when validating
    * usernames in forms or displaying user information.
@@ -151,8 +183,29 @@ export class UserService {
    * type system doesn't distinguish between array and single-object returns when get: true.
    */
   getUserByNameCached(username: string): Observable<User> {
+    // Check if there's already an in-flight request for this user
+    const inFlight$ = this.inFlightUserRequests.get(username);
+    if (inFlight$) {
+      return inFlight$; // Return shared Observable
+    }
+
     const queryArgs: QueryFilter<User>[] = [['username', '=', username]];
-    return this.api.call(this.userQuery, [queryArgs, { get: true }]) as unknown as Observable<User>;
+    const request$ = (this.api.call(this.userQuery, [queryArgs, { get: true }]) as unknown as Observable<User>).pipe(
+      tap((user) => {
+        // Add to autocomplete cache when request succeeds
+        this.updateAutocompleteCache();
+        this.autocompleteUserCache.add(user.username);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+      finalize(() => {
+        // Remove from in-flight cache when request completes (success or error)
+        this.inFlightUserRequests.delete(username);
+      }),
+    );
+
+    // Store in-flight request
+    this.inFlightUserRequests.set(username, request$);
+    return request$;
   }
 
   /**
@@ -251,6 +304,8 @@ export class UserService {
       this.autocompleteGroupCache.clear();
       this.nonExistentUserCache.clear();
       this.nonExistentGroupCache.clear();
+      this.inFlightUserRequests.clear();
+      this.inFlightGroupRequests.clear();
     }
     this.autocompleteCacheTimestamp = now;
   }

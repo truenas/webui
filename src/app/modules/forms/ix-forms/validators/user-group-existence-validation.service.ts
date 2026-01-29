@@ -196,6 +196,11 @@ export class UserGroupExistenceValidationService {
       return of(username).pipe(
         debounceTime(debounceMs),
         switchMap((debouncedUsername): Observable<ValidationErrors | null> => {
+          // Verify control value hasn't changed during debounce to prevent stale errors
+          if (control.value !== debouncedUsername) {
+            return of(null); // Value changed, skip validation (new validation will run)
+          }
+
           // Check autocomplete cache first to avoid redundant API call
           if (this.userService.isUserInAutocompleteCache(debouncedUsername)) {
             return of(null); // User exists in autocomplete cache, skip API call
@@ -214,8 +219,19 @@ export class UserGroupExistenceValidationService {
           }
 
           return this.userService.getUserByNameCached(debouncedUsername).pipe(
-            map((): null => null),
-            catchError((): Observable<ValidationErrors> => {
+            switchMap(() => {
+              // Double-check value hasn't changed while request was in-flight
+              if (control.value !== debouncedUsername) {
+                return of(null); // Ignore stale result
+              }
+              return of(null); // User exists
+            }),
+            catchError((): Observable<ValidationErrors | null> => {
+              // Double-check value hasn't changed while request was in-flight
+              if (control.value !== debouncedUsername) {
+                return of(null); // Ignore stale error
+              }
+
               // Cache this as non-existent to avoid repeated API calls
               this.userService.recordUserAsNonExistent(debouncedUsername);
               return of({
@@ -258,6 +274,11 @@ export class UserGroupExistenceValidationService {
       return of(groupName).pipe(
         debounceTime(debounceMs),
         switchMap((debouncedGroupName): Observable<ValidationErrors | null> => {
+          // Verify control value hasn't changed during debounce to prevent stale errors
+          if (control.value !== debouncedGroupName) {
+            return of(null); // Value changed, skip validation (new validation will run)
+          }
+
           // Check autocomplete cache first to avoid redundant API call
           if (this.userService.isGroupInAutocompleteCache(debouncedGroupName)) {
             return of(null); // Group exists in autocomplete cache, skip API call
@@ -276,8 +297,19 @@ export class UserGroupExistenceValidationService {
           }
 
           return this.userService.getGroupByNameCached(debouncedGroupName).pipe(
-            map((): null => null),
-            catchError((): Observable<ValidationErrors> => {
+            switchMap(() => {
+              // Double-check value hasn't changed while request was in-flight
+              if (control.value !== debouncedGroupName) {
+                return of(null); // Ignore stale result
+              }
+              return of(null); // Group exists
+            }),
+            catchError((): Observable<ValidationErrors | null> => {
+              // Double-check value hasn't changed while request was in-flight
+              if (control.value !== debouncedGroupName) {
+                return of(null); // Ignore stale error
+              }
+
               // Cache this as non-existent to avoid repeated API calls
               this.userService.recordGroupAsNonExistent(debouncedGroupName);
               return of({

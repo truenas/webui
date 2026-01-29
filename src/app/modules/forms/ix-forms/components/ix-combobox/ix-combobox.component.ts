@@ -161,9 +161,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   filterOptions(filterValue: string): void {
-    // Skip fetch if we just selected an option and filterValue is empty.
-    // This prevents unnecessary API calls when closing the dropdown after selection.
-    if (!filterValue && this.selectedOption) {
+    // Skip fetch if filterValue is empty and we have a selected option.
+    // This prevents unnecessary API calls after selecting from dropdown.
+    // Still allow fetch on initial load (selectedOption is null) and after reset.
+    if (!filterValue && this.selectedOption && this.value) {
       return;
     }
 
