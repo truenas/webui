@@ -1,5 +1,7 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject,
+} from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import {
@@ -17,7 +19,8 @@ import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
-import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import { Group } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -146,33 +149,48 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   loadIds(acl: Acl): Observable<Acl> {
-    const requests$: Observable<DsUncachedGroup | DsUncachedUser>[] = [];
+    const requests$: Observable<Group | User>[] = [];
     const userWhoToIds = new Map<string, number>();
     const groupWhoToIds = new Map<string, number>();
+
+    // Deduplicate users and groups to avoid redundant API calls
+    const uniqueUsers = new Set<string>();
+    const uniqueGroups = new Set<string>();
+
     for (const ace of acl.acl) {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag) && ace.who) {
-        requests$.push(
-          this.userService.getUserByName(ace.who).pipe(
-            tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error: unknown) => {
-              this.errorHandler.showErrorModal(error);
-              return EMPTY;
-            }),
-          ),
-        );
+        uniqueUsers.add(ace.who);
       }
       if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag) && ace.who) {
-        requests$.push(
-          this.userService.getGroupByName(ace.who).pipe(
-            tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error: unknown) => {
-              this.errorHandler.showErrorModal(error);
-              return EMPTY;
-            }),
-          ),
-        );
+        uniqueGroups.add(ace.who);
       }
     }
+
+    // Make API calls only for unique users
+    uniqueUsers.forEach((who) => {
+      requests$.push(
+        this.userService.getUserByNameCached(who).pipe(
+          tap((user) => userWhoToIds.set(who, user.uid)),
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        ),
+      );
+    });
+
+    // Make API calls only for unique groups
+    uniqueGroups.forEach((who) => {
+      requests$.push(
+        this.userService.getGroupByNameCached(who).pipe(
+          tap((group) => groupWhoToIds.set(who, group.gid)),
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        ),
+      );
+    });
 
     const result$ = combineLatest(requests$).pipe(
       map(() => {

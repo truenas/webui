@@ -1,6 +1,16 @@
 import { ENTER } from '@angular/cdk/keycodes';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  input,
+  OnChanges,
+  Signal,
+  viewChild,
+  inject,
+} from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import {
@@ -20,6 +30,7 @@ import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/ch
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -62,6 +73,13 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
+  /**
+   * Debounce time in milliseconds for autocomplete suggestions.
+   * Note: For specialized wrappers (ix-user-chips, ix-group-chips), this value is also
+   * passed to validation, controlling both autocomplete fetch AND validation debouncing.
+   * @default defaultDebounceTimeMs (300)
+   */
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
   /**
    * A function that provides the options for the autocomplete dropdown.
    * This function is called when the user types into the input field,
@@ -247,7 +265,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       fromEvent(this.chipInput().nativeElement, 'input')
         .pipe(
           startWith(''),
-          debounceTime(100),
+          debounceTime(this.debounceTime()),
           distinctUntilChanged(),
         ),
       this.inputReset$,

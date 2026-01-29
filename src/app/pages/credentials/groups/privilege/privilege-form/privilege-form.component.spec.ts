@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -124,10 +124,24 @@ describe('PrivilegeFormComponent', () => {
           }
           return of(null);
         }),
+        getGroupByNameCached: jest.fn((groupName: string) => {
+          // Return existing groups, error for non-existent ones (for new validators)
+          const existingGroup = testGroups.find((group) => group.group === groupName);
+          if (existingGroup) {
+            return of(existingGroup);
+          }
+          return throwError(() => new Error('Group not found'));
+        }),
         getUserByName: jest.fn(() => {
           // Mock user validation - all users are considered non-existent for testing
           return of(null);
         }),
+        isGroupInAutocompleteCache: jest.fn(() => false),
+        isGroupCachedAsNonExistent: jest.fn(() => false),
+        recordGroupAsNonExistent: jest.fn(),
+        isUserInAutocompleteCache: jest.fn(() => false),
+        isUserCachedAsNonExistent: jest.fn(() => false),
+        recordUserAsNonExistent: jest.fn(),
       }),
       provideMockStore({
         selectors: [
