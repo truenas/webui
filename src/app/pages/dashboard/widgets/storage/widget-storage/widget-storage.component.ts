@@ -7,6 +7,7 @@ import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -18,7 +19,6 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -40,7 +40,7 @@ import {
     TestDirective,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     MatGridList,
     MatGridTile,
     RequiresRolesDirective,

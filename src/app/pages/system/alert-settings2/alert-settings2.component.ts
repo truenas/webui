@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -17,7 +17,6 @@ import { Role } from 'app/enums/role.enum';
 import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -40,7 +39,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatCardContent,
     MatList,
     MatListItem,
-    IxIconComponent,
+    TnIconComponent,
     IxInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -164,21 +163,21 @@ export class AlertSettings2Component implements OnInit {
   getIconName(level: AlertLevel): string {
     switch (level) {
       case AlertLevel.Info:
-        return 'info';
+        return 'information';
       case AlertLevel.Notice:
-        return 'event';
+        return 'calendar';
       case AlertLevel.Alert:
-        return 'notifications_active';
+        return 'bell-ring';
       case AlertLevel.Warning:
-        return 'warning';
+        return 'alert';
       case AlertLevel.Critical:
-        return 'local_fire_department';
+        return 'fire';
       case AlertLevel.Error:
-        return 'error';
+        return 'alert-circle';
       case AlertLevel.Emergency:
-        return 'crisis_alert';
+        return 'alert-octagon';
       default:
-        return 'info';
+        return 'information';
     }
   }
 

@@ -8,12 +8,12 @@ import { RouterLink } from '@angular/router';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
@@ -34,7 +34,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TestDirective,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     NgxSkeletonLoaderModule,
     BaseChartDirective,
     TranslateModule,
