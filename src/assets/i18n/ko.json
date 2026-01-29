@@ -409,7 +409,7 @@
   "{n, plural, =0 {Less than a day} one {# day} other {# days} }": "{n, plural, =0 {하루 미만} other {#일} }",
   "{n, plural, =0 {No errors} one {# Error} other {# Errors}}": "오류 {n, plural, =0 {없음} other {#개}}",
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "오류 {n, plural, =0 {없음} other {#개}}",
-  "{n, plural, =0 {No History} one {# entry} other {# entries}}": "{n, plural, =0 {No History} one {# entry} other {# entries}}",
+  "{n, plural, =0 {No History} one {# entry} other {# entries}}": "기록 {n, plural, =0 {없음} other {#개}}",
   "{n, plural, =0 {No keys} =1 {# key} other {# keys}}": "키 {n, plural, =0 {없음} other {#개}}",
   "{n, plural, =0 {No open files} one {# open file} other {# open files}}": "열린 파일 {n, plural, =0 {없음} other {#개}}",
   "{n, plural, one {# boot environment} other {# boot environments}} has been deleted.": "{n}개의 부트 환경을 삭제했습니다.",

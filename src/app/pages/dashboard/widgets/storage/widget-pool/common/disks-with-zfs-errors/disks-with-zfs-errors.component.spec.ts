@@ -24,11 +24,12 @@ describe('DisksWithZfsErrorsComponent', () => {
     expect(spectator.query('ngx-skeleton-loader')).toBeTruthy();
   });
 
-  it('should display total ZFS errors when pool is loaded', () => {
+  it('should display number of disks with ZFS errors', () => {
     const mockPool = {
       topology: {
         data: [
           { stats: { read_errors: 1, write_errors: 2, checksum_errors: 3 } },
+          { stats: { read_errors: 3, write_errors: 2, checksum_errors: 1 } },
           { stats: { read_errors: 0, write_errors: 0, checksum_errors: 0 } },
         ] as VDevItem[],
         cache: [] as VDevItem[],
@@ -40,7 +41,7 @@ describe('DisksWithZfsErrorsComponent', () => {
 
     spectator.setInput('pool', mockPool);
 
-    expect(spectator.query('.value')).toHaveText('6');
+    expect(spectator.query('.value')).toHaveText('2');
     expect(spectator.query('ngx-skeleton-loader')).toBeFalsy();
   });
 
