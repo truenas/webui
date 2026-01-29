@@ -51,9 +51,23 @@ export class UserGroupExistenceValidationService {
         debounceTime(debounceMs),
         switchMap((debouncedGroups) => {
           const groupChecks = debouncedGroups.map((groupName: string) => {
+            // Check autocomplete cache first to avoid redundant API call
+            if (this.userService.isGroupInAutocompleteCache(groupName)) {
+              return of({ name: groupName, exists: true }); // Skip API call
+            }
+
+            // Check if already cached as non-existent to avoid repeated failed API calls
+            if (this.userService.isGroupCachedAsNonExistent(groupName)) {
+              return of({ name: groupName, exists: false }); // Skip API call
+            }
+
             return this.userService.getGroupByNameCached(groupName).pipe(
               map(() => ({ name: groupName, exists: true })),
-              catchError(() => of({ name: groupName, exists: false })),
+              catchError(() => {
+                // Cache this as non-existent to avoid repeated API calls
+                this.userService.recordGroupAsNonExistent(groupName);
+                return of({ name: groupName, exists: false });
+              }),
             );
           });
           return forkJoin(groupChecks);
@@ -114,9 +128,23 @@ export class UserGroupExistenceValidationService {
         debounceTime(debounceMs),
         switchMap((debouncedUsers) => {
           const userChecks = debouncedUsers.map((username: string) => {
+            // Check autocomplete cache first to avoid redundant API call
+            if (this.userService.isUserInAutocompleteCache(username)) {
+              return of({ name: username, exists: true }); // Skip API call
+            }
+
+            // Check if already cached as non-existent to avoid repeated failed API calls
+            if (this.userService.isUserCachedAsNonExistent(username)) {
+              return of({ name: username, exists: false }); // Skip API call
+            }
+
             return this.userService.getUserByNameCached(username).pipe(
               map(() => ({ name: username, exists: true })),
-              catchError(() => of({ name: username, exists: false })),
+              catchError(() => {
+                // Cache this as non-existent to avoid repeated API calls
+                this.userService.recordUserAsNonExistent(username);
+                return of({ name: username, exists: false });
+              }),
             );
           });
           return forkJoin(userChecks);
@@ -168,16 +196,37 @@ export class UserGroupExistenceValidationService {
       return of(username).pipe(
         debounceTime(debounceMs),
         switchMap((debouncedUsername): Observable<ValidationErrors | null> => {
-          return this.userService.getUserByNameCached(debouncedUsername).pipe(
-            map((): null => null),
-            catchError((): Observable<ValidationErrors> => of({
+          // Check autocomplete cache first to avoid redundant API call
+          if (this.userService.isUserInAutocompleteCache(debouncedUsername)) {
+            return of(null); // User exists in autocomplete cache, skip API call
+          }
+
+          // Check if already cached as non-existent to avoid repeated failed API calls
+          if (this.userService.isUserCachedAsNonExistent(debouncedUsername)) {
+            return of({
               userDoesNotExist: {
                 message: this.translate.instant(
                   'User "{username}" does not exist',
                   { username: debouncedUsername },
                 ),
               },
-            })),
+            });
+          }
+
+          return this.userService.getUserByNameCached(debouncedUsername).pipe(
+            map((): null => null),
+            catchError((): Observable<ValidationErrors> => {
+              // Cache this as non-existent to avoid repeated API calls
+              this.userService.recordUserAsNonExistent(debouncedUsername);
+              return of({
+                userDoesNotExist: {
+                  message: this.translate.instant(
+                    'User "{username}" does not exist',
+                    { username: debouncedUsername },
+                  ),
+                },
+              });
+            }),
           );
         }),
       );
@@ -209,16 +258,37 @@ export class UserGroupExistenceValidationService {
       return of(groupName).pipe(
         debounceTime(debounceMs),
         switchMap((debouncedGroupName): Observable<ValidationErrors | null> => {
-          return this.userService.getGroupByNameCached(debouncedGroupName).pipe(
-            map((): null => null),
-            catchError((): Observable<ValidationErrors> => of({
+          // Check autocomplete cache first to avoid redundant API call
+          if (this.userService.isGroupInAutocompleteCache(debouncedGroupName)) {
+            return of(null); // Group exists in autocomplete cache, skip API call
+          }
+
+          // Check if already cached as non-existent to avoid repeated failed API calls
+          if (this.userService.isGroupCachedAsNonExistent(debouncedGroupName)) {
+            return of({
               groupDoesNotExist: {
                 message: this.translate.instant(
                   'Group "{groupName}" does not exist',
                   { groupName: debouncedGroupName },
                 ),
               },
-            })),
+            });
+          }
+
+          return this.userService.getGroupByNameCached(debouncedGroupName).pipe(
+            map((): null => null),
+            catchError((): Observable<ValidationErrors> => {
+              // Cache this as non-existent to avoid repeated API calls
+              this.userService.recordGroupAsNonExistent(debouncedGroupName);
+              return of({
+                groupDoesNotExist: {
+                  message: this.translate.instant(
+                    'Group "{groupName}" does not exist',
+                    { groupName: debouncedGroupName },
+                  ),
+                },
+              });
+            }),
           );
         }),
       );
