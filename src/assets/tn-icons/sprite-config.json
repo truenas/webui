@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=de0e2c8dd0",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=a7c5b9b4dd",
   "icons": [
     "app-dataset",
     "app-dataset-root",
@@ -22,6 +22,7 @@
     "app-truenas-logo",
     "app-truenas-logo-type",
     "app-webshare",
+    "apps",
     "dataset",
     "mat-apps",
     "mat-arrow_circle_right",
@@ -201,6 +202,7 @@
     "mdi-web",
     "mdi-widgets",
     "mdi-wrench",
+    "share",
     "tn-cloud-off",
     "tn-dataset",
     "tn-dataset-root",
@@ -240,6 +242,7 @@
     "tn-truenas-logo-mark-color",
     "tn-truenas-logo-type",
     "tn-truenas-logo-type-color",
-    "tn-two-factor-auth"
+    "tn-two-factor-auth",
+    "tn-webshare"
   ]
 }

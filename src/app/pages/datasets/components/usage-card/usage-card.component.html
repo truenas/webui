@@ -96,7 +96,7 @@
     }
     @if (hasDirectWebShares() || hasInheritedWebShares()) {
       <div class="details-item">
-        <tn-icon name="share-variant" class="icon"></tn-icon>
+        <tn-icon name="tn-webshare" class="icon"></tn-icon>
         <div class="label">{{ 'Share Attached' | translate }}:</div>
         <div class="webshares value">
           {{ 'Dataset is shared via WebShare as {shares}' | translate: { shares: combinedWebShareDisplay() } }}
