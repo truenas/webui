@@ -3,12 +3,12 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -22,7 +22,7 @@ describe('ConfigResetComponent', () => {
     component: ConfigResetComponent,
     shallow: true,
     declarations: [
-      MockComponent(IxIconComponent),
+      MockComponent(TnIconComponent),
       MockComponent(CopyrightLineComponent),
     ],
     providers: [
