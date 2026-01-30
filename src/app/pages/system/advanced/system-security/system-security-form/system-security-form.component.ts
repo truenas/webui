@@ -666,7 +666,6 @@ export class SystemSecurityFormComponent implements OnInit {
   protected handleRequirementAction(requirement: MissingStigRequirement): void {
     // Mark form as pristine to avoid unsaved changes dialog
     this.form.markAsPristine();
-    this.slideInRef.close({ response: false });
 
     if (requirement.navigateTo) {
       this.navigateAndHighlightService.navigateAndHighlight(
