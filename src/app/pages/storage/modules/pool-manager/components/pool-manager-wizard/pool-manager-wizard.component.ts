@@ -23,8 +23,8 @@ import {
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -77,7 +77,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
   providers: [
     PoolManagerValidationService,

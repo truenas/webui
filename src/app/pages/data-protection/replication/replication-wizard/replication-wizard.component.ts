@@ -29,8 +29,8 @@ import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.inte
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -60,7 +60,7 @@ import { ReplicationService } from 'app/services/replication.service';
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
     TranslateModule,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
 })
 export class ReplicationWizardComponent {

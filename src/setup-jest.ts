@@ -13,8 +13,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconRegistry } from '@angular/material/icon';
-import { FakeMatIconRegistry } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -75,8 +73,6 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
@@ -111,7 +107,6 @@ defineGlobalsInjections({
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
-    IxIconComponent,
     TnIconComponent,
     TnIconButtonComponent,
     MatDatepickerModule,
@@ -210,8 +205,6 @@ defineGlobalsInjections({
       provide: ApiService,
       useClass: EmptyApiService,
     },
-    { provide: IxIconRegistry, useClass: FakeMatIconRegistry },
-    { provide: MatIconRegistry, useClass: FakeMatIconRegistry },
     ...TnIconTesting.jest.providers(),
   ],
 });
