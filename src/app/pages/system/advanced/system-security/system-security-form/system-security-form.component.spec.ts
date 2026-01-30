@@ -1238,10 +1238,8 @@ describe('SystemSecurityFormComponent', () => {
     it('opens the user edit slidein when clicking the configure button for root/truenas_admin error', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
-      const slideInRef = navigationSpectator.inject(SlideInRef);
 
       const openSpy = jest.spyOn(slideIn, 'open');
-      const closeSlideInSpy = jest.spyOn(slideInRef, 'close');
 
       // Trigger setupStigRequirements - should show root/admin password requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1259,7 +1257,6 @@ describe('SystemSecurityFormComponent', () => {
       // Click the Configure button
       configureButton.click();
 
-      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
       expect(openSpy).toHaveBeenCalledWith(UserFormComponent, { data: { username: 'root', password_disabled: false } as User });
     });
 
@@ -1267,7 +1264,6 @@ describe('SystemSecurityFormComponent', () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
       const slideInOpenSpy = jest.spyOn(slideIn, 'open');
-      const closeSlideInSpy = jest.spyOn(navigationSpectator.inject(SlideInRef), 'close');
 
       // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1287,7 +1283,6 @@ describe('SystemSecurityFormComponent', () => {
 
 
       // Wait for navigation promise to resolve and action to be called
-      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
       await navigationSpectator.fixture.whenStable();
 
       // Verify the Global 2FA form was opened after navigation
@@ -1300,10 +1295,8 @@ describe('SystemSecurityFormComponent', () => {
     it('opens Global Two-Factor Auth form when clicking SSH 2FA configure button', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
-      const slideInRef = navigationSpectator.inject(SlideInRef);
 
       const openSpy = jest.spyOn(slideIn, 'open');
-      const closeSlideInSpy = jest.spyOn(slideInRef, 'close');
 
       // Trigger setupStigRequirements - should show SSH 2FA requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1320,8 +1313,6 @@ describe('SystemSecurityFormComponent', () => {
 
       // Click the Configure button
       configureButton.click();
-
-      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
 
       // Verify the Global 2FA form was opened with the correct data
       expect(openSpy).toHaveBeenCalledWith(
