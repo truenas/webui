@@ -9,6 +9,7 @@ import {
 } from 'app/constants/bytes.constant';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { buildNormalizedFileSize, normalizeFileSize } from 'app/helpers/file-size.utils';
+import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -16,6 +17,7 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
+import { determineTimeUnit, isUpsRuntimeWithData } from '../../utils/report.utils';
 
 interface Conversion {
   value: number;
@@ -61,6 +63,11 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly zoomChange = output<number[]>();
 
   render(update?: boolean): void {
+    const data = this.data()?.data;
+    this.units = this.inferUnits(this.labelY());
+    if (isUpsRuntimeWithData(this.report().name, data)) {
+      this.units = stringToTitleCase(determineTimeUnit(data));
+    }
     this.renderGraph(update);
   }
 
@@ -178,12 +185,16 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private formatAxisName(): string {
+    const data = this.data().data;
     if (this.report().name === ReportingGraphName.NetworkInterface) {
       return this.yLabelPrefix + '/s';
     }
+
+    if (isUpsRuntimeWithData(this.report().name, data)) {
+      return this.units;
+    }
+
     switch (true) {
-      case this.labelY().toLowerCase() === 'seconds':
-        return 'Days';
       case this.labelY().toLowerCase().includes('bits/s'):
         return `${this.yLabelPrefix}bits/s`;
       case this.labelY().toLowerCase().includes('bytes/s'):
@@ -204,7 +215,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     prefixRules?: boolean,
     axis = false,
   ): Conversion {
-    const day = 60 * 60 * 24;
     if (!fixed) {
       fixed = -1;
     }
@@ -213,8 +223,15 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     switch (units.toLowerCase()) {
-      case 'seconds':
-        return { value: value / day, shortName: ' days' };
+      case 'seconds': {
+        const shortName = this.units;
+        switch (this.units.toLowerCase()) {
+          case 'minutes': return { value: value / 60, shortName };
+          case 'hours': return { value: value / (60 * 60), shortName };
+          case 'days': return { value: value / (60 * 60 * 24), shortName };
+          default: return { value, shortName };
+        }
+      }
       case 'kilobits': {
         const result = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
         if (axis) {
