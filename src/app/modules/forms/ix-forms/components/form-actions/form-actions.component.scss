@@ -9,6 +9,34 @@
   margin: 0;
 }
 
+.submit-button-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+
+  &.validating::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 30%;
+    height: 3px;
+    background: var(--primary);
+    content: '';
+    animation: loading-bar 1s ease-in-out infinite;
+  }
+}
+
+@keyframes loading-bar {
+  0% {
+    left: -30%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
 :host-context(.ix-form-container) :host {
   flex-wrap: wrap;
   gap: 8px;
