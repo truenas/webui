@@ -120,6 +120,27 @@ describe('convertAggregations', () => {
     expect(result.aggregations.max).toEqual(['2 KiB/s']);
     expect(result.aggregations.mean).toEqual(['1.5 KiB/s']);
   });
+
+  it('uses determineTimeUnit for UPS runtime graphs', () => {
+    jest.spyOn(console, 'warn').mockImplementation();
+    const data: ReportingData = {
+      name: 'upsruntime',
+      identifier: 'upsruntime',
+      legend: ['runtime'],
+      data: [[0, 7200], [1, 7300], [2, 7400]],
+      aggregations: {
+        min: [7200],
+        max: [7400],
+        mean: [7300],
+      },
+    } as ReportingData;
+
+    const result = convertAggregations(data, 'Runtime');
+
+    expect(result.aggregations.min).toEqual(['2 h']);
+    expect(result.aggregations.max).toEqual(['2.1 h']);
+    expect(result.aggregations.mean).toEqual(['2 h']);
+  });
 });
 
 describe('formatData', () => {
