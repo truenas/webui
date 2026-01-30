@@ -3,9 +3,9 @@ import {
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -14,7 +14,7 @@ import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/d
   styleUrls: ['./dataset-roles-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     MatTooltip,
   ],

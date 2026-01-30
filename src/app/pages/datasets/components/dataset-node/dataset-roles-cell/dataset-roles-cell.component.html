@@ -1,70 +1,70 @@
 @if (isSystemDataset()) {
-  <ix-icon
-    name="ix-truenas-logo-mark"
+  <tn-icon
+    name="tn-truenas-logo-mark"
     [matTooltip]="'This dataset is used by the system' | translate"
     [fullSize]="true"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (dataset().apps?.length || isApps()) {
   @if (isApps()) {
-    <ix-icon
+    <tn-icon
       name="apps"
       [matTooltip]="'This dataset is used to store apps config and other container related data' | translate"
-    ></ix-icon>
+    ></tn-icon>
   } @else {
-    <ix-icon
+    <tn-icon
       name="apps"
       [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appNames() }"
-    ></ix-icon>
+    ></tn-icon>
   }
 }
 
 @if (dataset().vms?.length) {
-  <ix-icon
+  <tn-icon
     name="mdi-laptop"
     [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmNames() }"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (hasShares()) {
-  <ix-icon
+  <tn-icon
     name="share"
     [matTooltip]="'This dataset has children with shares' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (dataset().smb_shares?.length) {
-  <ix-icon
-    name="ix-smb-share"
+  <tn-icon
+    name="tn-smb-share"
     [matTooltip]="'Dataset is shared via SMB' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (dataset().nfs_shares?.length) {
-  <ix-icon
-    name="ix-nfs-share"
+  <tn-icon
+    name="tn-nfs-share"
     [matTooltip]="'Dataset is shared via NFS' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (dataset().iscsi_shares?.length) {
-  <ix-icon
-    name="ix-iscsi-share"
+  <tn-icon
+    name="tn-iscsi-share"
     [matTooltip]="'Dataset is shared via iSCSI' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (dataset().nvmet_shares?.length) {
-  <ix-icon
-    name="ix-nvme-share"
+  <tn-icon
+    name="tn-nvme-share"
     [matTooltip]="'Dataset is shared via NVMe-oF' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }
 
 @if (dataset().webshare_shares?.length) {
-  <ix-icon
-    name="ix-webshare"
+  <tn-icon
+    name="tn-webshare"
     [matTooltip]="'Dataset is shared via WebShare' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }

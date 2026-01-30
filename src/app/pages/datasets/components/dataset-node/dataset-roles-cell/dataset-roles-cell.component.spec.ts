@@ -1,13 +1,13 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 
 describe('DatasetRolesCellComponent', () => {
   let spectator: Spectator<DatasetRolesCellComponent>;
-  let ixIcon: IxIconHarness;
+  let ixIcon: TnIconHarness;
 
   const createComponent = createComponentFactory({
     component: DatasetRolesCellComponent,
@@ -22,13 +22,13 @@ describe('DatasetRolesCellComponent', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ixIcon = await loader.getHarness(IxIconHarness);
+    ixIcon = await loader.getHarness(TnIconHarness);
   }
 
   it('shows "System Dataset" when dataset is marked as system', async () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
-    expect(await ixIcon.getName()).toBe('ix-truenas-logo-mark');
+    expect(await ixIcon.getName()).toBe('tn-truenas-logo-mark');
     expect(spectator.query(MatTooltip)!.message).toBe('This dataset is used by the system');
   });
 
@@ -80,7 +80,7 @@ describe('DatasetRolesCellComponent', () => {
       smb_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getName()).toBe('ix-smb-share');
+    expect(await ixIcon.getName()).toBe('tn-smb-share');
   });
 
   it('shows "NFS Share" icon for dataset', async () => {
@@ -89,7 +89,7 @@ describe('DatasetRolesCellComponent', () => {
       nfs_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getName()).toBe('ix-nfs-share');
+    expect(await ixIcon.getName()).toBe('tn-nfs-share');
   });
 
   it('shows "iSCSI Share" icon for dataset', async () => {
@@ -98,7 +98,7 @@ describe('DatasetRolesCellComponent', () => {
       iscsi_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getName()).toBe('ix-iscsi-share');
+    expect(await ixIcon.getName()).toBe('tn-iscsi-share');
   });
 
   it('shows "NVMe-oF Share" icon for dataset', async () => {
@@ -107,7 +107,7 @@ describe('DatasetRolesCellComponent', () => {
       nvmet_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getName()).toBe('ix-nvme-share');
+    expect(await ixIcon.getName()).toBe('tn-nvme-share');
   });
 
   it('shows "WebShare" icon for dataset', async () => {
@@ -116,6 +116,6 @@ describe('DatasetRolesCellComponent', () => {
       webshare_shares: [{}],
     } as DatasetDetails, false);
 
-    expect(await ixIcon.getName()).toBe('ix-webshare');
+    expect(await ixIcon.getName()).toBe('tn-webshare');
   });
 });

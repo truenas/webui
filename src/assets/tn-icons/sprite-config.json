@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=a7c5b9b4dd",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=1c5ea83650",
   "icons": [
     "app-dataset",
     "app-dataset-root",
@@ -20,7 +20,14 @@
     "app-ssd-mirror",
     "app-true-cloud",
     "app-truenas-logo",
+    "app-truenas-logo-ce",
+    "app-truenas-logo-ce-color",
+    "app-truenas-logo-enterprise",
+    "app-truenas-logo-enterprise-color",
+    "app-truenas-logo-mark",
+    "app-truenas-logo-mark-color",
     "app-truenas-logo-type",
+    "app-truenas-logo-type-color",
     "app-webshare",
     "apps",
     "dataset",
