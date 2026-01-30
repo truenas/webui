@@ -23,5 +23,7 @@
 
 @let control = controlDirective.control;
 @if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
+  <div class="errors-row">
+    <ix-errors [control]="control" [label]="label()"></ix-errors>
+  </div>
 }
