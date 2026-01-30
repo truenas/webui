@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
@@ -17,6 +18,7 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
+import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -92,6 +94,7 @@ describe('SigninStore', () => {
         logout: jest.fn(() => of(undefined)),
         hasAuthToken: false,
       }),
+      mockProvider(SessionTimeoutService),
     ],
   });
 
@@ -395,6 +398,77 @@ describe('SigninStore', () => {
       const state = await firstValueFrom(spectator.service.state$);
       expect(state.isLoading).toBe(false);
     });
+  });
+
+  describe('session expired message', () => {
+    it('shows session expired message when token exists but is outside timeline', fakeAsync(() => {
+      isTokenWithinTimeline$.next(false);
+
+      Object.defineProperty(authService, 'hasAuthToken', {
+        get: () => true,
+      });
+
+      const sessionTimeoutService = spectator.inject(SessionTimeoutService);
+      const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
+
+      spectator.service.init();
+      tick();
+
+      expect(showSessionExpiredSpy).toHaveBeenCalled();
+      expect(authService.clearAuthToken).toHaveBeenCalled();
+    }));
+
+    it('does not show session expired message when no token exists', fakeAsync(() => {
+      isTokenWithinTimeline$.next(false);
+
+      Object.defineProperty(authService, 'hasAuthToken', {
+        get: () => false,
+      });
+
+      const sessionTimeoutService = spectator.inject(SessionTimeoutService);
+      const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
+
+      spectator.service.init();
+      tick();
+
+      expect(showSessionExpiredSpy).not.toHaveBeenCalled();
+    }));
+
+    it('shows session expired message when token login returns IncorrectDetails', fakeAsync(() => {
+      isTokenWithinTimeline$.next(true);
+
+      Object.defineProperty(authService, 'hasAuthToken', {
+        get: () => true,
+      });
+
+      jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.IncorrectDetails));
+
+      const sessionTimeoutService = spectator.inject(SessionTimeoutService);
+      const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
+
+      spectator.service.init();
+      tick();
+
+      expect(showSessionExpiredSpy).toHaveBeenCalled();
+    }));
+
+    it('does not show session expired message when token login returns NoAccess', fakeAsync(() => {
+      isTokenWithinTimeline$.next(true);
+
+      Object.defineProperty(authService, 'hasAuthToken', {
+        get: () => true,
+      });
+
+      jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.NoAccess));
+
+      const sessionTimeoutService = spectator.inject(SessionTimeoutService);
+      const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
+
+      spectator.service.init();
+      tick();
+
+      expect(showSessionExpiredSpy).not.toHaveBeenCalled();
+    }));
   });
 
   describe('getRedirectUrl', () => {
