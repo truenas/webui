@@ -1,5 +1,6 @@
 import { HarnessLoader, parallel, TestKey } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { NgControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { MatChipGridHarness } from '@angular/material/chips/testing';
@@ -239,5 +240,24 @@ describe('IxChipsComponent', () => {
 
       expect(spectator.component.values).toEqual(['Option 1']);
     });
+  });
+
+  describe('debounceTime input', () => {
+    it('respects custom debounceTime for autocomplete', fakeAsync(() => {
+      const autocompleteProvider = jest.fn(() => of(['suggestion1', 'suggestion2']));
+      spectator.setHostInput('autocompleteProvider', autocompleteProvider);
+      spectator.setHostInput('debounceTime', 500);
+      spectator.component.ngOnChanges();
+
+      const input = spectator.query('input');
+      input.value = 'test';
+      input.dispatchEvent(new Event('input'));
+
+      // Should call provider after custom debounce time
+      tick(500);
+      expect(autocompleteProvider).toHaveBeenCalledWith('test');
+
+      discardPeriodicTasks();
+    }));
   });
 });

@@ -1,11 +1,13 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { cloneDeep, concat } from 'lodash-es';
@@ -18,7 +20,8 @@ import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
-import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import { Group } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -29,7 +32,6 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-save-as-preset-modal',
   templateUrl: './save-as-preset-modal.component.html',
@@ -60,6 +62,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   private userService = inject(UserService);
   private dialogRef = inject<MatDialogRef<SaveAsPresetModalComponent>>(MatDialogRef);
   private store = inject(DatasetAclEditorStore);
+  private destroyRef = inject(DestroyRef);
   data = inject<SaveAsPresetModalConfig>(MAT_DIALOG_DATA);
 
   form = this.fb.group({
@@ -74,7 +77,7 @@ export class SaveAsPresetModalComponent implements OnInit {
     this.loadOptions();
 
     this.store.state$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         this.isFormLoading.set(state.isLoading);
         this.acl = state.acl;
@@ -96,7 +99,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((presets) => {
         this.presets = this.sortPresets(presets);
@@ -127,7 +130,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       }),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dialogRef.close();
     });
@@ -138,7 +141,7 @@ export class SaveAsPresetModalComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         this.loader.withLoader(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.loadOptions();
@@ -146,33 +149,48 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   loadIds(acl: Acl): Observable<Acl> {
-    const requests$: Observable<DsUncachedGroup | DsUncachedUser>[] = [];
+    const requests$: Observable<Group | User>[] = [];
     const userWhoToIds = new Map<string, number>();
     const groupWhoToIds = new Map<string, number>();
+
+    // Deduplicate users and groups to avoid redundant API calls
+    const uniqueUsers = new Set<string>();
+    const uniqueGroups = new Set<string>();
+
     for (const ace of acl.acl) {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag) && ace.who) {
-        requests$.push(
-          this.userService.getUserByName(ace.who).pipe(
-            tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error: unknown) => {
-              this.errorHandler.showErrorModal(error);
-              return EMPTY;
-            }),
-          ),
-        );
+        uniqueUsers.add(ace.who);
       }
       if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag) && ace.who) {
-        requests$.push(
-          this.userService.getGroupByName(ace.who).pipe(
-            tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error: unknown) => {
-              this.errorHandler.showErrorModal(error);
-              return EMPTY;
-            }),
-          ),
-        );
+        uniqueGroups.add(ace.who);
       }
     }
+
+    // Make API calls only for unique users
+    uniqueUsers.forEach((who) => {
+      requests$.push(
+        this.userService.getUserByNameCached(who).pipe(
+          tap((user) => userWhoToIds.set(who, user.uid)),
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        ),
+      );
+    });
+
+    // Make API calls only for unique groups
+    uniqueGroups.forEach((who) => {
+      requests$.push(
+        this.userService.getGroupByNameCached(who).pipe(
+          tap((group) => groupWhoToIds.set(who, group.gid)),
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        ),
+      );
+    });
 
     const result$ = combineLatest(requests$).pipe(
       map(() => {

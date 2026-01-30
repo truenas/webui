@@ -15,18 +15,27 @@
     }
 
     .details-item {
+      align-items: center;
+      column-gap: 8px;
+      display: flex;
       margin: 8px 0;
 
       ix-missing-access-wrapper {
         margin-left: auto;
       }
     }
+
+    .scrub-tooltip {
+      width: 20px;
+      padding-left: 4px;
+    }
+  }
+
+  .blank-spacer {
+    width: 24px;
   }
 }
 
-.scrub-tooltip {
-  vertical-align: -2px;
-}
 
 .card-content {
   display: flex;

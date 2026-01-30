@@ -1,6 +1,18 @@
 import { ENTER } from '@angular/cdk/keycodes';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  input,
+  OnChanges,
+  Signal,
+  viewChild,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import {
@@ -8,7 +20,6 @@ import {
 } from '@angular/material/chips';
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
   fromEvent, merge, Observable, Subject,
@@ -21,11 +32,11 @@ import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/ch
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-chips',
   templateUrl: './ix-chips.component.html',
@@ -55,6 +66,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
@@ -62,6 +74,13 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
+  /**
+   * Debounce time in milliseconds for autocomplete suggestions.
+   * Note: For specialized wrappers (ix-user-chips, ix-group-chips), this value is also
+   * passed to validation, controlling both autocomplete fetch AND validation debouncing.
+   * @default defaultDebounceTimeMs (300)
+   */
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
   /**
    * A function that provides the options for the autocomplete dropdown.
    * This function is called when the user types into the input field,
@@ -188,7 +207,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     if (trigger?.panelOpen) {
       // If there's a typed value, process it after the panel closes
       if (inputValue.trim() && this.allowNewEntries() && !this.resolveValue()) {
-        trigger.panelClosingActions.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+        trigger.panelClosingActions.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           // Re-check the input value after panel closes, in case user selected an option
           const currentValue = this.chipInput().nativeElement.value;
           if (currentValue.trim()) {
@@ -200,7 +219,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
         });
       } else {
         // No value to process, but still need to trigger validation
-        trigger.panelClosingActions.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+        trigger.panelClosingActions.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           this.onTouch();
         });
       }
@@ -231,7 +250,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       return;
     }
 
-    this.resolveOptions()?.pipe(untilDestroyed(this)).subscribe((options) => {
+    this.resolveOptions()?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
       this.resolvedOptions = options;
     });
   }
@@ -247,7 +266,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       fromEvent(this.chipInput().nativeElement, 'input')
         .pipe(
           startWith(''),
-          debounceTime(100),
+          debounceTime(this.debounceTime()),
           distinctUntilChanged(),
         ),
       this.inputReset$,
