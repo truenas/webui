@@ -21,6 +21,7 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -62,13 +63,20 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected isLoading = signal(false);
   isHaSystem = false;
 
   form = this.fb.nonNullable.group({
-    basename: ['', Validators.required],
+    basename: ['', [
+      Validators.required,
+      this.validatorsService.withMessage(
+        Validators.pattern(/^[a-z0-9.:-]+$/),
+        this.translate.instant('Only lowercase alphanumeric characters and . : - are allowed.'),
+      ),
+    ]],
     isns_servers: [[] as string[]],
     pool_avail_threshold: [null as number | null],
     listen_port: [null as number | null, Validators.required],

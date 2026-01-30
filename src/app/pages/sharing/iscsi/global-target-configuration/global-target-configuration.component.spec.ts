@@ -179,4 +179,35 @@ describe('TargetGlobalConfigurationComponent', () => {
       'Enable iSCSI Extensions for RDMA (iSER)': false,
     });
   });
+
+  it('validates Base Name field to only allow lowercase alphanumeric characters and . : -', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+
+    // Test with uppercase letters
+    await form.fillForm({
+      'Base Name': 'IQN.2005-10.ORG.FREENAS.CTL',
+    });
+    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+    expect(spectator.component.form.controls.basename.errors).toMatchObject({
+      pattern: { message: 'Only lowercase alphanumeric characters and . : - are allowed.' },
+    });
+
+    // Test with special characters like @ and !
+    await form.fillForm({
+      'Base Name': 'iqn.2005-10.org.freenas.ctl@%!!',
+    });
+    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+
+    // Test with spaces
+    await form.fillForm({
+      'Base Name': 'iqn 2005-10 org freenas ctl',
+    });
+    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+
+    // Test with valid value (lowercase, dots, dashes, colons)
+    await form.fillForm({
+      'Base Name': 'iqn.2005-10.org.freenas.ctl:target',
+    });
+    expect(spectator.component.form.controls.basename.valid).toBe(true);
+  });
 });
