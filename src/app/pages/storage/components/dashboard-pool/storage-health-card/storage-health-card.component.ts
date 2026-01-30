@@ -106,7 +106,9 @@ export class StorageHealthCardComponent {
   );
 
   private latestScan = toSignal(this.scanUpdates$);
+
   protected scan = computed(() => this.latestScan() ?? this.pool().scan);
+
   protected readonly helptextVolumes = helptextVolumes;
 
   readonly poolStatusLabels = poolStatusLabels;

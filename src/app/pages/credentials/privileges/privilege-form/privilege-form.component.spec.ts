@@ -117,6 +117,7 @@ describe('PrivilegeFormComponent', () => {
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
         getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+        getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
       }),
       provideMockStore({
         selectors: [
@@ -440,6 +441,7 @@ describe('PrivilegeFormComponent', () => {
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
             getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -494,6 +496,7 @@ describe('PrivilegeFormComponent', () => {
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
             getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -548,6 +551,7 @@ describe('PrivilegeFormComponent', () => {
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
             getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -604,6 +608,7 @@ describe('PrivilegeFormComponent', () => {
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
             getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -658,6 +663,7 @@ describe('PrivilegeFormComponent', () => {
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
             getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           mockAuth(),
         ],

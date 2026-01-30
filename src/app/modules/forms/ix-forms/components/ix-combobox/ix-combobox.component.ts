@@ -1,4 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  input,
+  OnInit,
+  Signal,
+  viewChild,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor, NgControl,
   ReactiveFormsModule,
@@ -8,7 +20,6 @@ import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
@@ -17,19 +28,19 @@ import {
 } from 'rxjs';
 import {
   catchError,
-  debounceTime, distinctUntilChanged, map, takeUntil,
+  debounceTime, distinctUntilChanged, map,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-combobox',
   templateUrl: './ix-combobox.component.html',
@@ -57,12 +68,20 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
   readonly tooltip = input<TranslatedString>();
   readonly allowCustomValue = input(false);
+  /**
+   * Debounce time in milliseconds for autocomplete suggestions.
+   * Note: For specialized wrappers (ix-user-combobox, ix-group-combobox), this value is also
+   * passed to validation, controlling both autocomplete fetch AND validation debouncing.
+   * @default defaultDebounceTimeMs (300)
+   */
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
 
   readonly provider = input.required<IxComboboxProvider>();
 
@@ -112,9 +131,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     }
 
     this.filterChanged$.pipe(
-      debounceTime(300),
+      debounceTime(this.debounceTime()),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((changedValue) => {
       if (this.filterValue === changedValue) {
         return;
@@ -142,28 +161,51 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   filterOptions(filterValue: string): void {
+    // Skip fetch if filterValue is empty and we have a selected option.
+    // This prevents unnecessary API calls after selecting from dropdown.
+    // Still allow fetch on initial load (selectedOption is null) and after reset.
+    if (!filterValue && this.selectedOption && this.value) {
+      return;
+    }
+
     this.loading = true;
     this.cdr.markForCheck();
 
-    this.provider()?.fetch(filterValue).pipe(
-      catchError(() => {
+    this.provider().fetch(filterValue).pipe(
+      catchError((error: unknown) => {
+        console.error('Combobox autocomplete fetch failed:', error);
         this.hasErrorInOptions = true;
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((options: Option[]) => {
       this.options = options;
 
       const selectedOptionFromLabel = this.options.find((option: Option) => option.label === filterValue);
       if (selectedOptionFromLabel) {
+        // User typed a label that exactly matches an option (e.g., typed "root" and found {label: "root", value: 0})
+        // Use the option's value (typically an ID like 0) rather than the label ("root")
         this.selectedOption = selectedOptionFromLabel;
         this.value = selectedOptionFromLabel.value;
         this.onChange(this.value);
-      } else if (this.value !== null) {
+      } else {
+        // No exact label match found
         const selectedOptionFromValue = this.options.find((option: Option) => option.value === this.value);
         this.selectedOption = selectedOptionFromValue
           ? { ...selectedOptionFromValue }
           : { label: this.value as string, value: this.value };
+
+        // If custom values allowed and user typed something not in options, update form control
+        // Note: This runs after the debounced fetch completes (debounceTime ms after last keystroke).
+        // If user already blurred, inputBlurred() will have set the value, so check before calling onChange again.
+        // This prevents double-calling onChange with the same value.
+        if (
+          this.allowCustomValue() && filterValue
+          && !this.options.some((option: Option) => option.value === filterValue)
+          && this.value !== filterValue
+        ) {
+          this.onChange(filterValue);
+        }
       }
 
       this.loading = false;
@@ -187,8 +229,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         .pipe(
           debounceTime(300),
           map(() => (autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
-          takeUntil(autocompleteTrigger.panelClosingActions),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe(() => {
           const {
             scrollTop,
@@ -204,7 +245,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           this.loading = true;
           this.cdr.markForCheck();
           this.provider()?.nextPage(this.filterValue !== null && this.filterValue !== undefined ? this.filterValue : '')
-            .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+            .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();
               /**
@@ -242,10 +283,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     }
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
-
-    if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
-      this.onChange(changedValue);
-    }
   }
 
   resetInput(): void {
