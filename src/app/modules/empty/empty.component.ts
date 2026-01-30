@@ -4,13 +4,12 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 // TODO: Similar to ix-empty-row
@@ -23,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatButtonModule,
     TranslateModule,
     MatProgressSpinnerModule,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     TestDirective,
   ],
