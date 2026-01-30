@@ -59,12 +59,10 @@
           <button
             mat-icon-button
             ixTest="system-go-to-reports"
-            matTooltipPosition="above"
             [attr.aria-label]="'System Reports' | translate"
-            [matTooltip]="'System Reports' | translate"
             [routerLink]="['/reportsdashboard', 'system']"
           >
-            <tn-icon name="chart-box" library="mdi"></tn-icon>
+            <tn-icon name="chart-box" library="mdi" [tooltip]="'System Reports' | translate"></tn-icon>
           </button>
         </div>
 
