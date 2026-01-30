@@ -692,12 +692,11 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   private logout(): void {
-    // the top-level `app.component.ts` subscribes to an observable
-    // in the `authService` that finishes logging the user out
-    // and navigates to `/signin`, so there's no reason to do that here.
     this.authService.logout()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+      .subscribe(() => {
+        this.router.navigate(['/signin']);
+      });
   }
 
   private openGlobalTwoFactorForm(highlight: 'global' | 'ssh'): void {

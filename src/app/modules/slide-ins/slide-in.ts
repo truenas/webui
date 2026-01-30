@@ -240,11 +240,7 @@ export class SlideIn {
 
     return new OverlayConfig({
       hasBackdrop: true,
-      // this used to dynamically determine whether or not to display a backdrop
-      // and apply the correct CSS class. this was originally to prevent backdrops
-      // from stacking, but this behavior doesn't actually occur. so we just assign a backdrop
-      // to all SlideIns.
-      backdropClass: 'custom-slide-in-backdrop',
+      backdropClass: !this.slideInInstances().length ? 'custom-slide-in-backdrop' : 'custom-slide-in-nobackdrop',
       positionStrategy: this.cdkOverlay.position().global().top('48px').right(rightPosition),
       height: 'calc(100% - 48px)',
       panelClass: 'slide-in-panel',
