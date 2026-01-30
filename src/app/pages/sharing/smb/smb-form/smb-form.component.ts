@@ -67,7 +67,6 @@ import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -111,7 +110,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private datasetService = inject(DatasetService);
   private translate = inject(TranslateService);
   private router = inject(Router);
-  private userService = inject(UserService);
   protected loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
