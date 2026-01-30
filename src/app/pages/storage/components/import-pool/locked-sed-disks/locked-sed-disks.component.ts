@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 
@@ -13,7 +13,7 @@ import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/se
   styleUrls: ['./locked-sed-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TestDirective,
     TranslateModule,

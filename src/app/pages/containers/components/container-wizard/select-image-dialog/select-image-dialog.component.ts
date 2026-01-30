@@ -7,6 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -17,7 +18,6 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,7 +37,7 @@ export type ContainerImageWithId = ContainerImage & {
     MatDialogContent,
     MatDialogModule,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
     IxInputComponent,
     MatButton,
     MatIconButton,

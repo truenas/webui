@@ -6,9 +6,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -26,7 +26,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
   imports: [
     MatCard,
     MatCardContent,
-    IxIconComponent,
+    TnIconComponent,
     CopyrightLineComponent,
     TranslateModule,
   ],

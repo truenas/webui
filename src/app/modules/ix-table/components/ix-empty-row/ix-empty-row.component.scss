@@ -17,7 +17,7 @@
   .icon-div {
     text-align: center;
 
-    .ix-icon {
+    tn-icon {
       align-items: center;
       color: var(--fg2);
       display: inline-flex;
@@ -46,11 +46,12 @@
 
   &.large {
     .icon-div {
-      .ix-icon {
+      tn-icon {
         align-items: center;
         display: inline-flex;
         font-size: 100px;
         height: 100px;
+        opacity: 0.1;
         width: auto;
 
         &.logo {
@@ -85,7 +86,7 @@
     margin: 16px;
   }
 
-  .icon-div .ix-icon {
+  .icon-div tn-icon {
     color: var(--red);
     opacity: 1;
   }

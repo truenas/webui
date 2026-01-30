@@ -5,12 +5,12 @@
 <div class="panel-content">
   @if (failoverDisabledReasons.length) {
     <div class="status-line">
-      <ix-icon name="warning"></ix-icon>
+      <tn-icon name="alert" library="mdi"></tn-icon>
       {{ 'HA is disabled' | translate }}
     </div>
   } @else {
     <div class="status-line status-line--enabled">
-      <ix-icon name="check_circle"></ix-icon>
+      <tn-icon name="check-circle" library="mdi"></tn-icon>
       {{ 'HA is enabled' | translate }}
     </div>
   }

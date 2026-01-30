@@ -7,10 +7,10 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { isObservable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -26,7 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatTooltip,
     RequiresRolesDirective,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TestDirective,
     MatMenu,

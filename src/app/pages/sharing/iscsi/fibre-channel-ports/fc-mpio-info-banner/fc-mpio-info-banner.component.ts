@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-fc-mpio-info-banner',
@@ -10,7 +10,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   styleUrls: ['./fc-mpio-info-banner.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
   ],
 })

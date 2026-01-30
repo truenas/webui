@@ -4,6 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter,
   forkJoin,
@@ -16,7 +17,6 @@ import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerStopParams } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -31,7 +31,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,

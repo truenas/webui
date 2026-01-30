@@ -1,21 +1,21 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, TemplateRef, viewChildren, inject } from '@angular/core';
 import { MatStepper, MatStepperIcon, MatStepperIconContext } from '@angular/material/stepper';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 
 /**
- * Sets ixIcons to be used with mat-stepper.
+ * Sets TrueNAS icons to be used with mat-stepper.
  * Usage: add this component inside a mat-stepper component.
  */
 @Component({
   selector: 'ix-use-ix-icons-in-stepper',
-  templateUrl: './use-ix-icons-in-stepper.component.html',
+  templateUrl: './use-icons-in-stepper.component.html',
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatStepperIcon,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UseIxIconsInStepperComponent implements AfterViewInit {
+export class UseIconsInStepperComponent implements AfterViewInit {
   private stepper = inject(MatStepper);
 
   readonly stepperIcons = viewChildren(MatStepperIcon);

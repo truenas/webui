@@ -34,7 +34,7 @@
             <mat-list class="list">
               <div class="section-title">{{ 'Default Route' | translate }}</div>
               <mat-list-item>
-                <ix-icon name="router" class="list-icon"></ix-icon>
+                <tn-icon name="router" library="mdi" class="list-icon"></tn-icon>
                 <span class="label">{{ 'IPv4' | translate }}:</span>
                 <ul class="value">
                   @for (ip of ipv4; track ip) {
@@ -48,7 +48,7 @@
           @if (ipv6.length > 0) {
             <mat-list class="list">
               <mat-list-item>
-                <ix-icon name="router" class="list-icon"></ix-icon>
+                <tn-icon name="router" library="mdi" class="list-icon"></tn-icon>
                 <span class="label">{{ 'IPv6' | translate }}:</span>
                 <ul class="value">
                   @for (ip of ipv6; track ip) {

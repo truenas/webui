@@ -6,7 +6,7 @@
     [attr.aria-label]="'Close Dialog' | translate"
     [matDialogClose]="false"
   >
-    <ix-icon name="cancel"></ix-icon>
+    <tn-icon name="close" library="mdi"></tn-icon>
   </button>
 </h1>
 
@@ -35,7 +35,7 @@
       [ixTest]="['add-new']"
       (click)="onAdd()"
     >
-      <ix-icon name="add"></ix-icon>
+      <tn-icon name="plus" library="mdi"></tn-icon>
       {{ 'Add New' | translate }}
     </button>
   </div>

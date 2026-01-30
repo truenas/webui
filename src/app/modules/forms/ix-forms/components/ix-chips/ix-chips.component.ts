@@ -20,6 +20,7 @@ import {
 } from '@angular/material/chips';
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   fromEvent, merge, Observable, Subject,
 } from 'rxjs';
@@ -32,7 +33,6 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -46,7 +46,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     IxLabelComponent,
     MatChipGrid,
     MatChipRow,
-    IxIconComponent,
+    TnIconComponent,
     MatChipRemove,
     MatAutocompleteTrigger,
     ReactiveFormsModule,

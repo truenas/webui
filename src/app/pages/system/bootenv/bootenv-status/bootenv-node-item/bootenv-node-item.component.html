@@ -5,10 +5,11 @@
   <div class="cell cell-status" [style.background-color]="statusColor()">
     <span>{{ topologyItem().status | titlecase }}</span>
     @if (!isDisk() && !isMirror() && poolInstance()?.status_detail) {
-      <ix-icon
-        name="mdi-information-outline"
+      <tn-icon
+        name="information-outline"
+        library="mdi"
         [matTooltip]="poolInstance().status_detail"
-      ></ix-icon>
+      ></tn-icon>
     }
   </div>
   <div class="cell">
@@ -32,18 +33,18 @@
         [ixTest]="[ownName(), 'actions']"
         [matMenuTriggerFor]="menu"
       >
-        <ix-icon name="more_vert"></ix-icon>
+        <tn-icon name="dots-vertical" library="mdi"></tn-icon>
       </button>
     }
     <mat-menu #menu="matMenu">
       <button *ixRequiresRoles="requiredRoles" mat-menu-item ixTest="replace" (click)="replace()">
-        <ix-icon name="mdi-file-replace"></ix-icon>
+        <tn-icon name="file-replace" library="mdi"></tn-icon>
         <span>{{ 'Replace' | translate }}</span>
       </button>
       <ng-container *ixRequiresRoles="requiredRoles">
         @if (isDisk() && oneDisk()) {
           <button mat-menu-item ixTest="attach" (click)="attach()">
-            <ix-icon name="mdi-attachment-plus"></ix-icon>
+            <tn-icon name="attachment-plus" library="mdi"></tn-icon>
             <span>{{ 'Attach' | translate }}</span>
           </button>
         }
@@ -51,7 +52,7 @@
       <ng-container *ixRequiresRoles="requiredRoles">
         @if (isMirror()) {
           <button mat-menu-item ixTest="detach" (click)="detach()">
-            <ix-icon name="mdi-attachment-minus"></ix-icon>
+            <tn-icon name="attachment-minus" library="mdi"></tn-icon>
             <span>{{ 'Detach' | translate }}</span>
           </button>
         }

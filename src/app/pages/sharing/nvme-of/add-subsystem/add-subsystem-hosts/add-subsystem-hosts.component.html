@@ -22,11 +22,12 @@
             {{ host.hostnqn }}
 
             @if (host.dhchap_key) {
-              <ix-icon
-                name="mdi-key"
+              <tn-icon
+                name="key"
+                library="mdi"
                 class="key-icon"
                 [matTooltip]="helptext.hasHostAuthentication | translate"
-              ></ix-icon>
+              ></tn-icon>
             }
           </span>
 
@@ -36,7 +37,7 @@
               [ixTest]="['remove-host-association', host.hostnqn]"
               (click)="onRemoveHost(host)"
             >
-              <ix-icon class="icon" name="clear"></ix-icon>
+              <tn-icon class="icon" name="close" library="mdi"></tn-icon>
             </button>
           </span>
         </span>

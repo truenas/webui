@@ -9,7 +9,7 @@
         [matTooltip]="mainPortal.label"
         (click)="openPortal(mainPortal.url)"
       >
-        <ix-icon name="mdi-web"></ix-icon>
+        <tn-icon name="web" library="mdi"></tn-icon>
       </button>
 
       @if (otherPortals().length > 0) {
@@ -20,7 +20,7 @@
           [matTooltip]="'Other Portals' | translate"
           [matMenuTriggerFor]="portalMenu"
         >
-          <ix-icon name="mdi-menu-down" class="dropdown-icon"></ix-icon>
+          <tn-icon name="menu-down" library="mdi" class="dropdown-icon"></tn-icon>
         </button>
 
         <mat-menu #portalMenu="matMenu">
@@ -43,7 +43,7 @@
     [disabled]="app.state === appState.Deploying"
     (click)="onRestartApp(app)"
   >
-    <ix-icon name="mdi-restart"></ix-icon>
+    <tn-icon name="restart" library="mdi"></tn-icon>
   </button>
 
   <button
@@ -54,6 +54,6 @@
     [matTooltip]="'Check App Details' | translate"
     (click)="openAppDetails(app)"
   >
-    <ix-icon name="mdi-cog"></ix-icon>
+    <tn-icon name="cog" library="mdi"></tn-icon>
   </button>
 </ng-container>

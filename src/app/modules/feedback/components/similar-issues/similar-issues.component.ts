@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy, uniqBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
@@ -9,7 +10,6 @@ import {
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
@@ -20,7 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     AsyncPipe,
   ],

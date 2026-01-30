@@ -1,21 +1,19 @@
 <div class="font-size-controls">
   <span>{{ 'Font Size:' | translate }}</span>
-  <button
-    mat-icon-button
+  <tn-icon-button
+    name="minus"
+    library="mdi"
     ixTest="decrease-font-size"
     [attr.aria-label]="'Decrease font size' | translate"
     [disabled]="fontSize() <= minFontSize"
     (click)="change(-1)"
-  >
-    <ix-icon name="remove"></ix-icon>
-  </button>
-  <button
-    mat-icon-button
+  ></tn-icon-button>
+  <tn-icon-button
+    name="plus"
+    library="mdi"
     ixTest="increase-font-size"
     [attr.aria-label]="'Increase font size' | translate"
     [disabled]="fontSize() >= maxFontSize"
     (click)="change(1)"
-  >
-    <ix-icon name="add"></ix-icon>
-  </button>
+  ></tn-icon-button>
 </div>

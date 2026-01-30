@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of, Observable } from 'rxjs';
 import { mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -12,7 +13,6 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -88,7 +88,7 @@ describe('AppControlsComponent', () => {
   it('checks open web portal', async () => {
     const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
 
-    const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
+    const portalButton = await loader.getHarness(TnIconHarness.with({ name: 'web' }));
     await portalButton.click();
 
     expect(redirectSpy).toHaveBeenCalledWith('http://test.com/');
@@ -97,7 +97,7 @@ describe('AppControlsComponent', () => {
   it('should open portal menu and show other portals', async () => {
     const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
 
-    const otherPortalsButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-menu-down' }));
+    const otherPortalsButton = await loader.getHarness(TnIconHarness.with({ name: 'menu-down' }));
     expect(otherPortalsButton).toExist();
 
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
@@ -123,7 +123,7 @@ describe('AppControlsComponent', () => {
     const restartSpy = jest.spyOn(spectator.inject(ApplicationsService), 'restartApplication');
     const dialogSpy = jest.spyOn(spectator.inject(DialogService), 'jobDialog');
 
-    const restartButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-restart' }));
+    const restartButton = await loader.getHarness(TnIconHarness.with({ name: 'restart' }));
     await restartButton.click();
 
     expect(restartSpy).toHaveBeenCalledWith(app.name);
@@ -137,9 +137,9 @@ describe('AppControlsComponent', () => {
   });
 
   it('checks redirect to installed apps page', async () => {
-    jest.spyOn(spectator.inject(Router), 'navigate');
+    jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
 
-    const appButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-cog' }));
+    const appButton = await loader.getHarness(TnIconHarness.with({ name: 'cog' }));
     await appButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.metadata.train, app.id]);
@@ -161,7 +161,7 @@ describe('AppControlsComponent', () => {
     spectator.detectChanges();
 
     const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
-    const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
+    const portalButton = await loader.getHarness(TnIconHarness.with({ name: 'web' }));
     await portalButton.click();
 
     expect(redirectSpy).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');

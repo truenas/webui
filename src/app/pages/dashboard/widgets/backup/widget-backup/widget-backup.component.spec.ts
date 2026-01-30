@@ -202,7 +202,7 @@ describe('WidgetBackupComponent', () => {
 
     it('shows alert status when there are errors', async () => {
       const header = await widgetBackup.getHeader();
-      expect(header.icon).toBe('mdi-alert');
+      expect(header.icon).toBe('alert');
       expect(header.message).toBe('3 of 8 tasks failed');
     });
   });
@@ -315,7 +315,7 @@ describe('WidgetBackupComponent', () => {
 
     it('shows success status when there are no errors', async () => {
       const header = await widgetBackup.getHeader();
-      expect(header.icon).toBe('mdi-check-circle');
+      expect(header.icon).toBe('check-circle');
       expect(header.message).toBeFalsy();
     });
   });

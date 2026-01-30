@@ -57,7 +57,8 @@
     left: 4px;
     opacity: 0.2;
     position: absolute;
-    top: 3px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .search-input {
@@ -83,7 +84,7 @@
     top: 0;
     user-select: none;
 
-    ix-icon {
+    tn-icon {
       height: 17px;
       width: 17px;
 

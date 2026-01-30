@@ -3,11 +3,11 @@ import { MatButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DatasetUnlockComponent,
@@ -24,7 +24,7 @@ import {
     MatDialogContent,
     MatDivider,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     FormActionsComponent,
     MatButton,
   ],

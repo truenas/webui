@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, output, signal, inject } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { take } from 'rxjs';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { terminalFontSizeUpdated } from 'app/store/preferences/preferences.actions';
@@ -18,8 +17,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    IxIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
     TestDirective,
   ],

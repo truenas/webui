@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -10,7 +11,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -82,7 +82,7 @@ describe('JbofListComponent', () => {
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'description 1');
+    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'description 1');
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(JbofFormComponent, {
@@ -91,7 +91,7 @@ describe('JbofListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'description 2');
+    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'description 2');
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

@@ -42,7 +42,7 @@
         (keydown.enter)="openTruenasConnectDialog()"
         (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
       >
-        <ix-icon name="info"></ix-icon>
+        <tn-icon name="information" library="mdi"></tn-icon>
         <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
       </div>
     }
@@ -56,7 +56,7 @@
         (keydown.enter)="navigateToUsers()"
         (keydown.space)="navigateToUsers(); $event.preventDefault()"
       >
-        <ix-icon name="info"></ix-icon>
+        <tn-icon name="information" library="mdi"></tn-icon>
         <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
       </div>
     }

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { terminalFontSizeUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -40,16 +40,16 @@ describe('TerminalFontSizeComponent', () => {
   });
 
   it('emits and stores value when font size increases', async () => {
-    const icon = await loader.getHarness(IxIconHarness.with({ name: 'add' }));
-    await icon.click();
+    const button = await loader.getHarness(TnIconButtonHarness.with({ name: 'plus' }));
+    await button.click();
     expect(spectator.component.fontSizeChanged.emit).toHaveBeenCalledWith(17);
     expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(terminalFontSizeUpdated({ fontSize: 17 }));
   });
 
   it('does not let font size to exceed max value', async () => {
-    const icon = await loader.getHarness(IxIconHarness.with({ name: 'add' }));
+    const button = await loader.getHarness(TnIconButtonHarness.with({ name: 'plus' }));
     for (let i = 0; i < 25 - 16 + 1; i++) {
-      await icon.click();
+      await button.click();
     }
 
     expect(spectator.component.fontSizeChanged.emit).toHaveBeenLastCalledWith(25);
@@ -57,9 +57,9 @@ describe('TerminalFontSizeComponent', () => {
   });
 
   it('does not go below min font size', async () => {
-    const icon = await loader.getHarness(IxIconHarness.with({ name: 'remove' }));
+    const button = await loader.getHarness(TnIconButtonHarness.with({ name: 'minus' }));
     for (let i = 0; i < 16 - 10 + 1; i++) {
-      await icon.click();
+      await button.click();
     }
 
     expect(spectator.component.fontSizeChanged.emit).toHaveBeenLastCalledWith(10);

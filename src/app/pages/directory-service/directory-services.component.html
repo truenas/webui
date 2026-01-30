@@ -59,7 +59,7 @@
             [matTooltip]="'More Actions' | translate"
             [attr.aria-label]="'More Actions' | translate"
           >
-            <ix-icon name="more_vert"></ix-icon>
+            <tn-icon name="dots-vertical" library="mdi"></tn-icon>
           </button>
 
           <mat-menu #actionsMenu="matMenu">
@@ -69,7 +69,7 @@
               [ixUiSearch]="searchableElements.elements.settings"
               (click)="card.onSettingsPressed()"
             >
-              <ix-icon name="settings"></ix-icon>
+              <tn-icon name="cog" library="mdi"></tn-icon>
               <span>{{ 'Settings' | translate }}</span>
             </button>
             <button 
@@ -80,7 +80,7 @@
               [disabled]="isLoading()"
               (click)="onRebuildCachePressed()"
             >
-              <ix-icon name="refresh"></ix-icon>
+              <tn-icon name="refresh" library="mdi"></tn-icon>
               <span>{{ 'Rebuild Directory Service Cache' | translate }}</span>
             </button>
             @if (card.showLeaveButton) {
@@ -90,7 +90,7 @@
                 [ixTest]="[card.title, 'leave']"
                 (click)="card.onLeavePressed()"
               >
-                <ix-icon name="cancel"></ix-icon>
+                <tn-icon name="close-circle" library="mdi"></tn-icon>
                 <span>{{ 'Leave' | translate }}</span>
               </button>
             }

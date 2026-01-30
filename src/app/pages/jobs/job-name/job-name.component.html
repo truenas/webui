@@ -2,17 +2,19 @@
   <div class="job-icon">
     @switch (job().state) {
       @case (JobState.Success) {
-        <ix-icon
-          name="check_circle_outline"
+        <tn-icon
+          name="check-circle-outline"
+          library="mdi"
           class="success"
-        ></ix-icon>
+        ></tn-icon>
       }
       @case (JobState.Failed) {
-        <ix-icon
-          name="highlight_off"
+        <tn-icon
+          name="close-circle"
+          library="mdi"
           class="failed"
           [matTooltip]="job().error"
-        ></ix-icon>
+        ></tn-icon>
       }
       @case (JobState.Running) {
         <mat-spinner
@@ -22,10 +24,10 @@
         ></mat-spinner>
       }
       @case (JobState.Waiting) {
-        <ix-icon class="waiting" name="schedule"></ix-icon>
+        <tn-icon class="waiting" name="clock-outline" library="mdi"></tn-icon>
       }
       @case (JobState.Aborted) {
-        <ix-icon class="aborted" name="report"></ix-icon>
+        <tn-icon class="aborted" name="alert-circle" library="mdi"></tn-icon>
       }
     }
   </div>
@@ -60,6 +62,6 @@
     [attr.aria-label]="'Abort' | translate"
     (click)="onAborted()"
   >
-    <ix-icon name="mdi-close-circle"></ix-icon>
+    <tn-icon name="close-circle" library="mdi"></tn-icon>
   </button>
 }

@@ -2,8 +2,7 @@ import { Component, ChangeDetectionStrategy, computed, input, inject } from '@an
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -14,7 +13,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./truenas-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     RouterLink,
   ],
 })
@@ -39,24 +38,24 @@ export class TruenasLogoComponent {
 
   readonly logoTypeIcon = computed(() => {
     return this.useWhite()
-      ? iconMarker('ix-truenas-logo-type')
-      : iconMarker('ix-truenas-logo-type-color');
+      ? tnIconMarker('truenas-logo-type', 'custom')
+      : tnIconMarker('truenas-logo-type-color', 'custom');
   });
 
   readonly logoMarkIcon = computed(() => {
     return this.useWhite()
-      ? iconMarker('ix-truenas-logo-mark')
-      : iconMarker('ix-truenas-logo-mark-color');
+      ? tnIconMarker('truenas-logo-mark', 'custom')
+      : tnIconMarker('truenas-logo-mark-color', 'custom');
   });
 
   readonly fullSizeIcon = computed(() => {
     if (this.isEnterprise()) {
       return this.useWhite()
-        ? iconMarker('ix-truenas-logo-enterprise')
-        : iconMarker('ix-truenas-logo-enterprise-color');
+        ? tnIconMarker('truenas-logo-enterprise', 'custom')
+        : tnIconMarker('truenas-logo-enterprise-color', 'custom');
     }
     return this.useWhite()
-      ? iconMarker('ix-truenas-logo-ce')
-      : iconMarker('ix-truenas-logo-ce-color');
+      ? tnIconMarker('truenas-logo-ce', 'custom')
+      : tnIconMarker('truenas-logo-ce-color', 'custom');
   });
 }

@@ -1,19 +1,19 @@
 import { DecimalPipe } from '@angular/common';
 import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
   Observable, Subscription, map,
 } from 'rxjs';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -57,9 +57,8 @@ export interface JobProgressDialogConfig<Result> {
     MatProgressBar,
     MatDialogActions,
     MatButton,
-    MatIconButton,
     MatDialogClose,
-    IxIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
     DecimalPipe,
     TestDirective,

@@ -4,6 +4,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { combineLatest, Observable, of } from 'rxjs';
 import {
   delay,
@@ -12,7 +13,6 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -33,7 +33,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
     MatProgressBar,
     MatCard,
     MatCardContent,
-    IxIconComponent,
+    TnIconComponent,
     SigninFormComponent,
     SetAdminPasswordFormComponent,
     TrueCommandStatusComponent,

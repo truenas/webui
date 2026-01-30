@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { tnIconMarker } from '@truenas/ui-components';
 import { SnackbarOptions } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -42,7 +42,7 @@ export class SnackbarService {
   success(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
     return this.open({
       message,
-      icon: iconMarker('mdi-check'),
+      icon: tnIconMarker('check', 'mdi'),
       iconCssColor: 'var(--green)',
       politeness: 'assertive',
       panelClass: 'ix-snackbar-high-priority',
@@ -53,7 +53,7 @@ export class SnackbarService {
   error(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
     return this.open({
       message,
-      icon: iconMarker('mdi-alert-circle'),
+      icon: tnIconMarker('alert-circle', 'mdi'),
       iconCssColor: 'var(--red)',
       politeness: 'assertive',
       button: {

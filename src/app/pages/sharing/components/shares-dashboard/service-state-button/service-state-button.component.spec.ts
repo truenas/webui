@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 
@@ -21,7 +21,7 @@ describe('ServiceStateButtonComponent', () => {
       MapValuePipe,
     ],
     declarations: [
-      MockComponent(IxIconComponent),
+      MockComponent(TnIconComponent),
       MockDirective(MatTooltip),
     ],
   });

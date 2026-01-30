@@ -5,7 +5,7 @@
       autocomplete="username"
       name="username"
       class="username-input"
-      [prefixIcon]="iconMarker('person')"
+      [prefixIcon]="tnIconMarker('account', 'mdi')"
       [label]="'Username' | translate"
     ></ix-input>
 
@@ -14,7 +14,7 @@
       type="password"
       name="password"
       autocomplete="current-password"
-      [prefixIcon]="iconMarker('mdi-lock')"
+      [prefixIcon]="tnIconMarker('lock', 'mdi')"
       [label]="'Password' | translate"
     ></ix-input>
 
@@ -46,7 +46,7 @@
     <ix-input
       formControlName="otp"
       autocomplete="one-time-code"
-      [prefixIcon]="iconMarker('phonelink')"
+      [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
     ></ix-input>

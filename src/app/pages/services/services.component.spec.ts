@@ -7,6 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -18,7 +19,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -119,7 +119,7 @@ describe('ServicesComponent', () => {
   describe('edit', () => {
     it('should open iSCSI global configuration form', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Iscsi) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
@@ -127,7 +127,7 @@ describe('ServicesComponent', () => {
 
     it('should open FTP configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ftp) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
@@ -135,7 +135,7 @@ describe('ServicesComponent', () => {
 
     it('should open NFS configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Nfs) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
@@ -143,7 +143,7 @@ describe('ServicesComponent', () => {
 
     it('should open SNMP configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Snmp) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
@@ -151,7 +151,7 @@ describe('ServicesComponent', () => {
 
     it('should open UPS configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ups) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
@@ -159,7 +159,7 @@ describe('ServicesComponent', () => {
 
     it('should open SSH configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ssh) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSshComponent);
@@ -167,7 +167,7 @@ describe('ServicesComponent', () => {
 
     it('should open SMB configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Cifs) + 1;
-      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'pencil' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmbComponent);
@@ -205,7 +205,7 @@ describe('ServicesComponent', () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
     const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ftp) + 1;
     const startServiceButton = await table.getHarnessInCell(
-      IxIconHarness.with({ name: 'mdi-play-circle' }),
+      TnIconHarness.with({ name: 'play-circle' }),
       serviceIndex,
       1,
     );

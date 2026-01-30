@@ -8,6 +8,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -15,7 +16,6 @@ import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.inter
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
@@ -64,7 +64,7 @@ export interface BootPoolActionEvent {
     BootenvNodeItemComponent,
     MatIconButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     FormatDateTimePipe,
     TreeViewComponent,

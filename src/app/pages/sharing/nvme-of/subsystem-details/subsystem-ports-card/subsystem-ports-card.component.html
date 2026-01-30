@@ -11,10 +11,11 @@
   <mat-card-content>
     @if (!subsystem().ports?.length) {
       <div class="no-ports-warning">
-        <ix-icon
-          name="mdi-alert"
+        <tn-icon
+          name="alert"
+          library="mdi"
           class="icon"
-        ></ix-icon>
+        ></tn-icon>
 
         <div>
           {{ helptext.noPortsWarning | translate }}
@@ -35,7 +36,7 @@
                   [matTooltip]="'Remove port from the subsystem' | translate"
                   (click)="onRemoveAssociation(port)"
                 >
-                  <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
+                  <tn-icon class="icon" name="link-variant-off" library="mdi"></tn-icon>
                 </button>
               </span>
             </span>

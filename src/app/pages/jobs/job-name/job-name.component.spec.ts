@@ -5,12 +5,12 @@ import { MatProgressSpinnerHarness } from '@angular/material/progress-spinner/te
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 
@@ -49,27 +49,27 @@ describe('JobNameComponent', () => {
 
   describe('rendering', () => {
     it('shows correct icon based on job status', async () => {
-      let icon: IxIconHarness;
+      let icon: TnIconHarness;
 
       // Success
       spectator.setInput('job', { ...job, state: JobState.Success });
-      icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.job-icon' }));
-      expect(await icon.getName()).toBe('check_circle_outline');
+      icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.job-icon' }));
+      expect(await icon.getName()).toBe('check-circle-outline');
 
       // Failed
       spectator.setInput('job', { ...job, state: JobState.Failed });
-      icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.job-icon' }));
-      expect(await icon.getName()).toBe('highlight_off');
+      icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.job-icon' }));
+      expect(await icon.getName()).toBe('close-circle');
 
       // Waiting
       spectator.setInput('job', { ...job, state: JobState.Waiting });
-      icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.job-icon' }));
-      expect(await icon.getName()).toBe('schedule');
+      icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.job-icon' }));
+      expect(await icon.getName()).toBe('clock-outline');
 
       // Aborted
       spectator.setInput('job', { ...job, state: JobState.Aborted });
-      icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.job-icon' }));
-      expect(await icon.getName()).toBe('report');
+      icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.job-icon' }));
+      expect(await icon.getName()).toBe('alert-circle');
     });
 
     it('shows job description if it is available', () => {
@@ -114,7 +114,7 @@ describe('JobNameComponent', () => {
     });
 
     it('allows to abort a job when it is in running state and is abortable', async () => {
-      const abortIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-close-circle' }));
+      const abortIcon = await loader.getHarness(TnIconHarness.with({ name: 'close-circle' }));
       await abortIcon.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(

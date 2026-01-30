@@ -1,5 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -8,7 +9,6 @@ import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
@@ -62,7 +62,7 @@ describe('ServiceStatusCellComponent', () => {
   it('shows "Start Service" icon when service is stopped', async () => {
     setupTest({ service: ServiceName.Ftp, state: ServiceStatus.Stopped } as Service);
 
-    const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+    const startIcon = await loader.getHarness(TnIconHarness.with({ name: 'play-circle' }));
     expect(startIcon).toBeTruthy();
 
     await startIcon.click();
@@ -73,7 +73,7 @@ describe('ServiceStatusCellComponent', () => {
   it('shows "Stop Service" icon when service is running', async () => {
     setupTest({ service: ServiceName.Ftp, state: ServiceStatus.Running } as Service);
 
-    const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+    const stopIcon = await loader.getHarness(TnIconHarness.with({ name: 'stop-circle' }));
     expect(stopIcon).toBeTruthy();
 
     await stopIcon.click();

@@ -33,7 +33,7 @@
           [matMenuTriggerFor]="advancedMenu"
           [ixTest]="['advanced-actions', pool()?.name]"
         >
-          <ix-icon name="more_vert"></ix-icon>
+          <tn-icon name="dots-vertical" library="mdi"></tn-icon>
         </button>
 
         <mat-menu #advancedMenu="matMenu">
@@ -44,7 +44,7 @@
             [ixUiSearch]="searchableElements.elements.expand"
             (click)="onExpand()"
           >
-            <ix-icon name="trending_up"></ix-icon>
+            <tn-icon name="trending-up" library="mdi"></tn-icon>
             {{ 'Expand Pool' | translate }}
           </button>
 
@@ -54,7 +54,7 @@
             [ixTest]="['auto-trim', pool()?.name]"
             (click)="onEditAutotrim()"
           >
-            <ix-icon name="content_cut"></ix-icon>
+            <tn-icon name="content-cut" library="mdi"></tn-icon>
             {{ 'Auto TRIM' | translate }}
           </button>
         </mat-menu>

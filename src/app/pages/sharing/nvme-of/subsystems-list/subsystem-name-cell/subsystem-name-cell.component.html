@@ -3,8 +3,9 @@
 </span>
 
 @if (showWarning()) {
-  <ix-icon
-    name="warning"
+  <tn-icon
+    name="alert"
+    library="mdi"
     [matTooltip]="'This subsystem is currently not usable due to missing required configuration.' | translate"
-  ></ix-icon>
+  ></tn-icon>
 }

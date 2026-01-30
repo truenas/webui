@@ -14,7 +14,7 @@
       (keydown.enter)="toggleLearnMore()"
     >
       {{ 'Learn more' | translate }}
-      <ix-icon [name]="showLearnMore() ? 'mdi-chevron-up' : 'mdi-chevron-down'"></ix-icon>
+      <tn-icon library="mdi" [name]="showLearnMore() ? 'chevron-up' : 'chevron-down'"></tn-icon>
     </a>
     @if (showLearnMore()) {
       <div class="learn-more-content">

@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -18,7 +18,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -39,12 +38,11 @@ import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/dis
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxIconComponent,
+    TnIconComponent,
     IxSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
-    MatTooltip,
     TestDirective,
     TranslateModule,
     TranslateOptionsPipe,
@@ -71,6 +69,7 @@ export class DiskBulkEditComponent {
 
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulkEdit;
+  protected readonly disksTooltip = this.translate.instant(helptextDisks.bulkEdit.disks.tooltip);
   readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
   readonly advpowermgmtOptions$ = of(
     helptextDisks.advancedPowerManagementOptions,

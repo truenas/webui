@@ -3,9 +3,9 @@ import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { EnclosureElementType, enclosureElementTypeLabels } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface ViewOption {
@@ -21,7 +21,7 @@ export interface ViewOption {
     MatButton,
     TestDirective,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     TranslateModule,

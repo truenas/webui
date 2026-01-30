@@ -71,7 +71,7 @@
       [disabled]="inProgress()"
       (click)="start(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-play-circle"></ix-icon>
+      <tn-icon name="play-circle" library="mdi"></tn-icon>
     </button>
   } @else {
     <button
@@ -83,7 +83,7 @@
       [matTooltip]="'Restart App' | translate"
       (click)="restart(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-restart"></ix-icon>
+      <tn-icon name="restart" library="mdi"></tn-icon>
     </button>
 
     <button
@@ -94,11 +94,11 @@
       [matTooltip]="'Stop' | translate"
       (click)="stop(); $event.stopPropagation()"
     >
-      <ix-icon name="mdi-stop-circle"></ix-icon>
+      <tn-icon name="stop-circle" library="mdi"></tn-icon>
     </button>
   }
 </div>
 
 <div class="cell-clickable">
-  <ix-icon name="mdi-chevron-right"></ix-icon>
+  <tn-icon name="chevron-right" library="mdi"></tn-icon>
 </div>

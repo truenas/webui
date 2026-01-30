@@ -1,13 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
@@ -60,7 +60,7 @@ describe('SubsystemPortsCardComponent', () => {
     const warning = spectator.query('.no-ports-warning');
     expect(warning).toBeTruthy();
     expect(warning.textContent).toContain(helptextNvmeOf.noPortsWarning);
-    expect(warning).toHaveDescendant('ix-icon');
+    expect(warning).toHaveDescendant('tn-icon');
   });
 
   it('has a menu-button to add new ports', () => {
@@ -125,7 +125,7 @@ describe('SubsystemPortsCardComponent', () => {
     });
 
     it('deletes a port association when delete icon is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-link-variant-off' }));
+      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'link-variant-off' }));
       await deleteIcon.click();
 
       expect(spectator.inject(NvmeOfService).removePortAssociation).toHaveBeenCalledWith(subsystem, subsystem.ports[0]);

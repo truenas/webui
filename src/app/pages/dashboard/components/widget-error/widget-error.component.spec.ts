@@ -17,7 +17,7 @@ describe('WidgetErrorComponent', () => {
   });
 
   it('renders an icon', () => {
-    expect(spectator.query('ix-icon.icon')).toExist();
+    expect(spectator.query('tn-icon.icon')).toExist();
   });
 
   it('renders the error message provided', () => {

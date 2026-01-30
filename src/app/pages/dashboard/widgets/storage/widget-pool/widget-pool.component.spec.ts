@@ -1,5 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { Ng2FittextDirective } from 'ng2-fittext';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
@@ -9,7 +10,6 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
@@ -48,7 +48,7 @@ describe('WidgetPoolComponent', () => {
     imports: [
       NgxSkeletonLoaderComponent,
       Ng2FittextDirective,
-      MockComponent(IxIconComponent),
+      TnIconComponent,
       MockComponent(PoolUsageGaugeComponent),
       MockComponent(PoolStatusComponent),
       MockComponent(DisksWithZfsErrorsComponent),

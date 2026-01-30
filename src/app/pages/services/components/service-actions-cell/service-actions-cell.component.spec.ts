@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuditService } from 'app/enums/audit.enum';
@@ -8,7 +9,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
@@ -92,7 +92,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open NVMe-oF global configuration form', async () => {
       setup({ service: ServiceName.NvmeOf, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
@@ -101,7 +101,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open iSCSI global configuration form', async () => {
       setup({ service: ServiceName.Iscsi, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
@@ -110,7 +110,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open FTP configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.Ftp, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
@@ -119,7 +119,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open NFS configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.Nfs, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
@@ -128,7 +128,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open SNMP configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.Snmp, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
@@ -137,7 +137,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open UPS configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.Ups, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
@@ -146,7 +146,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open SSH configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.Ssh, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSshComponent);
@@ -155,7 +155,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open SMB configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.Cifs, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmbComponent);
@@ -164,7 +164,7 @@ describe('ServiceActionsCellComponent', () => {
     it('should open WebShare configuration when edit button is pressed', async () => {
       setup({ service: ServiceName.WebShare, state: ServiceStatus.Stopped });
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceWebshareComponent);

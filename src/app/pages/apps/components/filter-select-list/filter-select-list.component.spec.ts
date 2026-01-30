@@ -2,10 +2,10 @@ import { Signal, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 
 describe('FilterSelectListComponent', () => {
@@ -23,7 +23,7 @@ describe('FilterSelectListComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
-      MockComponent(IxIconComponent),
+      MockComponent(TnIconComponent),
     ],
   });
 
@@ -68,13 +68,13 @@ describe('FilterSelectListComponent', () => {
       control.setValue('value1');
       spectator.detectComponentChanges();
 
-      let icons = spectator.queryAll('ix-icon');
+      let icons = spectator.queryAll('tn-icon');
       expect(icons).toHaveLength(1);
       expect(icons[0].parentNode).toHaveText('label1');
 
       control.setValue('value2');
       spectator.detectComponentChanges();
-      icons = spectator.queryAll('ix-icon');
+      icons = spectator.queryAll('tn-icon');
       expect(icons).toHaveLength(1);
       expect(icons[0].parentNode).toHaveText('label2');
     });
@@ -84,11 +84,11 @@ describe('FilterSelectListComponent', () => {
 
       items[0].click();
       spectator.detectComponentChanges();
-      expect(items[0]).toHaveDescendant('ix-icon[name="check_circle"]');
+      expect(items[0]).toHaveDescendant('tn-icon[name="check-circle"]');
 
       items[2].click();
       spectator.detectComponentChanges();
-      expect(items[2]).toHaveDescendant('ix-icon[name="check_circle"]');
+      expect(items[2]).toHaveDescendant('tn-icon[name="check-circle"]');
     });
   });
 
@@ -106,14 +106,14 @@ describe('FilterSelectListComponent', () => {
       control.setValue(['value1']);
       spectator.detectComponentChanges();
 
-      let icons = spectator.queryAll('ix-icon');
+      let icons = spectator.queryAll('tn-icon');
       expect(icons).toHaveLength(1);
       expect(icons[0].parentNode).toHaveText('label1');
 
       control.setValue(['value1', 'value2']);
       spectator.detectComponentChanges();
 
-      icons = spectator.queryAll('ix-icon');
+      icons = spectator.queryAll('tn-icon');
       expect(icons).toHaveLength(2);
       expect(icons[0].parentNode).toHaveText('label1');
       expect(icons[1].parentNode).toHaveText('label2');
@@ -124,11 +124,11 @@ describe('FilterSelectListComponent', () => {
 
       items[0].click();
       spectator.detectComponentChanges();
-      expect(items[0]).toHaveDescendant('ix-icon[name="check_circle"]');
+      expect(items[0]).toHaveDescendant('tn-icon[name="check-circle"]');
 
       items[2].click();
       spectator.detectComponentChanges();
-      expect(items[2]).toHaveDescendant('ix-icon[name="check_circle"]');
+      expect(items[2]).toHaveDescendant('tn-icon[name="check-circle"]');
     });
   });
 });

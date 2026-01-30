@@ -14,6 +14,7 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash-es';
 import { Subject, Subscription } from 'rxjs';
@@ -36,7 +37,6 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import {
   TreeVirtualScrollViewComponent,
@@ -69,7 +69,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FakeProgressBarComponent,
     BasicSearchComponent,
     DatasetNodeComponent,
-    IxIconComponent,
+    TnIconComponent,
     RouterLink,
     MatIconButton,
     CdkTreeNodePadding,

@@ -2,16 +2,15 @@
 
 <h1 matDialogTitle>{{ 'Send Feedback' | translate }}</h1>
 
-<button
-  mat-icon-button
+<tn-icon-button
   mat-dialog-close
   class="close-feedback-dialog"
   ixTest="close-feedback-dialog"
+  name="close"
+  library="mdi"
   [disabled]="isLoading"
   [aria-label]="'Close Feedback Dialog' | translate"
->
-  <ix-icon name="clear"></ix-icon>
-</button>
+></tn-icon-button>
 
 @if (isLoadingTypes) {
   <div class="placeholder">

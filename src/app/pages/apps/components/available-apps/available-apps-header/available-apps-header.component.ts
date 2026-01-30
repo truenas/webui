@@ -5,6 +5,7 @@ import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   BehaviorSubject,
@@ -20,8 +21,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
@@ -42,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     MatAnchor,
     IxChipsComponent,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     NgxSkeletonLoaderModule,
     AsyncPipe,
@@ -171,5 +170,5 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     });
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }

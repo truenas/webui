@@ -9,6 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -16,7 +17,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import {
   App, AppContainerDetails, appContainerStateLabels,
 } from 'app/interfaces/app.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -38,7 +38,7 @@ import {
     MatTooltip,
     RequiresRolesDirective,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     MapValuePipe,
     MatIconButton,
     MatCardContent,

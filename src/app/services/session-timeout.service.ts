@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
   filter, Subscription,
@@ -17,7 +18,6 @@ import {
   SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -108,7 +108,7 @@ export class SessionTimeoutService {
   showSessionExpiredMessage(): void {
     this.snackbar.open({
       message: this.translate.instant('Session expired'),
-      icon: iconMarker('mdi-clock-alert-outline'),
+      icon: tnIconMarker('clock-alert-outline', 'mdi'),
       iconCssColor: 'var(--orange)',
       button: {
         title: this.translate.instant('Close'),

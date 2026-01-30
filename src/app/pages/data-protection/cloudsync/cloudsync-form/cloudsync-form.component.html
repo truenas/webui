@@ -66,10 +66,11 @@
             (click)="goToManageCredentials()"
           >
             <div class="link">
-              {{ 'Manage Credentials' | translate }}<ix-icon
-                name="open_in_new"
+              {{ 'Manage Credentials' | translate }}<tn-icon
+                name="open-in-new"
+                library="mdi"
                 [attr.aria-label]="'Open Backup Credentials in full page' | translate"
-              ></ix-icon>
+              ></tn-icon>
             </div>
           </a>
           @if (form.controls.credentials.enabled) {

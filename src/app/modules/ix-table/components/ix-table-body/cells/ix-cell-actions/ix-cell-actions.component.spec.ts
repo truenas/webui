@@ -2,10 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconHarness, tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 
@@ -41,7 +40,7 @@ describe('IxCellActionsComponent', () => {
 
   it('renders action buttons', async () => {
     const mockAction: IconActionConfig<TestTableData> = {
-      iconName: iconMarker('mdi-pencil'),
+      iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: 'Edit',
       onClick: jest.fn(),
     };
@@ -52,14 +51,14 @@ describe('IxCellActionsComponent', () => {
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
     expect(buttons).toHaveLength(1);
 
-    const icon = await loader.getHarness(IxIconHarness);
+    const icon = await loader.getHarness(TnIconHarness);
     expect(await icon.getName()).toBe('mdi-pencil');
   });
 
   it('renders multiple action buttons', async () => {
     const actions: IconActionConfig<TestTableData>[] = [
-      { iconName: iconMarker('mdi-pencil'), tooltip: 'Edit', onClick: jest.fn() },
-      { iconName: iconMarker('mdi-delete'), tooltip: 'Delete', onClick: jest.fn() },
+      { iconName: tnIconMarker('pencil', 'mdi'), tooltip: 'Edit', onClick: jest.fn() },
+      { iconName: tnIconMarker('delete', 'mdi'), tooltip: 'Delete', onClick: jest.fn() },
     ];
 
     spectator.component.actions = actions;
@@ -72,7 +71,7 @@ describe('IxCellActionsComponent', () => {
   it('calls onClick handler when button is clicked', async () => {
     const onClickSpy = jest.fn();
     const mockAction: IconActionConfig<TestTableData> = {
-      iconName: iconMarker('mdi-pencil'),
+      iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: 'Edit',
       onClick: onClickSpy,
     };
@@ -88,7 +87,7 @@ describe('IxCellActionsComponent', () => {
 
   it('disables button when disabled function returns true', async () => {
     const mockAction: IconActionConfig<TestTableData> = {
-      iconName: iconMarker('mdi-pencil'),
+      iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: 'Edit',
       onClick: jest.fn(),
       disabled: () => of(true),
@@ -103,7 +102,7 @@ describe('IxCellActionsComponent', () => {
 
   it('enables button when disabled function returns false', async () => {
     const mockAction: IconActionConfig<TestTableData> = {
-      iconName: iconMarker('mdi-pencil'),
+      iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: 'Edit',
       onClick: jest.fn(),
       disabled: () => of(false),
@@ -118,7 +117,7 @@ describe('IxCellActionsComponent', () => {
 
   it('hides button when hidden function returns true', async () => {
     const mockAction: IconActionConfig<TestTableData> = {
-      iconName: iconMarker('mdi-pencil'),
+      iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: 'Edit',
       onClick: jest.fn(),
       hidden: () => of(true),
@@ -133,7 +132,7 @@ describe('IxCellActionsComponent', () => {
 
   it('shows button when hidden function returns false', async () => {
     const mockAction: IconActionConfig<TestTableData> = {
-      iconName: iconMarker('mdi-pencil'),
+      iconName: tnIconMarker('pencil', 'mdi'),
       tooltip: 'Edit',
       onClick: jest.fn(),
       hidden: () => of(false),

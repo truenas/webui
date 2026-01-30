@@ -4,9 +4,9 @@ import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -17,7 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   imports: [
     MatDialogTitle,
-    IxIconComponent,
+    TnIconComponent,
     MatDialogContent,
     MatDialogActions,
     MatButton,

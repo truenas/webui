@@ -5,6 +5,7 @@ import {
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -12,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -39,7 +39,7 @@ export interface InheritedWebShare {
     MatCardTitle,
     TranslateModule,
     MatCardContent,
-    IxIconComponent,
+    TnIconComponent,
     RouterLink,
     TestDirective,
     RequiresRolesDirective,

@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   combineLatest,
   distinctUntilChanged,
@@ -29,7 +30,6 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { dateProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -53,7 +53,7 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
     SearchInputComponent,
     TranslateModule,
     ExportButtonComponent,
-    IxIconComponent,
+    TnIconComponent,
     TestDirective,
     IxSelectComponent,
     ReactiveFormsModule,

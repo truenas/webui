@@ -1,10 +1,9 @@
-<button
-  mat-icon-button
+<tn-icon-button
   class="debug-panel-toggle"
   ixTest="debug-panel-toggle"
+  library="mdi"
   [class.active-mocks]="hasActiveMocks()"
+  [name]="isPanelOpen() ? 'chevron-right' : 'bug'"
   [attr.aria-label]="isPanelOpen() ? 'Close debug panel' : 'Open debug panel'"
   (click)="onToggle()"
->
-  <ix-icon [name]="isPanelOpen() ? 'chevron_right' : 'bug_report'"></ix-icon>
-</button>
+></tn-icon-button>

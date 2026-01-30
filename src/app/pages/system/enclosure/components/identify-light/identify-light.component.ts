@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -18,7 +18,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./identify-light.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TestDirective,
     TranslateModule,

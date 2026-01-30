@@ -296,6 +296,13 @@ describe('VmListComponent', () => {
         name: 'new_vm',
         devices: [],
         display_available: false,
+        status: {
+          state: VmState.Stopped,
+          pid: null,
+          domain_state: 'SHUTOFF',
+        },
+        autostart: false,
+        bootloader: VmBootloader.Uefi,
       } as VirtualMachine;
 
       vmSubscriptionSubject$.next({

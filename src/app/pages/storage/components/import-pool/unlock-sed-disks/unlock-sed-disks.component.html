@@ -28,7 +28,7 @@
               [attr.aria-label]="'Remove disk exception' | translate"
               (click)="removeException($index)"
             >
-              <ix-icon name="mdi-close"></ix-icon>
+              <tn-icon name="close" library="mdi"></tn-icon>
             </button>
             <ix-select
               formControlName="diskName"
@@ -54,7 +54,7 @@
         [disabled]="availableDisksForException().length === 0"
         (click)="addException()"
       >
-        <ix-icon name="mdi-plus"></ix-icon>
+        <tn-icon name="plus" library="mdi"></tn-icon>
         {{ 'Add Disk Exception' | translate }}
       </button>
     </div>

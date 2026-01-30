@@ -13,7 +13,7 @@ import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+
 
 describe('IxFormGlossaryComponent', () => {
   let spectator: SpectatorHost<IxFormGlossaryComponent>;
@@ -27,7 +27,7 @@ describe('IxFormGlossaryComponent', () => {
       IxInputComponent,
       ReactiveFormsModule,
       IxFormSectionComponent,
-      IxIconComponent,
+
       MatAutocomplete,
     ],
     providers: [

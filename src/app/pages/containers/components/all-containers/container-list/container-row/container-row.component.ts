@@ -5,6 +5,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';
@@ -17,7 +18,6 @@ import {
   ContainerStopParams,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -36,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./container-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     TestDirective,
     TranslateModule,
     MatTooltipModule,

@@ -272,9 +272,9 @@ $scrollbar-offset: 20px;
     }
   }
 
-  .nested-tree-root-node ix-icon.mobile-actions,
-  .ix-tree-node ix-icon.mobile-actions,
-  .ix-nested-tree-node ix-icon.mobile-actions {
+  .nested-tree-root-node tn-icon.mobile-actions,
+  .ix-tree-node tn-icon.mobile-actions,
+  .ix-nested-tree-node tn-icon.mobile-actions {
     display: none;
 
     @media (max-width: $breakpoint-hidden) {

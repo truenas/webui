@@ -3,13 +3,12 @@ import { ChangeDetectionStrategy, Component, computed, input, inject } from '@an
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { v4 as uuidv4 } from 'uuid';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
-import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +18,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatTooltipModule,
-    IxIconComponent,
+    TnIconComponent,
     NgClass,
   ],
 })
@@ -50,20 +49,20 @@ export class InterfaceStatusIconComponent {
     return this.translate.instant('Received: {received}/s Sent: {sent}/s', { sent, received });
   });
 
-  statusIcon = computed<MarkedIcon>(() => {
+  statusIcon = computed<string>(() => {
     const update = this.update();
     const hasSent = update ? update.sent_bytes_rate > this.minRate : false;
     const hasReceived = update ? update.received_bytes_rate > this.minRate : false;
 
     if (!this.isLinkUp()) {
-      return iconMarker('ix-network-upload-download-disabled');
+      return tnIconMarker('tn-network-upload-download-disabled');
     }
 
     switch (true) {
-      case hasSent && hasReceived: return iconMarker('ix-network-upload-download-both');
-      case hasSent: return iconMarker('ix-network-upload-download-up');
-      case hasReceived: return iconMarker('ix-network-upload-download-down');
-      default: return iconMarker('ix-network-upload-download');
+      case hasSent && hasReceived: return tnIconMarker('tn-network-upload-download-both');
+      case hasSent: return tnIconMarker('tn-network-upload-download-up');
+      case hasReceived: return tnIconMarker('tn-network-upload-download-down');
+      default: return tnIconMarker('tn-network-upload-download');
     }
   });
 

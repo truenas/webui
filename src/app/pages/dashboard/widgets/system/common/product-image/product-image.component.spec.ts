@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { TnIconHarness } from '@truenas/ui-components';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 
 describe('ProductImageComponent', () => {
@@ -28,10 +28,10 @@ describe('ProductImageComponent', () => {
       });
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      const icon = await loader.getHarness(IxIconHarness);
+      const icon = await loader.getHarness(TnIconHarness);
 
       expect(spectator.query('img')).not.toExist();
-      expect(await icon.getName()).toBe('ix-truenas-logo-mark');
+      expect(await icon.getName()).toBe('tn-truenas-logo-mark');
       expect(spectator.query('.product-image-text')).toHaveExactText('(Unsupported Hardware)');
     });
   });

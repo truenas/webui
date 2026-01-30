@@ -20,7 +20,7 @@ describe('WidgetStaleDataNoticeComponent', () => {
   });
 
   it('should display an icon', () => {
-    const icon = spectator.query('ix-icon');
+    const icon = spectator.query('tn-icon');
     expect(icon).toExist();
   });
 

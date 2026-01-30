@@ -7,13 +7,13 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
 import { VDevNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
   isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
@@ -46,7 +46,7 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
     FormsModule,
     RouterLinkActive,
     TopologyItemNodeComponent,
-    IxIconComponent,
+    TnIconComponent,
     VDevGroupNodeComponent,
     MatIconButton,
     TranslateModule,

@@ -4,6 +4,7 @@ import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   catchError,
   EMPTY,
@@ -16,7 +17,6 @@ import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.in
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -82,13 +82,13 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('restore'),
+          iconName: tnIconMarker('restore', 'mdi'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: [Role.CloudBackupWrite],
           onClick: (row) => this.doDelete(row),

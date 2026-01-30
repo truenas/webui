@@ -787,7 +787,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     .mat-mdc-list-item-unscoped-content > a {
       background-color: var(--bg2);
 
-      ix-icon,
       tn-icon {
         color: var(--primary);
       }

@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, switchMap, take,
@@ -17,7 +18,6 @@ import {
   AssociatedTargetDialogData, IscsiExtent, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
@@ -38,7 +38,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TestDirective,
     TranslateModule,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     MatCardContent,
     RequiresRolesDirective,
     MatTooltip,

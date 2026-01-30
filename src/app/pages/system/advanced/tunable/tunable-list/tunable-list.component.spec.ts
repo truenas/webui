@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -13,7 +14,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -157,7 +157,7 @@ describe('TunableListComponent', () => {
   });
 
   it('shows edit form with an existing sysctl when Edit button is pressed', async () => {
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
     await editIcon.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -177,7 +177,7 @@ describe('TunableListComponent', () => {
   });
 
   it('shows confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
+    const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteIcon.click();
 
     const dialogService = spectator.inject(DialogService);

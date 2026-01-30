@@ -25,7 +25,7 @@ describe('WidgetGroupControlsComponent', () => {
 
       const button = spectator.query('[aria-label="Move widget up"]')!;
       expect(button).toExist();
-      expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-menu-up');
+      expect(button.querySelector('tn-icon')).toHaveAttribute('name', 'menu-up');
 
       spectator.click(button);
 
@@ -46,7 +46,7 @@ describe('WidgetGroupControlsComponent', () => {
 
       const button = spectator.query('[aria-label="Move widget down"]')!;
       expect(button).toExist();
-      expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-menu-down');
+      expect(button.querySelector('tn-icon')).toHaveAttribute('name', 'menu-down');
 
       spectator.click(button);
 
@@ -66,7 +66,7 @@ describe('WidgetGroupControlsComponent', () => {
 
     const button = spectator.query('[aria-label="Edit group"]')!;
     expect(button).toExist();
-    expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'edit');
+    expect(button.querySelector('tn-icon')).toHaveAttribute('name', 'pencil');
 
     spectator.click(button);
 
@@ -78,7 +78,7 @@ describe('WidgetGroupControlsComponent', () => {
 
     const button = spectator.query('[aria-label="Delete group"]')!;
     expect(button).toExist();
-    expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-delete');
+    expect(button.querySelector('tn-icon')).toHaveAttribute('name', 'delete');
 
     spectator.click(button);
 

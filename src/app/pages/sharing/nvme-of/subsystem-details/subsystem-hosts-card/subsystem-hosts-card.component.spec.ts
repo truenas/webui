@@ -1,10 +1,10 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfHost, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -79,8 +79,8 @@ describe('SubsystemHostsCardComponent', () => {
     expect(allowedHosts).toHaveLength(2);
     expect(allowedHosts[0].textContent).toContain('nqn.2014-01.org');
     expect(allowedHosts[1].textContent).toContain('nqn.2014-02.org');
-    expect(allowedHosts[1]).toHaveDescendant('ix-icon');
-    expect(allowedHosts[1].querySelector('ix-icon')).toHaveAttribute('name', 'mdi-key');
+    expect(allowedHosts[1]).toHaveDescendant('tn-icon');
+    expect(allowedHosts[1].querySelector('tn-icon')).toHaveAttribute('name', 'key');
   });
 
   it('adds a new host when it is selected from the Add menu', () => {
@@ -118,7 +118,7 @@ describe('SubsystemHostsCardComponent', () => {
     });
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const removeButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-link-variant-off' }));
+    const removeButton = await loader.getHarness(TnIconHarness.with({ name: 'link-variant-off' }));
     await removeButton.click();
 
     expect(spectator.inject(NvmeOfService).removeHostAssociation).toHaveBeenCalledWith(

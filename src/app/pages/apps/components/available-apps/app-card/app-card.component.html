@@ -19,7 +19,7 @@
 
       @if (!!app()?.popularity_rank) {
         <span class="popularity-rank" [matTooltip]="'Popularity' | translate">
-          <ix-icon name="local_fire_department"></ix-icon>
+          <tn-icon name="fire" library="mdi"></tn-icon>
           {{ app()?.popularity_rank }}
         </span>
       }

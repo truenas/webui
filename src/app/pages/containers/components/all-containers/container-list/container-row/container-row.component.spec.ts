@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -10,7 +11,6 @@ import {
   ContainerStats,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -128,9 +128,9 @@ describe('ContainerRowComponent', () => {
         },
       }));
 
-      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
-      const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play-circle' }));
-      const restartIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-restart' }));
+      const stopIcon = await loader.getHarness(TnIconHarness.with({ name: 'stop-circle' }));
+      const startIcon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'play-circle' }));
+      const restartIcon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'restart' }));
 
       expect(stopIcon).toExist();
       expect(restartIcon).toExist();
@@ -147,9 +147,9 @@ describe('ContainerRowComponent', () => {
         },
       }));
 
-      const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop-circle' }));
-      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
-      const restartIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-restart' }));
+      const stopIcon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'stop-circle' }));
+      const startIcon = await loader.getHarness(TnIconHarness.with({ name: 'play-circle' }));
+      const restartIcon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'restart' }));
 
       expect(restartIcon).not.toExist();
       expect(stopIcon).not.toExist();
@@ -159,7 +159,7 @@ describe('ContainerRowComponent', () => {
 
   describe('actions', () => {
     it('shows stop options dialog and stops container when Stop icon is pressed', async () => {
-      const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
+      const stopIcon = await loader.getHarness(TnIconHarness.with({ name: 'stop-circle' }));
       await stopIcon.click();
 
       expect(spectator.inject(MatDialog).open)
@@ -173,7 +173,7 @@ describe('ContainerRowComponent', () => {
     });
 
     it('shows restart options dialog and restarts container when Restart icon is pressed', async () => {
-      const restartIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-restart' }));
+      const restartIcon = await loader.getHarness(TnIconHarness.with({ name: 'restart' }));
       await restartIcon.click();
 
       expect(spectator.inject(MatDialog).open)
@@ -200,7 +200,7 @@ describe('ContainerRowComponent', () => {
         },
       }));
 
-      const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+      const startIcon = await loader.getHarness(TnIconHarness.with({ name: 'play-circle' }));
       await startIcon.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [1]);

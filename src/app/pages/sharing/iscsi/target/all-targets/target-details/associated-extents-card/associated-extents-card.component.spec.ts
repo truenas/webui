@@ -6,12 +6,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { AssociatedExtentsCardComponent } from './associated-extents-card.component';
@@ -25,7 +25,7 @@ describe('AssociatedExtentsCardComponent', () => {
     imports: [
       MatCardModule,
       MatButtonModule,
-      IxIconComponent,
+      TnIconComponent,
       TranslateModule.forRoot(),
       NgxSkeletonLoaderModule,
     ],
