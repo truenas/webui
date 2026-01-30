@@ -32,6 +32,29 @@ export interface QueryOptions<T> {
   count?: boolean;
 
   /**
+   * Get a single object instead of an array. Returns the first match or throws an error if not found.
+   * Has the advantage of inserting into the directory services cache on positive result.
+   *
+   * IMPORTANT: When get: true, the return type changes from T[] to T.
+   * The type cast `as unknown as Observable<T>` is required because TypeScript's
+   * type system doesn't currently support conditional return types based on option values.
+   *
+   * Future improvement: Consider adding method overloads to ApiService to eliminate
+   * the need for type casting:
+   * ```typescript
+   * call<T>(method: string, params: [QueryFilter<T>[], { get: true }]): Observable<T>;
+   * call<T>(method: string, params: [QueryFilter<T>[], QueryOptions<T>?]): Observable<T[]>;
+   * ```
+   *
+   * @example
+   * ```typescript
+   * // Returns Observable<User> instead of Observable<User[]>
+   * return this.api.call('user.query', [filters, { get: true }]) as unknown as Observable<User>;
+   * ```
+   */
+  get?: boolean;
+
+  /**
    * Limit the number of results returned.
    */
   limit?: number;

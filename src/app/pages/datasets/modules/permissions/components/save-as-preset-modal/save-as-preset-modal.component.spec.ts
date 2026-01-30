@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath, PosixAclItem } from 'app/interfaces/acl.interface';
+import { Group } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -28,7 +30,10 @@ describe('SaveAsPresetModalComponent', () => {
       DatasetAclEditorStore,
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockProvider(UserService),
+      mockProvider(UserService, {
+        getUserByNameCached: jest.fn(() => of({ username: 'testuser', uid: 1000 } as User)),
+        getGroupByNameCached: jest.fn(() => of({ group: 'testgroup', gid: 1000 } as Group)),
+      }),
       mockApi([
         mockCall('filesystem.acltemplate.by_path', [
           {

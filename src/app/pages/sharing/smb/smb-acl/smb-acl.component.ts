@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -230,15 +232,20 @@ export class SmbAclComponent implements OnInit {
       if (ace.ae_who === NfsAclTag.Everyone) {
         result.ae_who_sid = 'S-1-1-0';
       } else {
+        // Explicit null check to fail fast with clear error instead of calling API with "null" string
+        if (!whoIdOrName && whoIdOrName !== 0) {
+          throw new Error(`ACE entry requires a user/group identifier but got: ${whoIdOrName}`);
+        }
+
         let id: number;
         if (isNumber(whoIdOrName)) {
           id = Number(whoIdOrName);
         } else if (ace.ae_who === NfsAclTag.UserGroup) {
-          id = (await firstValueFrom(this.userService.getGroupByName(String(whoIdOrName))))
-            .gr_gid;
+          id = (await firstValueFrom(this.userService.getGroupByNameCached(String(whoIdOrName))))
+            .gid;
         } else {
-          id = (await firstValueFrom(this.userService.getUserByName(String(whoIdOrName))))
-            .pw_uid;
+          id = (await firstValueFrom(this.userService.getUserByNameCached(String(whoIdOrName))))
+            .uid;
         }
 
         result.ae_who_id = { id_type: ace.ae_who, id };
@@ -274,8 +281,9 @@ export class SmbAclComponent implements OnInit {
         }),
       )
       .pipe(untilDestroyed(this))
-      .subscribe((data: unknown[][]) => {
-        const response = data[0];
+      .subscribe((aceData: unknown[]) => {
+        // forkJoin returns an array, so unwrap to get the actual data
+        const response = aceData[0] as unknown[];
         const initialOptions: Option[] = [];
 
         if (response.length) {

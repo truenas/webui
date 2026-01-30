@@ -50,12 +50,30 @@ describe('DatasetQuotaAddFormComponent', () => {
           }
           return of(null);
         }),
+        getGroupByNameCached: jest.fn((groupName: string) => {
+          if (groupName === 'test-group') {
+            return of({ group: 'test-group', gid: 1000 });
+          }
+          return of(null);
+        }),
         getUserByName: jest.fn((username: string) => {
           if (username === 'john' || username === 'jill') {
             return of({ username, uid: username === 'john' ? 1001 : 1002 });
           }
           return of(null);
         }),
+        getUserByNameCached: jest.fn((username: string) => {
+          if (username === 'john' || username === 'jill') {
+            return of({ username, uid: username === 'john' ? 1001 : 1002 });
+          }
+          return of(null);
+        }),
+        isGroupInAutocompleteCache: jest.fn(() => false),
+        isGroupCachedAsNonExistent: jest.fn(() => false),
+        recordGroupAsNonExistent: jest.fn(),
+        isUserInAutocompleteCache: jest.fn(() => false),
+        isUserCachedAsNonExistent: jest.fn(() => false),
+        recordUserAsNonExistent: jest.fn(),
       }),
       mockProvider(SlideIn),
       mockProvider(DialogService),

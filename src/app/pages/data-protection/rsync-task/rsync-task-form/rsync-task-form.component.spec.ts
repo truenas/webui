@@ -92,6 +92,13 @@ describe('RsyncTaskFormComponent', () => {
           { username: 'steven' },
         ] as User[]),
         getUserByName: (username: string) => of({ username } as User),
+        getUserByNameCached: (username: string) => of({ username } as User),
+        isGroupInAutocompleteCache: jest.fn(() => false),
+        isGroupCachedAsNonExistent: jest.fn(() => false),
+        recordGroupAsNonExistent: jest.fn(),
+        isUserInAutocompleteCache: jest.fn(() => false),
+        isUserCachedAsNonExistent: jest.fn(() => false),
+        recordUserAsNonExistent: jest.fn(),
       }),
       mockProvider(DialogService),
       provideMockStore({
