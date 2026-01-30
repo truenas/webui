@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 
@@ -10,7 +9,7 @@ import { User } from 'app/interfaces/user.interface';
   templateUrl: './user-access-cell.component.html',
   styleUrls: ['./user-access-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnIconComponent, MatTooltip, TranslateModule],
+  imports: [TnIconComponent, TnTooltipDirective, TranslateModule],
 })
 export class UserAccessCellComponent {
   private translate = inject(TranslateService);

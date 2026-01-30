@@ -35,11 +35,11 @@
               <div class="info-list-item state">
                 @if (isLinkStateUp()) {
                   <span class="icon-wrapper up">
-                    <tn-icon name="check-circle" library="mdi" [matTooltip]="linkStateLabel()"></tn-icon>
+                    <tn-icon name="check-circle" library="mdi" [tnTooltip]="linkStateLabel()"></tn-icon>
                   </span>
                 } @else {
                   <span class="icon-wrapper down">
-                    <tn-icon name="close" library="mdi" [matTooltip]="linkStateLabel()"></tn-icon>
+                    <tn-icon name="close" library="mdi" [tnTooltip]="linkStateLabel()"></tn-icon>
                   </span>
                 }
                 <span>{{ linkStateLabel() }}</span>

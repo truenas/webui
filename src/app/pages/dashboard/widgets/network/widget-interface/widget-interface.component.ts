@@ -6,7 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -48,6 +48,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
     MatTooltip,
     RouterLink,
     TnIconComponent,
+    TnTooltipDirective,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
     InterfaceStatusIconComponent,
