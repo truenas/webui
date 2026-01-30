@@ -107,7 +107,7 @@
     "@smarttools/eslint-plugin-rxjs": "~1.0.22",
     "@stylistic/eslint-plugin": "~2.9.0",
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master",
-    "@truenas/ui-components": "~0.1.6",
+    "@truenas/ui-components": "~0.1.8",
     "@types/cheerio": "~0.22.35",
     "@types/d3": "~7.4.3",
     "@types/dygraphs": "^2.1.10",
