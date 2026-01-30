@@ -17,7 +17,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
-import { DsUncachedGroup } from 'app/interfaces/ds-cache.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -1190,7 +1189,7 @@ describe('SmbFormComponent', () => {
     it('should show error when non-existent group is entered in watch list', async () => {
       // Mock API to return error for non-existent group
       const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
+      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
 
       // Fill in required fields and enable audit logging
       await form.fillForm({
@@ -1209,9 +1208,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.markAsTouched();
       auditGroup.controls.watch_list.updateValueAndValidity();
 
-      // Wait for async validation and debounce
+      // Wait for async validation and debounce (300ms)
       await new Promise<void>((resolve) => {
-        setTimeout(resolve, 600);
+        setTimeout(resolve, 400);
       });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1228,7 +1227,7 @@ describe('SmbFormComponent', () => {
     it('should show error when non-existent group is entered in ignore list', async () => {
       // Mock API to return error for non-existent group
       const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
+      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
 
       // Fill in required fields and enable audit logging
       await form.fillForm({
@@ -1247,9 +1246,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.ignore_list.markAsTouched();
       auditGroup.controls.ignore_list.updateValueAndValidity();
 
-      // Wait for async validation and debounce
+      // Wait for async validation and debounce (300ms)
       await new Promise<void>((resolve) => {
-        setTimeout(resolve, 600);
+        setTimeout(resolve, 400);
       });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1266,11 +1265,13 @@ describe('SmbFormComponent', () => {
     it('should pass validation when all entered groups exist', async () => {
       // Mock API to return success for existing groups
       const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByName').mockReturnValue(of({
-        gr_gid: 1000,
-        gr_name: 'test',
-        gr_mem: [],
-      } as DsUncachedGroup));
+      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(of({
+        id: 1,
+        gid: 1000,
+        name: 'test',
+        group: 'test',
+        builtin: false,
+      } as Group));
 
       // Fill in required fields and enable audit logging
       await form.fillForm({
@@ -1289,9 +1290,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.markAsTouched();
       auditGroup.controls.watch_list.updateValueAndValidity();
 
-      // Wait for async validation and debounce
+      // Wait for async validation and debounce (300ms)
       await new Promise<void>((resolve) => {
-        setTimeout(resolve, 600);
+        setTimeout(resolve, 400);
       });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -1308,8 +1309,8 @@ describe('SmbFormComponent', () => {
     it('should disable save button during async validation', async () => {
       // Mock API with a delayed response to catch the PENDING state
       const userService = spectator.inject(UserService);
-      const delayedObservable$ = new Subject<DsUncachedGroup>();
-      jest.spyOn(userService, 'getGroupByName').mockReturnValue(delayedObservable$.asObservable());
+      const delayedObservable$ = new Subject<Group>();
+      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(delayedObservable$.asObservable());
 
       // Fill in required fields and enable audit logging
       await form.fillForm({
@@ -1328,9 +1329,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.markAsTouched();
       auditGroup.controls.watch_list.updateValueAndValidity();
 
-      // Wait for debounce
+      // Wait for debounce (300ms)
       await new Promise<void>((resolve) => {
-        setTimeout(resolve, 600);
+        setTimeout(resolve, 400);
       });
       spectator.detectChanges();
 
@@ -1340,10 +1341,12 @@ describe('SmbFormComponent', () => {
 
       // Complete the async validation
       delayedObservable$.next({
-        gr_gid: 1000,
-        gr_name: 'test',
-        gr_mem: [],
-      } as DsUncachedGroup);
+        id: 1,
+        gid: 1000,
+        name: 'test',
+        group: 'test',
+        builtin: false,
+      } as Group);
       delayedObservable$.complete();
 
       spectator.detectChanges();
