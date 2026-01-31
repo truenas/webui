@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=0aea700c2f",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=88e4de7052",
   "icons": [
     "dataset",
     "mdi-account-circle",
@@ -93,6 +93,7 @@
     "tn-truenas-logo-mark-color",
     "tn-truenas-logo-type",
     "tn-truenas-logo-type-color",
-    "tn-two-factor-auth"
+    "tn-two-factor-auth",
+    "tn-webshare"
   ]
 }
