@@ -4900,7 +4900,7 @@
     "hierarchy": [
       "Credentials",
       "Users",
-      "Download Key"
+      "Download Public Key"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -4909,7 +4909,7 @@
       "/credentials/users"
     ],
     "routerLink": null,
-    "anchor": "download-key",
+    "anchor": "download-public-key",
     "triggerAnchor": null,
     "section": "ui"
   },
