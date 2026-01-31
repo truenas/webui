@@ -185,8 +185,13 @@ describe('SmbFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
 
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-    await advancedButton.click();
+    const advancedButton = await loader.getHarness(
+      MatButtonHarness.with({ selector: '[ixTest="toggle-advanced-options"]' }),
+    );
+    const advancedButtonText = await advancedButton.getText();
+    if (advancedButtonText.includes('Advanced Options')) {
+      await advancedButton.click();
+    }
   }
 
   const commonValues = {
@@ -569,6 +574,27 @@ describe('SmbFormComponent', () => {
       );
 
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('edit share with legacy audit logging', () => {
+    beforeEach(async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.DefaultShare,
+        audit: {
+          enable: true,
+          watch_list: [],
+          ignore_list: [],
+        },
+      });
+    });
+
+    it('disables save when audit logging has no groups', async () => {
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
     });
   });
 
@@ -1308,9 +1334,17 @@ describe('SmbFormComponent', () => {
 
     it('should disable save button during async validation', async () => {
       // Mock API with a delayed response to catch the PENDING state
-      const userService = spectator.inject(UserService);
+      const userService = spectator.inject(UserService) as {
+        getGroupByNameCached: jest.Mock;
+        isGroupInAutocompleteCache: jest.Mock;
+        isGroupCachedAsNonExistent: jest.Mock;
+      };
       const delayedObservable$ = new Subject<Group>();
-      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(delayedObservable$.asObservable());
+
+      // Override mock methods to ensure delayed observable is used
+      userService.getGroupByNameCached = jest.fn(() => delayedObservable$.asObservable());
+      userService.isGroupInAutocompleteCache = jest.fn(() => false);
+      userService.isGroupCachedAsNonExistent = jest.fn(() => false);
 
       // Fill in required fields and enable audit logging
       await form.fillForm({
@@ -1329,7 +1363,7 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.markAsTouched();
       auditGroup.controls.watch_list.updateValueAndValidity();
 
-      // Wait for debounce (300ms)
+      // Wait for debounce (300ms + buffer)
       await new Promise<void>((resolve) => {
         setTimeout(resolve, 400);
       });
