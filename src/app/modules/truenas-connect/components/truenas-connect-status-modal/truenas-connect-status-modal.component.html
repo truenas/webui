@@ -1,17 +1,5 @@
 <div mat-dialog-title class="dialog-title-with-logo">
   <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
-  @if (status() === TncStatus.Active) {
-    <button
-      mat-icon-button
-      class="disable-service-button"
-      ixTest="tnc-disable-service"
-      [matTooltip]="'Disable Service' | translate"
-      [disabled]="isDisabling()"
-      (click)="disableService()"
-    >
-      <tn-icon name="tn-cloud-off"></tn-icon>
-    </button>
-  }
 </div>
 <mat-divider></mat-divider>
 <mat-dialog-content>
@@ -49,6 +37,15 @@
       {{ "Loading..." | translate }}
     </button>
   } @else if (status() === TncStatus.Active) {
+    <button
+      color="warn"
+      mat-button
+      ixTest="tnc-disable-service"
+      [disabled]="isDisabling()"
+      (click)="disableService()"
+    >
+      {{ "Disable" | translate }}
+    </button>
     <button
       color="primary"
       mat-button

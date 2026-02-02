@@ -308,7 +308,7 @@
         }
       }
 
-      <ix-form-actions>
+      <ix-form-actions [validating]="isAsyncValidatorPending">
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
