@@ -1239,7 +1239,7 @@ describe('SystemSecurityFormComponent', () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
 
-      const openSpy = jest.spyOn(slideIn, 'open');
+      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
 
       // Trigger setupStigRequirements - should show root/admin password requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1263,7 +1263,7 @@ describe('SystemSecurityFormComponent', () => {
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
-      const slideInOpenSpy = jest.spyOn(slideIn, 'open');
+      const slideInOpenSpy = jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
 
       // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1296,7 +1296,7 @@ describe('SystemSecurityFormComponent', () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
 
-      const openSpy = jest.spyOn(slideIn, 'open');
+      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
 
       // Trigger setupStigRequirements - should show SSH 2FA requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1324,6 +1324,8 @@ describe('SystemSecurityFormComponent', () => {
 
     it('marks form as pristine before navigating to avoid unsaved changes dialog', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
+      const slideIn = navigationSpectator.inject(SlideIn);
+      jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
       jest.spyOn(navigationSpectator.inject(Router), 'navigate').mockResolvedValue(true);
 
       // Trigger setupStigRequirements
@@ -1343,6 +1345,166 @@ describe('SystemSecurityFormComponent', () => {
 
       // Form should be marked as pristine before navigation
       expect(navigationSpectator.component.form.pristine).toBe(true);
+    });
+
+    it('re-evaluates STIG requirements after user edit form is closed', async () => {
+      // Create a scenario where root password is initially not disabled
+      const apiServiceMock = createStigRequirementsApiMock({
+        rootPasswordDisabled: false,
+      });
+
+      const reevaluationSpectator = createTwoFactorTestComponent({
+        providers: [
+          mockProvider(ApiService, apiServiceMock),
+        ],
+      });
+      const slideIn = reevaluationSpectator.inject(SlideIn);
+
+      // Create an observable to simulate the slidein closing
+      const slideInRef$ = of(undefined);
+      jest.spyOn(slideIn, 'open').mockReturnValue(slideInRef$);
+
+      // Enable STIG mode to trigger requirement check
+      reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });
+      reevaluationSpectator.detectChanges();
+      await reevaluationSpectator.fixture.whenStable();
+
+      // Verify the root password error is present
+      let errorElement = reevaluationSpectator.query('mat-error');
+      expect(errorElement?.textContent).toContain('The root user must have their password disabled.');
+      expect(reevaluationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
+        stigRequirementsNotMet: true,
+      });
+
+      // Find and click the Configure button for root password
+      const errorMessages = reevaluationSpectator.queryAll('mat-error li');
+      const passwordError = errorMessages.find((el) => el.textContent.includes('root user'));
+      const configureButton = passwordError.querySelector('.link-button') as HTMLElement;
+
+      // Update mock to simulate the password being disabled after form closes
+      (apiServiceMock.call as jest.Mock).mockImplementation((method: string, params?: MockParams) => {
+        if (method === 'auth.twofactor.config') {
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            // Now return root user with password disabled
+            return of([
+              { username: 'root', password_disabled: true } as User,
+              { username: 'truenas_admin', password_disabled: true } as User,
+            ]);
+          }
+          return of([]);
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured, description: '' });
+        }
+        if (method === 'auth.me') {
+          return of({
+            pw_name: 'testuser',
+            two_factor_config: { secret_configured: true },
+          });
+        }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
+        }
+        return of(null);
+      });
+
+      // Click the configure button to open the user edit form
+      configureButton.click();
+
+      // Wait for the slidein observable to complete (simulating closing the form)
+      await reevaluationSpectator.fixture.whenStable();
+      reevaluationSpectator.detectChanges();
+
+      // Verify the error is now gone
+      errorElement = reevaluationSpectator.query('mat-error');
+      const errorText = errorElement?.textContent || '';
+      expect(errorText).not.toContain('The root user must have their password disabled.');
+
+      // Verify the stigRequirementsNotMet error is cleared
+      expect(reevaluationSpectator.component.form.controls.enable_gpos_stig.errors).toBeNull();
+    });
+
+    it('re-evaluates STIG requirements after global 2FA form is closed', async () => {
+      // Create a scenario where 2FA is initially not enabled
+      const apiServiceMock = createStigRequirementsApiMock({
+        twoFactorEnabled: false,
+      });
+
+      const reevaluationSpectator = createTwoFactorTestComponent({
+        providers: [
+          mockProvider(ApiService, apiServiceMock),
+        ],
+      });
+      const slideIn = reevaluationSpectator.inject(SlideIn);
+
+      // Create an observable to simulate the slidein closing
+      const slideInRef$ = of(undefined);
+      jest.spyOn(slideIn, 'open').mockReturnValue(slideInRef$);
+
+      // Enable STIG mode to trigger requirement check
+      reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });
+      reevaluationSpectator.detectChanges();
+      await reevaluationSpectator.fixture.whenStable();
+
+      // Verify the 2FA error is present
+      let errorElement = reevaluationSpectator.query('mat-error');
+      expect(errorElement?.textContent).toContain('Global Two-Factor Authentication must be enabled.');
+      expect(reevaluationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
+        stigRequirementsNotMet: true,
+      });
+
+      // Find and click the Configure button for 2FA
+      const errorMessages = reevaluationSpectator.queryAll('mat-error li');
+      const twoFactorError = errorMessages.find((el) => el.textContent.includes('Global Two-Factor Authentication'));
+      const configureButton = twoFactorError.querySelector('.link-button') as HTMLElement;
+
+      // Update mock to simulate 2FA being enabled after form closes
+      (apiServiceMock.call as jest.Mock).mockImplementation((method: string, params?: MockParams) => {
+        if (method === 'auth.twofactor.config') {
+          // Now return 2FA as enabled
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: false } as User,
+              { username: 'truenas_admin', password_disabled: false } as User,
+            ]);
+          }
+          return of([]);
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured, description: '' });
+        }
+        if (method === 'auth.me') {
+          return of({
+            pw_name: 'testuser',
+            two_factor_config: { secret_configured: true },
+          });
+        }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
+        }
+        return of(null);
+      });
+
+      // Click the configure button to open the 2FA form
+      configureButton.click();
+
+      // Wait for the slidein observable to complete (simulating closing the form)
+      await reevaluationSpectator.fixture.whenStable();
+      reevaluationSpectator.detectChanges();
+
+      // Verify the 2FA error is now gone
+      errorElement = reevaluationSpectator.query('mat-error');
+      const errorText = errorElement?.textContent || '';
+      expect(errorText).not.toContain('Global Two-Factor Authentication must be enabled.');
+
+      // Note: Other requirements (root/admin password) will still be present,
+      // so we just verify that the 2FA error is gone, not that all errors are cleared
     });
   });
 });

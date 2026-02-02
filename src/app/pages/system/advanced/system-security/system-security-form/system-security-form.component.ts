@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, DOCUMENT,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -25,7 +25,6 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { WINDOW } from 'app/helpers/window.helper';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -134,7 +133,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
   private navigateAndHighlightService = inject(NavigateAndHighlightService);
-  private window = inject<Window>(WINDOW);
+  private document = inject(DOCUMENT);
   private router = inject(Router);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
@@ -683,7 +682,7 @@ export class SystemSecurityFormComponent implements OnInit {
    */
   private delayHighlightElement(elementName: string): void {
     setTimeout(() => {
-      const htmlElement = this.window.document.getElementById(elementName);
+      const htmlElement = this.document.getElementById(elementName);
       if (htmlElement) {
         this.navigateAndHighlightService.scrollIntoView(htmlElement);
       }
@@ -702,13 +701,22 @@ export class SystemSecurityFormComponent implements OnInit {
     const config = this.twoFactorConfig();
     if (config) {
       const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
-      this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config });
+      const slideinRef$ = this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config });
       this.delayHighlightElement(elementName);
+
+      // re-trigger STIG requirement computation after the slidein closes
+      slideinRef$.subscribe((_) => {
+        this.setupStigRequirements();
+      });
     }
   }
 
   private openUserEditForm(user: User): void {
-    this.slideIn.open(UserFormComponent, { data: user });
+    const slideinRef$ = this.slideIn.open(UserFormComponent, { data: user });
     this.delayHighlightElement('disablePasswordCheckbox');
+
+    slideinRef$.subscribe((_) => {
+      this.setupStigRequirements();
+    });
   }
 }
