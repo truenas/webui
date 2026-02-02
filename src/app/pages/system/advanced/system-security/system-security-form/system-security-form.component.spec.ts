@@ -175,30 +175,7 @@ describe('SystemSecurityFormComponent', () => {
         navigate: jest.fn(),
       }),
       mockAuth(),
-      mockProvider(ApiService, {
-        call: jest.fn((method: string) => {
-          if (method === 'user.query') {
-            return of([]);
-          }
-          if (method === 'auth.twofactor.config') {
-            return of({ enabled: true, services: { ssh: true } });
-          }
-          if (method === 'docker.status') {
-            return of({ status: DockerStatus.Unconfigured } as { status: DockerStatus });
-          }
-          if (method === 'auth.me') {
-            return of({
-              pw_name: 'testuser',
-              two_factor_config: { secret_configured: true },
-            });
-          }
-          if (method === 'auth.sessions') {
-            return of([{ current: true, credentials: CredentialType.TwoFactor }]);
-          }
-          return of(null);
-        }),
-        job: jest.fn(() => fakeSuccessfulJob()),
-      }),
+      mockProvider(ApiService, createStigRequirementsApiMock()),
     ],
   });
 
@@ -671,33 +648,8 @@ describe('SystemSecurityFormComponent', () => {
         { username: 'user2', roles: [{ id: 2 }] } as unknown as User,
       ];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
-        if (method === 'user.query') {
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
-            return of([
-              { username: 'root', password_disabled: true } as User,
-              { username: 'truenas_admin', password_disabled: true } as User,
-            ]);
-          }
-          return of(usersWithoutTwoFa);
-        }
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: true, services: { ssh: true } });
-        }
-        if (method === 'docker.status') {
-          return of({ status: DockerStatus.Unconfigured, description: '' });
-        }
-        if (method === 'auth.me') {
-          return of({
-            pw_name: 'testuser',
-            two_factor_config: { secret_configured: true },
-          });
-        }
-        if (method === 'auth.sessions') {
-          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
-        }
-        return of(null);
-      });
+      const apiMock = createStigRequirementsApiMock({ usersWithout2fa: usersWithoutTwoFa });
+      jest.spyOn(apiService, 'call').mockImplementation(apiMock.call as jest.Mock);
 
       const dialogSpy = jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true) as unknown as Observable<DialogWithSecondaryCheckboxResult>);
 
@@ -719,35 +671,8 @@ describe('SystemSecurityFormComponent', () => {
     });
 
     it('does not show warning when all users have 2FA configured', async () => {
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
-        if (method === 'user.query') {
-          // Check if this is the local user query (for root/admin check) or the 2FA check
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0][0] === 'local') {
-            // Return mock root and admin users with passwords disabled
-            return of([
-              { username: 'root', password_disabled: true } as User,
-              { username: 'truenas_admin', password_disabled: true } as User,
-            ]);
-          }
-          return of([]); // No users without 2FA
-        }
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: true, services: { ssh: true } });
-        }
-        if (method === 'docker.status') {
-          return of({ status: DockerStatus.Unconfigured, description: '' });
-        }
-        if (method === 'auth.me') {
-          return of({
-            pw_name: 'testuser',
-            two_factor_config: { secret_configured: true },
-          });
-        }
-        if (method === 'auth.sessions') {
-          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
-        }
-        return of(null);
-      });
+      const apiMock = createStigRequirementsApiMock();
+      jest.spyOn(apiService, 'call').mockImplementation(apiMock.call as jest.Mock);
 
       const dialogSpy = jest.spyOn(dialogService, 'confirm');
 
@@ -766,33 +691,8 @@ describe('SystemSecurityFormComponent', () => {
     it('cancels STIG enablement when user cancels warning dialog', async () => {
       const usersWithoutTwoFa = [{ username: 'user1', roles: [{ id: 1 }] } as unknown as User];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
-        if (method === 'user.query') {
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
-            return of([
-              { username: 'root', password_disabled: true } as User,
-              { username: 'truenas_admin', password_disabled: true } as User,
-            ]);
-          }
-          return of(usersWithoutTwoFa);
-        }
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: true, services: { ssh: true } });
-        }
-        if (method === 'docker.status') {
-          return of({ status: DockerStatus.Unconfigured });
-        }
-        if (method === 'auth.me') {
-          return of({
-            pw_name: 'testuser',
-            two_factor_config: { secret_configured: true },
-          });
-        }
-        if (method === 'auth.sessions') {
-          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
-        }
-        return of(null);
-      });
+      const apiMock = createStigRequirementsApiMock({ usersWithout2fa: usersWithoutTwoFa });
+      jest.spyOn(apiService, 'call').mockImplementation(apiMock.call as jest.Mock);
 
       jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false) as unknown as Observable<DialogWithSecondaryCheckboxResult>); // User cancels
 
@@ -810,33 +710,8 @@ describe('SystemSecurityFormComponent', () => {
     it('proceeds with save when user confirms warning dialog', async () => {
       const usersWithoutTwoFa = [{ username: 'user1', roles: [{ id: 1 }] } as unknown as User];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
-        if (method === 'user.query') {
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
-            return of([
-              { username: 'root', password_disabled: true } as User,
-              { username: 'truenas_admin', password_disabled: true } as User,
-            ]);
-          }
-          return of(usersWithoutTwoFa);
-        }
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: true, services: { ssh: true } });
-        }
-        if (method === 'docker.status') {
-          return of({ status: DockerStatus.Unconfigured });
-        }
-        if (method === 'auth.me') {
-          return of({
-            pw_name: 'testuser',
-            two_factor_config: { secret_configured: true },
-          });
-        }
-        if (method === 'auth.sessions') {
-          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
-        }
-        return of(null);
-      });
+      const apiMock = createStigRequirementsApiMock({ usersWithout2fa: usersWithoutTwoFa });
+      jest.spyOn(apiService, 'call').mockImplementation(apiMock.call as jest.Mock);
 
       jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true) as unknown as Observable<DialogWithSecondaryCheckboxResult>); // User confirms
 
