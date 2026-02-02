@@ -5,7 +5,6 @@ import {
   EMPTY,
   filter,
   map,
-  merge,
   Observable,
   of,
   OperatorFunction,
@@ -113,17 +112,11 @@ export class ApiService {
       method,
       params: params as unknown[] ?? [],
     });
-    const callResponse$ = this.wsHandler.responses$.pipe(
-      filter((message) => 'id' in message && message.id === uuid),
-      this.getErrorSwitchMap(method, uuid),
-      map((message) => message.result),
-      take(1),
-    );
     return this.store$.pipe(
       select(selectJobWithCallId(uuid)),
       filter((job): job is Job<ApiJobResponse<M>> => !!job),
       observeJob(),
-      takeUntil(merge(this.clearSubscriptions$, callResponse$)),
+      takeUntil(this.clearSubscriptions$),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 

@@ -11,12 +11,12 @@ import {
   mergeMap,
   Observable,
   of,
+  share,
   Subject,
   Subscription,
   take,
   tap,
   timer,
-  shareReplay,
   catchError,
   throwError,
 } from 'rxjs';
@@ -102,7 +102,7 @@ export class WebSocketHandlerService {
             this.debugService.logIncomingMessage(message, isMocked);
           }
         }),
-        shareReplay({ bufferSize: 1, refCount: true }),
+        share(),
       );
     }
     return this._responses$;
