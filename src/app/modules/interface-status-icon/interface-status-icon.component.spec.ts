@@ -1,9 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
-import { MockDirective } from 'ng-mocks';
+import { TnIconHarness, TnTooltipDirective } from '@truenas/ui-components';
 import { kb, Mb } from 'app/constants/bits.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
@@ -17,9 +15,6 @@ describe('InterfaceStatusIconComponent', () => {
 
   const createComponent = createComponentFactory({
     component: InterfaceStatusIconComponent,
-    declarations: [
-      MockDirective(MatTooltip),
-    ],
   });
 
   function setupTest(update: NetworkInterfaceUpdate): void {
@@ -55,7 +50,7 @@ describe('InterfaceStatusIconComponent', () => {
     });
 
     it('shows sent and received rate in icon tooltip', () => {
-      const tooltip = spectator.query(MatTooltip)!;
+      const tooltip = spectator.query(TnTooltipDirective)!;
 
       expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 kb/s');
     });
