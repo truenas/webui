@@ -2,26 +2,15 @@
   align-items: center;
   display: flex;
   position: relative;
-  
+
   &.dialog-title-with-logo {
     justify-content: center;
     padding: 8px 24px;
   }
-  
+
   .title-logo {
     height: 24px;
     width: auto;
-  }
-  
-  .disable-service-button {
-    height: 36px;
-    position: absolute;
-    right: 8px;
-    width: 36px;
-    
-    ix-icon {
-      font-size: 20px;
-    }
   }
 }
 
