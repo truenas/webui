@@ -6,7 +6,7 @@ import {
   createComponentFactory, createSpyObject, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
@@ -15,8 +15,10 @@ import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
+import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
+import { NewTicketResponse } from '../../interfaces/file-ticket.interface';
 
 describe('FileTicketComponent', () => {
   let spectator: Spectator<FileTicketComponent>;
@@ -108,6 +110,26 @@ describe('FileTicketComponent', () => {
     });
     expect(dialogRef.close).toHaveBeenCalled();
     expect(feedbackService.showTicketSuccessMessage).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
+  });
+
+  it('disables file input during ticket submission', async () => {
+    const ticketSubmission$ = new Subject<NewTicketResponse>();
+    jest.spyOn(feedbackService, 'createTicket').mockReturnValue(ticketSubmission$.asObservable());
+
+    await form.fillForm({
+      'Attach additional images': true,
+    });
+
+    const fileInput = await loader.getHarness(IxFileInputHarness);
+
+    loginToJiraButton.loggedIn.emit('jira-token');
+
+    expect(await fileInput.isDisabled()).toBe(true);
+
+    ticketSubmission$.next({ ticket: 24, url: 'https://jira-redirect.ixsystems.com/ticket', has_debug: false });
+    ticketSubmission$.complete();
+
+    expect(await fileInput.isDisabled()).toBe(false);
   });
 
   // TODO: Test case for not failing if images were not uploaded.
