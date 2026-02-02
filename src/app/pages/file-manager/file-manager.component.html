@@ -290,7 +290,7 @@
 <mat-menu #contextMenu="matMenu">
   @if (contextMenuItem()) {
     @if (!isDirectory(contextMenuItem()!)) {
-      <button mat-menu-item (click)="downloadFile(contextMenuItem()!)">
+      <button mat-menu-item (click)="downloadSelectedFiles()">
         <ix-icon name="mdi-download"></ix-icon>
         <span>{{ "Download" | translate }}</span>
       </button>

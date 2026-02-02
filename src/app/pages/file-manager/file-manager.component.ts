@@ -587,12 +587,49 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     const selected = this.selectedItems();
     const items = this.items();
 
-    for (const path of selected) {
-      const item = items.find((i) => i.path === path);
-      if (item && item.type !== FileType.Directory) {
-        this.downloadFile(item);
-      }
+    // Get all selected files (excluding directories)
+    const selectedFiles = Array.from(selected)
+      .map((path) => items.find((i) => i.path === path))
+      .filter((item): item is FileRecord => item !== undefined && item.type !== FileType.Directory);
+
+    if (selectedFiles.length === 0) {
+      return;
     }
+
+    if (selectedFiles.length === 1) {
+      // Single file: download directly
+      this.downloadFile(selectedFiles[0]);
+    } else {
+      // Multiple files: download as ZIP archive
+      this.downloadBatchFiles(selectedFiles);
+    }
+  }
+
+  downloadBatchFiles(items: FileRecord[]): void {
+    this.isDownloading.set(true);
+
+    // Create archive name based on current directory or timestamp
+    const dirName = this.currentPath().split('/').pop() || 'files';
+    const archiveName = `${dirName}_${Date.now()}.zip`;
+
+    // Extract paths from selected items
+    const paths = items.map((item) => item.path);
+
+    this.downloadService.coreDownload({
+      method: 'filesystem.get_archive',
+      arguments: [{ paths }],
+      fileName: archiveName,
+      mimeType: 'application/zip',
+    }).subscribe({
+      next: () => {
+        this.isDownloading.set(false);
+      },
+      error: (error: unknown) => {
+        console.error('Batch download failed:', error);
+        this.isDownloading.set(false);
+        this.snackbar.error(this.translate.instant('Download failed'));
+      },
+    });
   }
 
   onContextMenu(event: MouseEvent, item: FileRecord): void {
