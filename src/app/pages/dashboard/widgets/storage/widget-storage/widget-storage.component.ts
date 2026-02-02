@@ -7,7 +7,7 @@ import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -41,6 +41,7 @@ import {
     MatTooltip,
     RouterLink,
     TnIconComponent,
+    TnTooltipDirective,
     MatGridList,
     MatGridTile,
     RequiresRolesDirective,

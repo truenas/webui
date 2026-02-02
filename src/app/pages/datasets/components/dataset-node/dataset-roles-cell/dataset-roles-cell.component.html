@@ -1,7 +1,7 @@
 @if (isSystemDataset()) {
   <tn-icon
     name="tn-truenas-logo-mark"
-    [matTooltip]="'This dataset is used by the system' | translate"
+    [tnTooltip]="'This dataset is used by the system' | translate"
   ></tn-icon>
 }
 
@@ -9,12 +9,12 @@
   @if (isApps()) {
     <tn-icon
       name="apps"
-      [matTooltip]="'This dataset is used to store apps config and other container related data' | translate"
+      [tnTooltip]="'This dataset is used to store apps config and other container related data' | translate"
     ></tn-icon>
   } @else {
     <tn-icon
       name="apps"
-      [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appNames() }"
+      [tnTooltip]="'This dataset is used by: {apps}' | translate: { apps: appNames() }"
     ></tn-icon>
   }
 }
@@ -22,48 +22,48 @@
 @if (dataset().vms?.length) {
   <tn-icon
     name="mdi-laptop"
-    [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmNames() }"
+    [tnTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmNames() }"
   ></tn-icon>
 }
 
 @if (hasShares()) {
   <tn-icon
     name="share"
-    [matTooltip]="'This dataset has children with shares' | translate"
+    [tnTooltip]="'This dataset has children with shares' | translate"
   ></tn-icon>
 }
 
 @if (dataset().smb_shares?.length) {
   <tn-icon
     name="tn-smb-share"
-    [matTooltip]="'Dataset is shared via SMB' | translate"
+    [tnTooltip]="'Dataset is shared via SMB' | translate"
   ></tn-icon>
 }
 
 @if (dataset().nfs_shares?.length) {
   <tn-icon
     name="tn-nfs-share"
-    [matTooltip]="'Dataset is shared via NFS' | translate"
+    [tnTooltip]="'Dataset is shared via NFS' | translate"
   ></tn-icon>
 }
 
 @if (dataset().iscsi_shares?.length) {
   <tn-icon
     name="tn-iscsi-share"
-    [matTooltip]="'Dataset is shared via iSCSI' | translate"
+    [tnTooltip]="'Dataset is shared via iSCSI' | translate"
   ></tn-icon>
 }
 
 @if (dataset().nvmet_shares?.length) {
   <tn-icon
     name="tn-nvme-share"
-    [matTooltip]="'Dataset is shared via NVMe-oF' | translate"
+    [tnTooltip]="'Dataset is shared via NVMe-oF' | translate"
   ></tn-icon>
 }
 
 @if (dataset().webshare_shares?.length) {
   <tn-icon
     name="tn-webshare"
-    [matTooltip]="'Dataset is shared via WebShare' | translate"
+    [tnTooltip]="'Dataset is shared via WebShare' | translate"
   ></tn-icon>
 }

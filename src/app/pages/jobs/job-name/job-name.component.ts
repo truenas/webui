@@ -7,7 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -24,6 +24,7 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
+    TnTooltipDirective,
     MatTooltip,
     MatProgressSpinner,
     MatProgressBar,

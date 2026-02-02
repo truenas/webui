@@ -53,7 +53,7 @@
           class="group-row"
           [class.group-row-empty]="!group.children.length"
         >
-          <tn-icon name="enclosure" library="custom" [tooltip]="enclosureTooltip"></tn-icon>
+          <tn-icon name="enclosure" library="custom" [tnTooltip]="enclosureTooltip"></tn-icon>
           <span class="group-name">{{ asEnclosureGroup(group).group }}</span>
           @if (group.children.length) {
             <tn-icon

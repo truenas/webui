@@ -9,10 +9,9 @@ import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -34,10 +33,10 @@ type InputValue = string | number | null;
   imports: [
     IxLabelComponent,
     TnIconComponent,
+    TnTooltipDirective,
     MatInput,
     MatAutocompleteTrigger,
     MatIconButton,
-    MatTooltip,
     MatAutocomplete,
     ReactiveFormsModule,
     MatOption,

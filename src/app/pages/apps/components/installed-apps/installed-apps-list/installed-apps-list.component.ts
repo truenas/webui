@@ -8,14 +8,13 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import {
   ActivatedRoute, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
@@ -71,6 +70,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     FakeProgressBarComponent,
     BasicSearchComponent,
     TnIconComponent,
+    TnTooltipDirective,
     MatSort,
     AsyncPipe,
     MatCheckbox,
@@ -78,7 +78,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     MatSortHeader,
     AppRowComponent,
     EmptyComponent,
-    MatTooltip,
     TestDirective,
     TranslateModule,
   ],

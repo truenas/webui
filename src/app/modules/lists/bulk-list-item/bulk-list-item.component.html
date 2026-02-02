@@ -6,14 +6,14 @@
           name="radiobox-marked"
           library="mdi"
           class="initial"
-          [matTooltip]="item().message || 'Pending' | translate"
+          [tnTooltip]="item().message || 'Pending' | translate"
         ></tn-icon>
       }
       @case (State.Running) {
         <mat-spinner
           class="running"
           [diameter]="20"
-          [matTooltip]="item().message || 'Running' | translate"
+          [tnTooltip]="item().message || 'Running' | translate"
         ></mat-spinner>
       }
       @case (State.Success) {
@@ -21,7 +21,7 @@
           name="check-circle"
           library="mdi"
           class="success"
-          [matTooltip]="item().message || 'Success' | translate"
+          [tnTooltip]="item().message || 'Success' | translate"
         ></tn-icon>
       }
       @case (State.Error) {
@@ -29,7 +29,7 @@
           name="alert-circle"
           library="mdi"
           class="error"
-          [matTooltip]="item().message || 'Error' | translate"
+          [tnTooltip]="item().message || 'Error' | translate"
         ></tn-icon>
       }
     }

@@ -8,7 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
@@ -37,6 +37,7 @@ import {
     MatCard,
     MatCardContent,
     TnIconComponent,
+    TnTooltipDirective,
     ProductImageComponent,
     MatButton,
     TestDirective,

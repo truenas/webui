@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding, computed, input, inject } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { App } from 'app/interfaces/app.interface';
 
 @Component({
@@ -9,7 +9,7 @@ import { App } from 'app/interfaces/app.interface';
   templateUrl: './app-update-cell.component.html',
   styleUrls: ['./app-update-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule, MatTooltipModule, TnIconComponent],
+  imports: [TranslateModule, MatTooltipModule, TnIconComponent, TnTooltipDirective],
 })
 export class AppUpdateCellComponent {
   private translate = inject(TranslateService);

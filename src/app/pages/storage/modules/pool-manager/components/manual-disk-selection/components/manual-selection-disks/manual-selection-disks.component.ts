@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angu
 import { RouterLinkActive } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   DndDropEvent, DndDropzoneDirective, DndDraggableDirective, DndDragImageRefDirective,
 } from 'ngx-drag-drop';
@@ -63,6 +63,7 @@ const noEnclosureId = 'no-enclosure';
     DndDragImageRefDirective,
     DiskInfoComponent,
     TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
     AsyncPipe,
     TreeViewComponent,

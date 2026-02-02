@@ -7,12 +7,11 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -65,7 +64,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     StepActivationDirective,
     MatStepLabel,
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     GeneralWizardStepComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,

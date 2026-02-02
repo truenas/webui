@@ -5,11 +5,10 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
 import { filter, take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -67,7 +66,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     PageHeaderComponent,
     WithLoadingStateDirective,
     TnIconComponent,
-    MatTooltip,
+    TnTooltipDirective,
     BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,

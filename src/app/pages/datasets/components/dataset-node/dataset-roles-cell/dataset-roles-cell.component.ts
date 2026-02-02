@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
@@ -15,8 +14,8 @@ import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/d
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
-    MatTooltip,
   ],
 })
 export class DatasetRolesCellComponent {

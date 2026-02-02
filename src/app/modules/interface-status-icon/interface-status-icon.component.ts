@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input, inject } from '@an
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
 import { v4 as uuidv4 } from 'uuid';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
@@ -19,6 +19,7 @@ import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
   imports: [
     MatTooltipModule,
     TnIconComponent,
+    TnTooltipDirective,
     NgClass,
   ],
 })
