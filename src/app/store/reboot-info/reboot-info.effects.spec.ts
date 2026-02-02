@@ -1,5 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -7,7 +8,8 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
-import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { rebootInfoLoaded, refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
 import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
 
 const fakeThisNodeRebootInfo: SystemRebootInfo = {
@@ -33,6 +35,11 @@ describe('RebootInfoEffects', () => {
     service: RebootInfoEffects,
     providers: [
       provideMockActions(() => actions$),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsHaLicensed, value: false },
+        ],
+      }),
       mockApi([
         mockCall('system.reboot.info', fakeThisNodeRebootInfo),
         mockCall('failover.reboot.info', {
@@ -96,6 +103,17 @@ describe('RebootInfoEffects', () => {
     it('subscribes to reboot info and dispatches rebootInfoLoaded() for non-HA', async () => {
       actions$.next(failoverLicensedStatusLoaded({ isHaLicensed: false }));
       const dispatchedAction = await firstValueFrom(spectator.service.subscribeToRebootInfo);
+      expect(dispatchedAction).toEqual(rebootInfoLoaded({
+        thisNodeRebootInfo: fakeThisNodeRebootInfo,
+        otherNodeRebootInfo: null,
+      }));
+    });
+  });
+
+  describe('refreshRebootInfo', () => {
+    it('refreshes reboot info and dispatches rebootInfoLoaded() for non-HA', async () => {
+      actions$.next(refreshRebootInfo());
+      const dispatchedAction = await firstValueFrom(spectator.service.refreshRebootInfo);
       expect(dispatchedAction).toEqual(rebootInfoLoaded({
         thisNodeRebootInfo: fakeThisNodeRebootInfo,
         otherNodeRebootInfo: null,
