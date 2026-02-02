@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of, throwError } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
@@ -21,8 +22,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
@@ -66,6 +69,10 @@ describe('SystemSecurityFormComponent', () => {
       }),
       mockProvider(Router, {
         navigate: jest.fn(),
+      }),
+      mockProvider(RebootInfoDialogSuppressionService, {
+        suppress: jest.fn(),
+        unsuppress: jest.fn(),
       }),
       mockAuth(),
       mockProvider(ApiService, {
@@ -142,6 +149,21 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'System Security Settings Updated.',
       );
+    });
+
+    it('dispatches refreshRebootInfo and unsuppresses reboot info dialog after save', async () => {
+      const store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+
+      await form.fillForm({
+        'Enable FIPS': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(refreshRebootInfo());
+      expect(spectator.inject(RebootInfoDialogSuppressionService).unsuppress).toHaveBeenCalled();
     });
 
     it('handles null password_complexity_ruleset when saving', async () => {
