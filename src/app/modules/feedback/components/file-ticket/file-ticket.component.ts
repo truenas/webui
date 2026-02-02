@@ -55,7 +55,7 @@ export class FileTicketComponent {
 
   readonly isLoadingChange = output<boolean>();
 
-  private fileInputComponent = viewChild.required(IxFileInputComponent);
+  private fileInputComponent = viewChild(IxFileInputComponent);
 
   protected form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.maxLength(200)]],
@@ -86,12 +86,12 @@ export class FileTicketComponent {
 
   onSubmit(token: unknown): void {
     this.isLoadingChange.emit(true);
-    this.fileInputComponent().setDisabledState?.(true);
+    this.fileInputComponent()?.setDisabledState?.(true);
 
     this.feedbackService.createTicket(token as string, this.ticketType, this.form.getRawValue()).pipe(
       finalize(() => {
         this.isLoadingChange.emit(false);
-        this.fileInputComponent().setDisabledState?.(false);
+        this.fileInputComponent()?.setDisabledState?.(false);
       }),
       untilDestroyed(this),
     ).subscribe({
