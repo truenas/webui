@@ -37,6 +37,13 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .submit-button-wrapper.validating::before {
+    animation: none;
+    width: 100%;
+  }
+}
+
 :host-context(.ix-form-container) :host {
   flex-wrap: wrap;
   gap: 8px;
