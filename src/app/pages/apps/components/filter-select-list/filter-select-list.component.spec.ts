@@ -2,7 +2,6 @@ import { Signal, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -23,7 +22,6 @@ describe('FilterSelectListComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
-      MockComponent(TnIconComponent),
     ],
   });
 

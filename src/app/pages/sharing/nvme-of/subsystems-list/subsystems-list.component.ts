@@ -4,7 +4,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { tnIconMarker } from '@truenas/ui-components';
 import { noSearchResultsConfig, nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -16,6 +16,7 @@ import { searchDelayConst } from 'app/modules/global-search/constants/delay.cons
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -45,7 +46,6 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTableCellDirective,
-    TnIconComponent,
     IxTableEmptyDirective,
     IxTablePagerComponent,
     SubSystemNameCellComponent,
@@ -98,8 +98,23 @@ export class SubsystemsListComponent {
         return row.hosts.length;
       },
     }),
-    templateColumn({
+    actionsColumn({
       cssClass: 'view-details-column',
+      actions: [
+        {
+          iconName: tnIconMarker('chevron-right', 'mdi'),
+          tooltip: this.translate.instant('View Details'),
+          onClick: (row) => {
+            const isCurrentlyExpanded = this.dataProvider().expandedRow === row;
+            if (isCurrentlyExpanded) {
+              this.expanded(null);
+            } else {
+              this.dataProvider().expandedRow = row;
+              this.expanded(row);
+            }
+          },
+        },
+      ],
     }),
   ], {
     uniqueRowTag: (row) => 'nvmeof-subsys-' + row.name,

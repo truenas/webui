@@ -4,7 +4,6 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -21,7 +20,6 @@ describe('ExtentWizardStepComponent', () => {
     component: ExtentWizardStepComponent,
     providers: [
       FormBuilder,
-      mockAuth(),
       mockApi([
         mockCall('iscsi.extent.disk_choices', {
           'zvol/tank/regular-vol': 'tank/regular-vol (10 GiB)',

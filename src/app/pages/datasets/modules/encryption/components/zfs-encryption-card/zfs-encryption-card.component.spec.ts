@@ -77,8 +77,6 @@ describe('ZfsEncryptionCardComponent', () => {
 
   it('shows correct card state for key encrypted root', async () => {
     setupTest({ dataset: keyEncryptedRoot });
-    await spectator.fixture.whenStable();
-    spectator.detectChanges();
 
     const details = getDetails();
     expect(details).toEqual({
@@ -97,8 +95,6 @@ describe('ZfsEncryptionCardComponent', () => {
 
   it('shows correct card state for password encrypted unlocked root', async () => {
     setupTest({ dataset: passwordEncryptedRoot });
-    await spectator.fixture.whenStable();
-    spectator.detectChanges();
 
     const details = getDetails();
     expect(details).toEqual({
@@ -120,8 +116,6 @@ describe('ZfsEncryptionCardComponent', () => {
         locked: true,
       },
     });
-    await spectator.fixture.whenStable();
-    spectator.detectChanges();
 
     const details = getDetails();
     expect(details).toEqual({

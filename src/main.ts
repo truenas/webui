@@ -22,6 +22,7 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
+import { TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -114,6 +115,10 @@ bootstrapApplication(AppComponent, {
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
+    }),
+    provideAppInitializer(() => {
+      const spriteLoader = inject(TnSpriteLoaderService);
+      return spriteLoader.ensureSpriteLoaded();
     }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
