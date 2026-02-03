@@ -120,7 +120,7 @@ describe('ScheduleSectionComponent', () => {
     expect(await form.getValues()).toEqual({
       'Run Automatically': true,
       Schedule: true,
-      Frequency: 'Custom At 12:00 AM, every 2 days',
+      Frequency: 'Custom At 00:00 (12:00 AM), every 2 days',
       'Only Replicate Snapshots Matching Schedule': true,
     });
   });

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -16,7 +16,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
+import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -116,6 +116,8 @@ describe('PrivilegeFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
+        getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+        getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
       }),
       provideMockStore({
         selectors: [
@@ -300,6 +302,16 @@ describe('PrivilegeFormComponent', () => {
       // Note: Cannot use IxFormHarness here because this tests an edge case where
       // a group was valid when entered but got deleted before submission.
       // The chips provider would prevent entering invalid groups in normal UI flow.
+
+      // Mock getGroupByName to fail for non-existent groups
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockImplementation((groupName) => {
+        if (groupName === 'NonExistentDSGroup') {
+          return throwError(() => new Error('Group not found'));
+        }
+        return of({ gr_gid: 1000, gr_mem: [], gr_name: groupName });
+      });
+
       // Accessing protected form property via bracket notation for testing
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['form'].patchValue({
@@ -376,43 +388,6 @@ describe('PrivilegeFormComponent', () => {
       expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
     });
 
-    it('should use UserService.groupQueryDsCache for DS groups', async () => {
-      const provider = spectator.component.dsGroupsProvider;
-      const userService = spectator.inject(UserService);
-
-      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of([
-        { id: 1, group: 'domain-test', gid: 1001 } as Group,
-        { id: 2, group: 'test-domain', gid: 1002 } as Group,
-      ]));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Should call UserService.groupQueryDsCache with the query
-      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0);
-
-      // Should return group names
-      expect(result).toEqual(['domain-test', 'test-domain']);
-    });
-
-    it('should limit DS groups results to 50', async () => {
-      const provider = spectator.component.dsGroupsProvider;
-      const userService = spectator.inject(UserService);
-
-      // Mock more than 50 groups
-      const manyGroups = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        group: `group${i}`,
-        gid: 1000 + i,
-      } as Group));
-
-      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of(manyGroups));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Should limit to 50 results
-      expect(result).toHaveLength(50);
-    });
-
     it('should handle empty query for local groups', async () => {
       const provider = spectator.component.localGroupsProvider;
 
@@ -465,6 +440,8 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -518,6 +495,8 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -571,6 +550,8 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -626,6 +607,8 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           provideMockStore({
             selectors: [
@@ -679,6 +662,8 @@ describe('PrivilegeFormComponent', () => {
           }),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
           }),
           mockAuth(),
         ],

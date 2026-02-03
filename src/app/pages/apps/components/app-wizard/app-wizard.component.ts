@@ -451,8 +451,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private setAppForEdit(app: App): void {
     this.rootDynamicSection = [];
     this.isNew = false;
-    this.config = app.config;
-    this.config.release_name = app.id;
+    this.config = { ...app.config, release_name: app.id };
 
     this._pageTitle$.next(app.metadata.title || app.name);
 
@@ -582,7 +581,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   private listenForVersionChanges(): void {
     this.form.controls.version?.valueChanges.pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
-      this.catalogApp.schema = this.catalogApp.versions[version].schema;
+      this.catalogApp = { ...this.catalogApp, schema: this.catalogApp.versions[version].schema };
       this.buildDynamicForm(this.catalogApp.schema);
     });
   }

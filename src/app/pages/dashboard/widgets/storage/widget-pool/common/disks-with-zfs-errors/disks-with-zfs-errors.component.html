@@ -1,7 +1,7 @@
 <div class="item">
-  <h2 class="value">
+  <h2 class="value" [class.value-warn]="disksWithZfsErrors() > 0">
     @if (!isPoolLoading()) {
-      {{ totalZfsErrors() }}
+      {{ disksWithZfsErrors() }}
     } @else {
       <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
     }

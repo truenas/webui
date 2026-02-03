@@ -1,9 +1,12 @@
 /* eslint-disable jest/no-conditional-expect */
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -30,6 +33,7 @@ function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig
 
 describe('TruecommandButtonComponent', () => {
   let spectator: Spectator<TruecommandButtonComponent>;
+  let loader: HarnessLoader;
   let dialogServiceMock: DialogService;
   let matDialogMock: MatDialog;
 
@@ -53,6 +57,13 @@ describe('TruecommandButtonComponent', () => {
           })),
         }),
         mockProvider(MatDialogRef),
+        mockProvider(TnSpriteLoaderService, {
+          ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+          getIconUrl: jest.fn(),
+          getSafeIconUrl: jest.fn(),
+          isSpriteLoaded: jest.fn(() => true),
+          getSpriteConfig: jest.fn(),
+        }),
       ],
     });
   }
@@ -66,13 +77,14 @@ describe('TruecommandButtonComponent', () => {
 
       beforeEach(() => {
         spectator = createComponent();
-
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         dialogServiceMock = spectator.inject(DialogService);
       });
 
-      it(`shows ${expectedButtonId} button with trueconnect icon`, () => {
+      it(`shows ${expectedButtonId} button with trueconnect icon`, async () => {
         expect(spectator.query(expectedButtonId)).toBeVisible();
-        expect(spectator.query(`${expectedButtonId} [name="ix-truecommand-logo-mark"]`)).toBeVisible();
+        const icon = await loader.getHarness(TnIconHarness.with({ name: 'tn-truecommand-logo-mark' }));
+        expect(icon).toBeTruthy();
       });
 
       it(`shows correct message when user clicks on the ${expectedButtonId} button`, () => {
@@ -111,16 +123,17 @@ describe('TruecommandButtonComponent', () => {
 
       beforeEach(() => {
         spectator = createComponent();
-
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         dialogServiceMock = spectator.inject(DialogService);
 
         matDialogMock = spectator.inject(MatDialog);
         jest.spyOn(matDialogMock, 'open');
       });
 
-      it(`shows ${expectedButtonId} button with trueconnect icon`, () => {
+      it(`shows ${expectedButtonId} button with trueconnect icon`, async () => {
         expect(spectator.query(expectedButtonId)).toBeVisible();
-        expect(spectator.query(`${expectedButtonId} [name="ix-truecommand-logo-mark"]`)).toBeVisible();
+        const icon = await loader.getHarness(TnIconHarness.with({ name: 'tn-truecommand-logo-mark' }));
+        expect(icon).toBeTruthy();
       });
 
       it(`shows status modal when user clicks on the ${expectedButtonId} button`, () => {

@@ -60,7 +60,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.columns?.firstChange) {
-      this.defaultColumns = changes.columns.currentValue;
+      this.defaultColumns = cloneDeep(changes.columns.currentValue);
     }
   }
 
@@ -91,12 +91,20 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.columns().forEach((column) => {
         if (column instanceof IxCellActionsComponent || column instanceof IxCellActionsWithMenuComponent) return;
 
+        // Skip columns without a title - they're not user-selectable
+        // and should keep their default visibility
+        if (!column.title) return;
+
         column.hidden = !displayedColumns.columns.includes(column.title);
 
         if (column.hidden) {
           this.hiddenColumns.select(column);
         }
       });
+
+      // Enable reset button when loading from saved preferences
+      // since user may want to return to defaults
+      this.isResetToDefaultDisabled.set(false);
 
       if (displayedColumns.columns.every((column) => !this.columns().some((col) => col.title === column))) {
         this.hiddenColumns.clear();
@@ -105,14 +113,16 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   }
 
   toggleAll(): void {
+    const selectableColumns = this.columns().filter((col) => !!col.title);
+
     if (this.isAllSelected) {
-      this.hiddenColumns.deselect(...this.columns());
-      this.toggle(this.columns()[0]);
+      this.hiddenColumns.deselect(...selectableColumns);
+      this.toggle(selectableColumns[0]);
     } else {
-      this.hiddenColumns.select(...this.columns());
+      this.hiddenColumns.select(...selectableColumns);
     }
 
-    this.columns().forEach((_cell, index) => this.toggle(this.columns()[index]));
+    selectableColumns.forEach((column) => this.toggle(column));
     this.emitColumnsChange();
   }
 
@@ -137,7 +147,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.store$.dispatch(preferredColumnsUpdated({
         tableDisplayedColumns: [{
           title: this.columnPreferencesKey(),
-          columns: this.columns().filter((column) => !column.hidden).map((column) => column.title),
+          columns: this.columns().filter((column) => !column.hidden && column.title).map((column) => column.title),
         }],
       }));
     }

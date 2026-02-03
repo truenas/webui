@@ -3,9 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatBadgeHarness } from '@angular/material/badge/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
@@ -36,6 +36,13 @@ describe('JobsIndicatorComponent', () => {
           beforeClosed: () => of(undefined),
         })),
       }),
+      mockProvider(TnSpriteLoaderService, {
+        ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+        getIconUrl: jest.fn(),
+        getSafeIconUrl: jest.fn(),
+        isSpriteLoaded: jest.fn(() => true),
+        getSpriteConfig: jest.fn(),
+      }),
     ],
   });
 
@@ -46,8 +53,8 @@ describe('JobsIndicatorComponent', () => {
 
   it('shows an icon with a badge for number of running jobs', async () => {
     const iconButton = await loader.getHarness(MatButtonHarness);
-    const icon = await iconButton.getHarness(MatIconHarness);
-    expect(await icon.getName()).toMatch('assignment');
+    const icon = await iconButton.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('clipboard-text');
 
     const badge = await loader.getHarness(MatBadgeHarness);
     expect(await badge.getText()).toBe('4');

@@ -25,8 +25,9 @@ export const helptextUsers = {
  here when editing a user.'),
   homeDirectoryPermissionsTooltip: T('Sets default Unix permissions of the user home\
  directory. This is read-only for built-in users.'),
-  publicKeyTooltip: T('Enter or paste the <b>public</b> SSH key of the\
- user for any key-based authentication. <b>Do not paste the private key.</b>'),
+  publicKeyTooltip: T('Enter or paste the user\'s <b>public</b> SSH key(s) to allow \
+key-based authentication (stored in <i>authorized_keys</i>). Multiple keys can be \
+entered, one per line. <b>Do not paste private keys.</b>'),
   disablePasswordTooltip: T('<i>Yes:</i> Disables the <b>Password</b> \
  fields. The account cannot \
  use password-based logins for services. For example, disabling the \

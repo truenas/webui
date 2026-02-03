@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
@@ -55,6 +56,7 @@ import { LicenseService } from 'app/services/license.service';
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     ModalHeaderComponent,
     MatCard,
     MatCardContent,
@@ -95,11 +97,16 @@ export class TargetFormComponent implements OnInit {
   }
 
   get isAsyncValidatorPending(): boolean {
-    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.dirty;
   }
 
   get showPortControls(): boolean {
     return this.form.value.mode === IscsiTargetMode.Fc || this.form.value.mode === IscsiTargetMode.Both;
+  }
+
+  get showGroupsControls(): boolean {
+    const mode = this.form.value.mode;
+    return mode === IscsiTargetMode.Iscsi || mode === IscsiTargetMode.Both;
   }
 
   get title(): string {
@@ -234,6 +241,11 @@ export class TargetFormComponent implements OnInit {
 
   protected onSubmit(): void {
     const { fcPorts, ...values } = this.form.getRawValue();
+
+    // Clear groups array if mode is FC (groups are not applicable in FC mode)
+    if (values.mode === IscsiTargetMode.Fc) {
+      values.groups = [];
+    }
 
     this.isLoading.set(true);
     let request$: Observable<IscsiTarget>;
