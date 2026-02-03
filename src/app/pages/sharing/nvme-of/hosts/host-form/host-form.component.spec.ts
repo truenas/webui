@@ -74,6 +74,7 @@ describe('HostFormComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('nvmet.host.create', [{
       hostnqn: 'nqn.2014-08.org',
+      description: '',
       dhchap_key: '1234567890',
       dhchap_ctrl_key: '111222',
       dhchap_dhgroup: '2048-BIT',
@@ -101,6 +102,7 @@ describe('HostFormComponent', () => {
       const formValues = await form.getValues();
       expect(formValues).toEqual({
         'Host NQN': 'nqn.2014-08.org',
+        Description: '',
         'Require Host Authentication': true,
         'Key For Host To Present': '1234567890',
         'Key For TrueNAS To Present (Optional)': '111222',
@@ -129,6 +131,7 @@ describe('HostFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('nvmet.host.update', [23, {
         hostnqn: 'nqn.2014-09.org',
+        description: '',
         dhchap_key: null,
         dhchap_ctrl_key: '111222',
         dhchap_hash: 'SHA-256',

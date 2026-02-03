@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
+  MatDialog, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -70,6 +70,7 @@ export class ManageHostsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
+  private dialogRef = inject(MatDialogRef<ManageHostsDialog>);
   private snackbar = inject(SnackbarService);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -78,6 +79,10 @@ export class ManageHostsDialog implements OnInit {
     textColumn({
       title: this.translate.instant('NQN'),
       propertyName: 'hostnqn',
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'description',
     }),
     yesNoColumn({
       title: this.translate.instant('Has Host Authentication'),
@@ -125,6 +130,7 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
+    this.dialogRef.close();
     this.slideIn
       .open(HostFormComponent)
       .pipe(
@@ -138,6 +144,7 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onEdit(host: NvmeOfHostAndUsage): void {
+    this.dialogRef.close();
     this.slideIn.open(HostFormComponent, { data: host })
       .pipe(
         filter((response) => Boolean(response.response)),
