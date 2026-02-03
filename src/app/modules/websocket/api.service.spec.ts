@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
@@ -204,6 +204,81 @@ describe('ApiService', () => {
       await expect(firstValueFrom(spectator.service.job('boot.attach'))).rejects.toMatchObject({
         job: failedJobUpdate,
       });
+    });
+
+    it('should complete when time_finished is set, not when API response arrives', fakeAsync(() => {
+      const uuid = 'raceConditionUUID';
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      jest.spyOn(require('uuid'), 'v4').mockReturnValue(uuid);
+
+      // Start with running job (no time_finished)
+      const runningJob = {
+        id: 100,
+        method: 'pool.dataset.permission',
+        message_ids: [uuid],
+        state: JobState.Running,
+        progress: { percent: 50 },
+        time_finished: undefined,
+      } as Job;
+
+      mockStore$.overrideSelector(selectJobs, [runningJob]);
+      mockStore$.refreshState();
+
+      const emissions: Job[] = [];
+      let completed = false;
+
+      spectator.service.job('pool.dataset.permission').subscribe({
+        next: (job) => emissions.push(job),
+        complete: () => { completed = true; },
+      });
+
+      // Simulate API response arriving (should NOT complete the observable)
+      responses$.next({ jsonrpc: '2.0', id: uuid, result: 100 });
+
+      expect(completed).toBe(false);
+      expect(emissions).toHaveLength(1);
+
+      // Now simulate job completion via store update
+      const completedJob = {
+        ...runningJob,
+        state: JobState.Success,
+        progress: { percent: 100 },
+        time_finished: { $date: Date.now() },
+      } as Job;
+
+      mockStore$.overrideSelector(selectJobs, [completedJob]);
+      mockStore$.refreshState();
+      tick();
+
+      expect(completed).toBe(true);
+      expect(emissions).toHaveLength(2);
+      expect(emissions[1].state).toBe(JobState.Success);
+    }));
+
+    it('should complete when clearSubscriptions$ emits', () => {
+      const uuid = 'clearSubsUUID';
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      jest.spyOn(require('uuid'), 'v4').mockReturnValue(uuid);
+
+      const runningJob = {
+        id: 300,
+        method: 'app.start',
+        message_ids: [uuid],
+        state: JobState.Running,
+        time_finished: undefined,
+      } as Job;
+
+      mockStore$.overrideSelector(selectJobs, [runningJob]);
+      mockStore$.refreshState();
+
+      let completed = false;
+      spectator.service.job('app.start').subscribe({
+        complete: () => { completed = true; },
+      });
+
+      expect(completed).toBe(false);
+      spectator.service.clearSubscriptions();
+      expect(completed).toBe(true);
     });
   });
 
