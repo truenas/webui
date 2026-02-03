@@ -121,4 +121,25 @@ describe('analyzeVersionChange', () => {
       hasRevisionChange: true,
     });
   });
+
+  it('falls back to "Update available" when latest_app_version is not provided by backend', () => {
+    const app = {
+      upgrade_available: true,
+      version: '1.0.0',
+      latest_version: '1.0.1',
+      latest_app_version: undefined,
+      human_version: '2.0.0_1.0.0',
+      metadata: {
+        app_version: '2.0.0',
+      },
+    } as App;
+
+    const result = analyzeVersionChange(app);
+
+    // When backend doesn't provide latest_app_version, default to showing "Update available"
+    expect(result).toEqual({
+      hasAppVersionChange: true,
+      hasRevisionChange: true,
+    });
+  });
 });
