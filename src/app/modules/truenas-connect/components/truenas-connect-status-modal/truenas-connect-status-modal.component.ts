@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -28,9 +27,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     MatDialogContent,
     IxIconComponent,
     MatButton,
-    MatIconButton,
     MatDialogActions,
-    MatTooltip,
     TranslateModule,
     TestDirective,
     TruenasConnectSpinnerComponent,

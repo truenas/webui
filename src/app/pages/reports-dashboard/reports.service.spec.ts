@@ -23,7 +23,7 @@ describe('ReportsService', () => {
         ] as Disk[]),
         mockCall('reporting.netdata_graphs', [
           { name: ReportingGraphName.Cpu },
-          { name: ReportingGraphName.Ups },
+          { name: ReportingGraphName.UpsTemp },
         ] as ReportingGraph[]),
         mockCall('reporting.netdata_get_data', [{
           name: 'cpu',
