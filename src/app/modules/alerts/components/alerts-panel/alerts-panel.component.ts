@@ -5,8 +5,9 @@ import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -65,6 +66,7 @@ export class AlertsPanelComponent implements OnInit {
   private smartAlertService = inject(SmartAlertService);
   private destroyRef = inject(DestroyRef);
   private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
 
@@ -134,14 +136,14 @@ export class AlertsPanelComponent implements OnInit {
 
   // Category labels for display
   protected readonly categoryLabels: Record<SmartAlertCategory, string> = {
-    [SmartAlertCategory.Storage]: 'Storage',
-    [SmartAlertCategory.Network]: 'Network',
-    [SmartAlertCategory.Services]: 'Services',
-    [SmartAlertCategory.System]: 'System',
-    [SmartAlertCategory.Security]: 'Security',
-    [SmartAlertCategory.Hardware]: 'Hardware',
-    [SmartAlertCategory.Tasks]: 'Tasks',
-    [SmartAlertCategory.Applications]: 'Applications',
+    [SmartAlertCategory.Storage]: T('Storage'),
+    [SmartAlertCategory.Network]: T('Network'),
+    [SmartAlertCategory.Services]: T('Services'),
+    [SmartAlertCategory.System]: T('System'),
+    [SmartAlertCategory.Security]: T('Security'),
+    [SmartAlertCategory.Hardware]: T('Hardware'),
+    [SmartAlertCategory.Tasks]: T('Tasks'),
+    [SmartAlertCategory.Applications]: T('Applications'),
   };
 
   // Category icons for display - matching side navigation icons
@@ -183,11 +185,13 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   onReopenAll(): void {
-    this.store$.dispatch(reopenAllAlertsPressed());
+    const alertIds = this.enhancedDismissedAlerts().map((alert) => alert.id);
+    this.store$.dispatch(reopenAllAlertsPressed({ alertIds }));
   }
 
   onDismissAll(): void {
-    this.store$.dispatch(dismissAllAlertsPressed());
+    const alertIds = this.enhancedUnreadAlerts().map((alert) => alert.id);
+    this.store$.dispatch(dismissAllAlertsPressed({ alertIds }));
   }
 
   setSeverityFilter(filter: 'all' | 'critical' | 'warning' | 'info' | 'dismissed'): void {
@@ -206,6 +210,40 @@ export class AlertsPanelComponent implements OnInit {
    */
   protected shouldShowUnread = computed(() => {
     return this.severityFilter() !== 'dismissed';
+  });
+
+  /**
+   * Get text for "Dismiss All" button based on current filter
+   */
+  protected dismissAllButtonText = computed(() => {
+    const filter = this.severityFilter();
+    switch (filter) {
+      case 'critical':
+        return this.translate.instant('Dismiss All Critical Alerts');
+      case 'warning':
+        return this.translate.instant('Dismiss All Warnings');
+      case 'info':
+        return this.translate.instant('Dismiss All Info Alerts');
+      default:
+        return this.translate.instant('Dismiss All Alerts');
+    }
+  });
+
+  /**
+   * Get text for "Re-Open All" button based on current filter
+   */
+  protected reopenAllButtonText = computed(() => {
+    const filter = this.severityFilter();
+    switch (filter) {
+      case 'critical':
+        return this.translate.instant('Re-Open All Critical Alerts');
+      case 'warning':
+        return this.translate.instant('Re-Open All Warnings');
+      case 'info':
+        return this.translate.instant('Re-Open All Info Alerts');
+      default:
+        return this.translate.instant('Re-Open All Alerts');
+    }
   });
 
   private filterBySeverity<T extends Alert & EnhancedAlert>(alerts: T[]): T[] {

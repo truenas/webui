@@ -203,7 +203,7 @@ export function createFragmentExtractor(
  *   extractApiParams: createTaskIdExtractor(),
  * }
  */
-export function createTaskIdExtractor(): (alert: { args: unknown }) => unknown {
+export function createTaskIdExtractor(): (alert: { args: unknown }) => number | undefined {
   return (alert: { args: unknown }) => {
     // Handle array args (most common case)
     if (Array.isArray(alert.args) && alert.args.length > 0) {
@@ -212,14 +212,20 @@ export function createTaskIdExtractor(): (alert: { args: unknown }) => unknown {
       if (typeof firstArg === 'object' && firstArg !== null && 'id' in firstArg) {
         return (firstArg as { id: number }).id;
       }
-      // Otherwise use the first argument directly (already a number)
-      return firstArg;
+      // If it's a plain number, return it
+      if (typeof firstArg === 'number') {
+        return firstArg;
+      }
     }
     // Fallback: check if args is directly an object with id property
     if (typeof alert.args === 'object' && alert.args !== null && 'id' in alert.args) {
       return (alert.args as { id: number }).id;
     }
-    // Last resort: return args as-is
-    return alert.args;
+    // If args is directly a number
+    if (typeof alert.args === 'number') {
+      return alert.args;
+    }
+    // Unable to extract ID
+    return undefined;
   };
 }

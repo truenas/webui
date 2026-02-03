@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
@@ -101,7 +101,9 @@ export class SmartAlertService {
               if (key && key in extractedApiParams) {
                 return String((extractedApiParams as Record<string, unknown>)[key]);
               }
-              console.warn(`Missing placeholder value for ${segment} in extractedApiParams:`, extractedApiParams);
+              if (isDevMode()) {
+                console.warn(`Missing placeholder value for ${segment} in extractedApiParams:`, extractedApiParams);
+              }
               return segment; // Return placeholder unchanged if key not found
             }
             // If extractedApiParams is a primitive, use it directly (backward compatibility)
@@ -113,7 +115,9 @@ export class SmartAlertService {
         // Check if any placeholders remain unreplaced
         const hasUnreplacedPlaceholders = updatedRoute.some(isRoutePlaceholder);
         if (hasUnreplacedPlaceholders) {
-          console.warn('Route has unreplaced placeholders, falling back to related menu path:', updatedRoute);
+          if (isDevMode()) {
+            console.warn('Route has unreplaced placeholders, falling back to related menu path:', updatedRoute);
+          }
           // Don't set the route - the action will be filtered out or use relatedMenuPath
           enhancedAction = { ...enhancedAction, route: undefined };
         } else {
@@ -220,17 +224,23 @@ export class SmartAlertService {
           if (action.apiMethod && action.apiParams !== undefined) {
             this.handleRunTask(action, alert);
           } else {
-            console.error('Run task action missing required apiMethod or apiParams:', action);
+            if (isDevMode()) {
+              console.error('Run task action missing required apiMethod or apiParams:', action);
+            }
           }
           break;
 
         case SmartAlertActionType.Modal:
           // TODO: Implement modal handler when needed
-          console.warn('Modal actions not yet implemented:', action);
+          if (isDevMode()) {
+            console.warn('Modal actions not yet implemented:', action);
+          }
           break;
 
         default:
-          console.warn('Unknown action type:', action.type);
+          if (isDevMode()) {
+            console.warn('Unknown action type:', action.type);
+          }
       }
     };
   }

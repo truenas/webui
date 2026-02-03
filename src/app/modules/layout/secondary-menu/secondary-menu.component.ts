@@ -5,7 +5,7 @@ import {
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -33,6 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class SecondaryMenuComponent {
   private alertNavBadgeService = inject(AlertNavBadgeService);
+  private translate = inject(TranslateService);
 
   protected readonly AlertBadgeType = AlertBadgeType;
 
@@ -74,14 +75,7 @@ export class SecondaryMenuComponent {
     if (!menuNameValue) return AlertBadgeType.Info;
 
     const pathArray = [menuNameValue, subItem.state];
-    const key = pathArray.join('.');
-    const counts = this.badgeCounts().get(key);
-
-    if (!counts) return AlertBadgeType.Info;
-
-    if (counts.critical > 0) return AlertBadgeType.Critical;
-    if (counts.warning > 0) return AlertBadgeType.Warning;
-    return AlertBadgeType.Info;
+    return this.alertNavBadgeService.getBadgeTypeForPath(pathArray, this.badgeCounts());
   }
 
   /**
@@ -99,13 +93,22 @@ export class SecondaryMenuComponent {
 
     const parts: string[] = [];
     if (counts.critical > 0) {
-      parts.push(counts.critical === 1 ? '1 critical alert' : `${counts.critical} critical alerts`);
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 critical alert} other {# critical alerts}}',
+        { count: counts.critical },
+      ));
     }
     if (counts.warning > 0) {
-      parts.push(counts.warning === 1 ? '1 warning' : `${counts.warning} warnings`);
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 warning} other {# warnings}}',
+        { count: counts.warning },
+      ));
     }
     if (counts.info > 0) {
-      parts.push(counts.info === 1 ? '1 info alert' : `${counts.info} info alerts`);
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 info alert} other {# info alerts}}',
+        { count: counts.info },
+      ));
     }
 
     return parts.join(', ');
@@ -116,15 +119,6 @@ export class SecondaryMenuComponent {
    */
   getBadgeIcon(subItem: SubMenuItem): string {
     const badgeType = this.getBadgeType(subItem);
-    switch (badgeType) {
-      case AlertBadgeType.Critical:
-        return 'mdi-alert-circle';
-      case AlertBadgeType.Warning:
-        return 'mdi-alert';
-      case AlertBadgeType.Info:
-        return 'mdi-information';
-      default:
-        return 'mdi-information';
-    }
+    return this.alertNavBadgeService.getBadgeIconForType(badgeType);
   }
 }

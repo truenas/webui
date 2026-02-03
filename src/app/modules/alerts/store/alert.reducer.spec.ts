@@ -300,23 +300,57 @@ describe('alertReducer', () => {
   });
 
   describe('dismissAllAlertsPressed', () => {
-    it('marks all alerts as dismissed', () => {
+    it('marks all alerts as dismissed when no alertIds provided', () => {
       const initialState = adapter.setAll(mockAlerts, alertsInitialState);
-      const state = alertReducer(initialState, dismissAllAlertsPressed());
+      const state = alertReducer(initialState, dismissAllAlertsPressed({ alertIds: undefined }));
 
       expect(state.entities['1']?.dismissed).toBe(true);
       expect(state.entities['2']?.dismissed).toBe(true);
     });
-  });
 
-  describe('reopenAllAlertsPressed', () => {
-    it('marks all alerts as not dismissed', () => {
-      const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
-      const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
-      const state = alertReducer(initialState, reopenAllAlertsPressed());
+    it('marks only specified alerts as dismissed when alertIds provided', () => {
+      const initialState = adapter.setAll(mockAlerts, alertsInitialState);
+      const state = alertReducer(initialState, dismissAllAlertsPressed({ alertIds: ['1'] }));
+
+      expect(state.entities['1']?.dismissed).toBe(true);
+      expect(state.entities['2']?.dismissed).toBe(false);
+    });
+
+    it('handles empty alertIds array by dismissing no alerts', () => {
+      const initialState = adapter.setAll(mockAlerts, alertsInitialState);
+      const state = alertReducer(initialState, dismissAllAlertsPressed({ alertIds: [] }));
 
       expect(state.entities['1']?.dismissed).toBe(false);
       expect(state.entities['2']?.dismissed).toBe(false);
+    });
+  });
+
+  describe('reopenAllAlertsPressed', () => {
+    it('marks all alerts as not dismissed when no alertIds provided', () => {
+      const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
+      const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
+      const state = alertReducer(initialState, reopenAllAlertsPressed({ alertIds: undefined }));
+
+      expect(state.entities['1']?.dismissed).toBe(false);
+      expect(state.entities['2']?.dismissed).toBe(false);
+    });
+
+    it('marks only specified alerts as not dismissed when alertIds provided', () => {
+      const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
+      const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
+      const state = alertReducer(initialState, reopenAllAlertsPressed({ alertIds: ['1'] }));
+
+      expect(state.entities['1']?.dismissed).toBe(false);
+      expect(state.entities['2']?.dismissed).toBe(true);
+    });
+
+    it('handles empty alertIds array by reopening no alerts', () => {
+      const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
+      const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
+      const state = alertReducer(initialState, reopenAllAlertsPressed({ alertIds: [] }));
+
+      expect(state.entities['1']?.dismissed).toBe(true);
+      expect(state.entities['2']?.dismissed).toBe(true);
     });
   });
 

@@ -1,6 +1,7 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
+import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { selectAlertsForNavBadges } from 'app/modules/alerts/store/alert.selectors';
@@ -96,5 +97,32 @@ export class AlertNavBadgeService {
       const alerts = this.alertsSignal();
       return alerts.map((alert) => this.smartAlertService.enhanceAlert(alert));
     });
+  }
+
+  /**
+   * Get badge type (critical, warning, or info) for a specific menu path
+   */
+  getBadgeTypeForPath(path: string[], badgeCounts: Map<string, NavBadge>): AlertBadgeType {
+    const counts = badgeCounts.get(path.join('.'));
+    if (!counts) return AlertBadgeType.Info;
+    if (counts.critical > 0) return AlertBadgeType.Critical;
+    if (counts.warning > 0) return AlertBadgeType.Warning;
+    return AlertBadgeType.Info;
+  }
+
+  /**
+   * Get icon for badge based on alert type
+   */
+  getBadgeIconForType(type: AlertBadgeType): string {
+    switch (type) {
+      case AlertBadgeType.Critical:
+        return 'mdi-alert-circle';
+      case AlertBadgeType.Warning:
+        return 'mdi-alert';
+      case AlertBadgeType.Info:
+        return 'mdi-information';
+      default:
+        return 'mdi-information';
+    }
   }
 }

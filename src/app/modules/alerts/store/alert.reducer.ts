@@ -108,10 +108,26 @@ export const alertReducer = createReducer(
     return adapter.updateMany(updates, state);
   }),
 
-  on(dismissAllAlertsPressed, (state) => {
+  on(dismissAllAlertsPressed, (state, { alertIds }) => {
+    // If specific alert IDs provided, only dismiss those; otherwise dismiss all
+    if (alertIds && alertIds.length > 0) {
+      const updates = alertIds.map((id) => ({
+        id,
+        changes: { dismissed: true },
+      }));
+      return adapter.updateMany(updates, state);
+    }
     return adapter.map((alert) => ({ ...alert, dismissed: true }), state);
   }),
-  on(reopenAllAlertsPressed, (state) => {
+  on(reopenAllAlertsPressed, (state, { alertIds }) => {
+    // If specific alert IDs provided, only reopen those; otherwise reopen all
+    if (alertIds && alertIds.length > 0) {
+      const updates = alertIds.map((id) => ({
+        id,
+        changes: { dismissed: false },
+      }));
+      return adapter.updateMany(updates, state);
+    }
     return adapter.map((alert) => ({ ...alert, dismissed: false }), state);
   }),
 );

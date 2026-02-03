@@ -497,27 +497,22 @@ export const smartAlertRegistry: SmartAlertConfig = {
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/replication/',
       actions: [
         {
-          label: T('Rerun Replication'),
-          type: SmartAlertActionType.RunTask,
-          icon: iconMarker('mdi-play-circle'),
-          apiMethod: 'replication.run',
-          primary: true,
-          requiresConfirmation: true,
-        },
-        {
           label: T('View Replication'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-sync'),
           route: ['/data-protection', 'replication'],
+          primary: true,
         },
       ],
       extractFragment: createFragmentExtractor(
         'replication-task',
         /Replication\s+"([^"]+)"/i,
         undefined,
-        (value) => value.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase(),
+        // HTML IDs can only contain letters, digits, hyphens, underscores, and periods
+        // Remove all invalid characters (spaces, slashes, etc.) to match browser normalization
+        // e.g., 'tank - sed' → 'tank-sed', 'z - /mnt' → 'z-mnt'
+        (value) => value.replace(/[^a-zA-Z0-9-_.]/g, ''),
       ),
-      extractApiParams: createTaskIdExtractor(),
     },
 
     RsyncFailed: {

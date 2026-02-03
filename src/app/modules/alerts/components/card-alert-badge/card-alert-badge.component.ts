@@ -38,12 +38,7 @@ export class CardAlertBadgeComponent {
   });
 
   protected readonly badgeType = computed((): AlertBadgeType => {
-    const counts = this.badgeCounts().get(this.menuPath().join('.'));
-    if (!counts) return AlertBadgeType.Info;
-
-    if (counts.critical > 0) return AlertBadgeType.Critical;
-    if (counts.warning > 0) return AlertBadgeType.Warning;
-    return AlertBadgeType.Info;
+    return this.alertNavBadgeService.getBadgeTypeForPath(this.menuPath(), this.badgeCounts());
   });
 
   protected readonly tooltip = computed(() => {
@@ -76,16 +71,6 @@ export class CardAlertBadgeComponent {
   });
 
   protected getIconForBadgeType(): string {
-    const type = this.badgeType();
-    switch (type) {
-      case AlertBadgeType.Critical:
-        return 'mdi-alert-circle';
-      case AlertBadgeType.Warning:
-        return 'mdi-alert';
-      case AlertBadgeType.Info:
-        return 'mdi-information';
-      default:
-        return 'mdi-information';
-    }
+    return this.alertNavBadgeService.getBadgeIconForType(this.badgeType());
   }
 }

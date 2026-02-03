@@ -140,8 +140,13 @@ export class AlertEffects {
   dismissAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAllAlertsPressed),
     withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
-    mergeMap(([, [unreadAlerts]]) => {
-      const requests = unreadAlerts.map((alert) => this.api.call('alert.dismiss', [alert.id]));
+    mergeMap(([action, [unreadAlerts]]) => {
+      // If specific alert IDs provided, only dismiss those; otherwise dismiss all
+      const alertIds = action.alertIds;
+      const alertsToDismiss = alertIds && alertIds.length > 0
+        ? unreadAlerts.filter((alert) => alertIds.includes(alert.id))
+        : unreadAlerts;
+      const requests = alertsToDismiss.map((alert) => this.api.call('alert.dismiss', [alert.id]));
       return forkJoin(requests).pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
@@ -156,8 +161,13 @@ export class AlertEffects {
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAllAlertsPressed),
     withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
-    mergeMap(([, [dismissedAlerts]]) => {
-      const requests = dismissedAlerts.map((alert) => this.api.call('alert.restore', [alert.id]));
+    mergeMap(([action, [dismissedAlerts]]) => {
+      // If specific alert IDs provided, only reopen those; otherwise reopen all
+      const alertIds = action.alertIds;
+      const alertsToReopen = alertIds && alertIds.length > 0
+        ? dismissedAlerts.filter((alert) => alertIds.includes(alert.id))
+        : dismissedAlerts;
+      const requests = alertsToReopen.map((alert) => this.api.call('alert.restore', [alert.id]));
       return forkJoin(requests).pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
