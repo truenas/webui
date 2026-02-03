@@ -179,4 +179,86 @@ describe('TargetGlobalConfigurationComponent', () => {
       'Enable iSCSI Extensions for RDMA (iSER)': false,
     });
   });
+
+  it('validates Base Name field only when it is being modified', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+
+    // Original value is 'iqn.2005-10.org.freenas.ctl' from mock
+    // Form should be valid initially even if we don't touch the basename
+    expect(spectator.component.form.controls.basename.valid).toBe(true);
+
+    // Test with uppercase letters - validation should trigger
+    await form.fillForm({
+      'Base Name': 'IQN.2005-10.ORG.FREENAS.CTL',
+    });
+    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+    expect(spectator.component.form.controls.basename.errors).toMatchObject({
+      pattern: { message: 'Only lowercase alphanumeric characters and . : - are allowed.' },
+    });
+
+    // Test with special characters like @ and !
+    await form.fillForm({
+      'Base Name': 'iqn.2005-10.org.freenas.ctl@%!!',
+    });
+    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+
+    // Test with spaces
+    await form.fillForm({
+      'Base Name': 'iqn 2005-10 org freenas ctl',
+    });
+    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+
+    // Test with valid value (lowercase, dots, dashes, colons)
+    await form.fillForm({
+      'Base Name': 'iqn.2005-10.org.freenas.ctl:target',
+    });
+    expect(spectator.component.form.controls.basename.valid).toBe(true);
+
+    // Change back to original value - should be valid again
+    await form.fillForm({
+      'Base Name': 'iqn.2005-10.org.freenas.ctl',
+    });
+    expect(spectator.component.form.controls.basename.valid).toBe(true);
+  });
+
+  it('allows saving form when only modifying non-basename fields, even with non-conforming basename', async () => {
+    // Setup a mock with a non-conforming basename (uppercase)
+    jest.spyOn(api, 'call').mockImplementation((method: string) => {
+      if (method === 'iscsi.global.config') {
+        return of({
+          basename: 'IQN.2005-10.ORG.FREENAS.CTL', // Non-conforming
+          isns_servers: ['188.23.4.23'],
+          pool_avail_threshold: 20,
+          listen_port: 3260,
+        } as IscsiGlobalConfig);
+      }
+      if (method === 'iscsi.global.update') {
+        return of(null);
+      }
+      return of(null);
+    });
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    const form = await loader.getHarness(IxFormHarness);
+
+    // Don't touch basename, only modify listen_port
+    await form.fillForm({
+      'iSCSI listen port': '3270',
+    });
+
+    // Form should be valid because we didn't modify the basename
+    expect(spectator.component.form.valid).toBe(true);
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    // Should successfully call the API
+    expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [
+      expect.objectContaining({
+        listen_port: 3270,
+      }),
+    ]);
+  });
 });
