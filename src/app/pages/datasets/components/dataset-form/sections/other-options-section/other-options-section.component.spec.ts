@@ -85,6 +85,11 @@ describe('OtherOptionsSectionComponent', () => {
       value: DatasetSnapdev.Hidden,
       source: ZfsPropertySource.Local,
     },
+    copies: {
+      value: '1',
+      parsed: 1,
+      source: ZfsPropertySource.Inherited,
+    },
     recordsize: {
       value: '1K',
       parsed: KiB,
@@ -156,6 +161,11 @@ describe('OtherOptionsSectionComponent', () => {
     snapdev: {
       value: DatasetSnapdev.Hidden,
       source: ZfsPropertySource.Local,
+    },
+    copies: {
+      value: '1',
+      parsed: 1,
+      source: ZfsPropertySource.Default,
     },
     recordsize: {
       value: '128K',
@@ -244,20 +254,20 @@ describe('OtherOptionsSectionComponent', () => {
       expect(await form.getValues()).toEqual({
         Comments: '',
         'Compression Level': 'LZJB',
-        'Enable Atime': 'Inherit',
-        Sync: 'Inherit',
-        'ZFS Deduplication': 'Inherit',
+        'Enable Atime': 'Inherit (OFF)',
+        Sync: 'Inherit (STANDARD)',
+        'ZFS Deduplication': 'Inherit (OFF)',
         'Case Sensitivity': 'Sensitive',
         Checksum: 'SHA256',
         'Read-only': 'Off',
-        Exec: 'Inherit',
-        'Snapshot Directory': 'Inherit',
+        Exec: 'Inherit (ON)',
+        'Snapshot Directory': 'Inherit (HIDDEN)',
         Snapdev: 'Hidden',
-        Copies: 'Inherit',
-        'Record Size': 'Inherit',
+        Copies: 'Inherit (1)',
+        'Record Size': 'Inherit (128K)',
         'ACL Type': 'POSIX',
         'ACL Mode': 'Discard',
-        'Use Metadata (Special) VDEVs': 'Inherit',
+        'Use Metadata (Special) VDEVs': 'Inherit (0)',
       });
     });
 
@@ -351,21 +361,21 @@ describe('OtherOptionsSectionComponent', () => {
 
       expect(await form.getValues()).toEqual({
         Comments: '',
-        Sync: 'Inherit',
-        'Compression Level': 'Inherit',
-        'Enable Atime': 'Inherit',
-        'ZFS Deduplication': 'Inherit',
+        Sync: 'Inherit (STANDARD)',
+        'Compression Level': 'Inherit (LZJB)',
+        'Enable Atime': 'Inherit (OFF)',
+        'ZFS Deduplication': 'Inherit (OFF)',
         'Case Sensitivity': 'Sensitive',
-        Checksum: 'Inherit',
+        Checksum: 'Inherit (ON)',
         'ACL Mode': 'Inherit',
         'ACL Type': 'Inherit',
-        Copies: 'Inherit',
-        Exec: 'Inherit',
-        'Use Metadata (Special) VDEVs': 'Inherit',
-        'Read-only': 'Inherit',
-        'Record Size': 'Inherit',
-        Snapdev: 'Inherit',
-        'Snapshot Directory': 'Inherit',
+        Copies: 'Inherit (1)',
+        Exec: 'Inherit (ON)',
+        'Use Metadata (Special) VDEVs': 'Inherit (0)',
+        'Read-only': 'Inherit (OFF)',
+        'Record Size': 'Inherit (128K)',
+        Snapdev: 'Inherit (HIDDEN)',
+        'Snapshot Directory': 'Inherit (HIDDEN)',
       });
     });
 

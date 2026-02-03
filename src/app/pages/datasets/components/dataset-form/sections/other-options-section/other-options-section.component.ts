@@ -394,42 +394,44 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.syncOptions$ = this.defaultSyncOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.sync.value),
     );
     this.compressionOptions$ = this.defaultCompressionOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.compression.value),
     );
     this.atimeOptions$ = this.defaultAtimeOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.atime.value),
     );
     this.deduplicationOptions$ = this.defaultDeduplicationOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.deduplication.value),
     );
     this.checksumOptions$ = this.defaultChecksumOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.checksum.value),
     );
     this.readonlyOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.readonly.value),
     );
     this.execOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.exec.value),
     );
     this.snapdirOptions$ = this.defaultSnapdirOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.snapdir.value),
     );
     this.snapdevOptions$ = this.defaultSnapdevOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.snapdev.value),
     );
     this.copiesOptions$ = this.defaultCopiesOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(String(parent.copies.value)),
     );
 
     this.recordsizeOptions$ = this.defaultRecordSizeOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(
+        parent.recordsize.value,
+      ),
     );
 
     this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$.pipe(
-      this.datasetFormService.addSimpleInheritOption(),
+      this.datasetFormService.addInheritOption(parent.special_small_block_size?.value || 'off'),
     );
   }
 
