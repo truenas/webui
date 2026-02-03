@@ -65,4 +65,16 @@ export class DatasetFormService {
       ]),
     );
   }
+
+  addSimpleInheritOption(): OperatorFunction<Option[], Option[]> {
+    return pipe(
+      map((options) => [
+        {
+          label: this.translate.instant('Inherit'),
+          value: inherit,
+        },
+        ...options,
+      ]),
+    );
+  }
 }

@@ -241,27 +241,23 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        'Snapshot Directory': 'Visible',
-      });
-
       expect(await form.getValues()).toEqual({
         Comments: '',
         'Compression Level': 'LZJB',
-        'Enable Atime': 'Inherit (OFF)',
-        Sync: 'Inherit (STANDARD)',
-        'ZFS Deduplication': 'Inherit (OFF)',
+        'Enable Atime': 'Inherit',
+        Sync: 'Inherit',
+        'ZFS Deduplication': 'Inherit',
         'Case Sensitivity': 'Sensitive',
         Checksum: 'SHA256',
         'Read-only': 'Off',
-        Exec: 'Inherit (ON)',
-        'Snapshot Directory': 'Visible',
+        Exec: 'Inherit',
+        'Snapshot Directory': 'Inherit',
         Snapdev: 'Hidden',
-        Copies: '--',
-        'Record Size': 'Inherit (128 KiB)',
+        Copies: 'Inherit',
+        'Record Size': 'Inherit',
         'ACL Type': 'POSIX',
         'ACL Mode': 'Discard',
-        'Use Metadata (Special) VDEVs': 'Inherit (off)',
+        'Use Metadata (Special) VDEVs': 'Inherit',
       });
     });
 
@@ -277,17 +273,73 @@ describe('OtherOptionsSectionComponent', () => {
         compression: 'LZJB',
         sync: inherit,
         checksum: 'SHA256',
-        copies: 1,
+        copies: inherit,
         deduplication: inherit,
         exec: inherit,
         readonly: OnOff.Off,
         recordsize: inherit,
         snapdev: DatasetSnapdev.Hidden,
-        snapdir: DatasetSnapdir.Disabled,
+        snapdir: inherit,
         special_small_block_size: inherit,
         aclmode: AclMode.Discard,
         acltype: DatasetAclType.Posix,
       });
+    });
+
+    it('sends INHERIT for snapdir when form value is INHERIT', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        snapdir: inherit,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.snapdir).toBe(inherit);
+    });
+
+    it('sends INHERIT for copies when form value is INHERIT', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        copies: inherit,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.copies).toBe(inherit);
+    });
+
+    it('sends specific value for copies when explicitly set', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        copies: 2,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.copies).toBe(2);
+    });
+
+    it('sends specific value for snapdir when explicitly set', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        snapdir: DatasetSnapdir.Visible,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.snapdir).toBe(DatasetSnapdir.Visible);
     });
   });
 
@@ -299,21 +351,21 @@ describe('OtherOptionsSectionComponent', () => {
 
       expect(await form.getValues()).toEqual({
         Comments: '',
-        Sync: 'Inherit (STANDARD)',
-        'Compression Level': 'Inherit (LZJB)',
-        'Enable Atime': 'Inherit (OFF)',
-        'ZFS Deduplication': 'Inherit (OFF)',
+        Sync: 'Inherit',
+        'Compression Level': 'Inherit',
+        'Enable Atime': 'Inherit',
+        'ZFS Deduplication': 'Inherit',
         'Case Sensitivity': 'Sensitive',
-        Checksum: 'Inherit (ON)',
+        Checksum: 'Inherit',
         'ACL Mode': 'Inherit',
         'ACL Type': 'Inherit',
-        Copies: '1',
-        Exec: 'Inherit (ON)',
-        'Use Metadata (Special) VDEVs': 'Inherit (off)',
-        'Read-only': 'Inherit (OFF)',
-        'Record Size': 'Inherit (128 KiB)',
-        Snapdev: 'Inherit (HIDDEN)',
-        'Snapshot Directory': '--',
+        Copies: 'Inherit',
+        Exec: 'Inherit',
+        'Use Metadata (Special) VDEVs': 'Inherit',
+        'Read-only': 'Inherit',
+        'Record Size': 'Inherit',
+        Snapdev: 'Inherit',
+        'Snapshot Directory': 'Inherit',
       });
     });
 
