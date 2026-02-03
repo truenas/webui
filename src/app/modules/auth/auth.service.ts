@@ -7,6 +7,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  defaultIfEmpty,
   filter,
   map,
   Observable,
@@ -127,8 +128,12 @@ export class AuthService implements OnDestroy {
           return of(cachedConfig);
         }
 
-        return this.api.call('auth.twofactor.config').pipe(
-          tap((config) => this.cachedGlobalTwoFactorConfig$.next(config)),
+        return this.wsStatus.isAuthenticated$.pipe(
+          take(1),
+          filter(Boolean),
+          switchMap(() => this.api.call('auth.twofactor.config').pipe(
+            tap((config) => this.cachedGlobalTwoFactorConfig$.next(config)),
+          )),
         );
       }),
     );
@@ -171,16 +176,21 @@ export class AuthService implements OnDestroy {
   }
 
   isTwoFactorSetupRequired(): Observable<boolean> {
-    return this.getGlobalTwoFactorConfig().pipe(
-      switchMap((globalConfig) => {
-        if (!globalConfig.enabled) {
-          return of(false);
-        }
+    return this.wsStatus.isAuthenticated$.pipe(
+      take(1),
+      filter(Boolean),
+      switchMap(() => this.getGlobalTwoFactorConfig().pipe(
+        switchMap((globalConfig) => {
+          if (!globalConfig.enabled) {
+            return of(false);
+          }
 
-        return this.userTwoFactorConfig$.pipe(
-          map((userConfig) => !userConfig.secret_configured),
-        );
-      }),
+          return this.userTwoFactorConfig$.pipe(
+            map((userConfig) => !userConfig.secret_configured),
+          );
+        }),
+      )),
+      defaultIfEmpty(false),
     );
   }
 
