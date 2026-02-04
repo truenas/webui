@@ -61,8 +61,7 @@ describe('NfsCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NfsCardComponent,
-    imports: [
-      IxTablePagerShowMoreComponent,
+    imports: [IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(
@@ -90,6 +89,11 @@ describe('NfsCardComponent', () => {
         })),
       }),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectServices,

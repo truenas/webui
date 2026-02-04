@@ -19,6 +19,7 @@ import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -71,6 +72,7 @@ import { AppState } from 'app/store';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
@@ -86,6 +88,7 @@ export class RsyncTaskCardComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'rsync'];
 
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;

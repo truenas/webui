@@ -11,9 +11,10 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, map, of, switchMap,
+  filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -35,6 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
+import { refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
 
 @UntilDestroy()
 @Component({
@@ -63,6 +65,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
+  private store$ = inject(Store);
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
@@ -278,6 +281,7 @@ export class SystemSecurityFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
+        tap(() => this.store$.dispatch(refreshRebootInfo())),
         finalize(() => this.rebootInfoSuppression.unsuppress()),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),

@@ -400,8 +400,8 @@ export class AppWizardComponent implements OnInit, OnDestroy {
             const humanVersion = versionInfo.metadata?.app_version || versionInfo.human_version;
             return {
               value: version,
-              // In wizard, always show just app version (users don't care about catalog revision during install)
-              label: formatVersionLabel(version, humanVersion, { showRevision: false }),
+              // Show revision in parentheses to distinguish between catalog versions with the same app version
+              label: formatVersionLabel(version, humanVersion, { showRevision: true }),
             };
           })),
           hidden: hideVersion,
