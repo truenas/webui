@@ -1,5 +1,6 @@
 import { isDevMode } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   SmartAlertAction,
@@ -211,7 +212,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     /**
      * Storage and Pool Alerts
      */
-    VolumeStatus: {
+    [AlertClassName.VolumeStatus]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       contextualHelp: T('Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.'),
@@ -422,7 +423,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
   byClass: {
     // Additional mappings by AlertClassName can be added here
     // These will override or extend bySource mappings
-    CloudBackupTaskFailed: {
+    [AlertClassName.CloudBackupTaskFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloud-backup'],
       contextualHelp: T('Cloud backup failures may be caused by network connectivity issues, insufficient cloud storage space, invalid credentials, or expired authentication tokens.'),
@@ -463,7 +464,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       extractApiParams: createTaskIdExtractor(),
     },
 
-    CloudSyncTaskFailed: {
+    [AlertClassName.CloudSyncTaskFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloudsync'],
       contextualHelp: T('Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.'),
@@ -491,7 +492,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       extractApiParams: createTaskIdExtractor(),
     },
 
-    ReplicationFailed: {
+    [AlertClassName.ReplicationFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'replication'],
       contextualHelp: T('Replication failures can cause backup gaps. Check network connectivity and destination system health.'),
@@ -516,7 +517,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       ),
     },
 
-    RsyncFailed: {
+    [AlertClassName.RsyncFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'rsync'],
       contextualHelp: T('Rsync task failures may be due to connectivity issues, permission problems, or incorrect paths.'),
@@ -545,7 +546,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       extractApiParams: createTaskIdExtractor(),
     },
 
-    SnapshotFailed: {
+    [AlertClassName.SnapshotFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'snapshot'],
       contextualHelp: T('Snapshot failures may indicate storage issues or misconfigured retention policies. Snapshot tasks run automatically on schedule and cannot be manually triggered.'),
@@ -565,7 +566,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       ),
     },
 
-    ScrubPaused: {
+    [AlertClassName.ScrubPaused]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       contextualHelp: T('Pool scrub is paused or not running. This may be due to pool being offline or scrub task being manually paused. Check pool status and scheduled scrub configuration.'),
@@ -596,7 +597,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Applications
-    FailuresInAppMigration: {
+    [AlertClassName.FailuresInAppMigration]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
       actions: [{
@@ -608,7 +609,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    AppUpdate: {
+    [AlertClassName.AppUpdate]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
       actions: [{
@@ -620,7 +621,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    ApplicationsStartFailed: {
+    [AlertClassName.ApplicationsStartFailed]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
       actions: [{
@@ -632,7 +633,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    ApplicationsConfigurationFailed: {
+    [AlertClassName.ApplicationsConfigurationFailed]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
       actions: [{
@@ -646,7 +647,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Certificates
-    CertificateExpired: {
+    [AlertClassName.CertificateExpired]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
       actions: [{
@@ -658,7 +659,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    CertificateIsExpiring: {
+    [AlertClassName.CertificateIsExpiring]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
       actions: [{
@@ -670,7 +671,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    CertificateIsExpiringSoon: {
+    [AlertClassName.CertificateIsExpiringSoon]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
       actions: [{
@@ -682,7 +683,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    CertificateParsingFailed: {
+    [AlertClassName.CertificateParsingFailed]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
       actions: [{
@@ -694,7 +695,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    CertificateRevoked: {
+    [AlertClassName.CertificateRevoked]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
       actions: [{
@@ -706,7 +707,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    WebUiCertificateSetupFailed: {
+    [AlertClassName.WebUiCertificateSetupFailed]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
       actions: [{
@@ -733,7 +734,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Directory Services
-    ActiveDirectoryDomainBind: {
+    [AlertClassName.ActiveDirectoryDomainBind]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configadscale/',
@@ -746,7 +747,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    ActiveDirectoryDomainHealth: {
+    [AlertClassName.ActiveDirectoryDomainHealth]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configadscale/',
@@ -759,7 +760,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    LdapBind: {
+    [AlertClassName.LdapBind]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configldapscale/',
@@ -773,7 +774,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Network
-    NoCriticalFailoverInterfaceFound: {
+    [AlertClassName.NoCriticalFailoverInterfaceFound]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
       actions: [{
@@ -785,7 +786,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    NetworkCardsMismatchOnActiveNode: {
+    [AlertClassName.NetworkCardsMismatchOnActiveNode]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
       actions: [{
@@ -797,7 +798,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    NetworkCardsMismatchOnStandbyNode: {
+    [AlertClassName.NetworkCardsMismatchOnStandbyNode]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
       actions: [{
@@ -809,7 +810,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    BONDMissingPorts: {
+    [AlertClassName.BondMissingPorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
       actions: [{
@@ -821,7 +822,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    BONDInactivePorts: {
+    [AlertClassName.BondInactivePorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
       actions: [{
@@ -833,7 +834,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    BONDNoActivePorts: {
+    [AlertClassName.BondNoActivePorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
       actions: [{
@@ -846,7 +847,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Failover
-    FailoverSyncFailed: {
+    [AlertClassName.FailoverSyncFailed]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'failover'],
       actions: [{
@@ -859,7 +860,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    FailoverKeysSyncFailed: {
+    [AlertClassName.FailoverKeysSyncFailed]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'failover'],
       actions: [{
@@ -873,7 +874,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // JBOF
-    JBOFRedfishComm: {
+    [AlertClassName.JbofRedfishComm]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'jbof'],
       actions: [{
@@ -885,7 +886,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    JBOFElementCritical: {
+    [AlertClassName.JbofElementCritical]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'jbof'],
       actions: [{
@@ -897,7 +898,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    JBOFElementWarning: {
+    [AlertClassName.JbofElementWarning]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'jbof'],
       actions: [{
@@ -909,7 +910,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    JBOFTearDownFailure: {
+    [AlertClassName.JbofTearDownFailure]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'jbof'],
       actions: [{
@@ -921,7 +922,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    JBOFInvalidData: {
+    [AlertClassName.JbofInvalidData]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'jbof'],
       actions: [{
@@ -934,7 +935,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Disks & SMART
-    SMART: {
+    [AlertClassName.Smart]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['storage', 'disks'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/disks/',
@@ -947,7 +948,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    Smartd: {
+    [AlertClassName.Smartd]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['system', 'services'],
       actions: [{
@@ -960,7 +961,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // KMIP
-    KMIPConnectionFailed: {
+    [AlertClassName.KmipConnectionFailed]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
@@ -973,7 +974,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    KMIPSEDGlobalPasswordSyncFailure: {
+    [AlertClassName.KmipSedGlobalPasswordSyncFailure]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
@@ -986,7 +987,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    KMIPSEDDisksSyncFailure: {
+    [AlertClassName.KmipSedDisksSyncFailure]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
@@ -999,7 +1000,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    KMIPZFSDatasetsSyncFailure: {
+    [AlertClassName.KmipZfsDatasetsSyncFailure]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
@@ -1013,7 +1014,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // NFS
-    NFSBindAddress: {
+    [AlertClassName.NfsBindAddress]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['system', 'services'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/nfsservicescale/',
@@ -1028,7 +1029,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // SMB
-    SMBPath: {
+    [AlertClassName.SmbPath]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'smb'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/shares/smb/managesmbshares/',
@@ -1041,7 +1042,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    SMBLegacyProtocol: {
+    [AlertClassName.SmbLegacyProtocol]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'smb'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/smbservicescale/',
@@ -1055,7 +1056,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Datasets
-    ShareLocked: {
+    [AlertClassName.ShareLocked]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
       actions: [{
@@ -1067,20 +1068,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    QuotaCritical: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['datasets'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
-      actions: [{
-        label: T('Go to Datasets'),
-        type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-database'),
-        route: ['/datasets'],
-        primary: true,
-      }],
-    },
-
-    QuotaWarning: {
+    [AlertClassName.QuotaCritical]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
@@ -1093,7 +1081,20 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    EncryptedDataset: {
+    [AlertClassName.QuotaWarning]: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-database'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.EncryptedDataset]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
       actions: [{
@@ -1130,7 +1131,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    ZpoolCapacityCritical: {
+    [AlertClassName.ZpoolCapacityCritical]: {
       conditions: [
         {
           // Boot pool capacity - direct to Boot Environments management
@@ -1170,7 +1171,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       },
     } satisfies ConditionalSmartAlertEnhancement,
 
-    ZpoolCapacityWarning: {
+    [AlertClassName.ZpoolCapacityWarning]: {
       conditions: [
         {
           // Boot pool capacity - direct to Boot Environments management
@@ -1210,7 +1211,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       },
     } satisfies ConditionalSmartAlertEnhancement,
 
-    ZpoolCapacityNotice: {
+    [AlertClassName.ZpoolCapacityNotice]: {
       conditions: [
         {
           // Boot pool capacity - direct to Boot Environments management
@@ -1250,7 +1251,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       },
     } satisfies ConditionalSmartAlertEnhancement,
 
-    VolumeStatus: {
+    [AlertClassName.VolumeStatus]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       extractApiParams: () => {
@@ -1267,7 +1268,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    PoolUsbDisks: {
+    [AlertClassName.PoolUsbDisks]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       actions: [{
@@ -1280,7 +1281,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Snapshots
-    SnapshotTotalCount: {
+    [AlertClassName.SnapshotTotalCount]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
       actions: [{
@@ -1292,7 +1293,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    SnapshotCount: {
+    [AlertClassName.SnapshotCount]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
       actions: [{
@@ -1330,7 +1331,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Boot Pool
-    BootPoolStatus: {
+    [AlertClassName.BootPoolStatus]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'boot'],
       actions: [{
@@ -1343,7 +1344,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // License - already covered by LicenseStatus source but adding class mappings
-    LicenseHasExpired: {
+    [AlertClassName.LicenseHasExpired]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
       actions: [{
@@ -1356,7 +1357,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    LicenseIsExpiring: {
+    [AlertClassName.LicenseIsExpiring]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
       actions: [{
@@ -1369,7 +1370,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    License: {
+    [AlertClassName.License]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
       actions: [{
@@ -1396,7 +1397,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // System Updates
-    HasUpdate: {
+    [AlertClassName.HasUpdate]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'update'],
       actions: [{
@@ -1409,7 +1410,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Data Protection - already have CloudBackupTaskFailed, CloudSyncTaskFailed, ReplicationFailed
-    ReplicationSuccess: {
+    [AlertClassName.ReplicationSuccess]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'replication'],
       actions: [{
@@ -1421,7 +1422,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    ScrubFinished: {
+    [AlertClassName.ScrubFinished]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       actions: [{
@@ -1433,7 +1434,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    ScrubNotStarted: {
+    [AlertClassName.ScrubNotStarted]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       actions: [{

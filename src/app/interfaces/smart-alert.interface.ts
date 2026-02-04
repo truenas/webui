@@ -1,3 +1,4 @@
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 
@@ -127,7 +128,10 @@ export interface SmartAlertConfig {
   bySource?: Record<string, SmartAlertEnhancement | ConditionalSmartAlertEnhancement>;
 
   // Map by class name (supports both regular and conditional enhancements)
-  byClass?: Record<string, SmartAlertEnhancement | ConditionalSmartAlertEnhancement>;
+  // Prefer using AlertClassName enum values for type safety: [AlertClassName.CloudBackupTaskFailed]: {...}
+  // String keys are also supported for alerts not yet in the enum
+  byClass?: Partial<Record<AlertClassName, SmartAlertEnhancement | ConditionalSmartAlertEnhancement>>
+    & Record<string, SmartAlertEnhancement | ConditionalSmartAlertEnhancement>;
 
   // Map by level
   byLevel?: Partial<Record<AlertLevel, Partial<SmartAlertEnhancement>>>;
