@@ -81,6 +81,7 @@ export class DatasetFormService {
       'ON', 'OFF', // OnOff enum
       'STANDARD', 'ALWAYS', 'DISABLED', // DatasetSync enum
       'VISIBLE', 'HIDDEN', // DatasetSnapdir/Snapdev enum
+      'VERIFY', // DeduplicationSetting enum
     ]);
 
     // Only convert whitelisted uppercase enum values to title case
@@ -89,17 +90,5 @@ export class DatasetFormService {
     }
 
     return value;
-  }
-
-  addSimpleInheritOption(): OperatorFunction<Option[], Option[]> {
-    return pipe(
-      map((options) => [
-        {
-          label: this.translate.instant('Inherit'),
-          value: inherit,
-        },
-        ...options,
-      ]),
-    );
   }
 }

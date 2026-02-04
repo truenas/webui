@@ -74,5 +74,39 @@ describe('DatasetFormService', () => {
         { label: 'original', value: 'original' },
       ]);
     });
+
+    it('converts uppercase enum values to title case', async () => {
+      const options = [
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' },
+      ];
+
+      const optionsWithInherit = await firstValueFrom(of(options).pipe(
+        spectator.service.addInheritOption('OFF'),
+      ));
+
+      expect(optionsWithInherit).toEqual([
+        { label: 'Inherit (Off)', value: inherit },
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' },
+      ]);
+    });
+
+    it('does not convert values that are not in the whitelist', async () => {
+      const options = [
+        { label: '128K', value: '128K' },
+        { label: '256K', value: '256K' },
+      ];
+
+      const optionsWithInherit = await firstValueFrom(of(options).pipe(
+        spectator.service.addInheritOption('128K'),
+      ));
+
+      expect(optionsWithInherit).toEqual([
+        { label: 'Inherit (128K)', value: inherit },
+        { label: '128K', value: '128K' },
+        { label: '256K', value: '256K' },
+      ]);
+    });
   });
 });
