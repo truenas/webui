@@ -157,21 +157,20 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
         this.dialogRef.close();
       },
       complete: () => {
-        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (this.job.state) {
           case JobState.Failed:
             this.jobFailure.emit(this.job);
-            this.dialogRef.close();
             break;
           case JobState.Aborted:
             this.jobAborted.emit(this.job);
-            this.dialogRef.close();
             break;
           case JobState.Success:
+          default:
             this.jobSuccess.emit(this.job);
-            this.dialogRef.close();
             break;
         }
+
+        this.dialogRef.close();
 
         if (this.realtimeLogsSubscribed) {
           logsSubscription?.unsubscribe();
