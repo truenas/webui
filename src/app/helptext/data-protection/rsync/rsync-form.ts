@@ -23,7 +23,7 @@ export const helptextRsyncForm = {
                 system.'),
   rsyncValidateRpathTooltip: T('Set to automatically create the defined <b>Remote\
                 Path</b> if it does not exist.'),
-  rsyncDirectionTooltip: T('Direct the flow of data to the remote host.'),
+  rsyncDirectionTooltip: T('Direct the flow of data to or from the remote host.'),
   rsyncPickerTooltip: T('Select a schedule preset or choose <i>Custom</i>\
                 to open the advanced scheduler.'),
   rsyncRecursiveTooltip: T('Set to include all subdirectories of the specified\
