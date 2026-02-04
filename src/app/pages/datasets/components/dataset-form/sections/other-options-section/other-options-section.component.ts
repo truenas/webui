@@ -222,14 +222,12 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
     const values = this.form.value;
 
-    // Build payload from form values - using Record type to allow transformation of UI types to API types
-    // Note: snapdir type in DatasetUpdate interface doesn't include WithInherit, but the middleware accepts it
-    const payload: Record<string, unknown> = {
+    const payload = {
       ...values,
       checksum: values.checksum as DatasetChecksum,
       copies: values.copies ?? inherit,
       snapdir: values.snapdir ?? inherit,
-    };
+    } as Record<string, unknown>;
 
     // Handle special_small_block_size transformation
     payload.special_small_block_size = transformSpecialSmallBlockSizeForPayload(

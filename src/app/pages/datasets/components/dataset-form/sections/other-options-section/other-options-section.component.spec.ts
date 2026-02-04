@@ -371,6 +371,33 @@ describe('OtherOptionsSectionComponent', () => {
       const payload = spectator.component.getPayload();
       expect(payload.snapdir).toBe(DatasetSnapdir.Visible);
     });
+
+    it('handles copies when parent is undefined', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: undefined,
+      });
+
+      expect(spectator.component.form.value.copies).toBe(1);
+    });
+
+    it('handles copies with LOCAL source when parent exists', () => {
+      const datasetWithLocalCopies = {
+        ...existingDataset,
+        copies: {
+          value: '2',
+          parsed: 2,
+          source: ZfsPropertySource.Local,
+        },
+      } as Dataset;
+
+      spectator.setInput({
+        existing: datasetWithLocalCopies,
+        parent: parentDataset,
+      });
+
+      expect(spectator.component.form.value.copies).toBe(2);
+    });
   });
 
   describe('creating a new dataset', () => {
