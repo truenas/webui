@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -213,6 +214,25 @@ describe('OtherOptionsSectionComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string, params?: Record<string, string>) => {
+          // Handle template strings with interpolation
+          if (key === 'Inherit ({value})' && params?.value) {
+            return `Inherit (${String(params.value)})`;
+          }
+          // Return key as-is (translations are already in title case from the service)
+          return key;
+        }),
+        get: jest.fn((key: string, params?: Record<string, string>) => {
+          if (key === 'Inherit ({value})' && params?.value) {
+            return of(`Inherit (${String(params.value)})`);
+          }
+          return of(key);
+        }),
+        onTranslationChange: { subscribe: jest.fn() },
+        onLangChange: { subscribe: jest.fn() },
+        onDefaultLangChange: { subscribe: jest.fn() },
+      }),
       provideMockStore({
         initialState: {
           systemInfo: {
@@ -254,14 +274,14 @@ describe('OtherOptionsSectionComponent', () => {
       expect(await form.getValues()).toEqual({
         Comments: '',
         'Compression Level': 'LZJB',
-        'Enable Atime': 'Inherit (OFF)',
-        Sync: 'Inherit (STANDARD)',
-        'ZFS Deduplication': 'Inherit (OFF)',
+        'Enable Atime': 'Inherit (Off)',
+        Sync: 'Inherit (Standard)',
+        'ZFS Deduplication': 'Inherit (Off)',
         'Case Sensitivity': 'Sensitive',
         Checksum: 'SHA256',
         'Read-only': 'Off',
-        Exec: 'Inherit (ON)',
-        'Snapshot Directory': 'Inherit (HIDDEN)',
+        Exec: 'Inherit (On)',
+        'Snapshot Directory': 'Inherit (Hidden)',
         Snapdev: 'Hidden',
         Copies: 'Inherit (1)',
         'Record Size': 'Inherit (128K)',
@@ -361,21 +381,21 @@ describe('OtherOptionsSectionComponent', () => {
 
       expect(await form.getValues()).toEqual({
         Comments: '',
-        Sync: 'Inherit (STANDARD)',
+        Sync: 'Inherit (Standard)',
         'Compression Level': 'Inherit (LZJB)',
-        'Enable Atime': 'Inherit (OFF)',
-        'ZFS Deduplication': 'Inherit (OFF)',
+        'Enable Atime': 'Inherit (Off)',
+        'ZFS Deduplication': 'Inherit (Off)',
         'Case Sensitivity': 'Sensitive',
-        Checksum: 'Inherit (ON)',
+        Checksum: 'Inherit (On)',
         'ACL Mode': 'Inherit',
         'ACL Type': 'Inherit',
         Copies: 'Inherit (1)',
-        Exec: 'Inherit (ON)',
+        Exec: 'Inherit (On)',
         'Use Metadata (Special) VDEVs': 'Inherit (0)',
-        'Read-only': 'Inherit (OFF)',
+        'Read-only': 'Inherit (Off)',
         'Record Size': 'Inherit (128K)',
-        Snapdev: 'Inherit (HIDDEN)',
-        'Snapshot Directory': 'Inherit (HIDDEN)',
+        Snapdev: 'Inherit (Hidden)',
+        'Snapshot Directory': 'Inherit (Hidden)',
       });
     });
 
