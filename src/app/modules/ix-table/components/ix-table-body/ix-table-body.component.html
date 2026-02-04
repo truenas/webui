@@ -2,6 +2,7 @@
   <tr
     class="row"
     tabindex="0"
+    [id]="getRowTag(row)"
     [ixTest]="getRowTag(row)"
     [ixUiSearch]="{ anchor: getRowTag(row) }"
     [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : null }"

@@ -1,0 +1,69 @@
+@if (hasAlerts()) {
+  <div class="page-alerts-container">
+    @for (alert of sortedPageAlerts(); track alert.id) {
+      <div [class]="'page-alert ' + getAlertClass(alert.level)">
+        <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        @if (hasDuplicates(alert)) {
+          <span
+            class="duplicate-count-badge"
+            [matTooltip]="getDuplicateTooltip(alert)"
+          >
+            {{ getDuplicateCount(alert) }}
+          </span>
+        }
+        <div class="alert-content-wrapper">
+          <div class="alert-content">
+            <div class="alert-message">
+              @if (isLongMessage(alert.formatted)) {
+                <div
+                  [attr.id]="'alert-content-' + alert.id"
+                  [attr.aria-live]="'polite'"
+                >
+                  @if (isExpanded(alert.id)) {
+                    <span [innerHTML]="alert.formatted"></span>
+                  } @else {
+                    <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
+                  }
+                </div>
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  [attr.aria-expanded]="isExpanded(alert.id)"
+                  [attr.aria-controls]="'alert-content-' + alert.id"
+                  (click)="toggleExpansion(alert.id)"
+                >
+                  {{ (isExpanded(alert.id) ? 'Show Less' : 'Show More') | translate }}
+                </button>
+              } @else {
+                <span [innerHTML]="alert.formatted"></span>
+              }
+            </div>
+            @if (alert.contextualHelp) {
+              <div class="alert-help">{{ alert.contextualHelp }}</div>
+            }
+            @if (alert.documentationUrl) {
+              <a
+                class="alert-docs-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="alert.documentationUrl"
+              >
+                {{ 'Learn More' | translate }}
+              </a>
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="dismiss-btn"
+          [attr.aria-label]="getDismissAriaLabel(alert)"
+          [matTooltip]="getDismissTooltip(alert)"
+          (click)="onDismiss(alert)"
+        >
+          <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
+        </button>
+      </div>
+    }
+  </div>
+}

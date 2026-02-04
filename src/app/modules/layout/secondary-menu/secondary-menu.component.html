@@ -1,6 +1,7 @@
 <mat-list role="list">
   @for (subItem of subMenuItems(); track subItem) {
     @if (!subItem.isVisible$ || (subItem.isVisible$ | async)) {
+      @let badgeCount = getBadgeCount(subItem);
       <mat-list-item
         *ixHasAccess="!subItem.hasAccess$ || (subItem.hasAccess$ | async) || false"
         routerLinkActive="selected"
@@ -8,8 +9,27 @@
         role="listitem"
         (click)="toggleMenu.emit()"
       >
-        <a class="slidein-nav-link" [ixTest]="subItem.name" [routerLink]="['/', menuName(), subItem.state]">
-          {{ subItem.name | translate }}
+        <a
+          class="slidein-nav-link"
+          [ixTest]="subItem.name"
+          [routerLink]="['/', menuName(), subItem.state]"
+        >
+          <span class="submenu-text">
+            {{ subItem.name | translate }}
+            @if (badgeCount > 0) {
+              <span
+                class="submenu-badge-dot"
+                role="status"
+                [class.critical]="getBadgeType(subItem) === AlertBadgeType.Critical"
+                [class.warning]="getBadgeType(subItem) === AlertBadgeType.Warning"
+                [class.info]="getBadgeType(subItem) === AlertBadgeType.Info"
+                [matTooltip]="getBadgeTooltip(subItem) | translate"
+                [attr.aria-label]="getBadgeTooltip(subItem) | translate"
+              >
+                <ix-icon [name]="getBadgeIcon(subItem)"></ix-icon>
+              </span>
+            }
+          </span>
         </a>
       </mat-list-item>
     }

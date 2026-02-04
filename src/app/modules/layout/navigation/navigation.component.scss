@@ -37,4 +37,36 @@
   .menu-caret {
     margin-left: auto;
   }
+
+  // Inline badge dot styling (after menu text)
+  .menu-badge-dot {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    margin-left: 6px;
+    width: 24px;
+    vertical-align: middle;
+
+    &.critical tn-icon {
+      color: var(--red) !important;
+    }
+
+    &.warning tn-icon {
+      color: var(--orange) !important;
+    }
+
+    &.info tn-icon {
+      color: var(--primary) !important;
+    }
+  }
+
+  .menu-text {
+    flex: 1;
+  }
+
+  mat-list-item a {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+  }
 }
