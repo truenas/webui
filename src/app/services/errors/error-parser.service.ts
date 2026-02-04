@@ -15,6 +15,7 @@ import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { ErrorReport, ErrorDetails, traceDetailLabel } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
 const httpStatusTexts: Record<number, string> = {
@@ -154,7 +155,7 @@ export class ErrorParserService {
       return {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network connection was closed or timed out. Try again later.'),
-        icon: 'ix-cloud-off',
+        icon: iconMarker('ix-cloud-off'),
         details: this.extractErrorDetails(error),
       };
     }
@@ -163,7 +164,7 @@ export class ErrorParserService {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network resource is not reachable, verify your network settings and health.'),
         hint: this.translate.instant('Double check that your nameservers and gateway are properly configured.'),
-        icon: 'ix-cloud-off',
+        icon: iconMarker('ix-cloud-off'),
         actions: [
           {
             label: this.translate.instant('Network Settings'),

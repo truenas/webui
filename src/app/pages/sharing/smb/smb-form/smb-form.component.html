@@ -308,7 +308,7 @@
         }
       }
 
-      <ix-form-actions>
+      <ix-form-actions [validating]="isAsyncValidatorPending">
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
@@ -326,7 +326,7 @@
           mat-button
           type="button"
           ixTest="toggle-advanced-options"
-          (click)="this.isAdvancedMode = !this.isAdvancedMode"
+          (click)="toggleAdvancedMode()"
         >
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>

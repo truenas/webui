@@ -206,6 +206,70 @@ describe('LineChartComponent', () => {
       spectator.component.yLabelPrefix = 'kb';
       expect(spectator.component.axisLabelFormatter(1500)).toBe('1.5');
     });
+
+    it('converts seconds to minutes for UPS runtime', () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+      const upsRuntimeData: ReportingData = {
+        name: 'upsruntime',
+        legend: ['runtime'],
+        data: [[Date.now() / 1000, 120]],
+      } as ReportingData;
+
+      spectator.setInput('report', { name: ReportingGraphName.UpsRuntime } as Report);
+      spectator.setInput('data', upsRuntimeData);
+      spectator.setInput('labelY', 'seconds');
+      spectator.component.units = 'Minutes';
+
+      expect(spectator.component.axisLabelFormatter(120)).toBe('2');
+    });
+
+    it('converts seconds to hours for UPS runtime', () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+      const upsRuntimeData: ReportingData = {
+        name: 'upsruntime',
+        legend: ['runtime'],
+        data: [[Date.now() / 1000, 7200]],
+      } as ReportingData;
+
+      spectator.setInput('report', { name: ReportingGraphName.UpsRuntime } as Report);
+      spectator.setInput('data', upsRuntimeData);
+      spectator.setInput('labelY', 'seconds');
+      spectator.component.units = 'Hours';
+
+      expect(spectator.component.axisLabelFormatter(7200)).toBe('2');
+    });
+
+    it('converts seconds to days for UPS runtime', () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+      const upsRuntimeData: ReportingData = {
+        name: 'upsruntime',
+        legend: ['runtime'],
+        data: [[Date.now() / 1000, 86400]],
+      } as ReportingData;
+
+      spectator.setInput('report', { name: ReportingGraphName.UpsRuntime } as Report);
+      spectator.setInput('data', upsRuntimeData);
+      spectator.setInput('labelY', 'seconds');
+      spectator.component.units = 'Days';
+
+      expect(spectator.component.axisLabelFormatter(86400)).toBe('1');
+    });
+
+    it('returns seconds value when units is seconds for UPS runtime', () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+      const upsRuntimeData: ReportingData = {
+        name: 'upsruntime',
+        legend: ['runtime'],
+        data: [[Date.now() / 1000, 100]],
+      } as ReportingData;
+
+      spectator.setInput('report', { name: ReportingGraphName.UpsRuntime } as Report);
+      spectator.setInput('data', upsRuntimeData);
+      spectator.setInput('labelY', 'seconds');
+      spectator.component.units = 'Seconds';
+
+      expect(spectator.component.axisLabelFormatter(100)).toBe('100');
+    });
   });
 
   describe('value conversion', () => {

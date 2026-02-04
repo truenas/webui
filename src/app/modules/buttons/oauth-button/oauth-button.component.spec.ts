@@ -91,4 +91,32 @@ describe('OauthButtonComponent', () => {
     spectator.setInput('isLoggedIn', true);
     expect(await button.getText()).toBe('Logged In To Provider');
   });
+
+  it('disables button while oauth window is open', async () => {
+    const mockPopup = { closed: false };
+    const window = spectator.inject<Window>(WINDOW);
+    jest.spyOn(window, 'open').mockReturnValue(mockPopup as Window);
+
+    spectator.setInput('oauthType', OauthButtonType.Jira);
+    spectator.setInput('oauthUrl', 'https://oauth/jira?origin=');
+
+    const button = await loader.getHarness(MatButtonHarness);
+
+    expect(await button.isDisabled()).toBe(false);
+
+    spectator.component.onOauthClicked();
+    spectator.detectChanges();
+
+    expect(await button.isDisabled()).toBe(true);
+
+    // close the window and wait for the poll interval to lapse
+    // so the component can detect that it was closed.
+    mockPopup.closed = true;
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1100);
+    });
+    spectator.detectChanges();
+
+    expect(await button.isDisabled()).toBe(false);
+  });
 });

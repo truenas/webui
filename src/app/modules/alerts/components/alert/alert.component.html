@@ -8,9 +8,19 @@
 
 <div class="alert-body">
   @if (!alert().dismissed) {
-    <h3 [class]="['alert-level', alertLevelColor]">
-      {{ levelLabel() }}
-    </h3>
+    <div class="alert-header">
+      <h3 [class]="['alert-level', alertLevelColor]">
+        {{ levelLabel() }}
+      </h3>
+      @if (hasDuplicates()) {
+        <span
+          class="duplicate-count-badge"
+          [matTooltip]="duplicateCountTooltip()"
+        >
+          {{ duplicateCount() }}
+        </span>
+      }
+    </div>
   }
   <h4
     #alertMessage
@@ -39,6 +49,53 @@
     }
   </div>
 
+  @let enhanced = enhancedAlert();
+  @if (enhanced.contextualHelp && !alert().dismissed) {
+    <div class="context-help">
+      <button
+        mat-button
+        class="context-help-toggle"
+        [ixTest]="[alert().key, 'toggle-help']"
+        (click)="toggleContextHelp()"
+      >
+        <ix-icon [name]="showContextHelp() ? 'mdi-chevron-up' : 'mdi-chevron-down'"></ix-icon>
+        {{ showContextHelp() ? ('Hide Details' | translate) : ('Why am I seeing this?' | translate) }}
+      </button>
+      @if (showContextHelp()) {
+        <div class="context-help-content">
+          <p>{{ enhanced.contextualHelp }}</p>
+          @if (enhanced.documentationUrl) {
+            <a
+              class="action-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              [href]="enhanced.documentationUrl"
+            >
+              {{ 'Learn More' | translate }}
+              <ix-icon name="mdi-open-in-new"></ix-icon>
+            </a>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (enhanced.actions && enhanced.actions.length > 0 && !alert().dismissed && showActions()) {
+    <div class="smart-actions">
+      @for (action of enhanced.actions; track action.label) {
+        <button
+          mat-button
+          [class.primary-action]="action.primary"
+          [ixTest]="[alert().key, 'action', action.label]"
+          (click)="onSmartActionClick(action.handler)"
+        >
+          <ix-icon [name]="action.icon"></ix-icon>
+          {{ action.label | translate }}
+        </button>
+      }
+    </div>
+  }
+
   <div class="links">
     @if (alert().dismissed) {
       <a
@@ -58,20 +115,25 @@
         role="button"
         class="action-link"
         [ixTest]="[alert().key, 'dismiss']"
+        [matTooltip]="dismissTooltip()"
         (click)="onDismiss()"
       >
-        {{ 'Dismiss' | translate }}
-      </a>
-    }
-
-    @let linkLabel = link()?.label;
-    @if (linkLabel) {
-      <a
-        [ixTest]="[alert().key, 'open-link']"
-        (click)="openLink()"
-      >
-        {{ linkLabel | translate }}
+        {{ dismissButtonText() }}
       </a>
     }
   </div>
 </div>
+
+@if (!alert().dismissed && showActions()) {
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-icon-button
+    class="dismiss-button"
+    [ixTest]="[alert().key, 'dismiss-icon']"
+    [attr.aria-label]="dismissTooltip() || dismissButtonText()"
+    [matTooltip]="dismissTooltip() || dismissButtonText()"
+    (click)="onDismiss()"
+  >
+    <ix-icon [name]="closeIcon"></ix-icon>
+  </button>
+}

@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, Signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -16,12 +16,12 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { VDevItem } from 'app/interfaces/storage.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -51,7 +51,11 @@ enum AutoTrimValue {
   Off = 'off',
 }
 
-@UntilDestroy()
+interface StatusIconData {
+  tooltip: string;
+  icon: PoolCardIconType;
+}
+
 @Component({
   selector: 'ix-storage-health-card',
   templateUrl: './storage-health-card.component.html',
@@ -68,7 +72,6 @@ enum AutoTrimValue {
     TestDirective,
     MatCardContent,
     TranslateModule,
-    MapValuePipe,
     TooltipComponent,
     ActivePoolScanComponent,
     LastPoolScanComponent,
@@ -76,15 +79,15 @@ enum AutoTrimValue {
     DeduplicationStatsComponent,
   ],
 })
-export class StorageHealthCardComponent implements OnChanges {
+export class StorageHealthCardComponent {
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
   private store = inject(PoolsDashboardStore);
   private slideIn = inject(SlideIn);
+  private router = inject(Router);
 
   readonly pool = input.required<Pool>();
 
@@ -92,10 +95,19 @@ export class StorageHealthCardComponent implements OnChanges {
 
   protected readonly searchableElements = storageHealthCardElements;
 
-  protected scan = signal<PoolScanUpdate | null>(null);
+  private scanUpdates$ = toObservable(this.pool).pipe(
+    switchMap((pool) => this.api.subscribe('pool.scan').pipe(
+      map((apiEvent) => apiEvent.fields),
+      filter((scan) => scan.name === pool.name),
+      map((scan) => scan.scan),
+    )),
+    this.errorHandler.withErrorHandler(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-  totalZfsErrors = 0;
-  poolScanSubscription: Subscription;
+  private latestScan = toSignal(this.scanUpdates$);
+
+  protected scan = computed(() => this.latestScan() ?? this.pool().scan);
 
   protected readonly helptextVolumes = helptextVolumes;
 
@@ -106,38 +118,34 @@ export class StorageHealthCardComponent implements OnChanges {
   protected readonly wasScanInitiated = computed(() => this.scan()?.state === PoolScanState.Scanning);
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);
 
-  protected iconType = computed(() => {
-    if (!this.pool().healthy) {
-      return PoolCardIconType.Error;
+  protected iconData: Signal<StatusIconData> = computed(() => {
+    const pool = this.pool();
+    const statusStr = this.poolStatusLabels.get(pool.status);
+    let tooltip: string;
+    let icon: PoolCardIconType;
+
+    if (!pool.healthy && pool.status === PoolStatus.Online) {
+      tooltip = this.translate.instant('Pool is {status} with errors', { status: statusStr });
+      icon = PoolCardIconType.Warn;
+    } else if (pool.status === PoolStatus.Degraded || pool.status === PoolStatus.Faulted) {
+      tooltip = this.translate.instant('Pool status is {status}', { status: statusStr });
+      icon = pool.status === PoolStatus.Degraded ? PoolCardIconType.Warn : PoolCardIconType.Error;
+    } else if (!pool.healthy) {
+      tooltip = this.translate.instant('Pool is not healthy');
+      icon = PoolCardIconType.Error;
+    } else {
+      tooltip = this.translate.instant('Everything is fine');
+      icon = PoolCardIconType.Safe;
     }
-    if (this.pool().status === PoolStatus.Degraded) {
-      return PoolCardIconType.Warn;
-    }
-    if (this.pool().status === PoolStatus.Faulted) {
-      return PoolCardIconType.Faulted;
-    }
-    return PoolCardIconType.Safe;
+
+    return {
+      tooltip,
+      icon,
+    };
   });
 
-  protected iconTooltip = computed(() => {
-    if (!this.pool().healthy) {
-      return this.translate.instant('Pool is not healthy');
-    }
-    if (this.pool().status === PoolStatus.Degraded) {
-      return this.translate.instant('Pool status is {status}', { status: this.pool().status });
-    }
-    if (this.pool().status === PoolStatus.Faulted) {
-      return this.translate.instant('Pool status is {status}', { status: this.pool().status });
-    }
-    return this.translate.instant('Everything is fine');
-  });
-
-  ngOnChanges(): void {
-    this.scan.set(this.pool().scan);
-
-    this.subscribeToScan();
-    this.calculateTotalZfsErrors();
-  }
+  protected iconType = computed(() => this.iconData().icon);
+  protected iconTooltip = computed(() => this.iconData().tooltip);
 
   protected onStartScrub(): void {
     const message = this.translate.instant('Start scrub on pool <i>{poolName}</i>?', { poolName: this.pool().name });
@@ -151,7 +159,6 @@ export class StorageHealthCardComponent implements OnChanges {
         filter(Boolean),
         switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
       )
       .subscribe();
   }
@@ -160,25 +167,8 @@ export class StorageHealthCardComponent implements OnChanges {
     this.matDialog
       .open(AutotrimDialog, { data: this.pool() })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean))
       .subscribe(() => this.store.loadDashboard());
-  }
-
-  private subscribeToScan(): void {
-    if (this.poolScanSubscription && !this.poolScanSubscription.closed) {
-      this.poolScanSubscription.unsubscribe();
-    }
-    this.poolScanSubscription = this.api.subscribe('pool.scan')
-      .pipe(
-        map((apiEvent) => apiEvent.fields),
-        filter((scan) => scan.name === this.pool().name),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe((scan) => {
-        this.scan.set(scan.scan);
-        this.cdr.markForCheck();
-      });
   }
 
   protected onConfigureScrub(): void {
@@ -190,24 +180,54 @@ export class StorageHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter((result) => result?.response),
-        untilDestroyed(this),
       )
       .subscribe(() => {
         this.store.loadDashboard();
       });
   }
 
-  private calculateTotalZfsErrors(): void {
-    if (!this.pool().topology) {
-      return;
+  protected getErrorText(): string {
+    const errorCount = this.countVdevErrors() + this.countPhysDiskErrors();
+
+    const statusStr = poolStatusLabels.get(this.pool().status);
+    const errorStr = this.translate.instant(
+      '{count, plural, =0{no errors} one{# error} other{# errors}}',
+      { count: errorCount },
+    );
+
+    if (errorCount === 0) {
+      return this.translate.instant('{status}, no errors.', { status: statusStr });
     }
-    this.totalZfsErrors = Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: VDevItem[]) => {
-      return totalErrors + vdevs.reduce((vdevCategoryErrors, vdev) => {
-        return vdevCategoryErrors
-          + (vdev.stats?.read_errors || 0)
-          + (vdev.stats?.write_errors || 0)
-          + (vdev.stats?.checksum_errors || 0);
-      }, 0);
-    }, 0);
+
+    return this.translate.instant('{statusStr}, {errorStr}.', {
+      statusStr,
+      errorStr,
+    });
+  }
+
+  protected hasErrors(): boolean {
+    return (this.countPhysDiskErrors() + this.countVdevErrors()) > 0;
+  }
+
+  protected goToVdevsPage(): void {
+    this.router.navigate(['/storage', this.pool().id.toString(), 'vdevs']);
+  }
+
+  /**
+   * counts the number of errors on all VDEVs in the pool's topology. this
+   * explicitly does *not* include physical disks.
+   * @returns number of errors ZFS reports on the top-level VDEVs
+   */
+  private countVdevErrors(): number {
+    return countTopologyErrors((item) => item.type !== TopologyItemType.Disk, this.pool().topology);
+  }
+
+  /**
+   * companion function to `countVdevErrors` which returns *only* the number of
+   * physical disk errors and ignores all VDEV components.
+   * @returns number of errors ZFS reports on the physical disks themselves.
+   */
+  private countPhysDiskErrors(): number {
+    return countTopologyErrors((item) => item.type === TopologyItemType.Disk, this.pool().topology);
   }
 }

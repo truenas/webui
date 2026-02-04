@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnDestroy, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnDestroy, output, inject, DestroyRef, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { map, interval, takeWhile, finalize } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { MailSendMethod, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -26,6 +28,7 @@ export class OauthButtonComponent implements OnDestroy {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   readonly oauthType = input<OauthButtonType>();
   readonly isLoggedIn = input(false);
@@ -44,6 +47,8 @@ export class OauthButtonComponent implements OnDestroy {
   private readonly outlookAuthFn = (message: OauthMessage<MailOauthConfig>): void => {
     this.onLogInWithOutlookSuccess(message);
   };
+
+  protected oauthWindowOpen = signal(false);
 
   protected buttonText = computed(() => {
     switch (this.oauthType()) {
@@ -173,12 +178,28 @@ export class OauthButtonComponent implements OnDestroy {
     ) => void,
   ): void {
     this.window.removeEventListener('message', authFn, false);
-    this.window.open(
+    const popup = this.window.open(
       this.oauthUrl() + encodeURIComponent(this.window.location.toString()),
       '_blank',
       'width=640,height=480',
     );
     this.window.addEventListener('message', authFn, false);
+
+    if (popup) {
+      // if the popup was created successfully, mark it as opened
+      // via the `oauthWindowOpen` signal and poll its `closed` property
+      // for true.
+      //
+      // it *is* necessary to poll here, since we can't rely on the window's `close`
+      // or `beforeunload` events.
+      this.oauthWindowOpen.set(true);
+      interval(1000).pipe(
+        map(() => popup?.closed),
+        takeWhile((closed) => !closed, true),
+        finalize(() => this.oauthWindowOpen.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe();
+    }
   }
 
   private handleProviderError(error: string): void {

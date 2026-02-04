@@ -1,0 +1,38 @@
+:host {
+  .slidein-nav-link {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  .submenu-text {
+    flex: 1;
+  }
+
+  // Inline badge dot styling for submenu
+  .submenu-badge-dot {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    margin-left: 6px;
+    vertical-align: middle;
+
+    ix-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+
+    &.critical ix-icon {
+      color: var(--red) !important;
+    }
+
+    &.warning ix-icon {
+      color: var(--orange) !important;
+    }
+
+    &.info ix-icon {
+      color: var(--primary) !important;
+    }
+  }
+}

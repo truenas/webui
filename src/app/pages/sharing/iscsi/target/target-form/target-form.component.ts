@@ -97,7 +97,7 @@ export class TargetFormComponent implements OnInit {
   }
 
   get isAsyncValidatorPending(): boolean {
-    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.dirty;
   }
 
   get showPortControls(): boolean {

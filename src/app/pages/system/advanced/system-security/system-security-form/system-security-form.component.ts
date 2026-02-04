@@ -14,9 +14,10 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, map, of, tap, zip, forkJoin,
+  filter, finalize, map, of, tap, forkJoin, zip,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
@@ -45,6 +46,7 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
+import { refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
 
 /** time to wait in milliseconds between opening a slidein and highlighting an element on it */
 const slideInAnimationDuration = 600;
@@ -128,6 +130,7 @@ export class SystemSecurityFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
+  private store$ = inject(Store);
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
@@ -574,6 +577,7 @@ export class SystemSecurityFormComponent implements OnInit {
     )
       .afterClosed()
       .pipe(
+        tap(() => this.store$.dispatch(refreshRebootInfo())),
         finalize(() => this.rebootInfoSuppression.unsuppress()),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
