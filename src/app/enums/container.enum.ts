@@ -35,6 +35,7 @@ export enum ContainerDeviceType {
 
 export enum ContainerGpuType {
   Amd = 'AMD',
+  Intel = 'INTEL',
   Nvidia = 'NVIDIA',
 }
 

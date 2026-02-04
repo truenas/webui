@@ -153,5 +153,16 @@ describe('getDeviceDescription', () => {
       const result = getDeviceDescription(mockTranslate as TranslateService, device);
       expect(result).toBe('AMD GPU (0000:1a:00.0)');
     });
+
+    it('should return GPU description with type and PCI address for Intel', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Gpu,
+        gpu_type: ContainerGpuType.Intel,
+        pci_address: '0000:00:02.0',
+      } as ContainerGpuDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('INTEL GPU (0000:00:02.0)');
+    });
   });
 });

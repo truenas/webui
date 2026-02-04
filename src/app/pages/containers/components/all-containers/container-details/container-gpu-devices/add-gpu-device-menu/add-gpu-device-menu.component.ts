@@ -104,7 +104,7 @@ export class AddGpuDeviceMenuComponent {
   protected addGpu(gpu: GpuMenuItem): void {
     this.addDevice({
       dtype: ContainerDeviceType.Gpu,
-      gpu_type: gpu.gpuType as 'NVIDIA' | 'AMD',
+      gpu_type: gpu.gpuType as ContainerGpuType,
       pci_address: gpu.pciAddress,
     } as ContainerGpuDevice);
   }
