@@ -109,25 +109,35 @@ export const alertReducer = createReducer(
   }),
 
   on(dismissAllAlertsPressed, (state, { alertIds }) => {
-    // If specific alert IDs provided, only dismiss those; otherwise dismiss all
-    if (alertIds && alertIds.length > 0) {
-      const updates = alertIds.map((id) => ({
-        id,
-        changes: { dismissed: true },
-      }));
-      return adapter.updateMany(updates, state);
+    // If alertIds is undefined, dismiss all (backward compatibility)
+    // If alertIds is empty array, dismiss nothing
+    // If alertIds has values, dismiss only those
+    if (alertIds === undefined) {
+      return adapter.map((alert) => ({ ...alert, dismissed: true }), state);
     }
-    return adapter.map((alert) => ({ ...alert, dismissed: true }), state);
+    if (alertIds.length === 0) {
+      return state;
+    }
+    const updates = alertIds.map((id) => ({
+      id,
+      changes: { dismissed: true },
+    }));
+    return adapter.updateMany(updates, state);
   }),
   on(reopenAllAlertsPressed, (state, { alertIds }) => {
-    // If specific alert IDs provided, only reopen those; otherwise reopen all
-    if (alertIds && alertIds.length > 0) {
-      const updates = alertIds.map((id) => ({
-        id,
-        changes: { dismissed: false },
-      }));
-      return adapter.updateMany(updates, state);
+    // If alertIds is undefined, reopen all (backward compatibility)
+    // If alertIds is empty array, reopen nothing
+    // If alertIds has values, reopen only those
+    if (alertIds === undefined) {
+      return adapter.map((alert) => ({ ...alert, dismissed: false }), state);
     }
-    return adapter.map((alert) => ({ ...alert, dismissed: false }), state);
+    if (alertIds.length === 0) {
+      return state;
+    }
+    const updates = alertIds.map((id) => ({
+      id,
+      changes: { dismissed: false },
+    }));
+    return adapter.updateMany(updates, state);
   }),
 );

@@ -141,11 +141,17 @@ export class AlertEffects {
     ofType(dismissAllAlertsPressed),
     withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
     mergeMap(([action, [unreadAlerts]]) => {
-      // If specific alert IDs provided, only dismiss those; otherwise dismiss all
+      // If alertIds is undefined, dismiss all; if empty array, dismiss nothing; if has values, dismiss those
       const alertIds = action.alertIds;
-      const alertsToDismiss = alertIds && alertIds.length > 0
-        ? unreadAlerts.filter((alert) => alertIds.includes(alert.id))
-        : unreadAlerts;
+      const alertsToDismiss = alertIds === undefined
+        ? unreadAlerts
+        : unreadAlerts.filter((alert) => alertIds.includes(alert.id));
+
+      // If no alerts to dismiss, return empty
+      if (alertsToDismiss.length === 0) {
+        return of(EMPTY);
+      }
+
       const requests = alertsToDismiss.map((alert) => this.api.call('alert.dismiss', [alert.id]));
       return forkJoin(requests).pipe(
         catchError((error: unknown) => {
@@ -162,11 +168,17 @@ export class AlertEffects {
     ofType(reopenAllAlertsPressed),
     withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
     mergeMap(([action, [dismissedAlerts]]) => {
-      // If specific alert IDs provided, only reopen those; otherwise reopen all
+      // If alertIds is undefined, reopen all; if empty array, reopen nothing; if has values, reopen those
       const alertIds = action.alertIds;
-      const alertsToReopen = alertIds && alertIds.length > 0
-        ? dismissedAlerts.filter((alert) => alertIds.includes(alert.id))
-        : dismissedAlerts;
+      const alertsToReopen = alertIds === undefined
+        ? dismissedAlerts
+        : dismissedAlerts.filter((alert) => alertIds.includes(alert.id));
+
+      // If no alerts to reopen, return empty
+      if (alertsToReopen.length === 0) {
+        return of(EMPTY);
+      }
+
       const requests = alertsToReopen.map((alert) => this.api.call('alert.restore', [alert.id]));
       return forkJoin(requests).pipe(
         catchError((error: unknown) => {
