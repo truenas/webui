@@ -30,8 +30,10 @@
         (click)="selectHost(host)"
       >
         @if (host.description) {
-          <div>{{ host.description }}</div>
-          <div class="secondary">{{ host.hostnqn }}</div>
+          <div class="host-item">
+            <div class="description">{{ host.description }}</div>
+            <div class="hostnqn">{{ host.hostnqn }}</div>
+          </div>
         } @else {
           {{ host.hostnqn }}
         }
