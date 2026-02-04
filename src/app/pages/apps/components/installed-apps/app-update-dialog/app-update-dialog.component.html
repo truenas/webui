@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  @if (selectedVersion?.available_versions_for_upgrade?.length) {
+  @if (versionOptions.size > 0) {
     <div class="version-info">
       @if (hasAppVersionChange()) {
         <div class="version-row">

@@ -16,7 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { extractAppVersion, formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -95,7 +95,10 @@ export class AppUpdateDialog {
     return 0;
   }
 
-  getVersionLabel = formatVersionLabel;
+  getVersionLabel(libraryVersion: string, humanVersion: string): string {
+    const appVersion = extractAppVersion(humanVersion, libraryVersion);
+    return `Version: ${appVersion} / Revision: ${libraryVersion}`;
+  }
 
   getLatestAppVersion(): string {
     // Use latest_app_version if available, otherwise extract from latest_human_version

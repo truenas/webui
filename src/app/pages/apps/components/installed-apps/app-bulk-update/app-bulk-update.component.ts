@@ -150,32 +150,12 @@ export class AppBulkUpdateComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (summary) => {
-          // Check if app version is changing
-          const currentAppVersion = extractAppVersion(app.human_version, app.version);
-          const latestAppVersion = summary.latest_app_version
-            || extractAppVersion(summary.latest_human_version, summary.latest_version);
-          const isAppVersionChanging = currentAppVersion !== latestAppVersion;
-
-          // Check if all app versions are unique (no duplicates)
-          const appVersions = summary.available_versions_for_upgrade?.map((item) => {
-            // Use app_version from API if available, otherwise extract from human_version
-            return item.app_version || extractAppVersion(item.human_version, item.version);
-          }) || [];
-          const hasUniqueAppVersions = new Set(appVersions).size === appVersions.length;
-
           const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
-            // Only hide revision if:
-            // 1. App version is changing (users care about app version)
-            // 2. All app versions are unique (no duplicates that need revision for disambiguation)
-            const shouldHideRevision = isAppVersionChanging && hasUniqueAppVersions;
-
             // Use app_version from API if available for accurate display
             const appVersionToShow = item.app_version || extractAppVersion(item.human_version, item.version);
 
-            // Format label: show app version, optionally with revision
-            const label = shouldHideRevision
-              ? appVersionToShow
-              : `${appVersionToShow} (${item.version})`;
+            // Format label consistently: "Version: X / Revision: Y"
+            const label = `Version: ${appVersionToShow} / Revision: ${item.version}`;
 
             return { value: item.version, label } as Option;
           }) || [];
