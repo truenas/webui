@@ -113,6 +113,24 @@ export class AlertComponent implements OnChanges, AfterViewInit {
     return this.smartAlertService.enhanceAlert(this.alert());
   });
 
+  protected readonly dismissButtonText = computed(() => {
+    if (this.hasDuplicates()) {
+      return this.translate.instant('Dismiss All ({count})', { count: this.duplicateCount() });
+    }
+    return this.translate.instant('Dismiss');
+  });
+
+  protected readonly dismissTooltip = computed(() => {
+    if (this.hasDuplicates()) {
+      return this.translate.instant('Dismiss all {count} instances', { count: this.duplicateCount() });
+    }
+    return undefined;
+  });
+
+  protected readonly duplicateCountTooltip = computed(() => {
+    return this.translate.instant('{count} instances of this alert', { count: this.duplicateCount() });
+  });
+
   ngOnChanges(): void {
     this.setStyles();
     this.checkIfExpandable();

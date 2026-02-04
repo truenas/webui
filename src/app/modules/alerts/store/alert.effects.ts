@@ -172,14 +172,14 @@ export class AlertEffects {
       const alertIds = action.alertIds;
       const alertsToReopen = alertIds === undefined
         ? dismissedAlerts
-        : dismissedAlerts.filter((alert) => alertIds.includes(alert.id));
+        : dismissedAlerts.filter((alert: Alert) => alertIds.includes(alert.id));
 
       // If no alerts to reopen, return empty
       if (alertsToReopen.length === 0) {
         return of(EMPTY);
       }
 
-      const requests = alertsToReopen.map((alert) => this.api.call('alert.restore', [alert.id]));
+      const requests = alertsToReopen.map((alert: Alert) => this.api.call('alert.restore', [alert.id]));
       return forkJoin(requests).pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);

@@ -1,3 +1,4 @@
+import { isDevMode } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
@@ -1724,7 +1725,9 @@ export function getAlertEnhancement(
   // Resolve conditional enhancements if alert is provided
   if (isConditionalEnhancement(enhancement)) {
     if (!alert) {
-      console.warn('Conditional enhancement found but no alert object provided. Using default enhancement.');
+      if (isDevMode()) {
+        console.warn('Conditional enhancement found but no alert object provided. Using default enhancement.');
+      }
       return enhancement.defaultEnhancement;
     }
     return resolveConditionalEnhancement(enhancement, alert);

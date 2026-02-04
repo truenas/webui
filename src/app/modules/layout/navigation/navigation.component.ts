@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
@@ -36,7 +36,6 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 export class NavigationComponent {
   private navService = inject(NavigationService);
   private alertNavBadgeService = inject(AlertNavBadgeService);
-  private translate = inject(TranslateService);
 
   protected readonly AlertBadgeType = AlertBadgeType;
   protected readonly MenuItemType = MenuItemType;
@@ -121,32 +120,7 @@ export class NavigationComponent {
    */
   getBadgeTooltip(item: MenuItem): string {
     const pathArray = item.state.split('/').filter((segment) => segment);
-    const key = pathArray.join('.');
-    const counts = this.badgeCounts().get(key);
-
-    if (!counts) return '';
-
-    const parts: string[] = [];
-    if (counts.critical > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 critical alert} other {# critical alerts}}',
-        { count: counts.critical },
-      ));
-    }
-    if (counts.warning > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 warning} other {# warnings}}',
-        { count: counts.warning },
-      ));
-    }
-    if (counts.info > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 info alert} other {# info alerts}}',
-        { count: counts.info },
-      ));
-    }
-
-    return parts.join(', ');
+    return this.alertNavBadgeService.getBadgeTooltip(pathArray, this.badgeCounts());
   }
 
   /**

@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
@@ -37,6 +37,7 @@ export class PageAlertsComponent {
   private router = inject(Router);
   private store$ = inject<Store<AppState>>(Store);
   private alertNavBadgeService = inject(AlertNavBadgeService);
+  private translate = inject(TranslateService);
 
   // Get all enhanced alerts
   private allAlerts = this.alertNavBadgeService.getEnhancedAlerts();
@@ -137,22 +138,25 @@ export class PageAlertsComponent {
   });
 
   /**
-   * Group alerts by severity for display
+   * Get all page alerts sorted by severity (critical first, then warnings, then info)
    */
-  protected groupedAlerts = computed(() => {
+  protected sortedPageAlerts = computed(() => {
     const alerts = this.pageAlerts();
 
-    const critical = alerts.filter((a) => a.level === AlertLevel.Critical
-      || a.level === AlertLevel.Alert
-      || a.level === AlertLevel.Emergency
-      || a.level === AlertLevel.Error);
+    // Sort by severity: critical -> warning -> info
+    return alerts.sort((a, b) => {
+      const getSeverityOrder = (level: AlertLevel): number => {
+        if ([AlertLevel.Critical, AlertLevel.Alert, AlertLevel.Emergency, AlertLevel.Error].includes(level)) {
+          return 0; // Critical
+        }
+        if (level === AlertLevel.Warning) {
+          return 1; // Warning
+        }
+        return 2; // Info
+      };
 
-    const warnings = alerts.filter((a) => a.level === AlertLevel.Warning);
-
-    const info = alerts.filter((a) => a.level === AlertLevel.Info
-      || a.level === AlertLevel.Notice);
-
-    return { critical, warnings, info };
+      return getSeverityOrder(a.level) - getSeverityOrder(b.level);
+    });
   });
 
   /**
@@ -305,5 +309,38 @@ export class PageAlertsComponent {
    */
   protected getDuplicateCount(alert: { duplicateCount?: number }): number {
     return alert.duplicateCount || 1;
+  }
+
+  /**
+   * Get dismiss button aria-label for accessibility
+   */
+  protected getDismissAriaLabel(alert: Alert & { duplicateCount?: number }): string {
+    if (this.hasDuplicates(alert)) {
+      return this.translate.instant('Dismiss all {count} instances', {
+        count: this.getDuplicateCount(alert),
+      });
+    }
+    return this.translate.instant('Dismiss alert: {message}', { message: alert.formatted });
+  }
+
+  /**
+   * Get dismiss button tooltip
+   */
+  protected getDismissTooltip(alert: { duplicateCount?: number }): string {
+    if (this.hasDuplicates(alert)) {
+      return this.translate.instant('Dismiss all {count} system-wide instances', {
+        count: this.getDuplicateCount(alert),
+      });
+    }
+    return this.translate.instant('Dismiss');
+  }
+
+  /**
+   * Get duplicate count badge tooltip
+   */
+  protected getDuplicateTooltip(alert: { duplicateCount?: number }): string {
+    return this.translate.instant('{count} system-wide instances of this alert', {
+      count: this.getDuplicateCount(alert),
+    });
   }
 }

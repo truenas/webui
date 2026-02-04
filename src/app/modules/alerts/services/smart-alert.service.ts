@@ -1,8 +1,10 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject, isDevMode } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
+import {
+  distinctUntilChanged, filter, first, switchMap, takeUntil, tap, timeout,
+} from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -184,23 +186,29 @@ export class SmartAlertService {
                     directive.highlight(pendingElement);
                     this.searchDirectives.setPendingUiHighlightElement(null);
                   } else {
-                    // Wait for directive to be registered
-                    let cleanupTimer: ReturnType<typeof setTimeout>;
+                    // Wait for directive to be registered with automatic cleanup
+                    // Observable completes on: first match, timeout, or navigation start
+                    const navigationStart$ = this.router.events.pipe(
+                      filter((event) => event instanceof NavigationStart),
+                    );
 
-                    const subscription = this.searchDirectives.directiveAdded$.subscribe(() => {
-                      const foundDirective = this.searchDirectives.get(pendingElement);
-                      if (foundDirective) {
-                        foundDirective.highlight(pendingElement);
-                        this.searchDirectives.setPendingUiHighlightElement(null);
-                        clearTimeout(cleanupTimer);
-                        subscription.unsubscribe();
-                      }
+                    this.searchDirectives.directiveAdded$.pipe(
+                      filter(() => !!this.searchDirectives.get(pendingElement)),
+                      first(),
+                      timeout(highlightTimeoutMs),
+                      takeUntil(navigationStart$),
+                    ).subscribe({
+                      next: () => {
+                        const foundDirective = this.searchDirectives.get(pendingElement);
+                        if (foundDirective) {
+                          foundDirective.highlight(pendingElement);
+                          this.searchDirectives.setPendingUiHighlightElement(null);
+                        }
+                      },
+                      error: () => {
+                        // Timeout or navigation occurred, no action needed
+                      },
                     });
-
-                    // Cleanup after timeout if directive never appears
-                    cleanupTimer = setTimeout(() => {
-                      subscription.unsubscribe();
-                    }, highlightTimeoutMs);
                   }
                 }, highlightDelayMs);
                 return;

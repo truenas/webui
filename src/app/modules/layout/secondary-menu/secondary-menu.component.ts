@@ -5,7 +5,7 @@ import {
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -33,7 +33,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class SecondaryMenuComponent {
   private alertNavBadgeService = inject(AlertNavBadgeService);
-  private translate = inject(TranslateService);
 
   protected readonly AlertBadgeType = AlertBadgeType;
 
@@ -86,32 +85,7 @@ export class SecondaryMenuComponent {
     if (!menuNameValue) return '';
 
     const pathArray = [menuNameValue, subItem.state];
-    const key = pathArray.join('.');
-    const counts = this.badgeCounts().get(key);
-
-    if (!counts) return '';
-
-    const parts: string[] = [];
-    if (counts.critical > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 critical alert} other {# critical alerts}}',
-        { count: counts.critical },
-      ));
-    }
-    if (counts.warning > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 warning} other {# warnings}}',
-        { count: counts.warning },
-      ));
-    }
-    if (counts.info > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 info alert} other {# info alerts}}',
-        { count: counts.info },
-      ));
-    }
-
-    return parts.join(', ');
+    return this.alertNavBadgeService.getBadgeTooltip(pathArray, this.badgeCounts());
   }
 
   /**

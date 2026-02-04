@@ -1,6 +1,7 @@
 import { Injectable, Signal, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
@@ -53,6 +54,7 @@ export interface NavBadge {
 export class AlertNavBadgeService {
   private store$ = inject<Store<AppState>>(Store);
   private smartAlertService = inject(SmartAlertService);
+  private translate = inject(TranslateService);
 
   private alertsSignal = toSignal(
     this.store$.select(selectAlertsForNavBadges),
@@ -124,5 +126,37 @@ export class AlertNavBadgeService {
       default:
         return 'mdi-information';
     }
+  }
+
+  /**
+   * Get badge tooltip text with translated alert counts
+   */
+  getBadgeTooltip(path: string[], badgeCounts: Map<string, NavBadge>): string {
+    const key = path.join('.');
+    const counts = badgeCounts.get(key);
+
+    if (!counts) return '';
+
+    const parts: string[] = [];
+    if (counts.critical > 0) {
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 critical alert} other {# critical alerts}}',
+        { count: counts.critical },
+      ));
+    }
+    if (counts.warning > 0) {
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 warning} other {# warnings}}',
+        { count: counts.warning },
+      ));
+    }
+    if (counts.info > 0) {
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 info alert} other {# info alerts}}',
+        { count: counts.info },
+      ));
+    }
+
+    return parts.join(', ');
   }
 }
