@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { afterNextRender, AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
@@ -34,7 +33,6 @@ enum AlertLevelColor {
   Primary = 'primary',
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alert',
   templateUrl: './alert.component.html',

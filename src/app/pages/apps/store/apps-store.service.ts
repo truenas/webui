@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -38,7 +37,6 @@ const initialState: AppsState = {
   isSyncingCatalog: false,
 };
 
-@UntilDestroy()
 @Injectable()
 export class AppsStore extends ComponentStore<AppsState> {
   private errorHandler = inject(ErrorHandlerService);

@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { Observable, take } from 'rxjs';
@@ -13,7 +12,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-modal-header',
   templateUrl: './modal-header.component.html',

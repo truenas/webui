@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { MatCard, MatCardHeader, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
@@ -15,7 +14,6 @@ import { PoolsViewComponent } from './pools-view/pools-view.component';
 import { SasExpanderStatusViewComponent } from './sas-expander-status-view/sas-expander-status-view.component';
 import { StatusViewComponent } from './status-view/status-view.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-page',
   templateUrl: './enclosure-page.component.html',

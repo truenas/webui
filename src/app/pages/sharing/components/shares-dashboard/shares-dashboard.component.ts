@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { sharesEmptyConfig } from 'app/constants/empty-configs';
@@ -18,7 +17,6 @@ import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
 import { SmbCardComponent } from './smb-card/smb-card.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-shares-dashboard',
   templateUrl: './shares-dashboard.component.html',

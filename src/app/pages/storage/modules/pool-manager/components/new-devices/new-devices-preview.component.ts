@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { omitBy } from 'lodash-es';
 import { map } from 'rxjs';
@@ -16,7 +15,6 @@ import {
   PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-new-devices-preview',
   templateUrl: './new-devices-preview.component.html',

@@ -7,7 +7,6 @@ import {
   Router,
   RouterLink,
 } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -22,7 +21,6 @@ import { CustomAppButtonComponent } from 'app/pages/apps/components/available-ap
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-category-view',
   templateUrl: './category-view.component.html',

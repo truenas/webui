@@ -5,7 +5,6 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -25,7 +24,6 @@ interface DiskState {
   unit: TemperatureUnit;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-health-card',
   templateUrl: './disk-health-card.component.html',

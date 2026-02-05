@@ -4,14 +4,12 @@ import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent,
 } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatDistance } from 'date-fns';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dockerhub-rate-info-dialog',
   templateUrl: './dockerhub-rate-limit-info-dialog.component.html',
