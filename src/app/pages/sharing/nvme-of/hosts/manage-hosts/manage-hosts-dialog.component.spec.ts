@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -25,11 +25,13 @@ describe('ManageHostsDialog', () => {
     {
       id: 1,
       hostnqn: 'nqn.2014-08.org.nvmexpress',
+      description: '',
       dhchap_key: '1234567890',
     },
     {
       id: 2,
       hostnqn: 'nqn.2014-09.org.nvmexpress',
+      description: '',
     },
   ] as NvmeOfHost[];
   const createComponent = createComponentFactory({
@@ -66,6 +68,9 @@ describe('ManageHostsDialog', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: {} })),
       }),
+      mockProvider(MatDialogRef, {
+        close: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -78,9 +83,9 @@ describe('ManageHostsDialog', () => {
 
   it('shows a list of hosts', async () => {
     expect(await table.getCellTexts()).toEqual([
-      ['NQN', 'Has Host Authentication', 'Used In Subsystems', ''],
-      ['nqn.2014-08.org.nvmexpress', 'Yes', '2', ''],
-      ['nqn.2014-09.org.nvmexpress', 'No', '1', ''],
+      ['NQN', 'Description', 'Has Host Authentication', 'Used In Subsystems', ''],
+      ['nqn.2014-08.org.nvmexpress', '', 'Yes', '2', ''],
+      ['nqn.2014-09.org.nvmexpress', '', 'No', '1', ''],
     ]);
   });
 
