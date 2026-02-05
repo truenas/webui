@@ -9,30 +9,28 @@
         ixTest="import-file-input"
         (change)="importConfigs($event)"
       />
-      <button
-        mat-button
+      <tn-icon-button
+        name="upload"
+        library="mdi"
         ixTest="import-button"
-        [matTooltip]="'Import' | translate"
+        [tooltip]="'Import' | translate"
         (click)="fileInput.click()"
-      >
-        <ix-icon name="mdi-upload"></ix-icon>
-      </button>
-      <button
-        mat-button
+      ></tn-icon-button>
+      <tn-icon-button
+        name="download"
+        library="mdi"
         ixTest="export-button"
-        [matTooltip]="'Export' | translate"
+        [tooltip]="'Export' | translate"
         [disabled]="mockConfigs().length === 0"
         (click)="exportConfigs()"
-      >
-        <ix-icon name="mdi-download"></ix-icon>
-      </button>
+      ></tn-icon-button>
       <button
         mat-button
         ixTest="add-mock-button"
         color="primary"
         (click)="addNewConfig()"
       >
-        <ix-icon name="add"></ix-icon>
+        <tn-icon name="plus" library="mdi"></tn-icon>
         {{ 'Add Mock' | translate }}
       </button>
     </div>
@@ -49,7 +47,7 @@
     } @else {
       @if (hasEnabledMocks()) {
         <div class="active-indicator">
-          <ix-icon name="radio_button_checked" class="active-icon"></ix-icon>
+          <tn-icon name="radiobox-marked" library="mdi" class="active-icon"></tn-icon>
           {{ 'Mocking Active' | translate }}
         </div>
       }
@@ -74,22 +72,20 @@
             </div>
 
             <div class="config-actions">
-              <button
-                mat-icon-button
+              <tn-icon-button
+                name="pencil"
+                library="mdi"
                 ixTest="edit-config-button"
-                [matTooltip]="'Edit' | translate"
+                [tooltip]="'Edit' | translate"
                 (click)="editConfig(config)"
-              >
-                <ix-icon name="edit"></ix-icon>
-              </button>
-              <button
-                mat-icon-button
+              ></tn-icon-button>
+              <tn-icon-button
+                name="delete"
+                library="mdi"
                 ixTest="delete-config-button"
-                [matTooltip]="'Delete' | translate"
+                [tooltip]="'Delete' | translate"
                 (click)="deleteConfig(config.id)"
-              >
-                <ix-icon name="mdi-delete"></ix-icon>
-              </button>
+              ></tn-icon-button>
             </div>
           </div>
         } @empty {

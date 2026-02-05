@@ -2,32 +2,35 @@
   <div class="bulk-list-item-state">
     @switch (item().state) {
       @case (State.Initial) {
-        <ix-icon
-          name="radio_button_checked"
+        <tn-icon
+          name="radiobox-marked"
+          library="mdi"
           class="initial"
-          [matTooltip]="item().message || 'Pending' | translate"
-        ></ix-icon>
+          [tnTooltip]="item().message || 'Pending' | translate"
+        ></tn-icon>
       }
       @case (State.Running) {
         <mat-spinner
           class="running"
           [diameter]="20"
-          [matTooltip]="item().message || 'Running' | translate"
+          [tnTooltip]="item().message || 'Running' | translate"
         ></mat-spinner>
       }
       @case (State.Success) {
-        <ix-icon
-          name="check_circle"
+        <tn-icon
+          name="check-circle"
+          library="mdi"
           class="success"
-          [matTooltip]="item().message || 'Success' | translate"
-        ></ix-icon>
+          [tnTooltip]="item().message || 'Success' | translate"
+        ></tn-icon>
       }
       @case (State.Error) {
-        <ix-icon
-          name="error"
+        <tn-icon
+          name="alert-circle"
+          library="mdi"
           class="error"
-          [matTooltip]="item().message || 'Error' | translate"
-        ></ix-icon>
+          [tnTooltip]="item().message || 'Error' | translate"
+        ></tn-icon>
       }
     }
   </div>

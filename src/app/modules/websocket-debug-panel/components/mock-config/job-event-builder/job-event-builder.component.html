@@ -2,7 +2,7 @@
   <div class="events-header">
     <h4>{{ 'Events Timeline' | translate }}</h4>
     <button mat-button ixTest="add-event-button" type="button" color="primary" (click)="addEvent()">
-      <ix-icon name="add"></ix-icon>
+      <tn-icon name="plus" library="mdi" size="sm"></tn-icon>
       {{ 'Add Event' | translate }}
     </button>
   </div>
@@ -18,9 +18,13 @@
           <mat-card-content>
             <div class="event-header">
               <h5>{{ 'Event' | translate }} #{{ i + 1 }}</h5>
-              <button mat-icon-button ixTest="remove-event-button" type="button" (click)="removeEvent(i)">
-                <ix-icon name="mdi-delete"></ix-icon>
-              </button>
+              <tn-icon-button
+                name="delete"
+                library="mdi"
+                ixTest="remove-event-button"
+                type="button"
+                (click)="removeEvent(i)"
+              ></tn-icon-button>
             </div>
 
             <div class="event-fields">

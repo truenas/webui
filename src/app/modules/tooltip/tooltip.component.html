@@ -10,12 +10,14 @@
         </div>
       </div>
       <div>
-        <ix-icon
+        <tn-icon
           class="close-icon"
-          name="mdi-close"
+          name="close"
+          library="mdi"
+          size="sm"
           ixTest="tooltip-close"
           (click)="popperTooltip.hide()"
-        ></ix-icon>
+        ></tn-icon>
       </div>
     </div>
     <div
@@ -25,14 +27,16 @@
     ></div>
   </popper-content>
 
-  <ix-icon
+  <tn-icon
     class="tooltip-icon"
-    name="help_outline"
+    name="help-circle-outline"
+    library="mdi"
+    size="sm"
     popperAppendTo="body"
     [ixTest]="['tooltip', header()]"
     [popperTrigger]="clickTrigger"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"
     [popperPlacement]="placement()"
-  ></ix-icon>
+  ></tn-icon>
 </div>

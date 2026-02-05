@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, input, output, inject, OnCh
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -10,7 +11,6 @@ import { redundantListToUniqueOptions } from 'app/helpers/operators/options.oper
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -83,5 +83,5 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
     }
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }

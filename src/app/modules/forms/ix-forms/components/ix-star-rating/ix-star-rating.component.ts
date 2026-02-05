@@ -3,11 +3,10 @@ import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/f
 import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -20,7 +19,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   imports: [
     IxLabelComponent,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     IxErrorsComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -77,5 +76,5 @@ export class IxStarRatingComponent implements ControlValueAccessor {
     this.onChange(this.value);
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }

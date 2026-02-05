@@ -3,16 +3,16 @@
   [class.has-many-components]="(componentsSize$ | async) > 1"
 >
   @if ((componentsSize$ | async) > 1 && !disableClose()) {
-    <button
-      mat-icon-button
+    <tn-icon-button
+      name="chevron-left"
+      library="mdi"
       id="ix-close-icon"
+      tnTooltipPosition="left"
       [ixTest]="['close-slide-in']"
-      [matTooltip]="tooltip()"
+      [tnTooltip]="tooltip()"
       [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
       (click)="close()"
-    >
-      <ix-icon name="mdi-chevron-left" ></ix-icon>
-    </button>
+    ></tn-icon-button>
   }
   <h3 class="ix-form-title" [class.title-left-margin]="(componentsSize$ | async) === 1">
     {{ title() ? (title() | translate) : '' }}
@@ -21,17 +21,18 @@
     }
   </h3>
   @if ((componentsSize$ | async) <= 1 && !disableClose()) {
-    <button
-      mat-icon-button
+    <tn-icon-button
+      name="close"
+      library="mdi"
       class="icon-margin-right"
       id="ix-close-icon"
+      tnTooltipPosition="left"
       [ixTest]="['close-slide-in']"
-      [matTooltip]="tooltip()"
+      [tnTooltip]="tooltip()"
       [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
       (click)="close()"
-    >
-      <ix-icon name="cancel" (keydown.enter)="close()"></ix-icon>
-    </button>
+      (keydown.enter)="close()"
+    ></tn-icon-button>
   }
 </div>
 

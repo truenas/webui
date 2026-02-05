@@ -5,6 +5,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
@@ -14,7 +15,6 @@ import {
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
@@ -121,7 +121,7 @@ describe('DashboardComponent', () => {
     });
 
     it('opens slide in to edit a widget when edit icon is pressed', async () => {
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -139,7 +139,7 @@ describe('DashboardComponent', () => {
       jest.spyOn(spectator.inject(SlideIn), 'open')
         .mockReturnValue(of({ response: updatedGroup } as SlideInResponse));
 
-      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
@@ -151,7 +151,7 @@ describe('DashboardComponent', () => {
     });
 
     it('removes a widget when delete button is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
+      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
       await deleteIcon.click();
 
       // Wait for animation to complete
@@ -192,7 +192,7 @@ describe('DashboardComponent', () => {
     });
 
     it('saves new configuration when Save is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
+      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
       await deleteIcon.click();
 
       // Wait for animation to complete
@@ -209,7 +209,7 @@ describe('DashboardComponent', () => {
     });
 
     it('reverts to loaded configuration when Cancel button is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
+      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
       await deleteIcon.click();
 
       const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
@@ -221,7 +221,7 @@ describe('DashboardComponent', () => {
     });
 
     it('reverts to loaded configuration when Escape is pressed', async () => {
-      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
+      const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
       await deleteIcon.click();
 
       spectator.dispatchKeyboardEvent(spectator.debugElement, 'keydown', 'Escape');
@@ -238,7 +238,7 @@ describe('DashboardComponent', () => {
     });
 
     it('moves widget up when widget is moved down via button on mobile', async () => {
-      const moveIcons = await loader.getAllHarnesses(IxIconHarness.with({ name: 'mdi-menu-up' }));
+      const moveIcons = await loader.getAllHarnesses(TnIconHarness.with({ name: 'menu-up' }));
       await moveIcons[1].click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
@@ -249,7 +249,7 @@ describe('DashboardComponent', () => {
     });
 
     it('moves widget down when widget is moved down via button on mobile', async () => {
-      const moveIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-menu-down' }));
+      const moveIcon = await loader.getHarness(TnIconHarness.with({ name: 'menu-down' }));
       await moveIcon.click();
 
       const groups = spectator.queryAll(WidgetGroupComponent);

@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, HostBinding, computed, input, inject } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { App } from 'app/interfaces/app.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-app-update-cell',
   templateUrl: './app-update-cell.component.html',
   styleUrls: ['./app-update-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule, MatTooltipModule, IxIconComponent],
+  imports: [TranslateModule, MatTooltipModule, TnIconComponent, TnTooltipDirective],
 })
 export class AppUpdateCellComponent {
   private translate = inject(TranslateService);

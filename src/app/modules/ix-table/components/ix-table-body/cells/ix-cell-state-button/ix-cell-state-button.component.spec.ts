@@ -5,12 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -115,7 +115,7 @@ describe('IxCellStateButtonComponent', () => {
     spectator.detectComponentChanges();
 
     const button = await loader.getHarness(MatButtonHarness);
-    expect(await button.hasHarness(IxIconHarness.with({ name: 'mdi-alert' }))).toBeTruthy();
+    expect(await button.hasHarness(TnIconHarness.with({ name: 'alert', library: 'mdi' }))).toBeTruthy();
   });
 
   it('gets aria label correctly', () => {

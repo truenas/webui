@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { RestartSmbDialog } from './restart-smb-dialog.component';
 
 describe('RestartSmbDialog', () => {
@@ -49,8 +49,8 @@ describe('RestartSmbDialog', () => {
     expect(learnMoreLink).toContainText('Learn more');
     expect(learnMoreLink).toHaveAttribute('aria-expanded', 'false');
 
-    const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.learn-more-link' }));
-    expect(await icon.getName()).toBe('mdi-chevron-down');
+    const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.learn-more-link' }));
+    expect(await icon.getName()).toBe('chevron-down');
   });
 
   it('does not show learn more content initially', () => {
@@ -65,8 +65,8 @@ describe('RestartSmbDialog', () => {
     expect(learnMoreLink).toHaveAttribute('aria-expanded', 'true');
     expect(spectator.query('.learn-more-content')).toExist();
 
-    const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.learn-more-link' }));
-    expect(await icon.getName()).toBe('mdi-chevron-up');
+    const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.learn-more-link' }));
+    expect(await icon.getName()).toBe('chevron-up');
   });
 
   it('shows examples in learn more content', () => {
@@ -90,8 +90,8 @@ describe('RestartSmbDialog', () => {
     spectator.detectChanges();
     expect(spectator.query('.learn-more-content')).not.toExist();
 
-    const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.learn-more-link' }));
-    expect(await icon.getName()).toBe('mdi-chevron-down');
+    const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.learn-more-link' }));
+    expect(await icon.getName()).toBe('chevron-down');
   });
 
   it('toggles learn more on Enter keypress', () => {

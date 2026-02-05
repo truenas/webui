@@ -8,28 +8,28 @@
         [matTooltip]="'Active' | translate"
       >
         <span class="job-badge-count">{{ runningJobsCount$ | async }}</span>
-        <ix-icon name="mdi-sync" class="job-icon-running"></ix-icon>
+        <tn-icon name="sync" library="mdi" class="job-icon-running"></tn-icon>
       </div>
       <div
         class="job-badge waiting"
         [matTooltip]="JobState.Waiting | jobStateDisplay"
       >
         <span class="job-badge-count">{{ waitingJobsCount$ | async }}</span>
-        <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
+        <tn-icon name="clock-outline" library="mdi" class="job-icon-waiting"></tn-icon>
       </div>
       <div
         class="job-badge success"
         [matTooltip]="JobState.Success | jobStateDisplay"
       >
         <span class="job-badge-count">{{ successJobsCount$ | async }}</span>
-        <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
+        <tn-icon name="check-circle" library="mdi" class="job-icon-success"></tn-icon>
       </div>
       <div
         class="job-badge failed"
         [matTooltip]="JobState.Failed | jobStateDisplay"
       >
         <span class="job-badge-count">{{ failedJobsCount$ | async }}</span>
-        <ix-icon name="cancel" class="job-icon-failed"></ix-icon>
+        <tn-icon name="close-circle" library="mdi" class="job-icon-failed"></tn-icon>
       </div>
     </div>
   </div>
@@ -57,7 +57,7 @@
       </div>
     } @else {
       <div class="no-jobs">
-        <ix-icon name="info"></ix-icon>
+        <tn-icon name="information" library="mdi"></tn-icon>
         <h4 class="message">{{ 'No jobs running.' | translate }}</h4>
       </div>
     }
@@ -78,7 +78,7 @@
 
   @if (error$ | async; as error) {
     <div class="error">
-      <ix-icon name="cancel" class="icon" color="accent"></ix-icon>
+      <tn-icon name="close-circle" library="mdi" class="icon" color="accent"></tn-icon>
       <h4 class="message">
         <span class="error-word">{{ 'Error' | translate }}:</span>
         {{ error }}

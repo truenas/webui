@@ -11,7 +11,7 @@
         [matTooltip]="'Disk Reports' | translate"
         [routerLink]="['/reportsdashboard', 'disk']"
       >
-        <ix-icon name="insert_chart"></ix-icon>
+        <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
       </button>
     </div>
     <div [class]="['container', size()]">
@@ -41,21 +41,21 @@
                   <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
                     <li>
                       <span [class]="['icon', poolInfo.status.level]">
-                        <ix-icon [name]="poolInfo.status.icon"></ix-icon>
+                        <tn-icon [name]="poolInfo.status.icon"></tn-icon>
                       </span>
                       <span class="label"> {{ poolInfo.status.label }}: </span>
                       <span class="value"> {{ poolInfo.status.value }} </span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.usedSpace.level]">
-                        <ix-icon [name]="poolInfo.usedSpace.icon"></ix-icon>
+                        <tn-icon [name]="poolInfo.usedSpace.icon"></tn-icon>
                       </span>
                       <span class="label">{{ poolInfo.usedSpace.label }}:</span>
                       <span class="value">{{ poolInfo.usedSpace.value }}</span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.disksWithError.level]">
-                        <ix-icon [name]="poolInfo.disksWithError.icon"></ix-icon>
+                        <tn-icon [name]="poolInfo.disksWithError.icon"></tn-icon>
                       </span>
                       <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
                       <span class="value"> {{ poolInfo.disksWithError.value }} </span>
@@ -63,10 +63,10 @@
                     @if (!isThreeTilesInColumn && (isTwoTilesInRow || getColumnsInTile(poolInfo.name) === 1)) {
                       <li>
                         <span [class]="['icon', poolInfo.scan.level]">
-                          <ix-icon
+                          <tn-icon
                             [name]="poolInfo.scan.icon"
-                            [matTooltip]="poolInfo.scan.value"
-                          ></ix-icon>
+                            [tnTooltip]="poolInfo.scan.value"
+                          ></tn-icon>
                         </span>
                         <span class="label"> {{ poolInfo.scan.label }} </span>
                         @if (!isTwoTilesInRow && getColumnsInTile(poolInfo.name) === 1) {
@@ -83,10 +83,10 @@
                       <li>
                         <span class="label"> {{ poolInfo.scan.label }}: </span>
                         <span [class]="['icon', poolInfo.scan.level]">
-                          <ix-icon
+                          <tn-icon
                             [name]="poolInfo.scan.icon"
-                            [matTooltip]="poolInfo.scan.value"
-                          ></ix-icon>
+                            [tnTooltip]="poolInfo.scan.value"
+                          ></tn-icon>
                         </span>
                       </li>
                       <li>
@@ -128,7 +128,7 @@
                 ixTest="create-pool"
                 [routerLink]="['/storage', 'create']"
                 >
-                <ix-icon name="mdi-database" class="create-pool-icon"></ix-icon>
+                <tn-icon name="database" library="mdi" class="create-pool-icon" [fullSize]="true"></tn-icon>
                 <span>{{ 'Create Pool' | translate }}</span>
               </a>
             </mat-grid-tile>

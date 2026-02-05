@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
 } from '@angular/material/core';
-import { MatIconRegistry } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import {
@@ -23,6 +22,7 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
+import { TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -34,7 +34,6 @@ import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
-import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -113,13 +112,13 @@ bootstrapApplication(AppComponent, {
       provide: WINDOW,
       useFactory: getWindow,
     },
-    {
-      provide: MatIconRegistry,
-      useClass: IxIconRegistry,
-    },
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
+    }),
+    provideAppInitializer(() => {
+      const spriteLoader = inject(TnSpriteLoaderService);
+      return spriteLoader.ensureSpriteLoaded();
     }),
     ApiService,
     provideCharts(withDefaultRegisterables()),

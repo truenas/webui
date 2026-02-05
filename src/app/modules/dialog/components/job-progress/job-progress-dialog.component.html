@@ -72,14 +72,13 @@
   }
 
   @if (showMinimizeButton) {
-    <button
+    <tn-icon-button
+      name="minus"
+      library="mdi"
       class="mat-dialog-close"
-      mat-icon-button
       mat-dialog-close="close"
       ixTest="close"
-      [aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
-    >
-      <ix-icon name="remove"></ix-icon>
-    </button>
+      [attr.aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
+    ></tn-icon-button>
   }
 </div>

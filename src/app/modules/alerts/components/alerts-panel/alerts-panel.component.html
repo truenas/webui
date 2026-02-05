@@ -2,14 +2,13 @@
   <h3>{{ 'Alerts' | translate }}</h3>
 
   <div class="controls">
-    <button
-      mat-icon-button
+    <tn-icon-button
+      name="cog"
+      library="mdi"
       ixTest="settings-menu"
-      [title]="'Settings' | translate"
+      [tooltip]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
-    >
-      <ix-icon [name]="settingsIcon"></ix-icon>
-    </button>
+    ></tn-icon-button>
     <mat-menu #alertSettingsMenu="matMenu">
       <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}
@@ -22,14 +21,13 @@
         {{ 'Email' | translate }}
       </a>
     </mat-menu>
-    <button
-      mat-icon-button
+    <tn-icon-button
+      name="close"
+      library="mdi"
       ixTest="close-panel"
-      [title]="'Close panel' | translate"
+      [tooltip]="'Close panel' | translate"
       (click)="onPanelClosed()"
-    >
-      <ix-icon [name]="clearIcon"></ix-icon>
-    </button>
+    ></tn-icon-button>
   </div>
 </div>
 
@@ -94,7 +92,7 @@
   <!-- TODO: Consider extracting into its own component -->
   @if (error$ | async; as error) {
     <div class="error">
-      <ix-icon class="icon" color="accent" [name]="cancelIcon"></ix-icon>
+      <tn-icon class="icon" color="accent" name="close-circle" library="mdi" [fullSize]="true"></tn-icon>
       <h4 class="message">
         <span class="error-word">{{ 'Error:' | translate }}</span>
         {{ error }}
@@ -104,14 +102,14 @@
 
   @if (shouldShowUnread() && !enhancedUnreadAlerts()?.length) {
     <div class="no-alerts">
-      <ix-icon class="icon" [name]="bellIcon"></ix-icon>
+      <tn-icon class="icon" name="bell-outline" library="mdi" [fullSize]="true"></tn-icon>
       <h3 class="title">{{ 'No alerts' | translate }}</h3>
     </div>
   }
 
   @if (shouldShowDismissed() && !enhancedDismissedAlerts()?.length) {
     <div class="no-alerts">
-      <ix-icon class="icon" [name]="bellIcon"></ix-icon>
+      <tn-icon class="icon" name="bell-outline" library="mdi" [fullSize]="true"></tn-icon>
       <h3 class="title">{{ 'No dismissed alerts' | translate }}</h3>
     </div>
   }
@@ -123,7 +121,7 @@
       @let alerts = entry[1];
       <div class="category-section">
         <div class="category-header">
-          <ix-icon [name]="getCategoryIcon(category)"></ix-icon>
+          <tn-icon [name]="getCategoryIcon(category)" [fullSize]="true"></tn-icon>
           <h4>{{ getCategoryLabel(category) | translate }}</h4>
           <span class="category-count">{{ alerts.length }}</span>
         </div>
@@ -157,7 +155,7 @@
       @let alerts = entry[1];
       <div class="category-section">
         <div class="category-header">
-          <ix-icon [name]="getCategoryIcon(category)"></ix-icon>
+          <tn-icon [name]="getCategoryIcon(category)" [fullSize]="true"></tn-icon>
           <h4>{{ getCategoryLabel(category) | translate }}</h4>
           <span class="category-count">{{ alerts.length }}</span>
         </div>

@@ -7,18 +7,20 @@
         @if (!!allCount) {
           <div class="status-container">
             @if (!!failedCount) {
-              <ix-icon
-                name="mdi-alert"
+              <tn-icon
+                name="alert"
+                library="mdi"
                 class="icon warning"
-              ></ix-icon>
+              ></tn-icon>
               <span>
                 {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
               </span>
             } @else {
-              <ix-icon
-                name="mdi-check-circle"
+              <tn-icon
+                name="check-circle"
+                library="mdi"
                 class="icon healthy"
-              ></ix-icon>
+              ></tn-icon>
             }
           </div>
         }
@@ -33,7 +35,7 @@
           [matTooltip]="'Data Protection' | translate"
           [routerLink]="['/data-protection']"
         >
-          <ix-icon name="open_in_new"></ix-icon>
+          <tn-icon name="open-in-new" library="mdi" size="lg"></tn-icon>
         </a>
       </div>
     </div>

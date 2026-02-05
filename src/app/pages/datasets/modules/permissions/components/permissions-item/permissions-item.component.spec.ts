@@ -1,6 +1,6 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconHarness } from '@truenas/ui-components';
 import {
   PermissionsItemComponent,
 } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
@@ -12,12 +12,9 @@ import {
 describe('PermissionsItemComponent', () => {
   const createComponent = createComponentFactory({
     component: PermissionsItemComponent,
-    declarations: [
-      MockComponent(IxIconComponent),
-    ],
   });
 
-  it('shows icon, name and permission string for permission item.', () => {
+  it('shows icon, name and permission string for permission item.', async () => {
     const spectator = createComponent({
       props: {
         item: {
@@ -28,7 +25,9 @@ describe('PermissionsItemComponent', () => {
       },
     });
 
-    expect(spectator.query(IxIconComponent)!.name).toBe('people');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('account-multiple');
     expect(spectator.query('.name')).toHaveExactText('Group – johns');
     expect(spectator.query('.permissions')).toHaveExactText('Read | Execute');
   });
