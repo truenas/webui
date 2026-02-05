@@ -182,7 +182,7 @@
     </div>
 
     <!-- Files Area -->
-    <div class="files-area">
+    <div class="files-area" (click)="onContainerClick()">
       @if (isLoading()) {
         <div class="loading-overlay">
           <mat-spinner diameter="40"></mat-spinner>

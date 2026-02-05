@@ -217,6 +217,26 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  @HostListener('document:keydown.meta.backspace', ['$event'])
+  onCommandDelete(event: Event): void {
+    // Don't trigger if user is typing in an input field
+    const target = document.activeElement as HTMLElement;
+    if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    // Check if any items are selected
+    if (this.selectedItems().size === 0) {
+      return;
+    }
+
+    // Prevent default browser behavior
+    event.preventDefault();
+
+    // Trigger delete for selected items
+    this.deleteSelected();
+  }
+
   @HostListener('document:keydown.space')
   onSpacebarPress(): void {
     // Don't trigger if user is typing in an input field
@@ -337,6 +357,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   onItemClick(item: FileRecord, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent container click from clearing selection
     if (event.ctrlKey || event.metaKey) {
       // Toggle selection
       const selected = new Set(this.selectedItems());
@@ -350,6 +371,11 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       // Single selection
       this.selectedItems.set(new Set([item.path]));
     }
+  }
+
+  onContainerClick(): void {
+    // Clear selection when clicking on empty space
+    this.selectedItems.set(new Set());
   }
 
   onItemDoubleClick(item: FileRecord): void {
