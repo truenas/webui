@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxPopperjsModule, NgxPopperjsPlacements, NgxPopperjsTriggers } from 'ngx-popperjs';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -14,7 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     NgxPopperjsModule,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
     TestDirective,
   ],
 })

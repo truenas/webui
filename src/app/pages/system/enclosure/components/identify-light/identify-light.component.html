@@ -2,20 +2,20 @@
   @if (isStatusKnown()) {
     @switch (status()) {
       @case (DriveBayLightStatus.On) {
-        <ix-icon name="mdi-lightbulb-on"></ix-icon>
+        <tn-icon name="lightbulb-on" library="mdi"></tn-icon>
         {{ 'Identify light is on.' | translate }}
       }
       @case (DriveBayLightStatus.Clear) {
-        <ix-icon name="mdi-lightbulb-off-outline"></ix-icon>
+        <tn-icon name="lightbulb-off-outline" library="mdi"></tn-icon>
         {{ 'Identify light is off.' | translate }}
       }
       @case (DriveBayLightStatus.Off) {
-        <ix-icon name="mdi-lightbulb-off-outline"></ix-icon>
+        <tn-icon name="lightbulb-off-outline" library="mdi"></tn-icon>
         {{ 'Identify light is off.' | translate }}
       }
     }
   } @else {
-    <ix-icon name="mdi-lightbulb-question-outline"></ix-icon>
+    <tn-icon name="lightbulb-question-outline" library="mdi"></tn-icon>
     {{ 'Light status is unknown.' | translate }}
   }
 </div>

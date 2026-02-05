@@ -1,7 +1,7 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { TnIconHarness } from '@truenas/ui-components';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   DatasetEncryptionCellComponent,
 } from 'app/pages/datasets/components/dataset-node/dataset-encryption-cell/dataset-encryption-cell.component';
@@ -10,9 +10,6 @@ describe('DatasetEncryptionCellComponent', () => {
   let spectator: Spectator<DatasetEncryptionCellComponent>;
   const createComponent = createComponentFactory({
     component: DatasetEncryptionCellComponent,
-    declarations: [
-      MockComponent(IxIconComponent),
-    ],
   });
 
   it('shows "Unencrypted" when dataset is not encrypted', () => {
@@ -27,7 +24,7 @@ describe('DatasetEncryptionCellComponent', () => {
     expect(spectator.query('.encryption-description')).toHaveText('Unencrypted');
   });
 
-  it('shows "Unlocked" and an icon when dataset is unlocked', () => {
+  it('shows "Unlocked" and an icon when dataset is unlocked', async () => {
     spectator = createComponent({
       props: {
         dataset: {
@@ -41,10 +38,12 @@ describe('DatasetEncryptionCellComponent', () => {
     });
 
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
-    expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock-open-variant');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('lock-open-variant');
   });
 
-  it('shows "Unlocked by parent" and an icon when ancestor dataset is unlocked and encryption is inherited', () => {
+  it('shows "Unlocked by parent" and an icon when ancestor dataset is unlocked and encryption is inherited', async () => {
     spectator = createComponent({
       props: {
         dataset: {
@@ -59,10 +58,12 @@ describe('DatasetEncryptionCellComponent', () => {
 
     expect(spectator.query('.encryption-description')).toHaveText('Unlocked');
     expect(spectator.query('.encryption-description')).toHaveText('by parent');
-    expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock-open-variant-outline');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('lock-open-variant-outline');
   });
 
-  it('shows "Locked" and an icon when dataset is locked', () => {
+  it('shows "Locked" and an icon when dataset is locked', async () => {
     spectator = createComponent({
       props: {
         dataset: {
@@ -76,10 +77,12 @@ describe('DatasetEncryptionCellComponent', () => {
     });
 
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
-    expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('lock');
   });
 
-  it('shows "Locked by parent" and an icon when ancestor dataset is locked and encryption is inherited', () => {
+  it('shows "Locked by parent" and an icon when ancestor dataset is locked and encryption is inherited', async () => {
     spectator = createComponent({
       props: {
         dataset: {
@@ -94,6 +97,8 @@ describe('DatasetEncryptionCellComponent', () => {
 
     expect(spectator.query('.encryption-description')).toHaveText('Locked');
     expect(spectator.query('.encryption-description')).toHaveText('by parent');
-    expect(spectator.query(IxIconComponent)!.name).toBe('mdi-lock-outline');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('lock-outline');
   });
 });

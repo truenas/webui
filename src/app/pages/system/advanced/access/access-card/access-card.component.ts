@@ -8,6 +8,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { of } from 'rxjs';
 import {
@@ -20,7 +21,6 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -126,7 +126,7 @@ export class AccessCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('exit_to_app'),
+          iconName: tnIconMarker('exit-to-app', 'mdi'),
           dynamicTooltip: (row) => of(row.current
             ? this.translate.instant('This session is current and cannot be terminated')
             : this.translate.instant('Terminate session')),

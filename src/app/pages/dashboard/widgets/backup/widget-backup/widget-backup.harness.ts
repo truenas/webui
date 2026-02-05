@@ -1,12 +1,12 @@
 import { ComponentHarness } from '@angular/cdk/testing';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { TnIconHarness } from '@truenas/ui-components';
 
 export class WidgetBackupHarness extends ComponentHarness {
   static readonly hostSelector = 'ix-widget-backup';
 
   async getHeader(): Promise<{ title: string; icon: string; message: string }> {
     const title = await this.locatorForOptional('.title h3')();
-    const icon = await this.locatorForOptional(IxIconHarness.with({ selector: '.icon' }))();
+    const icon = await this.locatorForOptional(TnIconHarness.with({ selector: '.icon' }))();
     const message = await this.locatorForOptional('.status-container')();
     return {
       title: await title?.text() || '',

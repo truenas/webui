@@ -73,12 +73,12 @@
       >
         <span>{{ 'Updates' | translate }}</span>
         @if (hasUpdates) {
-          <ix-icon
+          <tn-icon
             class="has-updates-icon"
-            name="mdi-alert-circle"
-            matTooltipPosition="above"
-            [matTooltip]="'Updates available' | translate"
-          ></ix-icon>
+            name="alert-circle"
+            library="mdi"
+            [tnTooltip]="'Updates available' | translate"
+          ></tn-icon>
         }
       </div>
       <div>{{ 'Controls' | translate }}</div>

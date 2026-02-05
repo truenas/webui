@@ -2,7 +2,7 @@ import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatIconHarness } from '@angular/material/icon/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
@@ -20,7 +20,7 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
   }
 
   getButtons = this.locatorForAll(MatButtonHarness);
-  getIcons = this.locatorForAll(MatIconHarness.with({ ancestor: '.icon-group' }));
+  getIcons = this.locatorForAll(TnIconHarness.with({ ancestor: '.icon-group' }));
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {

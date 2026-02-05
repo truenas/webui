@@ -52,7 +52,7 @@
                 [ixTest]="[task.id, 'run_now']"
                 (click)="runNow(task)"
               >
-                <ix-icon name="play_arrow"></ix-icon>
+                <tn-icon name="play" library="mdi"></tn-icon>
                 <span>{{ 'Run Now' | translate }}</span>
               </button>
             }
@@ -63,7 +63,7 @@
               [ixTest]="[task.id, 'restore']"
               (click)="restore(task)"
             >
-              <ix-icon name="mdi-restore"></ix-icon>
+              <tn-icon name="restore" library="mdi"></tn-icon>
               <span>{{ 'Restore' | translate }}</span>
             </button>
 
@@ -74,7 +74,7 @@
                 [ixTest]="[task.id, 'download']"
                 (click)="downloadKeys(task)"
               >
-                <ix-icon name="mdi-download"></ix-icon>
+                <tn-icon name="download" library="mdi"></tn-icon>
                 <span>{{ 'Download Keys' | translate }}</span>
               </button>
             }
@@ -84,7 +84,7 @@
               [ixTest]="[task.id, 'edit']"
               (click)="openForm(task)"
             >
-              <ix-icon name="edit"></ix-icon>
+              <tn-icon name="pencil" library="mdi"></tn-icon>
               <span>{{ 'Edit' | translate }}</span>
             </button>
 
@@ -94,7 +94,7 @@
               [ixTest]="[task.id, 'delete']"
               (click)="doDelete(task)"
             >
-              <ix-icon name="mdi-delete"></ix-icon>
+              <tn-icon name="delete" library="mdi"></tn-icon>
               <span>{{ 'Delete' | translate }}</span>
             </button>
           </div>

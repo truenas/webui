@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatCard } from '@angular/material/card';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 
 /**
  * Renders when there has been a fatal error with a widget, such as trying to use an unexpected widget type.
@@ -10,7 +10,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './widget-error.component.html',
   styleUrls: ['./widget-error.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, IxIconComponent],
+  imports: [MatCard, TnIconComponent],
 })
 export class WidgetErrorComponent {
   message = input<string>();

@@ -2,7 +2,7 @@
   @if (!isLoading()) {
     <div class="empty-card-content">
       <div class="empty-message">
-        <ix-icon name="mdi-format-list-text" class="empty-icon"></ix-icon>
+        <tn-icon name="format-list-text" library="mdi" class="empty-icon" [fullSize]="true"></tn-icon>
         <div class="backup-actions">
           <ng-template *ngTemplateOutlet="backupActions() || null"></ng-template>
         </div>

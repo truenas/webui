@@ -38,7 +38,7 @@ describe('JobItemComponent', () => {
 
     expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
     expect(spectator.query('.job-progress-description')).toHaveText('progress description');
-    expect(spectator.query('.job-button-abort ix-icon')).toBeTruthy();
+    expect(spectator.query('.job-button-abort')).toBeTruthy();
     expect(spectator.query('.job-icon-failed')).toBeFalsy();
   });
 

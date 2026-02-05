@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { DndModule } from 'ngx-drag-drop';
 import { of } from 'rxjs';
@@ -10,7 +11,6 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   DiskIconComponent,
 } from 'app/modules/disk-icon/disk-icon.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import {
   DiskInfoComponent,
@@ -36,13 +36,13 @@ describe('ManualSelectionDisksComponent', () => {
     component: ManualSelectionDisksComponent,
     imports: [
       DndModule,
+      TnIconComponent,
     ],
     declarations: [
       MockComponents(
         DiskInfoComponent,
         DiskIconComponent,
         ManualSelectionDiskFiltersComponent,
-        IxIconComponent,
       ),
     ],
     providers: [

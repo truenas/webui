@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, tap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
@@ -120,7 +120,7 @@ export class WebSocketDebugEffects {
     tap(([method, , isPanelOpen]) => {
       this.snackbar.open({
         message: ignoreTranslation(`Duplicate API call: "${method}"`),
-        icon: iconMarker('mdi-alert'),
+        icon: tnIconMarker('alert', 'mdi'),
         iconCssColor: 'var(--orange)',
         duration: 5000,
         button: isPanelOpen

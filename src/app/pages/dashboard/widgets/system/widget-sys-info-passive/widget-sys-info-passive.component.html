@@ -3,7 +3,7 @@
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <ix-icon [name]="isIxHardware() ? iconMarker('ix-truenas-logo') : iconMarker('ix-truenas-logo-type')" [fullSize]="true"></ix-icon>
+          <tn-icon [name]="isIxHardware() ? tnIconMarker('truenas-logo', 'custom') : tnIconMarker('truenas-logo-type', 'custom')" [fullSize]="true"></tn-icon>
         </div>
 
         <ix-product-image
@@ -51,7 +51,7 @@
               (click)="openDialog()"
             >
               @if (!isHaEnabled()) {
-                <ix-icon name="mdi-alert"></ix-icon>
+                <tn-icon name="alert" library="mdi"></tn-icon>
               }
               {{ 'Initiate Failover' | translate }}
             </button>
@@ -170,7 +170,7 @@
 
     @if (!isHaLicensed()) {
       <div [class]="['empty', 'container', size()]">
-        <ix-icon class="icon" name="mdi-widgets"></ix-icon>
+        <tn-icon class="icon" name="widgets" library="mdi"></tn-icon>
         <h3>
           <div>{{ 'This system is not licensed for HA.' | translate }}</div>
           <small>{{ 'Configure dashboard to edit this widget.' | translate }}</small>
@@ -180,7 +180,7 @@
 
     @if (isWaitingForEnabledHa()) {
       <div [class]="['empty', 'container', size()]">
-        <ix-icon class="icon" name="mdi-timer-cog-outline"></ix-icon>
+        <tn-icon class="icon" name="timer-cog-outline" library="mdi"></tn-icon>
         <h3>{{ 'Waiting for standby controller' | translate }}</h3>
       </div>
     }

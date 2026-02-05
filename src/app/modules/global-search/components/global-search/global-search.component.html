@@ -7,7 +7,7 @@
   [cdkTrapFocusAutoCapture]="true"
 >
   <div class="search-box">
-    <ix-icon name="search" class="search-icon"></ix-icon>
+    <tn-icon name="magnify" library="mdi" class="search-icon"></tn-icon>
 
     <input
       #searchInput
@@ -21,7 +21,7 @@
 
     @if (searchControl.value) {
       <span class="reset-icon reset-input" (click)="resetInput()">
-        <ix-icon name="mdi-close-circle"></ix-icon>
+        <tn-icon name="close-circle" library="mdi"></tn-icon>
       </span>
     }
   </div>

@@ -1,20 +1,20 @@
 @switch (mode()) {
   @case (TransferMode.Copy) {
-    <ix-icon name="add_to_photos"></ix-icon>
+    <tn-icon name="image-plus" library="mdi"></tn-icon>
     <div
       class="description"
       [innerHtml]="helptext.copyModeExplanation"
     ></div>
   }
   @case (TransferMode.Move) {
-    <ix-icon name="move_to_inbox"></ix-icon>
+    <tn-icon name="inbox-arrow-down" library="mdi"></tn-icon>
     <div
       class="description"
       [innerHtml]="helptext.moveModeExplanation"
     ></div>
   }
   @case (TransferMode.Sync) {
-    <ix-icon name="mdi-sync"></ix-icon>
+    <tn-icon name="sync" library="mdi"></tn-icon>
     <div
       class="description"
       [innerHtml]="helptext.syncModeExplanation"

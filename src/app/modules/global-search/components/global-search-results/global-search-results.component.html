@@ -21,16 +21,17 @@
                 <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm())"></h3>
 
                 @if (result.section === GlobalSearchSection.RecentSearches) {
-                  <ix-icon
+                  <tn-icon
                     role="button"
-                    name="mdi-close"
+                    name="close"
+                    library="mdi"
                     class="icon"
                     color="accent"
                     [attr.tabindex]="sectionResults.length + i + 1"
                     [attr.aria-label]="'Remove {value} from recent searches' | translate:{ value: result.hierarchy?.[result.hierarchy?.length - 1] }"
                     (click)="removeRecentSearch($event, result)"
                     (keydown.enter)="removeRecentSearch($event, result)"
-                  ></ix-icon>
+                  ></tn-icon>
                 }
               </div>
             }
