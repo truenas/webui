@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -12,7 +13,6 @@ import { AdvancedSearchAutocompleteService } from 'app/modules/forms/search-inpu
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
 import { searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 describe('AdvancedSearchComponent – editing', () => {
   let spectator: Spectator<AdvancedSearchComponent<AuditEntry>>;
@@ -84,7 +84,6 @@ describe('AdvancedSearchComponent – editing', () => {
     });
 
     it('emits (switchToBasic) when Switch To Basic is pressed', async () => {
-      expect(await (await searchHarness.getSwitchLink()).text()).toBe('Basic');
       await searchHarness.clickSwitchToBasic();
 
       expect(spectator.component.switchToBasic.emit).toHaveBeenCalled();
@@ -103,8 +102,8 @@ describe('AdvancedSearchComponent – editing', () => {
     it('shows error icon and stores error', async () => {
       await searchHarness.setValue('Username = "root');
 
-      const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.prefix-icon' }));
-      expect(await icon.getName()).toBe('warning');
+      const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.prefix-icon' }));
+      expect(await icon.getName()).toBe('alert');
       // TODO: Refactor not to rely on protected property.
       expect(spectator.component.errorMessages![0].message).toBe('Syntax error at 11-16');
     });

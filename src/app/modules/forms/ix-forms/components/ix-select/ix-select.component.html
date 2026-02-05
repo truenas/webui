@@ -31,9 +31,9 @@
           [ixTest]="[controlDirective.name, 'select-all']"
           (click)="toggleSelectAll(!selectAllState.checked)"
         >
-          <ix-icon
-            [name]="selectAllState.checked ? 'check_circle' : 'remove'"
-          ></ix-icon>
+          <tn-icon
+            library="mdi" [name]="selectAllState.checked ? 'check-circle' : 'minus'"
+          ></tn-icon>
           {{ 'Select All' | translate }}
         </div>
       }
@@ -67,9 +67,9 @@
             [attr.aria-label]="option.label | translate"
           >
             @if (multiple()) {
-              <ix-icon
-                [name]="ixOption.selected ? 'check_circle' : 'remove'"
-              ></ix-icon>
+              <tn-icon
+                library="mdi" [name]="ixOption.selected ? 'check-circle' : 'minus'"
+              ></tn-icon>
             }
             {{ option.label | translate }}
 

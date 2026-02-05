@@ -1,16 +1,14 @@
 import {
   Component, output, ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButtonModule,
-    IxIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
     TestDirective,
   ],

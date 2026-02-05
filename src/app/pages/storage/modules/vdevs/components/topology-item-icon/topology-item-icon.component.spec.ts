@@ -1,9 +1,10 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk, VDev } from 'app/interfaces/storage.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   TopologyItemIconComponent,
 } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
@@ -22,31 +23,39 @@ describe('TopologyItemIconComponent', () => {
     component: TopologyItemIconComponent,
   });
 
-  it('shows hdd disk icon', () => {
+  it('shows hdd disk icon', async () => {
     spectator = createComponent({
       props: { disk: diskHdd, topologyItem: vdevDisk },
     });
-    expect(spectator.query(IxIconComponent)!.svgIcon).toBe('ix-hdd');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('app-hdd');
   });
 
-  it('shows ssd disk icon', () => {
+  it('shows ssd disk icon', async () => {
     spectator = createComponent({
       props: { disk: diskSsd, topologyItem: vdevDisk },
     });
-    expect(spectator.query(IxIconComponent)!.svgIcon).toBe('ix-ssd');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('app-ssd');
   });
 
-  it('shows hdd mirror icon', () => {
+  it('shows hdd mirror icon', async () => {
     spectator = createComponent({
       props: { disk: diskHdd, topologyItem: vdevMirror },
     });
-    expect(spectator.query(IxIconComponent)!.svgIcon).toBe('ix-hdd-mirror');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('app-hdd-mirror');
   });
 
-  it('shows ssd mirror icon', () => {
+  it('shows ssd mirror icon', async () => {
     spectator = createComponent({
       props: { disk: diskSsd, topologyItem: vdevMirror },
     });
-    expect(spectator.query(IxIconComponent)!.svgIcon).toBe('ix-ssd-mirror');
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const icon = await loader.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('app-ssd-mirror');
   });
 });

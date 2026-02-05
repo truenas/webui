@@ -1,11 +1,10 @@
-<button
+<tn-icon-button
   tabindex="0"
-  mat-icon-button
   id="mobile-back-button"
   ixTest="disk-details-back"
+  name="chevron-left"
+  library="mdi"
   [attr.aria-label]="'Back' | translate"
   (click)="closed.emit()"
   (keydown.enter)="closed.emit()"
->
-  <ix-icon name="mdi-chevron-left"></ix-icon>
-</button>
+></tn-icon-button>

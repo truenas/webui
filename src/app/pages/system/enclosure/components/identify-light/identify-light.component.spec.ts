@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -44,8 +44,8 @@ describe('IdentifyLightComponent', () => {
     it('shows status string', async () => {
       expect(spectator.query('.status-line')).toHaveText('Light status is unknown.');
 
-      const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.status-line' }));
-      expect(await icon.getName()).toBe('mdi-lightbulb-question-outline');
+      const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.status-line' }));
+      expect(await icon.getName()).toBe('lightbulb-question-outline');
     });
 
     it('shows both Identify and Turn Off buttons', async () => {
@@ -69,8 +69,8 @@ describe('IdentifyLightComponent', () => {
     it('shows status string', async () => {
       expect(spectator.query('.status-line')).toHaveText('Identify light is off.');
 
-      const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.status-line' }));
-      expect(await icon.getName()).toBe('mdi-lightbulb-off-outline');
+      const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.status-line' }));
+      expect(await icon.getName()).toBe('lightbulb-off-outline');
     });
 
     it('shows Identify button', async () => {
@@ -91,8 +91,8 @@ describe('IdentifyLightComponent', () => {
     it('shows status string', async () => {
       expect(spectator.query('.status-line')).toHaveText('Identify light is on.');
 
-      const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.status-line' }));
-      expect(await icon.getName()).toBe('mdi-lightbulb-on');
+      const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.status-line' }));
+      expect(await icon.getName()).toBe('lightbulb-on');
     });
 
     it('shows turn off button', async () => {
@@ -113,8 +113,8 @@ describe('IdentifyLightComponent', () => {
     it('shows status string', async () => {
       expect(spectator.query('.status-line')).toHaveText('Identify light is off.');
 
-      const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.status-line' }));
-      expect(await icon.getName()).toBe('mdi-lightbulb-off-outline');
+      const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.status-line' }));
+      expect(await icon.getName()).toBe('lightbulb-off-outline');
     });
 
     it('shows Identify button', async () => {

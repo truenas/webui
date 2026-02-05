@@ -2,7 +2,7 @@
   @switch (status) {
     @case (DockerStatus.Running) {
       <div class="status-wrapper">
-        <ix-icon name="mdi-check-circle" class="running"></ix-icon>
+        <tn-icon name="check-circle" library="mdi" class="running"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
@@ -23,28 +23,28 @@
 
     @case (DockerStatus.Stopped) {
       <div class="status-wrapper">
-        <ix-icon name="stop_circle"></ix-icon>
+        <tn-icon name="stop-circle" library="mdi"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Failed) {
       <div class="status-wrapper" [matTooltip]="statusDescription$ | async">
-        <ix-icon name="mdi-close-circle" class="error"></ix-icon>
+        <tn-icon name="close-circle" library="mdi" class="error"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Unconfigured) {
       <div class="status-wrapper">
-        <ix-icon name="settings"></ix-icon>
+        <tn-icon name="cog" library="mdi"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Pending) {
       <div class="status-wrapper">
-        <ix-icon name="pending"></ix-icon>
+        <tn-icon name="clock-outline" library="mdi"></tn-icon>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }

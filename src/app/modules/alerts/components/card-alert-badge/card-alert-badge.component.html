@@ -8,7 +8,7 @@
     [matTooltip]="tooltip() | translate"
     [attr.aria-label]="tooltip() | translate"
   >
-    <ix-icon [name]="getIconForBadgeType()"></ix-icon>
+    <tn-icon [name]="getIconForBadgeType()" [fullSize]="true"></tn-icon>
     {{ count() }}
   </span>
 }

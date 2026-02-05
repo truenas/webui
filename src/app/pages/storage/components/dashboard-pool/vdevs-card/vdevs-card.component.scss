@@ -4,10 +4,11 @@
   display: flex;
 }
 
-.pool-icon {
+tn-icon.pool-icon {
   cursor: help;
+  display: inline-flex;
   height: 16px;
-  margin-top: 2px;
+  vertical-align: middle;
   width: 16px;
 }
 

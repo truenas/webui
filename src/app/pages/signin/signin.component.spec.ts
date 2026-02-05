@@ -1,5 +1,7 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -118,11 +120,12 @@ describe('SigninComponent', () => {
       expect(spectator.query(TrueCommandStatusComponent)).toExist();
     });
 
-    it('shows the logo when waiting for connection status', () => {
+    it('shows the logo when waiting for connection status', async () => {
       spectator.detectChanges();
 
-      const logo = spectator.query('.logo-wrapper ix-icon');
-      expect(logo).toExist();
+      const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const logo = await loader.getHarness(TnIconHarness.with({ ancestor: '.logo-wrapper' }));
+      expect(logo).toBeTruthy();
     });
 
     it('shows "Logging in..." message when user is authenticated and token is within the timeline', () => {

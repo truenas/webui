@@ -3,8 +3,8 @@ import { Component, ChangeDetectionStrategy, input, computed, HostBinding, injec
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
 @Component({
@@ -15,7 +15,7 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
   imports: [
     NgClass,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     NgxSkeletonLoaderModule,
     TranslateModule,
   ],

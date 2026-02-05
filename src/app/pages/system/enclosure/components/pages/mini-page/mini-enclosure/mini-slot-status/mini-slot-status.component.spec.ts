@@ -24,8 +24,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-circle-outline');
-    expect(spectator.query('ix-icon')).toHaveClass('status-empty');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'circle-outline');
+    expect(spectator.query('tn-icon')).toHaveClass('status-empty');
     expect(spectator.fixture.nativeElement).toHaveText('Empty');
   });
 
@@ -40,8 +40,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'check_circle');
-    expect(spectator.query('ix-icon')).toHaveClass('status-online');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'check-circle');
+    expect(spectator.query('tn-icon')).toHaveClass('status-online');
     expect(spectator.fixture.nativeElement).toHaveText('Online');
   });
 
@@ -56,8 +56,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'error');
-    expect(spectator.query('ix-icon')).toHaveClass('status-faulted');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'alert-circle');
+    expect(spectator.query('tn-icon')).toHaveClass('status-faulted');
     expect(spectator.fixture.nativeElement).toHaveText('Faulted');
   });
 
@@ -72,8 +72,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'error');
-    expect(spectator.query('ix-icon')).toHaveClass('status-degraded');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'alert-circle');
+    expect(spectator.query('tn-icon')).toHaveClass('status-degraded');
     expect(spectator.fixture.nativeElement).toHaveText('Degraded');
   });
 
@@ -88,8 +88,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-help-circle');
-    expect(spectator.query('ix-icon')).toHaveClass('status-unknown');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'help-circle');
+    expect(spectator.query('tn-icon')).toHaveClass('status-unknown');
     expect(spectator.fixture.nativeElement).toHaveText('Unknown');
   });
 
@@ -104,8 +104,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-minus-circle');
-    expect(spectator.query('ix-icon')).toHaveClass('status-offline');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'minus-circle');
+    expect(spectator.query('tn-icon')).toHaveClass('status-offline');
     expect(spectator.fixture.nativeElement).toHaveText('Offline');
   });
 
@@ -121,8 +121,8 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-database-plus');
-    expect(spectator.query('ix-icon')).toHaveClass('status-spare');
+    expect(spectator.query('tn-icon')).toHaveAttribute('name', 'database-plus');
+    expect(spectator.query('tn-icon')).toHaveClass('status-spare');
     expect(spectator.fixture.nativeElement).toHaveText('Spare');
   });
 

@@ -1,6 +1,7 @@
 import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   NfsAdvancedFlag, nfsAdvancedFlagLabels,
   NfsAdvancedPermission, nfsAdvancedPermissionLabels, nfsBasicFlagLabels, nfsBasicPermissionLabels,
@@ -10,7 +11,6 @@ import {
   areNfsPermissionsBasic,
   NfsAcl, NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PermissionsItemComponent } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
 import { PermissionItem } from 'app/pages/datasets/modules/permissions/interfaces/permission-item.interface';
 import { nfsAceToPermissionItem } from 'app/pages/datasets/modules/permissions/utils/nfs-ace-to-permission-item.utils';
@@ -32,7 +32,7 @@ interface PermissionDetails {
     CdkAccordion,
     CdkAccordionItem,
     PermissionsItemComponent,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
   ],
 })

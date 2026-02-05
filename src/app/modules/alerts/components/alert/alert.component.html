@@ -1,9 +1,10 @@
 <div [class]="['alert-icon', alertLevelColor]">
-  <ix-icon
-    class="alert-icon"
+  <tn-icon
+    library="mdi"
+    size="md"
     [name]="icon"
-    [matTooltip]="iconTooltip"
-  ></ix-icon>
+    [tnTooltip]="iconTooltip"
+  ></tn-icon>
 </div>
 
 <div class="alert-body">
@@ -58,7 +59,7 @@
         [ixTest]="[alert().key, 'toggle-help']"
         (click)="toggleContextHelp()"
       >
-        <ix-icon [name]="showContextHelp() ? 'mdi-chevron-up' : 'mdi-chevron-down'"></ix-icon>
+        <tn-icon library="mdi" [name]="showContextHelp() ? 'chevron-up' : 'chevron-down'" [fullSize]="true"></tn-icon>
         {{ showContextHelp() ? ('Hide Details' | translate) : ('Why am I seeing this?' | translate) }}
       </button>
       @if (showContextHelp()) {
@@ -72,7 +73,7 @@
               [href]="enhanced.documentationUrl"
             >
               {{ 'Learn More' | translate }}
-              <ix-icon name="mdi-open-in-new"></ix-icon>
+              <tn-icon name="open-in-new" library="mdi" [fullSize]="true"></tn-icon>
             </a>
           }
         </div>
@@ -89,7 +90,7 @@
           [ixTest]="[alert().key, 'action', action.label]"
           (click)="onSmartActionClick(action.handler)"
         >
-          <ix-icon [name]="action.icon"></ix-icon>
+          <tn-icon [name]="action.icon" [fullSize]="true"></tn-icon>
           {{ action.label | translate }}
         </button>
       }
@@ -134,6 +135,6 @@
     [matTooltip]="dismissTooltip() || dismissButtonText()"
     (click)="onDismiss()"
   >
-    <ix-icon [name]="closeIcon"></ix-icon>
+    <tn-icon [name]="closeIcon" [fullSize]="true"></tn-icon>
   </button>
 }

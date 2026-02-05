@@ -171,25 +171,25 @@ describe('WidgetStorageComponent', () => {
       expect(poolsInfo).toMatchObject([{
         name: 'poolWithFinishedScrub',
         status: {
-          icon: 'check_circle',
+          icon: 'mat-check_circle',
           label: 'Pool Status',
           level: 'safe',
           value: 'ONLINE',
         },
         usedSpace: {
-          icon: 'check_circle',
+          icon: 'mat-check_circle',
           label: 'Used Space',
           level: 'safe',
           value: '58.25%',
         },
         disksWithError: {
-          icon: 'error',
+          icon: 'mat-error',
           label: 'Disks with Errors',
           level: 'warn',
           value: '1 of 2',
         },
         scan: {
-          icon: 'check_circle',
+          icon: 'mat-check_circle',
           label: 'Last Scrub',
           level: 'safe',
           value: '2024-05-05 10:00:13',
@@ -261,7 +261,7 @@ describe('WidgetStorageComponent', () => {
       const poolsInfo = spectator.component.poolsInfo();
       // fakePools[0] - poolWithFinishedScrub
       expect(poolsInfo[0].scan).toMatchObject({
-        icon: 'check_circle',
+        icon: 'mat-check_circle',
         label: 'Last Scrub',
         level: 'safe',
         value: '2024-05-05 10:00:13',
@@ -272,7 +272,7 @@ describe('WidgetStorageComponent', () => {
       const poolsInfo = spectator.component.poolsInfo();
       // fakePools[1] - poolWithOngoingScrub
       expect(poolsInfo[1].scan).toMatchObject({
-        icon: 'arrow_circle_right',
+        icon: 'mat-arrow_circle_right',
         label: 'Last Scrub',
         level: 'safe',
         value: '65.19%',
@@ -304,7 +304,7 @@ describe('WidgetStorageComponent', () => {
     it('updates the percentage live', () => {
       let poolsInfo = spectator.component.poolsInfo();
       expect(poolsInfo[0].scan).toMatchObject({
-        icon: 'arrow_circle_right',
+        icon: 'mat-arrow_circle_right',
         label: 'Last Scrub',
         level: 'safe',
         value: '65.19%',
@@ -322,7 +322,7 @@ describe('WidgetStorageComponent', () => {
       poolsInfo = spectator.component.poolsInfo();
 
       expect(poolsInfo[0].scan).toMatchObject({
-        icon: 'arrow_circle_right',
+        icon: 'mat-arrow_circle_right',
         label: 'Last Scrub',
         level: 'safe',
         value: '71.23%',

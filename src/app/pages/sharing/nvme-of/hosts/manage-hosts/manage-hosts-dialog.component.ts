@@ -2,16 +2,15 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
+  MatDialog, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -46,7 +45,7 @@ interface NvmeOfHostAndUsage extends NvmeOfHost {
   styleUrl: './manage-hosts-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     MatDialogContent,
     MatDialogTitle,
@@ -70,6 +69,7 @@ export class ManageHostsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
+  private dialogRef = inject(MatDialogRef<ManageHostsDialog>);
   private snackbar = inject(SnackbarService);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -78,6 +78,10 @@ export class ManageHostsDialog implements OnInit {
     textColumn({
       title: this.translate.instant('NQN'),
       propertyName: 'hostnqn',
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'description',
     }),
     yesNoColumn({
       title: this.translate.instant('Has Host Authentication'),
@@ -90,12 +94,12 @@ export class ManageHostsDialog implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.onDelete(row),
@@ -125,11 +129,16 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onAdd(): void {
+    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
+    this.dialogRef.close();
+    // Note: untilDestroyed(this) is intentionally NOT used here.
+    // The dialog closes immediately (destroying this component), but we need the subscription
+    // to remain active to handle the slide-in response. The slide-in observable completes
+    // naturally when the form is submitted or cancelled, so there's no memory leak.
     this.slideIn
       .open(HostFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Added'));
@@ -138,10 +147,15 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onEdit(host: NvmeOfHostAndUsage): void {
+    // Close the dialog immediately to prevent it from appearing behind the slide-in form.
+    this.dialogRef.close();
+    // Note: untilDestroyed(this) is intentionally NOT used here.
+    // The dialog closes immediately (destroying this component), but we need the subscription
+    // to remain active to handle the slide-in response. The slide-in observable completes
+    // naturally when the form is submitted or cancelled, so there's no memory leak.
     this.slideIn.open(HostFormComponent, { data: host })
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Updated'));

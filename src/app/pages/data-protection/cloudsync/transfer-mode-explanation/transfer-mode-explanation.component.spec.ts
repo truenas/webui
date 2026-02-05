@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { TransferModeExplanationComponent } from './transfer-mode-explanation.component';
@@ -23,9 +23,9 @@ describe('TransferModeExplanationComponent', () => {
   });
 
   it('shows icon for the transfer mode provided', async () => {
-    const icon = await loader.getHarness(MatIconHarness);
+    const icon = await loader.getHarness(TnIconHarness);
 
-    expect(await icon.getName()).toBe('mdi-sync');
+    expect(await icon.getName()).toBe('sync');
   });
 
   it('shows the transfer mode description', () => {

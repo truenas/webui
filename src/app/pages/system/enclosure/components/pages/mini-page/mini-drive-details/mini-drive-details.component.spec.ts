@@ -73,7 +73,7 @@ describe('MiniDriveDetailsComponent', () => {
   });
 
   it('unselects a slot when X is pressed', () => {
-    spectator.click('ix-icon');
+    spectator.click('tn-icon');
 
     expect(spectator.inject(EnclosureStore).selectSlot).toHaveBeenCalledWith(null);
   });

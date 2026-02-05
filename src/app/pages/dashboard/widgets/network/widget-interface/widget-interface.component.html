@@ -11,7 +11,7 @@
           [matTooltip]="'Network Reports' | translate"
           [routerLink]="['/reportsdashboard', 'network']"
         >
-          <ix-icon name="insert_chart"></ix-icon>
+          <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
         </button>
       </div>
     }
@@ -35,11 +35,11 @@
               <div class="info-list-item state">
                 @if (isLinkStateUp()) {
                   <span class="icon-wrapper up">
-                    <ix-icon name="check_circle" [matTooltip]="linkStateLabel()"></ix-icon>
+                    <tn-icon name="check-circle" library="mdi" [tnTooltip]="linkStateLabel()"></tn-icon>
                   </span>
                 } @else {
                   <span class="icon-wrapper down">
-                    <ix-icon name="cancel" [matTooltip]="linkStateLabel()"></ix-icon>
+                    <tn-icon name="close" library="mdi" [tnTooltip]="linkStateLabel()"></tn-icon>
                   </span>
                 }
                 <span>{{ linkStateLabel() }}</span>

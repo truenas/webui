@@ -78,10 +78,10 @@
             (click)="$event.preventDefault()"
           >
             @if (treeControl.isExpanded(topologyItem)) {
-              <ix-icon name="expand_more"></ix-icon>
+              <tn-icon name="chevron-down" library="mdi"></tn-icon>
             }
             @if (!treeControl.isExpanded(topologyItem)) {
-              <ix-icon name="chevron_right"></ix-icon>
+              <tn-icon name="chevron-right" library="mdi"></tn-icon>
             }
           </button>
           <ix-bootenv-node-item

@@ -15,10 +15,11 @@
       {{ 'All hosts are allowed.' | translate }}
     } @else if (!subsystem().hosts?.length) {
       <div class="no-hosts-warning">
-        <ix-icon
-          name="mdi-alert"
+        <tn-icon
+          name="alert"
+          library="mdi"
           class="icon"
-        ></ix-icon>
+        ></tn-icon>
 
         <div>
           {{ helptext.noHostsWarning | translate }}
@@ -30,14 +31,19 @@
           <li>
             <span class="host">
               <span class="host-description">
-                {{ host.hostnqn }}
+                @if (host.description) {
+                  <strong>{{ host.description }}</strong> - {{ host.hostnqn }}
+                } @else {
+                  {{ host.hostnqn }}
+                }
 
                 @if (host.dhchap_key) {
-                  <ix-icon
-                    name="mdi-key"
+                  <tn-icon
+                    name="key"
+                    library="mdi"
                     class="key-icon"
-                    [matTooltip]="helptext.hasHostAuthentication | translate"
-                  ></ix-icon>
+                    [tnTooltip]="helptext.hasHostAuthentication | translate"
+                  ></tn-icon>
                 }
               </span>
 
@@ -49,7 +55,7 @@
                   [matTooltip]="'Remove host from the subsystem' | translate"
                   (click)="removeAssociation(host)"
                 >
-                  <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
+                  <tn-icon class="icon" name="link-variant-off" library="mdi"></tn-icon>
                 </button>
               </span>
             </span>

@@ -73,10 +73,10 @@
         } @else {
           <div class="oauth-message">
             @if (hasOauthAuthorization) {
-              <ix-icon name="check_circle"></ix-icon>
+              <tn-icon name="check-circle" library="mdi"></tn-icon>
               {{ '{oauthType} credentials have been applied.' | translate: { oauthType } }}
             } @else {
-              <ix-icon name="info"></ix-icon>
+              <tn-icon name="information" library="mdi"></tn-icon>
               {{ 'Log in to {oauthType} to set up Oauth credentials.' | translate: { oauthType } }}
             }
           </div>

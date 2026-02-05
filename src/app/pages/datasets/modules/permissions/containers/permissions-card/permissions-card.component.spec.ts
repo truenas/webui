@@ -129,7 +129,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('does not load permissions for locked datasets', () => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -141,7 +141,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('does not load permissions for unmounted datasets', () => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -159,7 +159,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('does not load permissions for datasets without mountpoint', () => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     spectator.setInput('dataset', {
       ...dataset,

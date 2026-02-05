@@ -3,9 +3,9 @@ import {
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-card-alert-badge',
@@ -14,7 +14,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     TranslateModule,
   ],

@@ -6,6 +6,7 @@ import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, Observable, of, switchMap,
   take,
@@ -18,8 +19,6 @@ import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -69,7 +68,7 @@ interface BootEnvironmentUi extends BootEnvironment {
     TestDirective,
     UiSearchDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -153,34 +152,34 @@ export class BootEnvironmentListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-check-decagram'),
+          iconName: tnIconMarker('check-decagram', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Activate'),
           hidden: (row) => of(!row.can_activate || row.activated),
           onClick: (row) => this.doActivate(row),
         },
         {
-          iconName: iconMarker('bookmark_border'),
+          iconName: tnIconMarker('bookmark-outline', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Keep'),
           hidden: (row) => of(row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: iconMarker('bookmark'),
+          iconName: tnIconMarker('bookmark', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Unkeep'),
           hidden: (row) => of(!row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: iconMarker('mdi-content-copy'),
+          iconName: tnIconMarker('content-copy', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Clone'),
           onClick: (row) => this.doClone(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           hidden: (row) => of(row.active || row.activated),

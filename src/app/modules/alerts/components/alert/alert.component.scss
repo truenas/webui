@@ -28,11 +28,6 @@
   flex: 0 0 auto;
   padding-right: 4px;
 
-  ix-icon {
-    height: 18px;
-    width: 18px;
-  }
-
   &.warn {
     color: var(--orange);
   }
@@ -180,8 +175,10 @@
     padding: 0;
     width: 100%;
 
-    ix-icon {
+    tn-icon {
       height: 14px;
+      position: relative;
+      top: -2px;
       width: 14px;
     }
 
@@ -207,8 +204,10 @@
       font-size: 0.8rem;
       gap: 4px;
 
-      ix-icon {
+      tn-icon {
         height: 12px;
+        position: relative;
+        top: -4px;
         width: 12px;
       }
     }
@@ -241,10 +240,10 @@
     white-space: nowrap;
     height: max-content;
 
-    ix-icon {
-      height: 18px;
-      width: 18px;
-      margin-right: 5px;
+    tn-icon {
+      height: 14px;
+      margin-right: 4px;
+      width: 14px;
     }
 
     &:hover {
@@ -278,7 +277,7 @@
   top: 4px;
   transition: opacity 0.2s ease, color 0.2s ease;
 
-  ix-icon {
+  tn-icon {
     height: 18px;
     width: 18px;
   }

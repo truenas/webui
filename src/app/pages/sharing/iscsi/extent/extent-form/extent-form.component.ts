@@ -7,6 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy, startsWith } from 'lodash-es';
 import {
   BehaviorSubject, combineLatest, Observable, of,
@@ -31,7 +32,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -56,7 +56,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxCheckboxComponent,
     IxSelectComponent,
     IxExplorerComponent,
-    IxIconComponent,
+    TnIconComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,

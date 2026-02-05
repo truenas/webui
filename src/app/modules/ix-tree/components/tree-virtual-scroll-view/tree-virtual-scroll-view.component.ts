@@ -6,17 +6,16 @@ import {
 } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, IterableDiffers, OnChanges, OnDestroy, OnInit, output, TrackByFunction, viewChild, input } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { ResizedEvent, AngularResizeEventModule } from 'angular-resize-event';
 import {
   animationFrameScheduler, asapScheduler, BehaviorSubject,
 } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
@@ -45,10 +44,9 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     AngularResizeEventModule,
     TreeVirtualScrollNodeOutletDirective,
     TreeNodeOutletDirective,
-    MatIconButton,
     TestDirective,
     MatTooltip,
-    IxIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
     AsyncPipe,
   ],

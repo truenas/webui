@@ -4,13 +4,13 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
 import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppState } from 'app/store';
 
 /**
@@ -28,7 +28,7 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     TranslateModule,
   ],
@@ -231,13 +231,13 @@ export class PageAlertsComponent {
       case AlertLevel.Alert:
       case AlertLevel.Emergency:
       case AlertLevel.Error:
-        return 'mdi-alert-circle';
+        return tnIconMarker('alert-circle', 'mdi');
       case AlertLevel.Warning:
-        return 'mdi-alert';
+        return tnIconMarker('alert', 'mdi');
       case AlertLevel.Info:
       case AlertLevel.Notice:
       default:
-        return 'mdi-information';
+        return tnIconMarker('information', 'mdi');
     }
   }
 

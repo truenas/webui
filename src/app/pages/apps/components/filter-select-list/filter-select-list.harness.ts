@@ -1,15 +1,15 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ComponentHarness } from '@angular/cdk/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { isString } from 'lodash-es';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 export class FilterSelectListHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-filter-select-list';
 
   getItems = this.locatorForAll('.item');
-  getIcons = this.locatorForAll(IxIconHarness);
+  getIcons = this.locatorForAll(TnIconHarness);
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
@@ -26,7 +26,7 @@ export class FilterSelectListHarness extends ComponentHarness implements IxFormC
     const checkedValues: string[] = [];
 
     for (const [idx, item] of items.entries()) {
-      if (await icons[idx].getName() === 'check_circle') {
+      if (await icons[idx].getName() === 'check-circle') {
         checkedValues.push(await item.text());
       }
     }
@@ -41,7 +41,7 @@ export class FilterSelectListHarness extends ComponentHarness implements IxFormC
     const items = await this.getItems();
 
     for (const [idx, item] of items.entries()) {
-      const isChecked = await this.locatorForOptional(`.item:nth-of-type(${idx + 1}) ix-icon[name="check_circle"]`)();
+      const isChecked = await this.locatorForOptional(`.item:nth-of-type(${idx + 1}) tn-icon[name="check-circle"]`)();
       const shouldBeChecked = newValue.includes(await item.text());
 
       if ((shouldBeChecked && !isChecked) || (!shouldBeChecked && isChecked)) {

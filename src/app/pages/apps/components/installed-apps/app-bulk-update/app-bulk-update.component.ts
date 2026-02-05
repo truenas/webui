@@ -10,6 +10,7 @@ import {
 } from '@angular/material/expansion';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, map, Observable, of, pairwise, startWith,
@@ -21,7 +22,6 @@ import { App, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FakeProgressBarComponent,
     MatExpansionPanelTitle,
     BulkListItemComponent,
-    IxIconComponent,
+    TnIconComponent,
     ImgFallbackModule,
     KeyValuePipe,
     IxSelectComponent,

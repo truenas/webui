@@ -5,6 +5,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
@@ -13,19 +14,17 @@ import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 const alertIcons = {
-  error: iconMarker('mdi-alert-circle'),
-  warning: iconMarker('mdi-alert'),
-  info: iconMarker('mdi-information'),
-  notificationsActive: iconMarker('notifications_active'),
-  checkCircle: iconMarker('check_circle'),
-  close: iconMarker('clear'),
+  error: tnIconMarker('alert-circle', 'mdi'),
+  warning: tnIconMarker('alert', 'mdi'),
+  info: tnIconMarker('information', 'mdi'),
+  notificationsActive: tnIconMarker('bell-ring', 'mdi'),
+  checkCircle: tnIconMarker('check-circle', 'mdi'),
+  close: tnIconMarker('close', 'mdi'),
 };
 
 enum AlertLevelColor {
@@ -42,10 +41,11 @@ enum AlertLevelColor {
   styleUrls: ['./alert.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
-    MatTooltip,
+    TnIconComponent,
+    TnTooltipDirective,
     MatButton,
     MatIconButton,
+    MatTooltip,
     TestDirective,
     TranslateModule,
     FormatDateTimePipe,

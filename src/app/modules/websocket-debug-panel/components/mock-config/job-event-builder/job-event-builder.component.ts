@@ -4,17 +4,17 @@ import {
 import {
   FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
@@ -27,9 +27,9 @@ import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websoc
     MatCard,
     MatCardContent,
     MatButton,
-    MatIconButton,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
+    TnIconButtonComponent,
     IxInputComponent,
     IxSelectComponent,
     IxTextareaComponent,

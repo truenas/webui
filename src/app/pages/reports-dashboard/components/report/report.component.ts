@@ -7,6 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -29,7 +30,6 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -61,7 +61,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
     MatButton,
     MatTooltip,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatCardContent,
     LineChartComponent,
     IxDateComponent,

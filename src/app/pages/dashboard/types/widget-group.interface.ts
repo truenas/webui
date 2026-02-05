@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { tnIconMarker } from '@truenas/ui-components';
 import { SlotSize, Widget } from 'app/pages/dashboard/types/widget.interface';
 
 export enum WidgetGroupLayout {
@@ -51,27 +51,27 @@ export const layoutToSlotSizes = {
 export const widgetGroupIcons = [
   {
     value: WidgetGroupLayout.Full,
-    icon: iconMarker('ix-layout-full'),
+    icon: tnIconMarker('layout-full', 'custom'),
     label: T('One large widget'),
   },
   {
     value: WidgetGroupLayout.Halves,
-    icon: iconMarker('ix-layout-halves'),
+    icon: tnIconMarker('layout-halves', 'custom'),
     label: T('Two half widgets, one below another'),
   },
   {
     value: WidgetGroupLayout.QuartersAndHalf,
-    icon: iconMarker('ix-layout-quarters-and-half'),
+    icon: tnIconMarker('layout-quarters-and-half', 'custom'),
     label: T('Two quarter widgets and one half widget below'),
   },
   {
     value: WidgetGroupLayout.HalfAndQuarters,
-    icon: iconMarker('ix-layout-half-and-quarters'),
+    icon: tnIconMarker('layout-half-and-quarters', 'custom'),
     label: T('One half widget and two quarter widgets below'),
   },
   {
     value: WidgetGroupLayout.Quarters,
-    icon: iconMarker('ix-layout-quarters'),
+    icon: tnIconMarker('layout-quarters', 'custom'),
     label: T('Four quarter widgets in two by two grid'),
   },
 ];
