@@ -29,7 +29,14 @@
         [ixTest]="['add-host', host.hostnqn]"
         (click)="selectHost(host)"
       >
-        {{ host.hostnqn }}
+        @if (host.description) {
+          <div class="host-item">
+            <div class="description">{{ host.description }}</div>
+            <div class="hostnqn">{{ host.hostnqn }}</div>
+          </div>
+        } @else {
+          {{ host.hostnqn }}
+        }
       </button>
     }
 

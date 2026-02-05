@@ -14,7 +14,9 @@ export const helptext2fa = {
   into the app. The URI is produced by the system when Two-Factor Authentication is first activated.'),
   },
 
-  allSetUp: T('Two-Factor authentication has been configured.'),
+  allSetUp: T('Two-Factor authentication has been configured and is enabled for your current session.'),
+  firstSetUp: T('Two-Factor authentication has been configured for your user, \
+but your current session was not initiated with two-factor auth.'),
   enabledGloballyButNotForUser: T('Two-Factor authentication is enabled on this system, but it\'s not yet configured for your user. Please configure it now.'),
   globallyDisabled: T('Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.'),
   qrCodeMessage: T('Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.'),

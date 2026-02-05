@@ -19,6 +19,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -68,6 +69,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class CloudBackupCardComponent implements OnInit {
@@ -88,6 +90,7 @@ export class CloudBackupCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
   protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'cloud-backup'];
   updatedCount = signal(0);
 
   columns = createTable<CloudBackup>([

@@ -21,6 +21,7 @@ import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -74,6 +75,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     MatTooltip,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -102,6 +104,7 @@ export class IscsiCardComponent implements OnInit {
 
   protected readonly searchableElements = iscsiCardElements;
   protected readonly emptyConfig = iscsiCardEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'iscsi'];
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
 

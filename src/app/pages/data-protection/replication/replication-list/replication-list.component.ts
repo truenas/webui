@@ -177,8 +177,8 @@ export class ReplicationListComponent implements OnInit {
       },
     }),
   ], {
-    uniqueRowTag: (row) => 'replication-task-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
+    uniqueRowTag: (row) => `replication-task-${row.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`,
   });
 
   protected get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {

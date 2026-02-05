@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { tnIconMarker } from '@truenas/ui-components';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
@@ -201,7 +202,7 @@ describe('ErrorParserService', () => {
       expect(errorReport).toMatchObject({
         title: 'Network Error',
         message: 'Network connection was closed or timed out. Try again later.',
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
       });
       expect(errorReport).not.toHaveProperty('stackTrace');
       expect(errorReport.details).toBeDefined();
@@ -228,7 +229,7 @@ describe('ErrorParserService', () => {
       expect(errorReport).toMatchObject({
         title: 'Network Error',
         message: 'Network connection was closed or timed out. Try again later.',
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
       });
       expect(errorReport).not.toHaveProperty('stackTrace');
       expect(errorReport.details).toBeDefined();
@@ -256,7 +257,7 @@ describe('ErrorParserService', () => {
         title: 'Network Error',
         message: 'Network resource is not reachable, verify your network settings and health.',
         hint: 'Double check that your nameservers and gateway are properly configured.',
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
         actions: [
           {
             label: 'Network Settings',

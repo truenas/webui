@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject, viewChild } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -55,6 +55,8 @@ export class FileTicketComponent {
 
   readonly isLoadingChange = output<boolean>();
 
+  private fileInputComponent = viewChild(IxFileInputComponent);
+
   protected form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.maxLength(200)]],
     message: ['', [Validators.maxLength(20000)]],
@@ -84,9 +86,13 @@ export class FileTicketComponent {
 
   onSubmit(token: unknown): void {
     this.isLoadingChange.emit(true);
+    this.fileInputComponent()?.setDisabledState?.(true);
 
     this.feedbackService.createTicket(token as string, this.ticketType, this.form.getRawValue()).pipe(
-      finalize(() => this.isLoadingChange.emit(false)),
+      finalize(() => {
+        this.isLoadingChange.emit(false);
+        this.fileInputComponent()?.setDisabledState?.(false);
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: (createdTicket) => this.onSuccess(createdTicket.url),

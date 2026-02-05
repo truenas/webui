@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnIconHarness, tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -120,7 +120,7 @@ describe('ErrorDialog', () => {
     it('shows custom icon when provided', async () => {
       const errorWithIcon = {
         ...baseError,
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
       } as ErrorReport;
 
       spectator = createComponent({
@@ -135,7 +135,7 @@ describe('ErrorDialog', () => {
 
       const icon = await loader.getHarnessOrNull(TnIconHarness);
       expect(icon).not.toBeNull();
-      expect(await icon.getName()).toBe('ix-cloud-off');
+      expect(await icon.getName()).toBe('app-cloud-off');
     });
   });
 

@@ -312,3 +312,8 @@ Object.defineProperty(global, 'ClipboardEvent', {
 Object.defineProperty(global, 'DataTransfer', {
   value: MockDataTransfer,
 });
+
+// Polyfill for structuredClone (not available in JSDOM)
+if (typeof globalThis.structuredClone === 'undefined') {
+  globalThis.structuredClone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
+}

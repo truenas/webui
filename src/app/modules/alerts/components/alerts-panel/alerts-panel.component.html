@@ -1,5 +1,5 @@
 <div class="alerts-header">
-  <h3 class="alerts-title">{{ 'Alerts' | translate }}</h3>
+  <h3>{{ 'Alerts' | translate }}</h3>
 
   <div class="controls">
     <tn-icon-button
@@ -16,10 +16,7 @@
       <a
         mat-menu-item
         ixTest="email-settings"
-        ixNavigateAndHighlight
-        navigateHash="email-settings"
-        [navigateRoute]="['/system', 'general']"
-        (click)="closePanel()"
+        (click)="openEmailForm()"
       >
         {{ 'Email' | translate }}
       </a>
@@ -34,6 +31,55 @@
   </div>
 </div>
 
+<!-- Severity Filters -->
+<div class="severity-filters">
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'all'"
+    [ixTest]="['filter', 'all']"
+    (click)="setSeverityFilter('all')"
+  >
+    {{ 'All Alerts' | translate }}
+    <span class="count">{{ alertCounts().all }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'critical'"
+    [ixTest]="['filter', 'critical']"
+    (click)="setSeverityFilter('critical')"
+  >
+    {{ 'Critical' | translate }}
+    <span class="count">{{ alertCounts().critical }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'warning'"
+    [ixTest]="['filter', 'warning']"
+    (click)="setSeverityFilter('warning')"
+  >
+    {{ 'Warnings' | translate }}
+    <span class="count">{{ alertCounts().warning }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'info'"
+    [ixTest]="['filter', 'info']"
+    (click)="setSeverityFilter('info')"
+  >
+    {{ 'Info' | translate }}
+    <span class="count">{{ alertCounts().info }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'dismissed'"
+    [ixTest]="['filter', 'dismissed']"
+    (click)="setSeverityFilter('dismissed')"
+  >
+    {{ 'Dismissed' | translate }}
+    <span class="count">{{ alertCounts().dismissed }}</span>
+  </button>
+</div>
+
 @if (isLoading$ | async) {
   <div>
     <mat-progress-bar
@@ -46,7 +92,7 @@
   <!-- TODO: Consider extracting into its own component -->
   @if (error$ | async; as error) {
     <div class="error">
-      <tn-icon class="icon" color="accent" name="close-circle" library="mdi"></tn-icon>
+      <tn-icon class="icon" color="accent" name="close-circle" library="mdi" [fullSize]="true"></tn-icon>
       <h4 class="message">
         <span class="error-word">{{ 'Error:' | translate }}</span>
         {{ error }}
@@ -54,56 +100,85 @@
     </div>
   }
 
-  @let unreadAlerts = unreadAlerts$ | async;
-  @if (!unreadAlerts?.length) {
+  @if (shouldShowUnread() && !enhancedUnreadAlerts()?.length) {
     <div class="no-alerts">
-      <tn-icon class="icon" name="information" library="mdi"></tn-icon>
-      <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
+      <tn-icon class="icon" name="bell-outline" library="mdi" [fullSize]="true"></tn-icon>
+      <h3 class="title">{{ 'No alerts' | translate }}</h3>
     </div>
-  } @else {
-    <div class="alert-list unread-alerts">
-      @for (alert of unreadAlerts; track alert.id; let last = $last) {
-        <div
-          class="alert"
-          role="listitem"
-          [class.alert-last]="last"
-        >
-          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+  }
+
+  @if (shouldShowDismissed() && !enhancedDismissedAlerts()?.length) {
+    <div class="no-alerts">
+      <tn-icon class="icon" name="bell-outline" library="mdi" [fullSize]="true"></tn-icon>
+      <h3 class="title">{{ 'No dismissed alerts' | translate }}</h3>
+    </div>
+  }
+
+  @if (shouldShowUnread() && enhancedUnreadAlerts()?.length) {
+    <!-- Grouped by category view -->
+    @for (entry of getCategoryEntries(groupedUnreadAlerts()); track entry[0]) {
+      @let category = entry[0];
+      @let alerts = entry[1];
+      <div class="category-section">
+        <div class="category-header">
+          <tn-icon [name]="getCategoryIcon(category)" [fullSize]="true"></tn-icon>
+          <h4>{{ getCategoryLabel(category) | translate }}</h4>
+          <span class="category-count">{{ alerts.length }}</span>
         </div>
-      }
-    </div>
+        <div class="alert-list">
+          @for (alert of alerts; track alert.id; let last = $last) {
+            <div
+              class="alert"
+              role="listitem"
+              [class.alert-last]="last"
+            >
+              <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+            </div>
+          }
+        </div>
+      </div>
+    }
     <button
       *ixRequiresRoles="requiredRoles"
-      matRipple
       class="button-row"
       ixTest="dismiss-all-alerts"
       (click)="onDismissAll()"
     >
-      {{ 'Dismiss All Alerts' | translate }}
+      {{ dismissAllButtonText() }}
     </button>
   }
 
-  @let dismissedAlerts = dismissedAlerts$ | async;
-  @if (dismissedAlerts?.length) {
-    <div class="alert-list dismissed-alerts">
-      @for (alert of dismissedAlerts; track alert.id; let last = $last) {
-        <div
-          class="alert"
-          role="listitem"
-          [class.alert-last]="last"
-        >
-          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+  @if (shouldShowDismissed() && enhancedDismissedAlerts()?.length) {
+    <!-- Grouped by category view for dismissed alerts -->
+    @for (entry of getCategoryEntries(groupedDismissedAlerts()); track entry[0]) {
+      @let category = entry[0];
+      @let alerts = entry[1];
+      <div class="category-section">
+        <div class="category-header">
+          <tn-icon [name]="getCategoryIcon(category)" [fullSize]="true"></tn-icon>
+          <h4>{{ getCategoryLabel(category) | translate }}</h4>
+          <span class="category-count">{{ alerts.length }}</span>
         </div>
-      }
-    </div>
+        <div class="alert-list">
+          @for (alert of alerts; track alert.id; let last = $last) {
+            <div
+              class="alert"
+              role="listitem"
+              [class.alert-last]="last"
+            >
+              <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+            </div>
+          }
+        </div>
+      </div>
+    }
     <button
       *ixRequiresRoles="requiredRoles"
       class="button-row"
-      matRipple
       ixTest="reopen-all-alerts"
       (click)="onReopenAll()"
     >
-      {{ 'Re-Open All Alerts' | translate }}
+      {{ reopenAllButtonText() }}
     </button>
   }
 }

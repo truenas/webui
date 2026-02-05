@@ -1,0 +1,38 @@
+:host {
+  .slidein-nav-link {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  .submenu-text {
+    flex: 1;
+  }
+
+  // Inline badge dot styling for submenu
+  .submenu-badge-dot {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    margin-left: 6px;
+    vertical-align: middle;
+
+    tn-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+
+    &.critical tn-icon {
+      color: var(--red) !important;
+    }
+
+    &.warning tn-icon {
+      color: var(--orange) !important;
+    }
+
+    &.info tn-icon {
+      color: var(--primary) !important;
+    }
+  }
+}

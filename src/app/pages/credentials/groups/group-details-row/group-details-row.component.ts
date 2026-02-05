@@ -3,7 +3,6 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -45,10 +44,6 @@ export class GroupDetailsRowComponent {
   readonly colspan = input<number>();
 
   readonly delete = output<number>();
-
-  protected readonly deleteNotAllowedMsg = marker('Groups with privileges or members cannot be deleted.');
-  protected readonly immutableGroupMsg = marker('This group is immutable and its members cannot be changed.');
-
   protected readonly Role = Role;
 
   doEdit(group: Group): void {

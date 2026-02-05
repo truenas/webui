@@ -17,6 +17,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
@@ -72,6 +73,7 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTableCellDirective,
     EmptyComponent,
     SubSystemNameCellComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -89,6 +91,7 @@ export class NvmeOfCardComponent implements OnInit {
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly emptyConfig = nvmeOfEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'nvme-of'];
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
 

@@ -21,6 +21,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 @Component({
   selector: 'ix-add-host-menu',
   templateUrl: './add-host-menu.component.html',
+  styleUrl: './add-host-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,

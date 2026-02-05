@@ -155,7 +155,7 @@ export class ErrorParserService {
       return {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network connection was closed or timed out. Try again later.'),
-        icon: tnIconMarker('ix-cloud-off'),
+        icon: tnIconMarker('cloud-off', 'custom'),
         details: this.extractErrorDetails(error),
       };
     }
@@ -164,7 +164,7 @@ export class ErrorParserService {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network resource is not reachable, verify your network settings and health.'),
         hint: this.translate.instant('Double check that your nameservers and gateway are properly configured.'),
-        icon: tnIconMarker('ix-cloud-off'),
+        icon: tnIconMarker('cloud-off', 'custom'),
         actions: [
           {
             label: this.translate.instant('Network Settings'),

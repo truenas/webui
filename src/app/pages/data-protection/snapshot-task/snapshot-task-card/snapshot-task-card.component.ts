@@ -18,6 +18,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -69,6 +70,7 @@ import { TaskService } from 'app/services/task.service';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class SnapshotTaskCardComponent implements OnInit {
@@ -86,6 +88,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly uiSearchableElement = snapshotTaskCardElements;
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'snapshot'];
 
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 

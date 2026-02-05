@@ -31,7 +31,11 @@
           <li>
             <span class="host">
               <span class="host-description">
-                {{ host.hostnqn }}
+                @if (host.description) {
+                  <strong>{{ host.description }}</strong> - {{ host.hostnqn }}
+                } @else {
+                  {{ host.hostnqn }}
+                }
 
                 @if (host.dhchap_key) {
                   <tn-icon

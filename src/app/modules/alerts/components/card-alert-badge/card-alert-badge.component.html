@@ -1,0 +1,14 @@
+@if (count() > 0) {
+  <span
+    class="card-badge"
+    role="status"
+    [class.critical]="badgeType() === AlertBadgeType.Critical"
+    [class.warning]="badgeType() === AlertBadgeType.Warning"
+    [class.info]="badgeType() === AlertBadgeType.Info"
+    [matTooltip]="tooltip() | translate"
+    [attr.aria-label]="tooltip() | translate"
+  >
+    <tn-icon [name]="getIconForBadgeType()" [fullSize]="true"></tn-icon>
+    {{ count() }}
+  </span>
+}

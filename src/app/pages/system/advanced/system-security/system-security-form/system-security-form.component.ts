@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, DOCUMENT,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,19 +12,24 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, map, of, switchMap,
+  filter, finalize, map, of, tap, forkJoin, zip,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,14 +37,71 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
+import { refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
 
-@UntilDestroy()
+/** time to wait in milliseconds between opening a slidein and highlighting an element on it */
+const slideInAnimationDuration = 600;
+
+/**
+ * helper type representing all requirements for enabling STIG mode
+ * and their fulfillment status.
+ */
+interface StigEnablementRequirements {
+  /** the current user can't be root, since the root user's password must be disabled */
+  currentUserIsNotRoot: boolean;
+  /** two factor auth must be globally enabled in advanced system settings */
+  twoFactorAuthGloballyEnabled: boolean;
+  /** two factor auth must be required for SSH globally in advanced system settings */
+  twoFactorSshGloballyEnabled: boolean;
+  /** the apps service must be completely unconfigured (i.e. no pool set) */
+  dockerServiceDisabled: boolean;
+  /** the root user's password must be disabled */
+  rootPasswordDisabled: [boolean, User | undefined];
+  /** the truenas_admin user's password must be disabled */
+  adminPasswordDisabled: [boolean, User | undefined];
+  /**
+   * all users must have 2FA required in order to access the truenas webUI.
+   * this is not a hard requirement, but all users that don't have 2FA enabled
+   * will be unable to access the webUI after STIG mode is enabled.
+   */
+  allUsersHave2fa: boolean;
+  /**
+   * the currently logged-in user has a 2FA secret configured.
+   */
+  currentUserIs2fa: boolean;
+  /**
+   * the currently logged-in user's session was initiated with 2FA.
+   */
+  currentSessionIs2fa: boolean;
+}
+
+/**
+ * helper type that represents a missing STIG requirement.
+ * if neither `navigateTo` nor `action` is present, the `Configure` button will
+ * not be shown in the requirements list.
+ */
+interface MissingStigRequirement {
+  /** what text to display on the action/navigation link */
+  configureTitle: string;
+  /** message to display when requirement is unfulfilled */
+  message: string;
+  /** route to navgiate to when clicking the configure button. */
+  navigateTo?: string[];
+  /** element to highlight when navigating */
+  highlightElement?: string;
+  /** the action to perform upon navigation */
+  action?: () => void;
+}
+
 @Component({
   selector: 'ix-system-security-form',
   templateUrl: './system-security-form.component.html',
@@ -56,16 +121,22 @@ import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dia
     MatHint,
     IxInputComponent,
     IxSelectComponent,
+    MatProgressBar,
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
+  private store$ = inject(Store);
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private navigateAndHighlightService = inject(NavigateAndHighlightService);
+  private document = inject(DOCUMENT);
   private router = inject(Router);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
@@ -76,7 +147,8 @@ export class SystemSecurityFormComponent implements OnInit {
   private readonly stigValidatorFn = this.stigValidator.bind(this);
 
   form = this.formBuilder.group({
-    enable_fips: [false],
+    // if STIG is enabled, then FIPS mode *must* also be enabled since FIPS is part of STIG
+    enable_fips: [false, this.stigValidatorFn],
     enable_gpos_stig: [false],
     min_password_age: [
       null as number | null,
@@ -106,8 +178,10 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
   protected isStigEnabled = signal<boolean>(false);
-  protected globalTwoFactorEnabled = signal<boolean>(false);
-  protected stigValidationError = signal<string | null>(null);
+  loadingStigRequirements = signal<boolean>(false);
+  protected missingStigRequirements = signal<MissingStigRequirement[]>([]);
+  protected missingStigWarnings = signal<MissingStigRequirement[]>([]);
+  private twoFactorConfig = signal<GlobalTwoFactorConfig | null>(null);
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -118,24 +192,215 @@ export class SystemSecurityFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.systemSecurityConfig()) {
       this.initSystemSecurityForm();
-      // Check global 2FA status if STIG is already enabled
       if (this.systemSecurityConfig().enable_gpos_stig) {
-        this.api.call('auth.twofactor.config').pipe(
-          untilDestroyed(this),
-        ).subscribe((twoFactorConfig) => {
-          const enabled = twoFactorConfig?.enabled || false;
-          this.globalTwoFactorEnabled.set(enabled);
-          if (!enabled) {
-            this.stigValidationError.set('Global Two-Factor Authentication must be enabled to activate this feature.');
-            this.form.controls.enable_gpos_stig.setErrors({ globalTwoFactorRequired: true });
-          }
-        });
+        this.setupStigRequirements();
       }
     }
   }
 
+  /**
+   * make all API calls necessary to determine whether or not we can enable STIG mode.
+   * will set the `loadingStigRequirements` signal for the form and unset it when the requirements
+   * have been retrieved from the API.
+   */
+  private setupStigRequirements(): void {
+    // bail early if stig mode is already enabled, since all requirements must already be satisfied.
+    if (this.slideInRef.getData().enable_gpos_stig) {
+      return;
+    }
+
+    // also, if we're already loading STIG requirements, then don't do anything since
+    // we don't want to make duplicate API calls while waiting on the last ones to finish.
+    if (this.loadingStigRequirements()) {
+      return;
+    }
+
+    this.missingStigRequirements.set([]);
+    this.missingStigWarnings.set([]);
+    this.loadingStigRequirements.set(true);
+
+    // firstly, get some API data that we need to determine if STIG is even possible to
+    // be enabled at this moment.
+    const twoFactorConfig$ = this.api.call('auth.twofactor.config').pipe(
+      tap((twoFactorConfig) => this.twoFactorConfig.set(twoFactorConfig)),
+      map((twoFactorConfig): Partial<StigEnablementRequirements> => ({
+        twoFactorAuthGloballyEnabled: twoFactorConfig.enabled,
+        twoFactorSshGloballyEnabled: twoFactorConfig.services ? twoFactorConfig.services.ssh : false,
+      })),
+    );
+    const dockerServiceConfig$ = this.api.call('docker.status').pipe(
+      map((dockerServiceConfig): Partial<StigEnablementRequirements> => ({
+        dockerServiceDisabled: dockerServiceConfig.status === DockerStatus.Unconfigured,
+      })),
+    );
+    const userConfig$ = this.api.call('user.query', [[['local', '=', true]]]).pipe(
+      map((userConfig): Partial<StigEnablementRequirements> => {
+        const rootUser: User | undefined = userConfig.find((user) => user.username === 'root');
+        const truenasAdminUser: User | undefined = userConfig.find((user) => user.username === 'truenas_admin');
+        return {
+          // if either account is missing, then its password is technically disabled and the requirement is met
+          rootPasswordDisabled: [rootUser ? rootUser.password_disabled : true, rootUser],
+          adminPasswordDisabled: [truenasAdminUser ? truenasAdminUser.password_disabled : true, truenasAdminUser],
+        };
+      }),
+    );
+    const user2faConfig$ = this.api.call('user.query', [[
+      ['builtin', '=', false],
+      ['twofactor_auth_configured', '=', false],
+      ['locked', '=', false],
+      ['password_disabled', '=', false],
+      ['roles', '!=', []],
+    ]]).pipe(
+      map((user2faConfig): Partial<StigEnablementRequirements> => ({
+        allUsersHave2fa: user2faConfig.length === 0,
+      })),
+    );
+    const userAuthDetails$ = forkJoin([
+      this.api.call('auth.me'),
+      this.api.call('auth.sessions'),
+    ]).pipe(
+      map(([myUser, sessionsList]) => ({
+        user: myUser,
+        session: sessionsList.find((session) => session.current),
+      })),
+      map((me): Partial<StigEnablementRequirements> => ({
+        currentUserIsNotRoot: me.user.pw_name !== 'root' && me.user.pw_name !== 'truenas_admin',
+        currentUserIs2fa: me.user.two_factor_config.secret_configured,
+        currentSessionIs2fa: me.session.credentials === CredentialType.TwoFactor,
+      })),
+    );
+
+    // and combine all that data into one big `StigEnablementRequirements` structure
+    const combined$ = zip(
+      twoFactorConfig$,
+      dockerServiceConfig$,
+      userConfig$,
+      user2faConfig$,
+      userAuthDetails$,
+    ).pipe(
+      map((details: Partial<StigEnablementRequirements>[]): Partial<StigEnablementRequirements> => {
+        // merge all details into one big `StigEnablementRequirements`
+        return details.reduce((acc, detail) => ({ ...acc, ...detail }), {} as StigEnablementRequirements);
+      }),
+      this.errorHandler.withErrorHandler(),
+      finalize(() => this.loadingStigRequirements.set(false)),
+      takeUntilDestroyed(this.destroyRef),
+    );
+
+    // then, for each property, check it and push a `MissingStigRequirement` to our internal list
+    // when any of them are missing or false.
+    combined$.subscribe((enablementRequirements) => {
+      const requirements: MissingStigRequirement[] = [];
+      const warnings: MissingStigRequirement[] = [];
+
+      if (!enablementRequirements?.currentUserIsNotRoot) {
+        requirements.push({
+          configureTitle: this.translate.instant('Log out'),
+          message: this.translate.instant('You must log in as a user other than root with admin access, because root must have its password disabled.'),
+          action: this.logout.bind(this),
+        });
+      }
+
+      if (!enablementRequirements?.twoFactorAuthGloballyEnabled) {
+        requirements.push({
+          configureTitle: this.translate.instant('Enable'),
+          message: this.translate.instant('Global Two-Factor Authentication must be enabled.'),
+          action: this.openGlobalTwoFactorForm.bind(this, 'global'),
+        });
+      }
+
+      if (!enablementRequirements.twoFactorSshGloballyEnabled) {
+        requirements.push({
+          configureTitle: this.translate.instant('Enable'),
+          message: this.translate.instant('SSH Two-Factor Authentication must be enabled.'),
+          action: this.openGlobalTwoFactorForm.bind(this, 'ssh'),
+        });
+      }
+
+      if (!enablementRequirements.dockerServiceDisabled) {
+        requirements.push({
+          configureTitle: this.translate.instant('Disable'),
+          message: this.translate.instant('The apps service must be disabled and the pool unset.'),
+          navigateTo: ['/apps'],
+          highlightElement: 'app-settings',
+        });
+      }
+
+      if (!enablementRequirements.rootPasswordDisabled[0]) {
+        requirements.push({
+          configureTitle: this.translate.instant('Disable'),
+          message: this.translate.instant('The root user must have their password disabled.'),
+          action: this.openUserEditForm.bind(this, enablementRequirements.rootPasswordDisabled[1]),
+        });
+      }
+
+      if (!enablementRequirements.adminPasswordDisabled[0]) {
+        requirements.push({
+          configureTitle: this.translate.instant('Disable'),
+          message: this.translate.instant('The truenas_admin user must have their password disabled.'),
+          action: this.openUserEditForm.bind(this, enablementRequirements.adminPasswordDisabled[1]),
+        });
+      }
+
+      if (!enablementRequirements.currentUserIs2fa && !enablementRequirements.currentSessionIs2fa) {
+        requirements.push({
+          configureTitle: this.translate.instant('Configure 2FA'),
+          message: this.translate.instant('The current user must be logged in with 2FA. After configuring 2FA, you will have to log out and log back in again.'),
+          navigateTo: ['/two-factor-auth'],
+        });
+      } else if (!enablementRequirements.currentUserIs2fa) {
+        requirements.push({
+          configureTitle: this.translate.instant('Configure 2FA'),
+          message: this.translate.instant('You must have 2FA configured for your user.'),
+          navigateTo: ['/two-factor-auth'],
+        });
+      } else if (!enablementRequirements.currentSessionIs2fa) {
+        requirements.push({
+          configureTitle: this.translate.instant('Log out'),
+          message: this.translate.instant('You must be logged in with 2FA. If you have already configured 2FA, you will have to log out and back in again.'),
+          action: this.logout.bind(this),
+        });
+      }
+
+      if (!enablementRequirements.allUsersHave2fa) {
+        warnings.push({
+          configureTitle: this.translate.instant('Configure'),
+          message: this.translate.instant('All users must have 2FA enabled and setup.'),
+          navigateTo: ['/credentials/users'],
+        });
+      }
+
+      // ensure that the user hasn't quickly unchecked the button, since if they have,
+      // then we need to *not* apply any of the errors.
+      if (!this.form.controls.enable_gpos_stig.value) {
+        this.clearStigRequirementsError();
+        return;
+      }
+
+      this.missingStigRequirements.set(requirements);
+      this.missingStigWarnings.set(warnings);
+
+      // prevent saving the form if we have any STIG requirements unmet
+      if (requirements.length > 0) {
+        this.form.controls.enable_gpos_stig.setErrors({ stigRequirementsNotMet: true });
+      } else {
+        this.clearStigRequirementsError();
+      }
+    });
+  }
+
+  private clearStigRequirementsError(): void {
+    // and remove that validation error if there aren't any
+    const errors = this.form.controls.enable_gpos_stig.errors;
+    if (errors?.['stigRequirementsNotMet']) {
+      delete errors['stigRequirementsNotMet'];
+      const hasErrors = Object.keys(errors).length > 0;
+      this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
+    }
+  }
+
   private stigValidator(control: AbstractControl): ValidationErrors | null {
-    if (!this.isStigEnabled?.()) {
+    if (!this.isStigEnabled?.() && !this.form?.controls.enable_gpos_stig.value) {
       return null;
     }
 
@@ -150,12 +415,25 @@ export class SystemSecurityFormComponent implements OnInit {
     const value = control.value as unknown;
 
     switch (controlName) {
+      case 'enable_fips':
+        if (!value) return {
+          stigRequiresFips: {
+            message: this.translate.instant(
+              'STIG requires FIPS to be enabled.',
+            ),
+          },
+        };
+        break;
       case 'min_password_age':
         if (value !== null && (value as number) < stigPasswordRequirements.minPasswordAge) {
           return {
             stigMinPasswordAge: {
               required: stigPasswordRequirements.minPasswordAge,
               actual: value as number,
+              message: this.translate.instant(
+                'STIG requires minimum password age of {days} days.',
+                { days: stigPasswordRequirements.minPasswordAge },
+              ),
             },
           };
         }
@@ -166,6 +444,10 @@ export class SystemSecurityFormComponent implements OnInit {
             stigMaxPasswordAge: {
               required: stigPasswordRequirements.maxPasswordAge,
               actual: value as number,
+              message: this.translate.instant(
+                'STIG requires maximum password age of {days} days.',
+                { days: stigPasswordRequirements.maxPasswordAge },
+              ),
             },
           };
         }
@@ -176,6 +458,10 @@ export class SystemSecurityFormComponent implements OnInit {
             stigMinPasswordLength: {
               required: stigPasswordRequirements.minPasswordLength,
               actual: value as number,
+              message: this.translate.instant(
+                'STIG requires minimum password length of {length} characters.',
+                { length: stigPasswordRequirements.minPasswordLength },
+              ),
             },
           };
         }
@@ -186,6 +472,10 @@ export class SystemSecurityFormComponent implements OnInit {
             stigPasswordHistoryLength: {
               required: stigPasswordRequirements.passwordHistoryLength,
               actual: value as number,
+              message: this.translate.instant(
+                'STIG requires password history length of {length} passwords.',
+                { length: stigPasswordRequirements.passwordHistoryLength },
+              ),
             },
           };
         }
@@ -195,7 +485,15 @@ export class SystemSecurityFormComponent implements OnInit {
           const requiredComplexity = [...stigPasswordRequirements.passwordComplexity];
           const hasAllRequired = requiredComplexity.every((req) => (value as unknown[]).includes(req));
           if (!hasAllRequired) {
-            return { stigPasswordComplexity: { required: requiredComplexity, actual: value } };
+            return {
+              stigPasswordComplexity: {
+                required: requiredComplexity,
+                actual: value,
+                message: this.translate.instant(
+                  'STIG requires Upper, Lower, Number, and Special complexity rules.',
+                ),
+              },
+            };
           }
         }
         break;
@@ -223,7 +521,7 @@ export class SystemSecurityFormComponent implements OnInit {
       ['password_disabled', '=', false],
       ['roles', '!=', []],
     ]] as QueryParams<User>).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (users) => {
         if (users.length > 0) {
@@ -255,32 +553,34 @@ export class SystemSecurityFormComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter((result) => !!result),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       callback();
     });
   }
 
   private saveSettings(values: SystemSecurityConfig): void {
-    if (values.password_complexity_ruleset) {
-      values.password_complexity_ruleset = {
-        $set: values.password_complexity_ruleset as unknown as PasswordComplexityRuleset[],
+    const valuesToSave = { ...values };
+    if (valuesToSave.password_complexity_ruleset) {
+      valuesToSave.password_complexity_ruleset = {
+        $set: valuesToSave.password_complexity_ruleset as unknown as PasswordComplexityRuleset[],
       };
     }
 
     this.rebootInfoSuppression.suppress();
 
     this.dialogService.jobDialog(
-      this.api.job('system.security.update', [values]),
+      this.api.job('system.security.update', [valuesToSave]),
       {
         title: this.translate.instant('Saving settings'),
       },
     )
       .afterClosed()
       .pipe(
+        tap(() => this.store$.dispatch(refreshRebootInfo())),
         finalize(() => this.rebootInfoSuppression.unsuppress()),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         if (values.enable_gpos_stig) {
@@ -303,34 +603,13 @@ export class SystemSecurityFormComponent implements OnInit {
 
     this.form.controls.enable_gpos_stig.valueChanges
       .pipe(
-        switchMap((value) => {
-          this.isStigEnabled.set(value);
-          if (value) {
-            // Check if global 2FA is enabled
-            return this.api.call('auth.twofactor.config').pipe(
-              map((twoFactorConfig) => ({ stigEnabled: value, twoFactorEnabled: twoFactorConfig?.enabled || false })),
-            );
-          }
-          return of({ stigEnabled: value, twoFactorEnabled: false });
-        }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ stigEnabled, twoFactorEnabled }) => {
+      .subscribe((stigEnabled) => {
+        this.isStigEnabled.set(stigEnabled);
         if (stigEnabled) {
-          this.globalTwoFactorEnabled.set(twoFactorEnabled);
-          if (!twoFactorEnabled) {
-            this.stigValidationError.set('Global Two-Factor Authentication must be enabled to activate this feature.');
-            this.form.controls.enable_gpos_stig.setErrors({ globalTwoFactorRequired: true });
-          } else {
-            this.stigValidationError.set(null);
-            // Remove only the globalTwoFactorRequired error
-            const errors = this.form.controls.enable_gpos_stig.errors;
-            if (errors?.['globalTwoFactorRequired']) {
-              delete errors['globalTwoFactorRequired'];
-              const hasErrors = Object.keys(errors).length > 0;
-              this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
-            }
-          }
+          this.setupStigRequirements();
+
           const currentValues = this.form.value;
           const updates: Partial<typeof currentValues> = {
             enable_fips: true,
@@ -374,15 +653,8 @@ export class SystemSecurityFormComponent implements OnInit {
 
           this.form.patchValue(updates);
         } else {
-          // Reset validation error when STIG is disabled
-          this.stigValidationError.set(null);
-          this.globalTwoFactorEnabled.set(false);
-          const errors = this.form.controls.enable_gpos_stig.errors;
-          if (errors?.['globalTwoFactorRequired']) {
-            delete errors['globalTwoFactorRequired'];
-            const hasErrors = Object.keys(errors).length > 0;
-            this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
-          }
+          this.missingStigRequirements.set([]);
+          this.missingStigWarnings.set([]);
         }
 
         Object.keys(this.form.controls).forEach((key) => {
@@ -394,10 +666,61 @@ export class SystemSecurityFormComponent implements OnInit {
       });
   }
 
-  navigateToGlobal2Fa(): void {
+  protected handleRequirementAction(requirement: MissingStigRequirement): void {
     // Mark form as pristine to avoid unsaved changes dialog
     this.form.markAsPristine();
-    this.slideInRef.close({ response: false });
-    this.router.navigate(['/credentials/two-factor']);
+
+    if (requirement.navigateTo) {
+      this.navigateAndHighlightService.navigateAndHighlight(
+        requirement.navigateTo,
+        requirement?.highlightElement,
+      );
+    } else if (requirement.action) {
+      requirement.action();
+    }
+  }
+
+  /**
+   * after `slideInAnimationDuration` milliseconds, highlight the element with ID `elementName`
+   * @param elementName the element ID to highlight
+   */
+  private delayHighlightElement(elementName: string): void {
+    setTimeout(() => {
+      const htmlElement = this.document.getElementById(elementName);
+      if (htmlElement) {
+        this.navigateAndHighlightService.scrollIntoView(htmlElement);
+      }
+    }, slideInAnimationDuration);
+  }
+
+  private logout(): void {
+    this.authService.logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.router.navigate(['/signin']);
+      });
+  }
+
+  private openGlobalTwoFactorForm(highlight: 'global' | 'ssh'): void {
+    const config = this.twoFactorConfig();
+    if (config) {
+      const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
+      const slideinRef$ = this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config });
+      this.delayHighlightElement(elementName);
+
+      // re-trigger STIG requirement computation after the slidein closes
+      slideinRef$.subscribe((_) => {
+        this.setupStigRequirements();
+      });
+    }
+  }
+
+  private openUserEditForm(user: User): void {
+    const slideinRef$ = this.slideIn.open(UserFormComponent, { data: user });
+    this.delayHighlightElement('disablePasswordCheckbox');
+
+    slideinRef$.subscribe((_) => {
+      this.setupStigRequirements();
+    });
   }
 }

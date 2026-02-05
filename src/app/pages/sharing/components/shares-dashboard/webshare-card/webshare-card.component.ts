@@ -24,6 +24,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -75,10 +76,12 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTableBodyComponent,
     IxTableEmptyDirective,
     IxTablePagerShowMoreComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
   readonly requiredRoles = [Role.SharingWrite];
+  protected readonly cardMenuPath = ['sharing', 'webshare'];
 
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
