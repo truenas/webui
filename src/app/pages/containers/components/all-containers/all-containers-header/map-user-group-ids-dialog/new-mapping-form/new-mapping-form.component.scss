@@ -1,21 +1,72 @@
-.mapping-form {
-  border-top: 1px solid var(--lines);
-  padding-top: 24px;
-
-  h3 {
-    margin: 0 0 16px;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--fg1);
-  }
+:host {
+  display: block;
+  margin-top: 24px;
 }
 
-.form-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+:host ix-fieldset {
+  margin-top: 0;
 
-  button[type="submit"] {
-    align-self: flex-start;
+  ::ng-deep fieldset {
+    padding: 0;
+  }
+
+  form.form {
+    align-items: flex-start;
+    display: flex;
+    gap: 12px;
+    margin-top: -10px;
+    padding: 0;
+
+    > *:first-child {
+      min-width: 200px;
+    }
+
+    > * {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+
+    .checkbox-with-tooltip {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      margin-top: 30px;
+
+      .default-checkbox {
+        ::ng-deep label {
+          white-space: nowrap;
+        }
+      }
+
+      .help-icon-inline {
+        cursor: pointer;
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        color: var(--fg2);
+        flex-shrink: 0;
+        border-radius: 50%;
+        outline: none;
+
+        &:focus-visible {
+          outline: 2px solid var(--primary);
+          outline-offset: 2px;
+        }
+      }
+    }
+
+    .set-button {
+      margin-top: 32px;
+    }
+
+    @media (max-width: 991px) {
+      display: block;
+
+      .set-button,
+      .checkbox-with-tooltip,
+      .default-checkbox {
+        margin-top: 0;
+      }
+    }
   }
 }

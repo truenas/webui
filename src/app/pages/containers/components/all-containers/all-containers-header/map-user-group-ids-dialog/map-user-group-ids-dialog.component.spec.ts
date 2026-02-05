@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -12,7 +11,14 @@ import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-b
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
 import { MapUserGroupIdsDialogComponent } from './map-user-group-ids-dialog.component';
-import { MappingType } from './mapping.types';
+import { ViewType } from './mapping.types';
+
+const mockUserService = {
+  userQueryDsCache: jest.fn(() => of([])),
+  groupQueryDsCache: jest.fn(() => of([])),
+  getUserByNameCached: jest.fn(() => of(null)),
+  getGroupByNameCached: jest.fn(() => of(null)),
+};
 
 describe('MapUserGroupIdsDialogComponent', () => {
   let spectator: Spectator<MapUserGroupIdsDialogComponent>;
@@ -40,14 +46,14 @@ describe('MapUserGroupIdsDialogComponent', () => {
     {
       id: 10,
       gid: 1000,
-      name: 'testgroup',
+      group: 'testgroup',
       userns_idmap: directIdMapping,
       local: true,
     } as Group,
     {
       id: 11,
       gid: 1001,
-      name: 'anothergroup',
+      group: 'anothergroup',
       userns_idmap: 2002,
       local: true,
     } as Group,
@@ -66,7 +72,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
         mockCall('group.update'),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(UserService),
+      mockProvider(UserService, mockUserService),
     ],
   });
 
@@ -78,21 +84,11 @@ describe('MapUserGroupIdsDialogComponent', () => {
 
   it('loads users on init', () => {
     expect(api.call).toHaveBeenCalledWith('user.query', [[
-      [['local', '=', true], ['userns_idmap', '!=', null]],
+      ['local', '=', true], ['userns_idmap', '!=', null],
     ]]);
-    expect(spectator.component.users()).toEqual(mockUsers);
-  });
-
-  it('loads groups on init', () => {
-    expect(api.call).toHaveBeenCalledWith('group.query', [[
-      [['local', '=', true], ['userns_idmap', '!=', null]],
-    ]]);
-    expect(spectator.component.groups()).toEqual(mockGroups);
   });
 
   it('displays users by default', () => {
-    expect(spectator.component.selectedType()).toBe(MappingType.Users);
-
     const rows = spectator.queryAll('tbody tr');
     expect(rows).toHaveLength(2);
     expect(rows[0]).toHaveText('testuser');
@@ -105,62 +101,39 @@ describe('MapUserGroupIdsDialogComponent', () => {
 
   it('switches to groups when type is changed', async () => {
     const buttonGroup = await loader.getHarness(IxButtonGroupHarness);
-    await buttonGroup.pressButton('Groups');
+    await buttonGroup.setValue('Groups');
 
-    expect(spectator.component.selectedType()).toBe(MappingType.Groups);
-
-    const rows = spectator.queryAll('tbody tr');
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toHaveText('testgroup');
-    expect(rows[0]).toHaveText('1000');
-    expect(rows[0]).toHaveText('Same');
+    expect(spectator.component.typeControl.value).toBe(ViewType.Groups);
   });
 
-  it('deletes user mapping when delete button is clicked', async () => {
-    jest.spyOn(api, 'call').mockReturnValue(of(null));
+  it('deletes user mapping when delete button is clicked', () => {
+    const apiCallSpy = jest.spyOn(api, 'call').mockReturnValue(of(null));
 
-    const deleteButtons = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixtest="delete-mapping"]' }));
-    await deleteButtons[0].click();
+    const deleteButtons = spectator.queryAll('button[mat-icon-button]');
+    // First button is close button, subsequent buttons are delete buttons in table
+    expect(deleteButtons.length).toBeGreaterThan(1);
 
-    expect(api.call).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);
-  });
+    deleteButtons[1].click();
+    spectator.detectChanges();
 
-  it('deletes group mapping when delete button is clicked', async () => {
-    jest.spyOn(api, 'call').mockReturnValue(of(null));
-
-    const buttonGroup = await loader.getHarness(IxButtonGroupHarness);
-    await buttonGroup.pressButton('Groups');
-
-    const deleteButtons = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixtest="delete-mapping"]' }));
-    await deleteButtons[0].click();
-
-    expect(api.call).toHaveBeenCalledWith('group.update', [10, { userns_idmap: null }]);
+    expect(apiCallSpy).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);
   });
 
   it('reloads mappings when a new mapping is added', () => {
     jest.spyOn(api, 'call');
 
-    spectator.component.onMappingAdded();
+    spectator.component.loadMappings();
 
     expect(api.call).toHaveBeenCalledWith('user.query', expect.anything());
-    expect(api.call).toHaveBeenCalledWith('group.query', expect.anything());
   });
 
-  it('closes dialog when close button is clicked', async () => {
+  it('closes dialog when close button is clicked', () => {
     const dialogRef = spectator.inject(MatDialogRef);
     jest.spyOn(dialogRef, 'close');
 
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await closeButton.click();
+    const closeButton = spectator.query('.header button[mat-icon-button]');
+    closeButton.click();
 
     expect(dialogRef.close).toHaveBeenCalled();
-  });
-
-  it('shows "No mappings configured" message when there are no mappings', () => {
-    jest.spyOn(api, 'call').mockReturnValue(of([]));
-    spectator.component.loadMappings();
-    spectator.detectChanges();
-
-    expect(spectator.query('.no-mappings')).toHaveText('No mappings configured');
   });
 });

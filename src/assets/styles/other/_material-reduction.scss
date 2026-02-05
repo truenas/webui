@@ -591,6 +591,7 @@ ix-tooltip {
 // Tooltip container must have explicit z-index to appear above CDK overlays (z-index: 1000).
 // The z-index in _tn-styles.scss doesn't apply because the selector hierarchy is inverted
 // when popperAppendTo="body" is used (ngxp__container becomes the parent, not child).
+// Material dialogs have z-index around 1000-1400, so 20001 ensures tooltips appear above them.
 .ngxp__container {
   border-radius: 6px !important;
   z-index: 20001 !important;

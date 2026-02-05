@@ -1,132 +1,188 @@
-import {
-  ChangeDetectionStrategy, Component, computed, inject, signal,
-} from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
+import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { TranslateModule } from '@ngx-translate/core';
-import { finalize, forkJoin, of } from 'rxjs';
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow,
+  MatRowDef,
+  MatTable,
+} from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  finalize, map, Observable, of,
+} from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
-import { Group } from 'app/interfaces/group.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { User, directIdMapping } from 'app/interfaces/user.interface';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { directIdMapping } from 'app/interfaces/user.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import {
+  IxButtonGroupComponent,
+} from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  IdMapping,
+  ViewType,
+} from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
+import {
+  NewMappingFormComponent,
+} from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/new-mapping-form/new-mapping-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { MappingType, TableRow } from './mapping.types';
-import { NewMappingFormComponent } from './new-mapping-form/new-mapping-form.component';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-map-user-group-ids-dialog',
   templateUrl: './map-user-group-ids-dialog.component.html',
   styleUrls: ['./map-user-group-ids-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    MatDialogTitle,
+    FakeProgressBarComponent,
+    IxIconComponent,
     MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatButton,
+    MatDialogTitle,
+    MatIconButton,
     MatProgressSpinner,
     TranslateModule,
-    IxIconComponent,
     TestDirective,
+    EmptyComponent,
+    FormsModule,
+    MatCell,
+    MatCellDef,
+    MatColumnDef,
+    MatHeaderCell,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatRow,
+    MatRowDef,
+    MatTable,
+    ReactiveFormsModule,
+    MatTooltip,
+    MatHeaderCellDef,
     NewMappingFormComponent,
     IxButtonGroupComponent,
-    ReactiveFormsModule,
   ],
 })
-export class MapUserGroupIdsDialogComponent {
+export class MapUserGroupIdsDialogComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject(MatDialogRef<MapUserGroupIdsDialogComponent>);
+  protected dialogRef = inject<MatDialogRef<MapUserGroupIdsDialogComponent>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
 
+  protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
   protected readonly helptext = containersHelptext;
-  protected readonly MappingType = MappingType;
 
-  protected selectedType = signal<MappingType>(MappingType.Users);
-  protected typeControl = new FormControl<MappingType>(MappingType.Users);
-  protected isLoading = signal(false);
-  protected users = signal<User[]>([]);
-  protected groups = signal<Group[]>([]);
+  protected readonly isLoading = signal(true);
+  protected readonly mappings = signal<IdMapping[]>([]);
 
-  protected typeOptions$ = of<Option[]>([
-    { label: 'Users', value: MappingType.Users },
-    { label: 'Groups', value: MappingType.Groups },
+  protected readonly noEntries = {
+    type: EmptyType.NoPageData,
+    large: true,
+    message: this.translate.instant('No entries have been mapped yet.'),
+  } as EmptyConfig;
+
+  protected readonly typeControl = new FormControl(ViewType.Users);
+
+  protected readonly typeOptions$ = of([
+    {
+      label: this.translate.instant('Users'),
+      value: ViewType.Users,
+    },
+    {
+      label: this.translate.instant('Groups'),
+      value: ViewType.Groups,
+    },
   ]);
 
-  protected mappings = computed(() => {
-    const type = this.selectedType();
-    const entities = type === MappingType.Users ? this.users() : this.groups();
+  protected readonly idMapHintText = this.translate.instant(this.helptext.idMapHint).replace(/<br>/g, '\n');
 
-    return entities.map((entity: User | Group): TableRow => {
-      const isUser = 'uid' in entity;
-      return {
-        id: entity.id,
-        name: isUser ? (entity as User).username : (entity as Group).name,
-        hostId: isUser ? (entity as User).uid : (entity as Group).gid,
-        containerId: entity.userns_idmap === directIdMapping ? directIdMapping : entity.userns_idmap,
-      };
-    });
-  });
-
-  constructor() {
+  ngOnInit(): void {
     this.loadMappings();
 
-    this.typeControl.valueChanges.subscribe((value) => {
-      if (value) {
-        this.selectedType.set(value);
-      }
-    });
+    this.loadMappingOnTypeChanges();
   }
 
-  protected onDeleteMapping(row: TableRow): void {
-    const isUser = this.selectedType() === MappingType.Users;
-    const method = isUser ? 'user.update' : 'group.update';
+  private loadMappingOnTypeChanges(): void {
+    this.typeControl.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadMappings());
+  }
 
-    this.api.call(method, [row.id, { userns_idmap: null }] as never)
-      .pipe(this.errorHandler.withErrorHandler())
+  protected loadMappings(): void {
+    this.isLoading.set(true);
+
+    let request$: Observable<IdMapping[]>;
+
+    if (this.typeControl.value === ViewType.Users) {
+      request$ = this.api.call('user.query', [[['local', '=', true], ['userns_idmap', '!=', null]]]).pipe(
+        map((users) => users.map((user) => ({
+          name: user.username,
+          systemId: user.id,
+          hostUidOrGid: user.uid,
+          instanceUidOrGid: user.userns_idmap,
+          description: user.username,
+        }))),
+      );
+    } else {
+      request$ = this.api.call('group.query', [[['local', '=', true], ['userns_idmap', '!=', null]]]).pipe(
+        map((groups) => groups.map((group) => ({
+          name: group.group,
+          systemId: group.id,
+          hostUidOrGid: group.gid,
+          instanceUidOrGid: group.userns_idmap,
+          description: group.group,
+        }))),
+      );
+    }
+
+    request$
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        finalize(() => this.isLoading.set(false)),
+        untilDestroyed(this),
+      )
+      .subscribe((mappings) => {
+        this.mappings.set(mappings);
+      });
+  }
+
+  protected onClearMapping(mapping: IdMapping): void {
+    let request$: Observable<unknown>;
+
+    if (this.typeControl.value === ViewType.Users) {
+      request$ = this.api.call('user.update', [mapping.systemId, { userns_idmap: null }]);
+    } else {
+      request$ = this.api.call('group.update', [mapping.systemId, { userns_idmap: null }]);
+    }
+
+    request$
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Mapping has been cleared.'));
         this.loadMappings();
       });
   }
 
-  protected onMappingAdded(): void {
-    this.loadMappings();
-  }
-
-  protected onClose(): void {
-    this.dialogRef.close();
-  }
-
-  private loadMappings(): void {
-    this.isLoading.set(true);
-
-    const userFilters: QueryFilters<User> = [['local', '=', true], ['userns_idmap', '!=', null]];
-    const groupFilters: QueryFilters<Group> = [['local', '=', true], ['userns_idmap', '!=', null]];
-
-    forkJoin({
-      users: this.api.call('user.query', [userFilters]),
-      groups: this.api.call('group.query', [groupFilters]),
-    })
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        finalize(() => this.isLoading.set(false)),
-      )
-      .subscribe(({ users, groups }) => {
-        this.users.set(users);
-        this.groups.set(groups);
-      });
-  }
+  protected readonly directIdMapping = directIdMapping;
+  protected readonly ViewType = ViewType;
 }

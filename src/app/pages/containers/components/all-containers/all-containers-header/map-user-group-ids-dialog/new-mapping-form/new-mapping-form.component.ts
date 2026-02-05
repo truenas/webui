@@ -1,99 +1,138 @@
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, inject, input, Output, signal,
-} from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+  FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { Role } from 'app/enums/role.enum';
+import { MatTooltip } from '@angular/material/tooltip';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable, switchMap } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ViewType,
+} from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { UserService } from 'app/services/user.service';
-import { MappingType } from '../mapping.types';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-new-mapping-form',
   templateUrl: './new-mapping-form.component.html',
-  styleUrls: ['./new-mapping-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
+  styleUrl: './new-mapping-form.component.scss',
   imports: [
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
+    FormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    MatButton,
-    IxComboboxComponent,
     IxCheckboxComponent,
     IxInputComponent,
-    RequiresRolesDirective,
+    IxIconComponent,
+    MatButton,
+    MatTooltip,
     TestDirective,
+    IxFieldsetComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewMappingFormComponent {
-  private fb = inject(FormBuilder);
+export class NewMappingFormComponent implements OnChanges, OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private userService = inject(UserService);
+  private loader = inject(LoaderService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
 
-  mappingType = input.required<MappingType>();
+  readonly type = input.required<ViewType>();
+  readonly mappingAdded = output();
 
-  @Output() mappingAdded = new EventEmitter<void>();
-
+  protected readonly ViewType = ViewType;
   protected readonly helptext = containersHelptext;
-  protected readonly MappingType = MappingType;
-  protected readonly requiredRoles = [Role.AccountWrite];
-  protected isSubmitting = signal(false);
 
-  protected readonly userProvider = new UserComboboxProvider(this.userService, { valueField: 'id' });
-  protected readonly groupProvider = new GroupComboboxProvider(this.userService, { valueField: 'id' });
-
-  protected form = this.fb.group({
-    hostUidOrGid: [null as number | null, Validators.required],
+  protected form = this.formBuilder.group({
+    hostUidOrGid: [null as string | number | null, Validators.required],
     mapDirectly: [true],
     instanceUidOrGid: [null as number | null],
   });
 
-  constructor() {
-    this.form.controls.mapDirectly.valueChanges.subscribe((mapDirectly) => {
-      const control = this.form.controls.instanceUidOrGid;
-      if (mapDirectly) {
-        control.clearValidators();
-        control.setValue(null);
-      } else {
-        control.setValidators([Validators.required, Validators.min(0)]);
-      }
-      control.updateValueAndValidity();
+  protected readonly isUserType = computed(() => this.type() === ViewType.Users);
+
+  ngOnChanges(): void {
+    this.resetFormOnTypeChanges();
+  }
+
+  ngOnInit(): void {
+    this.handleMapDirectlyChanges();
+  }
+
+  protected submit(): void {
+    const values = this.form.value;
+    const update = {
+      userns_idmap: values.mapDirectly ? directIdMapping : values.instanceUidOrGid,
+    };
+
+    let request$: Observable<unknown>;
+
+    if (this.isUserType()) {
+      // ix-user-combobox returns username, need to query for user ID
+      request$ = this.api.call('user.query', [[['username', '=', values.hostUidOrGid]]]).pipe(
+        switchMap((users) => {
+          if (!users.length) {
+            throw new Error('User not found');
+          }
+          return this.api.call('user.update', [users[0].id, update]);
+        }),
+      );
+    } else {
+      // ix-group-combobox returns group name, need to query for group ID
+      request$ = this.api.call('group.query', [[['group', '=', values.hostUidOrGid]]]).pipe(
+        switchMap((groups) => {
+          if (!groups.length) {
+            throw new Error('Group not found');
+          }
+          return this.api.call('group.update', [groups[0].id, update]);
+        }),
+      );
+    }
+
+    request$
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.mappingAdded.emit();
+        this.snackbar.success(this.translate.instant('Mapping added'));
+      });
+  }
+
+  private resetFormOnTypeChanges(): void {
+    this.form.setValue({
+      mapDirectly: true,
+      instanceUidOrGid: null,
+      hostUidOrGid: null,
     });
   }
 
-  protected onSubmit(): void {
-    if (this.form.invalid || this.isSubmitting()) {
-      return;
-    }
-
-    const { hostUidOrGid, mapDirectly, instanceUidOrGid } = this.form.value;
-    const isUser = this.mappingType() === MappingType.Users;
-    const method = isUser ? 'user.update' : 'group.update';
-    const idmapValue = mapDirectly ? directIdMapping : instanceUidOrGid;
-
-    this.isSubmitting.set(true);
-
-    this.api.call(method, [hostUidOrGid, { userns_idmap: idmapValue }] as never)
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        finalize(() => this.isSubmitting.set(false)),
-      )
-      .subscribe(() => {
-        this.form.reset({ mapDirectly: true });
-        this.mappingAdded.emit();
-      });
+  private handleMapDirectlyChanges(): void {
+    this.form.controls.mapDirectly.valueChanges.pipe(untilDestroyed(this)).subscribe((mapDirectly) => {
+      if (mapDirectly) {
+        this.form.controls.instanceUidOrGid.setValidators(null);
+      } else {
+        this.form.controls.instanceUidOrGid.setValidators(Validators.required);
+      }
+      this.form.controls.instanceUidOrGid.updateValueAndValidity();
+    });
   }
 }

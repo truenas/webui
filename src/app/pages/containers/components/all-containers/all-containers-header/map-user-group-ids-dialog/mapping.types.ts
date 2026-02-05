@@ -1,16 +1,14 @@
-import { Group } from 'app/interfaces/group.interface';
-import { User } from 'app/interfaces/user.interface';
+import { directIdMapping } from 'app/interfaces/user.interface';
 
-export enum MappingType {
-  Users = 'users',
-  Groups = 'groups',
+export interface IdMapping {
+  name: string;
+  systemId: number;
+  hostUidOrGid: number;
+  instanceUidOrGid: number | null | typeof directIdMapping;
+  description?: string;
 }
 
-export type MappedEntity = User | Group;
-
-export interface TableRow {
-  id: number;
-  name: string;
-  hostId: number;
-  containerId: number | 'DIRECT';
+export enum ViewType {
+  Users = 'Users',
+  Groups = 'Groups',
 }

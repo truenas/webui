@@ -1,41 +1,52 @@
-<form class="mapping-form" [formGroup]="form" (submit)="onSubmit()">
-  <h3>{{ 'Add New Mapping' | translate }}</h3>
+<ix-fieldset [title]="'Add New Mapping' | translate">
+  <form class="form" [formGroup]="form" (submit)="submit()">
+    @if (isUserType()) {
+      <ix-user-combobox
+        formControlName="hostUidOrGid"
+        [label]="'User' | translate"
+        [required]="true"
+      ></ix-user-combobox>
+    } @else {
+      <ix-group-combobox
+        formControlName="hostUidOrGid"
+        [label]="'Group' | translate"
+        [required]="true"
+      ></ix-group-combobox>
+    }
 
-  <div class="form-content">
-    <ix-combobox
-      formControlName="hostUidOrGid"
-      ixTest="host-uid-gid"
-      [label]="mappingType() === MappingType.Users ? ('User' | translate) : ('Group' | translate)"
-      [required]="true"
-      [provider]="mappingType() === MappingType.Users ? userProvider : groupProvider"
-    ></ix-combobox>
+    <div class="checkbox-with-tooltip">
+      <ix-checkbox
+        formControlName="mapDirectly"
+        class="default-checkbox"
+        [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
+      ></ix-checkbox>
+      <ix-icon
+        name="help_outline"
+        class="help-icon-inline"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'Help' | translate"
+        [matTooltip]="helptext.mapDirectlyTooltip | translate"
+      ></ix-icon>
+    </div>
 
-    <ix-checkbox
-      formControlName="mapDirectly"
-      ixTest="map-directly"
-      [label]="'Map to the same UID/GID in the container' | translate"
-      [tooltip]="helptext.mapDirectlyTooltip | translate"
-    ></ix-checkbox>
-
-    @if (!form.controls.mapDirectly.value) {
+    @if (!form.value.mapDirectly) {
       <ix-input
         formControlName="instanceUidOrGid"
         type="number"
-        ixTest="instance-uid-gid"
-        [label]="mappingType() === MappingType.Users ? ('Container UID' | translate) : ('Container GID' | translate)"
+        [label]="isUserType() ? ('Container UID' | translate) : ('Container GID' | translate)"
         [required]="true"
       ></ix-input>
     }
 
     <button
-      *ixRequiresRoles="requiredRoles"
+      class="set-button"
       mat-button
       type="submit"
-      color="primary"
-      ixTest="set-mapping"
-      [disabled]="form.invalid || isSubmitting()"
+      [disabled]="form.invalid || form.pending"
+      [ixTest]="['set-mapping']"
     >
       {{ 'Set' | translate }}
     </button>
-  </div>
-</form>
+  </form>
+</ix-fieldset>

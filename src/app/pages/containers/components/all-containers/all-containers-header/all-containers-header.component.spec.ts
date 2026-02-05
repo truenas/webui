@@ -66,7 +66,7 @@ describe('AllContainersHeaderComponent', () => {
       expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
     });
 
-    it('shows Global Settings and Map User/Group IDs menu items', async () => {
+    it('shows Settings and Map User/Group IDs menu items', async () => {
       const configButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
       await configButton.click();
 
@@ -75,17 +75,17 @@ describe('AllContainersHeaderComponent', () => {
       expect(items).toHaveLength(2);
 
       const itemTexts = await Promise.all(items.map((item) => item.getText()));
-      expect(itemTexts).toEqual(['Global Settings', 'Map User/Group IDs']);
+      expect(itemTexts).toEqual(['Settings', 'Map User/Group IDs']);
     });
   });
 
   describe('actions', () => {
-    it('opens GlobalConfigFormComponent when Global Settings menu item is pressed', async () => {
+    it('opens GlobalConfigFormComponent when Settings menu item is pressed', async () => {
       const configButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
       await configButton.click();
 
       const menu = await loader.getHarness(MatMenuHarness);
-      await menu.clickItem({ text: 'Global Settings' });
+      await menu.clickItem({ text: 'Settings' });
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         GlobalConfigFormComponent,

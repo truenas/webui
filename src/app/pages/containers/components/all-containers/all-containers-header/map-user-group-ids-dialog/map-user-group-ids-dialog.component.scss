@@ -1,25 +1,43 @@
 .header {
-  margin-bottom: 16px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 
   h1 {
-    margin: 0 0 8px;
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0;
+    padding-top: 20px;
+
+    .help-icon {
+      cursor: pointer;
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+      color: var(--fg2);
+      border-radius: 50%;
+      outline: none;
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+    }
   }
 
-  .hint {
-    color: var(--fg2);
-    font-size: 14px;
-    line-height: 1.5;
+  button {
+    margin-right: 20px;
   }
 }
 
 .type-selector {
-  margin-bottom: 24px;
+  display: block;
+  margin-bottom: 7px;
 }
 
-mat-dialog-content {
-  min-height: 300px;
-  max-height: 600px;
-  overflow: auto;
+.dialog-content {
+  padding-top: 18px;
 }
 
 .loading-container {
@@ -29,51 +47,25 @@ mat-dialog-content {
   min-height: 300px;
 }
 
-.dialog-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.mappings-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead {
-    background-color: var(--bg2);
-
-    th {
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-      color: var(--fg2);
-      border-bottom: 2px solid var(--lines);
-    }
-  }
-
-  tbody {
-    tr {
-      border-bottom: 1px solid var(--lines);
-
-      &:hover {
-        background-color: var(--hover-bg);
-      }
+.table-wrapper {
+  table {
+    th:last-child,
+    td:last-child {
+      text-align: right;
     }
 
-    td {
-      padding: 12px;
+    td:last-child button {
+      float: right;
     }
   }
 }
 
-.no-mappings {
-  padding: 24px;
-  text-align: center;
-  color: var(--fg2);
-  font-style: italic;
+::ng-deep .tooltip-wide {
+  max-width: 500px !important;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
-mat-dialog-actions {
-  justify-content: flex-end;
-  padding: 16px 24px;
+::ng-deep .tooltip-multiline {
+  white-space: pre-line !important;
 }
