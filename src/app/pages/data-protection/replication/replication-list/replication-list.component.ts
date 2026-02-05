@@ -261,7 +261,7 @@ export class ReplicationListComponent implements OnInit {
         },
       });
     } else {
-      this.slideIn.open(ReplicationWizardComponent).pipe(
+      this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe(() => this.getReplicationTasks());
