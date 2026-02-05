@@ -410,10 +410,6 @@ body * {
       padding-left: 1rem;
     }
 
-    .mat-nav-list>div>.sidebar-list-item a .ix-icon {
-      margin: 0;
-    }
-
     .mat-nav-list>div>.sidebar-list-item a .menu-caret {
       font-size: medium;
       left: 33px;
@@ -455,8 +451,4 @@ input:-webkit-autofill {
 
 .has-tooltip .tooltip .material-icons {
   vertical-align: middle;
-}
-
-.ix-icon.mat-warn {
-  color: var(--orange) !important;
 }

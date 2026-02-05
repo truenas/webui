@@ -402,9 +402,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
       min-height: 40px;
     }
 
-    .more-info .ix-icon {
-      margin: 0 4px;
-    }
   }
 
   .mat-spinner circle {
@@ -701,10 +698,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .node-content-wrapper {
     margin-left: 2px;
     padding-left: 3px;
-  }
-
-  tree-node-content .ix-icon {
-    vertical-align: top;
   }
 
   tree-node-content span {

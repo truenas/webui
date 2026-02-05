@@ -69,13 +69,18 @@
   cursor: default;
   left: 2px;
   right: auto;
+
+  tn-icon {
+    position: relative;
+    top: -2px;
+  }
 }
 
 .prefix-padding {
   padding-left: 28px;
 }
 
-.input-container .ix-icon {
+.input-container tn-icon {
   height: 14px;
   line-height: 1;
   max-height: 16px;
