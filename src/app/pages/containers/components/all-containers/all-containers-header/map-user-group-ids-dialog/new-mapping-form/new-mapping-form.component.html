@@ -1,0 +1,41 @@
+<form class="mapping-form" [formGroup]="form" (submit)="onSubmit()">
+  <h3>{{ 'Add New Mapping' | translate }}</h3>
+
+  <div class="form-content">
+    <ix-combobox
+      formControlName="hostUidOrGid"
+      ixTest="host-uid-gid"
+      [label]="mappingType() === MappingType.Users ? ('User' | translate) : ('Group' | translate)"
+      [required]="true"
+      [provider]="mappingType() === MappingType.Users ? userProvider : groupProvider"
+    ></ix-combobox>
+
+    <ix-checkbox
+      formControlName="mapDirectly"
+      ixTest="map-directly"
+      [label]="'Map to the same UID/GID in the container' | translate"
+      [tooltip]="helptext.mapDirectlyTooltip | translate"
+    ></ix-checkbox>
+
+    @if (!form.controls.mapDirectly.value) {
+      <ix-input
+        formControlName="instanceUidOrGid"
+        type="number"
+        ixTest="instance-uid-gid"
+        [label]="mappingType() === MappingType.Users ? ('Container UID' | translate) : ('Container GID' | translate)"
+        [required]="true"
+      ></ix-input>
+    }
+
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="set-mapping"
+      [disabled]="form.invalid || isSubmitting()"
+    >
+      {{ 'Set' | translate }}
+    </button>
+  </div>
+</form>

@@ -1,0 +1,91 @@
+<div class="header">
+  <h1 mat-dialog-title>{{ 'Map User/Group IDs' | translate }}</h1>
+  <div class="hint" [innerHTML]="helptext.idMapHint | translate"></div>
+</div>
+
+<mat-dialog-content>
+  <div class="type-selector">
+    <ix-button-group
+      [formControl]="typeControl"
+      [options]="typeOptions$"
+      [inlineFields]="true"
+    ></ix-button-group>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <div class="dialog-content">
+      @if (mappings().length > 0) {
+        <table class="mappings-table">
+          <thead>
+            <tr>
+              <th>{{ 'Name' | translate }}</th>
+              <th>
+                @if (selectedType() === MappingType.Users) {
+                  {{ 'Host UID' | translate }}
+                } @else {
+                  {{ 'Host GID' | translate }}
+                }
+              </th>
+              <th>
+                @if (selectedType() === MappingType.Users) {
+                  {{ 'Container UID' | translate }}
+                } @else {
+                  {{ 'Container GID' | translate }}
+                }
+              </th>
+              <th>{{ 'Actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mapping of mappings(); track mapping.id) {
+              <tr>
+                <td>{{ mapping.name }}</td>
+                <td>{{ mapping.hostId }}</td>
+                <td>
+                  @if (mapping.containerId === 'DIRECT') {
+                    {{ 'Same' | translate }}
+                  } @else {
+                    {{ mapping.containerId }}
+                  }
+                </td>
+                <td>
+                  <button
+                    mat-icon-button
+                    ixTest="delete-mapping"
+                    [attr.aria-label]="'Delete mapping' | translate"
+                    (click)="onDeleteMapping(mapping)"
+                  >
+                    <ix-icon name="mdi-delete"></ix-icon>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="no-mappings">
+          {{ 'No mappings configured' | translate }}
+        </div>
+      }
+
+      <ix-new-mapping-form
+        [mappingType]="selectedType()"
+        (mappingAdded)="onMappingAdded()"
+      ></ix-new-mapping-form>
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-button
+    ixTest="close"
+    [mat-dialog-close]="true"
+  >
+    {{ 'Close' | translate }}
+  </button>
+</mat-dialog-actions>

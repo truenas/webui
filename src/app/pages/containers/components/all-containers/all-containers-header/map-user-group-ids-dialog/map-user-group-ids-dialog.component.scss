@@ -1,0 +1,79 @@
+.header {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0 0 8px;
+  }
+
+  .hint {
+    color: var(--fg2);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.type-selector {
+  margin-bottom: 24px;
+}
+
+mat-dialog-content {
+  min-height: 300px;
+  max-height: 600px;
+  overflow: auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mappings-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background-color: var(--bg2);
+
+    th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--fg2);
+      border-bottom: 2px solid var(--lines);
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--lines);
+
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+    }
+
+    td {
+      padding: 12px;
+    }
+  }
+}
+
+.no-mappings {
+  padding: 24px;
+  text-align: center;
+  color: var(--fg2);
+  font-style: italic;
+}
+
+mat-dialog-actions {
+  justify-content: flex-end;
+  padding: 16px 24px;
+}

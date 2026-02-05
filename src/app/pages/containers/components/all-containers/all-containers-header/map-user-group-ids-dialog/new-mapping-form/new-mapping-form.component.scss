@@ -1,0 +1,21 @@
+.mapping-form {
+  border-top: 1px solid var(--lines);
+  padding-top: 24px;
+
+  h3 {
+    margin: 0 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg1);
+  }
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  button[type="submit"] {
+    align-self: flex-start;
+  }
+}
