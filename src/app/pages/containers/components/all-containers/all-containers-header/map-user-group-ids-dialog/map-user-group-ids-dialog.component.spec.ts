@@ -107,13 +107,14 @@ describe('MapUserGroupIdsDialogComponent', () => {
   });
 
   it('deletes user mapping when delete button is clicked', () => {
-    const apiCallSpy = jest.spyOn(api, 'call').mockReturnValue(of(null));
+    const apiCallSpy = jest.spyOn(api, 'call');
+    apiCallSpy.mockClear();
+    apiCallSpy.mockReturnValue(of(null));
 
-    const deleteButtons = spectator.queryAll('button[mat-icon-button]');
-    // First button is close button, subsequent buttons are delete buttons in table
-    expect(deleteButtons.length).toBeGreaterThan(1);
+    const deleteButtons = spectator.queryAll('td button[mat-icon-button]');
+    expect(deleteButtons.length).toBeGreaterThan(0);
 
-    deleteButtons[1].click();
+    deleteButtons[0].click();
     spectator.detectChanges();
 
     expect(apiCallSpy).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);

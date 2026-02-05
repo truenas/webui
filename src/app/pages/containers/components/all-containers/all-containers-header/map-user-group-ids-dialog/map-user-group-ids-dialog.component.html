@@ -72,6 +72,7 @@
               mat-icon-button
               type="button"
               [ixTest]="['clear-mapping', mapping.description]"
+              [attr.aria-label]="('Clear mapping for {name}' | translate: { name: mapping.name })"
               [matTooltip]="'Clear mapping' | translate"
               (click)="onClearMapping(mapping)"
             >
@@ -80,8 +81,8 @@
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
+        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['mapping-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['mapping-table-row', row]"></tr>
       </table>
 
       @if (!mappings().length) {

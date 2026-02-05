@@ -112,6 +112,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        this.resetFormOnTypeChanges();
         this.mappingAdded.emit();
         this.snackbar.success(this.translate.instant('Mapping added'));
       });

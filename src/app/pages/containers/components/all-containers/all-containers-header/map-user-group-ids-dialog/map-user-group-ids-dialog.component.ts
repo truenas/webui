@@ -91,11 +91,11 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   protected readonly isLoading = signal(true);
   protected readonly mappings = signal<IdMapping[]>([]);
 
-  protected readonly noEntries = {
+  protected readonly noEntries: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
     message: this.translate.instant('No entries have been mapped yet.'),
-  } as EmptyConfig;
+  };
 
   protected readonly typeControl = new FormControl(ViewType.Users);
 
