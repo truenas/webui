@@ -173,6 +173,18 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     return null;
   });
 
+  // Check if uploading is permitted in the current directory
+  // Uploading is NOT permitted in /mnt or pool root directories (e.g., /mnt/poolname)
+  isUploadPermitted = computed(() => {
+    const path = this.currentPath();
+    const pathParts = path.split('/').filter(Boolean);
+    // Not permitted at /mnt (1 segment) or /mnt/<pool> (2 segments)
+    if (pathParts.length <= 2 && pathParts[0] === 'mnt') {
+      return false;
+    }
+    return true;
+  });
+
   // USB drives
   usbDrives = signal<UsbDrive[]>([]);
   isLoadingUsbDrives = signal<boolean>(false);

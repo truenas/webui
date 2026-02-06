@@ -40,7 +40,7 @@
       <input #folderInput type="file" hidden webkitdirectory (change)="onFolderSelected($event)" />
       <button
         mat-icon-button
-        [disabled]="isUploading()"
+        [disabled]="isUploading() || !isUploadPermitted()"
         [matTooltip]="'Upload' | translate"
         [matMenuTriggerFor]="uploadMenu"
       >
