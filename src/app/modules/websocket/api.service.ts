@@ -172,6 +172,7 @@ export class ApiService {
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
+    this.jobApiErrors.clear();
   }
 
   private callMethod<M extends ApiCallMethod>(

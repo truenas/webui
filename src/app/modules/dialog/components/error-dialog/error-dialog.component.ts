@@ -8,14 +8,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { switchMap, tap } from 'rxjs';
-import { ErrorReport, ErrorReportAction, traceDetailLabel, logsExcerptDetailLabel } from 'app/interfaces/error-report.interface';
+import { ErrorReport, ErrorReportAction, collapsibleDetailLabels } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-
-const collapsibleDetailLabels = new Set([traceDetailLabel, logsExcerptDetailLabel]);
 
 @UntilDestroy()
 @Component({

@@ -3,6 +3,7 @@ import { Job } from 'app/interfaces/job.interface';
 
 export const traceDetailLabel = 'Trace';
 export const logsExcerptDetailLabel = 'Logs Excerpt';
+export const collapsibleDetailLabels = new Set([traceDetailLabel, logsExcerptDetailLabel]);
 
 export interface ErrorReportAction {
   label: string;
