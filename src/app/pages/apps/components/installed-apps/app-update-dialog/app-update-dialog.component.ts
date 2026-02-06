@@ -16,7 +16,7 @@ import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { extractAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -96,8 +96,7 @@ export class AppUpdateDialog {
   }
 
   getVersionLabel(libraryVersion: string, humanVersion: string): string {
-    const appVersion = extractAppVersion(humanVersion, libraryVersion);
-    return `Version: ${appVersion} / Revision: ${libraryVersion}`;
+    return formatVersionWithRevision(libraryVersion, humanVersion);
   }
 
   getLatestAppVersion(): string {

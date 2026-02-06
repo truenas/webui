@@ -1,4 +1,4 @@
-import { extractAppVersion, formatVersionLabel } from './version-formatting.utils';
+import { extractAppVersion, formatVersionLabel, formatVersionWithRevision } from './version-formatting.utils';
 
 describe('Version Formatting Utils', () => {
   describe('extractAppVersion', () => {
@@ -52,6 +52,30 @@ describe('Version Formatting Utils', () => {
 
     it('handles human version without suffix', () => {
       expect(formatVersionLabel('2.1.22', '32.0.3')).toBe('32.0.3 (2.1.22)');
+    });
+  });
+
+  describe('formatVersionWithRevision', () => {
+    it('formats version label with explicit labels for combined format', () => {
+      expect(formatVersionWithRevision('2.1.22', '32.0.3_2.1.22')).toBe('Version: 32.0.3 / Revision: 2.1.22');
+      expect(formatVersionWithRevision('1.0.2', '8.7.0_1.0.2')).toBe('Version: 8.7.0 / Revision: 1.0.2');
+      expect(formatVersionWithRevision('15.3.36', '24.0.6_15.3.36')).toBe('Version: 24.0.6 / Revision: 15.3.36');
+    });
+
+    it('formats version label when versions are the same', () => {
+      expect(formatVersionWithRevision('1.0.0', '1.0.0')).toBe('Version: 1.0.0 / Revision: 1.0.0');
+    });
+
+    it('handles human version without suffix', () => {
+      expect(formatVersionWithRevision('2.1.22', '32.0.3')).toBe('Version: 32.0.3 / Revision: 2.1.22');
+    });
+
+    it('handles version with multiple underscores correctly', () => {
+      expect(formatVersionWithRevision('2.1.22', '2022.10_1.0.7_2.1.22')).toBe('Version: 2022.10_1.0.7 / Revision: 2.1.22');
+    });
+
+    it('handles when library version is not a suffix', () => {
+      expect(formatVersionWithRevision('2.1.22', '32.0.3_2.1.20')).toBe('Version: 32.0.3_2.1.20 / Revision: 2.1.22');
     });
   });
 });

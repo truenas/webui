@@ -31,7 +31,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { extractAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -155,10 +155,12 @@ export class AppBulkUpdateComponent {
         next: (summary) => {
           const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
             // Use app_version from API if available for accurate display
-            const appVersionToShow = item.app_version || extractAppVersion(item.human_version, item.version);
+            const humanVersionForLabel = item.app_version
+              ? `${item.app_version}_${item.version}`
+              : item.human_version;
 
             // Format label consistently: "Version: X / Revision: Y"
-            const label = `Version: ${appVersionToShow} / Revision: ${item.version}`;
+            const label = formatVersionWithRevision(item.version, humanVersionForLabel);
 
             return { value: item.version, label } as Option;
           }) || [];
