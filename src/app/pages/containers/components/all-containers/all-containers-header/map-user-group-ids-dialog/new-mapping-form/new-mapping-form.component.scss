@@ -40,12 +40,8 @@
 
       .help-icon-inline {
         cursor: pointer;
-        font-size: 18px;
-        height: 18px;
-        width: 18px;
         color: var(--fg2);
         flex-shrink: 0;
-        border-radius: 50%;
         outline: none;
 
         &:focus-visible {

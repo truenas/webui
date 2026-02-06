@@ -12,11 +12,8 @@
 
     .help-icon {
       cursor: pointer;
-      font-size: 20px;
-      height: 20px;
-      width: 20px;
+      margin-bottom: 4px;
       color: var(--fg2);
-      border-radius: 50%;
       outline: none;
 
       &:focus-visible {
