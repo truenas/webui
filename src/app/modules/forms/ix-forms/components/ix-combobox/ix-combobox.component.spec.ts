@@ -187,4 +187,42 @@ describe('IxComboboxComponent', () => {
       discardPeriodicTasks();
     }));
   });
+
+  describe('clearing input with validation errors', () => {
+    it('triggers validation update when manually deleting all text', fakeAsync(() => {
+      spectator.component.ngOnInit();
+      spectator.setHostInput('allowCustomValue', true);
+      spectator.setHostInput('provider', new SimpleComboboxProvider([]));
+      tick(300);
+
+      // Set up component state with invalid value
+      const input = spectator.query('input') as HTMLInputElement;
+      spectator.component.textContent = 'invaliduser';
+      spectator.component.value = 'invaliduser';
+      spectator.component.selectedOption = null;
+      input.value = 'invaliduser';
+
+      // Manually set an error on the form control to simulate async validation error
+      formControl.setValue('invaliduser');
+      formControl.setErrors({ customError: { message: 'Value does not exist' } });
+      spectator.detectChanges();
+
+      // Verify error is present
+      expect(formControl.errors).toEqual({ customError: { message: 'Value does not exist' } });
+      expect(formControl.value).toBe('invaliduser');
+
+      // Spy on updateValueAndValidity to ensure it's called
+      const updateSpy = jest.spyOn(formControl, 'updateValueAndValidity');
+
+      // Simulate clearing the input by calling onChanged with empty string
+      spectator.component.onChanged('');
+      spectator.detectChanges();
+
+      // Verify updateValueAndValidity was called and value is cleared
+      expect(updateSpy).toHaveBeenCalled();
+      expect(formControl.value).toBeNull();
+
+      discardPeriodicTasks();
+    }));
+  });
 });
