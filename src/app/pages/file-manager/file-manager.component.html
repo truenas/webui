@@ -58,7 +58,7 @@
       </mat-menu>
       <button
         mat-icon-button
-        [disabled]="!hasFileSelected() || isDownloading()"
+        [disabled]="!hasItemSelected() || isDownloading()"
         [matTooltip]="'Download Selected' | translate"
         (click)="downloadSelectedFiles()"
       >
@@ -302,12 +302,10 @@
 <!-- Context Menu -->
 <mat-menu #contextMenu="matMenu">
   @if (contextMenuItem()) {
-    @if (!isDirectory(contextMenuItem()!)) {
-      <button mat-menu-item (click)="downloadSelectedFiles()">
-        <ix-icon name="mdi-download"></ix-icon>
-        <span>{{ "Download" | translate }}</span>
-      </button>
-    }
+    <button mat-menu-item (click)="downloadSelectedFiles()">
+      <ix-icon name="mdi-download"></ix-icon>
+      <span>{{ "Download" | translate }}</span>
+    </button>
     @if (isQuickLookSupported(contextMenuItem()!)) {
       <button mat-menu-item (click)="openQuickLook(contextMenuItem()!)">
         <ix-icon name="mdi-eye"></ix-icon>

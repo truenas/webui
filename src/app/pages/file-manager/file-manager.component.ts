@@ -140,14 +140,9 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   // Quick Look dialog reference for toggle behavior
   private quickLookDialogRef: import('@angular/material/dialog').MatDialogRef<QuickLookDialogComponent> | null = null;
 
-  // Check if any file (non-directory) is selected
-  hasFileSelected = computed(() => {
-    const selected = this.selectedItems();
-    const items = this.items();
-    return Array.from(selected).some((path) => {
-      const item = items.find((i) => i.path === path);
-      return item && item.type !== FileType.Directory;
-    });
+  // Check if any item is selected (file or directory)
+  hasItemSelected = computed(() => {
+    return this.selectedItems().size > 0;
   });
 
   // Check if /mnt directory is empty (no pools created)
@@ -625,21 +620,22 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     const selected = this.selectedItems();
     const items = this.items();
 
-    // Get all selected files (excluding directories)
-    const selectedFiles = Array.from(selected)
+    // Get all selected items (including directories)
+    const selectedItems = Array.from(selected)
       .map((path) => items.find((i) => i.path === path))
-      .filter((item): item is FileRecord => item !== undefined && item.type !== FileType.Directory);
+      .filter((item): item is FileRecord => item !== undefined);
 
-    if (selectedFiles.length === 0) {
+    if (selectedItems.length === 0) {
       return;
     }
 
-    if (selectedFiles.length === 1) {
+    // Check if only a single file (not directory) is selected
+    if (selectedItems.length === 1 && selectedItems[0].type !== FileType.Directory) {
       // Single file: download directly
-      this.downloadFile(selectedFiles[0]);
+      this.downloadFile(selectedItems[0]);
     } else {
-      // Multiple files: download as ZIP archive
-      this.downloadBatchFiles(selectedFiles);
+      // Multiple items or single directory: download as ZIP archive
+      this.downloadBatchFiles(selectedItems);
     }
   }
 
