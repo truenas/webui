@@ -13,9 +13,8 @@
           <ix-fake-progress-bar [loading]="loadingMap().get(bulkItem.key)"></ix-fake-progress-bar>
           <mat-panel-title>
             <ix-bulk-list-item [item]="bulkItem.value">
-              @let versionParts = bulkItem.value.item.human_version?.split('_') || [];
               <span class="app-name-text">{{ bulkItem.key }}</span>
-              <span class="app-version">{{ versionParts[0] }}</span>
+              <span class="app-version">{{ extractAppVersion(bulkItem.value.item.human_version, bulkItem.value.item.version) }}</span>
 
               <div class="logo">
                 <img

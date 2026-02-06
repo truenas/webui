@@ -6,6 +6,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -394,7 +395,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           type: DynamicFormSchemaType.Select,
           title: helptextApps.appWizard.nameGroup.version,
           required: true,
-          tooltip: 'Version shows the upstream application version. Revision shows the TrueNAS catalog revision.',
+          tooltip: T('Version shows the upstream application version. Revision shows the TrueNAS catalog revision.'),
           options: of(versionKeys.map((version) => {
             const versionInfo = this.catalogApp.versions[version];
             const appVersion = extractAppVersion(versionInfo.human_version, version);

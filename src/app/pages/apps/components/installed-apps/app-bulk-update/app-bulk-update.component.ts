@@ -8,6 +8,7 @@ import {
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -116,6 +117,8 @@ export class AppBulkUpdateComponent {
     return (summary?.available_versions_for_upgrade?.length || 0) > 1;
   }
 
+  protected readonly extractAppVersion = extractAppVersion;
+
   getVersionInfo(app: App, appName: string): {
     currentAppVersion: string;
     currentCatalogVersion: string;
@@ -171,7 +174,7 @@ export class AppBulkUpdateComponent {
           const item = this.bulkItems.get(name);
           if (item) {
             item.state = BulkListItemState.Error;
-            item.message = error instanceof Error ? error.message : 'Failed to load upgrade information';
+            item.message = error instanceof Error ? error.message : T('Failed to load upgrade information');
           }
         },
       });
