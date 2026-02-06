@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, from, switchMap } from 'rxjs';
@@ -35,7 +35,6 @@ import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-tunable-card',
   templateUrl: './tunable-card.component.html',
@@ -68,6 +67,7 @@ export class TunableCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableCardElements;
@@ -112,7 +112,7 @@ export class TunableCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const tunables$ = this.api.call('tunable.query').pipe(untilDestroyed(this));
+    const tunables$ = this.api.call('tunable.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.loadItems();
   }
@@ -137,7 +137,7 @@ export class TunableCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.job('tunable.delete', [row.id])),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -158,7 +158,7 @@ export class TunableCardComponent implements OnInit {
     from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
       switchMap(() => this.slideIn.open(TunableFormComponent, { data: row })),
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadItems();
     });

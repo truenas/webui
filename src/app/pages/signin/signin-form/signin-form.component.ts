@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
@@ -26,7 +25,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-signin-form',
   templateUrl: './signin-form.component.html',
@@ -52,6 +50,7 @@ export class SigninFormComponent implements OnInit {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   disabled = input.required<boolean>();
 
@@ -87,7 +86,7 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         performance.mark('Login page ready');
@@ -99,7 +98,7 @@ export class SigninFormComponent implements OnInit {
   ngOnInit(): void {
     this.form.valueChanges.pipe(
       distinctUntilChanged(isEqual),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isLastLoginAttemptFailed = false;
@@ -120,7 +119,7 @@ export class SigninFormComponent implements OnInit {
     const formValues = this.form.getRawValue();
     this.cdr.markForCheck();
     this.authService.login(formValues.username, formValues.password).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult, loginResponse }) => {
         if (loginResult === LoginResult.Success) {
@@ -192,7 +191,7 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult }) => {
         if (loginResult === LoginResult.Success) {

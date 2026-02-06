@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { switchMap, tap } from 'rxjs';
@@ -15,7 +15,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-error-dialog',
   templateUrl: './error-dialog.component.html',
@@ -39,6 +38,7 @@ export class ErrorDialog {
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   protected error = inject<ErrorReport>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected isDetailsOpen = signal(false);
   protected isTraceOpen = signal(false);
@@ -74,7 +74,7 @@ export class ErrorDialog {
       }),
       tap((file) => this.download.downloadBlob(file, `${logsId}.log`)),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dialogRef.close());
   }
 

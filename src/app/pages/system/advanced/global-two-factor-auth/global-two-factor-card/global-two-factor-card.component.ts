@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Subject, filter, shareReplay, startWith, switchMap, tap,
@@ -23,7 +23,6 @@ import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-tw
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-two-factor-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -48,6 +47,7 @@ export class GlobalTwoFactorAuthCardComponent {
   private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   readonly helpText = helptext2fa;
   protected readonly searchableElements = globalTwoFactorCardElements;
@@ -72,7 +72,7 @@ export class GlobalTwoFactorAuthCardComponent {
       )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

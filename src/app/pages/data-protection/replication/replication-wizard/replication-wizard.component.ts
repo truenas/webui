@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
 import {
@@ -43,7 +43,6 @@ import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ReplicationService } from 'app/services/replication.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-wizard',
   templateUrl: './replication-wizard.component.html',
@@ -74,6 +73,7 @@ export class ReplicationWizardComponent {
   private snackbar = inject(SnackbarService);
   private authService = inject(AuthService);
   slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
@@ -116,7 +116,7 @@ export class ReplicationWizardComponent {
     });
 
     if (requests.length) {
-      forkJoin(requests).pipe(untilDestroyed(this)).subscribe({
+      forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
@@ -166,7 +166,7 @@ export class ReplicationWizardComponent {
         this.handleError(err);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (createdReplication) => {
         this.slideInRef.close({ response: createdReplication });

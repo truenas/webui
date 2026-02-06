@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, input, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
@@ -19,7 +19,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-controls',
   templateUrl: './app-controls.component.html',
@@ -45,6 +44,7 @@ export class AppControlsComponent {
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   app = input.required<LoadingState<App>>();
   appState = AppState;
@@ -70,7 +70,7 @@ export class AppControlsComponent {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

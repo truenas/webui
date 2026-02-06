@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -7,7 +8,6 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -24,7 +24,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-default-gateway-dialog',
   templateUrl: './default-gateway-dialog.component.html',
@@ -61,6 +60,8 @@ export class DefaultGatewayDialog implements OnInit {
     nameserver3?: string;
   }>(MAT_DIALOG_DATA);
 
+  private destroyRef = inject(DestroyRef);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly currentGateway = signal('');
   protected readonly currentDns1 = signal('');
@@ -93,7 +94,7 @@ export class DefaultGatewayDialog implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((summary) => {
         const gateway = this.data?.ipv4gateway || summary.default_routes[0] || '';
@@ -137,7 +138,7 @@ export class DefaultGatewayDialog implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

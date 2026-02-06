@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-settings-form',
   templateUrl: 'replication-settings-form.component.html',
@@ -46,6 +45,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   slideInRef = inject<SlideInRef<ReplicationConfig, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
 
@@ -83,7 +83,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
       max_parallel_replication_tasks: maxTasks && maxTasks > 0 ? maxTasks : null,
     };
     this.isFormLoading.set(true);
-    this.api.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('replication.config.update', [replicationConfigUpdate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading.set(false);

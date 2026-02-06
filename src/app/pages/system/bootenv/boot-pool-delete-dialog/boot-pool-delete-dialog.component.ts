@@ -1,11 +1,11 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, TrackByFunction, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, TrackByFunction, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-boot-pool-delete-dialog',
   templateUrl: './boot-pool-delete-dialog.component.html',
@@ -45,6 +44,7 @@ export class BootPoolDeleteDialog {
   private dialogRef = inject<MatDialogRef<BootPoolDeleteDialog>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
   bootenvs = inject<BootEnvironment[]>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
 
@@ -85,7 +85,7 @@ export class BootPoolDeleteDialog {
     this.api.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((response) => {
       response.arguments[1].flat().forEach((params, index: number) => {
         const bootenvId = params.id;

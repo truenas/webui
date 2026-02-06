@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, computed,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, computed,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of, shareReplay } from 'rxjs';
@@ -33,7 +33,6 @@ import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/gro
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
 import { UserService } from 'app/services/user.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-group-form',
   templateUrl: './group-form.component.html',
@@ -63,6 +62,7 @@ export class GroupFormComponent implements OnInit {
   private store$ = inject<Store<GroupSlice>>(Store);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AccountWrite];
 
@@ -164,7 +164,7 @@ export class GroupFormComponent implements OnInit {
       });
       this.setNamesInUseValidator(this.editingGroup.group);
     } else {
-      this.api.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
+      this.api.call('group.get_next_gid').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((nextId) => {
         this.form.patchValue({
           gid: nextId,
         });
@@ -201,7 +201,7 @@ export class GroupFormComponent implements OnInit {
       switchMap((id) => this.api.call('group.query', [[['id', '=', id]]])),
       map((groups) => groups[0]),
       switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (group) => {
         const roles = this.privileges()
@@ -268,7 +268,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   private setNamesInUseValidator(currentName?: string): void {
-    this.api.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.api.call('group.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((groups) => {
       let forbiddenNames = groups.map((group) => group.group);
       if (currentName) {
         forbiddenNames = forbiddenNames.filter((name) => name !== currentName);
@@ -288,7 +288,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    this.form.controls.sudo_commands_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
+    this.form.controls.sudo_commands_all.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isAll) => {
       if (isAll) {
         this.form.controls.sudo_commands.disable();
       } else {
@@ -296,7 +296,9 @@ export class GroupFormComponent implements OnInit {
       }
     });
 
-    this.form.controls.sudo_commands_nopasswd_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
+    this.form.controls.sudo_commands_nopasswd_all.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isAll) => {
       if (isAll) {
         this.form.controls.sudo_commands_nopasswd.disable();
       } else {

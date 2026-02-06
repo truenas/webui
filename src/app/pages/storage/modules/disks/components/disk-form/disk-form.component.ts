@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -30,7 +29,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-form',
   templateUrl: 'disk-form.component.html',
@@ -62,6 +60,7 @@ export class DiskFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private snackbarService = inject(SnackbarService);
   slideInRef = inject<SlideInRef<Disk, DiskFormResponse>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -106,7 +105,7 @@ export class DiskFormComponent implements OnInit {
 
   private clearPasswordField(): void {
     this.form.controls.clear_pw.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(
         (state) => {
           const controlPasswd = this.form.controls.passwd;
@@ -146,7 +145,7 @@ export class DiskFormComponent implements OnInit {
 
     this.isLoading.set(true);
     this.api.call('disk.update', [diskId, valuesDiskUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isLoading.set(false);

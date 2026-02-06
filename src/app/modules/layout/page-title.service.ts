@@ -1,17 +1,17 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class PageTitleService {
   private router = inject(Router);
   private routePartsService = inject(RoutePartsService);
+  private destroyRef = inject(DestroyRef);
 
   title$ = new BehaviorSubject('');
   hasNewIndicator$ = new BehaviorSubject(false);
@@ -32,7 +32,7 @@ export class PageTitleService {
     this.emitTitleFromRoute();
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.emitTitleFromRoute();
     });

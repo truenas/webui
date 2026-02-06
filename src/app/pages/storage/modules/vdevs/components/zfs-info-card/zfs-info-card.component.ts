@@ -1,11 +1,11 @@
 import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,7 +32,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-zfs-info-card',
   templateUrl: './zfs-info-card.component.html',
@@ -61,6 +60,7 @@ export class ZfsInfoCardComponent {
   private translate = inject(TranslateService);
   private vDevsStore = inject(VDevsStore);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly topologyItem = input.required<VDevItem>();
   readonly topologyParentItem = input<VDevItem>();
@@ -148,10 +148,10 @@ export class ZfsInfoCardComponent {
           this.loader.withLoader(),
           this.errorHandler.withErrorHandler(),
           tap(() => this.vDevsStore.reloadList()),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -169,7 +169,7 @@ export class ZfsInfoCardComponent {
           tap(() => this.vDevsStore.reloadList()),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -187,7 +187,7 @@ export class ZfsInfoCardComponent {
           tap(() => this.vDevsStore.reloadList()),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -209,7 +209,7 @@ export class ZfsInfoCardComponent {
           .afterClosed()
           .pipe(this.errorHandler.withErrorHandler());
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Device removed'));
       this.vDevsStore.reloadList();
@@ -227,7 +227,7 @@ export class ZfsInfoCardComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.vDevsStore.reloadList();
@@ -244,7 +244,7 @@ export class ZfsInfoCardComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.vDevsStore.reloadList();

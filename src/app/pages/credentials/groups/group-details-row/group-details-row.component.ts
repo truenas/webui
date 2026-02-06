@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, input, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import {
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-group-details-row',
   templateUrl: './group-details-row.component.html',
@@ -39,6 +38,7 @@ export class GroupDetailsRowComponent {
   private slideIn = inject(SlideIn);
   private router = inject(Router);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   readonly group = input.required<Group>();
   readonly colspan = input<number>();
@@ -64,7 +64,7 @@ export class GroupDetailsRowComponent {
   doDelete(group: Group): void {
     this.matDialog.open(DeleteGroupDialog, { data: group })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wasDeleted) => {
         if (!wasDeleted) {
           return;

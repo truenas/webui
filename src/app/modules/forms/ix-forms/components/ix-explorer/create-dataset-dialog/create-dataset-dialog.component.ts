@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -7,7 +8,6 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, tap } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
@@ -23,7 +23,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-create-dataset-dialog',
   templateUrl: './create-dataset-dialog.component.html',
@@ -56,6 +55,8 @@ export class CreateDatasetDialog implements OnInit {
     dataset: DatasetCreate;
   }>(MAT_DIALOG_DATA);
 
+  private destroyRef = inject(DestroyRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading$ = new BehaviorSubject(false);
@@ -71,7 +72,7 @@ export class CreateDatasetDialog implements OnInit {
   ngOnInit(): void {
     this.loadParentDataset();
 
-    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+    this.isLoading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isLoading) => {
       if (isLoading) {
         this.form.controls.name.disable();
       } else {
@@ -83,7 +84,7 @@ export class CreateDatasetDialog implements OnInit {
   createDataset(): void {
     this.isLoading$.next(true);
     this.api.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
-      .pipe(untilDestroyed(this)).subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (dataset) => {
           this.isLoading$.next(false);
           this.dialogRef.close(dataset);
@@ -104,7 +105,7 @@ export class CreateDatasetDialog implements OnInit {
           throw new Error(`Parent dataset ${normalizedParentId} not found`);
         }
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (parent) => {
         this.isLoading$.next(false);

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,7 +25,6 @@ import {
 } from 'app/pages/storage/modules/vdevs/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-info-card',
   templateUrl: './disk-info-card.component.html',
@@ -51,6 +50,7 @@ export class DiskInfoCardComponent {
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
   private vDevsStore = inject(VDevsStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly topologyDisk = input.required<TopologyDisk>();
   readonly disk = input<Disk>();
@@ -68,7 +68,7 @@ export class DiskInfoCardComponent {
   onEdit(): void {
     this.slideIn.open(DiskFormComponent, { data: this.disk() }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.vDevsStore.reloadList());
   }
 
@@ -85,7 +85,7 @@ export class DiskInfoCardComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.vDevsStore.reloadList();

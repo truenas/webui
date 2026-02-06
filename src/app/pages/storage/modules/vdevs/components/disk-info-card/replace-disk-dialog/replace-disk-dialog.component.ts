@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -24,7 +24,6 @@ export interface ReplaceDiskDialogData {
   poolId: number;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replace-disk-dialog',
   templateUrl: './replace-disk-dialog.component.html',
@@ -52,6 +51,7 @@ export class ReplaceDiskDialog {
   data = inject<ReplaceDiskDialogData>(MAT_DIALOG_DATA);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
     replacement: ['', Validators.required],
@@ -79,7 +79,7 @@ export class ReplaceDiskDialog {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogRef.close(true);

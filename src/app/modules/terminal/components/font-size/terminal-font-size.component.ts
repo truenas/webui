@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, output, signal, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, output, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
@@ -9,7 +11,6 @@ import { AppState } from 'app/store';
 import { terminalFontSizeUpdated } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-terminal-font-size',
   templateUrl: './terminal-font-size.component.html',
@@ -23,6 +24,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class TerminalFontSizeComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
   private store$ = inject<Store<AppState>>(Store);
 
   fontSizeChanged = output<number>();
@@ -35,7 +38,7 @@ export class TerminalFontSizeComponent implements OnInit {
     this.store$.pipe(
       waitForPreferences,
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((preferences) => {
       const size = preferences.terminalFontSize ?? this.fontSize();
       this.fontSize.set(size);

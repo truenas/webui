@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -33,7 +33,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-target-configuration',
   templateUrl: './global-target-configuration.component.html',
@@ -64,6 +63,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected isLoading = signal(false);
@@ -114,7 +114,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     const values = { ...this.form.value } as IscsiGlobalConfigUpdate;
 
     this.api.call('iscsi.global.update', [values])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.isLoading.set(false);
@@ -132,7 +132,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private loadFormValues(): void {
     this.isLoading.set(true);
 
-    this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
         this.originalBasename = config.basename;
         this.form.patchValue(config);
@@ -146,7 +146,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   }
 
   private listenForHaStatus(): void {
-    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHa) => {
+    this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHa) => {
       this.isHaSystem = isHa;
 
       if (!isHa) {
@@ -166,7 +166,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       this.api.call('rdma.capable_protocols'),
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([capableProtocols, isEnterprise]) => {
       const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser) && isEnterprise;
       if (hasRdmaSupport) {
@@ -178,7 +178,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   }
 
   private setupBasenameValidation(): void {
-    this.form.controls.basename.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.basename.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       const basenameControl = this.form.controls.basename;
 
       // Only apply pattern validation if the basename value has been changed from the original

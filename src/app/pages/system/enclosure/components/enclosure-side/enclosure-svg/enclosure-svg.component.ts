@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, model, OnDestroy, Renderer2, signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, ElementRef, input, model, OnDestroy, Renderer2, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { delay } from 'rxjs';
@@ -10,7 +10,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-svg',
   templateUrl: './enclosure-svg.component.html',
@@ -24,6 +23,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   private errorHandler = inject(ErrorHandlerService);
   private sanitizer = inject(DomSanitizer);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly emptyOpacity = 0.15;
   readonly unselectedOpacity = 0.3;
@@ -59,7 +59,7 @@ export class EnclosureSvgComponent implements OnDestroy {
       .pipe(
         this.errorHandler.withErrorHandler(),
         delay(0),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((svg) => {
         // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization

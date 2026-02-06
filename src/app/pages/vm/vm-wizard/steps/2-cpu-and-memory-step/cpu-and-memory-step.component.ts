@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -24,7 +24,6 @@ import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cpu-and-memory-step',
   templateUrl: './cpu-and-memory-step.component.html',
@@ -54,6 +53,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     vcpus: [1, {
@@ -147,7 +147,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
     this.api.call('vm.maximum_supported_vcpus')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((maxVcpus) => {
         this.maxVcpus = maxVcpus;
@@ -157,7 +157,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
   private setPinVcpusRelation(): void {
     this.form.controls.cpuset.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((cpuset) => {
         if (cpuset) {
           this.form.controls.pin_vcpus.enable();

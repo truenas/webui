@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -44,7 +43,6 @@ export interface ApiKeyParams {
   editingKey?: ApiKey;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-api-key-form',
   templateUrl: './api-key-form.component.html',
@@ -75,6 +73,7 @@ export class ApiKeyFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private authService = inject(AuthService);
   slideInRef = inject<SlideInRef<ApiKeyParams | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly minDateToday = new Date();
   protected readonly editingRow = signal<ApiKey | undefined>(undefined);
@@ -167,7 +166,7 @@ export class ApiKeyFormComponent implements OnInit {
       : this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }]);
 
     request$
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ key }) => {
           this.isLoading.set(false);
@@ -198,7 +197,7 @@ export class ApiKeyFormComponent implements OnInit {
   }
 
   private handleNonExpiringChanges(): void {
-    this.form.controls.nonExpiring.valueChanges.pipe(untilDestroyed(this)).subscribe((nonExpiring) => {
+    this.form.controls.nonExpiring.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((nonExpiring) => {
       if (nonExpiring) {
         this.form.controls.expires_at.disable();
       } else {

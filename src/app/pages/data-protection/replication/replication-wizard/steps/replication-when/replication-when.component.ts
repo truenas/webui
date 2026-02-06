@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,7 +23,6 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-when',
   templateUrl: './replication-when.component.html',
@@ -47,6 +46,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isCustomRetentionVisible = input(true);
   readonly isLoading = input(false);
@@ -102,7 +102,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     this.form.controls.readonly.disable();
     this.form.controls.lifetime_value.disable();
     this.form.controls.lifetime_unit.disable();
-    this.form.controls.schedule_method.valueChanges.pipe(untilDestroyed(this)).subscribe((method) => {
+    this.form.controls.schedule_method.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((method) => {
       if (method === ScheduleMethod.Cron) {
         this.form.controls.schedule_picker.enable();
         this.form.controls.readonly.disable();
@@ -111,7 +111,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         this.form.controls.readonly.enable();
       }
     });
-    this.form.controls.retention_policy.valueChanges.pipe(untilDestroyed(this)).subscribe((policy) => {
+    this.form.controls.retention_policy.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((policy) => {
       if (policy === RetentionPolicy.Custom) {
         this.form.controls.lifetime_value.enable();
         this.form.controls.lifetime_unit.enable();

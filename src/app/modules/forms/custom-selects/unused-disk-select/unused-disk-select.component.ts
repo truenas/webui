@@ -1,7 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, forwardRef, input, OnInit, signal, viewChild, inject } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, forwardRef, input, OnInit, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, distinctUntilChanged, filter, map,
@@ -27,7 +26,6 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
  * Shows warning when user selects a disk with an exported pool.
  * Show extra "Allow non-unique serialed disks" if user has such disks.
  */
-@UntilDestroy()
 @Component({
   selector: 'ix-unused-disk-select',
   templateUrl: './unused-disk-select.component.html',
@@ -50,6 +48,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   /**
    * Optional function to filter disks in addition to default select's behaviour.
@@ -107,7 +106,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
 
   private loadDisks(): void {
     this.unusedDisks$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((disks) => {
         this.unusedDisks.set(disks);
       });
@@ -120,7 +119,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     this.combobox().controlDirective.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe((diskName: string) => this.warnAboutExportedPool(diskName));
   }

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Subject, filter, shareReplay, startWith, switchMap, tap,
@@ -20,7 +20,6 @@ import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/au
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy(this)
 @Component({
   selector: 'ix-audit-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -45,6 +44,7 @@ export class AuditCardComponent {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = auditCardElements;
@@ -66,7 +66,7 @@ export class AuditCardComponent {
       tap(() => {
         this.reloadConfig$.next();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

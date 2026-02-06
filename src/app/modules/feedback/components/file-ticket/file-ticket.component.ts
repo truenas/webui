@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, output, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -22,7 +22,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-file-ticket',
   styleUrls: ['./file-ticket.component.scss'],
@@ -48,6 +47,7 @@ export class FileTicketComponent {
   private imageValidator = inject(ImageValidatorService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
@@ -93,7 +93,7 @@ export class FileTicketComponent {
         this.isLoadingChange.emit(false);
         this.fileInputComponent()?.setDisabledState?.(false);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (createdTicket) => this.onSuccess(createdTicket.url),
       error: (error: unknown) => this.formErrorHandler.handleValidationErrors(error, this.form),
@@ -106,7 +106,7 @@ export class FileTicketComponent {
   }
 
   private getSystemFileSizeLimit(): void {
-    this.api.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+    this.api.call('support.attach_ticket_max_size').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(this.imageValidator.getImagesValidator(size * MiB));
       this.form.controls.images.updateValueAndValidity();
     });

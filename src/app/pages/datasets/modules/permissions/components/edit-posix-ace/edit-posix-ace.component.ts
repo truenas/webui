@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
@@ -17,7 +17,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-edit-posix-ace',
   templateUrl: './edit-posix-ace.component.html',
@@ -38,6 +37,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   private store = inject(DatasetAclEditorStore);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly ace = input.required<PosixAclItem>();
 
@@ -76,10 +76,10 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
 
   private setFormListeners(): void {
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onAceUpdated());
     this.form.statusChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onFormStatusUpdated());
   }
 

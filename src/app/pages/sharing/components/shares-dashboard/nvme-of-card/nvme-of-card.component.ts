@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -46,7 +46,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nvme-of-card',
   templateUrl: './nvme-of-card.component.html',
@@ -87,6 +86,7 @@ export class NvmeOfCardComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
@@ -173,7 +173,7 @@ export class NvmeOfCardComponent implements OnInit {
   openForm(): void {
     this.slideIn.open(AddSubsystemComponent).pipe(
       filter(({ response }) => !!response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.nvmeOfStore.initialize());
   }
 
@@ -191,7 +191,7 @@ export class NvmeOfCardComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.nvmeOfStore.initialize();
       });

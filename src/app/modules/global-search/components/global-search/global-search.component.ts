@@ -1,8 +1,8 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { Component, ChangeDetectionStrategy, OnInit, ElementRef, ChangeDetectorRef, AfterViewInit, OnDestroy, Signal, viewChild, DOCUMENT, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, ElementRef, ChangeDetectorRef, AfterViewInit, OnDestroy, Signal, viewChild, DOCUMENT, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -28,7 +28,6 @@ import { FocusService } from 'app/services/focus.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-search',
   templateUrl: './global-search.component.html',
@@ -55,6 +54,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private dialogService = inject(DialogService);
   private focusService = inject(FocusService);
   private document = inject<Document>(DOCUMENT);
+  private destroyRef = inject(DestroyRef);
 
   searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild.required('searchInput', { read: ElementRef });
   searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild.required('searchBoxWrapper', { read: ElementRef });
@@ -150,7 +150,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       debounceTime(searchDelayConst),
       filter(Boolean),
       switchMap((term) => this.globalSearchSectionsProvider.getUiSectionResults(term)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((searchResults) => {
       this.searchResults = [
         ...searchResults,
@@ -171,7 +171,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private getSystemVersion(): void {
     this.store$.pipe(
       waitForSystemInfo,
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe((systemInfo) => {
         this.systemVersion = systemInfo.version;
@@ -188,7 +188,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       combineLatestWith(this.searchDirectives.directiveAdded$.pipe(filter(Boolean))),
       filter(([config]) => !!this.searchDirectives.get(config)),
       distinctUntilChanged(([prevConfig], [nextConfig]) => isEqual(prevConfig, nextConfig)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([config]) => {
       this.resetInput();
       this.searchDirectives.setPendingUiHighlightElement(null);

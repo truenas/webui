@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-portal-form',
   templateUrl: './portal-form.component.html',
@@ -55,6 +54,7 @@ export class PortalFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
   protected iscsiService = inject(IscsiService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<IscsiPortal | undefined, boolean>>(SlideInRef);
 
   protected isLoading = signal(false);
@@ -147,7 +147,7 @@ export class PortalFormComponent implements OnInit {
       request$ = this.api.call('iscsi.portal.create', [params]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close({ response: true });

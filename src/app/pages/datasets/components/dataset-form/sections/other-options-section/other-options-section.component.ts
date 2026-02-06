@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -53,7 +53,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-other-options-section',
   styleUrls: ['./other-options-section.component.scss'],
@@ -78,6 +77,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   protected formatter = inject(IxFormatterService);
   private api = inject(ApiService);
   private datasetFormService = inject(DatasetFormService);
+  private destroyRef = inject(DestroyRef);
 
   readonly parent = input<Dataset>();
   readonly existing = input<Dataset>();
@@ -191,11 +191,13 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.checkIfDedupIsSupported();
 
-    this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.acltype.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateAclMode();
     });
 
-    this.form.controls.special_small_block_size.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.special_small_block_size.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
       const customControl = this.form.controls.special_small_block_size_custom;
       if (value === OnOff.On) {
         customControl.setValidators([
@@ -212,7 +214,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       customControl.updateValueAndValidity();
     });
 
-    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+    this.form.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => {
       this.formValidityChange.emit(status === 'VALID');
     });
   }
@@ -256,7 +258,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     combineLatest([
       this.store$.select(selectIsEnterprise),
       this.store$.pipe(waitForSystemInfo),
-    ]).pipe(untilDestroyed(this)).subscribe(([isEnterprise, systemInfo]) => {
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([isEnterprise, systemInfo]) => {
       if (!isEnterprise) {
         this.hasDeduplication = true;
         this.cdr.markForCheck();
@@ -452,7 +454,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpDedupWarning(): void {
-    this.form.controls.deduplication.valueChanges.pipe(untilDestroyed(this)).subscribe((dedup) => {
+    this.form.controls.deduplication.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dedup) => {
       if (!dedup || [DeduplicationSetting.Off, inherit].includes(dedup)) {
         this.cdr.markForCheck();
         return;
@@ -463,7 +465,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         message: this.translate.instant(helptextDatasetForm.deduplicationWarning),
         hideCheckbox: true,
       })
-        .pipe(untilDestroyed(this))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((confirmed) => {
           if (confirmed) {
             this.checkDedupChecksum();
@@ -500,7 +502,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
   private setUpAclTypeWarning(): void {
     this.form.controls.acltype.valueChanges
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.dialogService.warn(
           this.translate.instant('ACL Types & ACL Modes'),
@@ -539,7 +541,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
       this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([recordsizeValue, recommendedAsString]) => {
         const recordsizeAsString = recordsizeValue === '512' ? '512B' : recordsizeValue;
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
@@ -560,7 +562,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private listenForSyncChanges(): void {
-    this.form.controls.sync.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.sync.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
         this.dialogService.confirm({
           title: this.translate.instant('Warning'),

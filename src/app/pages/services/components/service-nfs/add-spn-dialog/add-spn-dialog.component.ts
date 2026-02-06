@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -14,7 +14,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-spn-dialog',
   templateUrl: './add-spn-dialog.component.html',
@@ -39,6 +38,7 @@ export class AddSpnDialog {
   private dialogRef = inject<MatDialogRef<CloudSyncRestoreDialog>>(MatDialogRef);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNfsWrite];
 
@@ -58,7 +58,7 @@ export class AddSpnDialog {
       .pipe(
         this.errorHandler.withErrorHandler(),
         this.loader.withLoader(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Credentials have been successfully added.'));

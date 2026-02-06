@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -9,7 +9,6 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-http-provider-form',
   templateUrl: './http-provider-form.component.html',
@@ -25,13 +24,14 @@ export class HttpProviderFormComponent extends BaseProviderFormComponent impleme
   formatter = inject(IxFormatterService);
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     url: ['', Validators.required],
   });
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });

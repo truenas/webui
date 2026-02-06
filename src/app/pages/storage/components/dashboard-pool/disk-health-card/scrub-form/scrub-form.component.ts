@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,7 +30,6 @@ export interface ScrubFormParams {
   existingScrubTask: ScrubTask | null;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-scrub-form',
   templateUrl: './scrub-form.component.html',
@@ -58,6 +57,7 @@ export class ScrubFormComponent {
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<ScrubFormParams, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PoolScrubWrite];
 
@@ -120,7 +120,7 @@ export class ScrubFormComponent {
       request$ = this.api.call('pool.scrub.create', [values as CreateScrubTask]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Scrub scheduled'));

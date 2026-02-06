@@ -1,11 +1,10 @@
 import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
@@ -35,7 +34,6 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dashboard',
   templateUrl: './dashboard.component.html',
@@ -70,6 +68,7 @@ export class DashboardComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   readonly searchableElements = dashboardElements;
   readonly isEditing = signal(false);
@@ -112,7 +111,7 @@ export class DashboardComponent implements OnInit {
   protected onAddGroup(): void {
     this.slideIn
       .open(WidgetGroupFormComponent, { wide: true })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((response) => {
         const newGroup = response.response;
         if (!newGroup) {
@@ -127,7 +126,7 @@ export class DashboardComponent implements OnInit {
     const editedGroup = this.renderedGroups()[i];
     this.slideIn
       .open(WidgetGroupFormComponent, { wide: true, data: editedGroup })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
@@ -176,7 +175,7 @@ export class DashboardComponent implements OnInit {
 
   protected onSave(): void {
     this.dashboardStore.save(this.renderedGroups())
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.isEditing.set(false);
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
@@ -190,7 +189,7 @@ export class DashboardComponent implements OnInit {
       hideCheckbox: true,
       buttonText: this.translate.instant('Restore'),
     })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (!confirmed) {
           return;
@@ -207,7 +206,7 @@ export class DashboardComponent implements OnInit {
 
   private loadGroups(): void {
     this.dashboardStore.groups$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((groups) => {
         if (this.isEditing()) {
           return;

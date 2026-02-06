@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
@@ -25,7 +25,6 @@ import {
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-settings-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -49,6 +48,7 @@ export class ReplicationSettingsCardComponent {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
   private replicationConfig: ReplicationConfig;
@@ -74,7 +74,7 @@ export class ReplicationSettingsCardComponent {
       )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

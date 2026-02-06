@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -24,7 +23,6 @@ import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.ac
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-gui-card',
   styleUrls: ['./../../common-settings-card.scss'],
@@ -47,6 +45,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = guiCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -74,7 +73,7 @@ export class GuiCardComponent {
   openSettings(): void {
     this.slideIn.open(GuiFormComponent).pipe(
       filter((response) => !response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.store$.dispatch(guiFormClosedWithoutSaving()));
   }
 }

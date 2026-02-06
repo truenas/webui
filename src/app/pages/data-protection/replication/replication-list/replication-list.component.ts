@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs';
@@ -59,7 +59,6 @@ import {
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-list',
   templateUrl: './replication-list.component.html',
@@ -98,6 +97,7 @@ export class ReplicationListComponent implements OnInit {
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   replicationTasks: ReplicationTask[] = [];
   searchQuery = signal('');
@@ -193,7 +193,7 @@ export class ReplicationListComponent implements OnInit {
     }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -223,7 +223,7 @@ export class ReplicationListComponent implements OnInit {
           this.translate.instant('Replication «{name}» has started.', { name: row.name }),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (job: Job) => {
         row.state = { state: job.state };
@@ -243,7 +243,7 @@ export class ReplicationListComponent implements OnInit {
       data: row.id,
     });
     dialog.afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getReplicationTasks());
   }
 
@@ -254,7 +254,7 @@ export class ReplicationListComponent implements OnInit {
         { data: row, wide: true },
       ).pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
           this.getReplicationTasks();
@@ -263,7 +263,7 @@ export class ReplicationListComponent implements OnInit {
     } else {
       this.slideIn.open(ReplicationWizardComponent).pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.getReplicationTasks());
     }
   }
@@ -278,7 +278,7 @@ export class ReplicationListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.loader.withLoader())),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getReplicationTasks();
@@ -311,7 +311,7 @@ export class ReplicationListComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -319,7 +319,7 @@ export class ReplicationListComponent implements OnInit {
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
     this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.getReplicationTasks();

@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, DestroyRef, input, computed, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuTrigger, MatMenuItem } from '@angular/material/menu';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
@@ -36,7 +36,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-audit-search',
   templateUrl: './audit-search.component.html',
@@ -64,6 +63,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   private activatedRoute = inject(ActivatedRoute);
   private urlOptionsService = inject(UrlOptionsService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataProvider = input.required<AuditApiDataProvider>();
 
@@ -191,13 +191,13 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.dataProvider().sortingOrPaginationUpdate
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.updateUrlOptions();
       });
 
     this.dataProvider().currentPage$
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((auditEntries) => {
         this.setSearchProperties(auditEntries);
       });
@@ -206,7 +206,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     // skip(1) prevents duplicate load - initial value was already handled during initialization
     this.initialization$.pipe(
       switchMap(() => this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1))),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((service) => {
       this.dataProvider().service = service;
       this.updateUrlOptions();
@@ -214,7 +214,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     });
 
     // Trigger initialization
-    this.initialization$.pipe(untilDestroyed(this)).subscribe();
+    this.initialization$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   updateUrlOptions(): void {

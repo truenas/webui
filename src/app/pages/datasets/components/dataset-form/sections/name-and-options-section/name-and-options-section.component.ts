@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   delay, merge, of,
@@ -24,7 +24,6 @@ import {
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-name-and-options',
   templateUrl: './name-and-options-section.component.html',
@@ -46,6 +45,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   private translate = inject(TranslateService);
   private smbValidationService = inject(SmbValidationService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly existing = input<Dataset>();
   readonly parent = input<Dataset>();
@@ -110,7 +110,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     this.listenForSmbNameValidation();
 
     merge(this.form.statusChanges, this.datasetPresetForm.statusChanges)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.emitValidity());
 
     // Ensure form starts in untouched state to prevent validation errors from showing immediately
@@ -175,7 +175,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       this.form.controls.share_type.valueChanges,
       this.datasetPresetForm.controls.create_smb.valueChanges,
     )
-      .pipe(delay(0), untilDestroyed(this))
+      .pipe(delay(0), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         const smbNameControl = this.datasetPresetForm.controls.smb_name;
 

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -22,7 +22,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReplicationService } from 'app/services/replication.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-target-section',
   styleUrls: ['./target-section.component.scss'],
@@ -42,6 +41,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private replicationService = inject(ReplicationService);
+  private destroyRef = inject(DestroyRef);
 
   readonly replication = input<ReplicationTask>();
   readonly allowsCustomRetentionPolicy = input(false);
@@ -111,7 +111,9 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     this.form.controls.lifetime_value.disable();
     this.form.controls.lifetime_unit.disable();
 
-    this.form.controls.retention_policy.valueChanges.pipe(untilDestroyed(this)).subscribe((retentionPolicy) => {
+    this.form.controls.retention_policy.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((retentionPolicy) => {
       if (retentionPolicy === RetentionPolicy.Custom) {
         this.form.controls.lifetime_value.enable();
         this.form.controls.lifetime_unit.enable();
@@ -126,7 +128,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     combineLatest([
       this.form.controls.encryption.valueChanges,
       this.form.controls.encryption_inherit.valueChanges,
-    ]).pipe(untilDestroyed(this)).subscribe(([encryption, encryptionInherit]) => {
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([encryption, encryptionInherit]) => {
       if (encryption && !encryptionInherit) {
         this.form.controls.encryption_key_format.enable();
       } else {
