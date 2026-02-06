@@ -57,7 +57,7 @@ describe('AppsStore', () => {
 
   const mockDialogRef = {
     afterClosed: jest.fn(() => of(true)),
-    getSubscriptionLimiterInstance: jest.fn(),
+    getDestroyRef: jest.fn(),
   } as unknown as JobProgressDialogRef<unknown>;
 
   const createService = createServiceFactory({
@@ -196,7 +196,7 @@ describe('AppsStore', () => {
 
       emptyMockDialogRef = {
         afterClosed: jest.fn(() => of(true)),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
 
       jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(emptyMockDialogRef);
@@ -272,7 +272,7 @@ describe('AppsStore', () => {
     it('handles sync job failure gracefully', async () => {
       const errorMockDialogRef = {
         afterClosed: jest.fn(() => throwError(() => new Error('Sync failed'))),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
 
       jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(errorMockDialogRef);
@@ -317,7 +317,7 @@ describe('AppsStore', () => {
       // Setup successful sync dialog
       const successMockDialogRef = {
         afterClosed: jest.fn(() => of(true)),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(successMockDialogRef);
 
@@ -360,7 +360,7 @@ describe('AppsStore', () => {
       // Setup successful sync dialog
       const successMockDialogRef = {
         afterClosed: jest.fn(() => of(true)),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(successMockDialogRef);
 
@@ -403,7 +403,7 @@ describe('AppsStore', () => {
       // Setup successful sync dialog
       const successMockDialogRef = {
         afterClosed: jest.fn(() => of(true)),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(successMockDialogRef);
 

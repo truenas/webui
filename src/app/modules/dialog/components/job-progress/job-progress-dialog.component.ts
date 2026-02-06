@@ -69,7 +69,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private destroyRef = inject(DestroyRef);
+  readonly destroyRef = inject(DestroyRef);
 
   readonly jobSuccess = output<Job<T>>();
   readonly jobFailure = output<unknown>();
