@@ -1,7 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatTableHarness } from '@angular/material/table/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -88,15 +90,21 @@ describe('MapUserGroupIdsDialogComponent', () => {
     ]]);
   });
 
-  it('displays users by default', () => {
-    const rows = spectator.queryAll('tbody tr');
+  it('displays users by default', async () => {
+    const table = await loader.getHarness(MatTableHarness);
+    const rows = await table.getRows();
+
     expect(rows).toHaveLength(2);
-    expect(rows[0]).toHaveText('testuser');
-    expect(rows[0]).toHaveText('1000');
-    expect(rows[0]).toHaveText('Same');
-    expect(rows[1]).toHaveText('anotheruser');
-    expect(rows[1]).toHaveText('1001');
-    expect(rows[1]).toHaveText('2001');
+
+    const firstRowCells = await rows[0].getCells();
+    expect(await firstRowCells[0].getText()).toBe('testuser');
+    expect(await firstRowCells[1].getText()).toBe('1000');
+    expect(await firstRowCells[2].getText()).toBe('Same');
+
+    const secondRowCells = await rows[1].getCells();
+    expect(await secondRowCells[0].getText()).toBe('anotheruser');
+    expect(await secondRowCells[1].getText()).toBe('1001');
+    expect(await secondRowCells[2].getText()).toBe('2001');
   });
 
   it('switches to groups when type is changed', async () => {
@@ -106,16 +114,25 @@ describe('MapUserGroupIdsDialogComponent', () => {
     expect(spectator.component.typeControl.value).toBe(ViewType.Groups);
   });
 
-  it('deletes user mapping when delete button is clicked', () => {
+  it('deletes user mapping when delete button is clicked', async () => {
     const apiCallSpy = jest.spyOn(api, 'call');
     apiCallSpy.mockClear();
-    apiCallSpy.mockReturnValue(of(null));
+    apiCallSpy.mockImplementation((method) => {
+      if (method === 'user.update') {
+        return of(null);
+      }
+      if (method === 'user.query') {
+        return of(mockUsers);
+      }
+      return of(null);
+    });
 
-    const deleteButtons = spectator.queryAll('td button[mat-icon-button]');
-    expect(deleteButtons.length).toBeGreaterThan(0);
+    const table = await loader.getHarness(MatTableHarness);
+    const rows = await table.getRows();
+    const firstRowCells = await rows[0].getCells();
+    const deleteButton = await firstRowCells[3].getHarness(MatButtonHarness);
 
-    deleteButtons[0].click();
-    spectator.detectChanges();
+    await deleteButton.click();
 
     expect(apiCallSpy).toHaveBeenCalledWith('user.update', [1, { userns_idmap: null }]);
   });
@@ -132,12 +149,12 @@ describe('MapUserGroupIdsDialogComponent', () => {
     ]]);
   });
 
-  it('closes dialog when close button is clicked', () => {
+  it('closes dialog when close button is clicked', async () => {
     const dialogRef = spectator.inject(MatDialogRef);
     jest.spyOn(dialogRef, 'close');
 
-    const closeButton = spectator.query('.header button[mat-icon-button]');
-    closeButton.click();
+    const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '.header button[mat-icon-button]' }));
+    await closeButton.click();
 
     expect(dialogRef.close).toHaveBeenCalled();
   });

@@ -14,6 +14,8 @@
       matTooltipClass="tooltip-wide tooltip-multiline"
       [attr.aria-label]="'Help' | translate"
       [matTooltip]="idMapHintText"
+      (keydown.enter)="$event.preventDefault()"
+      (keydown.space)="$event.preventDefault()"
     ></tn-icon>
   </h1>
 

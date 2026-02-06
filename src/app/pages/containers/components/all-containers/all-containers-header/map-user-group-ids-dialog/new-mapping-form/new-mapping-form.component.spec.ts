@@ -10,9 +10,9 @@ import { directIdMapping, User } from 'app/interfaces/user.interface';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ViewType } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
 import { UserService } from 'app/services/user.service';
 import { NewMappingFormComponent } from './new-mapping-form.component';
-import { ViewType } from '../mapping.types';
 
 const mockUserService = {
   userQueryDsCache: jest.fn(() => of([])),

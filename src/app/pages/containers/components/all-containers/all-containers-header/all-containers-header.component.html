@@ -21,6 +21,7 @@
     *ixRequiresRoles="requiredRoles"
     mat-menu-item
     ixTest="map-user-group-ids"
+    [ixUiSearch]="searchableElements.elements.mapUserGroupIds"
     (click)="onMapUserGroupIds()"
   >
     {{ 'Map User/Group IDs' | translate }}
