@@ -50,6 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './map-user-group-ids-dialog.component.html',
   styleUrls: ['./map-user-group-ids-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     FakeProgressBarComponent,
     TnIconComponent,

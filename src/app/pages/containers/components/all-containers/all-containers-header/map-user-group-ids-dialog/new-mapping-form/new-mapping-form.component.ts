@@ -29,6 +29,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   selector: 'ix-new-mapping-form',
   templateUrl: './new-mapping-form.component.html',
   styleUrl: './new-mapping-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
@@ -43,7 +45,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     IxFieldsetComponent,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewMappingFormComponent implements OnChanges, OnInit {
   private api = inject(ApiService);
@@ -88,7 +89,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
       request$ = this.api.call('user.query', [[['username', '=', values.hostUidOrGid]]]).pipe(
         switchMap((users) => {
           if (!users.length) {
-            throw new Error('User not found');
+            throw new Error(this.translate.instant('User not found'));
           }
           return this.api.call('user.update', [users[0].id, update]);
         }),
@@ -98,7 +99,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
       request$ = this.api.call('group.query', [[['group', '=', values.hostUidOrGid]]]).pipe(
         switchMap((groups) => {
           if (!groups.length) {
-            throw new Error('Group not found');
+            throw new Error(this.translate.instant('Group not found'));
           }
           return this.api.call('group.update', [groups[0].id, update]);
         }),
@@ -129,7 +130,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
   private handleMapDirectlyChanges(): void {
     this.form.controls.mapDirectly.valueChanges.pipe(untilDestroyed(this)).subscribe((mapDirectly) => {
       if (mapDirectly) {
-        this.form.controls.instanceUidOrGid.setValidators(null);
+        this.form.controls.instanceUidOrGid.clearValidators();
       } else {
         this.form.controls.instanceUidOrGid.setValidators(Validators.required);
       }

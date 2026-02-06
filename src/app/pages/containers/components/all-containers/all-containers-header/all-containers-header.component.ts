@@ -28,6 +28,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   templateUrl: './all-containers-header.component.html',
   styleUrls: ['./all-containers-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     MatButton,
