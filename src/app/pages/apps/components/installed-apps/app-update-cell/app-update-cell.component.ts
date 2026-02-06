@@ -32,9 +32,4 @@ export class AppUpdateCellComponent {
     }
     return this.translate.instant('Revision available');
   }
-
-  protected getVersionMsg(): string {
-    // Show appropriate message in tooltip based on what changed
-    return this.getUpdateMessage();
-  }
 }
