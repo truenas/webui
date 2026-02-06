@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -19,7 +19,6 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 
 const adminUsername = 'truenas_admin';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-set-admin-password-form',
   templateUrl: './set-admin-password-form.component.html',
@@ -43,6 +42,7 @@ export class SetAdminPasswordFormComponent {
   private translate = inject(TranslateService);
   private signinStore = inject(SigninStore);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   isLoading$ = this.signinStore.isLoading$;
 
@@ -70,7 +70,7 @@ export class SetAdminPasswordFormComponent {
 
     request$.pipe(
       switchMap(() => this.authService.login(username, password)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult }) => {
         this.signinStore.setLoadingState(false);

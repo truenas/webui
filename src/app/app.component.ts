@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import { filter, tap } from 'rxjs';
@@ -16,7 +16,6 @@ import { WebSocketDebugPanelComponent } from 'app/modules/websocket-debug-panel/
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-root',
   templateUrl: './app.component.html',
@@ -35,6 +34,7 @@ export class AppComponent implements OnInit {
   private window = inject<Window>(WINDOW);
   private slideIn = inject(SlideIn);
   private pingService = inject(PingService);
+  private destroyRef = inject(DestroyRef);
 
   isAuthenticated = false;
   debugPanelEnabled = environment.debugPanel?.enabled || false;
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
     // and automatically set up ping when connection is established
     this.pingService.initializePingService();
     this.wsStatus.isAuthenticated$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isAuthenticated) => {
       if (!isAuthenticated && this.isAuthenticated) {
         this.handleAuthenticationLost();
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
       this.setFavicon(event.matches);
     });
 
-    this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
         this.slideIn.closeAll();
@@ -117,7 +117,7 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       tap(() => this.layoutService.getContentContainer()?.scrollTo(0, 0)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

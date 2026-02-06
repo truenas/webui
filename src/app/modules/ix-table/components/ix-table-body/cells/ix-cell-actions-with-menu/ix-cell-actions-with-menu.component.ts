@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, effect, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { isObservable } from 'rxjs';
@@ -15,7 +15,6 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cell-actions-with-menu',
   templateUrl: './ix-cell-actions-with-menu.component.html',
@@ -36,6 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxCellActionsWithMenuComponent<T> extends ColumnComponent<T> {
+  private destroyRef = inject(DestroyRef);
   actions: IconActionConfig<T>[] = [];
   Role = Role;
 
@@ -54,7 +54,7 @@ export class IxCellActionsWithMenuComponent<T> extends ColumnComponent<T> {
           const result$ = action.hidden(this.row());
 
           if (isObservable(result$)) {
-            result$.pipe(untilDestroyed(this)).subscribe((shouldHide) => {
+            result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((shouldHide) => {
               if (!shouldHide) {
                 this.visibleActions.update((item) => [...item, action]);
               }

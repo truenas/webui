@@ -1,10 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
@@ -18,7 +20,6 @@ import { customAppButtonElements } from 'app/pages/apps/components/available-app
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-custom-app-button',
   templateUrl: './custom-app-button.component.html',
@@ -43,6 +44,7 @@ export class CustomAppButtonComponent {
   private dockerStore = inject(DockerStore);
   private router = inject(Router);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = customAppButtonElements;
@@ -58,7 +60,7 @@ export class CustomAppButtonComponent {
   openCustomAppYamlCreation(): void {
     this.slideIn.open(CustomAppFormComponent, { wide: true }).pipe(
       filter((result) => !!result.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.router.navigate(['/apps']);

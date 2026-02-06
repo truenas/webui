@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal, OnInit, ChangeDetectorRef, inject, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, signal, OnInit, ChangeDetectorRef, inject, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-all-cloud-backups',
   templateUrl: './all-cloud-backups.component.html',
@@ -42,6 +41,7 @@ export class AllCloudBackupsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
 
@@ -52,7 +52,7 @@ export class AllCloudBackupsComponent implements OnInit {
 
   constructor() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .pipe(filter((event) => event instanceof NavigationStart), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
           this.dataProvider.expandedRow = null;
@@ -64,7 +64,7 @@ export class AllCloudBackupsComponent implements OnInit {
   ngOnInit(): void {
     this.route.fragment.pipe(
       tap((id) => this.loadCloudBackups(id || undefined)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -72,7 +72,7 @@ export class AllCloudBackupsComponent implements OnInit {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.dataProvider.load());
   }
 

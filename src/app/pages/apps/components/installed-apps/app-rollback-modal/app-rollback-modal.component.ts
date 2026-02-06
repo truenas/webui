@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-rollback-modal',
   templateUrl: './app-rollback-modal.component.html',
@@ -49,6 +50,7 @@ export class AppRollbackModalComponent {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private app = inject<App>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     app_version: ['', Validators.required],
@@ -72,7 +74,7 @@ export class AppRollbackModalComponent {
       { title: this.translate.instant(helptextApps.apps.rollbackDialog.job) },
     )
       .afterClosed()
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dialogRef.close(true));
   }
 
@@ -88,7 +90,7 @@ export class AppRollbackModalComponent {
           this.selectFirstVersion(options[0]);
         }
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

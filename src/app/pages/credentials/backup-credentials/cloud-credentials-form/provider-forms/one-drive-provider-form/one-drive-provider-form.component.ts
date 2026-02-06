@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
@@ -20,7 +20,6 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-one-drive-provider-form',
   templateUrl: './one-drive-provider-form.component.html',
@@ -39,6 +38,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild(OauthProviderComponent, { static: true }) oauthComponent: OauthProviderComponent;
 
@@ -73,7 +73,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   }
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       this.oauthComponent.form.patchValue(values);
     });
@@ -93,7 +93,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   }
 
   private setupDriveSelect(): void {
-    this.form.controls.drives.valueChanges.pipe(untilDestroyed(this)).subscribe((driveId) => {
+    this.form.controls.drives.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((driveId) => {
       const selectedDrive = this.drives.find((drive) => drive.drive_id === driveId);
       if (!selectedDrive) {
         return;
@@ -117,7 +117,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     }])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((drives) => {
         this.drives = drives;

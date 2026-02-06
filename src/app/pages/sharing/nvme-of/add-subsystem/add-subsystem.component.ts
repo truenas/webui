@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -6,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -51,7 +51,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-subsystem',
   styleUrls: ['./add-subsystem.component.scss'],
@@ -91,6 +90,7 @@ export class AddSubsystemComponent {
   private nvmeOfService = inject(NvmeOfService);
   private store$ = inject<Store<AppState>>(Store);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -126,7 +126,7 @@ export class AddSubsystemComponent {
       tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ subsystem, relatedErrors }) => {
       if (subsystem && relatedErrors?.length > 0) {
         this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {

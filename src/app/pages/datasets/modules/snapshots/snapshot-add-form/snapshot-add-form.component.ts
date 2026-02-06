@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
@@ -34,7 +34,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { StorageService } from 'app/services/storage.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
@@ -65,6 +64,7 @@ export class SnapshotAddFormComponent implements OnInit {
   private datasetStore = inject(DatasetTreeStore);
   private storageService = inject(StorageService);
   slideInRef = inject<SlideInRef<string | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
@@ -108,7 +108,7 @@ export class SnapshotAddFormComponent implements OnInit {
       this.getDatasetOptions(),
       this.getNamingSchemaOptions(),
     ]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([datasetOptions, namingSchemaOptions]) => {
         this.datasetOptions$ = of(datasetOptions);
@@ -126,7 +126,7 @@ export class SnapshotAddFormComponent implements OnInit {
     merge(
       this.form.controls.recursive.valueChanges,
       this.form.controls.dataset.valueChanges,
-    ).pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.checkForVmsInDataset());
 
     if (this.datasetId) {
       this.form.controls.dataset.setValue(this.datasetId);
@@ -151,7 +151,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
     this.isFormLoading.set(true);
     this.api.call('pool.snapshot.create', [params]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isFormLoading.set(false);
@@ -191,7 +191,7 @@ export class SnapshotAddFormComponent implements OnInit {
   private checkForVmsInDataset(): void {
     this.isFormLoading.set(true);
     this.api.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (hasVmsInDataset) => {
           this.hasVmsInDataset = hasVmsInDataset;

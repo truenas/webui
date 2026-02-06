@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of, switchMap } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -21,7 +21,6 @@ import {
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-protocol-options-wizard-step',
   templateUrl: './protocol-options-wizard-step.component.html',
@@ -41,6 +40,7 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   private iscsiService = inject(IscsiService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   form = input.required<IscsiWizardComponent['form']['controls']['options']>();
   isFibreChannelMode = input(false);
@@ -65,12 +65,12 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
       { label: this.translate.instant('Create New'), value: newOption },
       ...options,
     ])),
-    untilDestroyed(this),
+    takeUntilDestroyed(this.destroyRef),
   );
 
   readonly addressOptions$ = this.iscsiService.getIpChoices().pipe(
     choicesToOptions(),
-    untilDestroyed(this),
+    takeUntilDestroyed(this.destroyRef),
   );
 
   get isNewPortal(): boolean {
@@ -78,7 +78,7 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form().controls.portal.valueChanges.pipe(untilDestroyed(this)).subscribe((portal) => {
+    this.form().controls.portal.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((portal) => {
       if (portal === newOption) {
         this.form().controls.listen.enable();
         this.form().controls.listen.addValidators(Validators.required);

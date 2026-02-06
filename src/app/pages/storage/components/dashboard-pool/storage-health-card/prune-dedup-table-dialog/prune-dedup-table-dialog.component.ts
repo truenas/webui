@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -6,7 +7,6 @@ import {
 } from '@angular/material/dialog';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -31,7 +31,6 @@ export const pruneByLabels = new Map<PruneBy, string>([
   [PruneBy.Age, T('Age')],
 ]);
 
-@UntilDestroy()
 @Component({
   selector: 'ix-prune-dedup-table-dialog',
   styleUrls: ['prune-dedup-table-dialog.component.scss'],
@@ -61,6 +60,7 @@ export class PruneDedupTableDialog {
   private errorHandler = inject(ErrorHandlerService);
   private dialogRef = inject<MatDialogRef<PruneDedupTableDialog>>(MatDialogRef);
   protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
     pruneBy: [PruneBy.Percentage],
@@ -90,7 +90,7 @@ export class PruneDedupTableDialog {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Deduplication table pruned'));

@@ -1,10 +1,10 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -20,7 +20,6 @@ import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
@@ -48,6 +47,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private reportsService = inject(ReportsService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
 
@@ -81,7 +81,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
 
   private setupTabs(): void {
     this.reportsService.getReportGraphs()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.allTabs = this.reportsService.getReportTabs();
         this.activeTab = this.allTabs.find((tab) => {
@@ -95,13 +95,13 @@ export class ReportsGlobalControlsComponent implements OnInit {
     if (this.activeTab?.value !== ReportType.Disk) {
       return;
     }
-    this.form.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((values) => {
+    this.form.valueChanges.pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.diskOptionsChanged.emit({
         devices: values.devices || [],
         metrics: values.metrics || [],
       });
     });
-    this.diskDevices$.pipe(untilDestroyed(this)).subscribe((disks) => {
+    this.diskDevices$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((disks) => {
       const disksNames = this.route.snapshot.queryParams.disks as string[] | string;
       let devices: string[];
       if (disksNames) {
@@ -111,7 +111,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
       }
       this.form.patchValue({ devices });
     });
-    this.diskMetrics$.pipe(untilDestroyed(this)).subscribe((metrics) => {
+    this.diskMetrics$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((metrics) => {
       this.form.patchValue({ metrics: metrics.map((device) => String(device.value)) });
     });
   }
@@ -120,11 +120,11 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.store$.pipe(
       waitForPreferences,
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((preferences) => {
       this.form.patchValue({ autoRefresh: preferences.autoRefreshReports });
       this.form.controls.autoRefresh.valueChanges.pipe(
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.store$.dispatch(autoRefreshReportsToggled());
       });

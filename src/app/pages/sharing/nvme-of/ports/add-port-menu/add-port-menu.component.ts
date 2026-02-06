@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
@@ -18,7 +18,6 @@ import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-d
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-port-menu',
   templateUrl: './add-port-menu.component.html',
@@ -40,6 +39,7 @@ export class AddPortMenuComponent {
   private slideIn = inject(SlideIn);
   private matDialog = inject(MatDialog);
   private nvmeOfStore = inject(NvmeOfStore);
+  private destroyRef = inject(DestroyRef);
 
   subsystemPorts = input.required<NvmeOfPort[]>();
   portSelected = output<NvmeOfPort>();
@@ -61,7 +61,7 @@ export class AddPortMenuComponent {
       .open(PortFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((response) => {
         this.selectPort(response.response);

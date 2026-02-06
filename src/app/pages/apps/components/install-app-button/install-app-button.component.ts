@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, ViewContainerRef, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, ViewContainerRef,
+} from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, Observable, of, switchMap, take,
@@ -18,7 +19,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectPoolDialog } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-install-app-button',
   styleUrls: ['./install-app-button.component.scss'],
@@ -40,6 +40,7 @@ export class InstallAppButtonComponent {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private viewContainerRef = inject(ViewContainerRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly app = input<AvailableApp>();
 
@@ -75,7 +76,7 @@ export class InstallAppButtonComponent {
   }
 
   navigateToInstallPage(): void {
-    this.showAgreementWarning().pipe(untilDestroyed(this)).subscribe(() => {
+    this.showAgreementWarning().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.router.navigate(['/apps', 'available', this.app()?.train, this.app()?.name, 'install']);
     });
   }
@@ -84,7 +85,7 @@ export class InstallAppButtonComponent {
     this.showAgreementWarning().pipe(
       switchMap(() => this.matDialog.open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef }).afterClosed()),
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.navigateToInstallPage());
   }
 }

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
@@ -33,7 +33,6 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
   [QuotaType.None, T('None')],
 ]);
 
-@UntilDestroy()
 @Component({
   selector: 'ix-set-dedup-quota',
   templateUrl: './set-dedup-quota.component.html',
@@ -60,6 +59,7 @@ export class SetDedupQuotaComponent {
   private dialogRef = inject<MatDialogRef<SetDedupQuotaComponent>>(MatDialogRef);
   protected formatter = inject(IxFormatterService);
   protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
     quotaType: [null as QuotaType | null],
@@ -116,7 +116,7 @@ export class SetDedupQuotaComponent {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Quota settings updated'));

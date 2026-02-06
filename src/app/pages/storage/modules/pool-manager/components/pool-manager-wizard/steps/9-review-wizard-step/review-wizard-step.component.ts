@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -31,7 +31,6 @@ import {
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-review-wizard-step',
   templateUrl: './review-wizard-step.component.html',
@@ -58,6 +57,7 @@ export class ReviewWizardStepComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private poolManagerValidation = inject(PoolManagerValidationService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isAddingVdevs = input<boolean>();
 
@@ -102,13 +102,13 @@ export class ReviewWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+    this.store.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
       this.state = state;
       this.nonEmptyTopologyCategories = this.filterNonEmptyCategories(state.topology);
       this.cdr.markForCheck();
     });
 
-    this.poolManagerValidation.getPoolCreationErrors().pipe(untilDestroyed(this)).subscribe((errors) => {
+    this.poolManagerValidation.getPoolCreationErrors().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((errors) => {
       this.poolCreationErrors = errors;
       this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
     });
@@ -144,7 +144,7 @@ export class ReviewWizardStepComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.store.startOver();
       });

@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -25,7 +25,6 @@ export interface SedConfig {
   sedPassword: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-self-encrypting-drive-form',
   templateUrl: './self-encrypting-drive-form.component.html',
@@ -52,6 +51,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<SedConfig, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
@@ -98,7 +98,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     const values = this.form.value;
     delete values.sed_passwd2;
 
-    this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));

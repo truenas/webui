@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
@@ -9,7 +9,6 @@ import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-compon
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/arbitrary-text/widget-arbitrary-text.definition';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-arbitrary-text-settings',
   templateUrl: './widget-arbitrary-text-settings.component.html',
@@ -25,6 +24,7 @@ export class WidgetArbitraryTextSettingsComponent implements
   WidgetSettingsComponent<WidgetArbitraryTextSettings>, OnInit {
   widgetSettingsRef = inject<WidgetSettingsRef<WidgetArbitraryTextSettings>>(WidgetSettingsRef);
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.nonNullable.group({
     widgetTitle: [null as string | null, [Validators.required, Validators.maxLength(20)]],
@@ -53,7 +53,7 @@ export class WidgetArbitraryTextSettingsComponent implements
     this.widgetSettingsRef.updateValidity(
       getAllFormErrors(this.form, this.formFieldNames),
     );
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (settings) => {
         this.widgetSettingsRef.updateSettings({
           widgetTitle: settings.widgetTitle || '',

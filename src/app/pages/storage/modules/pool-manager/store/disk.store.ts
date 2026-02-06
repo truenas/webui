@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { sortBy } from 'lodash-es';
 import { Observable, tap } from 'rxjs';
@@ -18,7 +17,6 @@ const initialState: DiskState = {
   unusedDisks: [],
 };
 
-@UntilDestroy()
 @Injectable()
 export class DiskStore extends ComponentStore<DiskState> {
   private api = inject(ApiService);

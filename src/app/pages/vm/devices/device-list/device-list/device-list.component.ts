@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
@@ -42,7 +42,6 @@ import {
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/export-disk-dialog/export-disk-dialog.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-device-list',
   templateUrl: './device-list.component.html',
@@ -81,6 +80,7 @@ export class DeviceListComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
@@ -117,21 +117,21 @@ export class DeviceListComponent implements OnInit {
   ngOnInit(): void {
     const devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
       tap((devices) => this.devices = devices),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
     this.loadDevices();
     this.loadVmName();
     this.subscribeToVmUpdates();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
 
   loadVmName(): void {
     this.api.call('vm.query', [[['id', '=', this.vmId]]]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((vms: VirtualMachine[]) => {
       if (vms.length > 0) {
         this.vmName = vms[0].name;
@@ -142,7 +142,7 @@ export class DeviceListComponent implements OnInit {
 
   subscribeToVmUpdates(): void {
     this.api.subscribe('vm.query').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((event) => {
       if (event.id === this.vmId) {
         this.vmName = event.fields.name;
@@ -164,7 +164,7 @@ export class DeviceListComponent implements OnInit {
       },
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadDevices();
     });
@@ -179,7 +179,7 @@ export class DeviceListComponent implements OnInit {
       },
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadDevices();
     });
@@ -196,7 +196,7 @@ export class DeviceListComponent implements OnInit {
         },
       )
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(
         () => this.loadDevices(),
       );
@@ -226,7 +226,7 @@ export class DeviceListComponent implements OnInit {
     dialogRef.afterClosed()
       .pipe(
         filter((result) => !!result),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((result: { request: { source: string; destination: string }; destinationPath: string }) => {
         const jobDialogRef = this.dialogService.jobDialog(
@@ -241,7 +241,7 @@ export class DeviceListComponent implements OnInit {
         );
 
         jobDialogRef.afterClosed()
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: (jobResult) => {
               if (!jobResult?.error) {

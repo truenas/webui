@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, merge, of, switchMap,
@@ -29,7 +29,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-port-form',
   templateUrl: './port-form.component.html',
@@ -57,6 +56,7 @@ export class PortFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private formErrorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
 
@@ -138,7 +138,7 @@ export class PortFormComponent implements OnInit {
 
     request$.pipe(
       finalize(() => this.isLoading.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (port) => {
         this.slideInRef.close({

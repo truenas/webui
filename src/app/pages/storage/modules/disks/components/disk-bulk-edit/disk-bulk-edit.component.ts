@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -26,7 +26,6 @@ import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/tr
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
@@ -56,6 +55,7 @@ export class DiskBulkEditComponent {
   private snackbarService = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<Disk[], DiskFormResponse>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -136,7 +136,7 @@ export class DiskBulkEditComponent {
     this.isLoading = true;
     this.api
       .job('core.bulk', ['disk.update', req])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {

@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -8,7 +9,6 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -32,7 +32,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-trivial-permissions',
   templateUrl: './dataset-trivial-permissions.component.html',
@@ -71,6 +70,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private dialog = inject(DialogService);
   private validatorService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -145,7 +145,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       { title: this.translate.instant('Saving Permissions') },
     )
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Permissions saved.'));
@@ -163,7 +163,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       this.api.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
       this.storageService.filesystemStat(this.datasetPath),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([datasets, stat]) => {
           this.isLoading.set(false);
@@ -216,7 +216,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           message: this.translate.instant('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
         });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((confirmed) => {
       if (confirmed) {
         return;

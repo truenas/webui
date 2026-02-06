@@ -1,8 +1,8 @@
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nfs-session-list',
   templateUrl: './nfs-session-list.component.html',
@@ -54,6 +53,7 @@ export class NfsSessionListComponent implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly activeNfsType = signal<NfsType>(NfsType.Nfs3);
   protected readonly searchableElements = nfsSessionListElements;
@@ -135,7 +135,7 @@ export class NfsSessionListComponent implements OnInit {
         this.onListFiltered(this.searchQuery());
       }
     }),
-    untilDestroyed(this),
+    takeUntilDestroyed(this.destroyRef),
   );
 
   nfs3DataProvider = new AsyncDataProvider<Nfs3Session>(this.nfs3ProviderRequest$);
@@ -148,7 +148,7 @@ export class NfsSessionListComponent implements OnInit {
         this.onListFiltered(this.searchQuery());
       }
     }),
-    untilDestroyed(this),
+    takeUntilDestroyed(this.destroyRef),
   );
 
   nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
@@ -157,7 +157,7 @@ export class NfsSessionListComponent implements OnInit {
     this.loadData();
 
     combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
-      .pipe(untilDestroyed(this)).subscribe(() => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.onListFiltered(this.searchQuery());
       });
   }

@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
@@ -21,7 +20,6 @@ import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-d
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-list',
   templateUrl: './user-list.component.html',

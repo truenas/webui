@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -20,7 +19,6 @@ import {
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-hardware-disk-encryption',
   templateUrl: './hardware-disk-encryption.component.html',
@@ -41,6 +39,7 @@ export class HardwareDiskEncryptionComponent {
   private store$ = inject<Store<AppState>>(Store);
   private matDialog = inject(MatDialog);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly topologyDisk = input.required<TopologyDisk>();
 
@@ -68,7 +67,7 @@ export class HardwareDiskEncryptionComponent {
     this.matDialog.open(ManageDiskSedDialog, {
       data: this.topologyDisk().disk,
     }).afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 }

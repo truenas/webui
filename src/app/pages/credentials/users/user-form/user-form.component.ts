@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -35,7 +35,6 @@ import { defaultHomePath, UserFormStore, UserStigPasswordOption } from 'app/page
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-form',
   templateUrl: './user-form.component.html',
@@ -68,6 +67,7 @@ export class UserFormComponent implements OnInit {
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   protected isStigMode = this.userFormStore.isStigMode;
   protected editingUser = signal<User>(this.slideInRef.getData());
@@ -216,7 +216,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private setNamesInUseValidator(currentName?: string): void {
-    this.store$.select(selectUsers).pipe(untilDestroyed(this)).subscribe((users) => {
+    this.store$.select(selectUsers).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((users) => {
       let forbiddenNames = users.map((user) => user.username);
       if (currentName) {
         forbiddenNames = forbiddenNames.filter((name) => name !== currentName);
@@ -227,7 +227,7 @@ export class UserFormComponent implements OnInit {
 
   private setupUsernameUpdate(): void {
     this.form.controls.username.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (username) => {
         this.userFormStore.updateUserConfig({
@@ -240,7 +240,7 @@ export class UserFormComponent implements OnInit {
       map((state) => state?.userConfig?.username),
       filter(Boolean),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((username) => {
       this.form.patchValue({ username });
     });
@@ -258,7 +258,7 @@ export class UserFormComponent implements OnInit {
         && prev?.smbAccess === curr?.smbAccess
         && prev?.webshareAccess === curr?.webshareAccess
         && prev?.truenasAccess === curr?.truenasAccess),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       // Force form validation recalculation for all forms
       this.reloadFormValidationState();
@@ -271,14 +271,14 @@ export class UserFormComponent implements OnInit {
   private setupHomeAndShellWatchers(): void {
     this.additionalDetailsSection().form.controls.home.valueChanges.pipe(
       startWith(this.additionalDetailsSection().form.controls.home.value),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((home) => {
       this.homeDirectory.set(home || defaultHomePath);
     });
 
     this.additionalDetailsSection().form.controls.shell.valueChanges.pipe(
       startWith(this.additionalDetailsSection().form.controls.shell.value),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((shell) => {
       this.shell.set(shell);
     });
@@ -286,14 +286,14 @@ export class UserFormComponent implements OnInit {
     // Watch password and password_disabled for SMB validation
     this.authSection().form.controls.password.valueChanges.pipe(
       startWith(this.authSection().form.controls.password.value),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((pwd) => {
       this.password.set(pwd || '');
     });
 
     this.authSection().form.controls.password_disabled.valueChanges.pipe(
       startWith(this.authSection().form.controls.password_disabled.value),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((disabled) => {
       this.passwordDisabled.set(disabled || false);
     });
@@ -392,7 +392,7 @@ export class UserFormComponent implements OnInit {
         this.formErrorHandler.handleValidationErrors(error, this.allForms);
         return of(undefined);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (user) => {
         this.isFormLoading.set(false);
@@ -425,7 +425,7 @@ export class UserFormComponent implements OnInit {
 
     combineLatest(statusObservables).pipe(
       map((invalidArray) => invalidArray.some(Boolean)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isInvalid) => this.isFormInvalid.set(isInvalid));
   }
 }

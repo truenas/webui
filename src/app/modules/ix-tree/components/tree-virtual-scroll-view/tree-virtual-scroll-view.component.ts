@@ -5,9 +5,9 @@ import {
   CdkTree, CdkTreeNodeOutletContext,
 } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, IterableDiffers, OnChanges, OnDestroy, OnInit, output, TrackByFunction, viewChild, input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostBinding, inject, Input, IterableDiffers, OnChanges, OnDestroy, OnInit, output, TrackByFunction, viewChild, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTooltip } from '@angular/material/tooltip';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { ResizedEvent, AngularResizeEventModule } from 'angular-resize-event';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export const defaultSize = 48;
 export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-tree-virtual-scroll-view',
   exportAs: 'ixTreeVirtualScrollView',
@@ -52,6 +51,8 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
   ],
 })
 export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit, OnDestroy {
+  private destroyRef = inject(DestroyRef);
+
   protected override differs: IterableDiffers;
   protected override changeDetectorRef: ChangeDetectorRef;
 
@@ -138,7 +139,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     this.renderNodeChanges$.pipe(
       auditTime(0, scrollFrameScheduler),
       map((data) => [...data].map((node, index) => this.createNode(node, index))),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((nodes) => {
       this.nodes$.next(nodes);
       this._dataSourceChanged.next();

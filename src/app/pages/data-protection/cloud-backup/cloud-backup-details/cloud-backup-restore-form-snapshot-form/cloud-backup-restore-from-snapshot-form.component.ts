@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { datasetsRootNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
@@ -40,7 +40,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-restore-from-snapshot-form',
   templateUrl: './cloud-backup-restore-from-snapshot-form.component.html',
@@ -76,6 +75,8 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     backup: CloudBackup;
     snapshot: CloudBackupSnapshot;
   }, boolean>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;
@@ -161,7 +162,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       },
     )
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
@@ -226,7 +227,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   }
 
   private listenForFormChanges(): void {
-    this.form.controls.includeExclude.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.controls.includeExclude.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.disableHiddenFields();
 
@@ -244,7 +245,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       },
     });
 
-    this.form.controls.subFolder.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.controls.subFolder.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.form.controls.includedPaths.setValue([]);
         this.updateIncludedPathsRootNodes();

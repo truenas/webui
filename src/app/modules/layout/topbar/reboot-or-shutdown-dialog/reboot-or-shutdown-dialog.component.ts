@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -8,7 +8,6 @@ import {
   MatDialogModule,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -23,7 +22,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 const customReasonValue = 'CUSTOM_REASON_VALUE';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-reboot-or-shutdown-dialog',
   templateUrl: './reboot-or-shutdown-dialog.component.html',
@@ -50,6 +48,7 @@ export class RebootOrShutdownDialog {
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   isShutdown = inject(MAT_DIALOG_DATA) ?? false;
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({
     confirm: [false, Validators.requiredTrue],
@@ -129,7 +128,7 @@ export class RebootOrShutdownDialog {
   }
 
   constructor() {
-    this.form.controls.reason.valueChanges.pipe(untilDestroyed(this)).subscribe((reason) => {
+    this.form.controls.reason.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((reason) => {
       if (reason === customReasonValue) {
         this.form.controls.customReason.enable();
       } else {

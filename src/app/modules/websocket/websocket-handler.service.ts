@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
@@ -39,7 +39,6 @@ import {
 
 type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { jsonrpc: '2.0' };
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -51,6 +50,7 @@ export class WebSocketHandlerService {
   private webSocket = inject(WEBSOCKET);
   private debugService = inject(WebSocketDebugService);
   private mockResponseService = inject(MockResponseService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly wsConnection: WebSocketConnection;
   private connectionUrl: string;
@@ -273,7 +273,7 @@ export class WebSocketHandlerService {
         There are more than 20 calls queued.
         See queued calls in the browser's console logs`),
         title: this.translate.instant('Max Concurrent Calls'),
-      }).pipe(untilDestroyed(this)).subscribe({
+      }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.showingConcurrentCallsError = false;
         },

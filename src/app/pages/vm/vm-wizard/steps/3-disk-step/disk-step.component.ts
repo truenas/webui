@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { catchError, debounceTime, shareReplay } from 'rxjs/operators';
@@ -34,7 +34,6 @@ export enum NewOrExistingDisk {
 
 const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-step',
   templateUrl: './disk-step.component.html',
@@ -63,6 +62,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   private imageVirtualSizeValidator = inject(ImageVirtualSizeValidatorService);
   private filesystemService = inject(FilesystemService);
   formatter = inject(IxFormatterService);
+  private destroyRef = inject(DestroyRef);
 
   // Cache for virtual size API calls, keyed by image path
   private virtualSizeCache = new Map<string, Observable<number | null>>();
@@ -152,11 +152,11 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
 
   ngOnInit(): void {
     this.form.controls.newOrExisting
-      .valueChanges.pipe(untilDestroyed(this))
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.setConditionalValidators());
 
     this.form.controls.import_image
-      .valueChanges.pipe(untilDestroyed(this))
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.setConditionalValidators());
 
     // Trigger validation when image source changes (with debounce to avoid excessive API calls)
@@ -166,7 +166,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     this.form.controls.image_source
       .valueChanges.pipe(
         debounceTime(300),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         // Check current state to prevent race conditions when user rapidly changes modes

@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -21,7 +21,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-kernel-form',
   templateUrl: 'kernel-form.component.html',
@@ -48,6 +47,7 @@ export class KernelFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<boolean, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
@@ -90,7 +90,7 @@ export class KernelFormComponent implements OnInit {
       debugkernel: values.debugkernel,
     };
     this.isFormLoading.set(true);
-    this.api.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [commonBody]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));

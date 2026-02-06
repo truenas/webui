@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -16,7 +16,6 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-openstack-swift-provider-form',
   templateUrl: './openstack-swift-provider-form.component.html',
@@ -37,6 +36,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     user: ['', Validators.required],
@@ -73,7 +73,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
   readonly endpointTypes$ = of(mapToOptions(this.endpointTypes, this.translate));
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });

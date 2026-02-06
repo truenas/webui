@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
@@ -52,7 +52,6 @@ const typeOptions: Option[] = [
   },
 ];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-base-namespace-form',
   templateUrl: './base-namespace-form.component.html',
@@ -80,6 +79,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   private filesystemService = inject(FilesystemService);
   protected formatter = inject(IxFormatterService);
   private formErrorHandler = inject(FormErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   namespace = input<NvmeOfNamespace>();
   error = input<unknown>(null);
@@ -162,7 +162,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   private clearPathOnTypeChanges(): void {
     this.form.controls.device_type.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.form.patchValue({ device_path: '' });
       });

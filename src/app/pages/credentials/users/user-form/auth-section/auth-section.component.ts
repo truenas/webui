@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
@@ -14,7 +14,6 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/pages/credentials/users/user-form/user.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-auth-section',
   styleUrl: './auth-section.component.scss',
@@ -34,6 +33,7 @@ export class AuthSectionComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private userStore = inject(UserFormStore);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   editingUser = input<User>();
   homeDirectory = input<string>();
@@ -92,7 +92,7 @@ export class AuthSectionComponent implements OnInit {
 
   constructor() {
     this.form.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         const rawValue = this.form.getRawValue();
@@ -227,7 +227,7 @@ export class AuthSectionComponent implements OnInit {
 
   private setPasswordFieldRelations(): void {
     this.form.controls.password_disabled.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isDisabled) => {
       if (isDisabled) {
         this.form.controls.password.disable();
@@ -241,7 +241,7 @@ export class AuthSectionComponent implements OnInit {
     });
 
     this.form.controls.ssh_password_enabled.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((sshPasswordEnabled) => {
       if (sshPasswordEnabled) {
         this.form.controls.password_disabled.disable({ emitEvent: false });

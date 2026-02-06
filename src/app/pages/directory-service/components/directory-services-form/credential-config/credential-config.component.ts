@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output, OnInit, inject } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   map,
@@ -26,7 +25,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-credential-config',
   templateUrl: './credential-config.component.html',
@@ -44,6 +42,7 @@ export class CredentialConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private validationService = inject(DirectoryServiceValidationService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly helptext = helptextCredentials;
 
@@ -99,7 +98,7 @@ export class CredentialConfigComponent implements OnInit {
       .pipe(
         startWith(null),
         pairwise(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([prev, current]) => {
         if (prev?.credential_type !== current.credential_type) {

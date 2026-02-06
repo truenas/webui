@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, of,
@@ -27,7 +27,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-authorized-access-form',
   templateUrl: './authorized-access-form.component.html',
@@ -52,6 +51,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
 
   get isNew(): boolean {
@@ -208,7 +208,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       ? this.api.call('iscsi.auth.update', [this.editingAccess.id, payload])
       : this.api.call('iscsi.auth.create', [payload]);
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close({ response: true });

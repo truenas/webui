@@ -6,8 +6,10 @@ import {
 import {
   ComponentPortal,
 } from '@angular/cdk/portal';
-import { ComponentRef, computed, Injectable, Injector, signal, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  ComponentRef, computed, DestroyRef, inject, Injectable, Injector, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash-es';
@@ -24,13 +26,13 @@ import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-chang
 import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
 @Injectable({ providedIn: 'root' })
 export class SlideIn {
   private cdkOverlay = inject(Overlay);
   private injector = inject(Injector);
   private unsavedChangesService = inject(UnsavedChangesService);
+  private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
   private slideInInstances = signal<SlideInInstance<unknown, unknown>[]>([]);
@@ -90,7 +92,7 @@ export class SlideIn {
       share(),
     );
 
-    open$.pipe(untilDestroyed(this)).subscribe();
+    open$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     return open$.pipe(take(1));
   }
@@ -103,7 +105,7 @@ export class SlideIn {
     prevInstance.wide = Boolean(options?.wide);
     prevInstance.containerRef.instance.slideOut().pipe(
       delay(0),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.createContentPortal(prevInstance);
@@ -157,7 +159,7 @@ export class SlideIn {
     overlay.backdropClick().pipe(
       // Add a small delay to prevent immediate close on open
       delay(100),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       // Only close if slideInRef exists (fully initialized)
       if (instance.slideInRef) {
@@ -219,7 +221,7 @@ export class SlideIn {
         });
       }),
       switchMap(() => this.animateInTopComponent()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
     return close$;
   }
@@ -265,7 +267,7 @@ export class SlideIn {
         (!response?.response ? this.canCloseSlideIn(slideInInstance.needConfirmation) : of(true)).pipe(
           filter(Boolean),
           take(1), // Ensure we only process once
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe({
           next: () => {
             // Ensure close$ is not already completed
@@ -287,7 +289,7 @@ export class SlideIn {
       swap: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean }): void => {
         this.canCloseSlideIn(slideInInstance.needConfirmation).pipe(
           filter(Boolean),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe({
           next: () => {
             this.swap(

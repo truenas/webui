@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Subscription, debounceTime, distinctUntilChanged,
@@ -12,7 +12,6 @@ import { ManageUnusedDiskDialog } from 'app/pages/storage/components/unused-reso
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-unused-resources',
   templateUrl: './unused-resources.component.html',
@@ -25,6 +24,7 @@ export class UnusedResourcesComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   readonly pools = input.required<Pool[]>();
 
@@ -47,7 +47,7 @@ export class UnusedResourcesComponent implements OnInit {
   private updateUnusedDisks(): void {
     this.api.call('disk.details').pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((diskDetails) => {
       this.noPoolsDisks = diskDetails.unused;
       this.exportedPoolsDisks = diskDetails.used.filter((disk) => disk.exported_zpool);
@@ -61,7 +61,7 @@ export class UnusedResourcesComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.updateUnusedDisks();

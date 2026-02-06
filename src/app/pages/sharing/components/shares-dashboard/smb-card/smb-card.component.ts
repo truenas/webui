@@ -1,13 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -52,7 +50,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-smb-card',
   templateUrl: './smb-card.component.html',
@@ -88,6 +85,7 @@ export class SmbCardComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
@@ -155,7 +153,7 @@ export class SmbCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const smbShares$ = this.api.call('sharing.smb.query').pipe(untilDestroyed(this));
+    const smbShares$ = this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -164,7 +162,7 @@ export class SmbCardComponent implements OnInit {
   protected openForm(row?: SmbShare): void {
     this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dataProvider.load();
     });
@@ -178,7 +176,7 @@ export class SmbCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('sharing.smb.delete', [smb.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();
@@ -196,12 +194,12 @@ export class SmbCardComponent implements OnInit {
       // A home share has a name (homes) set; row.name works for other shares
       const searchName = (row.options as LegacySmbShareOptions)?.home ? 'homes' : row.name;
       this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
-        .pipe(untilDestroyed(this))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (shareAcl: SmbSharesec) => {
             this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => {
               this.dataProvider.load();
             });
@@ -239,7 +237,7 @@ export class SmbCardComponent implements OnInit {
 
     this.api.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();

@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -15,7 +14,6 @@ import {
   WidgetInterfaceIpSettings,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-interface-ip-settings',
   templateUrl: './widget-interface-ip-settings.component.html',
@@ -31,6 +29,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
   widgetSettingsRef = inject<WidgetSettingsRef<WidgetInterfaceIpSettings>>(WidgetSettingsRef);
   private fb = inject(FormBuilder);
   private resources = inject(WidgetResourcesService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.nonNullable.group({
     interface: [null as string | null, [Validators.required]],
@@ -70,7 +69,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     this.widgetSettingsRef.updateValidity(
       getAllFormErrors(this.form, this.formFieldNames),
     );
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (settings) => {
         this.widgetSettingsRef.updateSettings({ interface: settings.interface });
         this.widgetSettingsRef.updateValidity(

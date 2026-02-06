@@ -1,7 +1,7 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
@@ -13,7 +13,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-explorer-create-zvol',
   templateUrl: './explorer-create-zvol.component.html',
@@ -32,6 +31,7 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
   private explorer = inject(IxExplorerComponent);
   private slideIn = inject(SlideIn);
   private ngControl = inject(NgControl);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -45,7 +45,9 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // TODO: Unclear why this is needed, but control in `ngControl` is empty for some reason in constructor.
-    this.ngControl.control?.valueChanges?.pipe(untilDestroyed(this))?.subscribe((value: string | string[]) => {
+    this.ngControl.control?.valueChanges?.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    )?.subscribe((value: string | string[]) => {
       this.explorerValue.set(value);
     });
   }
@@ -64,7 +66,7 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
       },
     }).pipe(
       filter((response) => Boolean(response.response)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((response) => {
       const zvol = response.response;
       const node = this.explorer.lastSelectedNode();

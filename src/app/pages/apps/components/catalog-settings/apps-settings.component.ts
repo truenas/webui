@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
@@ -36,7 +38,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-apps-settings',
   templateUrl: './apps-settings.component.html',
@@ -73,6 +74,7 @@ export class AppsSettingsComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private urlValidationService = inject(UrlValidationService);
+  private destroyRef = inject(DestroyRef);
 
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
@@ -119,7 +121,7 @@ export class AppsSettingsComponent implements OnInit {
       this.api.call('catalog.config'),
       this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([catalogConfig, dockerConfig]) => {
         dockerConfig.address_pools.forEach(() => {
           this.addAddressPool();
@@ -182,7 +184,7 @@ export class AppsSettingsComponent implements OnInit {
         registry_mirrors: values.registry_mirrors,
       }]),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);

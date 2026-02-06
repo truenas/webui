@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -40,7 +40,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-jobs-panel',
   templateUrl: './jobs-panel.component.html',
@@ -71,6 +70,7 @@ export class JobsPanelComponent {
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
   error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
@@ -91,7 +91,7 @@ export class JobsPanelComponent {
         cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.store$.dispatch(abortJobPressed({ job }));
       });
@@ -128,7 +128,7 @@ export class JobsPanelComponent {
     jobProgressDialogRef.afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(jobProgressDialogRef.getSubscriptionLimiterInstance()),
+        takeUntilDestroyed(jobProgressDialogRef.getDestroyRef()),
       )
       .subscribe({
         next: () => {

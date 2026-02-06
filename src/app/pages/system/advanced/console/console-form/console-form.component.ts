@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
@@ -26,7 +26,6 @@ import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/co
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'ix-console-form',
   templateUrl: './console-form.component.html',
@@ -55,6 +54,7 @@ export class ConsoleFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<ConsoleConfig, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
@@ -68,7 +68,7 @@ export class ConsoleFormComponent implements OnInit {
     motd: [''],
   });
 
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   readonly tooltips = {
     consolemenu: helptext.consoleMenuTooltip,
@@ -95,6 +95,9 @@ export class ConsoleFormComponent implements OnInit {
       return of(this.form.dirty);
     });
     this.consoleConfig = this.slideInRef.getData();
+    this.destroyRef.onDestroy(() => {
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
+    });
   }
 
   ngOnInit(): void {
@@ -116,7 +119,7 @@ export class ConsoleFormComponent implements OnInit {
     this.isFormLoading.set(true);
     const values = this.form.value;
 
-    this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));

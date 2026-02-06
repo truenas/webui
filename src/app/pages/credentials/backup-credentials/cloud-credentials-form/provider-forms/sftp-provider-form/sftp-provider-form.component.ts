@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
@@ -18,7 +18,6 @@ import {
 
 const newOption = 'NEW';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-sftp-provider-form',
   templateUrl: './sftp-provider-form.component.html',
@@ -36,6 +35,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     host: ['', Validators.required],
@@ -62,7 +62,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });

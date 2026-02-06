@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import {
   MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
 } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
 import { of } from 'rxjs';
@@ -40,7 +40,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-subject/csr-subject.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-csr-add',
   templateUrl: './csr-add.component.html',
@@ -75,6 +74,7 @@ export class CsrAddComponent {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
@@ -146,7 +146,7 @@ export class CsrAddComponent {
 
     const payload = this.preparePayload();
     this.api.job('certificate.create', [payload])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.isLoading.set(false);

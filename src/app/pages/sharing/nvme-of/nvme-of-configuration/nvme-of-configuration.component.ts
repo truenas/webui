@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin, of } from 'rxjs';
@@ -30,7 +29,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
@@ -60,6 +58,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private nvmeOfService = inject(NvmeOfService);
+  private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -107,7 +106,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
     ]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([config, isRdmaCapable]) => {
       this.form.patchValue(config);
 
@@ -135,7 +134,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
     this.api.call('nvmet.global.update', [payload]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Global configuration updated.'));
       this.slideInRef.close({

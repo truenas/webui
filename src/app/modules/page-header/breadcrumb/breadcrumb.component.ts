@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
@@ -10,7 +10,6 @@ import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-par
 // TODO: Bad. Redo.
 const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-breadcrumb',
   templateUrl: './breadcrumb.component.html',
@@ -26,6 +25,7 @@ export class BreadcrumbComponent implements OnInit {
   private router = inject(Router);
   private routePartsService = inject(RoutePartsService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   breadcrumbs: RoutePart[];
 
@@ -35,7 +35,7 @@ export class BreadcrumbComponent implements OnInit {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.breadcrumbs = this.getBreadcrumbs();
         this.cdr.markForCheck();

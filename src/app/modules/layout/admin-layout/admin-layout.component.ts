@@ -1,12 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
 } from '@angular/material/sidenav';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -39,7 +38,6 @@ import {
   selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
@@ -73,6 +71,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private sessionTimeoutService = inject(SessionTimeoutService);
   private router = inject(Router);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
@@ -130,7 +129,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     performance.measure('Login', 'Login Start', 'Admin Init');
     this.sessionTimeoutService.start();
     this.themeService.loadTheme$.next('');
-    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
     this.listenForSidenavChanges();
@@ -145,7 +144,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupGlobalHighlightHandler(): void {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       // Wait for components to render and register their directives
       setTimeout(() => this.handlePendingHighlight(), searchDelayConst);
@@ -168,7 +167,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       // Directive not found yet (table data still loading) - wait for it to be registered
       const subscription = this.searchDirectives.directiveAdded$.pipe(
         filter((added) => !!added),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         const foundDirective = this.searchDirectives.get(pendingElement);
         if (foundDirective) {
@@ -211,7 +210,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForSidenavChanges(): void {
-    this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
+    this.sideNavs?.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.sidenavService.setSidenav(this.sideNavs.first);
     });
   }

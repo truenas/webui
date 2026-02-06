@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,7 +28,6 @@ import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/sto
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-permissions-card',
   templateUrl: 'permissions-card.component.html',
@@ -60,6 +59,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -149,7 +149,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.store.state$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (state) => {
           this.isLoading.set(state.isLoading);

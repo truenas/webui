@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -22,7 +22,6 @@ import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failov
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-failover-card',
   templateUrl: './failover-card.component.html',
@@ -50,6 +49,7 @@ export class FailoverCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = failoverCardElements;
   protected readonly requiredRoles = [Role.FailoverWrite];
@@ -68,7 +68,7 @@ export class FailoverCardComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((config) => {
         this.config.set(config);
@@ -79,7 +79,7 @@ export class FailoverCardComponent implements OnInit {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.slideIn.open(FailoverFormComponent, { data: this.config() })),
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadConfig());
   }
 

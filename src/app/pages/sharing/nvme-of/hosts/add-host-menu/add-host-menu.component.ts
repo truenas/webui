@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
@@ -17,7 +17,6 @@ import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/hos
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-host-menu',
   templateUrl: './add-host-menu.component.html',
@@ -39,6 +38,7 @@ export class AddHostMenuComponent {
   private slideIn = inject(SlideIn);
   private matDialog = inject(MatDialog);
   private nvmeOfStore = inject(NvmeOfStore);
+  private destroyRef = inject(DestroyRef);
 
   hosts = input.required<NvmeOfHost[]>();
   showAllowAnyHost = input(false);
@@ -62,7 +62,7 @@ export class AddHostMenuComponent {
       .open(HostFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((response) => {
         this.selectHost(response.response);

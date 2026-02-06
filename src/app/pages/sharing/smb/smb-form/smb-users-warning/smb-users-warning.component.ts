@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, Component, signal, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-smb-users-warning',
   styleUrls: ['./smb-users-warning.component.scss'],
@@ -23,6 +22,7 @@ export class SmbUsersWarningComponent implements OnInit {
   private router = inject(Router);
   private smbValidationService = inject(SmbValidationService);
   private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected hasSmbUsers = signal(true);
 
@@ -37,7 +37,7 @@ export class SmbUsersWarningComponent implements OnInit {
 
   private checkForSmbUsersWarning(): void {
     this.smbValidationService.checkForSmbUsersWarning().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((hasWarning) => {
       this.hasSmbUsers.set(!hasWarning);
     });

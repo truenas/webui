@@ -1,16 +1,13 @@
-import {
-  ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-groups-card',
   templateUrl: './iscsi-groups-card.component.html',
@@ -33,6 +30,7 @@ export class IscsiGroupsCardComponent implements OnInit {
 
   private readonly iscsiService = inject(IscsiService);
   private readonly translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly portalMap = computed(() => {
     return new Map(this.portals().map((portal) => [portal.value, portal.label]));
@@ -62,7 +60,7 @@ export class IscsiGroupsCardComponent implements OnInit {
 
   private loadPortals(): void {
     this.iscsiService.listPortals().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((portals) => {
       const opts: Option[] = portals.map((portal) => ({
         label: portal.comment ? `${portal.id} (${portal.comment})` : String(portal.id),
@@ -74,7 +72,7 @@ export class IscsiGroupsCardComponent implements OnInit {
 
   private loadInitiators(): void {
     this.iscsiService.getInitiators().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((initiators) => {
       const opts: Option[] = initiators.map((initiator) => {
         const initiatorsAllowed = initiator.initiators.length === 0

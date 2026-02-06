@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
@@ -54,7 +53,6 @@ import { VmService } from 'app/services/vm.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vm-list',
   templateUrl: './vm-list.component.html',
@@ -98,6 +96,7 @@ export class VmListComponent implements OnInit {
   private vmService = inject(VmService);
   private fileSizePipe = inject(FileSizePipe);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
@@ -198,7 +197,7 @@ export class VmListComponent implements OnInit {
   ngOnInit(): void {
     this.createDataProvider();
     this.subscribeToVmEvents();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -220,7 +219,7 @@ export class VmListComponent implements OnInit {
 
   subscribeToVmEvents(): void {
     this.api.subscribe('vm.query')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
         const updatedVm = event.fields;
         const vmId = updatedVm?.id || event.id;
@@ -259,7 +258,7 @@ export class VmListComponent implements OnInit {
     this.slideIn.open(VmWizardComponent)
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.vmService.checkMemory();
         this.refresh();
@@ -334,7 +333,7 @@ export class VmListComponent implements OnInit {
       // User wants to stop a running VM - show stop dialog
       this.vmService.doStop(vm).pipe(
         take(1),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe((confirmed: boolean) => {
         if (!confirmed) {
           // User cancelled - revert toggle state
@@ -345,7 +344,7 @@ export class VmListComponent implements OnInit {
       // User wants to start a stopped VM - start directly
       this.vmService.doStartResume(vm).pipe(
         take(1),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe((success: boolean) => {
         if (!success) {
           // Start failed - revert toggle state
@@ -358,7 +357,7 @@ export class VmListComponent implements OnInit {
   private handleAutostartToggle(vm: VirtualMachine, _checked: boolean, toggle: { toggle(): void }): void {
     this.vmService.toggleVmAutostart(vm).pipe(
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((success: boolean) => {
       if (!success) {
         // Operation failed - revert toggle state

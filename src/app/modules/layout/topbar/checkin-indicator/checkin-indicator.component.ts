@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -19,7 +19,6 @@ import {
   selectNetworkInterfacesCheckinWaiting,
 } from 'app/store/network-interfaces/network-interfaces.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-checkin-indicator',
   templateUrl: './checkin-indicator.component.html',
@@ -38,6 +37,7 @@ export class CheckinIndicatorComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected hasPendingNetworkChanges$ = this.store$.select(selectHasPendingNetworkChanges);
 
@@ -59,7 +59,7 @@ export class CheckinIndicatorComponent implements OnInit {
 
   private listenToCheckinStatus(): void {
     this.store$.select(selectNetworkInterfacesCheckinWaiting)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((checkinWaiting) => {
         this.isWaitingForCheckin = Boolean(checkinWaiting);
       });
@@ -75,7 +75,7 @@ export class CheckinIndicatorComponent implements OnInit {
       message: this.translate.instant(helptextInterfaces.pendingChangesMessage),
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    }).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.router.navigate(['/system/network']);
     });
   }

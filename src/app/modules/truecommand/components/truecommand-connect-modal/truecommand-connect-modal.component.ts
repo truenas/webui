@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -25,7 +27,6 @@ export interface TruecommandSignupModalState {
 
 export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 
-@UntilDestroy()
 @Component({
   selector: 'ix-truecommand-connect-modal',
   styleUrls: ['./truecommand-connect-modal.component.scss'],
@@ -56,6 +57,7 @@ export class TruecommandConnectModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private loader = inject(LoaderService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextTopbar;
   protected readonly requiredRoles = [Role.TrueCommandWrite];
@@ -101,7 +103,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       params.api_key = this.form.getRawValue().api_key;
     }
 
-    this.api.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('truecommand.update', [params]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.loader.close();
         this.dialogRef.close();
@@ -126,14 +128,14 @@ export class TruecommandConnectModalComponent implements OnInit {
       icon: helptextTopbar.tcDeregisterDialog.icon,
       message: helptextTopbar.tcDeregisterDialog.message,
       confirmBtnMsg: helptextTopbar.tcDeregisterDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
       }
 
       this.loader.open();
       this.api.call('truecommand.update', [{ api_key: null, enabled: false }])
-        .pipe(untilDestroyed(this))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.loader.close();

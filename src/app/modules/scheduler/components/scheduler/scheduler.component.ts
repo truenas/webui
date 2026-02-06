@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor, NgControl, ReactiveFormsModule, FormsModule,
 } from '@angular/forms';
 import { MatOptionSelectionChange, MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -21,7 +23,6 @@ import { CronPresetValue, getDefaultCrontabPresets } from 'app/modules/scheduler
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-scheduler',
   templateUrl: './scheduler.component.html',
@@ -44,6 +45,7 @@ export class SchedulerComponent implements ControlValueAccessor {
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -102,7 +104,7 @@ export class SchedulerComponent implements ControlValueAccessor {
       } as SchedulerModalConfig,
     })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((newCrontab: string) => {
         if (Object.values(CronPresetValue).includes(newCrontab as CronPresetValue)) {
           this.customCrontab = null;

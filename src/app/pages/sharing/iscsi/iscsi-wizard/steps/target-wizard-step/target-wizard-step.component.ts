@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -15,7 +14,6 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 import { IscsiService } from 'app/services/iscsi.service';
 import { LicenseService } from 'app/services/license.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-target-wizard-step',
   templateUrl: './target-wizard-step.component.html',

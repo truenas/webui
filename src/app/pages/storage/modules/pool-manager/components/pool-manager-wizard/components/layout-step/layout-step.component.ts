@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -9,7 +9,6 @@ import {
 import { AutomatedDiskSelectionComponent } from './automated-disk-selection/automated-disk-selection.component';
 import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-layout-applied.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-layout-step',
   templateUrl: './layout-step.component.html',
@@ -20,6 +19,7 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
 export class LayoutStepComponent implements OnInit {
   private store = inject(PoolManagerStore);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>(false);
   readonly type = input.required<VDevType>();
@@ -37,7 +37,7 @@ export class LayoutStepComponent implements OnInit {
   }
 
   private connectToStore(): void {
-    this.store.state$.pipe(untilDestroyed(this)).subscribe(({ topology }) => {
+    this.store.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(({ topology }) => {
       this.topologyCategory = topology[this.type()];
       this.cdr.markForCheck();
     });

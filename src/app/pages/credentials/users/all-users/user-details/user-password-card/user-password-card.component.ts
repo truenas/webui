@@ -1,12 +1,11 @@
-import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, ChangeDetectionStrategy, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardTitle, MatCardHeader, MatCardContent,
   MatCardActions,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
@@ -25,7 +24,6 @@ import { userPasswordCardElements } from 'app/pages/credentials/users/all-users/
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-password-card',
   templateUrl: './user-password-card.component.html',
@@ -54,6 +52,7 @@ export class UserPasswordCardComponent {
   private api = inject(ApiService);
   private matDialog = inject(MatDialog);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   user = input.required<User>();
 
@@ -82,7 +81,7 @@ export class UserPasswordCardComponent {
         );
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

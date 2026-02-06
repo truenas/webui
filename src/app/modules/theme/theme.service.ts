@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TnThemeService, TnTheme } from '@truenas/ui-components';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -12,7 +12,6 @@ import { AppState } from 'app/store';
 import { themeNotFound } from 'app/store/preferences/preferences.actions';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -20,6 +19,7 @@ export class ThemeService {
   private store$ = inject<Store<AppState>>(Store);
   private window = inject<Window>(WINDOW);
   private tnThemeService = inject(TnThemeService);
+  private destroyRef = inject(DestroyRef);
 
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
@@ -57,7 +57,7 @@ export class ThemeService {
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((theme: string) => {
       this.window.sessionStorage.setItem('theme', theme);
       this.onThemeChanged(theme);

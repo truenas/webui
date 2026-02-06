@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, ValidatorFn, AbstractControl, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { finalize, of, switchMap } from 'rxjs';
@@ -30,7 +30,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-host-form',
   templateUrl: './host-form.component.html',
@@ -65,6 +64,7 @@ export class HostFormComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
 
@@ -172,7 +172,7 @@ export class HostFormComponent implements OnInit {
       .pipe(
         finalize(() => this.isGeneratingHostKey.set(false)),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((key) => {
         this.form.patchValue({
@@ -191,7 +191,7 @@ export class HostFormComponent implements OnInit {
       .pipe(
         finalize(() => this.isGeneratingTrueNasKey.set(false)),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((key) => {
         this.form.patchValue({
@@ -217,7 +217,7 @@ export class HostFormComponent implements OnInit {
     request$.pipe(
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (savedHost) => {
         this.slideInRef.close({

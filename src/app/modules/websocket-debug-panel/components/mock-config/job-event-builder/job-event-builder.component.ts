@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, OnChanges, inject, input, output,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, output,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -18,7 +18,6 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-job-event-builder',
   standalone: true,
@@ -43,6 +42,8 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   readonly eventsChange = output<MockEvent[]>();
 
   private readonly fb = inject(FormBuilder);
+
+  private destroyRef = inject(DestroyRef);
   private isUpdatingFromInput = false;
 
   protected readonly stateOptions$ = of<SelectOption[]>([
@@ -61,7 +62,7 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
     // Emit changes when form updates with debounce to prevent partial values
     this.form.valueChanges.pipe(
       debounceTime(300),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       if (!this.isUpdatingFromInput) {
         const formEvents = this.getFormEvents();

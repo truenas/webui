@@ -1,9 +1,9 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -16,7 +16,6 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-config-reset',
   templateUrl: './config-reset.component.html',
@@ -41,12 +40,13 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
   private location = inject(Location);
   private api = inject(ApiService);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   private connectedSubscription: Timeout;
 
   isWsConnected(): void {
     // TODO: isConnected$ doesn't work correctly.
-    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe({
+    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();
@@ -87,7 +87,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.wsManager.prepareShutdown();

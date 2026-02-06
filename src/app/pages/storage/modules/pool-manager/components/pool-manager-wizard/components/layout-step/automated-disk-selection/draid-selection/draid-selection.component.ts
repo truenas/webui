@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
@@ -29,7 +29,6 @@ const parityDisksPerGroup = {
 
 const maxDisksInDraidGroup = 255;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-draid-selection',
   templateUrl: './draid-selection.component.html',
@@ -46,6 +45,7 @@ const maxDisksInDraidGroup = 255;
 export class DraidSelectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   private store = inject(PoolManagerStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
@@ -103,7 +103,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
       this.store.startOver$,
       this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.form.setValue({
           children: null,
@@ -126,21 +126,21 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   }
 
   private updateControlOptionsOnChanges(): void {
-    this.form.controls.dataDevicesPerGroup.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.dataDevicesPerGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateSparesOptions();
     });
 
-    this.form.controls.spares.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.spares.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateChildrenOptions();
     });
 
-    this.form.controls.children.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.children.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateVdevsNumberOptions();
     });
   }
 
   private updateStoreOnChanges(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const values = this.form.getRawValue();
 
       this.store.setAutomaticTopologyCategory(this.type(), {

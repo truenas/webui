@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,7 +30,6 @@ import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-sna
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vmware-snapshot-list',
   templateUrl: './vmware-snapshot-list.component.html',
@@ -62,6 +61,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
@@ -99,11 +99,11 @@ export class VmwareSnapshotListComponent implements OnInit {
   ngOnInit(): void {
     const snapshots$ = this.api.call('vmware.query').pipe(
       tap((snapshots) => this.snapshots = snapshots),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -120,14 +120,14 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected doAdd(): void {
     this.slideIn.open(VmwareSnapshotFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getSnapshotsData());
   }
 
   protected doEdit(snapshot: VmwareSnapshot): void {
     this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getSnapshotsData());
   }
 
@@ -141,7 +141,7 @@ export class VmwareSnapshotListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('vmware.delete', [snapshot.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getSnapshotsData();

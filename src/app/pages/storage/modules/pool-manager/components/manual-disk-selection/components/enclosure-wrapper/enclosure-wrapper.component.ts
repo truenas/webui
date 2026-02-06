@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TnIconComponent } from '@truenas/ui-components';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-wrapper',
   templateUrl: './enclosure-wrapper.component.html',

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   forkJoin, of, switchMap,
@@ -40,7 +40,6 @@ import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prev
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vm-edit-form',
   templateUrl: './vm-edit-form.component.html',
@@ -79,6 +78,7 @@ export class VmEditFormComponent implements OnInit {
   private dialog = inject(DialogService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
   slideInRef = inject<SlideInRef<VirtualMachine, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
@@ -194,7 +194,7 @@ export class VmEditFormComponent implements OnInit {
         this.api.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
         this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       ])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isLoading = false;
@@ -215,7 +215,7 @@ export class VmEditFormComponent implements OnInit {
       ?.filter((device) => device.attributes.dtype === VmDeviceType.Pci)
       ?.map((pciDevice: VmPciPassthroughDevice) => pciDevice.attributes.pptdev) || [];
 
-    this.gpuService.getAllGpus().pipe(untilDestroyed(this)).subscribe((allGpus) => {
+    this.gpuService.getAllGpus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((allGpus) => {
       // Only include GPUs that have at least one of their PCI devices attached to the VM
       const vmGpus = allGpus.filter((gpu) => {
         return gpu.devices.some((pciDevice) => vmPciSlots.includes(pciDevice.vm_pci_slot));
@@ -231,7 +231,7 @@ export class VmEditFormComponent implements OnInit {
   private listenForFormValueChanges(): void {
     this.setPinVcpusRelation();
     this.form.controls.cpu_mode.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.showCpuModelField = value === VmCpuMode.Custom;
       });
@@ -241,7 +241,7 @@ export class VmEditFormComponent implements OnInit {
     // Setup critical GPU prevention with cached observable
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
       this.form.controls.gpus,
-      this,
+      this.destroyRef,
       this.translate.instant('Cannot Select GPU'),
       this.translate.instant('System critical GPUs cannot be used for VMs'),
       this.cachedGpuPciChoices$,
@@ -250,7 +250,7 @@ export class VmEditFormComponent implements OnInit {
 
   private setPinVcpusRelation(): void {
     this.form.controls.cpuset.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((cpuset) => {
         if (cpuset) {
           this.form.controls.pin_vcpus.enable();

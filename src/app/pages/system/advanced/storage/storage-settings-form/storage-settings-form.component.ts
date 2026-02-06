@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -41,7 +41,6 @@ export interface StorageSettingsData {
   priorityResilver: ResilverConfig;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-storage-settings-form',
   styleUrls: ['./storage-settings-form.component.scss'],
@@ -74,6 +73,7 @@ export class StorageSettingsFormComponent implements OnInit {
   private taskService = inject(TaskService);
   private auth = inject(AuthService);
   slideInRef = inject<SlideInRef<StorageSettingsData, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly rolesToEditPool = [Role.DatasetWrite];
   protected readonly rolesToEditPriorityResilver = [Role.PoolWrite];
@@ -161,7 +161,7 @@ export class StorageSettingsFormComponent implements OnInit {
     forkJoin(requests)
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         complete: () => {

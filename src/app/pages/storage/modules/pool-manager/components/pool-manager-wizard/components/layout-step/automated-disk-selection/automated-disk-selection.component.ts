@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, OnChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -19,7 +19,6 @@ import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topo
 import { DraidSelectionComponent } from './draid-selection/draid-selection.component';
 import { NormalSelectionComponent } from './normal-selection/normal-selection.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-automated-disk-selection',
   templateUrl: './automated-disk-selection.component.html',
@@ -40,6 +39,7 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
 export class AutomatedDiskSelectionComponent implements OnChanges {
   protected store = inject(PoolManagerStore);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>(false);
   readonly type = input<VDevType>();
@@ -83,18 +83,20 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   });
 
   private updateStoreOnChanges(): void {
-    this.store.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this)).subscribe({
-      next: () => {
-        const type = this.type();
-        if (
-          (!this.canChangeLayout() && !this.isDataVdev())
-          && (type && this.limitLayouts().length)
-        ) {
-          this.store.setTopologyCategoryLayout(type, this.limitLayouts()[0]);
-        }
-      },
-    });
-    this.layoutControl.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
+    this.store.isLoading$
+      .pipe(filter((isLoading) => !isLoading), take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          const type = this.type();
+          if (
+            (!this.canChangeLayout() && !this.isDataVdev())
+            && (type && this.limitLayouts().length)
+          ) {
+            this.store.setTopologyCategoryLayout(type, this.limitLayouts()[0]);
+          }
+        },
+      });
+    this.layoutControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((layout) => {
       if (!layout) {
         return;
       }
@@ -107,7 +109,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
       this.store.startOver$,
       this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.layoutControl.setValue(this.canChangeLayout() ? null : this.limitLayouts()[0]);
       });

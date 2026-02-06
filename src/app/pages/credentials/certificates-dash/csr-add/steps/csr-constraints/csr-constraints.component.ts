@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
@@ -35,7 +35,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/extensions.constants';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-csr-constraints',
   templateUrl: './csr-constraints.component.html',
@@ -60,6 +59,7 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
     BasicConstraints: this.formBuilder.nonNullable.group({
@@ -175,7 +175,7 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
 
   private updateUsagesValidator(): void {
     this.form.controls.ExtendedKeyUsage.controls.enabled.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wasEnabled) => {
         const usages = this.form.controls.ExtendedKeyUsage.controls.usages;
 
@@ -257,7 +257,7 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
       .pipe(
         choicesToOptions(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((options) => {
         this.extendedKeyUsageOptions = options;

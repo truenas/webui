@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { storageEmptyConfig } from 'app/constants/empty-configs';
@@ -21,7 +21,6 @@ import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-re
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-pools-dashboard',
   templateUrl: './pools-dashboard.component.html',
@@ -50,6 +49,7 @@ export class PoolsDashboardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private store = inject(PoolsDashboardStore);
   protected translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PoolWrite];
   readonly searchableElements = storageElements;
@@ -72,7 +72,7 @@ export class PoolsDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.rootDatasets$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((rootDatasets) => {
         this.rootDatasets = rootDatasets;
         this.cdr.markForCheck();
@@ -88,7 +88,7 @@ export class PoolsDashboardComponent implements OnInit {
   protected onImportPool(): void {
     this.slideIn.open(ImportPoolComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.store.loadDashboard());
   }
 }

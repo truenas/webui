@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
@@ -15,7 +15,6 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-google-drive-provider-form',
   templateUrl: './google-drive-provider-form.component.html',
@@ -35,6 +34,7 @@ import {
 export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   private readonly oauthComponent = viewChild.required(OauthProviderComponent);
 
@@ -44,7 +44,7 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
   });
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       this.oauthComponent().form.patchValue(values);
       this.cdr.detectChanges();

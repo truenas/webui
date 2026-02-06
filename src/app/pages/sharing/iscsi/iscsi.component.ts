@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -18,7 +17,6 @@ import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { IscsiService } from 'app/services/iscsi.service';
 import { LicenseService } from 'app/services/license.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
@@ -44,6 +42,7 @@ export class IscsiComponent {
   private slideIn = inject(SlideIn);
   private iscsiService = inject(IscsiService);
   private license = inject(LicenseService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = iscsiElements;
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
@@ -90,7 +89,7 @@ export class IscsiComponent {
     this.slideIn.open(IscsiWizardComponent)
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ response }) => {
         this.iscsiService.refreshData(response);

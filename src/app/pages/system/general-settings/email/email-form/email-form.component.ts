@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -39,7 +38,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-email-form',
   templateUrl: './email-form.component.html',
@@ -75,6 +73,7 @@ export class EmailFormComponent implements OnInit {
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject(Store<AppState>);
   slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   private productType = toSignal(this.store$.select(selectProductType));
 
@@ -186,7 +185,7 @@ export class EmailFormComponent implements OnInit {
     this.api.call('mail.local_administrator_email')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((email) => {
         if (!email) {
@@ -211,7 +210,7 @@ export class EmailFormComponent implements OnInit {
     const update = this.prepareConfigUpdate();
 
     this.api.call('mail.update', [update])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -249,7 +248,7 @@ export class EmailFormComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Test email sent.'));

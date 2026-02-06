@@ -1,10 +1,8 @@
 import { AfterViewInit, ComponentRef, Directive, input, OnChanges, ViewContainerRef, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component';
 
-@UntilDestroy()
 @Directive({
   selector: '[ix-table-empty]',
 })

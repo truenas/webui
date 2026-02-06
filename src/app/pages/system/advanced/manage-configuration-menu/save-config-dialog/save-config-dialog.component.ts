@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
@@ -29,7 +29,6 @@ export interface SaveConfigDialogMessages {
   cancelButton: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-save-config-dialog',
   templateUrl: './save-config-dialog.component.html',
@@ -55,6 +54,7 @@ export class SaveConfigDialog {
   private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
@@ -104,7 +104,7 @@ export class SaveConfigDialog {
           arguments: [{ secretseed: this.exportSeedCheckbox.value }],
         });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dialogRef.close(true);

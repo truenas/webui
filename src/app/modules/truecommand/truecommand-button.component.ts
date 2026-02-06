@@ -1,10 +1,12 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
@@ -28,7 +30,6 @@ import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-truecommand-button',
   styleUrls: ['./truecommand-button.component.scss'],
@@ -52,6 +53,7 @@ export class TruecommandButtonComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly TrueCommandStatus = TrueCommandStatus;
   tooltips = helptextTopbar.tooltips;
@@ -76,12 +78,12 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.api.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {
+    this.api.call('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.tcStatus = config;
       this.tcConnected = !!config.api_key;
       this.cdr.markForCheck();
     });
-    this.api.subscribe('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       this.tcStatus = event.fields;
       this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
@@ -102,7 +104,7 @@ export class TruecommandButtonComponent implements OnInit {
         } as TruecommandSignupModalState,
       })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((dialogResult: TruecommandSignupModalResult) => {
         if (isObject(dialogResult) && dialogResult?.deregistered) {
           this.tcStatusDialogRef.close(true);
@@ -124,10 +126,10 @@ export class TruecommandButtonComponent implements OnInit {
       icon: helptextTopbar.stopTCConnectingDialog.icon,
       message: helptextTopbar.stopTCConnectingDialog.message,
       confirmBtnMsg: helptextTopbar.stopTCConnectingDialog.confirmBtnMsg,
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.loader.open();
-        this.api.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
+        this.api.call('truecommand.update', [{ enabled: false }]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.loader.close();
           },
@@ -143,7 +145,7 @@ export class TruecommandButtonComponent implements OnInit {
   private openSignupDialog(): void {
     this.matDialog.open(TruecommandSignupModalComponent)
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((shouldConnect) => {
         if (!shouldConnect) {
           return;
@@ -173,7 +175,7 @@ export class TruecommandButtonComponent implements OnInit {
       });
     }
 
-    this.tcStatusDialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(
+    this.tcStatusDialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       () => {
         this.isTcStatusOpened = false;
         this.cdr.markForCheck();

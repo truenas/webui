@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
@@ -19,7 +19,6 @@ import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-form-glossary',
   templateUrl: './ix-form-glossary.component.html',
@@ -37,6 +36,7 @@ export class IxFormGlossaryComponent implements OnInit {
   private formService = inject(IxFormService);
   private cdr = inject(ChangeDetectorRef);
   private navigateAndHighlight = inject(NavigateAndHighlightService);
+  private destroyRef = inject(DestroyRef);
 
   protected searchControl = this.formBuilder.control('');
   protected searchOptions = signal<Option[]>([]);
@@ -65,7 +65,7 @@ export class IxFormGlossaryComponent implements OnInit {
       map((controlsWithLabels) => controlsWithLabels.map(
         (nameWithLabel) => ({ label: nameWithLabel.label, value: nameWithLabel.name }),
       )),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (options) => this.searchOptions.set(options),
     });
@@ -73,7 +73,7 @@ export class IxFormGlossaryComponent implements OnInit {
 
   private handleSectionUpdates(): void {
     this.formService.controlSections$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (sectionsWithControls) => {
         this.updateControlsStatusUpdates(sectionsWithControls);
@@ -98,7 +98,7 @@ export class IxFormGlossaryComponent implements OnInit {
         this.setControlValidity(section, control, control ? control.valid : true);
 
         const subscription = control?.statusChanges.pipe(
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe({
           next: () => {
             this.setControlValidity(section, control, control.valid);
@@ -153,7 +153,7 @@ export class IxFormGlossaryComponent implements OnInit {
     this.searchControl.valueChanges.pipe(
       debounceTime(100),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((value: string) => {
       const option = this.searchOptions().find((opt) => opt.value === value)
         || this.searchOptions().find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());

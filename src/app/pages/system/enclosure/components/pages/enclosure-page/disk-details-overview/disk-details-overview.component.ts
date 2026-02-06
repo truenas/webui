@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatMiniFabButton } from '@angular/material/button';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
@@ -11,7 +10,6 @@ import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/id
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { DiskDetailsComponent } from './disks-overview-details/disk-details.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-details-overview',
   templateUrl: './disk-details-overview.component.html',

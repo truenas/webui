@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
@@ -8,7 +7,6 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 
 type SelectListValue = string | number | null | (string | number | null)[];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-filter-select-list',
   styleUrls: ['./filter-select-list.component.scss'],

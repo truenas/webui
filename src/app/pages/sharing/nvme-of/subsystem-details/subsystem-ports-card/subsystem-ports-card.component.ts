@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,7 +22,6 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { subsystemPortsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-subsystem-ports-card',
   templateUrl: './subsystem-ports-card.component.html',
@@ -51,6 +50,7 @@ export class SubsystemPortsCardComponent {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private nvmeOfStore = inject(NvmeOfStore);
+  private destroyRef = inject(DestroyRef);
 
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
@@ -65,7 +65,7 @@ export class SubsystemPortsCardComponent {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Port added to the subsystem'));
@@ -79,7 +79,7 @@ export class SubsystemPortsCardComponent {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Port removed from the subsystem'));

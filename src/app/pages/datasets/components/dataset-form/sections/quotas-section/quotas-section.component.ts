@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { pickBy } from 'lodash-es';
 import { GiB } from 'app/constants/bytes.constant';
@@ -17,7 +17,6 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 const warning = 80;
 const critical = 95;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-quotas-section',
   styleUrls: ['./quotas-section.component.scss'],
@@ -36,6 +35,7 @@ export class QuotasSectionComponent implements OnInit {
   formatter = inject(IxFormatterService);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly formValidityChange = output<boolean>();
 
@@ -65,7 +65,7 @@ export class QuotasSectionComponent implements OnInit {
   ngOnInit(): void {
     this.setFormRelations();
 
-    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+    this.form.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => {
       this.formValidityChange.emit(status === 'VALID');
     });
   }
@@ -97,19 +97,27 @@ export class QuotasSectionComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    this.form.controls.refquota_warning_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((isInherit) => {
+    this.form.controls.refquota_warning_inherit.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isInherit) => {
       this.setDisabledForControl(this.form.controls.refquota_warning, isInherit);
     });
 
-    this.form.controls.refquota_critical_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((isInherit) => {
+    this.form.controls.refquota_critical_inherit.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isInherit) => {
       this.setDisabledForControl(this.form.controls.refquota_critical, isInherit);
     });
 
-    this.form.controls.quota_warning_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((isInherit) => {
+    this.form.controls.quota_warning_inherit.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isInherit) => {
       this.setDisabledForControl(this.form.controls.quota_warning, isInherit);
     });
 
-    this.form.controls.quota_critical_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((isInherit) => {
+    this.form.controls.quota_critical_inherit.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isInherit) => {
       this.setDisabledForControl(this.form.controls.quota_critical, isInherit);
     });
 

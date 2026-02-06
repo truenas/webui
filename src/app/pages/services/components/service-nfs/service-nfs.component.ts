@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -40,7 +40,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-service-nfs',
   templateUrl: './service-nfs.component.html',
@@ -75,6 +74,7 @@ export class ServiceNfsComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private matDialog = inject(MatDialog);
   private validatorsService = inject(IxValidatorsService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly isFormLoading = signal(false);
@@ -149,7 +149,7 @@ export class ServiceNfsComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         finalize(() => this.isFormLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.setFieldDependencies();
@@ -167,7 +167,7 @@ export class ServiceNfsComponent implements OnInit {
 
     this.isFormLoading.set(true);
     this.api.call('nfs.update', [params])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
@@ -226,7 +226,7 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private setFieldDependencies(): void {
-    this.form.controls.protocols.valueChanges.pipe(untilDestroyed(this)).subscribe((protocols) => {
+    this.form.controls.protocols.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((protocols) => {
       const nfs4Enabled = protocols.includes(NfsProtocol.V4);
       if (!nfs4Enabled) {
         this.form.patchValue({
@@ -257,7 +257,7 @@ export class ServiceNfsComponent implements OnInit {
       hideCheckbox: true,
       buttonText: this.translate.instant('Yes'),
       cancelText: this.translate.instant('No'),
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
       }

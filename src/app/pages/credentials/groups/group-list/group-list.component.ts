@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -39,7 +39,6 @@ import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-group-list',
   templateUrl: './group-list.component.html',
@@ -70,6 +69,7 @@ export class GroupListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
@@ -162,7 +162,7 @@ export class GroupListComponent implements OnInit {
   private getPreferences(): void {
     this.store$.pipe(
       waitForPreferences,
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((preferences) => {
       this.hideBuiltinGroups = preferences.hideBuiltinGroups;
       this.cdr.markForCheck();
@@ -172,7 +172,7 @@ export class GroupListComponent implements OnInit {
   private getGroups(): void {
     this.store$.pipe(
       select(selectGroups),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (groups) => {
         this.groups = groups;

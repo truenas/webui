@@ -1,11 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TrackByFunction, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconAnchor } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { differenceInDays } from 'date-fns';
@@ -40,7 +40,6 @@ interface BackupRow {
   direction: Direction;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-backup',
   templateUrl: './widget-backup.component.html',
@@ -70,6 +69,7 @@ export class WidgetBackupComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private slideIn = inject(SlideIn);
   private widgetResourcesService = inject(WidgetResourcesService);
+  private destroyRef = inject(DestroyRef);
 
   size = input.required<SlotSize>();
 
@@ -130,7 +130,7 @@ export class WidgetBackupComponent implements OnInit {
   getBackups(): void {
     this.isLoading = true;
     this.widgetResourcesService.backups$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks]) => {
         this.isLoading = false;
         this.backups = [
@@ -163,7 +163,7 @@ export class WidgetBackupComponent implements OnInit {
       { wide: true },
     ).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getBackups();
@@ -174,13 +174,13 @@ export class WidgetBackupComponent implements OnInit {
   addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getBackups());
   }
 
   addRsyncTask(): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getBackups());
   }
 

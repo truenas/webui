@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
@@ -34,7 +34,6 @@ export interface SyslogConfig {
   syslogservers: SyslogServer[];
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-syslog-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -61,6 +60,7 @@ export class SyslogCardComponent {
   private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = syslogCardElements;
@@ -128,7 +128,7 @@ export class SyslogCardComponent {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.slideIn.open(SyslogFormComponent, { data: this.syslogConfig })),
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.reloadConfig$.next();

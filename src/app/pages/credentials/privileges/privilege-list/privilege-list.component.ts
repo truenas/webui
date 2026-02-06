@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -41,7 +41,6 @@ import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privile
 import { privilegesListElements } from 'app/pages/credentials/privileges/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-privilege-list',
   templateUrl: './privilege-list.component.html',
@@ -70,6 +69,7 @@ export class PrivilegeListComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
@@ -160,7 +160,7 @@ export class PrivilegeListComponent implements OnInit {
   openForm(privilege?: Privilege): void {
     this.slideIn.open(PrivilegeFormComponent, { data: privilege }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getPrivileges();
     });
@@ -179,7 +179,7 @@ export class PrivilegeListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.call('privilege.delete', [privilege.id])),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {

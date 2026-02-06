@@ -1,9 +1,8 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -34,7 +33,6 @@ import {
 } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
@@ -64,6 +62,7 @@ export class AccessFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private authService = inject(AuthService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
 
@@ -87,17 +86,17 @@ export class AccessFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
+    this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
       if (preferences.lifetime) {
         this.form.controls.token_lifetime.setValue(preferences.lifetime);
       }
     });
 
-    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForGeneralConfig, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.form.controls.ds_auth.setValue(config.ds_auth);
     });
 
-    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForAdvancedConfig, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.form.controls.login_banner.setValue(config.login_banner);
     });
   }
@@ -107,7 +106,7 @@ export class AccessFormComponent implements OnInit {
       .pipe(
         filter(Boolean),
         take(1),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.getRawValue().token_lifetime }));
 
@@ -126,7 +125,7 @@ export class AccessFormComponent implements OnInit {
           }
 
           forkJoin(requests$)
-            .pipe(untilDestroyed(this))
+            .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
               next: () => {
                 this.isLoading.set(false);

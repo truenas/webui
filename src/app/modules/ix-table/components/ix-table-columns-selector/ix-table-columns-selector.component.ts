@@ -1,8 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, model, OnChanges, OnInit, output, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -17,7 +17,6 @@ import { AppState } from 'app/store';
 import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-table-columns-selector',
   templateUrl: './ix-table-columns-selector.component.html',
@@ -36,6 +35,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, OnInit {
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   readonly columns = model.required<Column<T, ColumnComponent<T>>[]>();
   readonly columnPreferencesKey = input<string>();
@@ -80,7 +80,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       waitForPreferences,
       map((config) => config.tableDisplayedColumns?.find((column) => column.title === this.columnPreferencesKey())),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((displayedColumns) => {
       // If no saved preferences exist, use default column visibility
       if (!displayedColumns?.columns?.length) {
@@ -172,7 +172,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   }
 
   private subscribeToColumnsChange(): void {
-    this.hiddenColumns.changed.pipe(untilDestroyed(this)).subscribe(() => {
+    this.hiddenColumns.changed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.columns().forEach((column) => {
         column.hidden = this.hiddenColumns.isSelected(column);
       });

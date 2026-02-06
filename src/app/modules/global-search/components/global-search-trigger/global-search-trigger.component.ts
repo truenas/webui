@@ -1,8 +1,8 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, ViewContainerRef, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostListener, ViewContainerRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatInput } from '@angular/material/input';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { delay, take } from 'rxjs';
@@ -13,7 +13,6 @@ import { KeyboardShortcutComponent } from 'app/modules/keyboard-shortcut/keyboar
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-search-trigger',
   templateUrl: './global-search-trigger.component.html',
@@ -33,6 +32,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
   private viewContainerRef = inject(ViewContainerRef);
   private searchProvider = inject(UiSearchProvider);
   private focusService = inject(FocusService);
+  private destroyRef = inject(DestroyRef);
 
   protected overlayRef: OverlayRef | undefined;
 
@@ -50,7 +50,9 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
 
     this.overlayRef = this.overlay.create(overlayConfig);
 
-    this.overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => this.detachOverlayAndFocusMainContent());
+    this.overlayRef.backdropClick().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.detachOverlayAndFocusMainContent());
   }
 
   protected showOverlay(): void {
@@ -65,7 +67,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
     this.cdr.markForCheck();
 
     this.searchProvider.selectionChanged$
-      .pipe(take(1), delay(searchDelayConst), untilDestroyed(this))
+      .pipe(take(1), delay(searchDelayConst), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.detachOverlayAndFocusMainContent());
   }
 

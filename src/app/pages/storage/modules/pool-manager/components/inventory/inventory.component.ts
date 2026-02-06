@@ -1,9 +1,9 @@
 import { KeyValue, AsyncPipe, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
@@ -15,7 +15,6 @@ import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfac
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-inventory',
   templateUrl: './inventory.component.html',
@@ -35,6 +34,7 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class InventoryComponent implements OnInit {
   poolManagerStore = inject(PoolManagerStore);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected readonly DiskType = DiskType;
@@ -50,7 +50,7 @@ export class InventoryComponent implements OnInit {
   ngOnInit(): void {
     // Continuously react to inventory changes (including encryption type changes)
     this.poolManagerStore.inventory$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((unusedDisks) => {
         this.sizeDisksMap = getDiskTypeSizeMap(unusedDisks);
         this.cdr.markForCheck();

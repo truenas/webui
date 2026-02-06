@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
@@ -56,7 +56,6 @@ import {
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-task-card',
   templateUrl: './replication-task-card.component.html',
@@ -91,6 +90,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private download = inject(DownloadService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
@@ -173,7 +173,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       extra: { check_dataset_encryption_keys: true },
     }]).pipe(
       tap((replicationTasks) => this.replicationTasks = replicationTasks),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
@@ -194,7 +194,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('replication.delete', [replicationTask.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getReplicationTasks();
@@ -208,13 +208,13 @@ export class ReplicationTaskCardComponent implements OnInit {
   protected addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getReplicationTasks());
   }
 
   private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getReplicationTasks());
   }
 
@@ -237,7 +237,7 @@ export class ReplicationTaskCardComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
@@ -251,7 +251,9 @@ export class ReplicationTaskCardComponent implements OnInit {
     const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
+    dialog.afterClosed()
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.getReplicationTasks());
   }
 
   protected downloadKeys(row: ReplicationTask): void {
@@ -263,14 +265,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     })
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe();
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
     this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.getReplicationTasks();

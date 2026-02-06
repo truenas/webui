@@ -3,14 +3,12 @@ import {
   input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-card',
   templateUrl: './app-card.component.html',

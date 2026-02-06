@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewEncapsulation, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,7 +23,6 @@ import {
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-isolated-gpus-card',
   styleUrls: ['./isolated-gpus-card.component.scss'],
@@ -51,6 +50,7 @@ export class IsolatedGpusCardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
@@ -77,12 +77,12 @@ export class IsolatedGpusCardComponent implements OnInit {
       switchMap(() => this.slideIn.open(IsolatedGpusFormComponent)),
       filter((response) => !!response.response),
       tap(() => this.loadIsolatedGpus()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   private loadIsolatedGpus(): void {
-    this.gpuService.getIsolatedGpus().pipe(untilDestroyed(this)).subscribe((gpus) => {
+    this.gpuService.getIsolatedGpus().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((gpus) => {
       this.isolatedGpus = gpus;
       this.cdr.markForCheck();
     });

@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
@@ -11,7 +11,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -21,6 +20,7 @@ export class RedirectService {
   private matDialog = inject(MatDialog);
   private store$ = inject<Store<AppState>>(Store);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
 
   openWindow(url: string, target?: string): void {
@@ -28,7 +28,7 @@ export class RedirectService {
       this.window.open(url, target);
       return;
     }
-    this.store$.pipe(waitForGeneralConfig, take(1), untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForGeneralConfig, take(1), takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       if (!config.ui_httpsredirect) {
         this.window.open(url, target);
         return;
@@ -45,7 +45,7 @@ You can try opening app url in an incognito mode.<br>
 Alternatively you can disable redirect in Settings, clear browser cache and try again.`, { url }),
           url,
         } as RedirectDialogData,
-      }).afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.window.open(url, target);
       });
     });

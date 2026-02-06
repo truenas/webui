@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +15,6 @@ import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prev
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-gpu-step',
   templateUrl: './gpu-step.component.html',
@@ -42,6 +40,7 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
   private dialog = inject(DialogService);
   private api = inject(ApiService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
     hide_from_msr: [false],
@@ -57,7 +56,7 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
     // Setup critical GPU prevention
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
       this.form.controls.gpus,
-      this,
+      this.destroyRef,
       this.translate.instant('Cannot Select GPU'),
       this.translate.instant('System critical GPUs cannot be used for VMs'),
     );

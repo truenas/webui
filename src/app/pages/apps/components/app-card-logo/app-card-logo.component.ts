@@ -2,12 +2,10 @@ import {
   ChangeDetectionStrategy, Component, inject, input,
   signal,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { LazyLoadImageModule, StateChange } from 'ng-lazyload-image';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { LayoutService } from 'app/modules/layout/layout.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-card-logo',
   templateUrl: './app-card-logo.component.html',

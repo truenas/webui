@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
@@ -28,7 +30,6 @@ import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/scheduler-preview-column.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-scheduler-modal',
   templateUrl: './scheduler-modal.component.html',
@@ -54,6 +55,7 @@ export class SchedulerModalComponent implements OnInit {
   private validators = inject(CrontabPartValidatorService);
   private store$ = inject<Store<AppState>>(Store);
   config = inject<SchedulerModalConfig>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
     preset: [''],
@@ -141,7 +143,7 @@ export class SchedulerModalComponent implements OnInit {
   }
 
   private setTimezone(): void {
-    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+    this.store$.select(selectTimezone).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((timezone) => {
       if (timezone) {
         this.timezone = timezone;
       }
@@ -150,7 +152,7 @@ export class SchedulerModalComponent implements OnInit {
   }
 
   private setupFormSubscriptions(): void {
-    this.form.controls.preset.valueChanges.pipe(untilDestroyed(this)).subscribe((preset) => {
+    this.form.controls.preset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((preset) => {
       if (!preset) {
         return;
       }
@@ -158,7 +160,7 @@ export class SchedulerModalComponent implements OnInit {
       this.setValuesFromCrontab(preset);
     });
 
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       if (this.form.invalid) {
         return;
       }

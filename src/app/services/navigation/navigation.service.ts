@@ -1,13 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { tnIconMarker } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { LicenseService } from 'app/services/license.service';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })

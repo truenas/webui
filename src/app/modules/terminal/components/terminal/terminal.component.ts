@@ -1,8 +1,11 @@
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener,
+  inject, input, OnDestroy, OnInit, Signal, signal, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { FitAddon } from '@xterm/addon-fit';
@@ -20,7 +23,6 @@ import { ShellService } from 'app/services/shell.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-terminal',
   templateUrl: './terminal.component.html',
@@ -42,6 +44,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private shellService = inject(ShellService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   readonly conf = input.required<TerminalConfiguration>();
 
@@ -75,7 +78,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.conf().preInit) {
-      this.conf().preInit?.().pipe(untilDestroyed(this)).subscribe(() => {
+      this.conf().preInit?.().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.initShell();
       });
     } else {
@@ -84,7 +87,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
     const reconnectShell$ = this.conf().reconnectShell$;
     if (reconnectShell$) {
-      reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
+      reconnectShell$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.reconnect();
       });
     }
@@ -92,7 +95,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.store$.pipe(
       waitForPreferences,
       filter((preferences) => Boolean(preferences.sidenavStatus)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       if (this.shellConnected()) {
         this.scheduleResize();
@@ -115,7 +118,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.initializeWebShell();
         this.initializeTerminal();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -159,7 +162,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
     if (size && this.connectionId()) {
-      this.api.call('core.resize_shell', [this.connectionId(), size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.api.call('core.resize_shell', [this.connectionId(), size.cols, size.rows]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.xterm.focus();
       });
     }
@@ -182,7 +185,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.shellService.connect(this.token, this.conf().connectionData);
 
     this.shellService.shellConnected$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event: ShellConnectedEvent) => {
         this.shellConnected.set(event.connected);
         this.connectionId.set(event.id);
@@ -215,7 +218,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.token = token;
         this.shellService.connect(this.token, this.conf().connectionData);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       error: () => {
         this.isReconnecting.set(false);
@@ -238,7 +241,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.token = token;
         this.shellService.connect(this.token, this.conf().connectionData);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       error: () => {
         this.isReconnecting.set(false);

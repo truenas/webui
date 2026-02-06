@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, startWith } from 'rxjs';
@@ -29,7 +29,6 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-failover-form',
   templateUrl: './failover-form.component.html',
@@ -62,6 +61,7 @@ export class FailoverFormComponent {
   private authService = inject(AuthService);
   private wsHandler = inject(WebSocketHandlerService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
     enabled: [false],
@@ -107,7 +107,7 @@ export class FailoverFormComponent {
       disabled: !values.enabled,
     };
 
-    this.api.call('failover.update', [payload]).pipe(untilDestroyed(this))
+    this.api.call('failover.update', [payload]).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.store$.dispatch(haSettingsUpdated());
@@ -145,7 +145,7 @@ export class FailoverFormComponent {
           this.isLoading.set(true);
           return this.api.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -173,7 +173,7 @@ export class FailoverFormComponent {
           this.isLoading.set(true);
           return this.api.call('failover.sync_from_peer');
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -204,7 +204,7 @@ export class FailoverFormComponent {
         }),
         take(1),
         filter((wasConfirmed) => !wasConfirmed),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.form.patchValue({ master: true });
@@ -215,7 +215,7 @@ export class FailoverFormComponent {
     this.form.controls.enabled.valueChanges
       .pipe(
         startWith(this.form.value.enabled),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((enabled) => {
         if (enabled) {
@@ -227,7 +227,7 @@ export class FailoverFormComponent {
   }
 
   private redirectToLoginPage(): void {
-    this.authService.logout().pipe(untilDestroyed(this)).subscribe({
+    this.authService.logout().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.wsHandler.reconnect();
         this.router.navigate(['/signin']);

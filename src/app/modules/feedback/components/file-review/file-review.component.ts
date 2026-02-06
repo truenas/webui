@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
@@ -28,7 +27,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export const maxRatingValue = 5;
 export const maxFileSizeBytes = 5 * MiB;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-file-review',
   styleUrls: ['file-review.component.scss'],
@@ -55,6 +53,7 @@ export class FileReviewComponent {
   private feedbackService = inject(FeedbackService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
@@ -96,7 +95,7 @@ export class FileReviewComponent {
     this.feedbackService.createReview(this.form.value).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoadingChange.emit(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.onSuccess());
   }
 

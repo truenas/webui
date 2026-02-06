@@ -1,8 +1,11 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, ViewChild, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  DestroyRef, ElementRef, HostBinding, HostListener, inject, ViewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   debounceTime, fromEvent,
   Observable, of, Subject, Subscription, take, timeout,
@@ -11,7 +14,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { FocusService } from 'app/services/focus.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-slide-in-container',
   templateUrl: './slide-in-container.component.html',
@@ -29,6 +31,7 @@ export class SlideInContainerComponent implements AfterViewInit {
   private elementRef = inject(ElementRef);
   private focusService = inject(FocusService);
   private document = inject(DOCUMENT);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild(CdkPortalOutlet, { static: true }) private readonly portalOutlet!: CdkPortalOutlet;
 
@@ -63,7 +66,7 @@ export class SlideInContainerComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.resizeSubject$.pipe(
       debounceTime(100),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.updateWidth());
 
     // Start with hidden state (already set by default)
@@ -105,7 +108,7 @@ export class SlideInContainerComponent implements AfterViewInit {
       timeout({ first: 300, with: () => of(undefined) }),
     );
 
-    slideIn$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideIn$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.focusFirstElement();
       this.addKeydownListener();
     });
@@ -165,7 +168,7 @@ export class SlideInContainerComponent implements AfterViewInit {
     this.removeKeydownListener();
 
     this.keydownSubscription = fromEvent<KeyboardEvent>(this.document, 'keydown')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
         if (event.key === 'Escape' && this.slideInRef) {
           if (event.defaultPrevented) {

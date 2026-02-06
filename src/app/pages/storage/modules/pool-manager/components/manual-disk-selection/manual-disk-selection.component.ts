@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -37,7 +37,6 @@ export interface ManualDiskSelectionParams {
   isSedEncryption?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manual-disk-selection',
   templateUrl: './manual-disk-selection.component.html',
@@ -66,6 +65,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   private dialogRef = inject<MatDialogRef<ManualDiskSelectionComponent>>(MatDialogRef);
   private manualDiskSelectionStore = inject(ManualDiskSelectionStore);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -95,7 +95,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   ngOnInit(): void {
     this.dialogRef.addPanelClass('manual-disk-selection-ref');
     this.dialogRef.updateSize('80vw', '80vh');
-    this.manualDiskSelectionStore.vdevs$.pipe(untilDestroyed(this)).subscribe((vdevs) => {
+    this.manualDiskSelectionStore.vdevs$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((vdevs) => {
       this.currentVdevs = vdevs;
       this.cdr.markForCheck();
     });

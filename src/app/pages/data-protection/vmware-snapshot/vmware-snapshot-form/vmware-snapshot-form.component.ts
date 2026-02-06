@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vmware-snapshot-form',
   templateUrl: './vmware-snapshot-form.component.html',
@@ -53,6 +52,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   protected dialogService = inject(DialogService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<VmwareSnapshot | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
@@ -113,7 +113,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.datastore.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+    this.form.controls.datastore.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
       const fileSystemValue = this.datastoreList?.find((datastore) => datastore.name === value)?.filesystems[0];
       if (fileSystemValue) {
         this.form.controls.filesystem.setValue(fileSystemValue);
@@ -147,7 +147,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       hostname,
       username,
       password,
-    }]).pipe(untilDestroyed(this)).subscribe({
+    }]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (matches: MatchDatastoresWithDatasets) => {
         this.isLoading = false;
         this.filesystemList = matches.filesystems;
@@ -222,8 +222,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
             hideCheckbox: true,
           })
         : of(true)
-    ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      request$.pipe(untilDestroyed(this)).subscribe({
+    ).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.isLoading = false;
           this.slideInRef.close({ response: true });

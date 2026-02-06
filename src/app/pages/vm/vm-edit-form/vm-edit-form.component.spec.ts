@@ -340,7 +340,7 @@ describe('VmEditFormComponent', () => {
       // Verify that setupCriticalGpuPrevention was called with the cached observable
       expect(setupSpy).toHaveBeenCalledWith(
         spectator.component.form.controls.gpus,
-        spectator.component,
+        expect.any(Object),
         expect.any(String),
         expect.any(String),
         // eslint-disable-next-line @typescript-eslint/dot-notation

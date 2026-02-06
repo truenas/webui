@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ha-status-icon',
   templateUrl: './ha-status-icon.component.html',
@@ -36,6 +35,7 @@ export class HaStatusIconComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
 
@@ -83,7 +83,7 @@ export class HaStatusIconComponent implements OnInit {
   private listenForHaStatus(): void {
     this.store$.select(selectHaStatus).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((haStatus) => {
       this.failoverDisabledReasons = haStatus.reasons || [];
       this.cdr.markForCheck();

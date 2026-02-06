@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
@@ -35,7 +35,6 @@ import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiat
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-initiator-list',
   templateUrl: './initiator-list.component.html',
@@ -70,6 +69,7 @@ export class InitiatorListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = initiatorListElements;
 
@@ -122,7 +122,7 @@ export class InitiatorListComponent implements OnInit {
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('iscsi.initiator.delete', [row.id]).pipe(this.loader.withLoader())),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               next: () => this.refresh(),
               error: (error: unknown) => {
@@ -145,12 +145,12 @@ export class InitiatorListComponent implements OnInit {
     );
 
     this.iscsiService.listenForDataRefresh()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
     this.dataProvider = new AsyncDataProvider(initiators$);
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }

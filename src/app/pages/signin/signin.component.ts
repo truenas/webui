@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -23,7 +23,6 @@ import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-signin',
   templateUrl: './signin.component.html',
@@ -51,6 +50,7 @@ export class SigninComponent implements OnInit {
   private authService = inject(AuthService);
   private tokenLastUsedService = inject(TokenLastUsedService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected hasAuthToken = this.authService.hasAuthToken;
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
@@ -78,7 +78,7 @@ export class SigninComponent implements OnInit {
     this.wsStatus.isFailoverRestart$
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.signinStore.init();
@@ -96,7 +96,7 @@ export class SigninComponent implements OnInit {
         }).pipe(take(1));
       }),
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.focusFirstInput();
     });
@@ -106,7 +106,7 @@ export class SigninComponent implements OnInit {
         delay(0),
         pairwise(),
         filter(([prev, curr]) => prev && !curr),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.focusFirstInput();
@@ -115,7 +115,7 @@ export class SigninComponent implements OnInit {
 
   ngOnInit(): void {
     this.isConnected$
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         // Check if this is after a system update - reload page to get latest UI
         const isUpdateRestart = this.window.sessionStorage.getItem('updateCompleted') === 'true';

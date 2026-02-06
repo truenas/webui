@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
@@ -51,7 +51,6 @@ interface BootEnvironmentUi extends BootEnvironment {
   selected?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-bootenv-list',
   templateUrl: './bootenv-list.component.html',
@@ -88,6 +87,7 @@ export class BootEnvironmentListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
@@ -109,7 +109,7 @@ export class BootEnvironmentListComponent implements OnInit {
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
           take(1),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((bootEnvs) => {
           bootEnvs.forEach((bootEnv) => bootEnv.selected = checked);
           this.dataProvider.setRows([]);
@@ -214,7 +214,7 @@ export class BootEnvironmentListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.setDefaultSort();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -222,7 +222,7 @@ export class BootEnvironmentListComponent implements OnInit {
   protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }
 
@@ -250,7 +250,7 @@ export class BootEnvironmentListComponent implements OnInit {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Scrub Started'));
     });
@@ -260,7 +260,7 @@ export class BootEnvironmentListComponent implements OnInit {
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.matDialog.open(BootPoolDeleteDialog, { data })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         bootenvs.forEach((bootenv) => delete bootenv.selected);
         this.refresh();
@@ -280,7 +280,7 @@ export class BootEnvironmentListComponent implements OnInit {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }
 
@@ -298,7 +298,7 @@ export class BootEnvironmentListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.refresh());
     } else {
       this.dialogService.confirm({
@@ -313,7 +313,7 @@ export class BootEnvironmentListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.refresh());
     }
   }

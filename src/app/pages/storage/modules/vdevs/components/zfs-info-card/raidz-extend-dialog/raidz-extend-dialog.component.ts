@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -29,7 +29,6 @@ export interface RaidzExtendDialogParams {
   vdev: VDev;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-raidz-extend-dialog',
   templateUrl: './raidz-extend-dialog.component.html',
@@ -58,6 +57,7 @@ export class RaidzExtendDialog {
   private dialogService = inject(DialogService);
   private poolExtendJobService = inject(PoolExtendJobService);
   data = inject<RaidzExtendDialogParams>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
@@ -100,7 +100,7 @@ export class RaidzExtendDialog {
         ).afterClosed();
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((result) => {
       if (result) {
         this.snackbar.success(this.translate.instant('VDEV successfully extended.'));
@@ -112,7 +112,7 @@ export class RaidzExtendDialog {
   private setFilterMinimumSizeFn(): void {
     let diskDictionary: Record<string, Disk> = {};
     this.vDevsStore.diskDictionary$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((dictionary) => diskDictionary = dictionary);
 
     const minimumSize = this.data.vdev.children.reduce((acc, topologyDisk) => {

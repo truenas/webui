@@ -1,10 +1,10 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, OnChanges, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
+import { Component, OnChanges, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -48,7 +48,6 @@ import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-report',
   templateUrl: './report.component.html',
@@ -83,6 +82,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private localeService = inject(LocaleService);
   private document = inject<Document>(DOCUMENT);
+  private destroyRef = inject(DestroyRef);
 
   private initialFetchTriggered = false;
 
@@ -177,7 +177,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
   private initAutoRefresh(): void {
     this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
       filter(() => this.autoRefreshEnabled),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
       this.currentStartDate = rrdOptions.start;
@@ -200,7 +200,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     // Initialize subscriptions
-    this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
+    this.reportsService.legendEventEmitterObs$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };
         clone.xHTML = this.formatTime(data.x);
@@ -211,7 +211,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();
     });
@@ -220,7 +220,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       .select(selectTimezone)
       .pipe(
         filter<string>((timezone) => !!timezone),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((timezone) => {
         this.timezone = timezone;
@@ -230,14 +230,14 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       waitForPreferences,
       filter(() => Boolean(this.lineChart()?.chart)),
       delay(toggleMenuDuration),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.resizeChart();
     });
 
     this.store$.pipe(
       waitForPreferences,
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((preferences) => {
       this.autoRefreshEnabled = preferences.autoRefreshReports;
       if (this.autoRefreshEnabled && !this.autoRefreshTimer) {
@@ -250,7 +250,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       throttleTime(100),
       skipWhile(() => this.document.hidden),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((params) => {
       this.fetchReportData(params);
     });
@@ -260,7 +260,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       throttleTime(100),
       skipWhile(() => this.document.hidden),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((changes) => {
       this.applyChanges(changes);
     });
@@ -502,7 +502,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       truncate: this.stepForwardDisabled,
     }).pipe(
       skipWhile(() => this.document.hidden),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (event) => {
         this.data = formatData(cloneDeep(event));
@@ -556,7 +556,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(
         debounceTime(100),
         filter(() => this.isReady),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.resizeChart();

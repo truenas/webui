@@ -94,7 +94,7 @@ export class MyComponent {
 
 ### Modern Angular Patterns
 
-**RxJS Cleanup**: Use `takeUntilDestroyed(this.destroyRef)` from `@angular/core/rxjs-interop` instead of `@ngneat/until-destroy`.
+**RxJS Cleanup**: Use `takeUntilDestroyed(this.destroyRef)` from `@angular/core/rxjs-interop`.
 
 **Host Metadata**: Use `host: { '(click)': 'onClick()', '[class]': 'cssClass' }` instead of `@HostListener` and `@HostBinding` decorators.
 

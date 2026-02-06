@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -15,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-virtual-ports-number-dialog',
   templateUrl: './virtual-ports-number-dialog.component.html',
@@ -36,6 +35,7 @@ export class VirtualPortsNumberDialog {
   private loader = inject(LoaderService);
   private dialogRef = inject<MatDialogRef<VirtualPortsNumberDialog>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
   private host = inject<FibreChannelHost>(MAT_DIALOG_DATA);
 
   protected form = new FormGroup({
@@ -56,7 +56,7 @@ export class VirtualPortsNumberDialog {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.dialogRef.close(true));
   }

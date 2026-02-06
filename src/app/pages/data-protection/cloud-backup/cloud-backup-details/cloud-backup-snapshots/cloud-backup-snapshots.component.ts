@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
@@ -34,7 +34,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-snapshots',
   templateUrl: './cloud-backup-snapshots.component.html',
@@ -63,6 +62,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly backup = input.required<CloudBackup>();
 
@@ -107,7 +107,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
     const cloudBackupSnapshots$ = this.api.call('cloud_backup.list_snapshots', [this.backup().id]).pipe(
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$);
     this.getCloudBackupSnapshots();
@@ -125,7 +125,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       },
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getCloudBackupSnapshots();
@@ -152,7 +152,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
           return EMPTY;
         }),
         finalize(() => this.loader.close()),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job) => {
         if (job.state === JobState.Success) {

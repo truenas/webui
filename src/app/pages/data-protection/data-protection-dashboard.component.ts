@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { dataProtectionEmptyConfig } from 'app/constants/empty-configs';
@@ -18,7 +17,6 @@ import { ReplicationTaskCardComponent } from './replication/replication-task-car
 import { RsyncTaskCardComponent } from './rsync-task/rsync-task-card/rsync-task-card.component';
 import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/snapshot-task-card.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',

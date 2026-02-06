@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -14,7 +14,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-export-dataset-key-dialog',
   templateUrl: './export-dataset-key-dialog.component.html',
@@ -39,6 +38,7 @@ export class ExportDatasetKeyDialog implements OnInit {
   private download = inject(DownloadService);
   private cdr = inject(ChangeDetectorRef);
   dataset = inject<Dataset>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   key: string;
 
@@ -58,7 +58,7 @@ export class ExportDatasetKeyDialog implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogRef.close();
@@ -67,7 +67,7 @@ export class ExportDatasetKeyDialog implements OnInit {
 
   private loadKey(): void {
     this.api.job('pool.dataset.export_key', [this.dataset.id])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (job) => {
           if (job.state === JobState.Failed) {
