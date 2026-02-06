@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   BulkListItem,
   BulkListItemState,
@@ -14,9 +13,9 @@ import {
   styleUrls: ['./bulk-list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
-    MatTooltip,
     MatProgressSpinner,
   ],
 })

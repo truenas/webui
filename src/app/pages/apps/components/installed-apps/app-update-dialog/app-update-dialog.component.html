@@ -16,7 +16,7 @@
           <span class="version-label">{{ 'Version' | translate }}:</span>
           <span class="version-value">
             {{ dialogConfig.appInfo.metadata.app_version }}
-            <ix-icon name="mdi-arrow-right"></ix-icon>
+            <tn-icon name="arrow-right" library="mdi"></tn-icon>
             {{ getLatestAppVersion() }}
           </span>
         </div>
@@ -25,7 +25,7 @@
           <span class="version-label">{{ 'Revision' | translate }}:</span>
           <span class="version-value">
             {{ dialogConfig.appInfo.version }}
-            <ix-icon name="mdi-arrow-right"></ix-icon>
+            <tn-icon name="mdi-arrow-right"></tn-icon>
             {{ selectedVersion.latest_version }}
           </span>
         </div>
@@ -64,7 +64,7 @@
           [href]="dialogConfig.appInfo.metadata.changelog_url"
           [attr.aria-label]="'View Upstream Release Notes (opens in new window)' | translate"
         >
-          <ix-icon name="mdi-open-in-new"></ix-icon>
+          <tn-icon name="open-in-new" library="mdi"></tn-icon>
           {{ 'View Upstream Release Notes' | translate }}
         </a>
       </div>

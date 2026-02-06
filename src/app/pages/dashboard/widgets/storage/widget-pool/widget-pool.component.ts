@@ -5,10 +5,10 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   combineLatest, filter, switchMap, tap,
 } from 'rxjs';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -32,7 +32,7 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
     TestDirective,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     PoolUsageGaugeComponent,
     PoolStatusComponent,
     DisksWithZfsErrorsComponent,

@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy, Component, TemplateRef, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 
 @Component({
@@ -14,7 +14,7 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   styleUrls: ['./backup-task-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     FormatDateTimePipe,
     NgTemplateOutlet,

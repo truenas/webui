@@ -71,7 +71,7 @@
                   [dataset]="dataset"
                   [isSystemDataset]="isSystemDataset(dataset)"
                 ></ix-dataset-node>
-                <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
+                <tn-icon name="chevron-right" library="mdi" class="mobile-actions"></tn-icon>
               </ix-tree-node>
 
               <ix-tree-node
@@ -91,10 +91,11 @@
                   [attr.aria-label]="'Toggle {row}' | translate: { row: dataset.name }"
                   (keydown.enter)="$event.stopPropagation()"
                 >
-                  <ix-icon
+                  <tn-icon
                     class="mat-icon-rtl-mirror"
-                    [name]="treeControl.isExpanded(dataset) ? 'expand_more' : 'chevron_right'"
-                  ></ix-icon>
+                    library="mdi"
+                    [name]="treeControl.isExpanded(dataset) ? 'chevron-down' : 'chevron-right'"
+                  ></tn-icon>
                 </button>
 
                 <ix-dataset-node
@@ -102,7 +103,7 @@
                   [isSystemDataset]="isSystemDataset(dataset)"
                 ></ix-dataset-node>
 
-                <ix-icon name="mdi-chevron-right" class="mobile-actions"></ix-icon>
+                <tn-icon name="chevron-right" library="mdi" class="mobile-actions"></tn-icon>
               </ix-tree-node>
             </ix-tree-virtual-scroll-view>
           }

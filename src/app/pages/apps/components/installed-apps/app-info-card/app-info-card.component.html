@@ -20,7 +20,7 @@
         [matTooltip]="'More Options' | translate"
         [attr.aria-label]="'More Options' | translate"
       >
-        <ix-icon name="more_vert"></ix-icon>
+        <tn-icon name="dots-vertical" library="mdi"></tn-icon>
       </button>
       <mat-menu #appInfoMenu="matMenu">
         <button
@@ -124,7 +124,7 @@
               [disabled]="inProgress()"
               (click)="startApp.emit(); $event.stopPropagation()"
             >
-              <ix-icon name="mdi-play-circle"></ix-icon> {{ 'Start' | translate }}
+              <tn-icon name="play-circle" library="mdi"></tn-icon> {{ 'Start' | translate }}
             </button>
           }
         </ng-container>
@@ -138,7 +138,7 @@
               [disabled]="inProgress()"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >
-              <ix-icon name="mdi-stop-circle"></ix-icon> {{ 'Stop' | translate }}
+              <tn-icon name="stop-circle" library="mdi"></tn-icon> {{ 'Stop' | translate }}
             </button>
           }
         </ng-container>

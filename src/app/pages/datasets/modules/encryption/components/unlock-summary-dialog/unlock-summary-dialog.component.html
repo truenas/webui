@@ -12,7 +12,7 @@
               <a ixTest="unlock-summary-details" (click)="showError(dataset)">
                 <u>{{ 'details' | translate }}</u>
               </a>
-              <ix-icon name="cancel" class="red-icon"></ix-icon>
+              <tn-icon name="close-circle" library="mdi" class="red-icon"></tn-icon>
             </div>
           </div>
         }
@@ -25,7 +25,7 @@
         @for (dataset of skippedDatasets; track dataset) {
           <div class="row">
             <strong>{{ dataset.name }}</strong>
-            <ix-icon name="cancel" class="red-icon"></ix-icon>
+            <tn-icon name="close-circle" library="mdi" class="red-icon"></tn-icon>
           </div>
         }
       </div>
@@ -37,7 +37,7 @@
         @for (dataset of unlockDatasets; track dataset) {
           <div class="row">
             <strong>{{ dataset.name }}</strong>
-            <ix-icon name="check_circle" class="green-icon"></ix-icon>
+            <tn-icon name="check-circle" library="mdi" class="green-icon"></tn-icon>
           </div>
         }
       </div>

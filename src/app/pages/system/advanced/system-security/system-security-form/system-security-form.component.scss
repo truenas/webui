@@ -7,7 +7,7 @@
 mat-hint {
   font-size: 12px;
 
-  &.stig-info {
+  .stig-info {
     color: var(--orange);
     font-weight: 500;
   }
@@ -17,9 +17,18 @@ mat-error {
   display: block;
   font-size: 12px;
   margin-top: 5px;
-  
+
   .link-button {
     display: inline;
+  }
+
+  .stig-validation-list {
+    margin: 8px 0;
+    padding-left: 20px;
+
+    li {
+      margin: 4px 0;
+    }
   }
 }
 
@@ -31,6 +40,6 @@ mat-error {
   text-decoration: underline;
 
   &:hover {
-    color: var(--primary-dark);
+    color: var(--primary-lighter);
   }
 }

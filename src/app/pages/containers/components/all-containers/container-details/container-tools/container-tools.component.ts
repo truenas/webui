@@ -6,8 +6,8 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
@@ -24,7 +24,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     TranslateModule,
     MatAnchor,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     RouterLink,
   ],

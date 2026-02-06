@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import {
-  FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+  FormsModule, NonNullableFormBuilder, ReactiveFormsModule, ValidatorFn, AbstractControl, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { finalize, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -63,6 +63,7 @@ export class HostFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
   slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef);
 
   protected isLoading = signal(false);
@@ -74,8 +75,58 @@ export class HostFormComponent implements OnInit {
   protected hashOptions$ = this.api.call('nvmet.host.dhchap_hash_choices').pipe(singleArrayToOptions());
   protected dhGroupOptions$ = this.api.call('nvmet.host.dhchap_dhgroup_choices').pipe(singleArrayToOptions());
 
+  private nqnValidator(): ValidatorFn {
+    return (control: AbstractControl): Record<string, { message: string }> | null => {
+      const value = control.value as string;
+
+      if (!value) {
+        return null; // Let required validator handle empty values
+      }
+
+      if (!value.startsWith('nqn.')) {
+        return {
+          nqnFormat: {
+            message: this.translate.instant('Host NQN must start with "nqn." followed by a date and domain (e.g., nqn.2014-08.org.nvmexpress)'),
+          },
+        };
+      }
+
+      if (value.length < 11) {
+        return {
+          nqnMinLength: {
+            message: this.translate.instant('Host NQN must be at least 11 characters long'),
+          },
+        };
+      }
+
+      if (value.length > 223) {
+        return {
+          nqnMaxLength: {
+            message: this.translate.instant('Host NQN cannot exceed 223 characters'),
+          },
+        };
+      }
+
+      // Check for basic format: nqn.YYYY-MM.domain
+      const nqnPattern = /^nqn\.\d{4}-\d{2}\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*(:.*)?$/;
+      if (!nqnPattern.test(value)) {
+        return {
+          nqnInvalid: {
+            message: this.translate.instant('Invalid NQN format. Must be: nqn.YYYY-MM.reverse-domain-name (e.g., nqn.2014-08.com.example or nqn.2014-08.org.nvmexpress:host1)'),
+          },
+        };
+      }
+
+      return null;
+    };
+  }
+
   protected form = this.formBuilder.group({
-    hostnqn: ['', Validators.required],
+    hostnqn: ['', [
+      Validators.required,
+      this.nqnValidator(),
+    ]],
+    description: [''],
 
     requireHostAuthentication: [false],
     dhchap_hash: ['SHA-256'],

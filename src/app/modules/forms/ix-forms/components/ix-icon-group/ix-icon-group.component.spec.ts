@@ -37,12 +37,12 @@ describe('IxIconGroupComponent', () => {
             {
               value: 'edit',
               label: 'Edit',
-              icon: 'mdi-pencil',
+              icon: 'pencil',
             },
             {
               value: 'delete',
               label: 'Delete',
-              icon: 'mdi-delete',
+              icon: 'delete',
             },
           ],
           label: 'Icon group',
@@ -74,8 +74,8 @@ describe('IxIconGroupComponent', () => {
 
       const icons = await iconGroupHarness.getIcons();
       expect(icons).toHaveLength(2);
-      expect(await icons[0].getName()).toBe('mdi-pencil');
-      expect(await icons[1].getName()).toBe('mdi-delete');
+      expect(await icons[0].getName()).toBe('pencil');
+      expect(await icons[1].getName()).toBe('delete');
     });
 
     it('does not highlight any buttons when no value is set', async () => {

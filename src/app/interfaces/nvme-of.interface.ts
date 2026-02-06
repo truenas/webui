@@ -99,6 +99,7 @@ export type DeleteNamespaceParams = [
 export interface NvmeOfHost {
   id: number;
   hostnqn: string;
+  description: string;
   dhchap_key: string | null;
   dhchap_ctrl_key: string | null;
   dhchap_dhgroup: string | null;

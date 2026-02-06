@@ -3,11 +3,10 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, i
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -18,7 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     CdkPortalOutlet,
     MatProgressSpinner,
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TranslateModule,
     TestDirective,
@@ -55,8 +54,8 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
     return this.conf().type === EmptyType.Loading;
   }
 
-  getIcon(): MarkedIcon {
-    let icon = iconMarker('ix-truenas-logo');
+  getIcon(): string {
+    let icon: string = tnIconMarker('truenas-logo', 'custom');
     const conf = this.conf();
     if (conf.icon) {
       icon = conf.icon;
@@ -64,22 +63,22 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
       const type = conf.type;
       switch (type) {
         case EmptyType.Loading:
-          icon = iconMarker('ix-truenas-logo');
+          icon = tnIconMarker('truenas-logo', 'custom');
           break;
         case EmptyType.FirstUse:
-          icon = iconMarker('mdi-rocket');
+          icon = tnIconMarker('rocket', 'mdi');
           break;
         case EmptyType.NoPageData:
-          icon = iconMarker('mdi-format-list-text');
+          icon = tnIconMarker('format-list-text', 'mdi');
           break;
         case EmptyType.Errors:
-          icon = iconMarker('mdi-alert-octagon');
+          icon = tnIconMarker('alert-octagon', 'mdi');
           break;
         case EmptyType.NoSearchResults:
-          icon = iconMarker('mdi-magnify-scan');
+          icon = tnIconMarker('magnify-scan', 'mdi');
           break;
         case EmptyType.None:
-          icon = iconMarker('');
+          icon = tnIconMarker('', 'mdi');
           break;
         default:
           assertUnreachable(type);

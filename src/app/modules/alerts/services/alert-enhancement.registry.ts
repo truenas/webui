@@ -1,5 +1,6 @@
 import { isDevMode } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { tnIconMarker } from '@truenas/ui-components';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
@@ -15,7 +16,6 @@ import {
   resolveConditionalEnhancement,
 } from 'app/interfaces/smart-alert.interface';
 import { isBootPoolAlert } from 'app/modules/alerts/utils/boot-pool.utils';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 
 /**
@@ -42,7 +42,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Manage License'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-license'),
+          icon: tnIconMarker('license', 'mdi'),
           route: ['/system', 'general'],
           fragment: 'support',
           primary: true,
@@ -50,13 +50,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-help-circle'),
+          icon: tnIconMarker('help-circle', 'mdi'),
           externalUrl: 'https://support.ixsystems.com',
         },
         {
           label: T('View Documentation'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
         },
       ],
@@ -71,7 +71,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Configure Support'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-cog'),
+          icon: tnIconMarker('cog', 'mdi'),
           route: ['/system', 'general'],
           fragment: 'support',
           primary: true,
@@ -79,7 +79,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Learn More'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-information'),
+          icon: tnIconMarker('information', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
         },
       ],
@@ -94,7 +94,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Manage License'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-license'),
+          icon: tnIconMarker('license', 'mdi'),
           route: ['/system', 'general'],
           fragment: 'support',
           primary: true,
@@ -102,13 +102,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-help-circle'),
+          icon: tnIconMarker('help-circle', 'mdi'),
           externalUrl: 'https://support.ixsystems.com',
         },
         {
           label: T('View Documentation'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scalehardwareguide/',
         },
       ],
@@ -126,14 +126,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Renew Certificate'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-certificate'),
+          icon: tnIconMarker('certificate', 'mdi'),
           route: ['/credentials', 'certificates'],
           primary: true,
         },
         {
           label: T('Certificate Guide'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/certificates/certificatesscale/',
         },
       ],
@@ -151,14 +151,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Manage Users'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-account-multiple'),
+          icon: tnIconMarker('account-multiple', 'mdi'),
           route: ['/credentials', 'users'],
           primary: true,
         },
         {
           label: T('User Management Guide'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/managelocalusersscale/',
         },
       ],
@@ -172,14 +172,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('System Security Settings'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('security'),
+          icon: tnIconMarker('security', 'material'),
           route: ['/system', 'advanced'],
           primary: true,
         },
         {
           label: T('Restart System'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-restart'),
+          icon: tnIconMarker('restart', 'mdi'),
           route: ['/system', 'general'],
         },
       ],
@@ -196,14 +196,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Enclosure'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-server'),
+          icon: tnIconMarker('server', 'mdi'),
           route: ['/system', 'viewenclosure'],
           primary: true,
         },
         {
           label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-help-circle'),
+          icon: tnIconMarker('help-circle', 'mdi'),
           externalUrl: 'https://support.ixsystems.com',
         },
       ],
@@ -227,20 +227,20 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-database'),
+          icon: tnIconMarker('database', 'mdi'),
           route: ['/storage'],
           primary: true,
         },
         {
           label: T('Managing Pools Guide'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
         },
         {
           label: T('Storage Documentation'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-help-circle'),
+          icon: tnIconMarker('help-circle', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/',
         },
       ],
@@ -254,14 +254,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-database'),
+          icon: tnIconMarker('database', 'mdi'),
           route: ['/storage'],
           primary: true,
         },
         {
           label: T('Managing Pools Guide'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
         },
       ],
@@ -279,7 +279,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Configure IPMI'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-lan'),
+          icon: tnIconMarker('lan', 'mdi'),
           route: ['/system', 'network'],
           fragment: 'ipmi',
           primary: true,
@@ -287,7 +287,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Network Settings'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-network'),
+          icon: tnIconMarker('network', 'mdi'),
           route: ['/system', 'network'],
         },
       ],
@@ -304,7 +304,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Services'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-cog'),
+          icon: tnIconMarker('cog', 'mdi'),
           route: ['/system', 'services'],
           primary: true,
         },
@@ -323,14 +323,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Applications'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-application'),
+          icon: tnIconMarker('application', 'mdi'),
           route: ['/apps', 'installed'],
           primary: true,
         },
         {
           label: T('App Troubleshooting'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/apps/',
         },
       ],
@@ -348,14 +348,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Check for Updates'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-update'),
+          icon: tnIconMarker('update', 'mdi'),
           route: ['/system', 'update'],
           primary: true,
         },
         {
           label: T('Release Notes'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-note-text'),
+          icon: tnIconMarker('note-text', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scalereleasenotes/',
         },
       ],
@@ -369,7 +369,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('dns'),
+          icon: tnIconMarker('dns', 'material'),
           route: ['/storage'],
           primary: true,
         },
@@ -387,14 +387,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Enclosure'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-server'),
+          icon: tnIconMarker('server', 'mdi'),
           route: ['/system', 'viewenclosure'],
           primary: true,
         },
         {
           label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-help-circle'),
+          icon: tnIconMarker('help-circle', 'mdi'),
           externalUrl: 'https://support.ixsystems.com',
         },
       ],
@@ -411,7 +411,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Configure UPS'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-flash'),
+          icon: tnIconMarker('flash', 'mdi'),
           route: ['/system', 'services'],
           fragment: 'ups',
           primary: true,
@@ -432,7 +432,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Rerun Cloud Backup'),
           type: SmartAlertActionType.RunTask,
-          icon: iconMarker('mdi-play-circle'),
+          icon: tnIconMarker('play-circle', 'mdi'),
           apiMethod: 'cloud_backup.sync',
           primary: true,
           requiresConfirmation: true,
@@ -440,19 +440,19 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Cloud Backup'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-cloud-upload'),
+          icon: tnIconMarker('cloud-upload', 'mdi'),
           route: ['/data-protection', 'cloud-backup'],
         },
         {
           label: T('Check Credentials'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-key'),
+          icon: tnIconMarker('key', 'mdi'),
           route: ['/credentials', 'backup-credentials'],
         },
         {
           label: T('Backup Documentation'),
           type: SmartAlertActionType.ExternalLink,
-          icon: iconMarker('mdi-book-open-variant'),
+          icon: tnIconMarker('book-open-variant', 'mdi'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
         },
       ],
@@ -473,7 +473,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Rerun Cloud Sync'),
           type: SmartAlertActionType.RunTask,
-          icon: iconMarker('mdi-play-circle'),
+          icon: tnIconMarker('play-circle', 'mdi'),
           apiMethod: 'cloudsync.sync',
           primary: true,
           requiresConfirmation: true,
@@ -481,7 +481,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Cloud Sync'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-cloud-sync'),
+          icon: tnIconMarker('cloud-sync', 'mdi'),
           route: ['/data-protection', 'cloudsync'],
         },
       ],
@@ -501,7 +501,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Replication'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-sync'),
+          icon: tnIconMarker('sync', 'mdi'),
           route: ['/data-protection', 'replication'],
           primary: true,
         },
@@ -526,7 +526,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('Rerun Rsync Task'),
           type: SmartAlertActionType.RunTask,
-          icon: iconMarker('mdi-play-circle'),
+          icon: tnIconMarker('play-circle', 'mdi'),
           apiMethod: 'rsynctask.run',
           primary: true,
           requiresConfirmation: true,
@@ -534,7 +534,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Rsync Tasks'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-sync'),
+          icon: tnIconMarker('sync', 'mdi'),
           route: ['/data-protection', 'rsync'],
         },
       ],
@@ -554,7 +554,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Snapshots'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-camera'),
+          icon: tnIconMarker('camera', 'mdi'),
           route: ['/data-protection', 'snapshot'],
           primary: true,
         },
@@ -574,7 +574,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('dns'),
+          icon: tnIconMarker('dns', 'material'),
           route: ['/storage'],
           primary: true,
         },
@@ -589,7 +589,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         {
           label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('dns'),
+          icon: tnIconMarker('dns', 'material'),
           route: ['/storage'],
           primary: true,
         },
@@ -603,7 +603,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('apps'),
+        icon: tnIconMarker('apps', 'material'),
         route: ['/apps', 'installed'],
         primary: true,
       }],
@@ -615,7 +615,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('apps'),
+        icon: tnIconMarker('apps', 'material'),
         route: ['/apps', 'installed'],
         primary: true,
       }],
@@ -627,7 +627,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('apps'),
+        icon: tnIconMarker('apps', 'material'),
         route: ['/apps', 'installed'],
         primary: true,
       }],
@@ -639,7 +639,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to App Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-cog'),
+        icon: tnIconMarker('cog', 'mdi'),
         route: ['/apps', 'installed'],
         fragment: 'installed',
         primary: true,
@@ -653,7 +653,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-certificate'),
+        icon: tnIconMarker('certificate', 'mdi'),
         route: ['/credentials', 'certificates'],
         primary: true,
       }],
@@ -665,7 +665,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-certificate'),
+        icon: tnIconMarker('certificate', 'mdi'),
         route: ['/credentials', 'certificates'],
         primary: true,
       }],
@@ -677,7 +677,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-certificate'),
+        icon: tnIconMarker('certificate', 'mdi'),
         route: ['/credentials', 'certificates'],
         primary: true,
       }],
@@ -689,7 +689,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-certificate'),
+        icon: tnIconMarker('certificate', 'mdi'),
         route: ['/credentials', 'certificates'],
         primary: true,
       }],
@@ -701,7 +701,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-certificate'),
+        icon: tnIconMarker('certificate', 'mdi'),
         route: ['/credentials', 'certificates'],
         primary: true,
       }],
@@ -713,7 +713,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to GUI Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-desktop-classic'),
+        icon: tnIconMarker('desktop-classic', 'mdi'),
         route: ['/system', 'general'],
         fragment: 'gui-settings',
         primary: true,
@@ -726,7 +726,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to GUI Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-desktop-classic'),
+        icon: tnIconMarker('desktop-classic', 'mdi'),
         route: ['/system', 'general'],
         fragment: 'gui-settings',
         primary: true,
@@ -741,7 +741,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go To Directory Services'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-sitemap'),
+        icon: tnIconMarker('sitemap', 'mdi'),
         route: ['/credentials', 'directory-services'],
         primary: true,
       }],
@@ -754,7 +754,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go To Directory Services'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-sitemap'),
+        icon: tnIconMarker('sitemap', 'mdi'),
         route: ['/credentials', 'directory-services'],
         primary: true,
       }],
@@ -767,7 +767,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go To Directory Services'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-sitemap'),
+        icon: tnIconMarker('sitemap', 'mdi'),
         route: ['/credentials', 'directory-services'],
         primary: true,
       }],
@@ -780,7 +780,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-lan'),
+        icon: tnIconMarker('lan', 'mdi'),
         route: ['/network'],
         primary: true,
       }],
@@ -792,7 +792,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-lan'),
+        icon: tnIconMarker('lan', 'mdi'),
         route: ['/network'],
         primary: true,
       }],
@@ -804,7 +804,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-lan'),
+        icon: tnIconMarker('lan', 'mdi'),
         route: ['/network'],
         primary: true,
       }],
@@ -816,7 +816,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-lan'),
+        icon: tnIconMarker('lan', 'mdi'),
         route: ['/network'],
         primary: true,
       }],
@@ -828,7 +828,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-lan'),
+        icon: tnIconMarker('lan', 'mdi'),
         route: ['/network'],
         primary: true,
       }],
@@ -840,7 +840,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-lan'),
+        icon: tnIconMarker('lan', 'mdi'),
         route: ['/network'],
         primary: true,
       }],
@@ -853,7 +853,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Failover Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-sync'),
+        icon: tnIconMarker('sync', 'mdi'),
         route: ['/system', 'failover'],
         fragment: 'failover',
         primary: true,
@@ -866,7 +866,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Failover Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-sync'),
+        icon: tnIconMarker('sync', 'mdi'),
         route: ['/system', 'failover'],
         fragment: 'failover',
         primary: true,
@@ -880,7 +880,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-expansion-card'),
+        icon: tnIconMarker('expansion-card', 'mdi'),
         route: ['/system', 'jbof'],
         primary: true,
       }],
@@ -892,7 +892,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-expansion-card'),
+        icon: tnIconMarker('expansion-card', 'mdi'),
         route: ['/system', 'jbof'],
         primary: true,
       }],
@@ -904,7 +904,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-expansion-card'),
+        icon: tnIconMarker('expansion-card', 'mdi'),
         route: ['/system', 'jbof'],
         primary: true,
       }],
@@ -916,7 +916,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-expansion-card'),
+        icon: tnIconMarker('expansion-card', 'mdi'),
         route: ['/system', 'jbof'],
         primary: true,
       }],
@@ -928,7 +928,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-expansion-card'),
+        icon: tnIconMarker('expansion-card', 'mdi'),
         route: ['/system', 'jbof'],
         primary: true,
       }],
@@ -942,7 +942,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Disks'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-harddisk'),
+        icon: tnIconMarker('harddisk', 'mdi'),
         route: ['/storage', 'disks'],
         primary: true,
       }],
@@ -954,7 +954,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Services'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-cog'),
+        icon: tnIconMarker('cog', 'mdi'),
         route: ['/system', 'services'],
         primary: true,
       }],
@@ -968,7 +968,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-key-variant'),
+        icon: tnIconMarker('key-variant', 'mdi'),
         route: ['/credentials', 'kmip'],
         primary: true,
       }],
@@ -981,7 +981,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-key-variant'),
+        icon: tnIconMarker('key-variant', 'mdi'),
         route: ['/credentials', 'kmip'],
         primary: true,
       }],
@@ -994,7 +994,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-key-variant'),
+        icon: tnIconMarker('key-variant', 'mdi'),
         route: ['/credentials', 'kmip'],
         primary: true,
       }],
@@ -1007,7 +1007,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-key-variant'),
+        icon: tnIconMarker('key-variant', 'mdi'),
         route: ['/credentials', 'kmip'],
         primary: true,
       }],
@@ -1021,7 +1021,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to NFS Service'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-folder-network'),
+        icon: tnIconMarker('folder-network', 'mdi'),
         route: ['/system', 'services'],
         fragment: 'nfs',
         primary: true,
@@ -1036,7 +1036,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to SMB shares'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-folder-network'),
+        icon: tnIconMarker('folder-network', 'mdi'),
         route: ['/sharing', 'smb'],
         primary: true,
       }],
@@ -1049,7 +1049,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to SMB sessions'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-folder-network'),
+        icon: tnIconMarker('folder-network', 'mdi'),
         route: ['/sharing', 'smb', 'status', 'sessions'],
         primary: true,
       }],
@@ -1062,7 +1062,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-database'),
+        icon: tnIconMarker('database', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1075,7 +1075,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-database'),
+        icon: tnIconMarker('database', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1088,7 +1088,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-database'),
+        icon: tnIconMarker('database', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1100,7 +1100,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-database'),
+        icon: tnIconMarker('database', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1112,7 +1112,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-database'),
+        icon: tnIconMarker('database', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1125,7 +1125,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Storage'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
+        icon: tnIconMarker('dns', 'material'),
         route: ['/storage'],
         primary: true,
       }],
@@ -1144,13 +1144,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
             actions: [{
               label: T('Manage Boot Environments'),
               type: SmartAlertActionType.Navigate,
-              icon: iconMarker('mdi-layers'),
+              icon: tnIconMarker('layers', 'mdi'),
               route: bootListElements.anchorRouterLink,
               primary: true,
             }, {
               label: T('Boot Environments Guide'),
               type: SmartAlertActionType.ExternalLink,
-              icon: iconMarker('mdi-book-open-variant'),
+              icon: tnIconMarker('book-open-variant', 'mdi'),
               externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
             }],
           },
@@ -1164,7 +1164,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         actions: [{
           label: T('Go to Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('dns'),
+          icon: tnIconMarker('dns', 'material'),
           route: ['/storage'],
           primary: true,
         }],
@@ -1184,13 +1184,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
             actions: [{
               label: T('Manage Boot Environments'),
               type: SmartAlertActionType.Navigate,
-              icon: iconMarker('mdi-layers'),
+              icon: tnIconMarker('layers', 'mdi'),
               route: bootListElements.anchorRouterLink,
               primary: true,
             }, {
               label: T('Boot Environments Guide'),
               type: SmartAlertActionType.ExternalLink,
-              icon: iconMarker('mdi-book-open-variant'),
+              icon: tnIconMarker('book-open-variant', 'mdi'),
               externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
             }],
           },
@@ -1204,7 +1204,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         actions: [{
           label: T('Go to Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('dns'),
+          icon: tnIconMarker('dns', 'material'),
           route: ['/storage'],
           primary: true,
         }],
@@ -1224,13 +1224,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
             actions: [{
               label: T('Manage Boot Environments'),
               type: SmartAlertActionType.Navigate,
-              icon: iconMarker('mdi-layers'),
+              icon: tnIconMarker('layers', 'mdi'),
               route: bootListElements.anchorRouterLink,
               primary: true,
             }, {
               label: T('Boot Environments Guide'),
               type: SmartAlertActionType.ExternalLink,
-              icon: iconMarker('mdi-book-open-variant'),
+              icon: tnIconMarker('book-open-variant', 'mdi'),
               externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
             }],
           },
@@ -1244,7 +1244,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         actions: [{
           label: T('Go to Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('dns'),
+          icon: tnIconMarker('dns', 'material'),
           route: ['/storage'],
           primary: true,
         }],
@@ -1262,7 +1262,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
+        icon: tnIconMarker('dns', 'material'),
         route: ['/storage'],
         primary: true,
       }],
@@ -1274,7 +1274,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Storage'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
+        icon: tnIconMarker('dns', 'material'),
         route: ['/storage'],
         primary: true,
       }],
@@ -1287,7 +1287,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Snapshots'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-camera'),
+        icon: tnIconMarker('camera', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1299,7 +1299,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Snapshots'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-camera'),
+        icon: tnIconMarker('camera', 'mdi'),
         route: ['/datasets'],
         primary: true,
       }],
@@ -1312,7 +1312,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to API keys'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-key'),
+        icon: tnIconMarker('key', 'mdi'),
         route: ['/credentials', 'users'],
         primary: true,
       }],
@@ -1324,7 +1324,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to API keys'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-key'),
+        icon: tnIconMarker('key', 'mdi'),
         route: ['/credentials', 'users'],
         primary: true,
       }],
@@ -1337,7 +1337,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Boot Pools'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-layers'),
+        icon: tnIconMarker('layers', 'mdi'),
         route: ['/system', 'boot'],
         primary: true,
       }],
@@ -1350,7 +1350,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to System Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('settings'),
+        icon: tnIconMarker('settings', 'material'),
         route: ['/system', 'general'],
         fragment: 'support',
         primary: true,
@@ -1363,7 +1363,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to System Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('settings'),
+        icon: tnIconMarker('settings', 'material'),
         route: ['/system', 'general'],
         fragment: 'support',
         primary: true,
@@ -1376,7 +1376,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to System Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('settings'),
+        icon: tnIconMarker('settings', 'material'),
         route: ['/system', 'general'],
         fragment: 'support',
         primary: true,
@@ -1389,7 +1389,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to System Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('settings'),
+        icon: tnIconMarker('settings', 'material'),
         route: ['/system', 'general'],
         fragment: 'support',
         primary: true,
@@ -1403,7 +1403,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to System Updates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-update'),
+        icon: tnIconMarker('update', 'mdi'),
         route: ['/system', 'update'],
         primary: true,
       }],
@@ -1416,7 +1416,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Data Protection'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('security'),
+        icon: tnIconMarker('security', 'material'),
         route: ['/data-protection'],
         primary: true,
       }],
@@ -1428,7 +1428,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Data Protection'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('security'),
+        icon: tnIconMarker('security', 'material'),
         route: ['/data-protection'],
         primary: true,
       }],
@@ -1440,7 +1440,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Data Protection'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('security'),
+        icon: tnIconMarker('security', 'material'),
         route: ['/data-protection'],
         primary: true,
       }],
@@ -1454,7 +1454,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to VMWare Snapshots'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-camera'),
+        icon: tnIconMarker('camera', 'mdi'),
         route: ['/data-protection', 'vmware-snapshots'],
         primary: true,
       }],
@@ -1467,7 +1467,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to VMWare Snapshots'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-camera'),
+        icon: tnIconMarker('camera', 'mdi'),
         route: ['/data-protection', 'vmware-snapshots'],
         primary: true,
       }],
@@ -1480,7 +1480,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to VMWare Snapshots'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-camera'),
+        icon: tnIconMarker('camera', 'mdi'),
         route: ['/data-protection', 'vmware-snapshots'],
         primary: true,
       }],
@@ -1494,7 +1494,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to UPS service'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-flash'),
+        icon: tnIconMarker('flash', 'mdi'),
         route: ['/system', 'services'],
         fragment: 'ups',
         primary: true,
@@ -1527,7 +1527,7 @@ const patternCategories: {
       {
         label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
+        icon: tnIconMarker('dns', 'material'),
         route: ['/storage'],
         primary: true,
       },
@@ -1542,7 +1542,7 @@ const patternCategories: {
       {
         label: T('Manage Users'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-account-multiple'),
+        icon: tnIconMarker('account-multiple', 'mdi'),
         route: ['/credentials', 'users'],
         primary: true,
       },
@@ -1557,14 +1557,14 @@ const patternCategories: {
       {
         label: T('View Enclosure'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-server'),
+        icon: tnIconMarker('server', 'mdi'),
         route: ['/system', 'viewenclosure'],
         primary: true,
       },
       {
         label: T('Contact Support'),
         type: SmartAlertActionType.ExternalLink,
-        icon: iconMarker('mdi-help-circle'),
+        icon: tnIconMarker('help-circle', 'mdi'),
         externalUrl: 'https://support.ixsystems.com',
       },
     ],
@@ -1578,7 +1578,7 @@ const patternCategories: {
       {
         label: T('Renew Certificate'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-certificate'),
+        icon: tnIconMarker('certificate', 'mdi'),
         route: ['/credentials', 'certificates'],
         primary: true,
       },
@@ -1593,7 +1593,7 @@ const patternCategories: {
       {
         label: T('Go to Network'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-network'),
+        icon: tnIconMarker('network', 'mdi'),
         route: ['/system', 'network'],
         primary: true,
       },
@@ -1608,7 +1608,7 @@ const patternCategories: {
       {
         label: T('View Services'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('settings'),
+        icon: tnIconMarker('settings', 'material'),
         route: ['/system', 'services'],
         primary: true,
       },
@@ -1623,7 +1623,7 @@ const patternCategories: {
       {
         label: T('View Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('apps'),
+        icon: tnIconMarker('apps', 'material'),
         route: ['/apps', 'installed'],
         primary: true,
       },
@@ -1638,7 +1638,7 @@ const patternCategories: {
       {
         label: T('View Data Protection'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('security'),
+        icon: tnIconMarker('security', 'material'),
         route: ['/data-protection'],
         primary: true,
       },
@@ -1653,7 +1653,7 @@ const patternCategories: {
       {
         label: T('View Updates'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-update'),
+        icon: tnIconMarker('update', 'mdi'),
         route: ['/system', 'update'],
         primary: true,
       },
@@ -1668,7 +1668,7 @@ const patternCategories: {
       {
         label: T('View Enclosure'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-server'),
+        icon: tnIconMarker('server', 'mdi'),
         route: ['/system', 'viewenclosure'],
         primary: true,
       },

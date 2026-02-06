@@ -33,7 +33,7 @@
       [attr.aria-label]="'First Page' | translate"
       (click)="goToPage(1)"
     >
-      <ix-icon name="first_page"></ix-icon>
+      <tn-icon name="page-first" library="mdi"></tn-icon>
     </button>
     <button
       mat-icon-button
@@ -42,7 +42,7 @@
       [attr.aria-label]="'Previous Page' | translate"
       (click)="previousPage()"
     >
-      <ix-icon name="mdi-chevron-left"></ix-icon>
+      <tn-icon name="chevron-left" library="mdi"></tn-icon>
     </button>
     <button
       mat-icon-button
@@ -51,7 +51,7 @@
       [disabled]="currentPage() === totalPages() || !totalPages()"
       (click)="nextPage()"
     >
-      <ix-icon name="mdi-chevron-right"></ix-icon>
+      <tn-icon name="chevron-right" library="mdi"></tn-icon>
     </button>
     <button
       mat-icon-button
@@ -60,7 +60,7 @@
       [disabled]="currentPage() === totalPages() || !totalPages()"
       (click)="goToPage(totalPages())"
     >
-      <ix-icon name="last_page"></ix-icon>
+      <tn-icon name="page-last" library="mdi"></tn-icon>
     </button>
   </div>
 </div>

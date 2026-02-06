@@ -2,6 +2,7 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import html2canvas, { Options } from 'html2canvas';
 import {
@@ -25,7 +26,6 @@ import {
   NewTicketResponse,
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -169,7 +169,7 @@ export class FeedbackService {
   showTicketSuccessMessage(ticketUrl: string): void {
     this.dialogService.generalDialog({
       message: this.translate.instant('Thank you. Ticket was submitted successfully.'),
-      icon: iconMarker('mdi-check'),
+      icon: tnIconMarker('check', 'mdi'),
       title: this.translate.instant('Ticket Created'),
       cancelBtnMsg: this.translate.instant('Close'),
       confirmBtnMsg: this.translate.instant('Open ticket'),

@@ -7,6 +7,8 @@ import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { AuthSession } from 'app/interfaces/auth-session.interface';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -38,6 +40,7 @@ describe('TwoFactorComponent', () => {
       mockApi([
         mockCall('user.renew_2fa_secret'),
         mockCall('user.unset_2fa_secret'),
+        mockCall('auth.sessions', [{ current: true, credentials: CredentialType.TwoFactor } as AuthSession]),
       ]),
       mockProvider(AuthService, {
         user$: of({

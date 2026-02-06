@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   VirtualPortsNumberDialog,
@@ -131,23 +131,23 @@ describe('FibreChannelPortsComponent', () => {
   });
 
   it('shows edit icon on physical ports only', async () => {
-    const firstRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 1, 5);
-    const secondRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 2, 5);
-    const thirdRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 3, 5);
-    const fourthRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 4, 5);
-    const fifthRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 5, 5);
+    const firstRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 1, 5);
+    const secondRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 2, 5);
+    const thirdRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 3, 5);
+    const fourthRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 4, 5);
+    const fifthRowIcons = await table.getAllHarnessesInCell(TnIconHarness, 5, 5);
 
     expect(firstRowIcons).toHaveLength(1);
-    expect(await firstRowIcons[0].getName()).toBe('edit');
+    expect(await firstRowIcons[0].getName()).toBe('mdi-pencil');
     expect(secondRowIcons).toHaveLength(0);
     expect(thirdRowIcons).toHaveLength(0);
     expect(fourthRowIcons).toHaveLength(1);
-    expect(await fourthRowIcons[0].getName()).toBe('edit');
+    expect(await fourthRowIcons[0].getName()).toBe('mdi-pencil');
     expect(fifthRowIcons).toHaveLength(0);
   });
 
   it('opens fibre channel port form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
     await editButton.click();
 
     expect(spectator.inject(MatDialog).open)

@@ -64,7 +64,7 @@
                   [matTooltip]="'Shell' | translate"
                   [routerLink]="getShellLink(container)"
                 >
-                  <ix-icon name="mdi-console"></ix-icon>
+                  <tn-icon name="console" library="mdi"></tn-icon>
                 </a>
                 <button
                   mat-icon-button
@@ -74,7 +74,7 @@
                   [matTooltip]="'Volume Mounts' | translate"
                   (click)="volumeButtonPressed(container)"
                 >
-                  <ix-icon name="mdi-folder-outline"></ix-icon>
+                  <tn-icon name="folder-outline" library="mdi"></tn-icon>
                 </button>
 
                 <a
@@ -85,7 +85,7 @@
                   [matTooltip]="'View Logs' | translate"
                   [routerLink]="getViewLogsLink(container)"
                 >
-                  <ix-icon name="mdi-text-box"></ix-icon>
+                  <tn-icon name="text-box" library="mdi"></tn-icon>
                 </a>
               </div>
             }
