@@ -157,6 +157,12 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     if (this.allowCustomValue() && this.textContent && !this.selectedOption) {
       this.value = this.textContent;
       this.onChange(this.textContent);
+    } else if (this.allowCustomValue() && !this.textContent && !this.selectedOption) {
+      // User manually cleared the text (e.g., select all + backspace)
+      // Update form control to null and re-run validation to clear any errors
+      this.value = null;
+      this.onChange(null);
+      this.controlDirective.control?.updateValueAndValidity();
     }
   }
 
@@ -282,6 +288,13 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       }
     }
     this.textContent = changedValue;
+
+    // If user cleared the text completely, update form control and clear validation errors
+    if (!changedValue && this.allowCustomValue()) {
+      this.onChange(null);
+      this.controlDirective.control?.updateValueAndValidity();
+    }
+
     this.filterChanged$.next(changedValue);
   }
 
@@ -294,6 +307,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.value = null;
     this.textContent = '';
     this.onChange(null);
+    // Force validation to re-run to clear any async validation errors
+    this.controlDirective.control?.updateValueAndValidity();
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
