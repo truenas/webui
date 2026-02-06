@@ -6,7 +6,7 @@
   <h1 mat-dialog-title>
     {{ 'Map User And Group IDs' | translate }}
 
-    <ix-icon
+    <tn-icon
       name="help_outline"
       class="help-icon"
       tabindex="0"
@@ -14,7 +14,7 @@
       matTooltipClass="tooltip-wide tooltip-multiline"
       [attr.aria-label]="'Help' | translate"
       [matTooltip]="idMapHintText"
-    ></ix-icon>
+    ></tn-icon>
   </h1>
 
   <button
@@ -23,7 +23,7 @@
     [attr.aria-label]="'Close Dialog' | translate"
     (click)="dialogRef.close()"
   >
-    <ix-icon name="cancel"></ix-icon>
+    <tn-icon name="cancel"></tn-icon>
   </button>
 </div>
 
@@ -72,17 +72,16 @@
               mat-icon-button
               type="button"
               [ixTest]="['clear-mapping', mapping.description]"
-              [attr.aria-label]="('Clear mapping for {name}' | translate: { name: mapping.name })"
               [matTooltip]="'Clear mapping' | translate"
               (click)="onClearMapping(mapping)"
             >
-              <ix-icon name="mdi-delete"></ix-icon>
+              <tn-icon name="mdi-delete"></tn-icon>
             </button>
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['mapping-table-header']"></tr>
-        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['mapping-table-row', row]"></tr>
+        <tr *matHeaderRowDef="columns" mat-header-row [ixTest]="['image-table-header']"></tr>
+        <tr *matRowDef="let row; columns: columns" mat-row [ixTest]="['image-table-row', row]"></tr>
       </table>
 
       @if (!mappings().length) {

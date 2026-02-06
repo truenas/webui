@@ -20,14 +20,14 @@
         class="default-checkbox"
         [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
       ></ix-checkbox>
-      <ix-icon
+      <tn-icon
         name="help_outline"
         class="help-icon-inline"
         tabindex="0"
         role="button"
         [attr.aria-label]="'Help' | translate"
         [matTooltip]="helptext.mapDirectlyTooltip | translate"
-      ></ix-icon>
+      ></tn-icon>
     </div>
 
     @if (!form.value.mapDirectly) {

@@ -18,6 +18,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
 } from 'rxjs';
@@ -29,7 +30,6 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -52,7 +52,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FakeProgressBarComponent,
-    IxIconComponent,
+    TnIconComponent,
     MatDialogContent,
     MatDialogTitle,
     MatIconButton,
