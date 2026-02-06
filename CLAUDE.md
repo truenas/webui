@@ -130,6 +130,9 @@ export class MyComponent {
 yarn auth-url /credentials/kmip
 # Output: http://localhost:4200/credentials/kmip?token=...
 
+# Custom credentials via environment variables (defaults: root/testing)
+AUTH_USERNAME=truenas_admin AUTH_PASSWORD=truenas yarn auth-url /dashboard
+
 # Use the URL with Playwright MCP
 mcp__playwright__browser_navigate(url)
 mcp__playwright__browser_wait_for(time: 5)  # Wait for redirect + load
@@ -137,9 +140,10 @@ mcp__playwright__browser_snapshot()         # See the page
 ```
 
 **Important Notes**:
+- **Custom credentials**: `auth-url` defaults to `root`/`testing`. Override with `AUTH_USERNAME` and `AUTH_PASSWORD` env vars.
 - **Login redirect is normal**: Page redirects to login page first, then auto-authenticates with token.
 - **Wait for `ix-admin-layout`**: Don't take snapshots until the main admin layout (ix-admin-layout) appears.
-- **Token TTL**: 2 hours, uses `root/testing` credentials from environment.ts
+- **Token TTL**: 2 hours, credentials are read from environment variables or fall back to defaults.
 - **Browser sessions**: If browser gets stuck, restart Claude Code session
 
 **Available Tools**:

@@ -109,3 +109,6 @@ src/assets/scripts/ie-support/ie-polyfills.min.js
 .jest
 
 src/app/testing-configs/*
+
+# Playwright MCP
+.playwright-mcp/
