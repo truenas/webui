@@ -26,6 +26,7 @@ import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
   styleUrls: ['./ix-icon.component.scss'],
   templateUrl: 'ix-icon.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
 })
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   readonly errorHandler: IconErrorHandlerService;

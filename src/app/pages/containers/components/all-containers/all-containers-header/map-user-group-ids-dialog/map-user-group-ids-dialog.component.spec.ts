@@ -121,11 +121,15 @@ describe('MapUserGroupIdsDialogComponent', () => {
   });
 
   it('reloads mappings when a new mapping is added', () => {
-    jest.spyOn(api, 'call');
+    const apiCallSpy = jest.spyOn(api, 'call');
+    apiCallSpy.mockClear();
 
-    spectator.component.loadMappings();
+    spectator.triggerEventHandler('ix-new-mapping-form', 'mappingAdded', undefined);
+    spectator.detectChanges();
 
-    expect(api.call).toHaveBeenCalledWith('user.query', expect.anything());
+    expect(apiCallSpy).toHaveBeenCalledWith('user.query', [[
+      ['local', '=', true], ['userns_idmap', '!=', null],
+    ]]);
   });
 
   it('closes dialog when close button is clicked', () => {

@@ -94,6 +94,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
   protected readonly noEntries: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
+    title: this.translate.instant('No ID Mappings'),
     message: this.translate.instant('No entries have been mapped yet.'),
   };
 
