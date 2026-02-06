@@ -51,6 +51,19 @@
                     </a>
                     <pre>{{ detail.value }}</pre>
                   }
+                } @else if (detail.label === LOGS_EXCERPT_LABEL) {
+                  @if (!isLogsExcerptOpen()) {
+                    <a class="trace-toggle" (click)="toggleLogsExcerpt()">
+                      <tn-icon name="eye" library="mdi"></tn-icon>
+                      <span>{{ 'Show' | translate }}</span>
+                    </a>
+                  } @else {
+                    <a class="trace-toggle" (click)="toggleLogsExcerpt()">
+                      <tn-icon name="eye-off" library="mdi"></tn-icon>
+                      <span>{{ 'Hide' | translate }}</span>
+                    </a>
+                    <pre>{{ detail.value }}</pre>
+                  }
                 } @else if (detail.value && detail.value.toString().includes('\n')) {
                   <pre>{{ detail.value }}</pre>
                 } @else {

@@ -2,6 +2,7 @@ import { Params } from '@angular/router';
 import { Job } from 'app/interfaces/job.interface';
 
 export const traceDetailLabel = 'Trace';
+export const logsExcerptDetailLabel = 'Logs Excerpt';
 
 export interface ErrorReportAction {
   label: string;
