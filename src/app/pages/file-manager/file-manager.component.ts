@@ -39,6 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-dialog.component';
 import { QuickLookDialogComponent, QuickLookDialogData } from './quick-look-dialog/quick-look-dialog.component';
+import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult } from './folder-picker-dialog/folder-picker-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -979,6 +980,60 @@ export class FileManagerComponent implements OnInit, OnDestroy {
               this.errorHandler.showErrorModal(error);
             },
           });
+      });
+  }
+
+  moveSelected(): void {
+    const selected = this.selectedItems();
+    if (selected.size === 0) return;
+
+    const selectedPaths = Array.from(selected);
+    const selectedItems = this.items().filter((i) => selectedPaths.includes(i.path));
+
+    if (selectedItems.length === 0) return;
+
+    const dialogRef = this.matDialog.open(FolderPickerDialogComponent, {
+      data: {
+        title: this.translate.instant('Move To'),
+        currentPath: this.currentPath(),
+        excludePaths: selectedPaths,
+      } as FolderPickerDialogData,
+      width: '700px',
+      maxHeight: '80vh',
+    });
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter((result: FolderPickerDialogResult | undefined): result is FolderPickerDialogResult => !!result),
+        untilDestroyed(this),
+      )
+      .subscribe((result) => {
+        this.performMove(selectedPaths, result.path);
+      });
+  }
+
+  private performMove(sourcePaths: string[], destinationPath: string): void {
+    this.dialogService.jobDialog(
+      this.api.job('filesystem.move', [{
+        src: sourcePaths,
+        dst: destinationPath,
+      }]),
+      { title: this.translate.instant('Moving...') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        const count = sourcePaths.length;
+        if (count === 1) {
+          this.snackbar.success(this.translate.instant('Item moved successfully'));
+        } else {
+          this.snackbar.success(this.translate.instant('{count} items moved successfully', { count }));
+        }
+        this.selectedItems.set(new Set());
+        this.loadDirectory(this.currentPath());
       });
   }
 

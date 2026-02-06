@@ -1,0 +1,91 @@
+<h2 mat-dialog-title>{{ data.title || ('Move To' | translate) }}</h2>
+
+<mat-dialog-content>
+  <div class="folder-picker-container">
+    <!-- Locations Sidebar -->
+    <div class="locations-sidebar">
+      <div class="sidebar-title">{{ 'Locations' | translate }}</div>
+      <mat-nav-list>
+        @for (location of locations(); track location.path) {
+          <a
+            mat-list-item
+            [class.active]="currentPath().startsWith(location.path)"
+            (click)="onLocationClick(location)"
+          >
+            <ix-icon [name]="location.icon" matListItemIcon></ix-icon>
+            <span matListItemTitle>{{ location.name }}</span>
+          </a>
+        }
+      </mat-nav-list>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Navigation Bar -->
+      <div class="nav-bar">
+        <button
+          mat-icon-button
+          [disabled]="!canGoUp()"
+          (click)="goUp()"
+          [matTooltip]="'Go Up' | translate"
+        >
+          <ix-icon name="mdi-arrow-up"></ix-icon>
+        </button>
+
+        <div class="breadcrumb">
+          @for (crumb of breadcrumbs(); track crumb.path; let last = $last) {
+            @if (!last) {
+              <span class="crumb" (click)="navigateTo(crumb.path)">{{ crumb.name }}</span>
+              <ix-icon name="mdi-chevron-right" class="separator"></ix-icon>
+            } @else {
+              <span class="crumb current">{{ crumb.name }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Folder List -->
+      <div class="folder-list">
+        @if (isLoading()) {
+          <div class="loading">
+            <mat-spinner diameter="32"></mat-spinner>
+          </div>
+        } @else if (items().length === 0) {
+          <div class="empty-state">
+            <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
+            <p>{{ 'No subfolders' | translate }}</p>
+          </div>
+        } @else {
+          @for (item of items(); track item.path) {
+            <div
+              class="folder-item"
+              (dblclick)="onItemDoubleClick(item)"
+            >
+              <ix-icon name="mdi-folder" class="folder-icon"></ix-icon>
+              <span class="folder-name">{{ item.name }}</span>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Current Selection -->
+      <div class="current-selection">
+        <span class="label">{{ 'Destination:' | translate }}</span>
+        <span class="path">{{ currentPath() }}</span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">{{ 'Cancel' | translate }}</button>
+  <button 
+    mat-flat-button 
+    color="primary" 
+    [disabled]="!canSelectCurrentFolder()"
+    [matTooltip]="!canSelectCurrentFolder() ? ('Select a folder inside a dataset or USB drive' | translate) : ''"
+    (click)="selectCurrentFolder()"
+  >
+    {{ 'Move Here' | translate }}
+  </button>
+</mat-dialog-actions>
