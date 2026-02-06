@@ -7,6 +7,7 @@ import {
   createComponentFactory,
   mockProvider,
 } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -476,7 +477,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   describe('Documentation link', () => {
-    it('should show documentation link in Active state with security and accessibility attributes', () => {
+    it('should show documentation link in Active state with security and accessibility attributes', async () => {
       config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
       spectator.detectChanges();
 
@@ -488,10 +489,9 @@ describe('TruenasConnectStatusModalComponent', () => {
       expect(docLink.textContent).toContain('Learn more about TrueNAS Connect');
       expect(docLink.textContent).toContain('opens in a new tab');
 
-      // Check for external link icon
-      const icon = docLink.querySelector('ix-icon[name="mdi-open-in-new"]');
-      expect(icon).toBeTruthy();
-      expect(icon.getAttribute('aria-hidden')).toBe('true');
+      // Check for external link icon using TnIconHarness
+      const icon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'open-in-new', library: 'mdi' }));
+      expect(icon).not.toBeNull();
 
       // Check for screen reader text
       const srText = docLink.querySelector('.sr-only');

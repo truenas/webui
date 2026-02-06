@@ -5,9 +5,9 @@
 } @else {
   @if (dataset().locked) {
     @if (isEncryptionRoot()) {
-      <ix-icon name="mdi-lock"></ix-icon>
+      <tn-icon name="lock" library="mdi"></tn-icon>
     } @else {
-      <ix-icon name="mdi-lock-outline"></ix-icon>
+      <tn-icon name="lock-outline" library="mdi"></tn-icon>
     }
     <div class="encryption-description">
       <div>{{ 'Locked' | translate }}</div>
@@ -19,9 +19,9 @@
     </div>
   } @else {
     @if (isEncryptionRoot()) {
-      <ix-icon name="mdi-lock-open-variant"></ix-icon>
+      <tn-icon name="lock-open-variant" library="mdi"></tn-icon>
     } @else {
-      <ix-icon name="mdi-lock-open-variant-outline"></ix-icon>
+      <tn-icon name="lock-open-variant-outline" library="mdi"></tn-icon>
     }
     <div class="encryption-description">
       <div>{{ 'Unlocked' | translate }}</div>

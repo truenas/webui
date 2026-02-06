@@ -10,7 +10,7 @@
           [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
           (click)="$event.stopPropagation(); action.onClick(row())"
         >
-          <ix-icon [name]="action.iconName"></ix-icon>
+          <tn-icon [name]="action.iconName"></tn-icon>
         </button>
       }
     </div>

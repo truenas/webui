@@ -17,21 +17,21 @@
     margin-left: 6px;
     vertical-align: middle;
 
-    ix-icon {
+    tn-icon {
       font-size: 16px;
       height: 16px;
       width: 16px;
     }
 
-    &.critical ix-icon {
+    &.critical tn-icon {
       color: var(--red) !important;
     }
 
-    &.warning ix-icon {
+    &.warning tn-icon {
       color: var(--orange) !important;
     }
 
-    &.info ix-icon {
+    &.info tn-icon {
       color: var(--primary) !important;
     }
   }

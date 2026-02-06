@@ -44,9 +44,9 @@
     >
       <div class="event-data" [matTooltip]="audit | getLogImportantData | translate">
         @if (audit.success) {
-          <ix-icon name="mdi-check-circle"></ix-icon>
+          <tn-icon name="check-circle" library="mdi"></tn-icon>
         } @else {
-          <ix-icon class="error-color" name="mdi-close-circle"></ix-icon>
+          <tn-icon class="error-color" name="close-circle" library="mdi"></tn-icon>
         }
         <span>{{ audit | getLogImportantData | translate }}</span>
       </div>

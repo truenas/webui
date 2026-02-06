@@ -160,8 +160,8 @@ describe('WidgetSysInfoPassiveComponent', () => {
       store$.refreshState();
       spectator.detectChanges();
 
-      expect(spectator.query('.container.empty div')).toHaveText('This system is not licensed for HA.');
-      expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit this widget.');
+      expect(spectator.query('.container.empty h3 div')).toHaveText('This system is not licensed for HA.');
+      expect(spectator.query('.container.empty h3 small')).toHaveText('Configure dashboard to edit this widget.');
     });
 
     it('shows hostname near product image when system serial is present', () => {

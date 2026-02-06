@@ -93,9 +93,9 @@ describe('AlertComponent', () => {
     expect(alert.nodeElement).toHaveExactText('Active Controller (A)');
   });
 
-  it('shows an alert icon', async () => {
-    const icon = await alert.getIconHarness();
-    expect(await icon.getName()).toBe('mdi-alert-circle');
+  it('shows an alert icon', () => {
+    const iconName = alert.getIconName();
+    expect(iconName).toBe('mdi-alert-circle');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {

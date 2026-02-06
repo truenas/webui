@@ -5,13 +5,13 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -30,7 +30,7 @@ import { RedirectService } from 'app/services/redirect.service';
     MatIconButton,
     TestDirective,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     MatMenuTrigger,
     MatMenu,

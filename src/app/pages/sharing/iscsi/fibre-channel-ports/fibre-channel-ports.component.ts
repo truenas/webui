@@ -7,6 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
 import {
   catchError,
@@ -16,7 +17,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -125,7 +125,7 @@ export class FibreChannelPortsComponent implements OnInit {
         disableSorting: true,
         actions: [
           {
-            iconName: iconMarker('edit'),
+            iconName: tnIconMarker('pencil', 'mdi'),
             tooltip: this.translate.instant('Edit'),
             onClick: (row) => this.doEdit(row),
             hidden: (row) => of(!row.isPhysical),

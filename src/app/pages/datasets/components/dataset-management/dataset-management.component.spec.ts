@@ -110,7 +110,7 @@ describe('DatasetsManagementComponent', () => {
     expect(spectator.query(EmptyComponent)!.conf).toEqual(
       expect.objectContaining({
         type: 'no_page_data',
-        icon: 'ix-dataset-root',
+        icon: 'app-dataset-root',
         title: 'No Datasets',
         large: true,
         button: expect.objectContaining({

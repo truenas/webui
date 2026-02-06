@@ -8,6 +8,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -23,8 +24,6 @@ import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-aler
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -61,7 +60,7 @@ import { AppState } from 'app/store';
     MatToolbarRow,
     TestDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     RequiresRolesDirective,
     MatButton,
@@ -132,19 +131,19 @@ export class RsyncTaskCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),

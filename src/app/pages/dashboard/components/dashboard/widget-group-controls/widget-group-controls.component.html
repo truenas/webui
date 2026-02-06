@@ -6,7 +6,7 @@
     [disabled]="!canMoveUp()"
     (click)="moveUp.emit()"
   >
-    <ix-icon name="mdi-menu-up"></ix-icon>
+    <tn-icon name="menu-up" library="mdi"></tn-icon>
   </button>
   <button
     mat-icon-button
@@ -15,12 +15,12 @@
     [disabled]="!canMoveDown()"
     (click)="moveDown.emit()"
   >
-    <ix-icon name="mdi-menu-down"></ix-icon>
+    <tn-icon name="menu-down" library="mdi"></tn-icon>
   </button>
 </div>
 
 <div class="drag-handle" cdkDragHandle>
-  <ix-icon name="mdi-drag-horizontal"></ix-icon>
+  <tn-icon name="drag-horizontal" library="mdi"></tn-icon>
 </div>
 
 <div class="edit-and-delete">
@@ -30,7 +30,7 @@
     [ixTest]="['edit-group', 'widget' + index()]"
     (click)="edit.emit()"
   >
-    <ix-icon name="edit"></ix-icon>
+    <tn-icon name="pencil" library="mdi"></tn-icon>
   </button>
   <button
     mat-icon-button
@@ -38,6 +38,6 @@
     [ixTest]="['delete-group', 'widget' + index()]"
     (click)="delete.emit()"
   >
-    <ix-icon name="mdi-delete"></ix-icon>
+    <tn-icon name="delete" library="mdi"></tn-icon>
   </button>
 </div>

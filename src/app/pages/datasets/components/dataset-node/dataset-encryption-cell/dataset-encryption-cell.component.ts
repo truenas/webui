@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -13,7 +13,7 @@ import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class DatasetEncryptionCellComponent {

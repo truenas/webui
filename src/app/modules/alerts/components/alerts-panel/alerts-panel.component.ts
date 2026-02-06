@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -26,8 +26,6 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -46,10 +44,10 @@ type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
   styleUrls: ['./alerts-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
+    TnIconButtonComponent,
+    TnIconComponent,
     TestDirective,
     MatMenuTrigger,
-    IxIconComponent,
     MatMenu,
     MatMenuItem,
     MatProgressBar,
@@ -77,11 +75,8 @@ export class AlertsPanelComponent implements OnInit {
   isHaLicensed = false;
 
   // Static icons
-  protected readonly settingsIcon = iconMarker('settings');
-  protected readonly clearIcon = iconMarker('clear');
-  protected readonly cancelIcon = iconMarker('cancel');
-  protected readonly infoIcon = iconMarker('info');
-  protected readonly bellIcon = iconMarker('notifications_none');
+  protected readonly cancelIcon = tnIconMarker('close-circle', 'mdi');
+  protected readonly bellIcon = tnIconMarker('bell-outline', 'mdi');
 
   // Severity filter
   protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info' | 'dismissed'>('all');
@@ -148,14 +143,14 @@ export class AlertsPanelComponent implements OnInit {
 
   // Category icons for display - matching side navigation icons
   protected readonly categoryIcons: Record<SmartAlertCategory, string> = {
-    [SmartAlertCategory.Storage]: iconMarker('dns'),
-    [SmartAlertCategory.Network]: iconMarker('mdi-network'),
-    [SmartAlertCategory.Services]: iconMarker('settings'),
-    [SmartAlertCategory.System]: iconMarker('settings'),
-    [SmartAlertCategory.Security]: iconMarker('vpn_key'),
-    [SmartAlertCategory.Hardware]: iconMarker('mdi-server'),
-    [SmartAlertCategory.Tasks]: iconMarker('security'),
-    [SmartAlertCategory.Applications]: iconMarker('apps'),
+    [SmartAlertCategory.Storage]: tnIconMarker('dns', 'material'),
+    [SmartAlertCategory.Network]: tnIconMarker('network', 'mdi'),
+    [SmartAlertCategory.Services]: tnIconMarker('cog', 'mdi'),
+    [SmartAlertCategory.System]: tnIconMarker('cog', 'mdi'),
+    [SmartAlertCategory.Security]: tnIconMarker('vpn_key', 'material'),
+    [SmartAlertCategory.Hardware]: tnIconMarker('server', 'mdi'),
+    [SmartAlertCategory.Tasks]: tnIconMarker('security', 'material'),
+    [SmartAlertCategory.Applications]: tnIconMarker('apps', 'material'),
   };
 
   ngOnInit(): void {
@@ -319,7 +314,7 @@ export class AlertsPanelComponent implements OnInit {
 
   // Helper to get category icon
   getCategoryIcon(category: string): string {
-    return this.categoryIcons[category as SmartAlertCategory] || iconMarker('mdi-alert-circle');
+    return this.categoryIcons[category as SmartAlertCategory] || tnIconMarker('alert-circle', 'mdi');
   }
 
   // Helper to get category label

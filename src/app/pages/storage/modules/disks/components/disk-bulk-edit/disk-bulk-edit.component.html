@@ -10,11 +10,12 @@
       <ix-fieldset [title]="helptextBulkEdit.title | translate">
         <label class="disk-list-label">
           {{ "Disks to be edited:" | translate }}
-          <ix-icon
+          <tn-icon
             class="tooltip-icon"
-            name="mdi-information-outline"
-            [matTooltip]="helptextBulkEdit.disks.tooltip | translate"
-          ></ix-icon>
+            name="information-outline"
+            library="mdi"
+            [tooltip]="disksTooltip"
+          ></tn-icon>
         </label>
         <div
           class="disk-list"
@@ -23,11 +24,12 @@
         >
           @for (diskName of form.controls.disknames.value; track diskName) {
             <div class="disk-item" role="listitem">
-              <ix-icon
-                name="ix-hdd"
+              <tn-icon
+                name="hdd"
+                library="custom"
                 class="disk-icon"
                 [attr.aria-hidden]="true"
-              ></ix-icon>
+              ></tn-icon>
               <span class="disk-name">{{ diskName }}</span>
             </div>
           }

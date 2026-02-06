@@ -2,7 +2,7 @@
   <div class="page-alerts-container">
     @for (alert of sortedPageAlerts(); track alert.id) {
       <div [class]="'page-alert ' + getAlertClass(alert.level)">
-        <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        <tn-icon class="alert-icon" [name]="getAlertIcon(alert.level)" [fullSize]="true"></tn-icon>
         @if (hasDuplicates(alert)) {
           <span
             class="duplicate-count-badge"
@@ -61,7 +61,7 @@
           [matTooltip]="getDismissTooltip(alert)"
           (click)="onDismiss(alert)"
         >
-          <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
+          <tn-icon name="clear" library="material" [attr.aria-hidden]="true"></tn-icon>
         </button>
       </div>
     }

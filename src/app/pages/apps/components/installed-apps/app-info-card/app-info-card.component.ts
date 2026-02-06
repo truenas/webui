@@ -9,6 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
@@ -23,7 +24,6 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
@@ -64,7 +64,7 @@ import { RedirectService } from 'app/services/redirect.service';
     MatCardActions,
     CleanLinkPipe,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     RouterLink,
   ],
 })

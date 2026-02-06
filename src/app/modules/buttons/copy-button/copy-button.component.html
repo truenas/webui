@@ -1,24 +1,22 @@
 @if (!jsonText() || !isValidJson()) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     matTooltipPosition="above"
     ixTest="copy-to-clipboard"
+    name="content-copy"
+    library="mdi"
     [matTooltip]="'Copy to Clipboard' | translate"
     (click)="copyToClipboard()"
-  >
-    <ix-icon name="assignment"></ix-icon>
-  </button>
+  ></tn-icon-button>
 }
 
 @if (jsonText() && isValidJson()) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     ixTest="copy-to-clipboard-menu"
+    name="content-copy"
+    library="mdi"
     [matTooltip]="'Copy to Clipboard' | translate"
     [matMenuTriggerFor]="menu"
-  >
-    <ix-icon name="assignment"></ix-icon>
-  </button>
+  ></tn-icon-button>
 }
 <mat-menu #menu="matMenu">
   <button mat-menu-item ixTest="copy-text" (click)="copyToClipboard()">

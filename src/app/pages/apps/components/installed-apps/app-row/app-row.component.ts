@@ -6,6 +6,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -13,7 +14,6 @@ import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -37,7 +37,7 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
     AppUpdateCellComponent,
     RequiresRolesDirective,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class AppRowComponent {

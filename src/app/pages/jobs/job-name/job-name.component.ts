@@ -7,11 +7,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
@@ -23,7 +23,8 @@ import { AppState } from 'app/store';
   styleUrls: ['./job-name.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     MatTooltip,
     MatProgressSpinner,
     MatProgressBar,

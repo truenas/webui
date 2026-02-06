@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY, NEVER, Observable, filter, switchMap, tap,
 } from 'rxjs';
@@ -17,7 +18,6 @@ import {
   ContainerNicDevice,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,7 +40,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     TranslateModule,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatIconButton,
     MatTooltip,
     MatMenu,

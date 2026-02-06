@@ -1,5 +1,5 @@
 <h1 #errorTitle mat-dialog-title id="err-title" class="err-title">
-  <ix-icon class="error-warning-icon" name="error"></ix-icon>
+  <tn-icon class="error-warning-icon" library="mdi" name="alert-circle"></tn-icon>
   {{ title() | translate }}
 </h1>
 <div #errorMdContent id="err-md-content">
@@ -10,9 +10,9 @@
       (click)="toggleOpen()"
     >
       @if (isCloseMoreInfo) {
-        <ix-icon name="add_circle_outline"></ix-icon>
+        <tn-icon name="plus-circle-outline" library="mdi"></tn-icon>
       } @else {
-        <ix-icon name="remove_circle_outline"></ix-icon>
+        <tn-icon name="minus-circle-outline" library="mdi"></tn-icon>
       }
       <span>{{ 'More info...' | translate }}</span>
     </div>

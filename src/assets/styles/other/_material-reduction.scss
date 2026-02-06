@@ -220,7 +220,7 @@ mat-checkbox {
 
 ix-tooltip button {
   i,
-  ix-icon {
+  tn-icon {
     opacity: 0.5;
   }
 }
@@ -525,14 +525,6 @@ td.mat-cell.mat-mdc-table-sticky::before {
 
 td.mat-cell.tree-cell {
   max-width: 300px;
-}
-
-td.mat-cell .ix-icon {
-  top: calc(50% - 12px);
-}
-
-td.mat-cell .ix-icon.expansion-trigger {
-  font-size: 24px;
 }
 
 td.mat-cell.mat-mdc-table-sticky.hover::before,

@@ -4,13 +4,13 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, ContainerGpuType, ContainerStatus } from 'app/enums/container.enum';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -41,7 +41,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddGpuDeviceMenuComponent,
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TestDirective,
   ],
