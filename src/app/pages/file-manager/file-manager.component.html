@@ -88,6 +88,19 @@
       >
         <ix-icon name="refresh"></ix-icon>
       </button>
+      <button
+        mat-icon-button
+        [matTooltip]="'More Actions' | translate"
+        [matMenuTriggerFor]="moreActionsMenu"
+      >
+        <ix-icon name="mdi-dots-horizontal"></ix-icon>
+      </button>
+      <mat-menu #moreActionsMenu="matMenu">
+        <button mat-menu-item [disabled]="!isUploadPermitted()" (click)="createFolder()">
+          <ix-icon name="mdi-folder-plus"></ix-icon>
+          <span>{{ "New Folder" | translate }}</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 

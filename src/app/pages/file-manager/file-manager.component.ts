@@ -953,6 +953,39 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     }
   }
 
+  createFolder(): void {
+    this.matDialog.open(InputDialogComponent, {
+      data: {
+        title: 'New Folder',
+        message: 'Enter folder name:',
+        inputLabel: 'Folder Name',
+        value: 'untitled folder',
+        confirmText: 'Create',
+      } as InputDialogConfig,
+      width: '400px',
+    })
+      .afterClosed()
+      .pipe(
+        filter((folderName: string | null) => !!folderName),
+        untilDestroyed(this),
+      )
+      .subscribe((folderName: string) => {
+        const newPath = `${this.currentPath()}/${folderName}`;
+
+        this.api.call('filesystem.mkdir', [{ path: newPath }])
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: () => {
+              this.snackbar.success(this.translate.instant('Folder created successfully'));
+              this.loadDirectory(this.currentPath());
+            },
+            error: (error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+            },
+          });
+      });
+  }
+
   private getMimeType(filename: string): string {
     const ext = filename.split('.').pop()?.toLowerCase() || '';
 
