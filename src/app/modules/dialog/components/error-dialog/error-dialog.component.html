@@ -38,27 +38,14 @@
             <tr>
               <td class="detail-label">{{ detail.label }}:</td>
               <td class="detail-value">
-                @if (detail.label === TRACE_LABEL) {
-                  @if (!isTraceOpen()) {
-                    <a class="trace-toggle" (click)="toggleTrace()">
+                @if (isCollapsibleDetail(detail.label)) {
+                  @if (!isDetailExpanded(detail.label)) {
+                    <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
                       <tn-icon name="eye" library="mdi"></tn-icon>
                       <span>{{ 'Show' | translate }}</span>
                     </a>
                   } @else {
-                    <a class="trace-toggle" (click)="toggleTrace()">
-                      <tn-icon name="eye-off" library="mdi"></tn-icon>
-                      <span>{{ 'Hide' | translate }}</span>
-                    </a>
-                    <pre>{{ detail.value }}</pre>
-                  }
-                } @else if (detail.label === LOGS_EXCERPT_LABEL) {
-                  @if (!isLogsExcerptOpen()) {
-                    <a class="trace-toggle" (click)="toggleLogsExcerpt()">
-                      <tn-icon name="eye" library="mdi"></tn-icon>
-                      <span>{{ 'Show' | translate }}</span>
-                    </a>
-                  } @else {
-                    <a class="trace-toggle" (click)="toggleLogsExcerpt()">
+                    <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
                       <tn-icon name="eye-off" library="mdi"></tn-icon>
                       <span>{{ 'Hide' | translate }}</span>
                     </a>

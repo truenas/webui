@@ -5,6 +5,7 @@ import {
   catchError,
   EMPTY,
   filter,
+  finalize,
   map,
   merge,
   Observable,
@@ -152,6 +153,7 @@ export class ApiService {
         return throwError(() => error);
       }),
       takeUntil(merge(this.clearSubscriptions$, callResponse$)),
+      finalize(() => this.jobApiErrors.delete(uuid)),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 

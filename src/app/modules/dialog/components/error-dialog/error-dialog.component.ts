@@ -15,6 +15,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+const collapsibleDetailLabels = new Set([traceDetailLabel, logsExcerptDetailLabel]);
+
 @UntilDestroy()
 @Component({
   selector: 'ix-error-dialog',
@@ -41,22 +43,30 @@ export class ErrorDialog {
   protected error = inject<ErrorReport>(MAT_DIALOG_DATA);
 
   protected isDetailsOpen = signal(false);
-  protected isTraceOpen = signal(false);
-  protected isLogsExcerptOpen = signal(false);
-
-  protected readonly TRACE_LABEL = traceDetailLabel;
-  protected readonly LOGS_EXCERPT_LABEL = logsExcerptDetailLabel;
+  protected expandedDetails = signal(new Set<string>());
 
   protected toggleDetails(): void {
     this.isDetailsOpen.set(!this.isDetailsOpen());
   }
 
-  protected toggleTrace(): void {
-    this.isTraceOpen.set(!this.isTraceOpen());
+  protected isCollapsibleDetail(label: string): boolean {
+    return collapsibleDetailLabels.has(label);
   }
 
-  protected toggleLogsExcerpt(): void {
-    this.isLogsExcerptOpen.set(!this.isLogsExcerptOpen());
+  protected isDetailExpanded(label: string): boolean {
+    return this.expandedDetails().has(label);
+  }
+
+  protected toggleDetailExpanded(label: string): void {
+    this.expandedDetails.update((current) => {
+      const next = new Set(current);
+      if (next.has(label)) {
+        next.delete(label);
+      } else {
+        next.add(label);
+      }
+      return next;
+    });
   }
 
   protected getDetailsAsText(): string {
