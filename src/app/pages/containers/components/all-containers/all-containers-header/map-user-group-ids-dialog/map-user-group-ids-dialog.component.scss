@@ -1,0 +1,68 @@
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  h1 {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0;
+    padding-top: 20px;
+
+    .help-icon {
+      cursor: pointer;
+      margin-bottom: 4px;
+      color: var(--fg2);
+      outline: none;
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  button {
+    margin-right: 20px;
+  }
+}
+
+.type-selector {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.dialog-content {
+  padding-top: 18px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.table-wrapper {
+  table {
+    th:last-child,
+    td:last-child {
+      text-align: right;
+    }
+
+    td:last-child button {
+      float: right;
+    }
+  }
+}
+
+::ng-deep .tooltip-wide {
+  max-width: 500px !important;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+::ng-deep .tooltip-multiline {
+  white-space: pre-line !important;
+}
