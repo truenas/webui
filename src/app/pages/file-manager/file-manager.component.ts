@@ -39,6 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-dialog.component';
 import { QuickLookDialogComponent, QuickLookDialogData } from './quick-look-dialog/quick-look-dialog.component';
+import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult } from './folder-picker-dialog/folder-picker-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -140,14 +141,9 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   // Quick Look dialog reference for toggle behavior
   private quickLookDialogRef: import('@angular/material/dialog').MatDialogRef<QuickLookDialogComponent> | null = null;
 
-  // Check if any file (non-directory) is selected
-  hasFileSelected = computed(() => {
-    const selected = this.selectedItems();
-    const items = this.items();
-    return Array.from(selected).some((path) => {
-      const item = items.find((i) => i.path === path);
-      return item && item.type !== FileType.Directory;
-    });
+  // Check if any item is selected (file or directory)
+  hasItemSelected = computed(() => {
+    return this.selectedItems().size > 0;
   });
 
   // Check if /mnt directory is empty (no pools created)
@@ -171,6 +167,18 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       return pathParts[1];
     }
     return null;
+  });
+
+  // Check if uploading is permitted in the current directory
+  // Uploading is NOT permitted in /mnt or pool root directories (e.g., /mnt/poolname)
+  isUploadPermitted = computed(() => {
+    const path = this.currentPath();
+    const pathParts = path.split('/').filter(Boolean);
+    // Not permitted at /mnt (1 segment) or /mnt/<pool> (2 segments)
+    if (pathParts.length <= 2 && pathParts[0] === 'mnt') {
+      return false;
+    }
+    return true;
   });
 
   // USB drives
@@ -215,6 +223,26 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('document:keydown.meta.backspace', ['$event'])
+  onCommandDelete(event: Event): void {
+    // Don't trigger if user is typing in an input field
+    const target = document.activeElement as HTMLElement;
+    if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    // Check if any items are selected
+    if (this.selectedItems().size === 0) {
+      return;
+    }
+
+    // Prevent default browser behavior
+    event.preventDefault();
+
+    // Trigger delete for selected items
+    this.deleteSelected();
   }
 
   @HostListener('document:keydown.space')
@@ -337,6 +365,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   }
 
   onItemClick(item: FileRecord, event: MouseEvent): void {
+    event.stopPropagation(); // Prevent container click from clearing selection
     if (event.ctrlKey || event.metaKey) {
       // Toggle selection
       const selected = new Set(this.selectedItems());
@@ -350,6 +379,11 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       // Single selection
       this.selectedItems.set(new Set([item.path]));
     }
+  }
+
+  onContainerClick(): void {
+    // Clear selection when clicking on empty space
+    this.selectedItems.set(new Set());
   }
 
   onItemDoubleClick(item: FileRecord): void {
@@ -587,21 +621,22 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     const selected = this.selectedItems();
     const items = this.items();
 
-    // Get all selected files (excluding directories)
-    const selectedFiles = Array.from(selected)
+    // Get all selected items (including directories)
+    const selectedItems = Array.from(selected)
       .map((path) => items.find((i) => i.path === path))
-      .filter((item): item is FileRecord => item !== undefined && item.type !== FileType.Directory);
+      .filter((item): item is FileRecord => item !== undefined);
 
-    if (selectedFiles.length === 0) {
+    if (selectedItems.length === 0) {
       return;
     }
 
-    if (selectedFiles.length === 1) {
+    // Check if only a single file (not directory) is selected
+    if (selectedItems.length === 1 && selectedItems[0].type !== FileType.Directory) {
       // Single file: download directly
-      this.downloadFile(selectedFiles[0]);
+      this.downloadFile(selectedItems[0]);
     } else {
-      // Multiple files: download as ZIP archive
-      this.downloadBatchFiles(selectedFiles);
+      // Multiple items or single directory: download as ZIP archive
+      this.downloadBatchFiles(selectedItems);
     }
   }
 
@@ -913,6 +948,93 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/datasets']);
     }
+  }
+
+  createFolder(): void {
+    this.matDialog.open(InputDialogComponent, {
+      data: {
+        title: 'New Folder',
+        message: 'Enter folder name:',
+        inputLabel: 'Folder Name',
+        value: 'untitled folder',
+        confirmText: 'Create',
+      } as InputDialogConfig,
+      width: '400px',
+    })
+      .afterClosed()
+      .pipe(
+        filter((folderName: string | null) => !!folderName),
+        untilDestroyed(this),
+      )
+      .subscribe((folderName: string) => {
+        const newPath = `${this.currentPath()}/${folderName}`;
+
+        this.api.call('filesystem.mkdir', [{ path: newPath }])
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: () => {
+              this.snackbar.success(this.translate.instant('Folder created successfully'));
+              this.loadDirectory(this.currentPath());
+            },
+            error: (error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+            },
+          });
+      });
+  }
+
+  moveSelected(): void {
+    const selected = this.selectedItems();
+    if (selected.size === 0) return;
+
+    const selectedPaths = Array.from(selected);
+    const selectedItems = this.items().filter((i) => selectedPaths.includes(i.path));
+
+    if (selectedItems.length === 0) return;
+
+    const dialogRef = this.matDialog.open(FolderPickerDialogComponent, {
+      data: {
+        title: this.translate.instant('Move To'),
+        currentPath: this.currentPath(),
+        excludePaths: selectedPaths,
+      } as FolderPickerDialogData,
+      width: '700px',
+      maxHeight: '80vh',
+    });
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter((result: FolderPickerDialogResult | undefined): result is FolderPickerDialogResult => !!result),
+        untilDestroyed(this),
+      )
+      .subscribe((result) => {
+        this.performMove(selectedPaths, result.path);
+      });
+  }
+
+  private performMove(sourcePaths: string[], destinationPath: string): void {
+    this.dialogService.jobDialog(
+      this.api.job('filesystem.move', [{
+        src: sourcePaths,
+        dst: destinationPath,
+      }]),
+      { title: this.translate.instant('Moving...') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        const count = sourcePaths.length;
+        if (count === 1) {
+          this.snackbar.success(this.translate.instant('Item moved successfully'));
+        } else {
+          this.snackbar.success(this.translate.instant('{count} items moved successfully', { count }));
+        }
+        this.selectedItems.set(new Set());
+        this.loadDirectory(this.currentPath());
+      });
   }
 
   private getMimeType(filename: string): string {

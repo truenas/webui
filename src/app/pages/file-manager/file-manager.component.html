@@ -40,7 +40,7 @@
       <input #folderInput type="file" hidden webkitdirectory (change)="onFolderSelected($event)" />
       <button
         mat-icon-button
-        [disabled]="isUploading()"
+        [disabled]="isUploading() || !isUploadPermitted()"
         [matTooltip]="'Upload' | translate"
         [matMenuTriggerFor]="uploadMenu"
       >
@@ -58,7 +58,7 @@
       </mat-menu>
       <button
         mat-icon-button
-        [disabled]="!hasFileSelected() || isDownloading()"
+        [disabled]="!hasItemSelected() || isDownloading()"
         [matTooltip]="'Download Selected' | translate"
         (click)="downloadSelectedFiles()"
       >
@@ -88,6 +88,23 @@
       >
         <ix-icon name="refresh"></ix-icon>
       </button>
+      <button
+        mat-icon-button
+        [matTooltip]="'More Actions' | translate"
+        [matMenuTriggerFor]="moreActionsMenu"
+      >
+        <ix-icon name="mdi-dots-horizontal"></ix-icon>
+      </button>
+      <mat-menu #moreActionsMenu="matMenu">
+        <button mat-menu-item [disabled]="!isUploadPermitted()" (click)="createFolder()">
+          <ix-icon name="mdi-folder-plus"></ix-icon>
+          <span>{{ "New Folder" | translate }}</span>
+        </button>
+        <button mat-menu-item [disabled]="!hasItemSelected()" (click)="moveSelected()">
+          <ix-icon name="mdi-folder-move"></ix-icon>
+          <span>{{ "Move To" | translate }}</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 
@@ -182,7 +199,7 @@
     </div>
 
     <!-- Files Area -->
-    <div class="files-area">
+    <div class="files-area" (click)="onContainerClick()">
       @if (isLoading()) {
         <div class="loading-overlay">
           <mat-spinner diameter="40"></mat-spinner>
@@ -289,12 +306,10 @@
 <!-- Context Menu -->
 <mat-menu #contextMenu="matMenu">
   @if (contextMenuItem()) {
-    @if (!isDirectory(contextMenuItem()!)) {
-      <button mat-menu-item (click)="downloadSelectedFiles()">
-        <ix-icon name="mdi-download"></ix-icon>
-        <span>{{ "Download" | translate }}</span>
-      </button>
-    }
+    <button mat-menu-item (click)="downloadSelectedFiles()">
+      <ix-icon name="mdi-download"></ix-icon>
+      <span>{{ "Download" | translate }}</span>
+    </button>
     @if (isQuickLookSupported(contextMenuItem()!)) {
       <button mat-menu-item (click)="openQuickLook(contextMenuItem()!)">
         <ix-icon name="mdi-eye"></ix-icon>
@@ -308,6 +323,10 @@
     <button mat-menu-item (click)="copyItem(contextMenuItem()!)">
       <ix-icon name="mdi-content-copy"></ix-icon>
       <span>{{ "Copy" | translate }}</span>
+    </button>
+    <button mat-menu-item (click)="moveSelected()">
+      <ix-icon name="mdi-folder-move"></ix-icon>
+      <span>{{ "Move To" | translate }}</span>
     </button>
     <mat-divider></mat-divider>
     <button
