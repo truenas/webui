@@ -56,13 +56,39 @@ export class DatasetFormService {
 
   addInheritOption(parentValue: string): OperatorFunction<Option[], Option[]> {
     return pipe(
-      map((options) => [
-        {
-          label: this.translate.instant('Inherit ({value})', { value: parentValue }),
-          value: inherit,
-        },
-        ...options,
-      ]),
+      map((options) => {
+        // Convert uppercase to title case, then translate
+        const titleCaseValue = this.toTitleCase(parentValue);
+        const translatedValue = this.translate.instant(titleCaseValue);
+
+        return [
+          {
+            label: this.translate.instant('Inherit ({value})', { value: translatedValue }),
+            value: inherit,
+          },
+          ...options,
+        ];
+      }),
     );
+  }
+
+  private toTitleCase(value: string): string {
+    if (!value) return value;
+
+    // Whitelist of known enum values that should be converted from uppercase to title case
+    // These are common ZFS property values that appear in parentheses
+    const enumValues = new Set([
+      'ON', 'OFF', // OnOff enum
+      'STANDARD', 'ALWAYS', 'DISABLED', // DatasetSync enum
+      'VISIBLE', 'HIDDEN', // DatasetSnapdir/Snapdev enum
+      'VERIFY', // DeduplicationSetting enum
+    ]);
+
+    // Only convert whitelisted uppercase enum values to title case
+    if (enumValues.has(value)) {
+      return value.charAt(0) + value.slice(1).toLowerCase();
+    }
+
+    return value;
   }
 }
