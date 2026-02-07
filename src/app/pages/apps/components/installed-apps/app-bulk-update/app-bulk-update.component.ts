@@ -1,5 +1,5 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, TrackByFunction, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal, TrackByFunction, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -8,10 +8,12 @@ import {
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map, Observable, of, pairwise, startWith,
 } from 'rxjs';
@@ -29,6 +31,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -55,6 +58,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
     TestDirective,
     MatButton,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class AppBulkUpdateComponent {
@@ -66,12 +70,13 @@ export class AppBulkUpdateComponent {
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private apps = inject<App[]>(MAT_DIALOG_DATA);
+  private cdr = inject(ChangeDetectorRef);
 
   readonly expandedItems = signal<string[]>([]);
+  readonly loadingMap = signal<Map<string, boolean>>(new Map());
 
   form = this.formBuilder.group<Record<string, string>>({});
   bulkItems = new Map<string, BulkListItem<App>>();
-  loadingMap = new Map<string, boolean>();
   optionsMap = new Map<string, Observable<Option[]>>();
   upgradeSummaryMap = new Map<string, AppUpgradeSummary>();
 
@@ -100,25 +105,34 @@ export class AppBulkUpdateComponent {
       return;
     }
 
-    this.getUpgradeSummary(row.value.item.name);
+    this.getUpgradeSummary(row.value.item);
   }
 
   isItemExpanded(row: KeyValue<string, BulkListItem<App>>): boolean {
     return this.expandedItems().includes(row.key);
   }
 
+  hasMultipleVersionOptions(appName: string): boolean {
+    const summary = this.upgradeSummaryMap.get(appName);
+    return (summary?.available_versions_for_upgrade?.length || 0) > 1;
+  }
+
+  protected readonly extractAppVersion = extractAppVersion;
+
   getVersionInfo(app: App, appName: string): {
     currentAppVersion: string;
     currentCatalogVersion: string;
     latestAppVersion: string;
     latestCatalogVersion: string;
+    hasAppVersionChange: boolean;
   } {
-    const versionParts = app.human_version.split('_');
-    const currentAppVersion = versionParts[0];
-    const currentCatalogVersion = versionParts[1] || versionParts[0];
+    const currentAppVersion = extractAppVersion(app.human_version, app.version);
+    const currentCatalogVersion = app.version;
 
     const summary = this.upgradeSummaryMap.get(appName);
-    const latestAppVersion = summary?.latest_human_version?.split('_')[0] || currentAppVersion;
+    // Use the latest_app_version field from the API if available, otherwise extract from latest_human_version
+    const latestAppVersion = summary?.latest_app_version
+      || extractAppVersion(summary?.latest_human_version, summary?.latest_version || app.latest_version);
     const latestCatalogVersion = this.form.value[appName] || app.latest_version;
 
     return {
@@ -126,29 +140,44 @@ export class AppBulkUpdateComponent {
       currentCatalogVersion,
       latestAppVersion,
       latestCatalogVersion,
+      hasAppVersionChange: currentAppVersion !== latestAppVersion,
     };
   }
 
-  private getUpgradeSummary(name: string, version?: string): void {
-    this.loadingMap.set(name, true);
+  private getUpgradeSummary(app: App, version?: string): void {
+    const name = app.name;
+    this.loadingMap.update((currentMap) => new Map(currentMap).set(name, true));
+
     this.appService
       .getAppUpgradeSummary(name, version)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (summary) => {
           const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
-            return { value: item.version, label: item.version } as Option;
+            // Use app_version from API if available for accurate display
+            const humanVersionForLabel = item.app_version
+              ? `${item.app_version}_${item.version}`
+              : item.human_version;
+
+            // Format label consistently: "Version: X / Revision: Y"
+            const label = formatVersionWithRevision(item.version, humanVersionForLabel);
+
+            return { value: item.version, label } as Option;
           }) || [];
           this.upgradeSummaryMap.set(name, summary);
           this.optionsMap.set(name, of(availableOptions));
           this.form.patchValue({
             [name]: version || String(availableOptions[0].value),
           });
-          this.loadingMap.set(name, false);
+          this.loadingMap.update((currentMap) => new Map(currentMap).set(name, false));
         },
         error: (error: unknown) => {
-          console.error(error);
-          this.loadingMap.set(name, false);
+          this.loadingMap.update((currentMap) => new Map(currentMap).set(name, false));
+          const item = this.bulkItems.get(name);
+          if (item) {
+            item.state = BulkListItemState.Error;
+            item.message = error instanceof Error ? error.message : T('Failed to load upgrade information');
+          }
         },
       });
   }
@@ -199,8 +228,11 @@ export class AppBulkUpdateComponent {
         filter(Boolean),
         untilDestroyed(this),
       )
-      .subscribe(([app, version]) => {
-        this.getUpgradeSummary(app, version || undefined);
+      .subscribe(([appName, version]) => {
+        const app = this.bulkItems.get(appName)?.item;
+        if (app) {
+          this.getUpgradeSummary(app, version || undefined);
+        }
       });
   }
 }
