@@ -57,7 +57,7 @@ export const helptextServiceUps = {
   ],
 
   shutdowntimerLabel: T('Shutdown Timer'),
-  shutdowntimerTooltip: T('Enter a value in seconds for the the UPS to wait\
+  shutdowntimerTooltip: T('Enter a value in seconds for the UPS to wait\
  before initiating shutdown. Shutdown will not occur\
  if power is restored while the timer is counting\
  down. This value only applies when <b>Shutdown\

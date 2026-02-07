@@ -100,7 +100,7 @@ export class IxFormatterService {
    * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
    * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
    * so 256 is considered 256 bytes.
-   * @returns The passed human readable string converted into number and unit seperately
+   * @returns The passed human readable string converted into number and unit separately
    */
   getNumberAndUnitFromHumanString(
     hstr: string,
