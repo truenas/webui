@@ -361,6 +361,8 @@ $fm-transition-normal: 200ms ease;
       .eject-button {
         position: absolute;
         right: $fm-space-2;
+        top: 50%;
+        transform: translateY(-50%);
         width: 28px;
         height: 28px;
         opacity: 0;
@@ -374,7 +376,7 @@ $fm-transition-normal: 200ms ease;
         }
 
         &:hover {
-          transform: scale(1.1);
+          transform: translateY(-50%) scale(1.1);
 
           ix-icon {
             color: $fm-text-primary;
