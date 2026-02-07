@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 
@@ -21,6 +22,8 @@ export class ApiCallError extends Error {
 }
 
 export class FailedJobError extends Error {
+  apiErrorDetails?: ApiErrorDetails;
+
   constructor(
     public job: Job,
   ) {
