@@ -1,5 +1,5 @@
 <div
-  class="relative flex justify-center items-center h-16"
+  class="sticky top-0 z-20 bg-background bg-opacity-100 flex justify-center items-center h-20 pt-4"
   [class.has-many-components]="(componentsSize$ | async) > 1"
 >
   @if ((componentsSize$ | async) > 1 && !disableClose()) {
