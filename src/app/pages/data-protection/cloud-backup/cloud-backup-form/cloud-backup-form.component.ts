@@ -48,7 +48,6 @@ type FormValue = CloudBackupFormComponent['form']['value'];
 @Component({
   selector: 'ix-cloud-backup-form',
   templateUrl: './cloud-backup-form.component.html',
-  styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,

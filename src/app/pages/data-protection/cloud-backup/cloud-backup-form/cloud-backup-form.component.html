@@ -2,7 +2,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="fieldsets">
+      <div class="grid lg:grid-cols-2 grid-cols-1 gap-5">
         <ix-fieldset
           class="fieldset"
           [title]="helptext.local | translate"
