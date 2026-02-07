@@ -22,7 +22,6 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
 @Component({
   selector: 'ix-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
-  styleUrls: ['./data-protection-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     UiSearchDirective,

@@ -6,7 +6,7 @@
     [requiredRoles]="requiredRoles"
   ></ix-empty>
 } @else {
-  <div class="cards" [ixUiSearch]="searchableElements.elements.dashboard">
+  <div class="grid grid-cols-2 p-5 gap-5" [ixUiSearch]="searchableElements.elements.dashboard">
     <ix-cloud-backup-card></ix-cloud-backup-card>
     <ix-cloudsync-task-card></ix-cloudsync-task-card>
     <ix-snapshot-task-card></ix-snapshot-task-card>
