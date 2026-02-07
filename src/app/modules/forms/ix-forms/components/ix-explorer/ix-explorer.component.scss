@@ -3,7 +3,6 @@
   display: block;
   margin-bottom: 12px;
   margin-top: 18px;
-  padding: 8px 0;
 
   :host-context(ix-editable) & {
     margin-bottom: 0;
@@ -19,9 +18,11 @@
   flex-direction: row;
   font-size: 12px;
   position: relative;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 
   input {
-    min-height: 26px;
+    min-height: 46px;
     padding: 3px 8px;
   }
 
@@ -45,7 +46,10 @@
   border-left: solid 1px var(--lines);
   border-right: solid 1px var(--lines);
   font-size: 12px;
-  padding-top: 2px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 
   &.disabled {
     cursor: not-allowed;
@@ -90,4 +94,3 @@
 .selected {
   color: var(--primary);
 }
-
