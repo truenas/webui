@@ -156,8 +156,8 @@ export interface DatasetUpdate {
   refreservation?: number;
   special_small_block_size?: WithInherit<number>;
   copies?: WithInherit<number>;
-  snapdir?: DatasetSnapdir;
-  snapdev?: DatasetSnapdev;
+  snapdir?: WithInherit<DatasetSnapdir>;
+  snapdev?: WithInherit<DatasetSnapdev>;
   deduplication?: DeduplicationSetting;
   checksum?: WithInherit<DatasetChecksum>;
   readonly?: WithInherit<OnOff>;
