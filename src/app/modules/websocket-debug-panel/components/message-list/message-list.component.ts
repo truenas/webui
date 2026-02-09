@@ -4,15 +4,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { clearMessages, createMockFromResponse, toggleDuplicateNotifications, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
@@ -35,12 +33,11 @@ interface JsonRpcSuccessResponse {
     AsyncPipe,
     JsonPipe,
     FormsModule,
-    MatButtonModule,
     MatCheckboxModule,
-    MatTooltipModule,
     TranslateModule,
     IxInputComponent,
-    IxIconComponent,
+    TnIconComponent,
+    TnIconButtonComponent,
   ],
   templateUrl: './message-list.component.html',
   styleUrls: ['./message-list.component.scss'],

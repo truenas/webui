@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TnIconComponent } from '@truenas/ui-components';
 import { take } from 'rxjs';
 import { AppBarItem } from 'app/interfaces/app-bar.interface';
 import { MenuItem } from 'app/interfaces/menu-item.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { appBarOpened } from 'app/store/app-bar/app-bar.actions';
 import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
@@ -16,7 +16,7 @@ import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
   selector: 'ix-app-bar',
   templateUrl: './app-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IxIconComponent, RouterLink, AsyncPipe, NgClass],
+  imports: [TnIconComponent, RouterLink, AsyncPipe, NgClass],
 })
 export class AppBarComponent implements OnInit {
   private store = inject(Store);

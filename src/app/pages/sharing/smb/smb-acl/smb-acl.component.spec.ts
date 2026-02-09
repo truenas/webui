@@ -3,14 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { SmbSharesec, SmbSharesecAce } from 'app/interfaces/smb-share.interface';
-import { User as TnUser } from 'app/interfaces/user.interface';
+import { User, User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
@@ -90,6 +90,20 @@ describe('SmbAclComponent', () => {
           { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },
         ]),
+        getGroupByNameCached: (name: string) => {
+          if (name === 'wheel') {
+            return of({
+              group: 'wheel', id: 1, gid: 1, name: 'wheel',
+            } as Group);
+          }
+          return throwError(() => new Error('Group not found'));
+        },
+        getUserByNameCached: (username: string) => {
+          if (username === 'root') {
+            return of({ username: 'root', id: 0, uid: 0 } as User);
+          }
+          return throwError(() => new Error('User not found'));
+        },
       }),
     ],
   });
@@ -137,6 +151,12 @@ describe('SmbAclComponent', () => {
       const userCombobox = fields['User'] as IxComboboxHarness;
       await userCombobox.writeCustomValue('root');
 
+      // Wait for debounced value update and autocomplete resolution
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 400);
+      });
+      spectator.detectChanges();
+
       const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       expect(userSelect).toExist();
 
@@ -174,6 +194,12 @@ describe('SmbAclComponent', () => {
 
       const groupCombobox = fields['Group'] as IxComboboxHarness;
       await groupCombobox.writeCustomValue('wheel');
+
+      // Wait for debounced value update and autocomplete resolution
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 400);
+      });
+      spectator.detectChanges();
 
       const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       expect(groupSelect).toExist();

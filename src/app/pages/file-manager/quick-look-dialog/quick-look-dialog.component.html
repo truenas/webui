@@ -2,7 +2,7 @@
   <div class="quick-look-header">
     <span class="file-name">{{ data.fileItem.name }}</span>
     <button mat-icon-button class="close-button" (click)="close()">
-      <ix-icon name="mdi-close"></ix-icon>
+      <tn-icon name="close" library="mdi"></tn-icon>
     </button>
   </div>
 
@@ -14,7 +14,7 @@
       </div>
     } @else if (error()) {
       <div class="error-container">
-        <ix-icon name="mdi-alert-circle" class="error-icon"></ix-icon>
+        <tn-icon name="alert-circle" library="mdi" class="error-icon"></tn-icon>
         <span class="error-text">{{ error() }}</span>
       </div>
     } @else if (isVideo()) {

@@ -1,13 +1,13 @@
+import { tnIconMarker } from '@truenas/ui-components';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
-import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 /**
  * Icon mapping for container device types (Filesystem, USB, NIC)
  * Uses Material Design Icons (mdi) from ix-icon component
  */
 export interface StorageDeviceIcon {
-  name: MarkedIcon;
+  name: string;
   color?: string;
   tooltip: string;
 }
@@ -19,31 +19,31 @@ export function getStorageDeviceIcon(deviceType: ContainerDeviceType): StorageDe
   switch (deviceType) {
     case ContainerDeviceType.Filesystem:
       return {
-        name: iconMarker('mdi-folder'),
+        name: tnIconMarker('folder', 'mdi'),
         tooltip: containersHelptext.deviceBadgeTooltips.filesystem,
       };
 
     case ContainerDeviceType.Usb:
       return {
-        name: iconMarker('usb'),
+        name: tnIconMarker('usb', 'mdi'),
         tooltip: containersHelptext.deviceBadgeTooltips.usb,
       };
 
     case ContainerDeviceType.Nic:
       return {
-        name: iconMarker('device_hub'),
+        name: tnIconMarker('lan', 'mdi'),
         tooltip: containersHelptext.deviceBadgeTooltips.nic,
       };
 
     case ContainerDeviceType.Gpu:
       return {
-        name: iconMarker('mdi-expansion-card'),
+        name: tnIconMarker('expansion-card', 'mdi'),
         tooltip: containersHelptext.deviceBadgeTooltips.gpu,
       };
 
     default:
       return {
-        name: iconMarker('help'),
+        name: tnIconMarker('help-circle', 'mdi'),
         tooltip: containersHelptext.deviceBadgeTooltips.unknown,
       };
   }

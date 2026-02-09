@@ -27,7 +27,7 @@
                 [disabled]="isFormLoading()"
                 (click)="onAddInitiator()"
               >
-                <ix-icon name="add"></ix-icon>
+                <tn-icon name="plus" library="mdi"></tn-icon>
               </button>
             </div>
           }
@@ -53,7 +53,7 @@
             [disabled]="isFormLoading()"
             (click)="getConnectedInitiators()"
           >
-            <ix-icon name="refresh"></ix-icon>
+            <tn-icon name="refresh" library="mdi"></tn-icon>
             {{ 'Refresh' | translate }}
           </button>
         }

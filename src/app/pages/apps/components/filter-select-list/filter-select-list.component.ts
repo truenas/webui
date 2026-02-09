@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } 
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type SelectListValue = string | number | null | (string | number | null)[];
 
@@ -15,7 +15,7 @@ type SelectListValue = string | number | null | (string | number | null)[];
   templateUrl: './filter-select-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     IxErrorsComponent,
     TranslateModule,
   ],

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, 
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -11,7 +12,6 @@ import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registr
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -88,12 +88,12 @@ export class DockerRegistriesListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.onDelete(row),

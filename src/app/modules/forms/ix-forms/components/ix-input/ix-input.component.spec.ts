@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxInputComponent } from './ix-input.component';
 
 describe('IxInputComponent', () => {
@@ -77,10 +77,11 @@ describe('IxInputComponent', () => {
         expect(spectator.query('mat-hint')).toHaveText('Capital letters only');
       });
 
-      it('renders a prefix icon when it is provided', () => {
+      it('renders a prefix icon when it is provided', async () => {
         spectator.setHostInput('prefixIcon', 'person');
 
-        expect(spectator.query('.prefix-icon ix-icon')).toHaveLength(1);
+        const icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.prefix-icon' }));
+        expect(icon).toBeTruthy();
         expect(spectator.query('input')).toHaveClass('prefix-padding');
       });
 
@@ -96,20 +97,26 @@ describe('IxInputComponent', () => {
         expect(spectator.query('input')).toHaveAttribute('autocomplete', 'on');
       });
 
-      it('shows button that resets input when input is not empty', () => {
+      it('shows button that resets input when input is not empty', async () => {
         formControl.setValue('test');
         spectator.detectComponentChanges();
 
-        spectator.click('.reset-input ix-icon');
+        const resetIcon = await loader.getHarness(TnIconHarness.with({ ancestor: '.reset-input' }));
+        expect(resetIcon).toBeTruthy();
+
+        spectator.click('.reset-input tn-icon');
 
         expect(formControl.value).toBe('');
       });
 
-      it('shows button that resets input when input type is number and value is 0', () => {
+      it('shows button that resets input when input type is number and value is 0', async () => {
         formControl.setValue('0');
         spectator.detectComponentChanges();
 
-        spectator.click('.reset-input ix-icon');
+        const resetIcon = await loader.getHarness(TnIconHarness.with({ ancestor: '.reset-input' }));
+        expect(resetIcon).toBeTruthy();
+
+        spectator.click('.reset-input tn-icon');
 
         expect(formControl.value).toBe('');
       });
@@ -194,17 +201,20 @@ describe('IxInputComponent', () => {
         expect(spectator.query('input')).toHaveAttribute('type', 'password');
       });
 
-      it('shows button that toggles password visibility when type is password', () => {
+      it('shows button that toggles password visibility when type is password', async () => {
         formControl.setValue('test');
         spectator.setHostInput('type', 'password');
 
         expect(spectator.query('input')).toHaveClass('password-field');
-        expect(spectator.query(IxIconComponent)!.name()).toBe('visibility_off');
+
+        let icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.toggle_pw' }));
+        expect(await icon.getName()).toBe('eye-off');
 
         spectator.click('.toggle_pw');
 
         expect(spectator.query('input')).not.toHaveClass('password-field');
-        expect(spectator.query(IxIconComponent)!.name()).toBe('visibility');
+        icon = await loader.getHarness(TnIconHarness.with({ ancestor: '.toggle_pw' }));
+        expect(await icon.getName()).toBe('eye');
       });
     });
 

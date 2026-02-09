@@ -7,11 +7,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { debounceTime, take } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -34,7 +34,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TestDirective,
     MatMenuTrigger,
     UiSearchDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     NgTemplateOutlet,
     MatMenuItem,

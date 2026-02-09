@@ -146,7 +146,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
                 condition = ReportingGraphName.Target === graphName;
                 break;
               case ReportType.Ups:
-                condition = graphName.startsWith(ReportingGraphName.Ups);
+                condition = [
+                  ReportingGraphName.UpsCharge,
+                  ReportingGraphName.UpsCurrent,
+                  ReportingGraphName.UpsFrequency,
+                  ReportingGraphName.UpsLoad,
+                  ReportingGraphName.UpsRuntime,
+                  ReportingGraphName.UpsTemp,
+                  ReportingGraphName.UpsVoltage,
+                ].includes(graphName);
                 break;
               case ReportType.Zfs:
                 condition = [

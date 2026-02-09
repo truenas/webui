@@ -4900,7 +4900,7 @@
     "hierarchy": [
       "Credentials",
       "Users",
-      "Download Key"
+      "Download Public Key"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -4909,7 +4909,7 @@
       "/credentials/users"
     ],
     "routerLink": null,
-    "anchor": "download-key",
+    "anchor": "download-public-key",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5535,6 +5535,30 @@
     ],
     "routerLink": null,
     "anchor": "container-global-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "Map User/Group IDs"
+    ],
+    "synonyms": [
+      "ID Mapping",
+      "User ID Mapping",
+      "Group ID Mapping"
+    ],
+    "requiredRoles": [
+      "CONTAINER_WRITE"
+    ],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers"
+    ],
+    "routerLink": null,
+    "anchor": "map-user-group-ids",
     "triggerAnchor": null,
     "section": "ui"
   },

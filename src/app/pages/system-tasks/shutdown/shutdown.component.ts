@@ -4,8 +4,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -20,7 +20,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     MatCard,
     MatCardContent,
-    IxIconComponent,
+    TnIconComponent,
     CopyrightLineComponent,
     TranslateModule,
   ],

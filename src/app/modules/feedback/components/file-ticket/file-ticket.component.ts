@@ -54,6 +54,8 @@ export class FileTicketComponent {
 
   readonly isLoadingChange = output<boolean>();
 
+  // private fileInputComponent = viewChild(IxFileInputComponent);
+
   protected form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.maxLength(200)]],
     message: ['', [Validators.maxLength(20000)]],

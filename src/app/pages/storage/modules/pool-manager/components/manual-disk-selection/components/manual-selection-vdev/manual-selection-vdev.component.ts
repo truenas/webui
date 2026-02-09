@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { keyBy } from 'lodash-es';
 import { DndDropEvent, DndDropzoneDirective, DndDraggableDirective } from 'ngx-drag-drop';
 import { MiB } from 'app/constants/bytes.constant';
@@ -11,7 +12,6 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/enclosure-wrapper/enclosure-wrapper.component';
 import {
@@ -38,7 +38,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
     EnclosureWrapperComponent,
     DiskIconComponent,
     DndDraggableDirective,
-    IxIconComponent,
+    TnIconComponent,
     IxLabelComponent,
     TranslateModule,
     FileSizePipe,

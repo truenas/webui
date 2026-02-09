@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { PageTitleService } from 'app/modules/layout/page-title.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -30,7 +30,7 @@ import { appBarClosed, appBarMinimized } from 'app/store/app-bar/app-bar.actions
     TranslateModule,
     AsyncPipe,
     TooltipComponent,
-    IxIconComponent,
+    TnIconComponent,
     NgClass,
   ],
 })

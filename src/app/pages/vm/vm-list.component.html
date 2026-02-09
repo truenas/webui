@@ -6,11 +6,12 @@
     >
       <strong>{{ "Available Memory" | translate }}:</strong>
       <span>{{ availableMemory | ixFileSize }}</span>
-      <ix-icon
-        name="info"
-        [matTooltip]="memWarning | translate"
+      <tn-icon
+        name="information"
+        library="mdi"
+        [tnTooltip]="memWarning | translate"
         [attr.aria-label]="memWarning | translate"
-      ></ix-icon>
+      ></tn-icon>
     </div>
 
     <ix-basic-search

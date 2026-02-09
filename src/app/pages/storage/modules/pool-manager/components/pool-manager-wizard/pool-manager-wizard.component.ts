@@ -7,11 +7,11 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -21,10 +21,9 @@ import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -64,8 +63,8 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     MatStep,
     StepActivationDirective,
     MatStepLabel,
-    IxIconComponent,
-    MatTooltip,
+    TnIconComponent,
+    TnTooltipDirective,
     GeneralWizardStepComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
@@ -77,7 +76,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
   providers: [
     PoolManagerValidationService,
@@ -159,6 +158,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
     return this.topLevelWarningsForEachStep?.[step];
   }
+
 
   getTopLevelErrorForStep(step: PoolCreationWizardStep): string {
     return this.topLevelErrorsForEachStep?.[step] || '';

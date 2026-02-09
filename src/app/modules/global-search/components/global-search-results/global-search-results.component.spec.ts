@@ -13,7 +13,7 @@ import { GlobalSearchResultsComponent } from './global-search-results.component'
 const mockedHelpElement = {
   hierarchy: ['Help Section Item'],
   section: GlobalSearchSection.Help,
-  targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=test',
+  targetHref: 'https://harboros.ai/docs/scale/24.10/search/?query=test',
 };
 
 const mockedUiElement = {

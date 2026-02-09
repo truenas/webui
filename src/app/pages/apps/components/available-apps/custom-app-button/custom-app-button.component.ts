@@ -6,12 +6,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { customAppButtonElements } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.elements';
@@ -33,7 +33,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     TranslateModule,
     MatMenu,
     MatMenuItem,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     MatIconButton,
     MatMenuTrigger,

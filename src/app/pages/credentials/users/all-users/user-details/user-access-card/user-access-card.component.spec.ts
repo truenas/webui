@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -13,7 +14,6 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,7 +56,7 @@ function createTestComponent(
   return createComponentFactory({
     component: UserAccessCardComponent,
     imports: [
-      IxIconComponent,
+      TnIconComponent,
       RequiresRolesDirective,
     ],
     declarations: [
@@ -150,7 +150,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should display SSH access status', () => {
     const sshSection = spectator.query('.content-wrapper:nth-of-type(9)');
-    expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
+    expect(sshSection).toHaveText('SSH Key Authentication & Password Login Enabled  Download Public Key');
   });
 
   it('should display Shell Access status', () => {
@@ -233,8 +233,8 @@ describe('UserAccessCardComponent', () => {
       });
     });
 
-    it('downloads ssh key when Download Key link is clicked', () => {
-      const downloadLink = spectator.query(byText('Download Key'));
+    it('downloads public ssh key when Download Public Key link is clicked', () => {
+      const downloadLink = spectator.query(byText('Download Public Key'));
       spectator.click(downloadLink);
 
       expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
@@ -288,7 +288,7 @@ describe('UserAccessCardComponent', () => {
     const createFactory = createComponentFactory({
       component: UserAccessCardComponent,
       imports: [
-        IxIconComponent,
+        TnIconComponent,
         RequiresRolesDirective,
       ],
       declarations: [

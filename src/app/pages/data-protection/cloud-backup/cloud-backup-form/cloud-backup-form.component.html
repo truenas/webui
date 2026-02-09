@@ -2,6 +2,19 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <tn-banner
+        type="info"
+        [heading]="helptext.introHeading | translate"
+        [message]="helptext.introMessage | translate"
+      >
+        <a target="_blank" rel="noopener noreferrer" tnBannerAction [href]="storjAccountUrl">
+          {{ helptext.createStorjAccountLink | translate }}
+        </a>
+        <a target="_blank" rel="noopener noreferrer" tnBannerAction [href]="documentationUrl">
+          {{ helptext.viewDocumentationLink | translate }}
+        </a>
+      </tn-banner>
+
       <div class="fieldsets">
         <ix-fieldset
           class="fieldset"
@@ -157,7 +170,7 @@
             formControlName="transfer_setting"
             [required]="true"
             [options]="transferSettings$"
-            [label]="'Transfer Setting' | translate"
+            [label]="helptext.transferSetting | translate"
           ></ix-select>
         </ix-fieldset>
       </div>

@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -12,7 +12,7 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
   styleUrls: ['./dataset-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class DatasetIconComponent {
@@ -24,12 +24,12 @@ export class DatasetIconComponent {
 
   protected readonly iconName = computed(() => {
     if (this.isRoot()) {
-      return 'ix-dataset-root';
+      return tnIconMarker('dataset-root', 'custom');
     }
     if (this.isZvol()) {
-      return 'mdi-database';
+      return tnIconMarker('database', 'mdi');
     }
 
-    return 'ix-dataset';
+    return tnIconMarker('dataset', 'custom');
   });
 }

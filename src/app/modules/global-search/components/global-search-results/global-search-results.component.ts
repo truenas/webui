@@ -4,6 +4,7 @@ import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { findIndex, isEqual } from 'lodash-es';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -14,7 +15,6 @@ import { processHierarchy } from 'app/modules/global-search/helpers/process-hier
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
@@ -26,7 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     MatCard,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TranslateModule,
   ],

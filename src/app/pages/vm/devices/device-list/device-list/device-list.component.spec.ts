@@ -79,7 +79,7 @@ describe('DeviceListComponent', () => {
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          afterClosed: () => of(undefined),
         })),
       }),
       mockProvider(DialogService, {

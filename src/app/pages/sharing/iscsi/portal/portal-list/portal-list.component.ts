@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, switchMap, tap,
 } from 'rxjs';
@@ -15,7 +16,6 @@ import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -109,7 +109,7 @@ export class PortalListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(PortalFormComponent, { data: row }).pipe(
@@ -119,7 +119,7 @@ export class PortalListComponent implements OnInit {
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({

@@ -11,12 +11,13 @@
           [routerLink]="getRouterLink(item.state)"
           (click)="onItemClick(item)"
         >
-          <ix-icon
+          <tn-icon
+            library="mdi"
             [name]="item.status === 'open' ? item.iconActive : item.icon"
             [ngClass]="
               item.status === 'open' ? 'text-background' : 'text-foreground'
             "
-          />
+          ></tn-icon>
         </button>
       }
     </div>

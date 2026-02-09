@@ -15,6 +15,7 @@
           [class.highlighted]="item.type === MenuItemType.SlideOut && isSlideOutActive(item.state)"
         >
           @if (item.type === MenuItemType.Link) {
+            @let badgeCount = getBadgeCount(item);
             <a
               matTooltipPosition="right"
               [ixTest]="getItemName(item)"
@@ -24,9 +25,25 @@
               (click)="closeMenu()"
             >
               <tn-icon size="lg" [name]="item.icon"></tn-icon>
-              <span>{{ item.name | translate }}</span>
+              <span class="menu-text">
+                {{ item.name | translate }}
+                @if (badgeCount > 0) {
+                  <span
+                    class="menu-badge-dot"
+                    role="status"
+                    [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
+                    [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
+                    [class.info]="getBadgeType(item) === AlertBadgeType.Info"
+                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [attr.aria-label]="getBadgeTooltip(item) | translate"
+                  >
+                    <tn-icon [name]="getBadgeIcon(item)"></tn-icon>
+                  </span>
+                }
+              </span>
             </a>
           } @else if (item.type === MenuItemType.SlideOut) {
+            @let badgeCount = getBadgeCount(item);
             <a
               tabindex="0"
               role="button"
@@ -41,7 +58,22 @@
               (keydown.space)="$event.preventDefault(); toggleMenu(item.state, item.sub || [])"
               >
               <tn-icon size="lg" [name]="item.icon"></tn-icon>
-              <span>{{ item.name | translate }}</span>
+              <span class="menu-text">
+                {{ item.name | translate }}
+                @if (badgeCount > 0) {
+                  <span
+                    class="menu-badge-dot"
+                    role="status"
+                    [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
+                    [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
+                    [class.info]="getBadgeType(item) === AlertBadgeType.Info"
+                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [attr.aria-label]="getBadgeTooltip(item) | translate"
+                  >
+                    <tn-icon [name]="getBadgeIcon(item)"></tn-icon>
+                  </span>
+                }
+              </span>
               <tn-icon class="menu-caret" name="chevron-right" library="mdi" size="lg"></tn-icon>
             </a>
           }

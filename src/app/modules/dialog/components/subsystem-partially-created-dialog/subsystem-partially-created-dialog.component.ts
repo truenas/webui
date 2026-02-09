@@ -6,8 +6,8 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -24,7 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatDialogClose,
     TestDirective,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class SubsystemPartiallyCreatedDialogComponent {

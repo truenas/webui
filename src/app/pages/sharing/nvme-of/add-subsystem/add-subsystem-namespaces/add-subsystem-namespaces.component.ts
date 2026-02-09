@@ -4,9 +4,9 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
 import { filter } from 'rxjs';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -28,7 +28,7 @@ import {
     ReactiveFormsModule,
     MatButton,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     TestDirective,
     NamespaceDescriptionComponent,

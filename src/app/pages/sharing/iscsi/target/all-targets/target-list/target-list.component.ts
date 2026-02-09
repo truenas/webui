@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -13,7 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
@@ -53,7 +53,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
-    IxIconComponent,
+    TnIconComponent,
     UiSearchDirective,
     IxTableCellDirective,
   ],

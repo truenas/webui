@@ -4,8 +4,9 @@
     <mat-toolbar-row>
       <!-- Sidenav toggle button -->
       <div class="flex justify-start gap-4 items-center w-full">
-        <ix-icon
-          name="ix-topbar-logo"
+        <tn-icon
+          name="app-topbar-logo"
+          library="custom"
           class="ix-topbar-logo ml-4"
           [matMenuTriggerFor]="menu"
         />
@@ -36,7 +37,7 @@
               ixTest="leave-feedback"
               [matMenuTriggerFor]="feedbackMenu"
             >
-              <ix-icon class="!text-foreground" name="ix-emoticon"></ix-icon>
+              <tn-icon class="!text-foreground" name="app-emoticon" library="custom" size="lg"></tn-icon>
             </button>
             <mat-menu #feedbackMenu="matMenu">
               <a
@@ -70,7 +71,7 @@
             [matTooltip]="tooltips.rebootInfo | translate"
             (click)="showRebootInfoDialog()"
           >
-            <ix-icon class="movement !text-foreground" name="update" ></ix-icon>
+            <tn-icon class="movement !text-foreground" name="update" library="mdi" size="lg"></tn-icon>
           </button>
         }
 
@@ -84,7 +85,7 @@
             [matTooltip]="tooltips.update | translate"
             (click)="showUpdateDialog()"
           >
-            <ix-icon class="movement !text-foreground" name="system_update_alt"></ix-icon>
+            <tn-icon class="movement !text-foreground" name="download" library="mdi" size="lg"></tn-icon>
           </button>
         }
         <ix-checkin-indicator></ix-checkin-indicator>
@@ -106,7 +107,7 @@
           [ixUiSearch]="searchableElements.elements.alerts"
           (click)="onAlertIndicatorPressed()"
         >
-          <ix-icon class="!text-foreground" name="ix-notifications"></ix-icon>
+          <tn-icon class="!text-foreground" name="app-notifications" library="custom" size="lg"></tn-icon>
         </button>
 
         <ix-user-menu></ix-user-menu>

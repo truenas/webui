@@ -7,6 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { differenceInDays } from 'date-fns';
 import { filter } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
@@ -14,7 +15,6 @@ import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -51,7 +51,7 @@ interface BackupRow {
   imports: [
     MatCard,
     MatCardContent,
-    IxIconComponent,
+    TnIconComponent,
     MatIconAnchor,
     TestDirective,
     MatTooltip,

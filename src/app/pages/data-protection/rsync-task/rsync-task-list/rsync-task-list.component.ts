@@ -4,6 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -18,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -179,18 +179,18 @@ export class RsyncTaskListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.runNow(row),
         },
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.edit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.delete(row),

@@ -9,6 +9,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,7 +26,6 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -57,7 +57,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     RequiresRolesDirective,
     MatButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     MatProgressSpinner,
   ],

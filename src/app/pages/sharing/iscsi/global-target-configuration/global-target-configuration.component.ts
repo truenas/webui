@@ -21,6 +21,7 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -62,10 +63,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected isLoading = signal(false);
   isHaSystem = false;
+  private originalBasename: string | null = null;
 
   form = this.fb.nonNullable.group({
     basename: ['', Validators.required],
@@ -103,6 +106,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     this.loadFormValues();
     this.listenForHaStatus();
     this.checkForRdmaSupport();
+    this.setupBasenameValidation();
   }
 
   onSubmit(): void {
@@ -130,6 +134,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
 
     this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
+        this.originalBasename = config.basename;
         this.form.patchValue(config);
         this.isLoading.set(false);
       },
@@ -169,6 +174,28 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       } else {
         this.form.controls.iser.disable();
       }
+    });
+  }
+
+  private setupBasenameValidation(): void {
+    this.form.controls.basename.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      const basenameControl = this.form.controls.basename;
+
+      // Only apply pattern validation if the basename value has been changed from the original
+      if (value !== this.originalBasename) {
+        basenameControl.setValidators([
+          Validators.required,
+          this.validatorsService.withMessage(
+            Validators.pattern(/^[a-z0-9.:-]+$/),
+            this.translate.instant('Only lowercase alphanumeric characters and . : - are allowed.'),
+          ),
+        ]);
+      } else {
+        // If value matches original, only require it to be non-empty
+        basenameControl.setValidators([Validators.required]);
+      }
+
+      basenameControl.updateValueAndValidity({ emitEvent: false });
     });
   }
 }

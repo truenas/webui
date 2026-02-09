@@ -5,7 +5,7 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -20,7 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatSelect,
     MatOption,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     TestDirective,
   ],

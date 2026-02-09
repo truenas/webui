@@ -1,4 +1,4 @@
-@import "scss-imports/cssvars";
+@import 'scss-imports/cssvars';
 
 .card {
   box-sizing: border-box;
@@ -110,6 +110,7 @@
   }
 }
 
+
 .card-content {
   display: flex;
   flex-direction: row;
@@ -179,7 +180,7 @@
     width: 100%;
     z-index: 2;
 
-    ix-icon {
+    tn-icon {
       height: 48px;
       width: 48px;
     }

@@ -1,9 +1,9 @@
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
@@ -462,7 +462,7 @@ describe('VDevsListComponent', () => {
       TreeViewComponent,
       TreeNodeComponent,
       NestedTreeNodeComponent,
-      IxIconComponent,
+      TnIconComponent,
     ],
 
     providers: [

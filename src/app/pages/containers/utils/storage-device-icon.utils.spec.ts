@@ -1,5 +1,5 @@
+import { tnIconMarker } from '@truenas/ui-components';
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import {
   getStorageDeviceClass,
   getStorageDeviceIcon,
@@ -10,31 +10,31 @@ describe('Storage Device Icon Utils', () => {
   describe('getStorageDeviceIcon', () => {
     it('returns correct icon for filesystem device', () => {
       const result = getStorageDeviceIcon(ContainerDeviceType.Filesystem);
-      expect(result.name).toEqual(iconMarker('mdi-folder'));
+      expect(result.name).toEqual(tnIconMarker('folder', 'mdi'));
       expect(result.tooltip).toBeTruthy();
     });
 
     it('returns correct icon for USB device', () => {
       const result = getStorageDeviceIcon(ContainerDeviceType.Usb);
-      expect(result.name).toEqual(iconMarker('usb'));
+      expect(result.name).toEqual(tnIconMarker('usb', 'mdi'));
       expect(result.tooltip).toBeTruthy();
     });
 
     it('returns correct icon for NIC device', () => {
       const result = getStorageDeviceIcon(ContainerDeviceType.Nic);
-      expect(result.name).toEqual(iconMarker('device_hub'));
+      expect(result.name).toEqual(tnIconMarker('lan', 'mdi'));
       expect(result.tooltip).toBeTruthy();
     });
 
     it('returns correct icon for GPU device', () => {
       const result = getStorageDeviceIcon(ContainerDeviceType.Gpu);
-      expect(result.name).toEqual(iconMarker('mdi-expansion-card'));
+      expect(result.name).toEqual(tnIconMarker('expansion-card', 'mdi'));
       expect(result.tooltip).toBeTruthy();
     });
 
     it('returns help icon for unknown device type', () => {
       const result = getStorageDeviceIcon('unknown' as ContainerDeviceType);
-      expect(result.name).toEqual(iconMarker('help'));
+      expect(result.name).toEqual(tnIconMarker('help-circle', 'mdi'));
       expect(result.tooltip).toBeTruthy();
     });
   });

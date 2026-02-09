@@ -9,6 +9,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,
@@ -51,7 +52,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -92,7 +92,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     TransferModeExplanationComponent,
     IxExplorerComponent,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     CloudCredentialsSelectComponent,
     IxCheckboxComponent,

@@ -6,13 +6,12 @@ import {
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -44,7 +43,7 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   styleUrl: './manage-ports-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     MatDialogContent,
     MatDialogTitle,
@@ -95,12 +94,12 @@ export class ManagePortsDialog implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.onDelete(row),

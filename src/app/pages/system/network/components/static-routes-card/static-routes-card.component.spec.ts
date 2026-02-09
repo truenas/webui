@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
@@ -81,7 +81,7 @@ describe('StaticRoutesCardComponent', () => {
   });
 
   it('opens static route form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
+    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 2);
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
@@ -95,7 +95,7 @@ describe('StaticRoutesCardComponent', () => {
   });
 
   it('opens static route delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
+    const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StaticRouteDeleteDialog, {

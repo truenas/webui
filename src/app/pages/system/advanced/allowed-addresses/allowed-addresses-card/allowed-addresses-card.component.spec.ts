@@ -3,12 +3,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -88,7 +88,7 @@ describe('AllowedAddressesCardComponent', () => {
   });
 
   it('deletes a Allowed IP Address with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -99,7 +99,7 @@ describe('AllowedAddressesCardComponent', () => {
   describe('SystemGeneralService integration', () => {
     it('should call SystemGeneralService.handleUiServiceRestart when deleting an address', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+      const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
 
       await deleteIcon.click();
 
@@ -109,7 +109,7 @@ describe('AllowedAddressesCardComponent', () => {
     it('should handle loading state during deletion', async () => {
       // This test verifies that the loading mechanism is in place
       // The actual loading state is managed internally by the component
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+      const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
 
       // Verify the delete icon exists and is clickable
       expect(deleteIcon).toBeTruthy();
@@ -121,7 +121,7 @@ describe('AllowedAddressesCardComponent', () => {
     });
 
     it('should update system.general configuration when deleting an address', async () => {
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+      const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
       await deleteIcon.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.general.update', [
@@ -131,7 +131,7 @@ describe('AllowedAddressesCardComponent', () => {
 
     it('should show proper delete confirmation message with IP address', async () => {
       const dialogService = spectator.inject(DialogService);
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+      const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
 
       await deleteIcon.click();
 
@@ -148,7 +148,7 @@ describe('AllowedAddressesCardComponent', () => {
       // Mock the confirm method to return false (cancelled)
       (dialogService.confirm as unknown) = jest.fn(() => of(false));
 
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+      const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
       await deleteIcon.click();
 
       expect(dialogService.confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -158,7 +158,7 @@ describe('AllowedAddressesCardComponent', () => {
     });
 
     it('should refresh the addresses list after successful deletion', async () => {
-      const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+      const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 1);
 
       // Spy on the data provider load method
       const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');

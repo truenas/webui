@@ -16,6 +16,7 @@ import { ɵɵRouterLink } from '@angular/router/testing';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, map, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -28,7 +29,6 @@ import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-requi
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { AboutNasDialog } from 'app/modules/layout/topbar/about-nas-dialog/about-nas-dialog.component';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -36,12 +36,14 @@ import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
+import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -61,7 +63,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     MatToolbarRow,
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
@@ -88,7 +90,7 @@ export class TopbarComponent implements OnInit {
   private translate = inject(TranslateService);
   private tnc = inject(TruenasConnectService);
   private apiService = inject<ApiService>(ApiService);
-  // private matIconRegistry = inject(MatIconRegistry);
+  private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private domSanitizer = inject(DomSanitizer);
 
   updateIsDone: Subscription;
@@ -233,7 +235,19 @@ export class TopbarComponent implements OnInit {
   }
 
   showUpdateDialog(): void {
-    this.matDialog.open(UpdateDialog);
+    const title = this.translate.instant('Update in Progress');
+    const message = this.updateText();
+
+    this.updateDialog = this.matDialog.open(UpdateDialog, {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      position: topbarDialogPosition,
+      data: {
+        title,
+        message,
+      },
+    });
   }
 
   showRebootInfoDialog(): void {
@@ -255,6 +269,7 @@ export class TopbarComponent implements OnInit {
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
       filter(() => !this.shownDialog()),
+      filter(() => !this.updateIsRunning && !this.rebootInfoSuppression.isSuppressed()),
       tap(() => this.shownDialog.set(true)),
       switchMap(() => this.matDialog.open(RebootRequiredDialog, { minWidth: '400px' }).afterClosed()),
     );

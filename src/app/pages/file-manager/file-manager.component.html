@@ -10,7 +10,7 @@
         [disabled]="!canGoBack()"
         (click)="goBack()"
       >
-        <ix-icon name="mdi-arrow-left"></ix-icon>
+        <tn-icon name="arrow-left" library="mdi"></tn-icon>
       </button>
       <button
         mat-icon-button
@@ -18,7 +18,7 @@
         [disabled]="!canGoForward()"
         (click)="goForward()"
       >
-        <ix-icon name="mdi-arrow-right"></ix-icon>
+        <tn-icon name="arrow-right" library="mdi"></tn-icon>
       </button>
     </div>
 
@@ -28,7 +28,7 @@
           <span class="crumb" (click)="navigateTo(crumb.path)">{{
             crumb.name
           }}</span>
-          <ix-icon name="mdi-chevron-right" class="separator"></ix-icon>
+          <tn-icon name="chevron-right" library="mdi" class="separator"></tn-icon>
         } @else {
           <span class="crumb current">{{ crumb.name }}</span>
         }
@@ -44,15 +44,15 @@
         [matTooltip]="'Upload' | translate"
         [matMenuTriggerFor]="uploadMenu"
       >
-        <ix-icon name="mdi-upload"></ix-icon>
+        <tn-icon name="upload" library="mdi"></tn-icon>
       </button>
       <mat-menu #uploadMenu="matMenu">
         <button mat-menu-item (click)="triggerUpload()">
-          <ix-icon name="mdi-file-upload"></ix-icon>
+          <tn-icon name="file-upload" library="mdi"></tn-icon>
           <span>{{ "Upload Files" | translate }}</span>
         </button>
         <button mat-menu-item (click)="triggerFolderUpload()">
-          <ix-icon name="mdi-folder-upload"></ix-icon>
+          <tn-icon name="folder-upload" library="mdi"></tn-icon>
           <span>{{ "Upload Folder" | translate }}</span>
         </button>
       </mat-menu>
@@ -62,7 +62,7 @@
         [matTooltip]="'Download Selected' | translate"
         (click)="downloadSelectedFiles()"
       >
-        <ix-icon name="mdi-download"></ix-icon>
+        <tn-icon name="download" library="mdi"></tn-icon>
       </button>
       <button
         mat-icon-button
@@ -73,35 +73,33 @@
         "
         (click)="toggleViewMode()"
       >
-        <ix-icon
-          [name]="
+        <tn-icon library="mdi" [name]="
             viewMode() === 'grid'
-              ? 'mdi-format-list-text'
-              : 'mdi-view-dashboard'
-          "
-        ></ix-icon>
+              ? 'format-list-text'
+              : 'view-dashboard'
+          "></tn-icon>
       </button>
       <button
         mat-icon-button
         [matTooltip]="'Refresh' | translate"
         (click)="loadDirectory(currentPath())"
       >
-        <ix-icon name="refresh"></ix-icon>
+        <tn-icon name="refresh" library="mdi"></tn-icon>
       </button>
       <button
         mat-icon-button
         [matTooltip]="'More Actions' | translate"
         [matMenuTriggerFor]="moreActionsMenu"
       >
-        <ix-icon name="mdi-dots-horizontal"></ix-icon>
+        <tn-icon name="dots-horizontal" library="mdi"></tn-icon>
       </button>
       <mat-menu #moreActionsMenu="matMenu">
         <button mat-menu-item [disabled]="!isUploadPermitted()" (click)="createFolder()">
-          <ix-icon name="mdi-folder-plus"></ix-icon>
+          <tn-icon name="folder-plus" library="mdi"></tn-icon>
           <span>{{ "New Folder" | translate }}</span>
         </button>
         <button mat-menu-item [disabled]="!hasItemSelected()" (click)="moveSelected()">
-          <ix-icon name="mdi-folder-move"></ix-icon>
+          <tn-icon name="folder-move" library="mdi"></tn-icon>
           <span>{{ "Move To" | translate }}</span>
         </button>
       </mat-menu>
@@ -135,7 +133,7 @@
         <div class="section-title">{{ "Favorites" | translate }}</div>
         <mat-nav-list>
           <a mat-list-item (click)="navigateTo('/mnt')">
-            <ix-icon name="mdi-folder" matListItemIcon></ix-icon>
+            <tn-icon name="folder" library="mdi" matListItemIcon></tn-icon>
             <span matListItemTitle>{{ "Home" | translate }}</span>
           </a>
         </mat-nav-list>
@@ -171,11 +169,7 @@
                   )
                 "
               >
-                <ix-icon
-                  name="mdi-usb-flash-drive"
-                  matListItemIcon
-                  class="usb-icon"
-                ></ix-icon>
+                <tn-icon name="usb-flash-drive" library="mdi" class="usb-icon" matListItemIcon></tn-icon>
                 <span matListItemTitle class="usb-drive-name">
                   {{ getUsbDriveDisplayName(mounted.drive, mounted.partition) }}
                 </span>
@@ -185,7 +179,7 @@
                   [matTooltip]="'Safely Eject' | translate"
                   (click)="ejectUsbDrive(mounted.drive, $event)"
                 >
-                  <ix-icon name="mdi-eject"></ix-icon>
+                  <tn-icon name="eject" library="mdi"></tn-icon>
                 </button>
               </a>
             }
@@ -208,23 +202,23 @@
         @if (items().length === 0) {
           <div class="empty-state">
             @if (isMntEmpty()) {
-              <ix-icon name="mdi-database-off" class="empty-icon"></ix-icon>
+              <tn-icon name="database-off" library="mdi" class="empty-icon"></tn-icon>
               <p class="empty-title">{{ "No Pools" | translate }}</p>
               <p class="empty-description">{{ "Create a storage pool first to start managing your files." | translate }}</p>
               <button mat-flat-button color="primary" (click)="goToStoragePage()">
-                <ix-icon name="mdi-plus"></ix-icon>
+                <tn-icon name="plus" library="mdi"></tn-icon>
                 <span>{{ "Go to Storage" | translate }}</span>
               </button>
             } @else if (isPoolEmpty()) {
-              <ix-icon name="mdi-database-outline" class="empty-icon"></ix-icon>
+              <tn-icon name="database-outline" library="mdi" class="empty-icon"></tn-icon>
               <p class="empty-title">{{ "No Datasets" | translate }}</p>
               <p class="empty-description">{{ "This pool has no datasets. Create a dataset to start storing your files." | translate }}</p>
               <button mat-flat-button color="primary" (click)="goToDatasetsPage()">
-                <ix-icon name="mdi-plus"></ix-icon>
+                <tn-icon name="plus" library="mdi"></tn-icon>
                 <span>{{ "Go to Datasets" | translate }}</span>
               </button>
             } @else {
-              <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
+              <tn-icon name="folder-open" library="mdi" class="empty-icon"></tn-icon>
               <p>{{ "This folder is empty" | translate }}</p>
             }
           </div>
@@ -239,10 +233,7 @@
                   (dblclick)="onItemDoubleClick(item)"
                   (contextmenu)="onContextMenu($event, item)"
                 >
-                  <ix-icon
-                    [name]="getFileIcon(item)"
-                    [class]="getFileIconClass(item)"
-                  ></ix-icon>
+                  <tn-icon library="mdi" [name]="getFileIcon(item)" [class]="getFileIconClass(item)"></tn-icon>
                   <span class="file-name">{{ item.name }}</span>
                 </div>
               }
@@ -264,10 +255,7 @@
                   (contextmenu)="onContextMenu($event, item)"
                 >
                   <span class="col-name">
-                    <ix-icon
-                      [name]="getFileIcon(item)"
-                      [class]="getFileIconClass(item)"
-                    ></ix-icon>
+                    <tn-icon library="mdi" [name]="getFileIcon(item)" [class]="getFileIconClass(item)"></tn-icon>
                     {{ item.name }}
                   </span>
                   <span class="col-modified">{{ formatDate(item.mtime) }}</span>
@@ -307,25 +295,25 @@
 <mat-menu #contextMenu="matMenu">
   @if (contextMenuItem()) {
     <button mat-menu-item (click)="downloadSelectedFiles()">
-      <ix-icon name="mdi-download"></ix-icon>
+      <tn-icon name="download" library="mdi"></tn-icon>
       <span>{{ "Download" | translate }}</span>
     </button>
     @if (isQuickLookSupported(contextMenuItem()!)) {
       <button mat-menu-item (click)="openQuickLook(contextMenuItem()!)">
-        <ix-icon name="mdi-eye"></ix-icon>
+        <tn-icon name="eye" library="mdi"></tn-icon>
         <span>{{ "Quick Look" | translate }}</span>
       </button>
     }
     <button mat-menu-item (click)="renameItem(contextMenuItem()!)">
-      <ix-icon name="mdi-pencil"></ix-icon>
+      <tn-icon name="pencil" library="mdi"></tn-icon>
       <span>{{ "Rename" | translate }}</span>
     </button>
     <button mat-menu-item (click)="copyItem(contextMenuItem()!)">
-      <ix-icon name="mdi-content-copy"></ix-icon>
+      <tn-icon name="content-copy" library="mdi"></tn-icon>
       <span>{{ "Copy" | translate }}</span>
     </button>
     <button mat-menu-item (click)="moveSelected()">
-      <ix-icon name="mdi-folder-move"></ix-icon>
+      <tn-icon name="folder-move" library="mdi"></tn-icon>
       <span>{{ "Move To" | translate }}</span>
     </button>
     <mat-divider></mat-divider>
@@ -334,7 +322,7 @@
       class="danger-item"
       (click)="deleteItem(contextMenuItem()!)"
     >
-      <ix-icon name="mdi-delete"></ix-icon>
+      <tn-icon name="delete" library="mdi"></tn-icon>
       <span>{{ "Delete" | translate }}</span>
     </button>
   }

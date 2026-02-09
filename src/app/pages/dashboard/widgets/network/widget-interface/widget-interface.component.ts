@@ -6,6 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -19,7 +20,6 @@ import { LinkState, NetworkInterfaceAliasType, linkStateLabelMap } from 'app/enu
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
@@ -47,7 +47,8 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
     TestDirective,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
     InterfaceStatusIconComponent,

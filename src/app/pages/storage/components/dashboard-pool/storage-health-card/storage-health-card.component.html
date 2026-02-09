@@ -25,21 +25,27 @@
 
   <mat-card-content class="card-content">
     <div class="details-item">
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
       <div class="label status">
-        {{ '{status}, {errorCount, plural, =0 {no errors} other {# errors}}.' | translate:{ status: (pool().status | mapValue: poolStatusLabels | translate), errorCount: totalZfsErrors } }}
+        {{ getErrorText() }}
       </div>
+      @if (hasErrors()) {
+        <a tabindex="0" (click)="goToVdevsPage()" (keydown.enter)="goToVdevsPage()">
+          {{ 'View' | translate }}
+        </a>
+      }
     </div>
 
     <div
       class="details-item"
       [ixUiSearch]="searchableElements.elements.scheduledScrub"
     >
+      <ix-tooltip
+        class="scrub-tooltip"
+        [message]="helptextVolumes.scrubTooltip | translate"
+      ></ix-tooltip>
       <div class="label">
         {{ 'Scheduled Scrub' | translate }}:
-        <ix-tooltip
-          class="scrub-tooltip"
-          [message]="helptextVolumes.scrubTooltip | translate"
-        ></ix-tooltip>
       </div>
 
       @if (scrub()?.enabled) {
@@ -62,6 +68,7 @@
 
     @if (pool().autotrim.value === AutoTrimValue.On) {
       <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
+        <span class="blank-spacer"></span>
         <div class="label">{{ 'Auto TRIM' | translate }}:</div>
         <div class="value">{{ 'On' | translate }}</div>
       </div>

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, input, inject } from '@an
 import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, Observable, switchMap, take,
 } from 'rxjs';
@@ -12,7 +13,6 @@ import { ServiceStatus, serviceStatusLabels } from 'app/enums/service-status.enu
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -32,7 +32,7 @@ import { ServicesService } from 'app/services/services.service';
     TranslateModule,
     MapValuePipe,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     MatIconButton,
     NgClass,

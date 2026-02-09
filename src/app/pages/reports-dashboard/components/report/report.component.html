@@ -19,7 +19,7 @@
                     [ixTest]="['steps', 'back']"
                     (click)="stepBack()"
                   >
-                    <ix-icon name="mdi-rewind"></ix-icon>
+                    <tn-icon name="rewind" library="mdi"></tn-icon>
                   </button>
                   <button
                     mat-button
@@ -29,7 +29,7 @@
                     [ixTest]="['steps', 'forward']"
                     (click)="stepForward()"
                   >
-                    <ix-icon name="mdi-fast-forward"></ix-icon>
+                    <tn-icon name="fast-forward" library="mdi"></tn-icon>
                   </button>
                 </div>
 
@@ -40,7 +40,7 @@
                     [matTooltip]="'Zoom Out' | translate"
                     [ixTest]="['zoom', 'out']"
                     (click)="timeZoomOut()"
-                    ><ix-icon name="mdi-magnify-minus"></ix-icon>
+                    ><tn-icon name="magnify-minus" library="mdi"></tn-icon>
                   </button>
 
                   <button
@@ -60,7 +60,7 @@
                     [ixTest]="['zoom', 'in']"
                     (click)="timeZoomIn()"
                     >
-                      <ix-icon name="mdi-magnify-plus"></ix-icon>
+                      <tn-icon name="magnify-plus" library="mdi"></tn-icon>
                   </button>
                   </div>
                 </div>

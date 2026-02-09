@@ -1,11 +1,10 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, NgZone, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
@@ -33,8 +32,7 @@ const retryIntervalMs = 100;
   imports: [
     AsyncPipe,
     MatTabsModule,
-    MatButtonModule,
-    IxIconComponent,
+    TnIconButtonComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
     EnclosureMockTabComponent,

@@ -5,8 +5,8 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
 
@@ -20,7 +20,7 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
     TranslateModule,
     AppCardLogoComponent,
     InstalledAppBadgeComponent,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
   ],
 })

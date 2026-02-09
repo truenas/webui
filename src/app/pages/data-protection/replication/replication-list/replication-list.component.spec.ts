@@ -41,6 +41,7 @@ import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/
 import { DownloadService } from 'app/services/download.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { ReplicationWizardComponent } from '../replication-wizard/replication-wizard.component';
 
 const tasks = [{
   id: 1,
@@ -194,6 +195,20 @@ describe('ReplicationListComponent', () => {
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('replication.run', [1]);
+  });
+
+  it('shows wizard when the add button is pressed', async () => {
+    await table.expandRow(0);
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      ReplicationWizardComponent,
+      {
+        wide: true,
+      },
+    );
   });
 
   it('shows form to edit an existing interface when edit button is pressed', async () => {

@@ -5,7 +5,8 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import {
   formatValue, maxDecimals, inferUnits, convertKmgt, convertByKilobits,
-  convertByThousands, formatData, convertAggregations, optimizeLegend,
+  convertByThousands, formatData, convertAggregations, optimizeLegend, determineTimeUnit,
+  isUpsRuntimeWithData,
 } from 'app/pages/reports-dashboard/utils/report.utils';
 
 describe('optimizeLegend', () => {
@@ -118,6 +119,27 @@ describe('convertAggregations', () => {
     expect(result.aggregations.min).toEqual(['1 KiB/s']);
     expect(result.aggregations.max).toEqual(['2 KiB/s']);
     expect(result.aggregations.mean).toEqual(['1.5 KiB/s']);
+  });
+
+  it('uses determineTimeUnit for UPS runtime graphs', () => {
+    jest.spyOn(console, 'warn').mockImplementation();
+    const data: ReportingData = {
+      name: 'upsruntime',
+      identifier: 'upsruntime',
+      legend: ['runtime'],
+      data: [[0, 7200], [1, 7300], [2, 7400]],
+      aggregations: {
+        min: [7200],
+        max: [7400],
+        mean: [7300],
+      },
+    } as ReportingData;
+
+    const result = convertAggregations(data, 'Runtime');
+
+    expect(result.aggregations.min).toEqual(['2 h']);
+    expect(result.aggregations.max).toEqual(['2.1 h']);
+    expect(result.aggregations.mean).toEqual(['2 h']);
   });
 });
 
@@ -331,7 +353,19 @@ describe('formatValue', () => {
   });
 
   it('returns value for Seconds', () => {
-    expect(formatValue(60 * 60 * 24 * 3, 'Seconds')).toBe('3 days');
+    expect(formatValue(123, 'Seconds')).toBe('123 s');
+  });
+
+  it('returns value for Minutes', () => {
+    expect(formatValue(6.5 * 60, 'Minutes')).toBe('6.5 m');
+  });
+
+  it('returns value for Hours', () => {
+    expect(formatValue(6.5 * 60 * 60, 'Hours')).toBe('6.5 h');
+  });
+
+  it('returns value for Days', () => {
+    expect(formatValue(6.5 * 60 * 60 * 24, 'Days')).toBe('6.5 d');
   });
 
   it('returns value for Mebibytes', () => {
@@ -352,5 +386,96 @@ describe('formatValue', () => {
 
   it('returns value for bytes', () => {
     expect(formatValue(500, 'bytes')).toBe('500 B');
+  });
+});
+
+describe('determineTimeUnit', () => {
+  it('returns "seconds" for values less than 2 minutes (120 seconds)', () => {
+    expect(determineTimeUnit([[0, 0], [1, 30], [2, 60], [3, 119]])).toBe('seconds');
+    expect(determineTimeUnit([[0, 0], [1, 10], [2, 50], [3, 100]])).toBe('seconds');
+  });
+
+  it('returns "minutes" for values between 2 minutes and 2 hours', () => {
+    expect(determineTimeUnit([[0, 0], [1, 120], [2, 180]])).toBe('minutes'); // 2 minutes
+    expect(determineTimeUnit([[0, 0], [1, 1800], [2, 3600]])).toBe('minutes'); // 30-60 minutes
+    expect(determineTimeUnit([[0, 0], [1, 5000], [2, 7199]])).toBe('minutes'); // Just under 2 hours
+  });
+
+  it('returns "hours" for values between 2 hours and 2 days', () => {
+    expect(determineTimeUnit([[0, 0], [1, 7200], [2, 10800]])).toBe('hours'); // 2-3 hours
+    expect(determineTimeUnit([[0, 0], [1, 36000], [2, 86399]])).toBe('hours'); // 10 hours to just under 1 day
+    expect(determineTimeUnit([[0, 0], [1, 100000], [2, 172799]])).toBe('hours'); // Just under 2 days
+  });
+
+  it('returns "days" for values 2 days or greater', () => {
+    expect(determineTimeUnit([[0, 0], [1, 172800], [2, 200000]])).toBe('days'); // 2 days
+    expect(determineTimeUnit([[0, 0], [1, 259200], [2, 345600]])).toBe('days'); // 3-4 days
+    expect(determineTimeUnit([[0, 0], [1, 604800], [2, 1000000]])).toBe('days'); // 7+ days
+  });
+
+  it('returns "seconds" for empty series', () => {
+    expect(determineTimeUnit([])).toBe('seconds');
+  });
+
+  it('returns "seconds" for series with all zero values', () => {
+    expect(determineTimeUnit([[0, 0], [1, 0], [2, 0]])).toBe('seconds');
+  });
+
+  it('correctly identifies max value in series', () => {
+    // Max value is in the middle
+    expect(determineTimeUnit([[0, 100], [1, 7200], [2, 50]])).toBe('hours');
+    // Max value is at the beginning
+    expect(determineTimeUnit([[0, 172800], [1, 100], [2, 50]])).toBe('days');
+    // Max value is at the end
+    expect(determineTimeUnit([[0, 50], [1, 100], [2, 500]])).toBe('minutes');
+  });
+});
+
+describe('isUpsRuntimeWithData', () => {
+  it('returns true for UPS runtime graph with valid array data', () => {
+    const data = [[0, 100], [1, 200], [2, 300]];
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, data)).toBe(true);
+    expect(isUpsRuntimeWithData('upsruntime', data)).toBe(true);
+  });
+
+  it('returns false for UPS runtime graph with empty array', () => {
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, [])).toBe(false);
+    expect(isUpsRuntimeWithData('upsruntime', [])).toBe(false);
+  });
+
+  it('returns false for UPS runtime graph with non-array data', () => {
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, null)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, undefined)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, 'invalid')).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, { data: [] })).toBe(false);
+  });
+
+  it('returns false for non-UPS runtime graphs even with valid data', () => {
+    const data = [[0, 100], [1, 200], [2, 300]];
+    expect(isUpsRuntimeWithData(ReportingGraphName.Cpu, data)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsCharge, data)).toBe(false);
+    expect(isUpsRuntimeWithData(ReportingGraphName.Memory, data)).toBe(false);
+    expect(isUpsRuntimeWithData('cpu', data)).toBe(false);
+  });
+
+  it('handles various graph identifier formats', () => {
+    const data = [[0, 100]];
+    // Exact enum value
+    expect(isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, data)).toBe(true);
+    // String representation
+    expect(isUpsRuntimeWithData('upsruntime', data)).toBe(true);
+    // Case sensitivity check
+    expect(isUpsRuntimeWithData('UpsRuntime', data)).toBe(false);
+    expect(isUpsRuntimeWithData('UPSRUNTIME', data)).toBe(false);
+  });
+
+  it('provides proper type narrowing when true', () => {
+    const data: unknown = [[0, 100], [1, 200]];
+    const typeNarrowResult = isUpsRuntimeWithData(ReportingGraphName.UpsRuntime, data);
+    expect(typeNarrowResult).toBe(true);
+    // a little weird, but we can use `typeNarrowResult` to narrow the type of `data` inline
+    // and still get the value of it via the `&&` operator.
+    expect(typeNarrowResult && data[0][0]).toBe(0);
+    expect(typeNarrowResult && data[0][1]).toBe(100);
   });
 });

@@ -7,6 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -16,7 +17,6 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -62,7 +62,7 @@ import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/expo
     IxTableCellDirective,
     MatIconButton,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     MatTooltip,

@@ -8,13 +8,13 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import {
   ActivatedRoute, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
@@ -29,7 +29,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -70,7 +69,8 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     MatSort,
     AsyncPipe,
     MatCheckbox,
@@ -78,7 +78,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     MatSortHeader,
     AppRowComponent,
     EmptyComponent,
-    MatTooltip,
     TestDirective,
     TranslateModule,
   ],

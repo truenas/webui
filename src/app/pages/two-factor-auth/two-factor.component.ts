@@ -10,7 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, of, EMPTY,
-  combineLatest,
+  combineLatest, map,
 } from 'rxjs';
 import {
   catchError,
@@ -19,6 +19,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -70,6 +71,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   protected isFormLoading = signal(false);
   globalTwoFactorEnabled = signal(false);
   showQrCodeWarning = false;
+  currentSessionIs2fa = signal(false);
 
   protected readonly showSkipButton = computed(() => {
     return this.isSetupDialog() && !this.userTwoFactorAuthConfigured();
@@ -79,7 +81,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
-    if (this.userTwoFactorAuthConfigured()) {
+    if (this.userTwoFactorAuthConfigured() && !this.currentSessionIs2fa()) {
+      return this.translate.instant(helptext2fa.firstSetUp);
+    }
+    if (this.userTwoFactorAuthConfigured() && this.currentSessionIs2fa()) {
       return this.translate.instant(helptext2fa.allSetUp);
     }
     return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
@@ -121,6 +126,12 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
         },
       });
+
+    this.api.call('auth.sessions').pipe(
+      map((sessionsList) => sessionsList.find((session) => {
+        return session.current && session.credentials === CredentialType.TwoFactor;
+      })),
+    ).subscribe((session) => this.currentSessionIs2fa.set(!!session));
   }
 
   protected renewSecretOrEnable2Fa(): void {
@@ -151,6 +162,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     this.isFormLoading.set(true);
 
     this.setQrWarningState(true);
+
+    this.currentSessionIs2fa.set(false);
 
     return this.authService.user$.pipe(
       take(1),
@@ -220,6 +233,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
         this.isFormLoading.set(false);
         this.userTwoFactorAuthConfigured.set(false);
         this.setQrWarningState(false);
+        this.currentSessionIs2fa.set(false);
       }),
       catchError((error: unknown) => this.handleError(error)),
       untilDestroyed(this),

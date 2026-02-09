@@ -3,12 +3,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -92,7 +92,7 @@ describe('ManagePortsDialog', () => {
   });
 
   it('opens port form when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'TCP');
+    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'TCP');
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -103,7 +103,7 @@ describe('ManagePortsDialog', () => {
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
-    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'TCP');
+    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'TCP');
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {

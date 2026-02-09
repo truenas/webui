@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -10,7 +11,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -116,17 +116,17 @@ describe('BootEnvironmentListComponent', () => {
   });
 
   it('shows "Keep" action with outline bookmark icon when keep is false', async () => {
-    const keepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark_border' }), 1, 6);
-    expect(keepIcon).toBeDefined();
+    const icon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-bookmark-outline' }), 1, 6);
+    expect(icon).toBeTruthy();
   });
 
   it('shows "Unkeep" action with filled bookmark icon when keep is true', async () => {
-    const unkeepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark' }), 3, 6);
-    expect(unkeepIcon).toBeDefined();
+    const icon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-bookmark' }), 3, 6);
+    expect(icon).toBeTruthy();
   });
 
   it('calls API to set keep flag when Keep action is clicked', async () => {
-    const keepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark_border' }), 1, 6);
+    const keepIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-bookmark-outline' }), 1, 6);
     await keepIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -141,7 +141,7 @@ describe('BootEnvironmentListComponent', () => {
   });
 
   it('calls API to remove keep flag when Unkeep action is clicked', async () => {
-    const unkeepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark' }), 3, 6);
+    const unkeepIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-bookmark' }), 3, 6);
     await unkeepIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

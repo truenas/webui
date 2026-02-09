@@ -1,5 +1,5 @@
 <h1 mat-dialog-title class="err-title">
-  <ix-icon class="error-warning-icon" [name]="error.icon || 'error'"></ix-icon>
+  <tn-icon class="error-warning-icon" library="mdi" [name]="error.icon || 'alert-circle'"></tn-icon>
   {{ error.title | translate }}
 </h1>
 
@@ -8,7 +8,7 @@
     <span [innerHTML]="error.message"></span>
     @if (error.hint) {
       <div class="hint-text">
-        <ix-icon name="info" class="hint-icon"></ix-icon>
+        <tn-icon name="information" library="mdi" class="hint-icon"></tn-icon>
         <span>{{ error.hint | translate }}</span>
       </div>
     }
@@ -21,9 +21,9 @@
       (click)="toggleDetails()"
     >
       @if (isDetailsOpen()) {
-        <ix-icon name="remove_circle_outline"></ix-icon>
+        <tn-icon name="minus-circle-outline" library="mdi"></tn-icon>
       } @else {
-        <ix-icon name="add_circle_outline"></ix-icon>
+        <tn-icon name="plus-circle-outline" library="mdi"></tn-icon>
       }
       <span>{{ 'View Details' | translate }}</span>
     </a>
@@ -41,12 +41,12 @@
                 @if (detail.label === TRACE_LABEL) {
                   @if (!isTraceOpen()) {
                     <a class="trace-toggle" (click)="toggleTrace()">
-                      <ix-icon name="visibility"></ix-icon>
+                      <tn-icon name="eye" library="mdi"></tn-icon>
                       <span>{{ 'Show' | translate }}</span>
                     </a>
                   } @else {
                     <a class="trace-toggle" (click)="toggleTrace()">
-                      <ix-icon name="visibility_off"></ix-icon>
+                      <tn-icon name="eye-off" library="mdi"></tn-icon>
                       <span>{{ 'Hide' | translate }}</span>
                     </a>
                     <pre>{{ detail.value }}</pre>

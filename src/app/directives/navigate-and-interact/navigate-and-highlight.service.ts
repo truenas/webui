@@ -15,20 +15,43 @@ export class NavigateAndHighlightService {
   private prevHighlightDiv: HTMLDivElement | null = null;
   private prevSubscription: Subscription | null = null;
   private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
+  private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   navigateAndHighlight(route: string[], hash?: string): void {
+    // Cancel any pending timeout from previous navigation
+    this.cancelPendingTimeout();
+
     this.router.navigate(route, { fragment: hash }).then(() => {
       if (!hash) {
         return;
       }
 
-      setTimeout(() => {
-        const htmlElement = this.window.document.getElementById(hash);
-        if (htmlElement) {
-          this.scrollIntoView(htmlElement);
-        }
-      }, 150);
+      // Wait for element with retries (for loading states)
+      this.waitForElement(hash, 0);
     });
+  }
+
+  private waitForElement(hash: string, attemptCount: number): void {
+    const maxAttempts = 50; // 5 seconds total (50 * 100ms)
+    const htmlElement = this.window.document.getElementById(hash);
+
+    if (htmlElement) {
+      this.pendingTimeoutId = null;
+      this.scrollIntoView(htmlElement);
+    } else if (attemptCount < maxAttempts) {
+      this.pendingTimeoutId = setTimeout(() => {
+        this.waitForElement(hash, attemptCount + 1);
+      }, 100);
+    } else {
+      this.pendingTimeoutId = null;
+    }
+  }
+
+  private cancelPendingTimeout(): void {
+    if (this.pendingTimeoutId !== null) {
+      clearTimeout(this.pendingTimeoutId);
+      this.pendingTimeoutId = null;
+    }
   }
 
   scrollIntoView(htmlElement: HTMLElement): void {
@@ -113,5 +136,7 @@ export class NavigateAndHighlightService {
       this.window.document.removeEventListener('click', this.clickOutsideListener, true);
       this.clickOutsideListener = null;
     }
+
+    this.cancelPendingTimeout();
   }
 }

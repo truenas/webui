@@ -8,6 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
@@ -17,8 +18,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -53,7 +52,7 @@ import { TaskService } from 'app/services/task.service';
     MatToolbarRow,
     TestDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     MatButton,
     MatTooltip,
@@ -115,18 +114,18 @@ export class CronCardComponent implements OnInit {
       cssClass: 'tight-actions',
       actions: [
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,

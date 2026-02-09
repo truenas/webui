@@ -1,18 +1,18 @@
 <div class="search-container">
   <div class="search-card">
     <ix-input
-      [prefixIcon]="iconMarker('search')"
+      [prefixIcon]="tnIconMarker('magnify', 'mdi')"
       [formControl]="searchControl"
       [placeholder]="'Search Input Fields' | translate"
       [autocompleteOptions]="searchOptions()"
       [label]="'Search' | translate"
     ></ix-input>
-    
+
     @for (section of sections(); track section) {
       <div class="section" (click)="onSectionClick(section)">
         {{ section.label() }}
         @if (!isSectionValid(section)) {
-          <ix-icon name="warning"></ix-icon>
+          <tn-icon name="alert" library="mdi"></tn-icon>
         }
       </div>
     }

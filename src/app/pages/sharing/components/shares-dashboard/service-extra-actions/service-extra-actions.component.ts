@@ -5,6 +5,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
@@ -12,7 +13,6 @@ import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-n
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -39,7 +39,7 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
     MatIconButton,
     TestDirective,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     RequiresRolesDirective,
     MatMenuItem,

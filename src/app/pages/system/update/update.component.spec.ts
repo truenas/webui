@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -23,7 +24,6 @@ import {
   UpdateStatus,
 } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -190,8 +190,8 @@ describe('UpdateComponent', () => {
       const upToDateMessage = spectator.query(byText('System is up to date!'));
       expect(upToDateMessage).toBeTruthy();
 
-      const checkIcon = await loader.getHarness(IxIconHarness.with({ name: 'check_circle' }));
-      expect(checkIcon).toBeTruthy();
+      const checkIcon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'check-circle' }));
+      expect(checkIcon).not.toBeNull();
     });
   });
 

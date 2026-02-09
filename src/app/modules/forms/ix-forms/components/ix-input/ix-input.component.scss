@@ -1,5 +1,5 @@
-@import "scss-imports/cssvars";
-@import "text-security/text-security.css";
+@import 'scss-imports/cssvars';
+@import 'text-security/text-security.css';
 
 :host {
   border-radius: 12px;
@@ -73,13 +73,18 @@
   cursor: default;
   left: 2px;
   right: auto;
+
+  tn-icon {
+    position: relative;
+    top: -2px;
+  }
 }
 
 .prefix-padding {
   padding-left: 28px;
 }
 
-.input-container .ix-icon {
+.input-container tn-icon {
   height: 14px;
   line-height: 1;
   max-height: 16px;
@@ -92,10 +97,15 @@
   border-radius: 100px;
 
   .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, "inline");
+    @include variable(display, --toggle_pw_display_prop, 'inline');
     opacity: var(--disabled-opacity);
+  }
+
+  .toggle_pw tn-icon {
+    height: 18px;
     position: relative;
-    top: -1px;
+    top: -2px;
+    width: 18px;
   }
 }
 

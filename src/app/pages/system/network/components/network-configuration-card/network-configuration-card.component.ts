@@ -6,6 +6,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { combineLatest, filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -15,7 +16,6 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -42,7 +42,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     MatCardContent,
     MatList,
     MatListItem,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     CastPipe,
   ],

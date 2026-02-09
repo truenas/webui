@@ -2,11 +2,11 @@ import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -39,7 +39,7 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
     UiSearchDirective,
     AuditSearchComponent,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
     GetLogImportantDataPipe,
     UserAvatarPipe,
   ],

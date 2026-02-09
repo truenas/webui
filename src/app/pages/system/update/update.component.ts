@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -23,7 +24,6 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -60,7 +60,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     RequiresRolesDirective,
     NgxSkeletonLoaderModule,
     MatButton,
-    IxIconComponent,
+    TnIconComponent,
     ReactiveFormsModule,
     PageHeaderComponent,
     UpdateProfileCard,

@@ -11,7 +11,6 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -21,8 +20,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { firstValueFrom, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
@@ -30,16 +31,15 @@ import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
+import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult } from './folder-picker-dialog/folder-picker-dialog.component';
 import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-dialog.component';
 import { QuickLookDialogComponent, QuickLookDialogData } from './quick-look-dialog/quick-look-dialog.component';
-import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult } from './folder-picker-dialog/folder-picker-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialog
     MatProgressSpinnerModule,
     MatTooltipModule,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
     PageHeaderComponent,
   ],
   templateUrl: './file-manager.component.html',

@@ -959,7 +959,7 @@ describe('VDevsCardComponent', () => {
     it('rendering VDEVs rows', () => {
       const captions = spectator.queryAll('.vdev-line b');
       const values = spectator.queryAll('.vdev-line .vdev-value');
-      expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(2);
+      expect(spectator.queryAll('.vdev-line .warning tn-icon')).toHaveLength(2);
 
       expect(captions[0]).toHaveText('Data VDEVs');
       expect(captions[1]).toHaveText('Metadata');
@@ -1677,7 +1677,7 @@ describe('VDevsCardComponent', () => {
     it('rendering VDEVs rows', () => {
       const captions = spectator.queryAll('.vdev-line b');
       const values = spectator.queryAll('.vdev-line .vdev-value');
-      expect(spectator.queryAll('.vdev-line .warning .ix-icon')).toHaveLength(1);
+      expect(spectator.queryAll('.vdev-line .warning .tn-icon')).toHaveLength(1);
       expect(captions).toHaveLength(6);
       expect(values).toHaveLength(6);
 
@@ -2366,7 +2366,7 @@ describe('VDevsCardComponent', () => {
       const captions = spectator.queryAll('.vdev-line b');
       const values = spectator.queryAll('.vdev-line .vdev-value');
 
-      expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
+      expect(spectator.queryAll('.vdev-line .warning tn-icon')).toHaveLength(1);
       expect(captions).toHaveLength(1);
       expect(values).toHaveLength(0);
 

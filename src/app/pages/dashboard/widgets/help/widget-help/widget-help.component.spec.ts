@@ -2,10 +2,10 @@ import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
@@ -45,22 +45,22 @@ describe('WidgetHelpComponent', () => {
     });
 
     it('checks help lines', async () => {
-      const icons = await loader.getAllHarnesses(IxIconHarness);
+      const icons = await loader.getAllHarnesses(TnIconHarness);
       const [firstIcon, secondIcon, thirdIcon] = await parallel(() => icons.map((icon) => icon.getName()));
       const [firstLine, secondLine, thirdLine] = spectator.queryAll('.helptext');
       const [firstHrefIconLine, secondHrefIconLine, thirdHrefIconLine] = spectator.queryAll('.icon-wrapper');
 
-      expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
+      expect(spectator.query('.icon-wrapper a tn-icon')).toExist();
 
-      expect(firstIcon).toBe('assignment');
+      expect(firstIcon).toBe('clipboard-text');
       expect(firstLine.innerHTML).toBe(helptextAbout.docs);
       expect(firstHrefIconLine.textContent).not.toExist();
 
-      expect(secondIcon).toBe('group');
+      expect(secondIcon).toBe('account-group');
       expect(secondLine.innerHTML).toBe(helptextAbout.forums);
       expect(secondHrefIconLine.textContent).not.toExist();
 
-      expect(thirdIcon).toBe('mail');
+      expect(thirdIcon).toBe('email');
       expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
       expect(thirdHrefIconLine.textContent).not.toExist();
     });
@@ -80,22 +80,22 @@ describe('WidgetHelpComponent', () => {
     });
 
     it('checks help lines', async () => {
-      const icons = await loader.getAllHarnesses(IxIconHarness);
+      const icons = await loader.getAllHarnesses(TnIconHarness);
       const [firstIcon, secondIcon, thirdIcon] = await parallel(() => icons.map((icon) => icon.getName()));
       const [firstLine, secondLine, thirdLine] = spectator.queryAll('.helptext');
       const [firstHrefIconLine, secondHrefIconLine, thirdHrefIconLine] = spectator.queryAll('.icon-wrapper');
 
-      expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
+      expect(spectator.query('.icon-wrapper a tn-icon')).toExist();
 
-      expect(firstIcon).toBe('assignment');
+      expect(firstIcon).toBe('clipboard-text');
       expect(firstLine.innerHTML).toBe(helptextAbout.docs);
       expect(firstHrefIconLine.textContent).toBe('Docs');
 
-      expect(secondIcon).toBe('group');
+      expect(secondIcon).toBe('account-group');
       expect(secondLine.innerHTML).toBe(helptextAbout.forums);
       expect(secondHrefIconLine.textContent).toBe('Forums');
 
-      expect(thirdIcon).toBe('mail');
+      expect(thirdIcon).toBe('email');
       expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
       expect(thirdHrefIconLine.textContent).toBe('Newsletter');
     });
@@ -115,22 +115,22 @@ describe('WidgetHelpComponent', () => {
     });
 
     it('checks help lines', async () => {
-      const icons = await loader.getAllHarnesses(IxIconHarness);
+      const icons = await loader.getAllHarnesses(TnIconHarness);
       const [firstIcon, secondIcon, thirdIcon] = await parallel(() => icons.map((icon) => icon.getName()));
       const [firstLine, secondLine, thirdLine] = spectator.queryAll('.helptext');
       const [firstHrefIconLine, secondHrefIconLine, thirdHrefIconLine] = spectator.queryAll('.icon-wrapper');
 
-      expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
+      expect(spectator.query('.icon-wrapper a tn-icon')).toExist();
 
-      expect(firstIcon).toBe('assignment');
+      expect(firstIcon).toBe('clipboard-text');
       expect(firstLine.innerHTML).toBe(helptextAbout.docs);
       expect(firstHrefIconLine.textContent).toBe('Docs');
 
-      expect(secondIcon).toBe('group');
+      expect(secondIcon).toBe('account-group');
       expect(secondLine.innerHTML).toBe(helptextAbout.forums);
       expect(secondHrefIconLine.textContent).toBe('Forums');
 
-      expect(thirdIcon).toBe('mail');
+      expect(thirdIcon).toBe('email');
       expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
       expect(thirdHrefIconLine.textContent).toBe('Newsletter');
     });

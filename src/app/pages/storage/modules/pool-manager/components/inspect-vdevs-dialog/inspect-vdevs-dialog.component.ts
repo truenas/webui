@@ -5,9 +5,9 @@ import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-vdev/manual-selection-vdev.component';
 import {
@@ -36,7 +36,7 @@ import {
     MatIconButton,
     MatDialogClose,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     ManualSelectionVdevComponent,
     TranslateModule,
   ],

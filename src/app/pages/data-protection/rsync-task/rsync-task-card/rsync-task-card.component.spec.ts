@@ -68,11 +68,15 @@ describe('RsyncTaskCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: RsyncTaskCardComponent,
-    imports: [
-    ],
+    imports: [],
     providers: [
       mockAuth(),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectJobs,

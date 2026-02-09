@@ -7,10 +7,10 @@ import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -32,7 +32,7 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
     MatButton,
     RequiresRolesDirective,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     AppSettingsButtonComponent,
     RouterLink,
     MatAnchor,

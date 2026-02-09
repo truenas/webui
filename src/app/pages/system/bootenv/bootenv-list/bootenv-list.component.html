@@ -1,4 +1,4 @@
-<ix-page-header [loading]="!!(dataProvider.isLoading$ | async)" [isSub]="true">
+<ix-page-header [loading]="!!(dataProvider.isLoading$ | async)"  [isSub]="true">
   <ix-basic-search
     [query]="searchQuery()"
     (queryChange)="onListFiltered($event)"
@@ -11,7 +11,7 @@
     [ixUiSearch]="searchableElements.elements.stats"
     (click)="openBootenvStats()"
   >
-    {{ "Stats/Settings" | translate }}
+    {{ 'Stats/Settings' | translate }}
   </button>
 
   <button
@@ -19,7 +19,7 @@
     ixTest="bootenv-status"
     [routerLink]="['/', 'system', 'boot', 'status']"
   >
-    {{ "Boot Pool Status" | translate }}
+    {{ 'Boot Pool Status' | translate }}
   </button>
 
   <button
@@ -29,14 +29,14 @@
     [ixUiSearch]="searchableElements.elements.scrubBootPool"
     (click)="doScrub()"
   >
-    {{ "Scrub Boot Pool" | translate }}
+    {{ 'Scrub Boot Pool' | translate }}
   </button>
 </ix-page-header>
 
 @if (selectedBootenvs.length) {
   <div class="batch-actions-toolbar">
     <div class="title">
-      <strong>{{ "Batch Operations" | translate }}</strong>
+      <strong>{{ 'Batch Operations' | translate }}</strong>
     </div>
     <div class="actions">
       <button
@@ -46,8 +46,8 @@
         [disabled]="!selectionHasItems"
         (click)="doDelete(selectedBootenvs)"
       >
-        <ix-icon name="mdi-delete"></ix-icon>
-        {{ "Delete" | translate }}
+        <tn-icon name="delete" library="mdi"></tn-icon>
+        {{ 'Delete' | translate }}
       </button>
     </div>
   </div>
@@ -56,9 +56,7 @@
 <ix-table
   class="table"
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="
-    emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)
-  "
+  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   [ixUiSearch]="searchableElements.elements.boot"
 >
   <thead
@@ -71,6 +69,7 @@
     [columns]="columns"
     [dataProvider]="dataProvider"
     [isLoading]="!!(dataProvider.isLoading$ | async)"
-  ></tbody>
+  >
+  </tbody>
 </ix-table>
 <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

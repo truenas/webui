@@ -28,8 +28,8 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -65,7 +65,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     MatStep,
     MatStepLabel,
     MatStepper,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
     MatButton,
     MatStepperNext,
     TestDirective,

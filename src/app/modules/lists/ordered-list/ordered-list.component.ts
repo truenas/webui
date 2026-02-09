@@ -8,11 +8,11 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ControlValueAccessor } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -30,7 +30,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     CdkDrag,
     MatSlideToggle,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     IxErrorsComponent,
     TranslateModule,
   ],

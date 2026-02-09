@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   switchMap, filter, tap, Observable,
 } from 'rxjs';
@@ -15,7 +16,6 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -89,12 +89,12 @@ export class CloudCredentialsCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),

@@ -9,6 +9,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -16,10 +17,9 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -56,7 +56,7 @@ import { selectService } from 'app/store/services/services.selectors';
     MatCard,
     MatToolbarRow,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     ServiceStateButtonComponent,
     RequiresRolesDirective,
     MatButton,
@@ -73,6 +73,7 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTableCellDirective,
     EmptyComponent,
     SubSystemNameCellComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -90,6 +91,7 @@ export class NvmeOfCardComponent implements OnInit {
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly emptyConfig = nvmeOfEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'nvme-of'];
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
 
@@ -146,13 +148,13 @@ export class NvmeOfCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('visibility'),
+          iconName: tnIconMarker('eye', 'mdi'),
           tooltip: this.translate.instant('View'),
           onClick: (row) => this.router.navigate(['/sharing/nvme-of', row.name]),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,

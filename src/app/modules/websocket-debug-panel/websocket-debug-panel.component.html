@@ -11,15 +11,14 @@
         <h2>WebSocket Debug Panel</h2>
         <div class="header-actions">
           <span class="keyboard-hint">Ctrl+Shift+X</span>
-          <button
-            mat-icon-button
+          <tn-icon-button
+            name="close"
+            library="mdi"
             class="toggle-button"
             ixTest="debug-panel-toggle"
             [attr.aria-label]="isOpen ? 'Close debug panel' : 'Open debug panel'"
             (click)="togglePanel()"
-          >
-            <ix-icon name="mdi-close"></ix-icon>
-          </button>
+          ></tn-icon-button>
         </div>
       </div>
 

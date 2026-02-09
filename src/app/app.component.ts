@@ -4,10 +4,9 @@ import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
-import { filter, tap, withLatestFrom } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -15,7 +14,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { PingService } from 'app/modules/websocket/ping.service';
 import { WebSocketDebugPanelComponent } from 'app/modules/websocket-debug-panel/websocket-debug-panel.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
-import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
@@ -31,14 +29,12 @@ export class AppComponent implements OnInit {
   private wsStatus = inject(WebSocketStatusService);
   private detectBrowser = inject(DetectBrowserService);
   private layoutService = inject(LayoutService);
-  private authService = inject(AuthService);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
   private slideIn = inject(SlideIn);
   private pingService = inject(PingService);
-  private sessionTimeoutService = inject(SessionTimeoutService);
 
   isAuthenticated = false;
   debugPanelEnabled = environment.debugPanel?.enabled || false;
@@ -50,11 +46,10 @@ export class AppComponent implements OnInit {
     // and automatically set up ping when connection is established
     this.pingService.initializePingService();
     this.wsStatus.isAuthenticated$.pipe(
-      withLatestFrom(this.authService.isManualLogout$),
       untilDestroyed(this),
-    ).subscribe(([isAuthenticated, isManualLogout]) => {
+    ).subscribe((isAuthenticated) => {
       if (!isAuthenticated && this.isAuthenticated) {
-        this.logOutExpiredUser(isManualLogout);
+        this.handleAuthenticationLost();
         return;
       }
 
@@ -88,12 +83,14 @@ export class AppComponent implements OnInit {
     this.setupScrollToTopOnNavigation();
   }
 
-  private logOutExpiredUser(isManualLogout: boolean): void {
-    this.authService.clearAuthToken();
+  /**
+   * Handles loss of authentication state (connection drop or logout).
+   * Redirects to signin where auto-login will be attempted if token is still valid.
+   */
+  private handleAuthenticationLost(): void {
+    // Token may still be valid for auto-login after reconnection.
+    // Session expired message is shown by SigninStore if auto-login fails.
     this.router.navigate(['/signin']);
-    if (!isManualLogout) {
-      this.sessionTimeoutService.showSessionExpiredMessage();
-    }
     this.dialog.closeAllDialogs();
   }
 

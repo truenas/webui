@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
 import {
   debounceTime,
@@ -17,8 +18,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +29,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
     IxInputComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class IxFormGlossaryComponent implements OnInit {
@@ -41,7 +40,7 @@ export class IxFormGlossaryComponent implements OnInit {
 
   protected searchControl = this.formBuilder.control('');
   protected searchOptions = signal<Option[]>([]);
-  protected iconMarker = iconMarker;
+  protected tnIconMarker = tnIconMarker;
 
   protected sections = signal<IxFormSectionComponent[]>([]);
   protected sectionsValidity = new Map<IxFormSectionComponent, boolean>();

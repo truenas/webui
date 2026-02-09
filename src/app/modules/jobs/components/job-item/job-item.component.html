@@ -94,53 +94,50 @@
 </div>
 
 @if (job().state === JobState.Running && job().abortable) {
-  <button
+  <tn-icon-button
     class="job-button-abort"
-    mat-icon-button
     type="button"
+    name="stop-circle"
+    library="mdi"
+    [class.job-icon-abort]="true"
     [ixTest]="['abort', job().description, job().method]"
     [matTooltip]="'Abort' | translate"
     (click)="abort()"
-  >
-    <ix-icon name="mdi-stop-circle" class="job-icon-abort"></ix-icon>
-  </button>
+  ></tn-icon-button>
 }
 
 @if (job().state === JobState.Waiting) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     type="button"
+    name="clock-outline"
+    library="mdi"
+    [class.job-icon-waiting]="true"
     [ixTest]="['waiting', job().description, job().method]"
     [disabled]="true"
-  >
-    <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
-  </button>
+  ></tn-icon-button>
 }
 
 @if (job().state === JobState.Failed) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     type="button"
+    name="close-circle"
+    library="mdi"
+    matTooltipPosition="left"
+    [class.job-icon-failed]="true"
     [ixTest]="['failed', job().description, job().method]"
+    [matTooltip]="job().error"
     [disabled]="true"
-  >
-    <ix-icon
-      name="cancel"
-      matTooltipPosition="left"
-      class="job-icon-failed"
-      [matTooltip]="job().error"
-    ></ix-icon>
-  </button>
+  ></tn-icon-button>
 }
 
 @if (job().state === JobState.Success) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     type="button"
+    name="check-circle"
+    library="mdi"
+    [class.job-icon-success]="true"
     [ixTest]="['success', job().description, job().method]"
     [disabled]="true"
-  >
-    <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
-  </button>
+  ></tn-icon-button>
 }
 </div>

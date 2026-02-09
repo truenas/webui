@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import {
   filter, map,
@@ -18,7 +19,6 @@ import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import {
@@ -49,7 +49,7 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   imports: [
     MatDialogContent,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     MatProgressBar,
     JobItemComponent,
     MatDialogActions,

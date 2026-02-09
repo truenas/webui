@@ -1,10 +1,9 @@
-import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export interface SnackbarConfig {
   message: string;
   iconCssColor?: string;
-  icon?: MarkedIcon;
+  icon?: string;
   button?: {
     title: string;
     action?: () => void;
@@ -22,7 +21,7 @@ export interface SnackbarConfig {
  * // Custom snackbar with action button
  * snackbar.open({
  *   message: 'File deleted',
- *   icon: iconMarker('mdi-delete'),
+ *   icon: tnIconMarker('delete', 'mdi'),
  *   button: {
  *     title: 'Undo',
  *     action: () => restoreFile()
@@ -33,7 +32,7 @@ export interface SnackbarConfig {
  * // Error message with assertive politeness
  * snackbar.open({
  *   message: 'Connection lost',
- *   icon: iconMarker('mdi-alert-circle'),
+ *   icon: tnIconMarker('alert-circle', 'mdi'),
  *   iconCssColor: 'var(--red)',
  *   politeness: 'assertive',  // Interrupts screen reader
  *   verticalPosition: 'top'
@@ -43,8 +42,8 @@ export interface SnackbarOptions {
   /** The message to display in the snackbar. Should be a translated string. */
   message: TranslatedString;
 
-  /** Optional icon to display alongside the message. Use iconMarker() to get a typed icon. */
-  icon?: MarkedIcon;
+  /** Optional icon to display alongside the message. Use tnIconMarker() to get a typed icon. */
+  icon?: string;
 
   /**
    * CSS color value for the icon. Defaults to 'var(--primary)'.

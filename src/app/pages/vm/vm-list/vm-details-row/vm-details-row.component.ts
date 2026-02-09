@@ -6,11 +6,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -31,7 +31,7 @@ import { VmService } from 'app/services/vm.service';
     RequiresRolesDirective,
     MatButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
   ],
 })

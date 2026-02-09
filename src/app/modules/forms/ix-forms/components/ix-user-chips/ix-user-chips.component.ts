@@ -2,11 +2,11 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, input, viewChild, inject,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UserService } from 'app/services/user.service';
@@ -25,7 +25,6 @@ import { UserService } from 'app/services/user.service';
  * ></ix-user-chips>
  * ```
  */
-@UntilDestroy()
 @Component({
   selector: 'ix-user-chips',
   templateUrl: './ix-user-chips.component.html',
@@ -47,6 +46,7 @@ export class IxUserChipsComponent implements AfterViewInit, ControlValueAccessor
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
+  readonly debounceTime = input<number>(defaultDebounceTimeMs);
 
   private readonly ixChips = viewChild.required(IxChipsComponent);
 
@@ -67,7 +67,7 @@ export class IxUserChipsComponent implements AfterViewInit, ControlValueAccessor
     const control = this.controlDirective.control;
     if (control) {
       control.addAsyncValidators([
-        this.existenceValidator.validateUsersExist(),
+        this.existenceValidator.validateUsersExist(this.debounceTime()),
       ]);
       // Don't call updateValueAndValidity() here to avoid showing validation errors
       // immediately on form load. Validation will run automatically when the user

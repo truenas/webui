@@ -8,6 +8,7 @@ import {
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
@@ -42,7 +43,6 @@ describe('FeedbackDialogComponent', () => {
     declarations: [
       MockComponents(
         FileReviewComponent,
-        FileTicketComponent,
         FileTicketLicensedComponent,
       ),
     ],
@@ -52,6 +52,9 @@ describe('FeedbackDialogComponent', () => {
       }),
       mockProvider(SystemGeneralService),
       mockProvider(MatDialogRef),
+      mockApi([
+        mockCall('support.attach_ticket_max_size', 5),
+      ]),
       {
         provide: MAT_DIALOG_DATA,
         useValue: null,
@@ -134,16 +137,16 @@ describe('FeedbackDialogComponent', () => {
 
         let visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
-        expect(visibleForm!.type).toBe(FeedbackType.Bug);
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.type()).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
 
         visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
-        expect(visibleForm!.type).toBe(FeedbackType.Bug);
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.type()).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
@@ -177,13 +180,13 @@ describe('FeedbackDialogComponent', () => {
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketComponent);
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(MatDialogRef));
 
         spectator.component.onIsLoadingChange(true);
-        expect(visibleForm!.dialogRef).toHaveProperty('disableClose', true);
+        expect(visibleForm!.dialogRef()).toHaveProperty('disableClose', true);
 
         spectator.component.onIsLoadingChange(false);
-        expect(visibleForm!.dialogRef).toHaveProperty('disableClose', false);
+        expect(visibleForm!.dialogRef()).toHaveProperty('disableClose', false);
       });
     });
   });

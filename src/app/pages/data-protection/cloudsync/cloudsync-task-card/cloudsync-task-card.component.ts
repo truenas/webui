@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -20,11 +21,10 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -63,7 +63,7 @@ import { AppState } from 'app/store';
     MatToolbarRow,
     TestDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     RequiresRolesDirective,
     MatButton,
@@ -74,6 +74,7 @@ import { AppState } from 'app/store';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class CloudSyncTaskCardComponent implements OnInit {
@@ -91,6 +92,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'cloudsync'];
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
@@ -138,38 +140,38 @@ export class CloudSyncTaskCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-stop-circle'),
+          iconName: tnIconMarker('stop-circle', 'mdi'),
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('sync'),
+          iconName: tnIconMarker('sync', 'mdi'),
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('restore'),
+          iconName: tnIconMarker('restore', 'mdi'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
