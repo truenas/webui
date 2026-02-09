@@ -1,0 +1,54 @@
+<ix-fieldset [title]="'Add New Mapping' | translate">
+  <form class="form" [formGroup]="form" (submit)="submit()">
+    @if (isUserType()) {
+      <ix-user-combobox
+        formControlName="hostUidOrGid"
+        [label]="'User' | translate"
+        [required]="true"
+      ></ix-user-combobox>
+    } @else {
+      <ix-group-combobox
+        formControlName="hostUidOrGid"
+        [label]="'Group' | translate"
+        [required]="true"
+      ></ix-group-combobox>
+    }
+
+    <div class="checkbox-with-tooltip">
+      <ix-checkbox
+        formControlName="mapDirectly"
+        class="default-checkbox"
+        [label]="isUserType() ? ('Map to the same UID in the container' | translate) : ('Map to the same GID in the container' | translate)"
+      ></ix-checkbox>
+      <tn-icon
+        name="help_outline"
+        class="help-icon-inline"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="'Help' | translate"
+        [matTooltip]="helptext.mapDirectlyTooltip | translate"
+        (keydown.enter)="$event.preventDefault()"
+        (keydown.space)="$event.preventDefault()"
+      ></tn-icon>
+    </div>
+
+    @if (!form.value.mapDirectly) {
+      <ix-input
+        formControlName="instanceUidOrGid"
+        type="number"
+        [label]="isUserType() ? ('Container UID' | translate) : ('Container GID' | translate)"
+        [required]="true"
+      ></ix-input>
+    }
+
+    <button
+      class="set-button"
+      mat-button
+      type="submit"
+      [disabled]="form.invalid || form.pending"
+      [ixTest]="['set-mapping']"
+    >
+      {{ 'Set' | translate }}
+    </button>
+  </form>
+</ix-fieldset>

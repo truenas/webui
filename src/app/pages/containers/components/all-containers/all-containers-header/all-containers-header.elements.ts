@@ -11,6 +11,11 @@ export const allContainersHeaderElements = {
       synonyms: [T('Container Settings')],
       anchor: 'container-global-settings',
     },
+    mapUserGroupIds: {
+      hierarchy: [T('Map User/Group IDs')],
+      synonyms: [T('ID Mapping'), T('User ID Mapping'), T('Group ID Mapping')],
+      anchor: 'map-user-group-ids',
+    },
     add: {
       hierarchy: [T('Create New Container')],
       synonyms: [T('New Container'), T('Add Container')],

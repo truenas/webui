@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=64b54c569f",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=f535d70c3c",
   "icons": [
     "app-cloud-off",
     "app-dataset",
@@ -31,7 +31,9 @@
     "app-truenas-logo-type-color",
     "app-webshare",
     "apps",
+    "cancel",
     "dataset",
+    "help_outline",
     "mat-apps",
     "mat-arrow_circle_right",
     "mat-check_circle",
