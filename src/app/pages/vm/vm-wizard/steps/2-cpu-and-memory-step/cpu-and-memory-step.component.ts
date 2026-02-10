@@ -144,7 +144,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   }
 
   private loadMaxSupportedVcpus(): void {
-    this.api.call('vm.maximum_supported_vcpus')
+    this.cpuValidator.getMaxVcpus()
       .pipe(
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
