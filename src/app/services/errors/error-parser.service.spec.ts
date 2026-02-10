@@ -121,6 +121,10 @@ describe('ErrorParserService', () => {
         title: 'FAILED',
         message: '<pre>DUMMY_ERROR</pre>',
         stackTrace: 'LOGS',
+        details: [
+          { label: 'Trace', value: 'EXCEPTION' },
+          { label: 'Logs Excerpt', value: 'LOGS' },
+        ],
         actions: [{
           label: 'View Details',
           route: '/jobs',
@@ -133,6 +137,10 @@ describe('ErrorParserService', () => {
         title: 'FAILED',
         message: '<pre>EXCEPTION</pre>',
         stackTrace: 'LOGS',
+        details: [
+          { label: 'Trace', value: 'EXCEPTION' },
+          { label: 'Logs Excerpt', value: 'LOGS' },
+        ],
         actions: [{
           label: 'View Details',
           route: '/jobs',
@@ -145,6 +153,9 @@ describe('ErrorParserService', () => {
         title: 'FAILED',
         message: 'Unknown error',
         stackTrace: 'LOGS',
+        details: [
+          { label: 'Logs Excerpt', value: 'LOGS' },
+        ],
         actions: [{
           label: 'View Details',
           route: '/jobs',
@@ -152,6 +163,57 @@ describe('ErrorParserService', () => {
         }],
         logs: job3,
       });
+    });
+
+    it('uses exc_info type as title when available', () => {
+      const jobWithExcType = {
+        ...failedJob,
+        exc_info: { type: 'CallError', extra: null, repr: '' },
+      } as Job;
+
+      const errorReport = spectator.service.parseError(new FailedJobError(jobWithExcType)) as ErrorReport;
+      expect(errorReport.title).toBe('CallError');
+      expect(errorReport.details).toContainEqual({ label: 'Error Type', value: 'CallError' });
+    });
+
+    it('does not include logs excerpt in details when job has no logs_excerpt', () => {
+      const jobWithoutLogs = {
+        ...failedJob,
+        logs_excerpt: null,
+      } as Job;
+
+      const errorReport = spectator.service.parseError(new FailedJobError(jobWithoutLogs)) as ErrorReport;
+      expect(errorReport.details).not.toContainEqual(
+        expect.objectContaining({ label: 'Logs Excerpt' }),
+      );
+    });
+
+    it('includes API error details and logs excerpt when apiErrorDetails is available', () => {
+      const jobWithLogs = {
+        ...failedJob,
+        logs_excerpt: 'Docker logs here',
+      } as Job;
+      const failedJobError = new FailedJobError(jobWithLogs);
+      failedJobError.apiErrorDetails = {
+        errname: 'EFAULT' as ApiErrorName,
+        error: 14,
+        extra: null,
+        reason: 'Some reason',
+        trace: {
+          class: 'CallError',
+          formatted: 'stack trace here',
+        },
+      } as ApiErrorDetails;
+
+      const errorReport = spectator.service.parseError(failedJobError) as ErrorReport;
+
+      expect(errorReport.title).toBe('CallError');
+      expect(errorReport.details).toContainEqual({ label: 'Error Name', value: 'EFAULT' });
+      expect(errorReport.details).toContainEqual({ label: 'Error Code', value: 14 });
+      expect(errorReport.details).toContainEqual({ label: 'Reason', value: 'Some reason' });
+      expect(errorReport.details).toContainEqual({ label: 'Error Class', value: 'CallError' });
+      expect(errorReport.details).toContainEqual({ label: 'Trace', value: 'stack trace here' });
+      expect(errorReport.details).toContainEqual({ label: 'Logs Excerpt', value: 'Docker logs here' });
     });
 
     it('parses a failed job with exc info', () => {
