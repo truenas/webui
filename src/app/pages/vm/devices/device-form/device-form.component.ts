@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +20,7 @@ import {
 } from 'app/enums/vm.enum';
 import { isApiCallError, transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { choicesToOptions, nicChoicesToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions, nicChoicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
@@ -34,6 +35,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -67,6 +69,7 @@ const specifyCustom = T('Specify custom');
     IxExplorerComponent,
     IxComboboxComponent,
     IxInputComponent,
+    IxRadioGroupComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -154,6 +157,7 @@ export class DeviceFormComponent implements OnInit {
 
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
   orderControl = new FormControl(null as number | null);
+  newOrExistingControl = new FormControl<'new' | 'existing'>('existing');
 
   cdromForm = this.formBuilder.nonNullable.group({
     path: [mntPath, Validators.required],
@@ -161,6 +165,8 @@ export class DeviceFormComponent implements OnInit {
 
   diskForm = this.formBuilder.group({
     path: ['', Validators.required],
+    datastore: [''],
+    volsize: [null as number | null],
     type: [null as VmDiskMode | null],
     sectorsize: [0],
   });
@@ -208,6 +214,16 @@ export class DeviceFormComponent implements OnInit {
   readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
   readonly VmDisplayType = VmDisplayType;
+
+  readonly newOrExistingOptions$ = of([
+    { label: this.translate.instant('Create new disk image'), value: 'new' as const },
+    { label: this.translate.instant('Use existing disk image'), value: 'existing' as const },
+  ]);
+
+  readonly datastoreOptions$ = this.api
+    .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
+    .pipe(singleArrayToOptions());
+
   readonly usbDeviceOptions$ = this.api.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
       const options = Object.entries(usbDevices).map(([id, device]) => {
@@ -329,6 +345,10 @@ export class DeviceFormComponent implements OnInit {
       // Initialize display form with no validators since no type is selected
       this.updateDisplayFormForType(null);
     }
+
+    this.newOrExistingControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.setDiskFormValidators(value);
+    });
 
     if (this.slideInData?.virtualMachineId) {
       this.virtualMachineId = this.slideInData.virtualMachineId;
@@ -574,6 +594,21 @@ export class DeviceFormComponent implements OnInit {
     }
   }
 
+  private setDiskFormValidators(mode: 'new' | 'existing'): void {
+    if (mode === 'new') {
+      this.diskForm.controls.datastore.setValidators(Validators.required);
+      this.diskForm.controls.volsize.setValidators(Validators.required);
+      this.diskForm.controls.path.clearValidators();
+    } else {
+      this.diskForm.controls.path.setValidators(Validators.required);
+      this.diskForm.controls.datastore.clearValidators();
+      this.diskForm.controls.volsize.clearValidators();
+    }
+    this.diskForm.controls.path.updateValueAndValidity();
+    this.diskForm.controls.datastore.updateValueAndValidity();
+    this.diskForm.controls.volsize.updateValueAndValidity();
+  }
+
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
     const values = {
       ...this.typeSpecificForm.value,
@@ -602,6 +637,31 @@ export class DeviceFormComponent implements OnInit {
       // Remove exists from otherAttributes if present
       if ('exists' in otherAttributes) {
         delete (otherAttributes as { exists?: boolean }).exists;
+      }
+
+      // Handle creating a new zvol for disk devices
+      if (this.typeControl.value === VmDeviceType.Disk && this.newOrExistingControl.value === 'new') {
+        const randomSuffix = Math.random().toString(36).substring(7);
+        const vmName = this.vmName?.replace(/\s+/g, '-') || 'vm';
+        const zvolName = `${this.diskForm.value.datastore}/${vmName}-${randomSuffix}`;
+
+        return {
+          dtype: VmDeviceType.Disk,
+          create_zvol: true,
+          zvol_name: zvolName,
+          zvol_volsize: this.diskForm.value.volsize,
+          type: this.diskForm.value.type,
+          logical_sectorsize: sectorsize === 0 ? null : sectorsize,
+          physical_sectorsize: sectorsize === 0 ? null : sectorsize,
+        } as VmDeviceUpdate['attributes'];
+      }
+
+      // Remove datastore and volsize from disk device attributes (only used for create-new)
+      if ('datastore' in otherAttributes) {
+        delete (otherAttributes as { datastore?: string }).datastore;
+      }
+      if ('volsize' in otherAttributes) {
+        delete (otherAttributes as { volsize?: number | null }).volsize;
       }
 
       const attributes = {
