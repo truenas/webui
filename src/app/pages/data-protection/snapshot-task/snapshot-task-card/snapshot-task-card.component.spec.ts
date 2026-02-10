@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -35,7 +36,8 @@ describe('SnapshotTaskCardComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
-  const fiftySecondsAgoMs = 50 * 1000; // 50 seconds in milliseconds
+  beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
+  afterEach(() => restoreDate());
 
   const snapshotTasks = [
     {
@@ -61,7 +63,7 @@ describe('SnapshotTaskCardComponent', () => {
       state: {
         state: 'PENDING',
         datetime: {
-          $date: new Date().getTime() - fiftySecondsAgoMs,
+          $date: new Date('2026-01-19T23:59:10Z').getTime(),
         },
       },
       keepfor: '2 WEEK(S)',
