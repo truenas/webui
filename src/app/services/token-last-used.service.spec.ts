@@ -2,6 +2,7 @@ import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/sp
 import { of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IncomingMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -39,8 +40,11 @@ describe('TokenLastUsedService', () => {
   });
 
   beforeEach(() => {
+    fakeDate(new Date('2026-01-20T00:00:00Z'));
     spectator = createService();
   });
+
+  afterEach(() => restoreDate());
 
   describe('isTokenWithinTimeline', () => {
     it('should return false if tokenLastUsed is not set', () => {
