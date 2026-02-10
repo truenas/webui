@@ -79,12 +79,12 @@ export class AddGpuDeviceMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Gpu);
 
     return Object.entries(gpuChoices)
-      .filter(([pciAddress, gpuType]: [string, ContainerGpuType]) => {
+      .filter(([pciAddress, gpuType]) => {
         const isAlreadyAdded = existingGpuDevices
           .some((device) => device.pci_address === pciAddress);
 
         // Filter out NVIDIA GPUs if drivers aren't enabled
-        if (gpuType === ContainerGpuType.Nvidia && !nvidiaEnabled) {
+        if (gpuType === (ContainerGpuType.Nvidia as string) && !nvidiaEnabled) {
           return false;
         }
 
@@ -104,7 +104,7 @@ export class AddGpuDeviceMenuComponent {
   protected addGpu(gpu: GpuMenuItem): void {
     this.addDevice({
       dtype: ContainerDeviceType.Gpu,
-      gpu_type: gpu.gpuType as ContainerGpuType,
+      gpu_type: gpu.gpuType,
       pci_address: gpu.pciAddress,
     } as ContainerGpuDevice);
   }

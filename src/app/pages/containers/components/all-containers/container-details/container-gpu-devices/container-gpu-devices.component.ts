@@ -84,7 +84,7 @@ export class ContainerGpuDevicesComponent {
       return false;
     }
 
-    return Object.values(gpuChoices).some((gpuType: ContainerGpuType) => gpuType === ContainerGpuType.Nvidia);
+    return Object.values(gpuChoices).some((gpuType) => gpuType === (ContainerGpuType.Nvidia as string));
   });
 
   protected getDeviceDescription(device: ContainerDevice): string {
