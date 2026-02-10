@@ -76,6 +76,7 @@
     <ix-select
       formControlName="snapdir"
       [label]="'Snapshot Directory' | translate"
+      [required]="true"
       [tooltip]="helptext.snapdirTooltip | translate"
       [options]="snapdirOptions$"
     ></ix-select>
@@ -91,6 +92,7 @@
     <ix-select
       formControlName="copies"
       [label]="'Copies' | translate"
+      [required]="true"
       [tooltip]="helptext.copiesTooltip | translate"
       [options]="copiesOptions$"
     ></ix-select>

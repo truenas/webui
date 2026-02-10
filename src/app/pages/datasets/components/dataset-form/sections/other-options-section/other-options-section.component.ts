@@ -6,7 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { startWith } from 'rxjs/operators';
 import {
   specialVdevDefaultThreshold,
   specialVdevMaxThreshold,
@@ -32,7 +32,6 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -101,9 +100,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     checksum: [inherit as WithInherit<DatasetChecksum>],
     readonly: [inherit as WithInherit<OnOff>],
     exec: [inherit as WithInherit<OnOff>],
-    snapdir: [null as WithInherit<DatasetSnapdir> | null],
+    snapdir: [inherit as WithInherit<DatasetSnapdir>],
     snapdev: [inherit as WithInherit<DatasetSnapdev>],
-    copies: [1 as number | null],
+    copies: [inherit as WithInherit<number>],
     recordsize: [inherit as string],
     acltype: [DatasetAclType.Inherit as DatasetAclType],
     aclmode: [AclMode.Inherit as AclMode],
@@ -119,13 +118,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   checksumOptions$: Observable<Option[]>;
   readonlyOptions$: Observable<Option[]>;
   execOptions$: Observable<Option[]>;
-  snapdirOptions$ = of(mapToOptions(datasetSnapdirLabels, this.translate));
+  snapdirOptions$: Observable<Option[]>;
   snapdevOptions$: Observable<Option[]>;
-  copiesOptions$ = of([
-    { label: '1', value: 1 },
-    { label: '2', value: 2 },
-    { label: '3', value: 3 },
-  ]);
+  copiesOptions$: Observable<Option[]>;
 
   recordsizeOptions$: Observable<Option[]>;
   caseSensitivityOptions$ = of(mapToOptions(datasetCaseSensitivityLabels, this.translate));
@@ -153,7 +148,14 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   );
 
   private onOffOptions$ = of(mapToOptions(onOffLabels, this.translate));
+  private defaultSnapdirOptions$ = of(mapToOptions(datasetSnapdirLabels, this.translate));
   private defaultSnapdevOptions$ = of(mapToOptions(datasetSnapdevLabels, this.translate));
+  private defaultCopiesOptions$ = of([
+    { label: '1', value: 1 },
+    { label: '2', value: 2 },
+    { label: '3', value: 3 },
+  ]);
+
   private defaultRecordSizeOptions$ = this.api.call('pool.dataset.recordsize_choices').pipe(
     singleArrayToOptions(),
   );
@@ -222,12 +224,12 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
     const values = this.form.value;
 
-    // Build payload from form values - using Record type to allow transformation of UI types to API types
-    const payload: Record<string, unknown> = {
+    const payload = {
       ...values,
       checksum: values.checksum as DatasetChecksum,
-      copies: values.copies || 1,
-    };
+      copies: values.copies ?? inherit,
+      snapdir: values.snapdir ?? inherit,
+    } as Record<string, unknown>;
 
     // Handle special_small_block_size transformation
     payload.special_small_block_size = transformSpecialSmallBlockSizeForPayload(
@@ -242,10 +244,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       payload.aclmode = AclMode.Discard;
     } else if (values.acltype === DatasetAclType.Inherit) {
       payload.aclmode = AclMode.Inherit;
-    }
-
-    if (!values.snapdir) {
-      delete payload.snapdir;
     }
 
     return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
@@ -271,6 +269,20 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  private getCopiesValue(dataset: Dataset): number | typeof inherit {
+    if (!this.parent()) {
+      return Number(dataset.copies.value);
+    }
+
+    // Check if inherited or default
+    if ([ZfsPropertySource.Default, ZfsPropertySource.Inherited].includes(dataset.copies.source)) {
+      return inherit;
+    }
+
+    // Return the parsed numeric value for LOCAL source
+    return dataset.copies.parsed;
   }
 
   private setFormValues(): void {
@@ -311,11 +323,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       readonly: getFieldValue(existing.readonly, this.parent()),
       exec: getFieldValue(existing.exec, this.parent()),
       recordsize: getFieldValue(existing.recordsize, this.parent()),
-      snapdir: existing.snapdir?.value,
+      snapdir: getFieldValue(existing.snapdir, this.parent()),
       snapdev: getFieldValue(existing.snapdev, this.parent()),
-      copies: existing.copies
-        ? Number(existing.copies.value)
-        : null,
+      copies: this.getCopiesValue(existing),
       acltype: getFieldValue(existing.acltype, this.parent()) as DatasetAclType,
       aclmode: getFieldValue(existing.aclmode, this.parent()) as AclMode,
       casesensitivity: existing.casesensitivity?.value,
@@ -374,7 +384,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       this.checksumOptions$ = this.defaultChecksumOptions$;
       this.readonlyOptions$ = this.onOffOptions$;
       this.execOptions$ = this.onOffOptions$;
+      this.snapdirOptions$ = this.defaultSnapdirOptions$;
       this.snapdevOptions$ = this.defaultSnapdevOptions$;
+      this.copiesOptions$ = this.defaultCopiesOptions$;
       this.recordsizeOptions$ = this.defaultRecordSizeOptions$;
       this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$;
 
@@ -402,32 +414,24 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.execOptions$ = this.onOffOptions$.pipe(
       this.datasetFormService.addInheritOption(parent.exec.value),
     );
+    this.snapdirOptions$ = this.defaultSnapdirOptions$.pipe(
+      this.datasetFormService.addInheritOption(parent.snapdir.value),
+    );
     this.snapdevOptions$ = this.defaultSnapdevOptions$.pipe(
       this.datasetFormService.addInheritOption(parent.snapdev.value),
+    );
+    this.copiesOptions$ = this.defaultCopiesOptions$.pipe(
+      this.datasetFormService.addInheritOption(String(parent.copies.value)),
     );
 
     this.recordsizeOptions$ = this.defaultRecordSizeOptions$.pipe(
       this.datasetFormService.addInheritOption(
-        buildNormalizedFileSize(parent.recordsize.parsed),
+        parent.recordsize.value,
       ),
     );
 
-    // Build inherit label for special_small_block_size
-    let inheritLabel = 'Inherit';
-    if (parent.special_small_block_size?.value) {
-      const sizeInBytes = this.formatter.convertHumanStringToNum(parent.special_small_block_size.value);
-      if (sizeInBytes === 0) {
-        // 0 means OFF
-        inheritLabel = 'Inherit (off)';
-      } else if (sizeInBytes > 0) {
-        // Format as human-readable size (e.g., "16 MiB")
-        const formattedSize = buildNormalizedFileSize(sizeInBytes);
-        inheritLabel = `Inherit (${formattedSize})`;
-      }
-    }
-
     this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$.pipe(
-      map((options) => [{ label: inheritLabel, value: inherit }, ...options]),
+      this.datasetFormService.addInheritOption(parent.special_small_block_size?.value || 'off'),
     );
   }
 

@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -85,6 +86,11 @@ describe('OtherOptionsSectionComponent', () => {
       value: DatasetSnapdev.Hidden,
       source: ZfsPropertySource.Local,
     },
+    copies: {
+      value: '1',
+      parsed: 1,
+      source: ZfsPropertySource.Inherited,
+    },
     recordsize: {
       value: '1K',
       parsed: KiB,
@@ -157,6 +163,11 @@ describe('OtherOptionsSectionComponent', () => {
       value: DatasetSnapdev.Hidden,
       source: ZfsPropertySource.Local,
     },
+    copies: {
+      value: '1',
+      parsed: 1,
+      source: ZfsPropertySource.Default,
+    },
     recordsize: {
       value: '128K',
       parsed: 128 * KiB,
@@ -203,6 +214,25 @@ describe('OtherOptionsSectionComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string, params?: Record<string, string>) => {
+          // Handle template strings with interpolation
+          if (key === 'Inherit ({value})' && params?.value) {
+            return `Inherit (${String(params.value)})`;
+          }
+          // Return key as-is (translations are already in title case from the service)
+          return key;
+        }),
+        get: jest.fn((key: string, params?: Record<string, string>) => {
+          if (key === 'Inherit ({value})' && params?.value) {
+            return of(`Inherit (${String(params.value)})`);
+          }
+          return of(key);
+        }),
+        onTranslationChange: { subscribe: jest.fn() },
+        onLangChange: { subscribe: jest.fn() },
+        onDefaultLangChange: { subscribe: jest.fn() },
+      }),
       provideMockStore({
         initialState: {
           systemInfo: {
@@ -241,27 +271,23 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        'Snapshot Directory': 'Visible',
-      });
-
       expect(await form.getValues()).toEqual({
         Comments: '',
         'Compression Level': 'LZJB',
-        'Enable Atime': 'Inherit (OFF)',
-        Sync: 'Inherit (STANDARD)',
-        'ZFS Deduplication': 'Inherit (OFF)',
+        'Enable Atime': 'Inherit (Off)',
+        Sync: 'Inherit (Standard)',
+        'ZFS Deduplication': 'Inherit (Off)',
         'Case Sensitivity': 'Sensitive',
         Checksum: 'SHA256',
         'Read-only': 'Off',
-        Exec: 'Inherit (ON)',
-        'Snapshot Directory': 'Visible',
+        Exec: 'Inherit (On)',
+        'Snapshot Directory': 'Inherit (Hidden)',
         Snapdev: 'Hidden',
-        Copies: '--',
-        'Record Size': 'Inherit (128 KiB)',
+        Copies: 'Inherit (1)',
+        'Record Size': 'Inherit (128K)',
         'ACL Type': 'POSIX',
         'ACL Mode': 'Discard',
-        'Use Metadata (Special) VDEVs': 'Inherit (off)',
+        'Use Metadata (Special) VDEVs': 'Inherit (0)',
       });
     });
 
@@ -277,17 +303,100 @@ describe('OtherOptionsSectionComponent', () => {
         compression: 'LZJB',
         sync: inherit,
         checksum: 'SHA256',
-        copies: 1,
+        copies: inherit,
         deduplication: inherit,
         exec: inherit,
         readonly: OnOff.Off,
         recordsize: inherit,
         snapdev: DatasetSnapdev.Hidden,
-        snapdir: DatasetSnapdir.Disabled,
+        snapdir: inherit,
         special_small_block_size: inherit,
         aclmode: AclMode.Discard,
         acltype: DatasetAclType.Posix,
       });
+    });
+
+    it('sends INHERIT for snapdir when form value is INHERIT', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        snapdir: inherit,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.snapdir).toBe(inherit);
+    });
+
+    it('sends INHERIT for copies when form value is INHERIT', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        copies: inherit,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.copies).toBe(inherit);
+    });
+
+    it('sends specific value for copies when explicitly set', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        copies: 2,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.copies).toBe(2);
+    });
+
+    it('sends specific value for snapdir when explicitly set', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        snapdir: DatasetSnapdir.Visible,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.snapdir).toBe(DatasetSnapdir.Visible);
+    });
+
+    it('handles copies when parent is undefined', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: undefined,
+      });
+
+      expect(spectator.component.form.value.copies).toBe(1);
+    });
+
+    it('handles copies with LOCAL source when parent exists', () => {
+      const datasetWithLocalCopies = {
+        ...existingDataset,
+        copies: {
+          value: '2',
+          parsed: 2,
+          source: ZfsPropertySource.Local,
+        },
+      } as Dataset;
+
+      spectator.setInput({
+        existing: datasetWithLocalCopies,
+        parent: parentDataset,
+      });
+
+      expect(spectator.component.form.value.copies).toBe(2);
     });
   });
 
@@ -299,21 +408,21 @@ describe('OtherOptionsSectionComponent', () => {
 
       expect(await form.getValues()).toEqual({
         Comments: '',
-        Sync: 'Inherit (STANDARD)',
+        Sync: 'Inherit (Standard)',
         'Compression Level': 'Inherit (LZJB)',
-        'Enable Atime': 'Inherit (OFF)',
-        'ZFS Deduplication': 'Inherit (OFF)',
+        'Enable Atime': 'Inherit (Off)',
+        'ZFS Deduplication': 'Inherit (Off)',
         'Case Sensitivity': 'Sensitive',
-        Checksum: 'Inherit (ON)',
+        Checksum: 'Inherit (On)',
         'ACL Mode': 'Inherit',
         'ACL Type': 'Inherit',
-        Copies: '1',
-        Exec: 'Inherit (ON)',
-        'Use Metadata (Special) VDEVs': 'Inherit (off)',
-        'Read-only': 'Inherit (OFF)',
-        'Record Size': 'Inherit (128 KiB)',
-        Snapdev: 'Inherit (HIDDEN)',
-        'Snapshot Directory': '--',
+        Copies: 'Inherit (1)',
+        Exec: 'Inherit (On)',
+        'Use Metadata (Special) VDEVs': 'Inherit (0)',
+        'Read-only': 'Inherit (Off)',
+        'Record Size': 'Inherit (128K)',
+        Snapdev: 'Inherit (Hidden)',
+        'Snapshot Directory': 'Inherit (Hidden)',
       });
     });
 

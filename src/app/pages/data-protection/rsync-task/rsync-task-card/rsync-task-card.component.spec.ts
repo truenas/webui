@@ -10,6 +10,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
@@ -30,6 +31,9 @@ describe('RsyncTaskCardComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
+  beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
+  afterEach(() => restoreDate());
+
   const rsyncTasks = [
     {
       id: 1,
@@ -48,7 +52,7 @@ describe('RsyncTaskCardComponent', () => {
         id: 1,
         state: JobState.Failed,
         time_finished: {
-          $date: new Date().getTime() - 50000,
+          $date: new Date('2026-01-19T23:59:10Z').getTime(),
         },
       },
       ssh_credentials: null,

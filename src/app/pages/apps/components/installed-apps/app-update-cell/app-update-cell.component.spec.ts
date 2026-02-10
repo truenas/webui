@@ -25,15 +25,29 @@ describe('AppUpdateCellComponent', () => {
     expect(spectator.query('span')).toHaveText('Up to date');
   });
 
-  it('checks text when app has update', () => {
+  it('shows "Update available" when app version has changed', () => {
     setupTest({
       upgrade_available: true,
       version: '1.0.0',
       latest_version: '1.0.1',
+      latest_app_version: '8.7.1',
       metadata: { app_version: '8.7.0' },
-      human_version: '8.7.1',
+      human_version: '8.7.0_1.0.0',
     } as App);
 
     expect(spectator.query('span')).toHaveText('Update available');
+  });
+
+  it('shows "Revision available" when only revision has changed', () => {
+    setupTest({
+      upgrade_available: true,
+      version: '1.0.0',
+      latest_version: '1.0.1',
+      latest_app_version: '8.7.0',
+      metadata: { app_version: '8.7.0' },
+      human_version: '8.7.0_1.0.0',
+    } as App);
+
+    expect(spectator.query('span')).toHaveText('Revision available');
   });
 });

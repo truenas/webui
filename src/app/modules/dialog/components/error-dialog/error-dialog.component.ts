@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { switchMap, tap } from 'rxjs';
-import { ErrorReport, ErrorReportAction, traceDetailLabel } from 'app/interfaces/error-report.interface';
+import { ErrorReport, ErrorReportAction, collapsibleDetailLabels } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,16 +41,30 @@ export class ErrorDialog {
   private destroyRef = inject(DestroyRef);
 
   protected isDetailsOpen = signal(false);
-  protected isTraceOpen = signal(false);
-
-  protected readonly TRACE_LABEL = traceDetailLabel;
+  protected expandedDetails = signal(new Set<string>());
 
   protected toggleDetails(): void {
     this.isDetailsOpen.set(!this.isDetailsOpen());
   }
 
-  protected toggleTrace(): void {
-    this.isTraceOpen.set(!this.isTraceOpen());
+  protected isCollapsibleDetail(label: string): boolean {
+    return collapsibleDetailLabels.has(label);
+  }
+
+  protected isDetailExpanded(label: string): boolean {
+    return this.expandedDetails().has(label);
+  }
+
+  protected toggleDetailExpanded(label: string): void {
+    this.expandedDetails.update((current) => {
+      const next = new Set(current);
+      if (next.has(label)) {
+        next.delete(label);
+      } else {
+        next.add(label);
+      }
+      return next;
+    });
   }
 
   protected getDetailsAsText(): string {

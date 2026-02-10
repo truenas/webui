@@ -10,7 +10,7 @@
 
 <div class="app-info">
   <div class="app-list-item">
-    <span class="label" [matTooltip]="'Upstream Application Version' | translate">{{ 'App Version' | translate }}:</span>
+    <span class="label" [matTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</span>
     @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
@@ -18,7 +18,7 @@
     }
   </div>
   <div class="app-list-item">
-    <span class="label" [matTooltip]="'TrueNAS Catalog Version' | translate">{{ 'Version' | translate }}:</span>
+    <span class="label" [matTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</span>
     @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {

@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -25,6 +26,9 @@ describe('UserApiKeysComponent', () => {
   let spectator: Spectator<UserApiKeysComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
+
+  beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
+  afterEach(() => restoreDate());
 
   const apiKeys = [
     {
@@ -117,7 +121,7 @@ describe('UserApiKeysComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires On', ''],
-      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 07:36:50', 'in 6 years', ''],
+      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 07:36:50', 'in about 6 years', ''],
       ['second-api-key', 'root', 'No', 'Yes', '2002-01-14 21:23:30', 'Never', ''],
     ];
 

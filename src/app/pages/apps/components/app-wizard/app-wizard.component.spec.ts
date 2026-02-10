@@ -27,6 +27,10 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 const appVersion121 = {
   healthy: true,
+  human_version: '0.9.1',
+  metadata: {
+    app_version: '0.9.1',
+  },
   schema: {
     groups: [
       { name: 'Networking' },
@@ -197,6 +201,10 @@ const appVersion121 = {
 
 const appVersion120 = {
   healthy: true,
+  human_version: '0.9.0',
+  metadata: {
+    app_version: '0.9.0',
+  },
   schema: {
     groups: [
       {
@@ -423,7 +431,7 @@ describe('AppWizardComponent', () => {
 
       expect(values).toEqual({
         'Application Name': 'ipfs',
-        Version: '1.2.1',
+        Version: 'Version: 0.9.1 / Revision: 1.2.1',
         'API Port to use for IPFS (local)': '9501',
         'Gateway Port to use for IPFS (local)': '9880',
         'Provide access to node network namespace for the workload': false,
@@ -446,7 +454,7 @@ describe('AppWizardComponent', () => {
 
       expect(values).toEqual({
         'Application Name': 'appname',
-        Version: '1.2.1',
+        Version: 'Version: 0.9.1 / Revision: 1.2.1',
         'API Port to use for IPFS (local)': '9599',
         'Gateway Port to use for IPFS (local)': '9822',
         'Swarm Port to use for IPFS (Public)': '9401',
@@ -483,7 +491,7 @@ describe('AppWizardComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
 
       await form.fillForm({
-        Version: '1.2.0',
+        Version: 'Version: 0.9.0 / Revision: 1.2.0',
       });
 
       const values = await form.getValues();
@@ -491,7 +499,7 @@ describe('AppWizardComponent', () => {
 
       expect(values).toEqual({
         'Application Name': 'ipfs',
-        Version: '1.2.0',
+        Version: 'Version: 0.9.0 / Revision: 1.2.0',
         'Provide access to node network namespace for the workload Another Version': true,
       });
     });
@@ -500,7 +508,7 @@ describe('AppWizardComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
 
       await form.fillForm({
-        Version: '1.2.0',
+        Version: 'Version: 0.9.0 / Revision: 1.2.0',
       });
 
       spectator.component.onSubmit();

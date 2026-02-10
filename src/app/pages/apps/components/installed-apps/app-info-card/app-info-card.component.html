@@ -59,15 +59,9 @@
           }
         </div>
         <div class="details-item">
-          <div class="label" [matTooltip]="'Upstream Application Version' | translate">{{ 'App Version' | translate }}:</div>
+          <div class="label" [matTooltip]="'Upstream Application Version' | translate">{{ 'Version' | translate }}:</div>
           <div class="value">
             {{ app().metadata.app_version | orNotAvailable }}
-          </div>
-        </div>
-        <div class="details-item">
-          <div class="label" [matTooltip]="'TrueNAS Catalog Version' | translate">{{ 'Version' | translate }}:</div>
-          <div class="value">
-            {{ app().version | orNotAvailable }}
           </div>
         </div>
         <div class="details-item sources">
