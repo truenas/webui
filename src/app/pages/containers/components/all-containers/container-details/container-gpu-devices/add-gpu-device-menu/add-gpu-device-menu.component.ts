@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerDeviceType, ContainerGpuType } from 'app/enums/container.enum';
+import { ContainerDeviceType, containerGpuType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { ContainerGpuDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -84,7 +84,7 @@ export class AddGpuDeviceMenuComponent {
           .some((device) => device.pci_address === pciAddress);
 
         // Filter out NVIDIA GPUs if drivers aren't enabled
-        if (gpuType === (ContainerGpuType.Nvidia as string) && !nvidiaEnabled) {
+        if (gpuType === containerGpuType.Nvidia && !nvidiaEnabled) {
           return false;
         }
 

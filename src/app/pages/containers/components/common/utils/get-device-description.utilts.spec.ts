@@ -1,7 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import {
   ContainerDeviceType,
-  ContainerGpuType,
+  containerGpuType,
 } from 'app/enums/container.enum';
 import {
   ContainerDevice,
@@ -135,7 +135,7 @@ describe('getDeviceDescription', () => {
     it('should return GPU description with type and PCI address for NVIDIA', () => {
       const device: ContainerDevice = {
         dtype: ContainerDeviceType.Gpu,
-        gpu_type: ContainerGpuType.Nvidia,
+        gpu_type: containerGpuType.Nvidia,
         pci_address: '0000:19:00.0',
       } as ContainerGpuDevice;
 
@@ -146,7 +146,7 @@ describe('getDeviceDescription', () => {
     it('should return GPU description with type and PCI address for AMD', () => {
       const device: ContainerDevice = {
         dtype: ContainerDeviceType.Gpu,
-        gpu_type: ContainerGpuType.Amd,
+        gpu_type: containerGpuType.Amd,
         pci_address: '0000:1a:00.0',
       } as ContainerGpuDevice;
 
@@ -157,7 +157,7 @@ describe('getDeviceDescription', () => {
     it('should return GPU description with type and PCI address for Intel', () => {
       const device: ContainerDevice = {
         dtype: ContainerDeviceType.Gpu,
-        gpu_type: ContainerGpuType.Intel,
+        gpu_type: containerGpuType.Intel,
         pci_address: '0000:00:02.0',
       } as ContainerGpuDevice;
 
