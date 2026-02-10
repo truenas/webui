@@ -1,14 +1,16 @@
 import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, input,
+  Component, computed, input,
 } from '@angular/core';
-import { json } from '@codemirror/lang-json';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
 import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
@@ -21,6 +23,8 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
     TranslateModule,
     MapValuePipe,
     JsonPipe,
+    ReactiveFormsModule,
+    IxCodeEditorComponent,
   ],
 })
 export class JobLogsRowComponent {
@@ -28,5 +32,9 @@ export class JobLogsRowComponent {
 
   readonly credentialTypeLabels = credentialTypeLabels;
   readonly getCredentialsCreationSource = getCredentialsCreationSource;
-  protected readonly json = json;
+  protected readonly CodeEditorLanguage = CodeEditorLanguage;
+
+  protected readonly argumentsControl = computed(() => {
+    return new FormControl({ value: JSON.stringify(this.job().arguments, null, 2), disabled: true });
+  });
 }
