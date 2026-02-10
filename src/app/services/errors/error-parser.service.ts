@@ -14,7 +14,7 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
-import { ErrorReport, ErrorDetails, traceDetailLabel } from 'app/interfaces/error-report.interface';
+import { ErrorReport, ErrorDetails, traceDetailLabel, logsExcerptDetailLabel } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
@@ -206,10 +206,30 @@ export class ErrorParserService {
       message = this.translate.instant('Unknown error');
     }
 
+    let details: ErrorDetails[];
+    let title: string;
+    if (failedJob.apiErrorDetails) {
+      details = this.extractErrorDetails(failedJob.apiErrorDetails);
+      title = failedJob.apiErrorDetails.trace?.class || job.exc_info?.type || job.state;
+    } else {
+      details = [];
+      if (job.exc_info?.type) {
+        details.push({ label: 'Error Type', value: job.exc_info.type });
+      }
+      if (job.exception) {
+        details.push({ label: traceDetailLabel, value: job.exception });
+      }
+      title = job.exc_info?.type || job.state;
+    }
+    if (job.logs_excerpt) {
+      details.push({ label: logsExcerptDetailLabel, value: job.logs_excerpt });
+    }
+
     return {
-      title: job.state,
+      title,
       message,
       stackTrace: job.logs_excerpt || job.exception,
+      details: details.length > 0 ? details : undefined,
       // display a `View Details` button and `Download Logs` button on any failed job dialogs
       actions: [{
         label: this.translate.instant('View Details'),

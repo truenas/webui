@@ -6,6 +6,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -61,6 +62,7 @@ import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rat
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { extractAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
@@ -393,7 +395,15 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           type: DynamicFormSchemaType.Select,
           title: helptextApps.appWizard.nameGroup.version,
           required: true,
-          options: of(versionKeys.map((version) => ({ value: version, label: version }))),
+          tooltip: T('Version shows the upstream application version. Revision shows the TrueNAS catalog revision.'),
+          options: of(versionKeys.map((version) => {
+            const versionInfo = this.catalogApp.versions[version];
+            const appVersion = extractAppVersion(versionInfo.human_version, version);
+            return {
+              value: version,
+              label: `Version: ${appVersion} / Revision: ${version}`,
+            };
+          })),
           hidden: hideVersion,
         },
       ],

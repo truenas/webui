@@ -9,6 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { delay, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
@@ -35,6 +36,9 @@ describe('CloudBackupCardComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
+  beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
+  afterEach(() => restoreDate());
+
   const cloudBackups = [
     {
       id: 1,
@@ -46,7 +50,7 @@ describe('CloudBackupCardComponent', () => {
       job: {
         state: JobState.Success,
         time_finished: {
-          $date: new Date().getTime() - 50000,
+          $date: new Date('2026-01-19T23:59:10Z').getTime(),
         },
       },
     },
@@ -60,7 +64,7 @@ describe('CloudBackupCardComponent', () => {
       job: {
         state: JobState.Success,
         time_finished: {
-          $date: new Date().getTime() - 50000,
+          $date: new Date('2026-01-19T23:59:10Z').getTime(),
         },
       },
     },
@@ -106,7 +110,7 @@ describe('CloudBackupCardComponent', () => {
             value: [{
               state: JobState.Success,
               time_finished: {
-                $date: new Date().getTime() - 50000,
+                $date: new Date('2026-01-19T23:59:10Z').getTime(),
               },
             }],
           },

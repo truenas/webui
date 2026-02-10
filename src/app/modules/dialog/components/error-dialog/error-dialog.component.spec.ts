@@ -322,4 +322,60 @@ describe('ErrorDialog', () => {
       expect(copyButton).toExist();
     });
   });
+
+  describe('logs excerpt in details', () => {
+    const errorWithLogsExcerpt = {
+      ...baseError,
+      details: [
+        { label: 'Logs Excerpt', value: 'container-1  | Error: something failed\ncontainer-1  | Exiting' },
+      ],
+    } as ErrorReport;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: errorWithLogsExcerpt,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('hides logs excerpt by default with Show link', () => {
+      const viewDetailsLink = spectator.query(byText('View Details'));
+      spectator.click(viewDetailsLink);
+
+      expect(spectator.query(byText('Logs Excerpt:'))).toExist();
+      const showLinks = spectator.queryAll(byText('Show'));
+      expect(showLinks).toHaveLength(1);
+      expect(spectator.query(byText('container-1  | Error: something failed'))).not.toExist();
+    });
+
+    it('shows logs excerpt content when Show is clicked', () => {
+      const viewDetailsLink = spectator.query(byText('View Details'));
+      spectator.click(viewDetailsLink);
+
+      const showLink = spectator.query(byText('Show'));
+      spectator.click(showLink);
+
+      const preElement = spectator.query('.detail-value pre');
+      expect(preElement).toExist();
+      expect(preElement).toHaveText('container-1  | Error: something failed\ncontainer-1  | Exiting');
+
+      expect(spectator.query(byText('Hide'))).toExist();
+    });
+
+    it('hides logs excerpt content when Hide is clicked', () => {
+      const viewDetailsLink = spectator.query(byText('View Details'));
+      spectator.click(viewDetailsLink);
+
+      spectator.click(spectator.query(byText('Show')));
+      spectator.click(spectator.query(byText('Hide')));
+
+      expect(spectator.query(byText('container-1  | Error: something failed'))).not.toExist();
+      expect(spectator.query(byText('Show'))).toExist();
+    });
+  });
 });

@@ -5541,6 +5541,30 @@
   {
     "hierarchy": [
       "Containers",
+      "Map User/Group IDs"
+    ],
+    "synonyms": [
+      "ID Mapping",
+      "User ID Mapping",
+      "Group ID Mapping"
+    ],
+    "requiredRoles": [
+      "CONTAINER_WRITE"
+    ],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers"
+    ],
+    "routerLink": null,
+    "anchor": "map-user-group-ids",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
       "Create New Container"
     ],
     "synonyms": [
