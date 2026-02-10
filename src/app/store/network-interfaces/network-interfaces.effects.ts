@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, merge } from 'rxjs';
@@ -21,7 +20,6 @@ import {
   networkInterfacesCheckinLoaded,
 } from 'app/store/network-interfaces/network-interfaces.actions';
 
-@UntilDestroy()
 @Injectable()
 export class NetworkInterfacesEffects {
   private actions$ = inject(Actions);

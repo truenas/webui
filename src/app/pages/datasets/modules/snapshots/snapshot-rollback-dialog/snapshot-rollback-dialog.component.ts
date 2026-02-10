@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
@@ -6,7 +7,6 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -26,7 +26,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-rollback-dialog',
   templateUrl: './snapshot-rollback-dialog.component.html',
@@ -60,6 +59,7 @@ export class SnapshotRollbackDialog implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private snapshotName = inject(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
@@ -113,7 +113,7 @@ export class SnapshotRollbackDialog implements OnInit {
   private getSnapshotCreationInfo(): void {
     this.api.call('pool.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
       map((snapshots) => snapshots[0]),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshot) => {
         this.publicSnapshot = snapshot;
@@ -143,7 +143,7 @@ export class SnapshotRollbackDialog implements OnInit {
 
     this.api.call('pool.snapshot.rollback', [this.snapshotName, body]).pipe(
       this.loader.withLoader(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.wasDatasetRolledBack = true;

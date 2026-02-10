@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { DestroyRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
@@ -9,14 +8,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-
-@UntilDestroy()
-@Component({
-  selector: 'ix-mock-component',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class MockComponent {}
 
 describe('CriticalGpuPreventionService', () => {
   let spectator: SpectatorService<CriticalGpuPreventionService>;
@@ -52,11 +43,11 @@ describe('CriticalGpuPreventionService', () => {
 
   describe('setupCriticalGpuPrevention', () => {
     let control: FormControl<string[]>;
-    let mockComponent: MockComponent;
+    let destroyRef: DestroyRef;
 
     beforeEach(() => {
       control = new FormControl<string[]>([]);
-      mockComponent = new MockComponent();
+      destroyRef = spectator.inject(DestroyRef);
     });
 
     it('should use provided observable when available', () => {
@@ -70,7 +61,7 @@ describe('CriticalGpuPreventionService', () => {
 
       const criticalGpus = spectator.service.setupCriticalGpuPrevention(
         control,
-        mockComponent,
+        destroyRef,
         'Test Title',
         'Test Message',
         customChoices$,
@@ -86,7 +77,7 @@ describe('CriticalGpuPreventionService', () => {
     it('should fall back to GpuService when no observable is provided', () => {
       const criticalGpus = spectator.service.setupCriticalGpuPrevention(
         control,
-        mockComponent,
+        destroyRef,
         'Test Title',
         'Test Message',
       );
@@ -107,7 +98,7 @@ describe('CriticalGpuPreventionService', () => {
 
       spectator.service.setupCriticalGpuPrevention(
         control,
-        mockComponent,
+        destroyRef,
         'Cannot Select GPU',
         'System critical GPUs cannot be used',
       );
@@ -140,7 +131,7 @@ describe('CriticalGpuPreventionService', () => {
 
       const criticalGpus = spectator.service.setupCriticalGpuPrevention(
         control,
-        mockComponent,
+        destroyRef,
         'Cannot Select GPU',
         'Default message for critical GPU',
         choicesWithEmptyReason$,

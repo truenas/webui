@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
@@ -7,7 +8,6 @@ import { Compartment, Extension } from '@codemirror/state';
 import {
   EditorView, EditorViewConfig, keymap, lineNumbers, placeholder,
 } from '@codemirror/view';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { material } from '@uiw/codemirror-theme-material';
 import { basicSetup } from 'codemirror';
 import {
@@ -23,7 +23,6 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-code-editor',
   templateUrl: './ix-code-editor.component.html',
@@ -44,6 +43,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
   protected controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
@@ -85,7 +85,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
           this.initEditor();
           this.editorReady$.next(true);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe();
     }
   }
@@ -100,7 +100,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
       this.editorReady$.pipe(filter(Boolean)),
       this.isDisabled$,
       this.afterViewInit$.pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe({
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([, isDisabled]) => {
         this.editorView.dispatch({
           effects: this.editableCompartment.reconfigure(EditorView.editable.of(!isDisabled)),
@@ -114,7 +114,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
       this.editorReady$.pipe(filter(Boolean)),
       this.value$,
       this.afterViewInit$.pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe({
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([, value]) => {
         this.updateValue(value);
       },

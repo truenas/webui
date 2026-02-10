@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,7 +18,6 @@ export interface StripAclModalData {
   path: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-strip-acl-modal',
   templateUrl: './strip-acl-modal.component.html',
@@ -44,6 +43,7 @@ export class StripAclModalComponent {
   private dialogRef = inject<MatDialogRef<StripAclModalComponent>>(MatDialogRef);
   private translate = inject(TranslateService);
   data = inject<StripAclModalData>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   traverseCheckbox = new FormControl(false);
 
@@ -69,7 +69,7 @@ export class StripAclModalComponent {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogRef.close(true);

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -24,7 +24,6 @@ import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-bootenv-stats-dialog',
   templateUrl: './bootenv-stats-dialog.component.html',
@@ -56,6 +55,7 @@ export class BootenvStatsDialog implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({
     interval: [null as number | null, [Validators.required, Validators.min(1)]],
@@ -79,7 +79,7 @@ export class BootenvStatsDialog implements OnInit {
   onSubmit(): void {
     const interval = Number(this.form.getRawValue().interval);
     this.api.call('boot.set_scrub_interval', [interval])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.dialogRef.close(true);
@@ -95,7 +95,7 @@ export class BootenvStatsDialog implements OnInit {
   }
 
   private loadScrubInterval(): void {
-    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForAdvancedConfig, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.form.patchValue({ interval: config.boot_scrub });
     });
   }
@@ -105,7 +105,7 @@ export class BootenvStatsDialog implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((state) => {
         this.state = state;

@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map, of, switchMap } from 'rxjs';
@@ -20,7 +20,6 @@ import {
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-menu',
   templateUrl: './user-menu.component.html',
@@ -45,6 +44,7 @@ export class UserMenuComponent {
   private matDialog = inject(MatDialog);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly tooltips = helptextTopbar.tooltips;
   protected searchableElements = userMenuElements;
@@ -72,7 +72,7 @@ export class UserMenuComponent {
 
   onSignOut(): void {
     this.authService.logout()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.router.navigate(['/signin']);
       });

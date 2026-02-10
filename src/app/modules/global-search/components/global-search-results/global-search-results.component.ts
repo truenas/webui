@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, input, OnChanges, output, TrackByFu
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { findIndex, isEqual } from 'lodash-es';
@@ -17,7 +16,6 @@ import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-search-results',
   templateUrl: './global-search-results.component.html',

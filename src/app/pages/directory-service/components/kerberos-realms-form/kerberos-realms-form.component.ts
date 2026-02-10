@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-kerberos-realms-form',
   templateUrl: './kerberos-realms-form.component.html',
@@ -45,6 +44,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   slideInRef = inject<SlideInRef<KerberosRealm | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingRealm: KerberosRealm | undefined;
@@ -106,7 +106,7 @@ export class KerberosRealmsFormComponent implements OnInit {
       request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.slideInRef.close({ response: true });

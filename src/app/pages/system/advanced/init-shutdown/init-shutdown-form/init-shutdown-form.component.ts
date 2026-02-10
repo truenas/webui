@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -31,7 +31,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'ix-init-shutdown-form',
   templateUrl: './init-shutdown-form.component.html',
@@ -63,6 +62,7 @@ export class InitShutdownFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private filesystemService = inject(FilesystemService);
   slideInRef = inject<SlideInRef<InitShutdownScript | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
 
@@ -78,7 +78,7 @@ export class InitShutdownFormComponent implements OnInit {
 
   protected isFormLoading = signal(false);
 
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   readonly form = this.fb.group({
     comment: [''],
@@ -112,6 +112,9 @@ export class InitShutdownFormComponent implements OnInit {
       return of(this.form.dirty);
     });
     this.editingScript = this.slideInRef.getData();
+    this.destroyRef.onDestroy(() => {
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
+    });
   }
 
   ngOnInit(): void {
@@ -139,7 +142,7 @@ export class InitShutdownFormComponent implements OnInit {
       request$ = this.api.call('initshutdownscript.create', [values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script created'));

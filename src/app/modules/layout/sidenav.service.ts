@@ -1,8 +1,8 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Injectable, signal, inject } from '@angular/core';
+import { DestroyRef, Injectable, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';
@@ -14,7 +14,6 @@ import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar
 
 export const collapsedMenuClass = 'collapsed-menu';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -23,6 +22,7 @@ export class SidenavService {
   private breakpointObserver = inject(BreakpointObserver);
   private store$ = inject<Store<AppState>>(Store);
   private actions$ = inject(Actions);
+  private destroyRef = inject(DestroyRef);
 
   sidenav: MatSidenav;
   isOpen = true;
@@ -99,7 +99,7 @@ export class SidenavService {
   private listenForScreenSizeChanges(): void {
     this.breakpointObserver
       .observe([Breakpoints.XSmall, Breakpoints.Small])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         const isMobile = state.matches;
         this.isMobile.set(isMobile);

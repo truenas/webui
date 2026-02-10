@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,7 +29,6 @@ import { ignoreTranslation, TranslatedString } from 'app/modules/translate/trans
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-certificate-acme-add',
   templateUrl: './certificate-acme-add.component.html',
@@ -63,6 +62,7 @@ export class CertificateAcmeAddComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
@@ -133,7 +133,7 @@ export class CertificateAcmeAddComponent implements OnInit {
       },
     )
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.slideInRef.close({ response: true });
@@ -153,7 +153,7 @@ export class CertificateAcmeAddComponent implements OnInit {
     this.isLoading.set(true);
 
     this.api.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (domains) => {
           this.domains = domains.map(ignoreTranslation);

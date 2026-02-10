@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
@@ -24,7 +24,6 @@ import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -39,6 +38,7 @@ export class SessionTimeoutService {
   private tokenLastUsedService = inject(TokenLastUsedService);
   private window = inject<Window>(WINDOW);
   private localeService = inject(LocaleService);
+  private destroyRef = inject(DestroyRef);
 
   private actionWaitTimeout: Timeout;
   private terminateCancelTimeout: Timeout;
@@ -75,7 +75,7 @@ export class SessionTimeoutService {
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
       this.warningDialogRef.afterClosed()
-        .pipe(untilDestroyed(this))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((shouldExtend) => {
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
@@ -87,10 +87,10 @@ export class SessionTimeoutService {
   };
 
   constructor() {
-    this.matDialog.afterOpened.pipe(untilDestroyed(this)).subscribe((dialog) => {
+    this.matDialog.afterOpened.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dialog) => {
       if (dialog.componentInstance instanceof JobProgressDialog) {
         this.stop();
-        dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+        dialog.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           this.start();
         });
       }
@@ -102,7 +102,7 @@ export class SessionTimeoutService {
     this.router.navigate(['/signin']);
     this.dialogService.closeAllDialogs();
 
-    this.authService.logout().pipe(untilDestroyed(this)).subscribe();
+    this.authService.logout().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   showSessionExpiredMessage(): void {
@@ -129,7 +129,7 @@ export class SessionTimeoutService {
       .select(selectPreferences)
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((preferences) => {
         const lifetime = preferences.lifetime || this.defaultLifetime;

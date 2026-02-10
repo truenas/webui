@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +22,6 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-docker-registry-form',
   templateUrl: './docker-registry-form.component.html',
@@ -51,6 +52,7 @@ export class DockerRegistryFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private urlValidationService = inject(UrlValidationService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -99,7 +101,7 @@ export class DockerRegistryFormComponent implements OnInit {
       this.setRegistryForEdit();
     }
 
-    this.form.controls.registry.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.registry.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       this.form.patchValue({ uri: value });
 
       if (value === dockerHubRegistry) {
@@ -123,7 +125,7 @@ export class DockerRegistryFormComponent implements OnInit {
 
     this.isFormLoading.set(true);
 
-    request$.pipe(untilDestroyed(this))
+    request$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);

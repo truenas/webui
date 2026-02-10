@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, of, throwError,
@@ -47,7 +47,6 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
 const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ssh-connection-form',
   templateUrl: './ssh-connection-form.component.html',
@@ -84,6 +83,7 @@ export class SshConnectionFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<KeychainSshCredentials | undefined, KeychainCredential | null>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
@@ -205,7 +205,7 @@ export class SshConnectionFormComponent implements OnInit {
     };
 
     this.api.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (remoteHostKey) => {
           this.form.patchValue({
@@ -226,7 +226,7 @@ export class SshConnectionFormComponent implements OnInit {
       : this.prepareUpdateRequest();
 
     request$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (newCredential) => {
         this.isLoading.set(false);

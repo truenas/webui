@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
@@ -21,7 +21,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-kereberos-keytabs-form',
   templateUrl: './kerberos-keytabs-form.component.html',
@@ -48,6 +47,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
   private api = inject(ApiService);
   slideInRef = inject<SlideInRef<KerberosKeytab | undefined, boolean>>(SlideInRef);
   private fileValidator = inject(FileValidatorService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingKerberosKeytab: KerberosKeytab | undefined;
@@ -119,7 +119,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
         request$ = this.api.call('kerberos.keytab.create', [payload]);
       }
 
-      request$.pipe(untilDestroyed(this)).subscribe({
+      request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {
           this.isLoading.set(false);
           this.slideInRef.close({ response: true });

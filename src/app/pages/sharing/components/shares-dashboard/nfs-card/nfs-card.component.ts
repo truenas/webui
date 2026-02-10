@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -41,7 +41,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nfs-card',
   templateUrl: './nfs-card.component.html',
@@ -77,6 +76,7 @@ export class NfsCardComponent implements OnInit {
   private dialogService = inject(DialogService);
   private store$ = inject<Store<ServicesState>>(Store);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
@@ -122,7 +122,7 @@ export class NfsCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const nfsShares$ = this.api.call('sharing.nfs.query').pipe(untilDestroyed(this));
+    const nfsShares$ = this.api.call('sharing.nfs.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -131,7 +131,7 @@ export class NfsCardComponent implements OnInit {
   protected openForm(row?: NfsShare): void {
     this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dataProvider.load();
     });
@@ -145,7 +145,7 @@ export class NfsCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('sharing.nfs.delete', [nfs.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();
@@ -161,7 +161,7 @@ export class NfsCardComponent implements OnInit {
 
     this.api.call('sharing.nfs.update', [row.id, { [param]: !row[param] }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -16,7 +16,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-create-storj-bucket-dialog',
   templateUrl: './create-storj-bucket-dialog.component.html',
@@ -45,6 +44,7 @@ export class CreateStorjBucketDialog {
   }>(MAT_DIALOG_DATA, { optional: true });
 
   private formErrorHandler = inject(FormErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
@@ -56,7 +56,7 @@ export class CreateStorjBucketDialog {
     this.api.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value])
       .pipe(
         this.loader.withLoader(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {

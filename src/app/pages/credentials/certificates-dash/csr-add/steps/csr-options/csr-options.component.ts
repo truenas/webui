@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
@@ -21,7 +20,6 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-csr-options',
   templateUrl: './csr-options.component.html',

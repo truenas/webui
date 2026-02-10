@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
@@ -31,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ssh-keypair-form',
   templateUrl: './ssh-keypair-form.component.html',
@@ -70,6 +69,7 @@ export class SshKeypairFormComponent implements OnInit {
   private loader = inject(LoaderService);
   private download = inject(DownloadService);
   slideInRef = inject<SlideInRef<KeychainSshKeyPair | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
@@ -125,7 +125,7 @@ export class SshKeypairFormComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((keyPair) => {
         this.form.patchValue({
@@ -167,7 +167,7 @@ export class SshKeypairFormComponent implements OnInit {
       }]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('SSH Keypair created'));

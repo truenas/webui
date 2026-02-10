@@ -1,7 +1,6 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Color, ChartDataset, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -12,7 +11,6 @@ import {
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-space-management-chart',
   templateUrl: './space-management-chart.component.html',

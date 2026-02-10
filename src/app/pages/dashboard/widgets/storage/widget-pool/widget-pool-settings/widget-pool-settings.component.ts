@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -13,7 +12,6 @@ import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-compon
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-pool-settings',
   templateUrl: './widget-pool-settings.component.html',
@@ -29,6 +27,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   widgetSettingsRef = inject<WidgetSettingsRef<WidgetPoolSettings>>(WidgetSettingsRef);
   private fb = inject(FormBuilder);
   private resources = inject(WidgetResourcesService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.nonNullable.group({
     poolId: [null as string | null, [Validators.required]],
@@ -72,7 +71,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
       .pipe(
         map((settings) => settings.poolId),
         filter<string>((poolId) => !!poolId),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (poolId) => {

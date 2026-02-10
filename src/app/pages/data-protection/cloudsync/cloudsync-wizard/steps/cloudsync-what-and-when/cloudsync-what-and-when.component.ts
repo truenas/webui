@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
 } from '@angular/forms';
@@ -6,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious } from '@angular/material/stepper';
 import { NavigationExtras, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
@@ -56,7 +56,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 
 type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloudsync-what-and-when',
   templateUrl: './cloudsync-what-and-when.component.html',
@@ -91,6 +90,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   private cloudCredentialService = inject(CloudCredentialService);
   private matDialog = inject(MatDialog);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly credentialId = input<number>();
 
@@ -189,7 +189,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         this.cdr.markForCheck();
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -299,7 +299,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
     });
@@ -336,7 +336,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   }
 
   private setupFormListeners(): void {
-    this.form.controls.direction.valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
+    this.form.controls.direction.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((direction) => {
       if (direction === Direction.Pull || this.form.controls.transfer_mode.value === TransferMode.Move) {
         this.form.controls.snapshot.disable();
       } else {
@@ -360,7 +360,9 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       }
     });
 
-    this.form.controls.transfer_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((transferMode) => {
+    this.form.controls.transfer_mode.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((transferMode) => {
       if (transferMode === TransferMode.Move || this.form.controls.direction.value === Direction.Pull) {
         this.form.controls.snapshot.disable();
       } else {
@@ -374,20 +376,24 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     ).pipe(
       filter(Boolean),
       map((values) => (Array.isArray(values) ? values.join('/') : values)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((path) => {
       this.updateDescriptionPath(path);
     });
 
-    this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
+    this.form.controls.path_source.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((values: string | string[]) => {
       this.handleFolderChange(this.form.controls.path_source, values);
     });
 
-    this.form.controls.folder_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
+    this.form.controls.folder_source.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((values: string | string[]) => {
       this.handleFolderChange(this.form.controls.folder_source, values);
     });
 
-    this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credential) => {
+    this.form.controls.credentials.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((credential) => {
       this.form.controls.folder_source.reset([]);
       this.credentialsDependentControls.forEach((control) => control.disable());
 
@@ -444,7 +450,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       }
     });
 
-    this.isCredentialInvalid$.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.isCredentialInvalid$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value) {
         this.form.controls.bucket_input.enable();
         this.form.controls.bucket.disable();
@@ -456,7 +462,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
 
     this.form.controls.bucket.valueChanges.pipe(
       filter((selectedOption) => selectedOption === newOption),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       const dialogRef = this.matDialog.open(CreateStorjBucketDialog, {
         width: '500px',
@@ -464,7 +470,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket: string | false) => {
+      dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.loadBucketOptions();
           this.form.controls.bucket.setValue(bucket);
@@ -486,7 +492,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     }
 
     this.cloudCredentialService.getBuckets(credential.id)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (buckets) => {
           const bucketOptions = buckets.map((bucket) => ({
@@ -521,7 +527,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             message: ignoreTranslation(apiError.reason),
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
-          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          }).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
             const extra: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: credential.id } };
             this.router.navigate(['/', 'credentials', 'backup-credentials'], extra);
           });

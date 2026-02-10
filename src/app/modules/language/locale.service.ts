@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { isValid, parse } from 'date-fns';
@@ -13,11 +13,11 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 
 export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
 
-@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   t24 = T('(24 Hours)');
   timezone: string | undefined;
@@ -28,7 +28,7 @@ export class LocaleService {
     combineLatest([
       this.store$.select(selectTimezone),
       this.store$.pipe(waitForPreferences),
-    ]).pipe(untilDestroyed(this)).subscribe(([timezone, preferences]) => {
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([timezone, preferences]) => {
       this.timezone = timezone;
 
       if (preferences?.dateFormat) {

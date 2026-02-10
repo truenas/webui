@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { unionBy } from 'lodash-es';
@@ -27,7 +27,6 @@ interface InitiatorItem {
   name: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-initiator-form',
   templateUrl: './initiator-form.component.html',
@@ -56,6 +55,7 @@ export class InitiatorFormComponent implements OnInit {
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = initiatorFormElements;
 
@@ -92,7 +92,7 @@ export class InitiatorFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
-    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+    this.activatedRoute.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params.pk) {
         this.pk = parseInt(params.pk as string, 10);
         this.setForm();
@@ -122,7 +122,7 @@ export class InitiatorFormComponent implements OnInit {
     }
 
     this.isFormLoading.set(true);
-    request.pipe(untilDestroyed(this)).subscribe({
+    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.onCancel();
@@ -135,7 +135,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   protected getConnectedInitiators(): void {
-    this.api.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.sessions').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (sessions) => {
         this.connectedInitiators.set(unionBy(sessions, (item) => item.initiator && item.initiator_addr));
       },
@@ -158,7 +158,7 @@ export class InitiatorFormComponent implements OnInit {
 
   private setForm(): void {
     this.api.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (initiators) => {
           if (initiators.length) {

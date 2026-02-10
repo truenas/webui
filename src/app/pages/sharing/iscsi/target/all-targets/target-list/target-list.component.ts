@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit, output, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, OnInit, output, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
@@ -31,7 +31,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-target-list',
   templateUrl: './target-list.component.html',
@@ -63,6 +62,7 @@ export class TargetListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<AsyncDataProvider<IscsiTarget>>();
@@ -125,7 +125,7 @@ export class TargetListComponent implements OnInit {
   ngOnInit(): void {
     this.setDefaultSort();
     this.dataProvider().load();
-    this.dataProvider().emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider().emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -150,7 +150,7 @@ export class TargetListComponent implements OnInit {
     this.slideIn.open(TargetFormComponent, { wide: true })
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ response }) => {
         this.dataProvider().expandedRow = response;

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -21,7 +21,6 @@ export interface SetEnclosureLabelDialogData {
   defaultLabel: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-set-enclosure-label-dialog',
   templateUrl: './set-enclosure-label-dialog.component.html',
@@ -48,6 +47,7 @@ export class SetEnclosureLabelDialog implements OnInit {
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private data = inject<SetEnclosureLabelDialogData>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   enclosureLabel = 'Enclosure Label';
 
@@ -74,7 +74,7 @@ export class SetEnclosureLabelDialog implements OnInit {
     const newLabel = formValues.resetToDefault ? this.data.defaultLabel : formValues.label;
 
     this.api.call('enclosure.label.set', [this.data.enclosureId, newLabel])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.dialogRef.close(newLabel);
@@ -87,7 +87,9 @@ export class SetEnclosureLabelDialog implements OnInit {
   }
 
   private setFormRelationship(): void {
-    this.form.controls.resetToDefault.valueChanges.pipe(untilDestroyed(this)).subscribe((resetToDefault) => {
+    this.form.controls.resetToDefault.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((resetToDefault) => {
       if (resetToDefault) {
         this.form.controls.label.disable();
       } else {

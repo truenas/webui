@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +19,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-restore-dialog',
   templateUrl: './replication-restore-dialog.component.html',
@@ -46,6 +45,7 @@ export class ReplicationRestoreDialog {
   private dialogRef = inject<MatDialogRef<ReplicationRestoreDialog>>(MatDialogRef);
   private errorHandler = inject(FormErrorHandlerService);
   private parentTaskId = inject(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
@@ -59,7 +59,7 @@ export class ReplicationRestoreDialog {
 
   onSubmit(): void {
     this.api.call('replication.restore', [this.parentTaskId, this.form.value])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.dialogRef.close(true);

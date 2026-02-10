@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Subject, filter, shareReplay, startWith, switchMap,
@@ -19,7 +19,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-system-security-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -41,6 +40,7 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
 export class SystemSecurityCardComponent {
   private slideIn = inject(SlideIn);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
@@ -58,7 +58,7 @@ export class SystemSecurityCardComponent {
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
     this.slideIn.open(SystemSecurityFormComponent, { data: config }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.reloadConfig$.next();
     });

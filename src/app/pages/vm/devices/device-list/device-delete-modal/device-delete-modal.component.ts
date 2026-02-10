@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -6,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -21,7 +21,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-device-delete-modal',
   styleUrls: ['./device-delete-modal.component.scss'],
@@ -50,6 +49,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly VmDeviceType = VmDeviceType;
   protected readonly requiredRoles = [Role.VmDeviceWrite];
@@ -96,7 +96,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.zvol.valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.zvol.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       ($event) => this.onDestroyCheckedStateChanged($event),
     );
   }
@@ -118,7 +118,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogRef.close(true);

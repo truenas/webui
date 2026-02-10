@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import { deburr, some, toLower } from 'lodash-es';
@@ -34,13 +34,13 @@ const initialState: AppsFilterState = {
   searchQuery: '',
 };
 
-@UntilDestroy()
 @Injectable()
 export class AppsFilterStore extends ComponentStore<AppsFilterState> {
   private appsStore = inject(AppsStore);
   private appsService = inject(ApplicationsService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   readonly appsPerCategory = 6;
 
@@ -164,7 +164,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       });
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (filteredApps) => {
         this.patchState((state: AppsFilterState): AppsFilterState => {
           if (filter.categories?.some((category) => category.includes(AppExtraCategory.Recommended))) {

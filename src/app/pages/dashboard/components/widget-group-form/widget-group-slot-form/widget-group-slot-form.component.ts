@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   EnvironmentInjector,
   Injector,
   OnChanges,
@@ -18,11 +19,10 @@ import {
   runInInjectionContext,
   signal, viewChild,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, Subscription, combineLatest, map, of, switchMap,
@@ -39,7 +39,6 @@ import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-group-slot-form',
   templateUrl: './widget-group-slot-form.component.html',
@@ -132,6 +131,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   });
 
   private environmentInjector = inject(EnvironmentInjector);
+  private destroyRef = inject(DestroyRef);
   private widgetRegistryEntries = Object.entries(widgetRegistry);
 
   private setupFormValueUpdates(): void {
@@ -140,7 +140,9 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   }
 
   private setupCategoryUpdates(): void {
-    this.categorySubscription = this.form.controls.category.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.categorySubscription = this.form.controls.category.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: (category) => {
         if (category === WidgetCategory.Empty) {
           this.slot.update((slot) => {
@@ -159,7 +161,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   }
 
   private setupTypeUpdates(): void {
-    this.typeSubscription = this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.typeSubscription = this.form.controls.type.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (type) => {
         this.slot.update((slot) => {
           return {

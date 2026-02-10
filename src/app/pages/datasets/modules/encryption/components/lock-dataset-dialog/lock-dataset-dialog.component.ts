@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-lock-dataset-dialog',
   templateUrl: './lock-dataset-dialog.component.html',
@@ -44,6 +43,7 @@ export class LockDatasetDialog {
   private dialogRef = inject<MatDialogRef<LockDatasetDialog>>(MatDialogRef);
   private dialogService = inject(DialogService);
   dataset = inject<Dataset>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -60,7 +60,7 @@ export class LockDatasetDialog {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset locked'));

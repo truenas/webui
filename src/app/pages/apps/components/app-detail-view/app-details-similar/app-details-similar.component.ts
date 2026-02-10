@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnChanges, input, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -8,7 +10,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-details-similar',
   templateUrl: './app-details-similar.component.html',
@@ -25,6 +26,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 export class AppDetailsSimilarComponent implements OnChanges {
   protected router = inject(Router);
   private appService = inject(ApplicationsService);
+  private destroyRef = inject(DestroyRef);
 
   readonly app = input.required<AvailableApp>();
 
@@ -40,7 +42,7 @@ export class AppDetailsSimilarComponent implements OnChanges {
 
   private loadSimilarApps(): void {
     this.isLoading.set(true);
-    this.appService.getSimilarApps(this.app()).pipe(untilDestroyed(this)).subscribe({
+    this.appService.getSimilarApps(this.app()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (apps) => {
         this.isLoading.set(false);
         this.similarApps.set(apps.slice(0, this.maxSimilarApps));

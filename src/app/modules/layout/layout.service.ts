@@ -1,10 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })

@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -16,7 +19,6 @@ import {
   MatTable,
 } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
@@ -44,7 +46,6 @@ import {
 } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/new-mapping-form/new-mapping-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-map-user-group-ids-dialog',
   templateUrl: './map-user-group-ids-dialog.component.html',
@@ -79,6 +80,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class MapUserGroupIdsDialogComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<MatDialogRef<MapUserGroupIdsDialogComponent>>(MatDialogRef);
@@ -122,7 +124,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
 
   private loadMappingOnTypeChanges(): void {
     this.typeControl.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadMappings());
   }
 
@@ -157,7 +159,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((mappings) => {
         this.mappings.set(mappings);
@@ -177,7 +179,7 @@ export class MapUserGroupIdsDialogComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Mapping has been cleared.'));

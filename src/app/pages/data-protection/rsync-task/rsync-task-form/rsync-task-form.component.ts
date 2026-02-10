@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,7 +38,6 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-rsync-task-form',
   templateUrl: './rsync-task-form.component.html',
@@ -76,6 +75,7 @@ export class RsyncTaskFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<RsyncTask | undefined, RsyncTask | false>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
@@ -215,7 +215,7 @@ export class RsyncTaskFormComponent implements OnInit {
       request$ = this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (task) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));

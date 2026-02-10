@@ -1,15 +1,14 @@
 import { Location } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
-@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class WebSocketConnectionGuard {
   private wsManager = inject(WebSocketHandlerService);
@@ -19,10 +18,11 @@ export class WebSocketConnectionGuard {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   isConnected = false;
   constructor() {
-    this.wsManager.isClosed$.pipe(untilDestroyed(this)).subscribe((isClosed) => {
+    this.wsManager.isClosed$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isClosed) => {
       if (isClosed) {
         this.resetUi();
         // TODO: Test why manually changing close status is needed
@@ -31,7 +31,7 @@ export class WebSocketConnectionGuard {
       }
     });
 
-    this.wsManager.isAccessRestricted$.pipe(untilDestroyed(this)).subscribe((isRestricted) => {
+    this.wsManager.isAccessRestricted$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isRestricted) => {
       if (isRestricted) {
         this.showAccessRestrictedDialog();
         this.wsManager.isAccessRestricted = false;
@@ -65,7 +65,7 @@ export class WebSocketConnectionGuard {
     this.dialogService.fullScreenDialog({
       title: this.translate.instant('Access restricted'),
       message: this.translate.instant('Access from your IP is restricted'),
-    }).pipe(untilDestroyed(this)).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.wsManager.reconnect();
       },

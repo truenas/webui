@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, of } from 'rxjs';
 import {
   catchError, map, timeout,
@@ -10,17 +10,17 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 /**
  * Ensures that translations have been loaded.
  */
-@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class TranslationsLoadedGuard {
   private languageService = inject(LanguageService);
   private wsStatus = inject(WebSocketStatusService);
+  private destroyRef = inject(DestroyRef);
 
   // Bail on translations if it takes too much time to load.
   private readonly maxLanguageLoadingTime = 10 * 1000;
   isConnected = false;
   constructor() {
-    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isConnected) => {
       this.isConnected = isConnected;
     });
   }

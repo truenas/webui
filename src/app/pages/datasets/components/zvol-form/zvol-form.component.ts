@@ -1,10 +1,10 @@
 // cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, forkJoin, map, Observable, of, tap,
@@ -62,7 +62,6 @@ import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
@@ -104,6 +103,8 @@ export class ZvolFormComponent implements OnInit {
     isNew: boolean;
     parentOrZvolId: string;
   }, Dataset>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -223,7 +224,9 @@ export class ZvolFormComponent implements OnInit {
     this.parentOrZvolId = this.slideInRef.getData().parentOrZvolId;
 
     // Set up conditional validation for special_small_block_size_custom
-    this.form.controls.special_small_block_size.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.special_small_block_size.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
       const customControl = this.form.controls.special_small_block_size_custom;
       if (value === OnOff.On) {
         customControl.setValidators([
@@ -260,7 +263,7 @@ export class ZvolFormComponent implements OnInit {
       .pipe(
         finalize(() => this.isLoading.set(false)),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: ([parents, , compressionOptions]) => {
           this.compressionOptions = compressionOptions;
@@ -289,7 +292,7 @@ export class ZvolFormComponent implements OnInit {
 
             this.api.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
               this.errorHandler.withErrorHandler(),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               next: (parentDataset) => {
                 this.form.controls.sparse.disable();
@@ -486,7 +489,7 @@ export class ZvolFormComponent implements OnInit {
 
   private setupEncryptionFieldEvents(): void {
     this.form.controls.inherit_encryption.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((inheritEncryption) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((inheritEncryption) => {
         this.inheritEncryption = inheritEncryption;
         if (inheritEncryption) {
           this.setEncryptionFieldsDisabled(true);
@@ -520,7 +523,7 @@ export class ZvolFormComponent implements OnInit {
       });
 
     this.form.controls.encryption.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((encryption: boolean) => {
         if (this.form.controls.inherit_encryption.value) {
           return;
         }
@@ -544,7 +547,7 @@ export class ZvolFormComponent implements OnInit {
         }
       });
     this.form.controls.encryption_type.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((type: 'key' | 'passphrase') => {
         this.encryptionType = type;
         const key = type === 'key';
         this.setPassphraseFieldsDisabled(key);
@@ -557,7 +560,7 @@ export class ZvolFormComponent implements OnInit {
         }
       });
     this.form.controls.generate_key.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((generateKey: boolean) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((generateKey: boolean) => {
         this.generateKey = generateKey;
         this.setKeyFieldsDisabled(generateKey);
       });
@@ -681,7 +684,7 @@ export class ZvolFormComponent implements OnInit {
     delete data.encryption_type;
     delete data.algorithm;
 
-    this.api.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.create', [data as DatasetCreate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
       error: (error: unknown) => {
         this.isLoading.set(false);
@@ -693,7 +696,7 @@ export class ZvolFormComponent implements OnInit {
 
   private editSubmit(): void {
     this.isLoading.set(true);
-    this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (datasets) => {
         const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
@@ -785,7 +788,7 @@ export class ZvolFormComponent implements OnInit {
         }
 
         if (canSubmit) {
-          this.api.call('pool.dataset.update', [this.parentOrZvolId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
+          this.api.call('pool.dataset.update', [this.parentOrZvolId, data as DatasetUpdate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
             error: (error: unknown) => {
               this.isLoading.set(false);
@@ -830,13 +833,13 @@ export class ZvolFormComponent implements OnInit {
         this.minimumRecommendedBlockSize = recommendedSize;
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   }
 
   private addMinimumBlocksizeWarning(): void {
     this.form.controls.volblocksize.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((recordSize: DatasetRecordSize) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((recordSize: DatasetRecordSize) => {
         const currentSize = this.formatter.convertHumanStringToNum(recordSize);
         const minimumRecommendedSize = this.formatter.convertHumanStringToNum(this.minimumRecommendedBlockSize);
         if (!currentSize || !minimumRecommendedSize || currentSize >= minimumRecommendedSize) {
@@ -875,7 +878,7 @@ export class ZvolFormComponent implements OnInit {
       this.originalReadonlyValue = readonlyValue;
       this.updateVolsizeStateBasedOnReadonly(readonlyValue);
 
-      this.form.controls.readonly.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      this.form.controls.readonly.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
         this.updateVolsizeStateBasedOnReadonly(value);
       });
     }

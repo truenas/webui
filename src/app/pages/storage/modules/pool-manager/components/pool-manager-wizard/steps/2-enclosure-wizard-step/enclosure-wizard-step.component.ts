@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of, timer } from 'rxjs';
 import {
@@ -22,7 +22,6 @@ export enum DispersalStrategy {
   LimitToSingle,
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-wizard-step',
   templateUrl: './enclosure-wizard-step.component.html',
@@ -45,6 +44,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>();
   readonly stepWarning = input<string | null>();
@@ -101,9 +101,9 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
         this.form.controls.limitToEnclosure.setValue(null);
         this.cdr.markForCheck();
       }),
-    ).pipe(untilDestroyed(this)).subscribe();
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
-    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.reset({
         dispersalStrategy: DispersalStrategy.None,
       });
@@ -111,7 +111,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   }
 
   private connectFormToStore(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       this.store.setEnclosureOptions({
         limitToSingleEnclosure: this.isLimitingToSingle
           ? (value.limitToEnclosure || null)

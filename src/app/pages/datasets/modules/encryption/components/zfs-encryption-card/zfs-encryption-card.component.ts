@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -6,7 +7,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,7 +32,6 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
 
 // TODO: Add support for exporting all keys on root dataset.
 // TODO: Bug with spaces in dataset name
-@UntilDestroy()
 @Component({
   selector: 'ix-zfs-encryption-card',
   templateUrl: './zfs-encryption-card.component.html',
@@ -58,6 +57,7 @@ export class ZfsEncryptionCardComponent {
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
   private datasetStore = inject(DatasetTreeStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
   readonly parentDataset = input<DatasetDetails | undefined>(undefined);
@@ -107,7 +107,7 @@ export class ZfsEncryptionCardComponent {
     });
     dialog
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
@@ -116,7 +116,7 @@ export class ZfsEncryptionCardComponent {
       data: this.dataset(),
     })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 

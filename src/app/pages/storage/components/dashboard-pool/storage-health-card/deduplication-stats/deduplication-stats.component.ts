@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -16,7 +16,6 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/set-dedup-quota/set-dedup-quota.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-deduplication-stats',
   templateUrl: './deduplication-stats.component.html',
@@ -33,6 +32,7 @@ export class DeduplicationStatsComponent {
   private fileSizePipe = inject(FileSizePipe);
   private matDialog = inject(MatDialog);
   private store = inject(PoolsDashboardStore);
+  private destroyRef = inject(DestroyRef);
 
   pool = input.required<Pool>();
 
@@ -52,7 +52,7 @@ export class DeduplicationStatsComponent {
     this.matDialog
       .open(PruneDedupTableDialog, { data: this.pool() })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }
 
@@ -60,7 +60,7 @@ export class DeduplicationStatsComponent {
     this.matDialog
       .open(SetDedupQuotaComponent, { data: this.pool() })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }
 }

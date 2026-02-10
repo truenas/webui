@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, output, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { merge, of } from 'rxjs';
@@ -20,7 +20,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-size-dropdowns',
   templateUrl: './disk-size-selects.component.html',
@@ -36,6 +35,7 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class DiskSizeSelectsComponent implements OnChanges {
   private formBuilder = inject(FormBuilder);
   private store = inject(PoolManagerStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly layout = input.required<CreateVdevLayout>();
   readonly type = input.required<VDevType>();
@@ -82,7 +82,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
       this.store.startOver$,
       this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.form.setValue({
           sizeAndType: [null, null],
@@ -94,7 +94,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   private setControlRelations(): void {
     this.form.controls.sizeAndType
       .valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         const canSelectLargerDisk = this.selectedDiskSize
           && this.inventory().some((disk) => disk.size > this.selectedDiskSize);
@@ -104,7 +104,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   }
 
   private updateStoreOnChanges(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const values = this.form.value;
 
       this.store.setTopologyCategoryDiskSizes(this.type(), {
@@ -144,7 +144,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   }
 
   private emitUpdatesOnChanges(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const suitableDisks = this.getSuitableDisks();
       this.disksSelected.emit(suitableDisks);
     });

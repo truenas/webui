@@ -1,12 +1,14 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, TrackByFunction, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, TrackByFunction,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,7 +23,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-docker-image-delete-dialog',
   templateUrl: './docker-image-delete-dialog.component.html',
@@ -47,6 +48,7 @@ export class DockerImageDeleteDialog {
   private errorHandler = inject(ErrorHandlerService);
   private dialogRef = inject<MatDialogRef<DockerImageDeleteDialog>>(MatDialogRef);
   images = inject<ContainerImage[]>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly forceCheckboxTooltip = T('Use force only if other methods fail as it can leave images in a undefined state. \
@@ -93,7 +95,7 @@ export class DockerImageDeleteDialog {
     this.api.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((response) => {
       response.arguments[1].forEach((params, index: number) => {
         if (!params) {

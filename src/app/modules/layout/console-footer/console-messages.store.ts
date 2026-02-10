@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Injectable, OnDestroy, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { filter, map } from 'rxjs';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -12,12 +12,12 @@ export const initialConsoleMessagesState: ConsoleMessagesState = {
   lines: [],
 };
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> implements OnDestroy {
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   lines$ = this.select((state) => state.lines.join('\n'));
   lastThreeLogLines$ = this.select((state) => state.lines.slice(-3).join('\n'));
@@ -43,7 +43,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
       .pipe(
         map((event) => event.fields),
         filter((log) => typeof log?.data === 'string'),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((log) => {
         this.addMessage(log.data);

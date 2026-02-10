@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -30,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-audit-form',
   templateUrl: 'audit-form.component.html',
@@ -58,6 +57,7 @@ export class AuditFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private formErrorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAuditWrite];
 
@@ -112,14 +112,14 @@ export class AuditFormComponent implements OnInit {
         this.formErrorHandler.handleValidationErrors(error, this.form);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   private loadForm(): void {
     this.isFormLoading.set(true);
 
-    this.api.call('audit.config').pipe(untilDestroyed(this))
+    this.api.call('audit.config').pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (auditConfig) => {
           this.isFormLoading.set(false);
