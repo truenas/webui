@@ -19,10 +19,6 @@ describe('GpuStepComponent', () => {
     providers: [
       mockProvider(CdkStepper),
       mockProvider(GpuService, {
-        getGpuOptions: () => of([
-          { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
-          { label: 'GeForce GTX 1080 Ti [0000:04:00.0]', value: '0000:04:00.0' },
-        ]),
         getRawGpuPciChoices: () => of({
           'GeForce GTX 1080 [0000:03:00.0]': {
             pci_slot: '0000:03:00.0',
@@ -35,6 +31,9 @@ describe('GpuStepComponent', () => {
             critical_reason: '',
           },
         }),
+        transformGpuChoicesToOptions: (choices: Record<string, { pci_slot: string }>) => Object.entries(choices).map(
+          ([label, choice]) => ({ label, value: choice.pci_slot }),
+        ),
       }),
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
