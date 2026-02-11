@@ -168,7 +168,7 @@
             [label]="'Capabilities Policy' | translate"
             [options]="capabilitiesPolicyOptions$"
             [hideEmpty]="true"
-            [tooltip]="'Default rules for capabilities: DEFAULT (keep default behavior), ALLOW (drop all capabilities), or DENY (keep all capabilities)' | translate"
+            [tooltip]="'Default rules for capabilities: DEFAULT (allow most capabilities but drop dangerous ones), ALLOW (keep all capabilities), or DENY (drop all capabilities)' | translate"
           ></ix-select>
         </ix-fieldset>
       }
