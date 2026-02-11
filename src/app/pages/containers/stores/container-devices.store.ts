@@ -7,7 +7,6 @@ import {
   filter,
   map,
   Observable,
-  distinctUntilChanged,
   take,
   of,
 } from 'rxjs';
@@ -52,7 +51,6 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
         }
       }),
       filter(Boolean),
-      distinctUntilChanged((prev, curr) => prev.id === curr.id),
       switchMap((container) => this.fetchDevicesForContainer(container)),
     );
   });
