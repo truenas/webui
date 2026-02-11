@@ -2,12 +2,35 @@
   margin-left: 4px;
   margin-right: -4px;
   margin-top: 2px;
+}
 
-  ::ng-deep {
-    .mat-badge-small .mat-badge-content {
-      height: 8px;
-      margin-bottom: -10px;
-      width: 8px;
-    }
-  }
+.icon-wrapper {
+  display: inline-flex;
+  position: relative;
+}
+
+.tier-badge {
+  border-radius: 50%;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  height: 14px;
+  line-height: 14px;
+  min-width: 14px;
+  position: absolute;
+  right: -4px;
+  text-align: center;
+  top: -4px;
+}
+
+.tier-foundation {
+  background-color: var(--green);
+}
+
+.tier-plus {
+  background-color: var(--blue);
+}
+
+.tier-business {
+  background-color: var(--violet);
 }
