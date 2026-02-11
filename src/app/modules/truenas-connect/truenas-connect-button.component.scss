@@ -1,3 +1,5 @@
+@use './tier-colors';
+
 :host {
   margin-left: 4px;
   margin-right: -4px;
@@ -21,16 +23,4 @@
   right: -4px;
   text-align: center;
   top: -4px;
-}
-
-.tier-foundation {
-  background-color: var(--green);
-}
-
-.tier-plus {
-  background-color: var(--blue);
-}
-
-.tier-business {
-  background-color: var(--violet);
 }

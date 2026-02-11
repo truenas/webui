@@ -5,6 +5,7 @@ import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
+import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
 @Component({
   selector: 'ix-truenas-connect-status-display',
@@ -27,20 +28,12 @@ export class TruenasConnectStatusDisplayComponent {
   tier = input<TruenasConnectTier | null>(null);
 
   protected tierLabel = computed(() => {
-    switch (this.tier()) {
-      case TruenasConnectTier.Foundation: return 'Foundation';
-      case TruenasConnectTier.Plus: return 'Plus';
-      case TruenasConnectTier.Business: return 'Business';
-      default: return null;
-    }
+    const tier = this.tier();
+    return tier ? tierDisplayConfig[tier].label : null;
   });
 
   protected tierCssClass = computed(() => {
-    switch (this.tier()) {
-      case TruenasConnectTier.Foundation: return 'tier-foundation';
-      case TruenasConnectTier.Plus: return 'tier-plus';
-      case TruenasConnectTier.Business: return 'tier-business';
-      default: return '';
-    }
+    const tier = this.tier();
+    return tier ? tierDisplayConfig[tier].cssClass : '';
   });
 }

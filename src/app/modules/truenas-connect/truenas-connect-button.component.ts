@@ -4,10 +4,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
 @Component({
   selector: 'ix-truenas-connect-button',
@@ -36,30 +36,18 @@ export class TruenasConnectButtonComponent {
   });
 
   protected tierLabel = computed(() => {
-    switch (this.tier()) {
-      case TruenasConnectTier.Foundation: return 'F';
-      case TruenasConnectTier.Plus: return '+';
-      case TruenasConnectTier.Business: return 'B';
-      default: return '';
-    }
+    const tier = this.tier();
+    return tier ? tierDisplayConfig[tier].short : '';
   });
 
   protected tierCssClass = computed(() => {
-    switch (this.tier()) {
-      case TruenasConnectTier.Foundation: return 'tier-foundation';
-      case TruenasConnectTier.Plus: return 'tier-plus';
-      case TruenasConnectTier.Business: return 'tier-business';
-      default: return '';
-    }
+    const tier = this.tier();
+    return tier ? tierDisplayConfig[tier].cssClass : '';
   });
 
   protected tierName = computed(() => {
-    switch (this.tier()) {
-      case TruenasConnectTier.Foundation: return 'Foundation';
-      case TruenasConnectTier.Plus: return 'Plus';
-      case TruenasConnectTier.Business: return 'Business';
-      default: return null;
-    }
+    const tier = this.tier();
+    return tier ? tierDisplayConfig[tier].label : null;
   });
 
   protected tooltip = computed(() => {
