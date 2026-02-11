@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
-import { ContainerDeviceType, ContainerGpuType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType, containerGpuType, ContainerStatus } from 'app/enums/container.enum';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
@@ -84,7 +84,7 @@ export class ContainerGpuDevicesComponent {
       return false;
     }
 
-    return Object.values(gpuChoices).some((gpuType: ContainerGpuType) => gpuType === ContainerGpuType.Nvidia);
+    return Object.values(gpuChoices).some((gpuType) => gpuType === containerGpuType.Nvidia);
   });
 
   protected getDeviceDescription(device: ContainerDevice): string {
