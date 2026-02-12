@@ -26,13 +26,13 @@
         class="panel-tabs"
         [selectedIndex]="selectedTabIndex$ | async"
         (selectedIndexChange)="onTabChange($event)">
-        <mat-tab label="Messages">
+        <mat-tab [label]="'Messages' | translate">
           <ix-websocket-tab></ix-websocket-tab>
         </mat-tab>
-        <mat-tab label="Mock Configurations">
+        <mat-tab [label]="'Mock Configurations' | translate">
           <ix-mock-configurations-tab></ix-mock-configurations-tab>
         </mat-tab>
-        <mat-tab label="Enclosure Mock">
+        <mat-tab [label]="'Enclosure Mock' | translate">
           <ix-enclosure-mock-tab></ix-enclosure-mock-tab>
         </mat-tab>
         <mat-tab [label]="'Alert Classes' | translate">
