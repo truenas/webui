@@ -25,6 +25,7 @@ export const tabs = {
   WEBSOCKET: 'websocket',
   MOCK_CONFIG: 'mock-configurations',
   ENCLOSURE_MOCK: 'enclosure-mock',
+  ALERT_CLASSES: 'alert-classes',
 } as const;
 
 // Export file naming

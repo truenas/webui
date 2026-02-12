@@ -13,7 +13,7 @@ import { AlertClassesTabComponent } from './components/alert-classes-tab/alert-c
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
-import { storageKeys } from './constants';
+import { storageKeys, tabs } from './constants';
 import * as WebSocketDebugActions from './store/websocket-debug.actions';
 import {
   selectIsPanelOpen, selectActiveTab, selectHasActiveMocks,
@@ -61,16 +61,16 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   readonly hasActiveMocks$ = this.store$.select(selectHasActiveMocks);
   readonly selectedTabIndex$ = this.activeTab$.pipe(
     map((tab) => {
-      if (tab === 'websocket') {
+      if (tab === tabs.WEBSOCKET) {
         return 0;
       }
-      if (tab === 'mock-configurations') {
+      if (tab === tabs.MOCK_CONFIG) {
         return 1;
       }
-      if (tab === 'enclosure-mock') {
+      if (tab === tabs.ENCLOSURE_MOCK) {
         return 2;
       }
-      if (tab === 'alert-classes') {
+      if (tab === tabs.ALERT_CLASSES) {
         return 3;
       }
       return 0;
@@ -163,13 +163,13 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number): void {
-    let tab: 'websocket' | 'mock-configurations' | 'enclosure-mock' | 'alert-classes' = 'websocket';
+    let tab: string = tabs.WEBSOCKET;
     if (index === 1) {
-      tab = 'mock-configurations';
+      tab = tabs.MOCK_CONFIG;
     } else if (index === 2) {
-      tab = 'enclosure-mock';
+      tab = tabs.ENCLOSURE_MOCK;
     } else if (index === 3) {
-      tab = 'alert-classes';
+      tab = tabs.ALERT_CLASSES;
     }
     this.store$.dispatch(WebSocketDebugActions.setActiveTab({ tab }));
   }
