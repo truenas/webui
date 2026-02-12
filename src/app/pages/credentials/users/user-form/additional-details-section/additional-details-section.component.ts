@@ -129,7 +129,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
     this.userService,
-    { valueField: 'id' },
+    { valueField: 'id', localOnly: true },
   );
 
   protected readonly roleGroupMap = new Map<Role, string>([

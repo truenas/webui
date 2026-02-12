@@ -151,6 +151,16 @@ describe('GroupDetailsRowComponent', () => {
     });
   });
 
+  it('does not show action buttons and shows message for Active Directory groups', async () => {
+    spectator.setInput('group', { ...dummyGroup, local: false });
+
+    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    expect(deleteButton).toBeNull();
+
+    expect(spectator.fixture.nativeElement.textContent)
+      .toContain('This group is managed by a directory service and cannot be modified.');
+  });
+
   it('should open DeleteUserGroup when Delete button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();

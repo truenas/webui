@@ -10,6 +10,7 @@ interface GroupComboboxOptions {
   valueField?: keyof Pick<Group, 'group' | 'gid' | 'id'>;
   initialOptions?: Option[];
   queryType?: ComboboxQueryType;
+  localOnly?: boolean;
 }
 
 export class GroupComboboxProvider implements IxComboboxProvider {
@@ -18,6 +19,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
   private valueField: keyof Pick<Group, 'group' | 'gid' | 'id'>;
   private initialOptions: Option[];
   private queryType: ComboboxQueryType;
+  private localOnly: boolean;
 
   constructor(
     protected userService: UserService,
@@ -26,6 +28,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     this.valueField = options.valueField ?? 'group';
     this.initialOptions = options.initialOptions ?? [];
     this.queryType = options.queryType ?? ComboboxQueryType.Default;
+    this.localOnly = options.localOnly ?? false;
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -45,6 +48,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
       : this.userService.groupQueryDsCache.bind(this.userService);
 
     return queryMethod(filterValue, false, offset).pipe(
+      map((groups) => (this.localOnly ? groups.filter((group) => group.local && !group.immutable) : groups)),
       map((groups) => this.groupQueryResToOptions(groups)),
       map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );
