@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
@@ -26,7 +26,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-two-factor-auth-form',
   templateUrl: './global-two-factor-form.component.html',
@@ -58,6 +57,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   private router = inject(Router);
   slideInRef = inject<SlideInRef<GlobalTwoFactorConfig, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
@@ -130,6 +130,6 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-    ).pipe(untilDestroyed(this)).subscribe();
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }

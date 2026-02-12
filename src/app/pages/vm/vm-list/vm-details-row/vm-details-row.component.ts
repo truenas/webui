@@ -1,10 +1,10 @@
 import {
-  Component, ChangeDetectionStrategy, input, computed, inject,
+  Component, ChangeDetectionStrategy, DestroyRef, input, computed, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +20,6 @@ import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/d
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { VmService } from 'app/services/vm.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vm-details-row',
   templateUrl: './vm-details-row.component.html',
@@ -42,6 +41,7 @@ export class VirtualMachineDetailsRowComponent {
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private vmService = inject(VmService);
+  private destroyRef = inject(DestroyRef);
 
   readonly vm = input.required<VirtualMachine>();
 
@@ -60,20 +60,20 @@ export class VirtualMachineDetailsRowComponent {
 
   protected doStart(): void {
     this.vmService.doStartResume(this.vm()).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   protected doStop(): void {
     this.vmService.doStop(this.vm()).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   protected doRestart(): void {
     this.vmService
       .doRestart(this.vm())
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => this.vmService.checkMemory(),
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
@@ -111,7 +111,7 @@ export class VirtualMachineDetailsRowComponent {
   protected downloadLogs(): void {
     this.vmService
       .downloadLogs(this.vm())
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });

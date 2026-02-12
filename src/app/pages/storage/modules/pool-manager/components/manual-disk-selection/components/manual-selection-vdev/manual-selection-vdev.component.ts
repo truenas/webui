@@ -1,7 +1,6 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { keyBy } from 'lodash-es';
@@ -23,7 +22,6 @@ import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager
 import { vdevCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manual-selection-vdev',
   templateUrl: './manual-selection-vdev.component.html',

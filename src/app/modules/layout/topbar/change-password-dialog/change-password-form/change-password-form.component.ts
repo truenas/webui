@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -19,7 +19,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-change-password-form',
   templateUrl: './change-password-form.component.html',
@@ -43,6 +42,7 @@ export class ChangePasswordFormComponent {
   private loader = inject(LoaderService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly passwordUpdated = output();
 
@@ -71,7 +71,7 @@ export class ChangePasswordFormComponent {
   }
 
   constructor() {
-    this.authService.user$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
+    this.authService.user$.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
       this.loggedInUser = user;
     });
   }
@@ -83,7 +83,7 @@ export class ChangePasswordFormComponent {
       username: this.loggedInUser.pw_name,
     }]).pipe(
       this.loader.withLoader(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(

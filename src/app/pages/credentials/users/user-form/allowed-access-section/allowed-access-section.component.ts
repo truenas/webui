@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -14,7 +14,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-allowed-access-section',
   templateUrl: './allowed-access-section.component.html',
@@ -35,6 +34,7 @@ export class AllowedAccessSectionComponent {
   private formBuilder = inject(NonNullableFormBuilder);
   private userFormStore = inject(UserFormStore);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   editingUser = input<User>();
   password = input<string>();
@@ -71,7 +71,7 @@ export class AllowedAccessSectionComponent {
 
     // Revalidate when SMB checkbox changes
     this.form.controls.smb.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.form.updateValueAndValidity();
     });
@@ -143,7 +143,7 @@ export class AllowedAccessSectionComponent {
 
   private setFieldRelations(): void {
     this.form.controls.ssh_access.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (sshAccess) => {
         if (sshAccess) {
@@ -155,7 +155,7 @@ export class AllowedAccessSectionComponent {
       },
     });
 
-    this.form.controls.truenas_access.valueChanges.pipe(untilDestroyed(this)).subscribe((hasAccess) => {
+    this.form.controls.truenas_access.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((hasAccess) => {
       if (hasAccess) {
         this.form.controls.role.setValidators([Validators.required]);
       } else {
@@ -167,7 +167,7 @@ export class AllowedAccessSectionComponent {
   }
 
   private updateStoreOnChanges(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
           smbAccess: values.smb,

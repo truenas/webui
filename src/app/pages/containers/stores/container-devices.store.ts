@@ -7,11 +7,9 @@ import {
   filter,
   map,
   Observable,
-  distinctUntilChanged,
   take,
   of,
 } from 'rxjs';
-import { ContainerGpuType } from 'app/enums/container.enum';
 import { Container, ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -21,7 +19,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export interface ContainerDeviceState {
   isLoading: boolean;
   devices: ContainerDevice[];
-  gpuChoices: Record<string, ContainerGpuType> | null;
+  gpuChoices: Record<string, string> | null;
   isLoadingGpuChoices: boolean;
 }
 
@@ -52,7 +50,6 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
         }
       }),
       filter(Boolean),
-      distinctUntilChanged((prev, curr) => prev.id === curr.id),
       switchMap((container) => this.fetchDevicesForContainer(container)),
     );
   });
@@ -69,7 +66,7 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
       take(1),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        return of({} as Record<string, ContainerGpuType>);
+        return of({});
       }),
     ).subscribe((gpuChoices) => {
       this.patchState({

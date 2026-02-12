@@ -1,10 +1,10 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, input, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
@@ -16,7 +16,6 @@ import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-job-name',
   templateUrl: './job-name.component.html',
@@ -38,6 +37,7 @@ export class JobNameComponent {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   readonly job = input.required<Job>();
 
@@ -56,7 +56,7 @@ export class JobNameComponent {
         cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.store$.dispatch(abortJobPressed({ job }));
       });

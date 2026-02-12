@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -38,7 +37,6 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ipmi-form',
   templateUrl: './ipmi-form.component.html',
@@ -74,6 +72,7 @@ export class IpmiFormComponent implements OnInit {
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<number, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.IpmiWrite];
 
@@ -138,7 +137,7 @@ export class IpmiFormComponent implements OnInit {
       verb: this.isFlashing() ? OnOff.Off : OnOff.On,
       ...(applyRemote && { apply_remote: true }),
     }])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.snackbar.success(
@@ -171,7 +170,7 @@ export class IpmiFormComponent implements OnInit {
           this.setFormValues(ipmiData[0]);
         }),
         switchMap(() => this.loadFailoverData()),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -242,7 +241,7 @@ export class IpmiFormComponent implements OnInit {
           ]);
         }),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([dataIpmi, chassisInfo]) => {
         this.setFormValues(dataIpmi[0]);
@@ -272,7 +271,7 @@ export class IpmiFormComponent implements OnInit {
     }
 
     this.api.call('ipmi.lan.update', [this.ipmiId, updateParams])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isLoading.set(false);
@@ -296,7 +295,7 @@ export class IpmiFormComponent implements OnInit {
 
     // Make vlan_id required only when vlan_id_enable is true
     this.form.controls.vlan_id_enable.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vlanEnabled) => {
         if (vlanEnabled) {
           this.form.controls.vlan_id.addValidators([Validators.required]);
@@ -312,7 +311,7 @@ export class IpmiFormComponent implements OnInit {
       this.form.controls.dhcp.valueChanges,
       this.form.controls.ipaddress.valueChanges,
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.updateManageButtonState();
       });
@@ -331,7 +330,7 @@ export class IpmiFormComponent implements OnInit {
       tap((ipmiStatus) => {
         this.isFlashing.set(ipmiStatus.chassis_identify_state !== IpmiChassisIdentifyState.Off);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   }
 

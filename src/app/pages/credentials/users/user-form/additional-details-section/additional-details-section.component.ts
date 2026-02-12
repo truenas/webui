@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
@@ -50,7 +50,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-additional-details-section',
   templateUrl: './additional-details-section.component.html',
@@ -88,6 +87,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private translate = inject(TranslateService);
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
   private userService = inject(UserService);
+  private destroyRef = inject(DestroyRef);
 
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
@@ -178,7 +178,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   constructor() {
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (values) => {
           this.userFormStore.updateUserConfig({
@@ -232,7 +232,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           this.form.patchValue({ groups: [groupId] });
         }
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
 
     effect(() => {
@@ -320,7 +320,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         });
         this.cdr.markForCheck();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -376,7 +376,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
               this.errorHandler.showErrorModal(error);
               return EMPTY;
             }),
-            untilDestroyed(this),
+            takeUntilDestroyed(this.destroyRef),
           )
           .subscribe((stat) => {
             if (stat) {
@@ -417,7 +417,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
     this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
 
-    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+    this.form.controls.home.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((home) => {
       if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
@@ -425,22 +425,24 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       }
     });
 
-    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
-      const currentRole = this.userFormStore.role();
-      const requiredGroup = this.roleGroupMap.get(currentRole);
-      const groupNames = groups.map((id) => this.groupNameCache.get(id));
+    this.form.controls.groups.valueChanges
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe((groups) => {
+        const currentRole = this.userFormStore.role();
+        const requiredGroup = this.roleGroupMap.get(currentRole);
+        const groupNames = groups.map((id) => this.groupNameCache.get(id));
 
-      if (groupNames.includes('')) {
-        return;
-      }
+        if (groupNames.includes('')) {
+          return;
+        }
 
-      if ((requiredGroup && !groupNames.includes(requiredGroup)) || !groups.length) {
-        this.userFormStore.updateSetupDetails({ role: null });
-      }
-    });
+        if ((requiredGroup && !groupNames.includes(requiredGroup)) || !groups.length) {
+          this.userFormStore.updateSetupDetails({ role: null });
+        }
+      });
 
     // Sync default_permissions checkbox with home_mode changes
-    this.form.controls.home_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((homeMode) => {
+    this.form.controls.home_mode.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((homeMode) => {
       const isDefaultPermissions = homeMode === '700';
       if (this.form.controls.default_permissions.value !== isDefaultPermissions) {
         this.form.controls.default_permissions.patchValue(isDefaultPermissions);
@@ -448,7 +450,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
 
     // When default_permissions is checked, set home_mode to '700'
-    this.form.controls.default_permissions.valueChanges.pipe(untilDestroyed(this)).subscribe((isDefault) => {
+    this.form.controls.default_permissions.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isDefault) => {
       if (isDefault && this.form.controls.home_mode.value !== '700') {
         this.form.controls.home_mode.patchValue('700');
       }
@@ -461,7 +465,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       this.form.controls.groups.valueChanges.pipe(startWith(this.form.controls.groups.value)),
     ]).pipe(
       debounceTime(300),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([group, groups]) => {
       this.updateShellOptions(group, groups);
     });
@@ -472,7 +476,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.userFormStore.state$.pipe(
       map((state) => state.setupDetails.allowedAccess.shellAccess),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((shellAccess) => {
       if (this.editingUser()) {
         // When editing, don't auto-set shell - keep user's current shell
@@ -491,7 +495,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     }
 
     this.api.call('user.shell_choices', [Array.from(ids)])
-      .pipe(choicesToOptions(), untilDestroyed(this))
+      .pipe(choicesToOptions(), takeUntilDestroyed(this.destroyRef))
       .subscribe((options) => {
         const filtered = options.filter((option) => !(option.value as string).includes('nologin'));
         const sorted = filtered.toSorted((a, b) => a.label.localeCompare(b.label));
@@ -505,7 +509,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       choicesToOptions(),
       filter((shells) => shells.length > 0),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((shells) => {
       const defaultShell = (shells.find((shell) => shell.label.includes('zsh'))?.value || shells[0].value) as string;
 
@@ -520,7 +524,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   }
 
   private detectHomeDirectoryChanges(): void {
-    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+    this.form.controls.home.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((home) => {
       // Normalize empty home directory values to default path
       if (!home || home.trim() === '') {
         this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
@@ -534,7 +538,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       }
     });
 
-    this.form.controls.home_create.valueChanges.pipe(untilDestroyed(this)).subscribe((checked) => {
+    this.form.controls.home_create.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((checked) => {
       if (checked) {
         this.form.patchValue({
           home_mode: '700',
@@ -552,7 +556,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ]]).pipe(
       filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((homeSharePath) => {
       this.form.patchValue({ home: homeSharePath });
     });

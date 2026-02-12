@@ -1,13 +1,9 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  OnChanges,
-  OnInit, Signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, Signal, viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
@@ -20,7 +16,6 @@ import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-scheduler-preview-column',
   templateUrl: './scheduler-preview-column.component.html',
@@ -37,6 +32,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
+  private destroyRef = inject(DestroyRef);
+
   readonly crontab = input.required<string>();
   readonly timezone = input.required<string>();
 
@@ -71,7 +68,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.calendar().stateChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onCalendarUpdated());
   }
 

@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
@@ -23,7 +23,6 @@ import {
   UploadConfigDialog,
 } from 'app/pages/system/advanced/manage-configuration-menu/upload-config-dialog/upload-config-dialog.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manage-configuration-menu',
   templateUrl: './manage-configuration-menu.component.html',
@@ -47,6 +46,7 @@ export class ManageConfigurationMenuComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly Role = Role;
   protected isSysAdmin$ = this.authService.isSysAdmin$;
@@ -69,7 +69,7 @@ export class ManageConfigurationMenuComponent {
     })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.router.navigate(['/system-tasks/config-reset'], { skipLocationChange: true });

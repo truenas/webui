@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
@@ -47,7 +47,6 @@ import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-card',
   templateUrl: './cloud-backup-card.component.html',
@@ -84,6 +83,7 @@ export class CloudBackupCardComponent implements OnInit {
   private router = inject(Router);
   protected emptyService = inject(EmptyService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
@@ -183,7 +183,7 @@ export class CloudBackupCardComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» has started.', { name: row.description }));
       }),
       switchMap(() => this.api.job('cloud_backup.sync', [row.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (job: Job) => {
         if (job.state === JobState.Success) {
@@ -203,7 +203,7 @@ export class CloudBackupCardComponent implements OnInit {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
           this.getCloudBackups();
@@ -222,7 +222,7 @@ export class CloudBackupCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.loader.withLoader())),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
@@ -238,7 +238,7 @@ export class CloudBackupCardComponent implements OnInit {
     this.updatedCount.update((count) => count + 1);
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.updatedCount.update((count) => count - 1);

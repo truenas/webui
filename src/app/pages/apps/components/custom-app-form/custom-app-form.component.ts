@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -24,7 +26,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-custom-app-form',
   templateUrl: './custom-app-form.component.html',
@@ -53,6 +54,7 @@ export class CustomAppFormComponent implements OnInit {
   private appService = inject(ApplicationsService);
   slideInRef = inject<SlideInRef<App | undefined, boolean>>(SlideInRef);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
@@ -134,7 +136,7 @@ export class CustomAppFormComponent implements OnInit {
           : this.translate.instant('Updating custom app'),
       },
     ).afterClosed().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.slideInRef.close({ response: true });
@@ -156,7 +158,7 @@ export class CustomAppFormComponent implements OnInit {
 
     this.appService.getApp(existingApp.id).pipe(
       filter((apps) => apps.length > 0),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([app]) => {
         this.existingApp = app;

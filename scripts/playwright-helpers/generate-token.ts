@@ -17,8 +17,8 @@ interface WebSocketResponse {
 }
 
 const defaultCredentials: AuthCredentials = {
-  username: 'root',
-  password: 'testing',
+  username: process.env.AUTH_USERNAME || 'root',
+  password: process.env.AUTH_PASSWORD || 'testing',
   tokenTtl: 7200,
 };
 

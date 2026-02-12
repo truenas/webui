@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -45,6 +46,9 @@ describe('CloudSyncTaskCardComponent', () => {
   let spectator: Spectator<CloudSyncTaskCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
+
+  beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
+  afterEach(() => restoreDate());
 
   const cloudsyncTasks = [
     {
@@ -89,7 +93,7 @@ describe('CloudSyncTaskCardComponent', () => {
         id: 1,
         state: JobState.Success,
         time_finished: {
-          $date: new Date().getTime() - 50000,
+          $date: new Date('2026-01-19T23:59:10Z').getTime(),
         },
       },
     } as unknown as CloudSyncTaskUi,

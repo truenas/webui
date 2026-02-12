@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -22,7 +22,6 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-normal-selection',
   templateUrl: './normal-selection.component.html',
@@ -41,6 +40,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
 export class NormalSelectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   protected store = inject(PoolManagerStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout>();
@@ -84,7 +84,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
       this.store.startOver$,
       this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.form.setValue({
           width: null,
@@ -105,13 +105,13 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   }
 
   private updateControlOptionsOnChanges(): void {
-    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.width.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateNumberOptions();
     });
   }
 
   private updateStoreOnChanges(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const values = this.form.value;
 
       this.store.setAutomaticTopologyCategory(this.type(), {

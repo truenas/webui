@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
@@ -38,7 +38,6 @@ import { ServicesService } from 'app/services/services.service';
     NgClass,
   ],
 })
-@UntilDestroy()
 export class ServiceStatusCellComponent {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
@@ -48,6 +47,7 @@ export class ServiceStatusCellComponent {
   private iscsiService = inject(IscsiService);
   private snackbar = inject(SnackbarService);
   private servicesService = inject(ServicesService);
+  private destroyRef = inject(DestroyRef);
 
   readonly service = input.required<Service>();
 
@@ -72,7 +72,7 @@ export class ServiceStatusCellComponent {
       observeJob(),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       complete: () => this.snackbar.success(this.translate.instant('Service started')),
     });
@@ -82,7 +82,7 @@ export class ServiceStatusCellComponent {
     this.confirmStop().pipe(
       filter(Boolean),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.stopService());
   }
 
@@ -91,7 +91,7 @@ export class ServiceStatusCellComponent {
       observeJob(),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
     });
@@ -133,7 +133,7 @@ export class ServiceStatusCellComponent {
           buttonText: this.translate.instant('Stop'),
         });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   }
 }

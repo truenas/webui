@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
@@ -35,7 +35,6 @@ import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-serv
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alert-service-list',
   templateUrl: './alert-service-list.component.html',
@@ -68,6 +67,7 @@ export class AlertServiceListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly searchableElements = alertServiceListElements;
@@ -129,11 +129,11 @@ export class AlertServiceListComponent implements OnInit {
   ngOnInit(): void {
     const alertServices$ = this.api.call('alertservice.query').pipe(
       tap((alertServices) => this.alertServices = alertServices),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<AlertService>(alertServices$);
     this.getAlertServices();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -141,7 +141,7 @@ export class AlertServiceListComponent implements OnInit {
   protected addAlertService(): void {
     this.slideIn.open(AlertServiceComponent).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getAlertServices());
   }
 
@@ -159,7 +159,7 @@ export class AlertServiceListComponent implements OnInit {
   private editAlertService(row: AlertService): void {
     this.slideIn.open(AlertServiceComponent, { data: row }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getAlertServices());
   }
 
@@ -173,7 +173,7 @@ export class AlertServiceListComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.api.call('alertservice.delete', [alertService.id])),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getAlertServices());
   }
 

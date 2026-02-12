@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { omit, sortBy } from 'lodash-es';
@@ -32,7 +32,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-localization-form',
   templateUrl: './localization-form.component.html',
@@ -63,6 +62,7 @@ export class LocalizationFormComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<LocalizationSettings, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   fieldsetTitle = helptext.localeTitle;
 
@@ -161,7 +161,7 @@ export class LocalizationFormComponent implements OnInit {
 
     const payload = omit(values, ['date_format', 'time_format', 'language']);
 
-    this.api.call('system.general.update', [payload]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.general.update', [payload]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());

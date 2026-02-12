@@ -1,8 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
@@ -38,7 +40,6 @@ export interface ContainerImageUi extends ContainerImage {
   selected?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-docker-images-list',
   templateUrl: './docker-images-list.component.html',
@@ -69,6 +70,7 @@ export class DockerImagesListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private fileSizePipe = inject(FileSizePipe);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerImagesListElements;
@@ -90,7 +92,7 @@ export class DockerImagesListComponent implements OnInit {
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
           take(1),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((images) => {
           images.forEach((image) => image.selected = checked);
           this.dataProvider.setRows([]);
@@ -144,21 +146,21 @@ export class DockerImagesListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
 
   doAdd(): void {
     this.slideIn.open(PullImageFormComponent)
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 
   doDelete(images: ContainerImageUi[]): void {
     this.matDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 

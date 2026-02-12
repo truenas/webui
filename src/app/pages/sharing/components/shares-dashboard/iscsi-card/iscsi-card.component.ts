@@ -1,13 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -49,7 +48,6 @@ import { LicenseService } from 'app/services/license.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-card',
   templateUrl: './iscsi-card.component.html',
@@ -88,6 +86,7 @@ export class IscsiCardComponent implements OnInit {
   private iscsiService = inject(IscsiService);
   private cdr = inject(ChangeDetectorRef);
   private license = inject(LicenseService);
+  private destroyRef = inject(DestroyRef);
 
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
   requiredRoles = [
@@ -167,7 +166,7 @@ export class IscsiCardComponent implements OnInit {
       tap((targets) => {
         this.targets.set(targets);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
     this.setDefaultSort();
@@ -185,7 +184,7 @@ export class IscsiCardComponent implements OnInit {
 
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dataProvider.load();
     });
@@ -195,7 +194,7 @@ export class IscsiCardComponent implements OnInit {
     this.matDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }
 

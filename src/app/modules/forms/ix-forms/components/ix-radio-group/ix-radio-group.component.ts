@@ -5,7 +5,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { RadioOption } from 'app/interfaces/option.interface';
@@ -17,7 +16,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-radio-group',
   styleUrls: ['./ix-radio-group.component.scss'],

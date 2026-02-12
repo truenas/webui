@@ -5,7 +5,6 @@ import {
 } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -38,7 +37,6 @@ export type EmptyDiskObject = Record<
   string, string | number | boolean | string[] | EnclosureAndSlot
 >;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vdevs-card',
   templateUrl: './vdevs-card.component.html',

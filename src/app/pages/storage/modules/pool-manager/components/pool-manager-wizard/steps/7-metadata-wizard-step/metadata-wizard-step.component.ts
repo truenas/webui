@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
@@ -14,7 +14,6 @@ import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/comp
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-metadata-wizard-step',
   templateUrl: './metadata-wizard-step.component.html',
@@ -34,6 +33,7 @@ export class MetadataWizardStepComponent implements OnInit {
   private addVdevsStore = inject(AddVdevsStore);
   private store = inject(PoolManagerStore);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
@@ -59,7 +59,7 @@ export class MetadataWizardStepComponent implements OnInit {
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
       map((pool) => pool?.topology[VDevType.Special]),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((metadataTopology) => {
       if (!metadataTopology?.length) {
         return;

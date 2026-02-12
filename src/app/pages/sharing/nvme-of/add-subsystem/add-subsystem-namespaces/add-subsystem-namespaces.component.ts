@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
@@ -17,7 +17,6 @@ import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-subsystem-namespaces',
   templateUrl: './add-subsystem-namespaces.component.html',
@@ -37,6 +36,7 @@ import {
 export class AddSubsystemNamespacesComponent {
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   namespacesControl = input.required<FormControl<NamespaceChanges[]>>();
 
@@ -48,7 +48,7 @@ export class AddSubsystemNamespacesComponent {
     this.slideIn.open(AddSubsystemNamespaceComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((response) => {
         const newNamespaces = [...this.namespaces, response.response];

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, timer } from 'rxjs';
@@ -14,7 +14,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-last-action',
   templateUrl: './user-last-action.component.html',
@@ -33,6 +32,7 @@ export class UserLastActionComponent implements OnChanges {
   private api = inject(ApiService);
   private urlOptions = inject(UrlOptionsService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   username = input.required<string>();
 
@@ -63,7 +63,7 @@ export class UserLastActionComponent implements OnChanges {
         }),
         finalize(() => this.isLoading.set(false)),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((entries: AuditEntry[]) => {
         this.lastAction.set(entries[0]);

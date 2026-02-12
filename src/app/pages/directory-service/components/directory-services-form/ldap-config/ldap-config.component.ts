@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, output, OnInit, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, output, OnInit, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LdapSchema } from 'app/enums/directory-services.enum';
@@ -22,7 +22,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { hasDeepNonNullValue } from 'app/pages/directory-service/components/directory-services-form/utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ldap-config',
   templateUrl: './ldap-config.component.html',
@@ -41,6 +40,7 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
 })
 export class LdapConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   readonly ldapConfig = input.required<LdapConfig | null>();
   readonly configurationChanged = output<LdapConfig>();
@@ -120,7 +120,7 @@ export class LdapConfigComponent implements OnInit {
 
   private watchForFormChanges(): void {
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.isValid.emit(this.form.valid);
         this.configurationChanged.emit(this.buildLdapConfig());

@@ -1,12 +1,11 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDrawerMode, MatSidenav, MatSidenavContainer,
 } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, Subject } from 'rxjs';
@@ -32,7 +31,6 @@ import {
   selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
@@ -57,8 +55,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
   private languageService = inject(LanguageService);
   private sessionTimeoutService = inject(SessionTimeoutService);
-  private destroy$ = new Subject<void>();
+  router = inject(Router);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private destroyRef = inject(DestroyRef);
+  private destroy$ = new Subject<void>();
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
@@ -72,7 +72,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   // credit <https://github.com/JackW6809> for the replace pattern!
   readonly copyrightText = computed(() => this.copyrightHtml().replace(/<br\s*\/?>/gi, '\n'));
   isInit = false;
-  router = inject(Router);
 
   protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
@@ -118,7 +117,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     performance.measure('Login', 'Login Start', 'Admin Init');
     this.sessionTimeoutService.start();
     this.themeService.loadTheme$.next('');
-    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
     this.listenForSidenavChanges();
@@ -133,7 +132,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupGlobalHighlightHandler(): void {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       // Wait for components to render and register their directives
       setTimeout(() => this.handlePendingHighlight(), searchDelayConst);
@@ -156,7 +155,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       // Directive not found yet (table data still loading) - wait for it to be registered
       const subscription = this.searchDirectives.directiveAdded$.pipe(
         filter((added) => !!added),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         const foundDirective = this.searchDirectives.get(pendingElement);
         if (foundDirective) {
@@ -202,7 +201,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForSidenavChanges(): void {
-    this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
+    this.sideNavs?.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.sidenavService.setSidenav(this.sideNavs.first);
     });
   }

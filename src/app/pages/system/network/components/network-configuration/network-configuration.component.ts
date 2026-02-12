@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -47,7 +47,6 @@ enum SpecificActivityType {
 export const UiNetworkActivityType = { ...NetworkActivityType, ...SpecificActivityType };
 export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-network-configuration',
   templateUrl: './network-configuration.component.html',
@@ -79,6 +78,7 @@ export class NetworkConfigurationComponent implements OnInit {
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
@@ -247,7 +247,7 @@ export class NetworkConfigurationComponent implements OnInit {
     this.isFormLoading.set(true);
     this.loadConfig();
 
-    this.form.controls.outbound_network_activity.valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.outbound_network_activity.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       (value: NetworkActivityType) => {
         if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(value)) {
           this.outboundNetworkValue.hidden = true;
@@ -257,7 +257,7 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    this.form.controls.inherit_dhcp.valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.inherit_dhcp.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       (value: boolean) => {
         if (value) {
           this.form.controls.domain.disable();
@@ -267,9 +267,9 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    this.store$.select(selectIsEnterprise).pipe(untilDestroyed(this)).subscribe((isEnterprise) => {
+    this.store$.select(selectIsEnterprise).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isEnterprise) => {
       if (isEnterprise) {
-        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
           this.hostnameB.hidden = !isHaLicensed;
           this.hostnameVirtual.hidden = !isHaLicensed;
         });
@@ -279,7 +279,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
   private loadConfig(): void {
     this.api.call('network.configuration.config')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (config: NetworkConfiguration) => {
           const transformed = {
@@ -365,7 +365,7 @@ export class NetworkConfigurationComponent implements OnInit {
 
     this.isFormLoading.set(true);
     this.api.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);

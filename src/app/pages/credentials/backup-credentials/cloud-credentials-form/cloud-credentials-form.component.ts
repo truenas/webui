@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewContainerRef, viewChild, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ViewContainerRef, viewChild, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -39,7 +39,6 @@ export interface CloudCredentialFormInput {
 }
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-credentials-form',
   templateUrl: './cloud-credentials-form.component.html',
@@ -70,6 +69,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   private snackbarService = inject(SnackbarService);
   private cloudCredentialService = inject(CloudCredentialService);
   slideInRef = inject<SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
@@ -154,7 +154,7 @@ export class CloudCredentialsFormComponent implements OnInit {
             ? this.api.call('cloudsync.credentials.create', [payload])
             : this.api.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (response) => {
@@ -186,7 +186,7 @@ export class CloudCredentialsFormComponent implements OnInit {
 
           return this.api.call('cloudsync.credentials.verify', [payload.provider]);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (response) => {
@@ -226,7 +226,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       this.cloudCredentialService.getProviders(),
       this.cloudCredentialService.getCloudSyncCredentials(),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([providers, credentials]) => {
           if (this.limitProviders?.length) {
@@ -256,7 +256,7 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   private setFormEvents(): void {
     this.commonForm.controls.type.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.renderProviderForm();
 

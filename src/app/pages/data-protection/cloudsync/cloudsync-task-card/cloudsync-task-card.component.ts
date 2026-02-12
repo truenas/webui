@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -52,7 +52,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloudsync-task-card',
   templateUrl: './cloudsync-task-card.component.html',
@@ -89,6 +88,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private matDialog = inject(MatDialog);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
@@ -192,7 +192,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       )),
       tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
@@ -201,7 +201,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
     cloudSyncTasks.forEach((transformed) => {
       if (transformed.job) {
-        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
           .subscribe((job: Job) => {
             transformed.job = { ...job };
             transformed.state = { state: job.state };
@@ -226,7 +226,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }));
@@ -241,7 +241,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   protected onAdd(): void {
     this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getCloudSyncTasks();
@@ -252,7 +252,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   protected onEdit(row?: CloudSyncTaskUi): void {
     this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getCloudSyncTasks();
     });
@@ -275,7 +275,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       if (job.state === JobState.Success) {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
@@ -302,7 +302,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
@@ -326,7 +326,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       if (job.state === JobState.Success) {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
@@ -343,7 +343,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     this.matDialog
       .open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(
           this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
@@ -356,7 +356,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
     this.api
       .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled } as CloudSyncTaskUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.getCloudSyncTasks();

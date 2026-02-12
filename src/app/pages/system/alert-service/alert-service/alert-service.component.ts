@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Type, ViewContainerRef, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, ViewContainerRef, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, FormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -59,7 +59,6 @@ import {
   TelegramServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alert-service',
   templateUrl: './alert-service.component.html',
@@ -90,6 +89,7 @@ export class AlertServiceComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
   slideInRef = inject<SlideInRef<AlertService | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AlertWrite];
 
@@ -155,7 +155,7 @@ export class AlertServiceComponent implements OnInit {
     const payload = this.generatePayload();
 
     this.api.call('alertservice.test', [payload])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (wasAlertSent) => {
           this.isLoading = false;
@@ -189,7 +189,7 @@ export class AlertServiceComponent implements OnInit {
       : this.api.call('alertservice.create', [payload]);
 
     request$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isLoading = false;
@@ -219,7 +219,7 @@ export class AlertServiceComponent implements OnInit {
 
   private setFormEvents(): void {
     this.commonForm.controls.type.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.renderAlertServiceForm();
       });

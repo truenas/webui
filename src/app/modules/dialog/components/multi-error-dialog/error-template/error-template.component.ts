@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, Signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, input, Signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { Job } from 'app/interfaces/job.interface';
@@ -10,7 +10,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-error-template',
   templateUrl: './error-template.component.html',
@@ -28,6 +27,7 @@ export class ErrorTemplateComponent {
   private api = inject(ApiService);
   private download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly errorMessageWrapper: Signal<ElementRef<HTMLElement>> = viewChild.required('errorMessageWrapper', { read: ElementRef });
   private readonly errorMdContent: Signal<ElementRef<HTMLElement>> = viewChild.required('errorMdContent', { read: ElementRef });
@@ -66,10 +66,10 @@ export class ErrorTemplateComponent {
     }
 
     this.api.call('core.job_download_logs', [logsId, `${logsId}.log`])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe((url) => {
         const mimetype = 'text/plain';
-        this.download.streamDownloadFile(url, `${logsId}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
+        this.download.streamDownloadFile(url, `${logsId}.log`, mimetype).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: (file) => {
             this.download.downloadBlob(file, `${logsId}.log`);
           },

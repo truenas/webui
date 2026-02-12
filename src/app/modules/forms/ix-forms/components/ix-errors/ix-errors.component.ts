@@ -1,9 +1,9 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
@@ -16,7 +16,6 @@ type SomeError = Record<string, unknown>;
 
 export const ixManualValidateError = 'ixManualValidateError';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-errors',
   templateUrl: './ix-errors.component.html',
@@ -33,6 +32,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private liveAnnouncer = inject(LiveAnnouncer);
+  private destroyRef = inject(DestroyRef);
 
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
@@ -134,7 +134,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
     this.statusChangeSubscription = this.control().statusChanges.pipe(
       filter((status) => status !== 'PENDING'),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.handleErrors();
     });

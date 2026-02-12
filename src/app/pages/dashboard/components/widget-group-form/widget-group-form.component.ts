@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, forwardRef, Signal, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of, tap } from 'rxjs';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -25,7 +25,6 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
 import { WidgetEditorGroupComponent } from './widget-editor-group/widget-editor-group.component';
 import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-group-slot-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-group-form',
   templateUrl: './widget-group-form.component.html',
@@ -47,6 +46,7 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
 export class WidgetGroupFormComponent {
   slideInRef = inject<SlideInRef<WidgetGroup | undefined, WidgetGroup | false>>(SlideInRef);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
@@ -124,7 +124,7 @@ export class WidgetGroupFormComponent {
         }
         this.cdr.markForCheck();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

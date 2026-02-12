@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -33,7 +33,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 const defaultEncryptionStandard = 'AES-256-GCM';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-general-wizard-step',
   templateUrl: './general-wizard-step.component.html',
@@ -63,6 +62,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private store$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private poolWizardNameValidationService = inject(PoolWizardNameValidationService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isAddingVdevs = input(false);
   readonly pool = input<Pool | undefined>(undefined);
@@ -150,7 +150,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     this.initSedDefaults();
     this.connectGeneralOptionsToStore();
 
-    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.resetForm();
     });
   }
@@ -170,7 +170,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
 
   private resetForm(): void {
     this.getDefaultEncryptionType$()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((defaultEncryptionType) => {
         // When adding VDEVs to existing pool, preserve the pool name (it's read-only)
         // When creating new pool, clear the name field (undefined allows form.reset to clear it)
@@ -191,7 +191,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     }
 
     this.getDefaultEncryptionType$()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((defaultEncryptionType) => {
         if (defaultEncryptionType === EncryptionType.Sed) {
           this.form.patchValue({ encryptionType: defaultEncryptionType });
@@ -200,7 +200,9 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   }
 
   private initEncryptionField(): void {
-    this.form.controls.encryptionType.valueChanges.pipe(untilDestroyed(this)).subscribe((encryptionType) => {
+    this.form.controls.encryptionType.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((encryptionType) => {
       // Reset password fields when encryption type changes (don't emit events to avoid triggering validation display)
       this.form.controls.sedPassword.reset('', { emitEvent: false });
       this.form.controls.sedPasswordConfirm.reset('', { emitEvent: false });
@@ -245,7 +247,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
         message: this.translate.instant(helptextPoolCreation.encryptionMessage),
         buttonText: this.translate.instant('I Understand'),
       })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (!confirmed) {
           this.form.controls.encryptionType.setValue(EncryptionType.None);
@@ -261,7 +263,9 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.form.controls.encryptionType.valueChanges.pipe(startWith(EncryptionType.None)),
       this.form.controls.encryptionStandard.valueChanges.pipe(startWith(defaultEncryptionStandard)),
       this.form.controls.sedPassword.valueChanges.pipe(startWith('')),
-    ]).pipe(untilDestroyed(this)).subscribe(([, name, encryptionType, encryptionStandard, sedPassword]) => {
+    ]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(([, name, encryptionType, encryptionStandard, sedPassword]) => {
       this.store.setGeneralOptions({
         name,
         nameErrors: this.form.controls.name.errors,

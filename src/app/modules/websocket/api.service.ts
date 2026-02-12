@@ -2,8 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  catchError,
   EMPTY,
   filter,
+  finalize,
   map,
   merge,
   Observable,
@@ -40,7 +42,7 @@ import { JobSlice, selectJobWithCallId } from 'app/modules/jobs/store/job.select
 import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { ApiCallError } from 'app/services/errors/error.classes';
+import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Injectable({
@@ -56,6 +58,7 @@ export class ApiService {
   readonly clearSubscriptions$ = new Subject<void>();
 
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
+  private jobApiErrors = new Map<string, ApiCallError>();
 
   constructor() {
     this.wsStatus.isConnected$?.subscribe((isConnected) => {
@@ -118,12 +121,39 @@ export class ApiService {
       this.getErrorSwitchMap(method, uuid),
       map((message) => message.result),
       take(1),
+      catchError((error: unknown) => {
+        // When a job exists in the store, save the API error details for later enrichment
+        // and let observeJob() handle the failure with full job data (including logs_excerpt).
+        // Only propagate errors when no job was created (e.g. validation failures).
+        return this.store$.pipe(
+          select(selectJobWithCallId(uuid)),
+          take(1),
+          switchMap((job) => {
+            if (job) {
+              if (error instanceof ApiCallError) {
+                this.jobApiErrors.set(uuid, error);
+              }
+              return EMPTY;
+            }
+            return throwError(() => error);
+          }),
+        );
+      }),
     );
     return this.store$.pipe(
       select(selectJobWithCallId(uuid)),
       filter((job): job is Job<ApiJobResponse<M>> => !!job),
       observeJob(),
+      catchError((error: unknown) => {
+        const savedApiError = this.jobApiErrors.get(uuid);
+        this.jobApiErrors.delete(uuid);
+        if (error instanceof FailedJobError && savedApiError?.error?.data) {
+          error.apiErrorDetails = savedApiError.error.data;
+        }
+        return throwError(() => error);
+      }),
       takeUntil(merge(this.clearSubscriptions$, callResponse$)),
+      finalize(() => this.jobApiErrors.delete(uuid)),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
@@ -142,6 +172,7 @@ export class ApiService {
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
+    this.jobApiErrors.clear();
   }
 
   private callMethod<M extends ApiCallMethod>(

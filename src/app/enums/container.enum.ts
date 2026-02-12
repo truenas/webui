@@ -33,10 +33,11 @@ export enum ContainerDeviceType {
   Gpu = 'GPU',
 }
 
-export enum ContainerGpuType {
-  Amd = 'AMD',
-  Nvidia = 'NVIDIA',
-}
+export const containerGpuType = {
+  Amd: 'AMD',
+  Intel: 'INTEL',
+  Nvidia: 'NVIDIA',
+} as const;
 
 export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
   [ContainerDeviceType.Usb, 'USB'],

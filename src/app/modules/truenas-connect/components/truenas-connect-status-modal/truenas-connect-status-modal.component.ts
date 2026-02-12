@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
@@ -18,7 +20,6 @@ import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/comp
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-truenas-connect-status-modal',
   imports: [
@@ -41,6 +42,7 @@ export class TruenasConnectStatusModalComponent {
   protected tnc = inject(TruenasConnectService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
@@ -116,7 +118,7 @@ export class TruenasConnectStatusModalComponent {
           return EMPTY;
         }),
         finalize(() => this.isConnecting.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -145,7 +147,7 @@ export class TruenasConnectStatusModalComponent {
               finalize(() => this.isDisabling.set(false)),
             );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -163,7 +165,7 @@ export class TruenasConnectStatusModalComponent {
           return EMPTY;
         }),
         finalize(() => this.isRetrying.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

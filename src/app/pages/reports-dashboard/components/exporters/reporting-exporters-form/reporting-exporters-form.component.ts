@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   UntypedFormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,7 +38,6 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-reporting-exporters-form',
   templateUrl: './reporting-exporters-form.component.html',
@@ -67,6 +66,7 @@ export class ReportingExportersFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   get isNew(): boolean {
     return !this.editingExporter;
@@ -111,7 +111,7 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   private handleTypeChange(): void {
-    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.controls.type.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (value) => {
         this.onExporterTypeChanged(value as ReportingExporterType);
       },
@@ -121,7 +121,7 @@ export class ReportingExportersFormComponent implements OnInit {
   private loadSchemas(): void {
     this.isLoading.set(true);
     this.getExportersSchemas().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (schemas: ReportingExporterSchema[]): void => {
         this.setExporterTypeOptions(schemas);
@@ -245,7 +245,7 @@ export class ReportingExportersFormComponent implements OnInit {
       request$ = this.api.call('reporting.exporters.create', [values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close({ response: true });

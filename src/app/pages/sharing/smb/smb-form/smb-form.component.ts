@@ -1,7 +1,13 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
@@ -9,7 +15,6 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -72,7 +77,6 @@ import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
@@ -122,6 +126,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     existingSmbShare?: SmbShare;
     defaultSmbShare?: SmbShare;
   } | undefined, boolean>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;
@@ -280,7 +286,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const auditGroup = this.form.controls.audit;
     const enableControl = auditGroup.controls.enable;
 
-    enableControl.valueChanges.pipe(untilDestroyed(this))
+    enableControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.updateAuditValidationState();
       });
@@ -387,7 +393,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private setupExplorerRootNodes(): void {
     this.filesystemService.getTopLevelDatasetsNodes().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (nodes) => {
         this.rootNodes.set(nodes);
@@ -433,7 +439,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private setupAclControl(): void {
     this.form.controls.acl
-      .valueChanges.pipe(debounceTime(100), untilDestroyed(this))
+      .valueChanges.pipe(debounceTime(100), takeUntilDestroyed(this.destroyRef))
       .subscribe((acl) => {
         this.checkAndShowStripAclWarning(this.form.controls.path.value, acl);
       });
@@ -463,14 +469,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant(helptextSharingSmb.manglingDialog.action),
         hideCancel: true,
       })),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe();
   }
 
   private setupAutoDatasetCreationControl(): void {
     this.form.controls.auto_dataset_creation.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((autoCreate) => {
       if (!autoCreate) {
         this.form.controls.dataset_naming_schema.setValue(null);
@@ -491,7 +497,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
         this.setNameFromPath();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe((path) => {
         this.checkAndShowStripAclWarning(path, this.form.controls.acl.value);
@@ -512,14 +518,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private setupAfpWarning(): void {
-    this.form.controls.afp.valueChanges.pipe(untilDestroyed(this))
+    this.form.controls.afp.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value: boolean) => {
         this.afpConfirmEnable(value);
       });
   }
 
   private setupPurposeControl(): void {
-    this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
+    this.form.controls.purpose.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.showLegacyWarning.set(value === SmbSharePurpose.LegacyShare);
         this.updateExtensionsWarning();
@@ -563,7 +569,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.api
       .call('filesystem.stat', [path])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((stat) => {
         if (stat.acl) {
           this.wasStripAclWarningShown = true;
@@ -611,7 +617,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant(helptextSharingSmb.stripACLDialog.button),
         hideCancel: true,
       })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 
@@ -662,7 +668,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant(helptextSharingSmb.afpDialogButton),
         hideCancel: false,
       })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((dialogResult: boolean) => {
         if (!dialogResult) {
           afpControl.setValue(!value);
@@ -741,7 +747,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       switchMap((smbShareResponse) => this.shouldRedirectToAclEdit().pipe(
         map((shouldRedirect) => ({ smbShareResponse, shouldRedirect })),
       )),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ smbShareResponse, shouldRedirect }) => {
         this.isLoading.set(false);
@@ -752,7 +758,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
             buttonText: this.translate.instant('Configure'),
             cancelText: this.translate.instant('No'),
             hideCheckbox: true,
-          }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
+          }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isConfigure) => {
             if (isConfigure) {
               const homeShare = this.form.controls.home.value;
               this.router.navigate(
@@ -889,7 +895,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.api.call('smb.config')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((config) => {
         this.smbConfig.set(config);

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
@@ -27,7 +27,6 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-self-encrypting-drive-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -52,6 +51,7 @@ export class SelfEncryptingDriveCardComponent {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = sedCardElements;
@@ -89,7 +89,7 @@ export class SelfEncryptingDriveCardComponent {
       )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

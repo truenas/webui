@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal, inject, viewChild } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
@@ -17,7 +17,6 @@ export interface NamespaceFormParams {
   subsystemId: number;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-namespace-form',
   templateUrl: './namespace-form.component.html',
@@ -32,6 +31,7 @@ export class NamespaceFormComponent {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
   protected existingNamespace = signal<NvmeOfNamespace>(undefined);
@@ -60,7 +60,7 @@ export class NamespaceFormComponent {
 
     request$.pipe(
       this.loader.withLoader(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe({
         next: () => {

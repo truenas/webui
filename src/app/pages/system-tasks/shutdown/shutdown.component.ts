@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -11,7 +11,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-shutdown',
   templateUrl: './shutdown.component.html',
@@ -33,6 +32,7 @@ export class ShutdownComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
 
   ngOnInit(): void {
@@ -41,10 +41,10 @@ export class ShutdownComponent implements OnInit {
     // Replace URL so that we don't shutdown again if page is refreshed.
     this.location.replaceState('/signin');
 
-    this.api.job('system.shutdown', [reason]).pipe(untilDestroyed(this)).subscribe({
+    this.api.job('system.shutdown', [reason]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (error: unknown) => { // error on shutdown
         this.errorHandler.showErrorModal(error)
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             this.router.navigate(['/signin']);
           });

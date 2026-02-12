@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -28,7 +28,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-os-step',
   templateUrl: './os-step.component.html',
@@ -50,6 +49,7 @@ export class OsStepComponent implements SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
     os: [null as VmOs | null],
@@ -84,7 +84,7 @@ export class OsStepComponent implements SummaryProvider {
 
   constructor() {
     // Handle VNC display controls
-    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((isEnabled) => {
+    this.form.controls.enable_vnc.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isEnabled) => {
       if (isEnabled) {
         this.form.controls.vnc_password.setValidators([Validators.required, Validators.maxLength(8)]);
         this.form.controls.vnc_bind.setValidators([Validators.required]);

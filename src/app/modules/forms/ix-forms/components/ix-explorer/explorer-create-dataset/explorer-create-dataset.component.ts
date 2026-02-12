@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, computed, signal, AfterViewInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, computed, signal, AfterViewInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
@@ -13,7 +13,6 @@ import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-explorer-create-dataset',
   templateUrl: './explorer-create-dataset.component.html',
@@ -32,6 +31,7 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
   private explorer = inject(IxExplorerComponent);
   private matDialog = inject(MatDialog);
   private ngControl = inject(NgControl);
+  private destroyRef = inject(DestroyRef);
 
   readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>({});
 
@@ -55,7 +55,9 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     // NgControl is not initialized at construction time — it's only available after view init.
     // We listen to control value changes here to sync explorerValue for button logic.
-    this.ngControl.control?.valueChanges?.pipe(untilDestroyed(this))?.subscribe((value: string | string[]) => {
+    this.ngControl.control?.valueChanges?.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    )?.subscribe((value: string | string[]) => {
       this.explorerValue.set(value);
     });
   }
@@ -74,7 +76,7 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
       },
     }).afterClosed().pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((dataset: Dataset) => {
       const node = this.explorer.lastSelectedNode();
       if (node) {

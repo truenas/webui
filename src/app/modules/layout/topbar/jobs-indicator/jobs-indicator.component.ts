@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -20,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-jobs-indicator',
   styleUrls: ['./jobs-indicator.component.scss'],
@@ -40,6 +39,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 export class JobsIndicatorComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   tooltips = helptextTopbar.tooltips;
 
@@ -62,7 +62,7 @@ export class JobsIndicatorComponent implements OnInit {
   private setupJobPanelListener(): void {
     this.isJobPanelOpen$.pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       const jobsPanelRef = this.matDialog.open(JobsPanelComponent, {
         width: '420px',
@@ -73,7 +73,7 @@ export class JobsIndicatorComponent implements OnInit {
 
       jobsPanelRef
         .beforeClosed()
-        .pipe(untilDestroyed(this))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           this.onJobPanelClosed();
         });

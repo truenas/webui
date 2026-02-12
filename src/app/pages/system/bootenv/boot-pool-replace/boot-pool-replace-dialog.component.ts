@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -20,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-boot-pool-replace-dialog',
   templateUrl: './boot-pool-replace-dialog.component.html',
@@ -49,6 +48,7 @@ export class BootPoolReplaceDialog implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   unusedDisks: DetailsDisk[] = [];
   protected isFormLoading = false;
@@ -65,7 +65,7 @@ export class BootPoolReplaceDialog implements OnInit {
   }
 
   setupWarningForExportedPools(): void {
-    this.form.controls.dev.valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.dev.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       this.warnForExportedPools.bind(this),
     );
   }
@@ -96,7 +96,7 @@ export class BootPoolReplaceDialog implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.isFormLoading = false;

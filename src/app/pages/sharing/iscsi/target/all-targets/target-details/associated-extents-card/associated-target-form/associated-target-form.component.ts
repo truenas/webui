@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,7 +22,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-associated-target-form',
   styleUrls: ['./associated-target-form.component.scss'],
@@ -49,6 +48,7 @@ export class AssociatedTargetFormComponent {
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
   data = inject<AssociatedTargetDialogData>(MAT_DIALOG_DATA);
   dialogRef = inject<MatDialogRef<AssociatedTargetFormComponent>>(MatDialogRef);
 
@@ -85,7 +85,7 @@ export class AssociatedTargetFormComponent {
 
     this.api.call('iscsi.targetextent.create', [values]).pipe(
       this.loader.withLoader(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (response) => {
         this.isLoading.set(false);

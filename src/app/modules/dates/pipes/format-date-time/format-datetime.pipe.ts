@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Pipe, PipeTransform, inject } from '@angular/core';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { ChangeDetectorRef, DestroyRef, Pipe, PipeTransform, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
@@ -8,7 +8,6 @@ import { invalidDate } from 'app/constants/invalid-date';
 import { WINDOW } from 'app/helpers/window.helper';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 
-@UntilDestroy()
 @Pipe({
   name: 'formatDateTime',
   pure: false,
@@ -18,6 +17,7 @@ export class FormatDateTimePipe implements PipeTransform {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
@@ -28,7 +28,7 @@ export class FormatDateTimePipe implements PipeTransform {
       .pipe(
         ofType(localizationFormSubmitted),
         distinctUntilChanged(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.checkFormatsFromLocalStorage();
       });

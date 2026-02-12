@@ -1,8 +1,8 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import {
@@ -22,7 +22,6 @@ import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.sto
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-pool-warnings',
   templateUrl: './pool-warnings.component.html',
@@ -45,6 +44,7 @@ export class PoolWarningsComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private store = inject(PoolManagerStore);
   private diskStore = inject(DiskStore);
+  private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.nonNullable.group({
     allowNonUniqueSerialDisks: [false],
@@ -85,7 +85,7 @@ export class PoolWarningsComponent implements OnInit {
     combineLatest([
       this.diskStore.selectableDisks$,
       this.store.encryptionType$,
-    ]).pipe(untilDestroyed(this)).subscribe(([allDisks, encryptionType]) => {
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([allDisks, encryptionType]) => {
       // Filter disks based on SED encryption requirement
       const filteredDisks = encryptionType === EncryptionType.Sed
         ? allDisks.filter(isSedCapable)
@@ -123,7 +123,7 @@ export class PoolWarningsComponent implements OnInit {
     combineLatest([
       this.form.controls.allowExportedPools.valueChanges.pipe(startWith([])),
       this.form.controls.allowNonUniqueSerialDisks.valueChanges.pipe(startWith(false)),
-    ]).pipe(untilDestroyed(this)).subscribe(([allowExportedPools, allowNonUniqueSerialDisks]) => {
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([allowExportedPools, allowNonUniqueSerialDisks]) => {
       this.store.setDiskWarningOptions({
         allowExportedPools,
         allowNonUniqueSerialDisks,

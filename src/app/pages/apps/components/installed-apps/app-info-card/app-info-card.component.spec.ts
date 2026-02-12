@@ -162,12 +162,8 @@ describe('AppInfoCardComponent', () => {
         value: 'test-user-app-name (ix-test-app)',
       },
       {
-        label: 'App Version:',
-        value: '3.2.1',
-      },
-      {
         label: 'Version:',
-        value: '1.2.3',
+        value: '3.2.1',
       },
       {
         label: 'Source:',

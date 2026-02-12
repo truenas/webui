@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy, uniqBy } from 'lodash-es';
@@ -12,7 +12,6 @@ import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interf
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-similar-issues',
   styleUrls: ['./similar-issues.component.scss'],
@@ -27,6 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class SimilarIssuesComponent implements OnChanges {
   private feedbackService = inject(FeedbackService);
+  private destroyRef = inject(DestroyRef);
 
   readonly query = input.required<string>();
 
@@ -52,14 +52,14 @@ export class SimilarIssuesComponent implements OnChanges {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((query) => this.fetchAndCombineSimilarIssues(query)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
 
     this.query$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       pairwise(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([oldQuery, newQuery]) => {
       if (!newQuery?.length) {
         this.similarIssues$.next([]);

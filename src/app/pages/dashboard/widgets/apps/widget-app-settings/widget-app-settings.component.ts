@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -13,7 +12,6 @@ import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-compon
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-app-settings',
   templateUrl: './widget-app-settings.component.html',
@@ -29,6 +27,7 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
   widgetSettingsRef = inject<WidgetSettingsRef<WidgetAppSettings>>(WidgetSettingsRef);
   private fb = inject(FormBuilder);
   private resources = inject(WidgetResourcesService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.nonNullable.group({
     appName: [null as string | null, [Validators.required]],
@@ -66,7 +65,7 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
     this.widgetSettingsRef.updateValidity(
       getAllFormErrors(this.form, this.formFieldNames),
     );
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (settings) => {
         if (!settings.appName) {
           return;

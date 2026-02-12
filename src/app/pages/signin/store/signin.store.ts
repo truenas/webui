@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -42,7 +41,6 @@ const initialState: SigninState = {
 
 const tokenParam = 'token' as const;
 
-@UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
   private api = inject(ApiService);

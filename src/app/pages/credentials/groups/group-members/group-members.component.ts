@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { forkJoin, Observable } from 'rxjs';
@@ -22,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-group-members',
   templateUrl: './group-members.component.html',
@@ -49,6 +48,7 @@ export class GroupMembersComponent implements OnInit {
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly tnIconMarker = tnIconMarker;
@@ -69,7 +69,7 @@ export class GroupMembersComponent implements OnInit {
         this.api.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]),
         this.api.call('user.query', [[['local', '=', true]]]),
       ])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([groups, users]) => {
       const group = groups[0];
       this.group.set(group);
@@ -88,7 +88,7 @@ export class GroupMembersComponent implements OnInit {
 
     const userIds = this.selectedMembers.map((user) => user.id);
     this.api.call('group.update', [this.group().id, { users: userIds }]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isLoading.set(false);

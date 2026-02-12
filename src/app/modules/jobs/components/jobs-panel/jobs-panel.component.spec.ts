@@ -108,7 +108,7 @@ describe('JobsPanelComponent', () => {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(undefined),
-          getSubscriptionLimiterInstance: () => spectator.component,
+          getDestroyRef: () => ({ onDestroy: jest.fn(() => () => {}) }),
         })),
       }),
       mockApi([

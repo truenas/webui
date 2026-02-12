@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -33,7 +33,6 @@ import {
 } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
 import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nvme-of',
   templateUrl: './nvme-of.component.html',
@@ -56,6 +55,7 @@ export class NvmeOfComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
 
@@ -110,7 +110,7 @@ export class NvmeOfComponent implements OnInit {
 
     this.dataProvider.expandedRow$
       .pipe(filter((row): row is NvmeOfSubsystemDetails => !!row))
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((row) => {
         this.selectedSubsystemName = row.name;
         setSubsystemNameInUrl(this.location, row.name);
@@ -132,7 +132,7 @@ export class NvmeOfComponent implements OnInit {
   protected addSubsystem(): void {
     this.slideIn.open(AddSubsystemComponent).pipe(
       filter(({ response }) => !!response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ response }) => {
       this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
       this.nvmeOfStore.initialize();

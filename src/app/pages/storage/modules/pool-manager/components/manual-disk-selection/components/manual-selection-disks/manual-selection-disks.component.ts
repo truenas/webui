@@ -1,7 +1,7 @@
 import { NgClass, AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLinkActive } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
@@ -47,7 +47,6 @@ type DiskOrGroup = EnclosureDisk | EnclosureGroup;
 
 const noEnclosureId = 'no-enclosure';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manual-selection-disks',
   templateUrl: './manual-selection-disks.component.html',
@@ -78,6 +77,7 @@ export class ManualSelectionDisksComponent implements OnInit {
   private translate = inject(TranslateService);
   protected store$ = inject(ManualDiskSelectionStore);
   protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly enclosures = input.required<Enclosure[]>();
   readonly isSedEncryption = input<boolean>(false);
@@ -115,7 +115,7 @@ export class ManualSelectionDisksComponent implements OnInit {
       this.store$.inventory$,
       this.filtersUpdated,
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([disks, filterValues]) => {
         const filteredDisks = this.filterDisks(disks, filterValues);
         const disksInEnclosures = this.mapDisksToEnclosures(filteredDisks, this.enclosures());

@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ValidationErrors } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { differenceBy, isEqual, without } from 'lodash-es';
@@ -131,7 +131,6 @@ export const initialState: PoolManagerState = {
   ],
 };
 
-@UntilDestroy()
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private diskStore = inject(DiskStore);
@@ -139,6 +138,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private errorHandler = inject(ErrorHandlerService);
   private generateVdevs = inject(GenerateVdevsService);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   readonly startOver$ = new Subject<void>();
   readonly resetStep$ = new Subject<VDevType>();
@@ -489,7 +489,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           this.setManualTopologyCategory(type, customVdevs);
         }
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

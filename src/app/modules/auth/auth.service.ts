@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Injectable, OnDestroy, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
@@ -38,7 +38,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -49,6 +48,7 @@ export class AuthService implements OnDestroy {
   private wsStatus = inject(WebSocketStatusService);
   private errorHandler = inject(ErrorHandlerService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
@@ -388,7 +388,7 @@ export class AuthService implements OnDestroy {
 
   protected setupAuthenticationUpdate(): void {
     this.wsStatus.isAuthenticated$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated && this.sessionInitialized) {
@@ -408,7 +408,7 @@ export class AuthService implements OnDestroy {
   protected setupWsConnectionUpdate(): void {
     this.wsStatus.isConnected$.pipe(
       filter((isConnected) => !isConnected),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.wsStatus.setLoginStatus(false);
       this.loggedInUser$.next(null);
@@ -419,14 +419,13 @@ export class AuthService implements OnDestroy {
 
   protected setupTokenUpdate(): void {
     this.latestTokenGenerated$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((token) => {
       this.token = token;
     });
   }
 
   ngOnDestroy(): void {
-    // @UntilDestroy will handle unsubscribing from all observables
     // Reset session state
     this.sessionInitialized = false;
     this.pendingAuthData = null;

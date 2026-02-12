@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -6,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -25,7 +25,6 @@ import {
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-select-preset-modal',
   templateUrl: 'select-preset-modal.component.html',
@@ -50,6 +49,7 @@ export class SelectPresetModalComponent implements OnInit {
   private loader = inject(LoaderService);
   private aclEditorStore = inject(DatasetAclEditorStore);
   private validatorsService = inject(IxValidatorsService);
+  private destroyRef = inject(DestroyRef);
   data = inject<SelectPresetModalConfig>(MAT_DIALOG_DATA);
 
   form = new FormGroup({
@@ -83,7 +83,7 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    this.form.controls.usePreset.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.usePreset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.presetName.updateValueAndValidity();
     });
   }
@@ -98,7 +98,7 @@ export class SelectPresetModalComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((presets) => {
         this.presets = presets;

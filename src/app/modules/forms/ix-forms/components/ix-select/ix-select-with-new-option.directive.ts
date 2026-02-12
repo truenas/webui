@@ -1,7 +1,7 @@
 import {
-  AfterViewInit, Directive, OnInit, viewChild, inject,
+  AfterViewInit, DestroyRef, Directive, OnInit, viewChild, inject,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
@@ -14,7 +14,6 @@ import { ComponentInSlideIn, SlideInResponse } from 'app/modules/slide-ins/slide
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
-@UntilDestroy()
 @Directive()
 export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   formComponentIsWide = false;
@@ -25,6 +24,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
 
   private slideIn = inject(SlideIn);
   private translateService = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.fetchOptions().pipe(
@@ -35,7 +35,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
         ];
       }),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (options) => {
         this.options.next(options);
@@ -83,7 +83,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
         { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
         ...options,
       ])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

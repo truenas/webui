@@ -3,9 +3,11 @@ import {
   Component, computed,
   ElementRef,
   inject,
+  DestroyRef,
   input,
   OnInit, signal, Signal, viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor, NgControl,
   ReactiveFormsModule,
@@ -15,7 +17,6 @@ import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
@@ -42,7 +43,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-picker',
   templateUrl: './ix-user-picker.component.html',
@@ -81,6 +81,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   readonly provider = input.required<UserPickerProvider>();
   readonly translate = inject(TranslateService);
   readonly slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   private comboboxProviderHandler = computed(() => {
     return this.provider();
@@ -135,7 +136,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.filterChanged$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((changedValue) => {
       if (this.filterValue === changedValue) {
         return;
@@ -167,7 +168,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
         // Return empty array to show "Add New" option even on error
         return of<Option[]>([]);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((options: Option[]) => {
       // Reset error flag on successful fetch
       if (options.length > 0 || !this.hasErrorInOptions()) {
@@ -216,8 +217,8 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
         .pipe(
           debounceTime(300),
           map(() => elementRef.nativeElement.scrollTop),
+          takeUntilDestroyed(this.destroyRef),
           takeUntil(autocompleteTrigger.panelClosingActions),
-          untilDestroyed(this),
         ).subscribe(() => {
           const {
             scrollTop,
@@ -235,7 +236,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
 
           const nextPage = this.filterValue ?? '';
           this.comboboxProviderHandler()?.nextPage(nextPage)
-            .pipe(untilDestroyed(this)).subscribe((options) => {
+            .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
               this.loading.set(false);
               this.cdr.markForCheck();
               /**
@@ -399,7 +400,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
         // Close panel immediately - the selection is already set
         this.autocompleteTrigger()?.closePanel();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

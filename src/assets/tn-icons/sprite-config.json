@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=4cc71df195",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=8962f3a332",
   "icons": [
     "app-account_circle",
     "app-assignment",
@@ -81,7 +81,6 @@
     "mdi-arrow-down",
     "mdi-arrow-left",
     "mdi-arrow-right",
-    "mdi-arrow-right-thin",
     "mdi-arrow-up",
     "mdi-attachment-minus",
     "mdi-attachment-plus",

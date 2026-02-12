@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { parse } from 'date-fns';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ipmi-events-dialog',
   templateUrl: './ipmi-events-dialog.component.html',
@@ -42,6 +41,7 @@ export class IpmiEventsDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
@@ -57,7 +57,7 @@ export class IpmiEventsDialog implements OnInit {
 
   onClear(): void {
     this.isLoading.set(true);
-    this.api.job('ipmi.sel.clear').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('ipmi.sel.clear').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
           return;
@@ -84,7 +84,7 @@ export class IpmiEventsDialog implements OnInit {
 
   private loadEvents(): void {
     this.isLoading.set(true);
-    this.api.job('ipmi.sel.elist').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
           return;

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
@@ -7,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -47,7 +46,6 @@ import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manual-update-form',
   templateUrl: './manual-update-form.component.html',
@@ -80,6 +78,7 @@ export class ManualUpdateFormComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private upload = inject(UploadService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
@@ -118,18 +117,18 @@ export class ManualUpdateFormComponent implements OnInit {
         }
         this.form.controls.rebootAfterManualUpdate.setValue(userPrefs.rebootAfterManualUpdate);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(noop);
   }
 
   private getVersionNoFromSysInfo(): void {
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+    this.store$.pipe(waitForSystemInfo, takeUntilDestroyed(this.destroyRef)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
     });
   }
 
   private setPoolOptions(): void {
-    this.api.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.api.call('pool.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pools) => {
       if (!pools) {
         return;
       }
@@ -145,9 +144,9 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   private checkHaLicenseAndUpdateStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(untilDestroyed(this)).subscribe((isEnterprise) => {
+    this.store$.select(selectIsEnterprise).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isEnterprise) => {
       if (isEnterprise) {
-        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
           this.isHaLicensed = isHaLicensed;
           this.checkForUpdateRunning();
 
@@ -161,7 +160,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   private checkForUpdateRunning(): void {
     this.api.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
-      .pipe(untilDestroyed(this)).subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (jobs) => {
           if (jobs && jobs.length > 0) {
             this.showRunningUpdate(jobs[0].id);
@@ -190,7 +189,7 @@ export class ManualUpdateFormComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
@@ -232,7 +231,7 @@ export class ManualUpdateFormComponent implements OnInit {
         finalize(() => {
           this.isFormLoading.set(false);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => this.handleUpdateSuccess(),
@@ -251,7 +250,7 @@ export class ManualUpdateFormComponent implements OnInit {
         message: this.translate.instant(helptext.rebootAfterManualUpdate.manualRebootMessage),
       }).pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.window.sessionStorage.setItem('updateCompleted', 'true');
         this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
@@ -269,7 +268,7 @@ export class ManualUpdateFormComponent implements OnInit {
       hideCheckbox: true,
       buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCancel: true,
-    }).pipe(untilDestroyed(this)).subscribe();
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   private handleUpdateSuccess(): void {
@@ -290,7 +289,7 @@ export class ManualUpdateFormComponent implements OnInit {
         buttonText: this.translate.instant(helptext.continueDialogAction),
       }).pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.resumeUpdateAfterFailure();
       });
@@ -307,7 +306,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.dialogService
       .jobDialog(job$, { title: this.translate.instant(helptext.manualUpdateAction) })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.handleUpdateSuccess(),
         error: (error: unknown) => this.handleUpdateFailure(error),

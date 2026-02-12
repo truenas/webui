@@ -1,12 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
@@ -34,7 +33,6 @@ import {
   selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-sys-info-passive',
   templateUrl: './widget-sys-info-passive.component.html',
@@ -65,6 +63,7 @@ export class WidgetSysInfoPassiveComponent {
   private router = inject(Router);
   private localeService = inject(LocaleService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   size = input.required<SlotSize>();
 
@@ -119,7 +118,7 @@ export class WidgetSysInfoPassiveComponent {
       buttonText: this.translate.instant(helptextSystemFailover.failoverButton),
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
     });

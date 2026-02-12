@@ -85,7 +85,7 @@ export class ContainerRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container started'));
-        this.containersStore.selectContainer(this.container().id);
+        this.containersStore.reload();
       });
   }
 
@@ -108,7 +108,7 @@ export class ContainerRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container stopped'));
-        this.containersStore.selectContainer(this.container().id);
+        this.containersStore.reload();
       });
   }
 
@@ -134,7 +134,7 @@ export class ContainerRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container restarted'));
-        this.containersStore.selectContainer(this.container().id);
+        this.containersStore.reload();
       });
   }
 }

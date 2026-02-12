@@ -1,8 +1,8 @@
 import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -16,7 +16,6 @@ import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 import { ReportsService } from './reports.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-reports-dashboard',
   styleUrls: ['./reports-dashboard.component.scss'],
@@ -38,6 +37,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   private layoutService = inject(LayoutService);
   private reportsService = inject(ReportsService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly searchableElements = reportingElements;
 
@@ -57,7 +57,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
 
     this.reportsService.getReportGraphs()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((reports) => {
         this.allTabs = this.reportsService.getReportTabs();
         this.allReports = reports.map((report) => {

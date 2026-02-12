@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -29,7 +29,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-allowed-addresses-form',
   templateUrl: 'allowed-addresses-form.component.html',
@@ -62,6 +61,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private systemGeneralService = inject(SystemGeneralService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly helptext = helptextSystemAdvanced;
@@ -82,7 +82,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.api.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.general.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
         this.initiallyHadNoAddresses.set(config.ui_allowlist.length === 0);
         config.ui_allowlist.forEach(() => {
@@ -101,7 +101,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   }
 
   private warnWhenAddressesAreAdded(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.isLockoutWarningShown.set(this.initiallyHadNoAddresses() && Boolean(this.form.value.addresses.length));
     });
   }
@@ -136,7 +136,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       tap(() => {
         this.slideInRef.close({ response: true });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       error: (error: unknown) => {
         this.isFormLoading.set(false);

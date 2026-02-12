@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -59,7 +59,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloudsync-list',
   templateUrl: './cloudsync-list.component.html',
@@ -98,6 +97,7 @@ export class CloudSyncListComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
 
   protected readonly searchableElements = cloudSyncListElements;
@@ -196,7 +196,7 @@ export class CloudSyncListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -222,7 +222,7 @@ export class CloudSyncListComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       if (job.state === JobState.Success) {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
@@ -246,7 +246,7 @@ export class CloudSyncListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }));
@@ -271,7 +271,7 @@ export class CloudSyncListComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       if (job.state === JobState.Success) {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
@@ -284,7 +284,7 @@ export class CloudSyncListComponent implements OnInit {
   protected restore(row: CloudSyncTaskUi): void {
     this.matDialog.open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(
           this.translate.instant('Cloud Sync «{name}» has been restored.', { name: row.description }),
@@ -297,7 +297,7 @@ export class CloudSyncListComponent implements OnInit {
     if (row) {
       this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
           this.getCloudSyncTasks();
@@ -306,7 +306,7 @@ export class CloudSyncListComponent implements OnInit {
     } else {
       this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
           this.getCloudSyncTasks();
@@ -325,7 +325,7 @@ export class CloudSyncListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloudsync.delete', [row.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(
@@ -353,7 +353,7 @@ export class CloudSyncListComponent implements OnInit {
   private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
     cloudSyncTasks.forEach((transformed) => {
       if (transformed.job) {
-        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
           .subscribe((job: Job) => {
             transformed.job = { ...job };
             transformed.state = { state: job.state };

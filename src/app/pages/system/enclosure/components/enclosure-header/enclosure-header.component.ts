@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -12,7 +12,6 @@ import {
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-header',
   templateUrl: './enclosure-header.component.html',
@@ -28,6 +27,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 export class EnclosureHeaderComponent {
   private enclosureStore = inject(EnclosureStore);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   readonly title = input.required<string>();
 
@@ -47,7 +47,7 @@ export class EnclosureHeaderComponent {
 
     this.matDialog.open(SetEnclosureLabelDialog, { data: dialogConfig })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newLabel: string) => {
         if (!newLabel) {
           return;

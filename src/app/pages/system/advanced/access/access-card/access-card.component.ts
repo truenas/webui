@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
@@ -48,7 +47,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-access-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -86,6 +84,7 @@ export class AccessCardComponent implements OnInit {
   private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
@@ -143,7 +142,7 @@ export class AccessCardComponent implements OnInit {
 
   ngOnInit(): void {
     const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);
     this.updateSessions();
@@ -160,7 +159,7 @@ export class AccessCardComponent implements OnInit {
       tap(() => {
         this.updateSessions();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -172,7 +171,7 @@ export class AccessCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => this.terminateSession(id),
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
@@ -187,7 +186,7 @@ export class AccessCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => this.terminateOtherSessions(),
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
@@ -198,7 +197,7 @@ export class AccessCardComponent implements OnInit {
     this.api.call('auth.terminate_other_sessions').pipe(
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.updateSessions();
     });
@@ -222,7 +221,7 @@ export class AccessCardComponent implements OnInit {
     this.api.call('auth.terminate_session', [sessionId]).pipe(
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.updateSessions();
     });

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -15,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-data-protection-card',
   templateUrl: './data-protection-card.component.html',
@@ -38,6 +37,7 @@ export class DataProtectionCardComponent {
   private slideIn = inject(SlideIn);
   private snackbarService = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -77,7 +77,7 @@ export class DataProtectionCardComponent {
   addSnapshot(): void {
     this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
     });

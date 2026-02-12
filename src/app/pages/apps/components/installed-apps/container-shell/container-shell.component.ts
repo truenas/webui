@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   combineLatest, Observable, Subject, Subscriber,
 } from 'rxjs';
 import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
@@ -18,6 +19,7 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
 })
 export class ContainerShellComponent implements TerminalConfiguration {
   private aroute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   reconnectShell$ = new Subject<void>();
 
@@ -39,7 +41,7 @@ export class ContainerShellComponent implements TerminalConfiguration {
       }
 
       combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(([params, parentParams]: [Record<string, unknown>, Record<string, unknown>]) => {
         this.appName = parentParams.appId as string;
         this.containerId = params.containerId as string;

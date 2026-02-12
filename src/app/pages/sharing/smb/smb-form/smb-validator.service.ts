@@ -3,7 +3,6 @@ import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
@@ -11,7 +10,6 @@ import {
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })

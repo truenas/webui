@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, EMPTY, switchMap } from 'rxjs';
@@ -23,7 +22,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-export-button',
   templateUrl: './export-button.component.html',
@@ -42,6 +40,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   readonly jobMethod = input.required<M>();
   readonly searchQuery = input<SearchQuery<T>>();
@@ -100,7 +99,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.isLoading = false;
       this.cdr.markForCheck();

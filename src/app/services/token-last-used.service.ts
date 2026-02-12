@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
   debounceTime,
@@ -10,13 +10,13 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class TokenLastUsedService {
   private wsHandler = inject(WebSocketHandlerService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   private tokenLastUsed$ = new BehaviorSubject<string | null>(this.window.localStorage.getItem('tokenLastUsed'));
   private readonly defaultLifetimeSeconds = 300; // 5 minutes default
@@ -55,7 +55,7 @@ export class TokenLastUsedService {
       tapOnce(() => this.updateTokenLastUsed()),
       switchMap(() => this.wsHandler.responses$.pipe(debounceTime(5000))),
       tap(() => this.updateTokenLastUsed()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

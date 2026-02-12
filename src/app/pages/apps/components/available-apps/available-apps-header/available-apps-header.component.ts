@@ -1,9 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -29,7 +31,6 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-available-apps-header',
   templateUrl: './available-apps-header.component.html',
@@ -61,6 +62,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   protected appsFilterStore = inject(AppsFilterStore);
   protected installedAppsStore = inject(InstalledAppsStore);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
@@ -96,11 +98,11 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((searchQuery) => {
       this.appsFilterStore.applySearchQuery(searchQuery || '');
     });
-    this.appsFilterStore.filterValues$.pipe(take(1), untilDestroyed(this)).subscribe({
+    this.appsFilterStore.filterValues$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (filterValues) => {
         if (filterValues.categories?.length) {
           this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
@@ -110,20 +112,20 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
         }
       },
     });
-    this.isFilterApplied$.pipe(untilDestroyed(this)).subscribe({
+    this.isFilterApplied$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (isFilterApplied) => {
         this.showFilters = this.showFilters || isFilterApplied;
         this.cdr.markForCheck();
       },
     });
-    this.appsFilterStore.searchQuery$.pipe(take(1), untilDestroyed(this)).subscribe({
+    this.appsFilterStore.searchQuery$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
       },
     });
     this.applicationsStore.isLoading$.pipe(
       filter((value) => !value),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.areLoaded$.next(true);
     });
@@ -133,7 +135,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     this.form.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.applyFilters();
     });
@@ -150,7 +152,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.applicationsStore.initialize();

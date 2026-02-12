@@ -1,12 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
@@ -61,10 +64,10 @@ import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rat
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { extractAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-wizard',
   templateUrl: './app-wizard.component.html',
@@ -102,6 +105,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private matDialog = inject(MatDialog);
   private unsavedChangesService = inject(UnsavedChangesService);
+  private destroyRef = inject(DestroyRef);
 
   appId: string;
   train: string;
@@ -181,7 +185,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     nextElement.classList.add('highlighted');
 
     timer(999)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => nextElement.classList.remove('highlighted'));
   }
 
@@ -194,7 +198,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.appService
       .getCatalogAppDetails(this.appId, this.train)
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (app) => {
           this.setAppForCreation({
@@ -230,7 +234,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     if (path) {
       // eslint-disable-next-line no-restricted-syntax
       const formField = this.form.get(path) as CustomUntypedFormField;
-      formField?.hidden$?.pipe(take(1), untilDestroyed(this)).subscribe((hidden) => {
+      formField?.hidden$?.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe((hidden) => {
         if (hidden) {
           deleteField$.next(path);
         }
@@ -252,7 +256,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
 
     const deleteField$ = new Subject<string>();
-    deleteField$.pipe(untilDestroyed(this)).subscribe({
+    deleteField$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (fieldToBeDeleted) => {
         const keys = fieldToBeDeleted.split('.');
         unset(data, keys);
@@ -295,7 +299,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.onSuccess());
   }
@@ -310,7 +314,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.activatedRoute.parent.params
       .pipe(
         filter((params: AppDetailsRouteParams) => !!params.appId && !!params.train),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ train, appId }) => {
         this.appId = appId;
@@ -333,7 +337,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.appService
       .getApp(this.appId)
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (releases) => {
           this.setAppForEdit(releases[0]);
@@ -393,7 +397,15 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           type: DynamicFormSchemaType.Select,
           title: helptextApps.appWizard.nameGroup.version,
           required: true,
-          options: of(versionKeys.map((version) => ({ value: version, label: version }))),
+          tooltip: T('Version shows the upstream application version. Revision shows the TrueNAS catalog revision.'),
+          options: of(versionKeys.map((version) => {
+            const versionInfo = this.catalogApp.versions[version];
+            const appVersion = extractAppVersion(versionInfo.human_version, version);
+            return {
+              value: version,
+              label: `Version: ${appVersion} / Revision: ${version}`,
+            };
+          })),
           hidden: hideVersion,
         },
       ],
@@ -431,7 +443,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           this.form.controls.release_name.markAsTouched();
           this.cdr.markForCheck();
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe();
     }
 
@@ -539,7 +551,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private checkIfPoolIsSet(): void {
     this.dockerStore.selectedPool$.pipe(
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (pool) => {
         if (!pool) {
@@ -553,7 +565,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     this.searchControl.valueChanges.pipe(
       debounceTime(100),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
       const option = this.searchOptions.find((opt) => opt.value === value)
         || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
@@ -570,14 +582,16 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   private listenForVersionChanges(): void {
-    this.form.controls.version?.valueChanges.pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
-      this.catalogApp = { ...this.catalogApp, schema: this.catalogApp.versions[version].schema };
-      this.buildDynamicForm(this.catalogApp.schema);
-    });
+    this.form.controls.version?.valueChanges
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .subscribe((version) => {
+        this.catalogApp = { ...this.catalogApp, schema: this.catalogApp.versions[version].schema };
+        this.buildDynamicForm(this.catalogApp.schema);
+      });
   }
 
   private getDockerHubRateLimitInfo(): void {
-    this.api.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
+    this.api.call('app.image.dockerhub_rate_limit').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((info) => {
       if (Number(info.remaining_pull_limit) < 5) {
         this.matDialog.open(DockerHubRateInfoDialog, {
           data: info,

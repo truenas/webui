@@ -1,7 +1,7 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, tap } from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -21,7 +21,6 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-vdevs',
   templateUrl: './add-vdevs.component.html',
@@ -50,6 +49,7 @@ export class AddVdevsComponent implements OnInit {
   private addVdevsStore = inject(AddVdevsStore);
   private activatedRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   protected hasConfigurationPreview = true;
   protected existingPool: Pool | null = null;
@@ -62,12 +62,12 @@ export class AddVdevsComponent implements OnInit {
       tap((params) => {
         this.addVdevsStore.loadPoolData(+params.poolId);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
     combineLatest([
       this.addVdevsStore.pool$.pipe(filter(Boolean)),
       this.addVdevsStore.poolDisks$.pipe(filter((disks) => !!disks.length)),
-    ]).pipe(untilDestroyed(this)).subscribe({
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([pool, poolDisks]) => {
         this.existingPool = pool;
         this.poolDisks = poolDisks;

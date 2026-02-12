@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
@@ -39,7 +39,6 @@ import {
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-init-shutdown-card',
   templateUrl: './init-shutdown-card.component.html',
@@ -72,6 +71,7 @@ export class InitShutdownCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShutdownCardElements;
@@ -130,7 +130,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   private loadScripts(): void {
     if (!this.dataProvider) {
-      const scripts$ = this.api.call('initshutdownscript.query').pipe(untilDestroyed(this));
+      const scripts$ = this.api.call('initshutdownscript.query').pipe(takeUntilDestroyed(this.destroyRef));
       this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
     }
     this.dataProvider.load();
@@ -150,7 +150,7 @@ export class InitShutdownCardComponent implements OnInit {
         switchMap(() => this.api.call('initshutdownscript.delete', [row.id])),
         filter(Boolean),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Script deleted.'));
@@ -167,7 +167,7 @@ export class InitShutdownCardComponent implements OnInit {
       switchMap(() => this.slideIn.open(InitShutdownFormComponent, { data: row })),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

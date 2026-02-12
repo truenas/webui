@@ -1,11 +1,13 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   Router, NavigationSkipped,
   RouterLink,
 } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -23,7 +25,6 @@ import { CustomAppButtonComponent } from 'app/pages/apps/components/available-ap
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-available-apps',
   templateUrl: './available-apps.component.html',
@@ -49,6 +50,7 @@ export class AvailableAppsComponent implements OnInit {
   protected router = inject(Router);
   protected applicationsStore = inject(AppsStore);
   protected appsFilterStore = inject(AppsFilterStore);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = availableAppsElements;
 
@@ -74,7 +76,7 @@ export class AvailableAppsComponent implements OnInit {
     // For clicking the breadcrumbs link to this page
     this.router.events.pipe(
       filter((event) => event instanceof NavigationSkipped),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       if (this.router.url.endsWith('/apps/available')) {
         this.appsFilterStore.resetFilters();

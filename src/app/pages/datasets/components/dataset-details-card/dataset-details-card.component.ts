@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -6,7 +7,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -30,7 +30,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-details-card',
   templateUrl: './dataset-details-card.component.html',
@@ -61,6 +60,7 @@ export class DatasetDetailsCardComponent {
   private router = inject(Router);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -107,7 +107,7 @@ export class DatasetDetailsCardComponent {
           this.datasetStore.datasetUpdated();
           return this.datasetStore.selectedParentDataset$.pipe(first());
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((parent) => {
         this.router.navigate(['/datasets', parent?.id]);
@@ -116,7 +116,7 @@ export class DatasetDetailsCardComponent {
 
   promoteDataset(): void {
     this.api.call('pool.dataset.promote', [this.dataset().id])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
         this.datasetStore.datasetUpdated();
@@ -128,7 +128,7 @@ export class DatasetDetailsCardComponent {
       wide: true, data: { datasetId: this.dataset().id, isNew: false },
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
@@ -137,7 +137,7 @@ export class DatasetDetailsCardComponent {
       data: { isNew: false, parentOrZvolId: this.dataset().id },
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ response }) => {
       this.snackbar.success(
         this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),

@@ -1,7 +1,6 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +9,6 @@ import { LinkState } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-interface-status-icon',
   templateUrl: './interface-status-icon.component.html',

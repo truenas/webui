@@ -8,11 +8,11 @@ jest.mock('date-fns', () => ({
 describe('formatDistanceToNowShortened', () => {
   it('shortens minutes', () => {
     (formatDistanceToNow as jest.Mock).mockReturnValue('about 2 minutes ago');
-    expect(formatDistanceToNowShortened(new Date())).toBe('2 min. ago');
+    expect(formatDistanceToNowShortened(new Date())).toBe('about 2 min. ago');
   });
 
   it('shortens seconds', () => {
     (formatDistanceToNow as jest.Mock).mockReturnValue('about 5 seconds ago');
-    expect(formatDistanceToNowShortened(new Date())).toBe('5 sec. ago');
+    expect(formatDistanceToNowShortened(new Date())).toBe('about 5 sec. ago');
   });
 });

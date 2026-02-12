@@ -1,12 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatFormField, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { Navigation, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -40,7 +39,6 @@ import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-network',
   templateUrl: './network.component.html',
@@ -85,6 +83,7 @@ export class NetworkComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private networkService = inject(NetworkService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = networkElements;
 
@@ -115,7 +114,7 @@ export class NetworkComponent implements OnInit {
   ngOnInit(): void {
     this.loadCheckinStatus();
 
-    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
+    this.actions$.pipe(ofType(networkInterfacesChanged), takeUntilDestroyed(this.destroyRef))
       .subscribe(({ checkIn }) => {
         if (!checkIn) {
           return;
@@ -136,7 +135,7 @@ export class NetworkComponent implements OnInit {
   protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.interfacesStore.loadInterfaces();
       this.loadCheckinStatusAfterChange();
@@ -232,7 +231,7 @@ export class NetworkComponent implements OnInit {
       .call('interface.services_restarted_on_sync')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((services) => {
         if (services.length > 0) {
@@ -264,7 +263,7 @@ export class NetworkComponent implements OnInit {
             hideCheckbox: false,
             buttonText: this.translate.instant(helptextInterfaces.commitButton),
           })
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((confirm: boolean) => {
             if (!confirm) {
               return;
@@ -276,7 +275,7 @@ export class NetworkComponent implements OnInit {
                 this.loader.withLoader(),
                 this.errorHandler.withErrorHandler(),
                 switchMap(() => this.getCheckInWaitingSeconds()),
-                untilDestroyed(this),
+                takeUntilDestroyed(this.destroyRef),
               )
               .subscribe((checkInSeconds) => {
                 this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
@@ -300,7 +299,7 @@ export class NetworkComponent implements OnInit {
           hideCheckbox: true,
           buttonText: this.translate.instant(helptextInterfaces.servicesRestarted.button),
         })
-        .pipe(filter(Boolean), untilDestroyed(this))
+        .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           this.finishCheckin();
         });
@@ -312,7 +311,7 @@ export class NetworkComponent implements OnInit {
           hideCheckbox: true,
           buttonText: this.translate.instant(helptextInterfaces.checkinButton),
         })
-        .pipe(filter(Boolean), untilDestroyed(this))
+        .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           this.finishCheckin();
         });
@@ -325,7 +324,7 @@ export class NetworkComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
@@ -349,7 +348,7 @@ export class NetworkComponent implements OnInit {
         hideCheckbox: false,
         buttonText: this.translate.instant(helptextInterfaces.revertChangesButton),
       })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirm: boolean) => {
         if (!confirm) {
           return;
@@ -360,7 +359,7 @@ export class NetworkComponent implements OnInit {
           .pipe(
             this.loader.withLoader(),
             this.errorHandler.withErrorHandler(),
-            untilDestroyed(this),
+            takeUntilDestroyed(this.destroyRef),
           )
           .subscribe(() => {
             this.store$.dispatch(networkInterfacesChanged({ commit: false }));
@@ -389,7 +388,7 @@ export class NetworkComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((interfaces) => {
         if (!interfaces[0]) {

@@ -1,11 +1,11 @@
 import {
   NgStyle, NgClass, NgTemplateOutlet, AsyncPipe,
 } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, contentChildren, contentChild, TemplateRef, output, input, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, contentChildren, contentChild, DestroyRef, TemplateRef, output, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -16,7 +16,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-table-body, tbody[ix-table-body]',
   templateUrl: './ix-table-body.component.html',
@@ -39,6 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly columns = input<Column<T, ColumnComponent<T>>[]>([]);
   readonly dataProvider = input.required<DataProvider<T>>();
@@ -70,7 +70,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
       }
     });
 
-    this.dataProvider().currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider().currentPage$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.cdr.detectChanges();
       this.cdr.markForCheck();
     });

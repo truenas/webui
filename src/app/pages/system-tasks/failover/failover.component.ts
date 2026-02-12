@@ -1,9 +1,9 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -17,7 +17,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-failover',
   templateUrl: './failover.component.html',
@@ -42,10 +41,11 @@ export class FailoverComponent implements OnInit {
   private location = inject(Location);
   private store$ = inject<Store<AlertSlice>>(Store);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
 
   isWsConnected(): void {
-    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe({
+    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();
@@ -68,10 +68,10 @@ export class FailoverComponent implements OnInit {
     this.wsStatus.setFailoverStatus(true);
 
     this.matDialog.closeAll();
-    this.api.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('failover.become_passive').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (error: unknown) => { // error on restart
         this.errorHandler.showErrorModal(error)
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             this.router.navigate(['/signin']);
           });

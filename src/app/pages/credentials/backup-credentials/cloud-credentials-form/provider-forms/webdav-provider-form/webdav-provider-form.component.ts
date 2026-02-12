@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -11,7 +11,6 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-webdav-provider-form',
   templateUrl: './webdav-provider-form.component.html',
@@ -29,6 +28,7 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     url: ['', Validators.required],
@@ -57,7 +57,7 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
   ]);
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });

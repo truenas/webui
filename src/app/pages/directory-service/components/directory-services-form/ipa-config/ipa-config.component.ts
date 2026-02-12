@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, output, OnInit, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, output, OnInit, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextIpa } from 'app/helptext/directory-service/ipa';
@@ -16,7 +15,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 import { hasDeepNonNullValue } from 'app/pages/directory-service/components/directory-services-form/utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ipa-config',
   templateUrl: './ipa-config.component.html',
@@ -33,6 +31,7 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
 export class IpaConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private validationService = inject(DirectoryServiceValidationService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly helptext = helptextIpa;
 
@@ -138,7 +137,7 @@ export class IpaConfigComponent implements OnInit {
 
   private watchForFormChanges(): void {
     this.form.controls.use_default_smb_domain.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (useDefaultSmbDomain) => {
         if (useDefaultSmbDomain) {
@@ -167,7 +166,7 @@ export class IpaConfigComponent implements OnInit {
       },
     });
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.isValid.emit(this.form.valid);
         this.configurationChanged.emit(this.buildIpaConfig());

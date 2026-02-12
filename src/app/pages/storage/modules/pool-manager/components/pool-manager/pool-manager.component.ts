@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, signal, ViewChild, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
@@ -16,7 +15,6 @@ import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-pool-manager',
   templateUrl: './pool-manager.component.html',

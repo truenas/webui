@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-service-snmp',
   templateUrl: './service-snmp.component.html',
@@ -56,6 +55,7 @@ export class ServiceSnmpComponent implements OnInit {
   private validation = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -128,7 +128,7 @@ export class ServiceSnmpComponent implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
@@ -143,7 +143,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   private loadCurrentSettings(): void {
     this.isFormLoading.set(true);
-    this.api.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
         this.isFormLoading.set(false);
         this.form.patchValue(config);

@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
@@ -16,7 +16,7 @@ export class CriticalGpuPreventionService {
 
   setupCriticalGpuPrevention(
     control: AbstractControl<string[]>,
-    component: object, // Component with untilDestroyed
+    destroyRef: DestroyRef,
     dialogTitle: string,
     defaultMessage: string,
     gpuPciChoices$?: Observable<GpuPciChoices>,
@@ -28,7 +28,7 @@ export class CriticalGpuPreventionService {
 
     // Load critical GPUs information
     choices$.pipe(
-      untilDestroyed(component),
+      takeUntilDestroyed(destroyRef),
     ).subscribe((choices) => {
       criticalGpus.clear();
       Object.entries(choices).forEach(([, choice]) => {
@@ -40,7 +40,7 @@ export class CriticalGpuPreventionService {
 
     // Prevent selection of critical GPUs
     control.valueChanges
-      .pipe(untilDestroyed(component))
+      .pipe(takeUntilDestroyed(destroyRef))
       .subscribe((selectedIds) => {
         if (!selectedIds || selectedIds.length === 0) {
           return;

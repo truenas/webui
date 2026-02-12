@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -17,7 +17,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-email-card',
   styleUrls: ['./../../common-settings-card.scss'],
@@ -39,6 +38,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 export class EmailCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextSystemEmail;
   protected readonly searchableElements = emailCardElements;
@@ -58,7 +58,7 @@ export class EmailCardComponent implements OnInit {
     this.api.call('mail.config')
       .pipe(
         toLoadingState(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((state) => this.emailConfigState.set(state));
   }
@@ -66,7 +66,7 @@ export class EmailCardComponent implements OnInit {
   protected openEmailSettings(): void {
     this.slideIn.open(EmailFormComponent, { data: this.emailConfigState().value }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadEmailConfig());
   }
 }

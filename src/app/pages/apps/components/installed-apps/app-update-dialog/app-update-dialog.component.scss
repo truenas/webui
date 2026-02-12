@@ -7,7 +7,9 @@
   overflow: auto;
 
   .mat-mdc-form-field {
+    flex: 1;
     margin: 0 0 0 10px;
+    min-width: 0;
     width: unset !important;
   }
 }
@@ -42,8 +44,9 @@
 .resource {
   align-items: center;
   display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
   padding: 5px 0;
-  white-space: nowrap;
   width: 100%;
 }
 
@@ -80,7 +83,6 @@
   background: var(--bg2);
   border-radius: 4px;
   margin: 16px 0;
-  padding: 12px 16px;
 
   .version-row {
     align-items: center;

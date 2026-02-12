@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,7 +13,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DeleteUserDialog } from 'app/pages/credentials/users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-detail-header',
   templateUrl: './user-detail-header.component.html',
@@ -31,6 +29,7 @@ export class UserDetailHeaderComponent {
   private authService = inject(AuthService);
   private slideIn = inject(SlideIn);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   user = input.required<User>();
 
@@ -45,7 +44,7 @@ export class UserDetailHeaderComponent {
     this.matDialog
       .open(DeleteUserDialog, { data: this.user() })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 }

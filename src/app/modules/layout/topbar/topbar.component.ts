@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, computed, OnInit, signal, inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton, MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -11,9 +11,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { ɵɵRouterLink } from '@angular/router/testing';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -52,7 +52,6 @@ import { selectHasConsoleFooter } from 'app/store/system-config/system-config.se
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-topbar',
   templateUrl: './topbar.component.html',
@@ -92,6 +91,7 @@ export class TopbarComponent implements OnInit {
   private apiService = inject<ApiService>(ApiService);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private domSanitizer = inject(DomSanitizer);
+  private destroyRef = inject(DestroyRef);
 
   updateIsDone: Subscription;
 
@@ -131,7 +131,7 @@ export class TopbarComponent implements OnInit {
   });
 
   constructor() {
-    this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
+    this.systemGeneralService.updateRunningNoticeSent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateNotificationSent = true;
       this.cdr.markForCheck();
     });
@@ -139,7 +139,7 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.isEnterprise()) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         this.cdr.markForCheck();
       });
@@ -162,7 +162,7 @@ export class TopbarComponent implements OnInit {
     //   this.domSanitizer.bypassSecurityTrustResourceUrl('assets/images/logo.svg'),
     // );
 
-    this.store$.select(selectUpdateJobs).pipe(untilDestroyed(this)).subscribe((jobs) => {
+    this.store$.select(selectUpdateJobs).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((jobs) => {
       const job = jobs[0];
       if (!job) {
         this.updateIsRunning = false;
@@ -179,7 +179,9 @@ export class TopbarComponent implements OnInit {
 
       // When update starts on HA system, listen for 'finish', then quit listening
       if (this.isHaLicensed) {
-        this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe(() => {
           this.updateIsRunning = false;
           this.updateIsDone.unsubscribe();
         });
@@ -251,7 +253,7 @@ export class TopbarComponent implements OnInit {
   }
 
   showRebootInfoDialog(): void {
-    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe(() => {
+    this.checkRebootInfo().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.shownDialog.set(false);
     });
   }

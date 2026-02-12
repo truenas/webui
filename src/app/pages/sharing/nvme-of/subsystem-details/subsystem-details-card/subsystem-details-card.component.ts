@@ -1,11 +1,11 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnChanges, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -27,7 +27,6 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details-card/subsystem-details-card.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-subsystem-details-card',
   templateUrl: './subsystem-details-card.component.html',
@@ -61,6 +60,7 @@ export class SubsystemDetailsCardComponent implements OnChanges {
   private nvmeOfService = inject(NvmeOfService);
   private clipboard = inject(Clipboard);
   private auth = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   subsystem = input.required<NvmeOfSubsystemDetails>();
   readonly nameUpdated = output<string>();
@@ -103,7 +103,7 @@ export class SubsystemDetailsCardComponent implements OnChanges {
     this.nvmeOfService.updateSubsystem(this.subsystem(), update)
       .pipe(
         finalize(() => this.isSaving.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (updated) => {
