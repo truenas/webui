@@ -13,7 +13,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router, NavigationEnd } from '@angular/router';
 import { ɵɵRouterLink } from '@angular/router/testing';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -152,7 +151,7 @@ export class TopbarComponent implements OnInit {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((url) => {
       this.updatePageTitle(url);
     });

@@ -1,7 +1,7 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, DestroyRef, Component, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TnIconComponent } from '@truenas/ui-components';
 import { take } from 'rxjs';
@@ -11,7 +11,6 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 import { appBarOpened } from 'app/store/app-bar/app-bar.actions';
 import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-bar',
   templateUrl: './app-bar.component.html',
@@ -21,6 +20,7 @@ import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
 export class AppBarComponent implements OnInit {
   private store = inject(Store);
   private navService = inject(NavigationService);
+  private destroyRef = inject(DestroyRef);
 
   readonly appBarState$ = this.store.select(selectAppBarState);
   private router = inject(Router);
@@ -31,7 +31,7 @@ export class AppBarComponent implements OnInit {
 
     this.appBarState$.pipe(
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((items) => {
       const hasMatchingOpenItem = items.some((item) => {
         const itemPath = item.state.split('/').find(Boolean);
