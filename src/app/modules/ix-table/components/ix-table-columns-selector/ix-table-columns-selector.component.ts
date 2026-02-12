@@ -91,6 +91,10 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
       this.columns().forEach((column) => {
         if (column instanceof IxCellActionsComponent || column instanceof IxCellActionsWithMenuComponent) return;
 
+        // Skip columns without a title - they're not user-selectable
+        // and should keep their default visibility
+        if (!column.title) return;
+
         column.hidden = !displayedColumns.columns.includes(column.title);
 
         if (column.hidden) {
