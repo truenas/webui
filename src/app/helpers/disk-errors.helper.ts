@@ -10,6 +10,10 @@ type CountableDisks = PoolTopology | VDevItem[];
  * @returns a `VDevItem[]` with all children of all items concatenated.
  */
 export function flattenDiskTopology(topo: CountableDisks): VDevItem[] {
+  if (!topo) {
+    return [];
+  }
+
   const allDisks: VDevItem[] = Object.values(topo).flat();
 
   /**
