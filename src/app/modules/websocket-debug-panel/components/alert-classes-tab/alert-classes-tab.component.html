@@ -1,0 +1,96 @@
+<div class="alert-classes-tab">
+  <div class="enable-section">
+    <mat-checkbox
+      [checked]="autoCheck()"
+      (change)="onAutoCheckChange($event.checked)"
+    >
+      {{ 'Auto-check alert class sync on open' | translate }}
+    </mat-checkbox>
+  </div>
+
+  <div class="actions">
+    <button
+      mat-button
+      color="primary"
+      [disabled]="loading() || !isAuthenticated()"
+      (click)="runComparison()"
+    >
+      {{ loading() ? ('Checking...' | translate) : ('Check Now' | translate) }}
+    </button>
+    @if (lastCheckedFormatted()) {
+      <span class="last-checked">
+        {{ 'Last checked:' | translate }} {{ lastCheckedFormatted() }}
+      </span>
+    }
+  </div>
+
+  @if (!isAuthenticated()) {
+    <div class="not-authenticated">
+      {{ 'Waiting for authentication to check alert classes...' | translate }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-message">{{ error() }}</div>
+  }
+
+  @if (lastCheckedFormatted()) {
+    @if (missingFromEnum().length === 0 && missingEnhancement().length === 0 && staleInUi().length === 0) {
+      <div class="sync-ok">
+        {{ 'All alert classes are in sync between UI and backend.' | translate }}
+      </div>
+    }
+
+    @if (missingFromEnum().length > 0) {
+      <div class="section error">
+        <h3>{{ 'Missing from Enum' | translate }} ({{ missingFromEnum().length }})</h3>
+        <p class="section-description">
+          {{ 'These alert classes exist in the backend but are not defined in AlertClassName enum. They need to be added to the enum and the enhancement registry.' | translate }}
+        </p>
+        <div class="class-list">
+          @for (item of missingFromEnum(); track item.id) {
+            <div class="class-item">
+              <span class="class-id">{{ item.id }}</span>
+              <span class="class-title">{{ item.title }}</span>
+              <span class="class-category">{{ item.category }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (missingEnhancement().length > 0) {
+      <div class="section warning">
+        <h3>{{ 'Missing Enhancement' | translate }} ({{ missingEnhancement().length }})</h3>
+        <p class="section-description">
+          {{ 'These alert classes are in the AlertClassName enum but have no entry in the smartAlertRegistry.byClass enhancement registry.' | translate }}
+        </p>
+        <div class="class-list">
+          @for (item of missingEnhancement(); track item.id) {
+            <div class="class-item">
+              <span class="class-id">{{ item.id }}</span>
+              <span class="class-title">{{ item.title }}</span>
+              <span class="class-category">{{ item.category }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (staleInUi().length > 0) {
+      <div class="section stale">
+        <h3>{{ 'Stale in UI' | translate }} ({{ staleInUi().length }})</h3>
+        <p class="section-description">
+          {{ 'These alert classes are defined in AlertClassName enum but no longer exist in the backend.' | translate }}
+        </p>
+        <div class="class-list">
+          @for (item of staleInUi(); track item) {
+            <div class="class-item">
+              <span class="class-id">{{ item }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

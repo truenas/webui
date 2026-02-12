@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
+import { AlertClassesTabComponent } from './components/alert-classes-tab/alert-classes-tab.component';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
@@ -37,6 +38,7 @@ const retryIntervalMs = 100;
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
     EnclosureMockTabComponent,
+    AlertClassesTabComponent,
   ],
   providers: [],
   templateUrl: './websocket-debug-panel.component.html',
@@ -65,6 +67,9 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       }
       if (tab === 'enclosure-mock') {
         return 2;
+      }
+      if (tab === 'alert-classes') {
+        return 3;
       }
       return 0;
     }),
@@ -156,11 +161,13 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number): void {
-    let tab: 'websocket' | 'mock-configurations' | 'enclosure-mock' = 'websocket';
+    let tab: 'websocket' | 'mock-configurations' | 'enclosure-mock' | 'alert-classes' = 'websocket';
     if (index === 1) {
       tab = 'mock-configurations';
     } else if (index === 2) {
       tab = 'enclosure-mock';
+    } else if (index === 3) {
+      tab = 'alert-classes';
     }
     this.store$.dispatch(WebSocketDebugActions.setActiveTab({ tab }));
   }
