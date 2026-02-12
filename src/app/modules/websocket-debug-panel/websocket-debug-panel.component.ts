@@ -5,6 +5,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
@@ -39,6 +40,7 @@ const retryIntervalMs = 100;
     MockConfigurationsTabComponent,
     EnclosureMockTabComponent,
     AlertClassesTabComponent,
+    TranslateModule,
   ],
   providers: [],
   templateUrl: './websocket-debug-panel.component.html',
