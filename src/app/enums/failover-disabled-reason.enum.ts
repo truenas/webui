@@ -23,12 +23,16 @@ export enum FailoverDisabledReason {
   RemoteFipsRebootRequired = 'REM_FIPS_REBOOT_REQ',
   LocalDatasetMigrationInProgress = 'LOC_SYSTEM_DATASET_MIGRATION_IN_PROGRESS',
   RemoteDatasetMigrationInProgress = 'REM_SYSTEM_DATASET_MIGRATION_IN_PROGRESS',
+  LocalGposStigRebootRequired = 'LOC_GPOSSTIG_REBOOT_REQ',
+  RemoteGposStigRebootRequired = 'REM_GPOSSTIG_REBOOT_REQ',
 }
 
 export const failoverAllowedReasons = [
   FailoverDisabledReason.MismatchVersions,
   FailoverDisabledReason.LocalFipsRebootRequired,
   FailoverDisabledReason.RemoteFipsRebootRequired,
+  FailoverDisabledReason.LocalGposStigRebootRequired,
+  FailoverDisabledReason.RemoteGposStigRebootRequired,
 ];
 
 export const failoverDisabledReasonLabels = new Map<FailoverDisabledReason, string>([
@@ -54,4 +58,6 @@ export const failoverDisabledReasonLabels = new Map<FailoverDisabledReason, stri
   [FailoverDisabledReason.RemoteFipsRebootRequired, T('Reboot of the other node is required for FIPS changes.')],
   [FailoverDisabledReason.LocalDatasetMigrationInProgress, T('This node is currently configuring the system dataset.')],
   [FailoverDisabledReason.RemoteDatasetMigrationInProgress, T('Other node is currently configuring the system dataset.')],
+  [FailoverDisabledReason.LocalGposStigRebootRequired, T('Reboot of this node is required for GPOS STIG changes.')],
+  [FailoverDisabledReason.RemoteGposStigRebootRequired, T('Reboot of the other node is required for GPOS STIG changes.')],
 ]);
