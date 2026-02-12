@@ -256,7 +256,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
     this.filterChanged$.next(changedValue);
 
-    if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
+    const isNewCustomValue = changedValue && !this.options.some((option: Option) => option.value === changedValue);
+    if (this.allowCustomValue() && isNewCustomValue) {
       this.onChange(changedValue);
     }
   }
