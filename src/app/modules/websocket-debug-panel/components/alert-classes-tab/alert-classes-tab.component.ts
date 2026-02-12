@@ -34,14 +34,14 @@ export class AlertClassesTabComponent {
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
-  autoCheck = signal(true);
-  isAuthenticated = toSignal(inject(WebSocketStatusService).isAuthenticated$, { initialValue: false });
-  loading = signal(false);
-  error = signal<string | null>(null);
-  missingFromEnum = signal<AlertClassInfo[]>([]);
-  missingEnhancement = signal<AlertClassInfo[]>([]);
-  staleInUi = signal<string[]>([]);
-  lastCheckedFormatted = signal<string | null>(null);
+  protected autoCheck = signal(true);
+  protected isAuthenticated = toSignal(inject(WebSocketStatusService).isAuthenticated$, { initialValue: false });
+  protected loading = signal(false);
+  protected error = signal<string | null>(null);
+  protected missingFromEnum = signal<AlertClassInfo[]>([]);
+  protected missingEnhancement = signal<AlertClassInfo[]>([]);
+  protected staleInUi = signal<string[]>([]);
+  protected lastCheckedFormatted = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -51,11 +51,11 @@ export class AlertClassesTabComponent {
     });
   }
 
-  onAutoCheckChange(checked: boolean): void {
+  protected onAutoCheckChange(checked: boolean): void {
     this.autoCheck.set(checked);
   }
 
-  runComparison(): void {
+  protected runComparison(): void {
     this.loading.set(true);
     this.error.set(null);
 

@@ -31,7 +31,7 @@
   }
 
   @if (error()) {
-    <div class="error-message">{{ error() }}</div>
+    <div class="error-message" aria-live="polite">{{ error() }}</div>
   }
 
   @if (lastCheckedFormatted()) {
