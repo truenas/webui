@@ -3,7 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -20,6 +22,7 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
     TestDirective,
     MatAnchor,
     UiSearchDirective,
+    RequiresRolesDirective,
   ],
 })
 export class AllUsersHeaderComponent {
@@ -27,6 +30,7 @@ export class AllUsersHeaderComponent {
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = allUsersHeaderElements;
+  protected readonly requiredRoles = [Role.AccountWrite];
   userCreated = output<User>();
 
   protected doAdd(): void {
