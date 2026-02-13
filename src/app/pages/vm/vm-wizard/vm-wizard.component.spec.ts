@@ -114,10 +114,6 @@ describe('VmWizardComponent', () => {
         }),
       ]),
       mockProvider(GpuService, {
-        getGpuOptions: () => of([
-          { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
-          { label: 'GeForce GTX 1070 [0000:02:00.0]', value: '0000:02:00.0' },
-        ]),
         getRawGpuPciChoices: () => of({
           'GeForce GTX 1080 [0000:03:00.0]': {
             pci_slot: '0000:03:00.0',
@@ -130,6 +126,9 @@ describe('VmWizardComponent', () => {
             critical_reason: '',
           },
         }),
+        transformGpuChoicesToOptions: (choices: Record<string, { pci_slot: string }>) => Object.entries(choices).map(
+          ([label, choice]) => ({ label, value: choice.pci_slot }),
+        ),
         addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([
           '0000:02:00.0',
