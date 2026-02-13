@@ -28,5 +28,7 @@ export const tabs = {
   ALERT_CLASSES: 'alert-classes',
 } as const;
 
+export type DebugTab = typeof tabs[keyof typeof tabs];
+
 // Export file naming
 export const exportFilePrefix = 'mock-configs';

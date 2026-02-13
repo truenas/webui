@@ -87,7 +87,7 @@ describe('reducer-utils', () => {
     it('should preserve other state properties', () => {
       const state = createMockState();
       state.isPanelOpen = true;
-      state.activeTab = 'mock-config';
+      state.activeTab = 'mock-configurations';
       state.mockConfigs = [{
         id: '1',
         enabled: true,
@@ -102,7 +102,7 @@ describe('reducer-utils', () => {
       const result = addMessageWithLimit(state, message);
 
       expect(result.isPanelOpen).toBe(true);
-      expect(result.activeTab).toBe('mock-config');
+      expect(result.activeTab).toBe('mock-configurations');
       expect(result.mockConfigs).toEqual(state.mockConfigs);
       expect(result.messageLimit).toBe(state.messageLimit);
     });
