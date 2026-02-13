@@ -8,7 +8,6 @@ import {
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY, catchError, finalize, of, switchMap, Observable,
 } from 'rxjs';
@@ -16,9 +15,15 @@ import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TruenasConnectInterfaceSelectorComponent } from 'app/modules/truenas-connect/components/truenas-connect-interface-selector/truenas-connect-interface-selector.component';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+
+enum ModalView {
+  Status = 'status',
+  InterfaceSelector = 'interface-selector',
+}
 
 @Component({
   selector: 'ix-truenas-connect-status-modal',
@@ -26,13 +31,13 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     MatDivider,
     MatDialogTitle,
     MatDialogContent,
-    TnIconComponent,
     MatButton,
     MatDialogActions,
     TranslateModule,
     TestDirective,
     TruenasConnectSpinnerComponent,
     TruenasConnectStatusDisplayComponent,
+    TruenasConnectInterfaceSelectorComponent,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
   styleUrl: './truenas-connect-status-modal.component.scss',
@@ -47,6 +52,10 @@ export class TruenasConnectStatusModalComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
+  readonly ModalView = ModalView;
+
+  protected currentView = signal<ModalView>(ModalView.Status);
+  protected selectedInterfaces = signal<string[]>([]);
 
   protected isLoading = signal(false);
   protected isConnecting = signal(false);
@@ -73,8 +82,8 @@ export class TruenasConnectStatusModalComponent {
       case TruenasConnectStatus.CertRenewalFailure:
         return TncStatus.Failed;
       case TruenasConnectStatus.Disabled:
+        return TncStatus.Disabled;
       default:
-        // Show "Get Connected" button for disabled state instead of dead-end "disabled" message
         return TncStatus.Waiting;
     }
   });
@@ -168,5 +177,13 @@ export class TruenasConnectStatusModalComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+  }
+
+  protected showInterfaceSelector(): void {
+    this.currentView.set(ModalView.InterfaceSelector);
+  }
+
+  protected onInterfacesSelected(interfaces: string[]): void {
+    this.selectedInterfaces.set(interfaces);
   }
 }

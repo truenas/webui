@@ -99,16 +99,15 @@ tn-icon {
   }
 }
 
-.documentation-link {
-  margin-top: 12px;
-  text-align: center;
+[mat-dialog-actions] {
+  gap: 16px;
 
-  tn-icon {
-    height: 12px;
-    margin: 0;
-    position: relative;
-    top: 2px;
-    width: 12px;
+  .learn-more-button {
+    text-decoration: none;
+
+    button {
+      background-color: var(--alt-bg2);
+    }
   }
 }
 

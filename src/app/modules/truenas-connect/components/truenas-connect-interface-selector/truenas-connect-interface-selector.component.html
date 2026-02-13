@@ -1,0 +1,49 @@
+<div class="interface-selector-content">
+  <p class="selector-description">
+    {{ "Select the interfaces to use for TrueNAS Connect" | translate }}
+  </p>
+
+  <div class="interface-list">
+    @for (interface of interfaces(); track interface.name) {
+      <label
+        class="interface-item"
+        [class.selected]="isSelected(interface.name)"
+        ixTest="tnc-interface-item"
+      >
+        <mat-checkbox
+          [checked]="isSelected(interface.name)"
+          (change)="toggleInterface(interface.name)"
+          [attr.ixTest]="'tnc-interface-checkbox-' + interface.name"
+        ></mat-checkbox>
+        <span class="interface-details">
+          <span class="interface-name">{{ interface.name }}</span>
+          <span class="interface-address">{{ interface.address }}</span>
+        </span>
+      </label>
+    }
+
+    <!-- Custom IP input -->
+    <label
+      class="interface-item"
+      [class.selected]="customEnabled()"
+      ixTest="tnc-interface-item-custom"
+    >
+      <mat-checkbox
+        [checked]="customEnabled()"
+        (change)="toggleCustom()"
+        ixTest="tnc-interface-checkbox-custom"
+      ></mat-checkbox>
+      <span class="interface-details custom">
+        <span class="interface-name">{{ "Custom" | translate }}</span>
+        <input
+          type="text"
+          [formControl]="customIpControl"
+          placeholder="{{ 'Enter IP address' | translate }}"
+          class="custom-ip-input"
+          ixTest="tnc-custom-ip-input"
+          (click)="$event.stopPropagation()"
+        />
+      </span>
+    </label>
+  </div>
+</div>

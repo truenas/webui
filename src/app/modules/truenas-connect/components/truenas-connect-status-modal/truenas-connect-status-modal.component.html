@@ -1,5 +1,7 @@
 <div mat-dialog-title class="dialog-title-with-logo">
-  <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
+  <a href="https://connect.truenas.com" target="_blank" rel="noopener noreferrer">
+    <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
+  </a>
 </div>
 <mat-divider></mat-divider>
 <mat-dialog-content>
@@ -10,32 +12,34 @@
         {{ "Initializing TrueNAS Connect service..." | translate }}
       </div>
     </div>
+  } @else if (currentView() === ModalView.InterfaceSelector) {
+    <ix-truenas-connect-interface-selector
+      (interfacesSelected)="onInterfacesSelected($event)"
+    ></ix-truenas-connect-interface-selector>
   } @else {
     <ix-truenas-connect-status-display
-      [status]="status()"
+      [status]="TncStatus.Waiting"
       [rawStatus]="tnc.config()?.status"
       [tier]="tnc.config()?.tier"
     ></ix-truenas-connect-status-display>
-  }
-  @if (!isLoading()) {
-    <div class="documentation-link">
-      <a
-        href="https://connect.truenas.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        ixTest="tnc-documentation-link"
-      >
-        {{ "Learn more about TrueNAS Connect" | translate }}
-        <tn-icon name="open-in-new" library="mdi" size="sm" aria-hidden="true" style="margin-top: -2px"></tn-icon>
-        <span class="sr-only">{{ "opens in a new tab" | translate }}</span>
-      </a>
-    </div>
   }
 </mat-dialog-content>
 <div mat-dialog-actions>
   @if (isLoading()) {
     <button mat-button ixTest="tnc-loading" [disabled]="true">
       {{ "Loading..." | translate }}
+    </button>
+  } @else if (currentView() === ModalView.InterfaceSelector) {
+    <button
+      color="primary"
+      mat-button
+      (click)="connect()"
+    >
+      @if (isConnecting()) {
+        {{ "Connecting..." | translate }}
+      } @else {
+        {{ "Connect" | translate }}
+      }
     </button>
   } @else if (status() === TncStatus.Active) {
     <button
@@ -54,23 +58,40 @@
       [disabled]="isDisabling()"
       (click)="open()"
     >
-      {{ "Open TrueNAS Connect" | translate }}
+      {{ "Open TNC" | translate }}
     </button>
   } @else if (status() === TncStatus.Waiting) {
+    <a
+      href="https://connect.truenas.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      ixTest="tnc-documentation-link"
+      class="learn-more-button"
+    >
+      <button mat-button>
+        {{ "Learn More" | translate }}
+      </button>
+    </a>
     <button
       color="primary"
       mat-button
       ixTest="tnc-get-connected"
-      [disabled]="isConnecting()"
-      (click)="connect()"
+      (click)="showInterfaceSelector()"
     >
-      @if (isConnecting()) {
-        {{ "Connecting..." | translate }}
-      } @else {
-        {{ "Get Connected" | translate }}
-      }
+      {{ "Get Connected" | translate }}
     </button>
   } @else if (status() === TncStatus.Failed) {
+    <a
+      href="https://connect.truenas.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      ixTest="tnc-documentation-link-failed"
+      class="learn-more-button"
+    >
+      <button mat-button>
+        {{ "Learn More" | translate }}
+      </button>
+    </a>
     <button
       color="primary"
       mat-button
@@ -83,6 +104,15 @@
       } @else {
         {{ "Retry Connection" | translate }}
       }
+    </button>
+  } @else if (status() === TncStatus.Disabled) {
+    <button
+      color="primary"
+      mat-button
+      ixTest="tnc-enable-service"
+      (click)="showInterfaceSelector()"
+    >
+      {{ "Enable Service" | translate }}
     </button>
   }
 </div>

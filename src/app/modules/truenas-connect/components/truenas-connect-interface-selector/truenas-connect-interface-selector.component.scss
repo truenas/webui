@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.interface-selector-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selector-description {
+  color: var(--fg1);
+  font-size: 14px;
+  margin: 0;
+}
+
+.interface-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.interface-item {
+  align-items: center;
+  background-color: var(--alt-bg1);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  transition: background-color 0.2s, border-color 0.2s;
+
+  &:hover {
+    background-color: var(--alt-bg2);
+  }
+
+  &.selected {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-color: var(--primary);
+  }
+
+  mat-checkbox {
+    flex-shrink: 0;
+  }
+}
+
+.interface-details {
+  display: flex;
+  flex: 1;
+  font-size: 14px;
+  gap: 8px;
+
+  &.custom {
+    align-items: center;
+  }
+}
+
+.interface-name {
+  background-color: var(--alt-bg2);
+  border-radius: 4px;
+  color: var(--fg1);
+  font-family: monospace;
+  padding: 2px 8px;
+}
+
+.interface-address {
+  color: var(--fg2);
+}
+
+.custom-ip-input {
+  background-color: var(--bg2);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  color: var(--fg1);
+  flex: 1;
+  font-size: 14px;
+  padding: 4px 8px;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    border-color: var(--primary);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: var(--fg2);
+  }
+}
