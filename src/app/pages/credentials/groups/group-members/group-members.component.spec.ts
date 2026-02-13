@@ -12,6 +12,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
 
@@ -118,6 +119,7 @@ describe('GroupMembersComponent - directory service group', () => {
         mockCall('user.query', []),
       ]),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockAuth(),
       mockWindow({
         navigator: {
@@ -128,8 +130,11 @@ describe('GroupMembersComponent - directory service group', () => {
     params: { pk: '1' },
   });
 
-  it('redirects to groups list for directory service groups', () => {
+  it('redirects to groups list with snackbar message for directory service groups', () => {
     const spectator = createNonLocalComponent();
+    expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith(
+      'Cannot manage members for directory service groups.',
+    );
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 });

@@ -48,6 +48,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
 
     let groups$: Observable<Group[]>;
     if (this.queryType === ComboboxQueryType.Smb) {
+      // localOnly is intentionally not applied for SMB queries, as SMB groups may include directory service groups.
       groups$ = this.userService.smbGroupQueryDsCache(filterValue, false, offset);
     } else {
       const extraFilters: QueryFilter<Group>[] = [];

@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
@@ -143,7 +144,7 @@ describe('GroupDetailsRowComponent', () => {
       expect(editButton).toBeNull();
     });
 
-    it('does not show Edit button for Active Directory groups', async () => {
+    it('does not show Edit button for non-local groups', async () => {
       spectator.setInput('group', { ...dummyGroup, local: false });
 
       const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
@@ -151,18 +152,18 @@ describe('GroupDetailsRowComponent', () => {
     });
   });
 
-  it('should disable Delete button for Active Directory groups', async () => {
+  it('should disable Delete button for non-local groups', async () => {
     spectator.setInput('group', { ...dummyGroup, local: false });
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     expect(await deleteButton.isDisabled()).toBe(true);
   });
 
-  it('should show directory service tooltip for Active Directory groups', () => {
+  it('should show directory service tooltip for non-local groups', () => {
     spectator.setInput('group', { ...dummyGroup, local: false });
 
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    expect(spectator.component['deleteTooltip']()).toBe(
+    const tooltipDirective = spectator.query(MatTooltip);
+    expect(tooltipDirective.message).toBe(
       'This group is managed by a directory service and cannot be deleted.',
     );
   });
