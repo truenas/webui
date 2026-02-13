@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -39,6 +39,7 @@ export class GroupDetailsRowComponent {
   private router = inject(Router);
   private matDialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   readonly group = input.required<Group>();
   readonly colspan = input<number>();
@@ -51,7 +52,19 @@ export class GroupDetailsRowComponent {
   }
 
   protected isDeleteDisabled(): boolean {
-    return Boolean(this.group()?.roles?.length) || Boolean(this.group()?.users?.length);
+    return !this.group()?.local
+      || Boolean(this.group()?.roles?.length)
+      || Boolean(this.group()?.users?.length);
+  }
+
+  protected deleteTooltip(): string | null {
+    if (!this.group()?.local) {
+      return this.translate.instant('This group is managed by a directory service and cannot be deleted.');
+    }
+    if (Boolean(this.group()?.roles?.length) || Boolean(this.group()?.users?.length)) {
+      return this.translate.instant('Groups with privileges or members cannot be deleted.');
+    }
+    return null;
   }
 
   openGroupMembersForm(): void {

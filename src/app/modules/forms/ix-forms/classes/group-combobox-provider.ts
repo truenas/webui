@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { UserService } from 'app/services/user.service';
 
@@ -43,12 +44,19 @@ export class GroupComboboxProvider implements IxComboboxProvider {
 
   private queryGroups(filterValue: string): Observable<Option[]> {
     const offset = this.page * this.pageSize;
-    const queryMethod = this.queryType === ComboboxQueryType.Smb
-      ? this.userService.smbGroupQueryDsCache.bind(this.userService)
-      : this.userService.groupQueryDsCache.bind(this.userService);
 
-    return queryMethod(filterValue, false, offset).pipe(
-      map((groups) => (this.localOnly ? groups.filter((group) => group.local && !group.immutable) : groups)),
+    let groups$: Observable<Group[]>;
+    if (this.queryType === ComboboxQueryType.Smb) {
+      groups$ = this.userService.smbGroupQueryDsCache(filterValue, false, offset);
+    } else {
+      const extraFilters: QueryFilter<Group>[] = [];
+      if (this.localOnly) {
+        extraFilters.push(['local', '=', true], ['immutable', '=', false]);
+      }
+      groups$ = this.userService.groupQueryDsCache(filterValue, false, offset, extraFilters);
+    }
+
+    return groups$.pipe(
       map((groups) => this.groupQueryResToOptions(groups)),
       map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );

@@ -151,7 +151,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       ['local', '=', true],
       ['immutable', '=', false],
     ]]).pipe(
-      map((groups) => groups.map((group) => group.group)),
+      map((groups) => {
+        const primaryGroupId = this.form.controls.group.value;
+        return groups
+          .filter((group) => group.id !== primaryGroupId)
+          .map((group) => group.group);
+      }),
     );
   };
 
