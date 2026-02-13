@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -531,6 +531,19 @@ describe('AdditionalDetailsSectionComponent', () => {
       spectator.component.form.controls.groups.patchValue([102, 103]);
 
       expect(spectator.component.groupComboboxProvider.excludedIds).toEqual([]);
+    });
+
+    it('filters out primary group from auxiliary group suggestions', async () => {
+      spectator.component.form.controls.group.patchValue(101);
+
+      const suggestions = await firstValueFrom(spectator.component.groupsProvider('test'));
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.query', [[
+        ['name', '^', 'test'],
+        ['local', '=', true],
+        ['immutable', '=', false],
+      ]]);
+      expect(suggestions).toEqual(['test-group-2', 'test-group-3']);
     });
   });
 });
