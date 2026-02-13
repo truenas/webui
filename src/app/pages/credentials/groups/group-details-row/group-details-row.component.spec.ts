@@ -165,10 +165,9 @@ describe('GroupDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     expect(deleteButton).toBeTruthy();
 
-    const tooltipDirective = spectator.query(MatTooltip);
-    expect(tooltipDirective.message).toBe(
-      'This group is managed by a directory service and cannot be deleted.',
-    );
+    const tooltips = spectator.queryAll(MatTooltip);
+    const deleteTooltip = tooltips.find((tooltip) => tooltip.message === 'This group is managed by a directory service and cannot be deleted.');
+    expect(deleteTooltip).toBeTruthy();
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {
