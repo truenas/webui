@@ -17,6 +17,11 @@
     <tn-icon class="status-connected" name="check-circle" library="mdi"></tn-icon>
     <span ixTest="tnc-status" class="active-header">{{ "TrueNAS Connect - Status Healthy" | translate }}</span>
   </div>
+  @if (tierLabel()) {
+    <span ixTest="tnc-tier" [class]="'tier-badge ' + tierCssClass()">
+      {{ "Tier: {tier}" | translate: { tier: tierLabel() } }}
+    </span>
+  }
   <div ixTest="tnc-status-reason" class="active-description">
     {{ "Your system is linked with TrueNAS Connect. Click below to open the TrueNAS Connect Management Interface" | translate }}
   </div>
