@@ -145,20 +145,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return homeValue !== defaultHomePath;
   }
 
-  groupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[
-      ['name', '^', query],
-      ['local', '=', true],
-      ['immutable', '=', false],
-    ]]).pipe(
-      map((groups) => {
-        const primaryGroupId = this.form.controls.group.value;
-        return groups
-          .filter((group) => group.id !== primaryGroupId)
-          .map((group) => group.group);
-      }),
-    );
-  };
+  groupsProvider: ChipsProvider = this.createGroupsProvider();
 
   readonly form = this.fb.group({
     full_name: ['' as string],
@@ -309,6 +296,23 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return this.form.controls.sudo_commands_nopasswd.value?.join(', ') || '';
   }
 
+  private createGroupsProvider(): ChipsProvider {
+    return (query: string) => {
+      return this.api.call('group.query', [[
+        ['name', '^', query],
+        ['local', '=', true],
+        ['immutable', '=', false],
+      ]]).pipe(
+        map((groups) => {
+          const primaryGroupId = Number(this.form.controls.group.value);
+          return groups
+            .filter((group) => group.id !== primaryGroupId)
+            .map((group) => group.group);
+        }),
+      );
+    };
+  }
+
   private resolveGroupNames(ids: number[]): void {
     const missingIds = ids.filter((groupId) => !this.groupNameCache.has(groupId));
     if (!missingIds.length) {
@@ -430,9 +434,38 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       }
     });
 
+    this.form.controls.group.valueChanges
+      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((primaryGroupId) => {
+        this.groupsProvider = this.createGroupsProvider();
+        this.cdr.markForCheck();
+
+        if (primaryGroupId == null) return;
+        const auxGroups = this.form.controls.groups.value;
+        const filtered = auxGroups.filter((id) => Number(id) !== Number(primaryGroupId));
+        if (filtered.length !== auxGroups.length) {
+          this.form.controls.groups.patchValue(filtered);
+        }
+      });
+
+    this.form.controls.groups.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((groups) => {
+        this.groupComboboxProvider.excludedIds = groups.map((id) => Number(id));
+      });
+
     this.form.controls.groups.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe((groups) => {
+        const primaryGroupId = this.form.controls.group.value;
+        if (primaryGroupId != null) {
+          const filtered = groups.filter((id) => Number(id) !== Number(primaryGroupId));
+          if (filtered.length !== groups.length) {
+            this.form.controls.groups.patchValue(filtered);
+            return;
+          }
+        }
+
         const currentRole = this.userFormStore.role();
         const requiredGroup = this.roleGroupMap.get(currentRole);
         const groupNames = groups.map((id) => this.groupNameCache.get(id));
