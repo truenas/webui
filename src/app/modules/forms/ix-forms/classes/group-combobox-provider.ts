@@ -12,6 +12,7 @@ interface GroupComboboxOptions {
   initialOptions?: Option[];
   queryType?: ComboboxQueryType;
   localOnly?: boolean;
+  excludedIds?: number[];
 }
 
 export class GroupComboboxProvider implements IxComboboxProvider {
@@ -21,6 +22,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
   private initialOptions: Option[];
   private queryType: ComboboxQueryType;
   private localOnly: boolean;
+  private excludedIds: number[];
 
   constructor(
     protected userService: UserService,
@@ -30,6 +32,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     this.initialOptions = options.initialOptions ?? [];
     this.queryType = options.queryType ?? ComboboxQueryType.Default;
     this.localOnly = options.localOnly ?? false;
+    this.excludedIds = options.excludedIds ?? [];
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -58,6 +61,12 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     }
 
     return groups$.pipe(
+      map((groups) => {
+        if (this.excludedIds.length) {
+          return groups.filter((group) => !this.excludedIds.includes(group.id));
+        }
+        return groups;
+      }),
       map((groups) => this.groupQueryResToOptions(groups)),
       map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );

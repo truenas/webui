@@ -115,6 +115,8 @@ export class UserAccessCardComponent {
     return !user.locked && (!user.builtin || user.username === 'root');
   });
 
+  // Directory service users are fully managed externally; lock/unlock, 2FA clear,
+  // and other account actions should not be available from the local UI.
   protected shouldShowActions = computed(() => {
     const user = this.user();
     if (!user.local) return false;

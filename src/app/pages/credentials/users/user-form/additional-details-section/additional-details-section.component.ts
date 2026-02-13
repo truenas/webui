@@ -449,6 +449,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       });
 
     this.form.controls.groups.valueChanges
+      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((auxGroupIds) => {
+        this.groupComboboxProvider = new GroupComboboxProvider(
+          this.userService,
+          { valueField: 'id', localOnly: true, excludedIds: auxGroupIds },
+        );
+        this.cdr.markForCheck();
+      });
+
+    this.form.controls.groups.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe((groups) => {
         const currentRole = this.userFormStore.role();

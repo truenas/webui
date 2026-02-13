@@ -43,6 +43,7 @@ describe('GroupMembersComponent', () => {
         mockCall('group.update'),
       ]),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockAuth(),
       mockWindow({
         navigator: {

@@ -98,6 +98,29 @@ describe('GroupComboboxProvider', () => {
     });
   });
 
+  describe('excludedIds option', () => {
+    it('filters out groups with excluded ids', async () => {
+      provider = new GroupComboboxProvider(userService, { excludedIds: [1] });
+
+      const options = await lastValueFrom(provider.fetch('test'));
+
+      expect(options).toEqual([
+        { label: 'group2', value: 'group2' },
+      ]);
+    });
+
+    it('returns all groups when excludedIds is empty', async () => {
+      provider = new GroupComboboxProvider(userService, { excludedIds: [] });
+
+      const options = await lastValueFrom(provider.fetch('test'));
+
+      expect(options).toEqual([
+        { label: 'group1', value: 'group1' },
+        { label: 'group2', value: 'group2' },
+      ]);
+    });
+  });
+
   describe('initialOptions feature', () => {
     const initialOptions = [
       { label: 'nogroup', value: 'nogroup' },
