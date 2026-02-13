@@ -98,19 +98,6 @@ describe('GroupComboboxProvider', () => {
     });
   });
 
-  describe('excludedIds', () => {
-    it('filters out groups with excluded ids', async () => {
-      provider = new GroupComboboxProvider(userService);
-      provider.excludedIds = [1];
-
-      const options = await lastValueFrom(provider.fetch('test'));
-
-      expect(options).toEqual([
-        { label: 'group2', value: 'group2' },
-      ]);
-    });
-  });
-
   describe('initialOptions feature', () => {
     const initialOptions = [
       { label: 'nogroup', value: 'nogroup' },

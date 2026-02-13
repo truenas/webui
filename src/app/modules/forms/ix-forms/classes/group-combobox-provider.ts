@@ -17,7 +17,6 @@ interface GroupComboboxOptions {
 export class GroupComboboxProvider implements IxComboboxProvider {
   protected page = 0;
   readonly pageSize = 50;
-  excludedIds: number[] = [];
   private valueField: keyof Pick<Group, 'group' | 'gid' | 'id'>;
   private initialOptions: Option[];
   private queryType: ComboboxQueryType;
@@ -59,12 +58,6 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     }
 
     return groups$.pipe(
-      map((groups) => {
-        if (this.excludedIds.length) {
-          return groups.filter((group) => !this.excludedIds.includes(group.id));
-        }
-        return groups;
-      }),
       map((groups) => this.groupQueryResToOptions(groups)),
       map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );

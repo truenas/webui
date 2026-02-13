@@ -127,7 +127,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
+  protected groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
     this.userService,
     { valueField: 'id', localOnly: true },
   );
@@ -145,7 +145,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return homeValue !== defaultHomePath;
   }
 
-  groupsProvider: ChipsProvider = this.createGroupsProvider();
+  protected groupsProvider: ChipsProvider = this.createGroupsProvider();
 
   readonly form = this.fb.group({
     full_name: ['' as string],

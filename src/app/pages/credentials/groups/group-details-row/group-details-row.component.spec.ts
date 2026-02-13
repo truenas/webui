@@ -187,4 +187,12 @@ describe('GroupDetailsRowComponent', () => {
 
     expect(await deleteButton.isDisabled()).toBe(true);
   });
+
+  it('should show privileges or members tooltip when group has roles or users', () => {
+    spectator.setInput('group', { ...dummyGroup, roles: ['admin'], users: [1] });
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const deleteTooltip = tooltips.find((tooltip) => tooltip.message === 'Groups with privileges or members cannot be deleted.');
+    expect(deleteTooltip).toBeTruthy();
+  });
 });

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, input, output, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -51,14 +51,14 @@ export class GroupDetailsRowComponent {
     this.slideIn.open(GroupFormComponent, { data: group });
   }
 
-  protected isDeleteDisabled(): boolean {
+  protected readonly isDeleteDisabled = computed(() => {
     const group = this.group();
     return !group?.local
       || Boolean(group?.roles?.length)
       || Boolean(group?.users?.length);
-  }
+  });
 
-  protected deleteTooltip(): string | null {
+  protected readonly deleteTooltip = computed(() => {
     const group = this.group();
     if (!group?.local) {
       return this.translate.instant('This group is managed by a directory service and cannot be deleted.');
@@ -67,7 +67,7 @@ export class GroupDetailsRowComponent {
       return this.translate.instant('Groups with privileges or members cannot be deleted.');
     }
     return null;
-  }
+  });
 
   openGroupMembersForm(): void {
     if (this.group().immutable) {
@@ -77,6 +77,8 @@ export class GroupDetailsRowComponent {
   }
 
   doDelete(group: Group): void {
+    if (this.isDeleteDisabled()) return;
+
     this.matDialog.open(DeleteGroupDialog, { data: group })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
