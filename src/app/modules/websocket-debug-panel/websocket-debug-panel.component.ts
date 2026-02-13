@@ -59,22 +59,10 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);
   readonly activeTab$ = this.store$.select(selectActiveTab);
   readonly hasActiveMocks$ = this.store$.select(selectHasActiveMocks);
+  private readonly tabIndexMap = [tabs.WEBSOCKET, tabs.MOCK_CONFIG, tabs.ENCLOSURE_MOCK, tabs.ALERT_CLASSES];
+
   readonly selectedTabIndex$ = this.activeTab$.pipe(
-    map((tab) => {
-      if (tab === tabs.WEBSOCKET) {
-        return 0;
-      }
-      if (tab === tabs.MOCK_CONFIG) {
-        return 1;
-      }
-      if (tab === tabs.ENCLOSURE_MOCK) {
-        return 2;
-      }
-      if (tab === tabs.ALERT_CLASSES) {
-        return 3;
-      }
-      return 0;
-    }),
+    map((tab) => Math.max(0, this.tabIndexMap.indexOf(tab))),
   );
 
   protected panelWidth = panelWidthDefault;
@@ -163,14 +151,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number): void {
-    let tab: string = tabs.WEBSOCKET;
-    if (index === 1) {
-      tab = tabs.MOCK_CONFIG;
-    } else if (index === 2) {
-      tab = tabs.ENCLOSURE_MOCK;
-    } else if (index === 3) {
-      tab = tabs.ALERT_CLASSES;
-    }
+    const tab = this.tabIndexMap[index] ?? tabs.WEBSOCKET;
     this.store$.dispatch(WebSocketDebugActions.setActiveTab({ tab }));
   }
 

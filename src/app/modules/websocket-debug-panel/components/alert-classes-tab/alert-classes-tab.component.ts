@@ -56,6 +56,7 @@ export class AlertClassesTabComponent {
   }
 
   protected runComparison(): void {
+    if (this.loading()) return;
     this.loading.set(true);
     this.error.set(null);
 

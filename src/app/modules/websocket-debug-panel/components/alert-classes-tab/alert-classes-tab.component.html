@@ -42,8 +42,8 @@
     }
 
     @if (missingFromEnum().length > 0) {
-      <div class="section error">
-        <h3>{{ 'Missing from Enum' | translate }} ({{ missingFromEnum().length }})</h3>
+      <div class="section error" role="region" aria-labelledby="missing-enum-heading">
+        <h3 id="missing-enum-heading">{{ 'Missing from Enum' | translate }} ({{ missingFromEnum().length }})</h3>
         <p class="section-description">
           {{ 'These alert classes exist in the backend but are not defined in AlertClassName enum. They need to be added to the enum and the enhancement registry.' | translate }}
         </p>
@@ -60,8 +60,8 @@
     }
 
     @if (missingEnhancement().length > 0) {
-      <div class="section warning">
-        <h3>{{ 'Missing Enhancement' | translate }} ({{ missingEnhancement().length }})</h3>
+      <div class="section warning" role="region" aria-labelledby="missing-enhancement-heading">
+        <h3 id="missing-enhancement-heading">{{ 'Missing Enhancement' | translate }} ({{ missingEnhancement().length }})</h3>
         <p class="section-description">
           {{ 'These alert classes are in the AlertClassName enum but have no entry in the smartAlertRegistry.byClass enhancement registry.' | translate }}
         </p>
@@ -78,8 +78,8 @@
     }
 
     @if (staleInUi().length > 0) {
-      <div class="section stale">
-        <h3>{{ 'Stale in UI' | translate }} ({{ staleInUi().length }})</h3>
+      <div class="section stale" role="region" aria-labelledby="stale-ui-heading">
+        <h3 id="stale-ui-heading">{{ 'Stale in UI' | translate }} ({{ staleInUi().length }})</h3>
         <p class="section-description">
           {{ 'These alert classes are defined in AlertClassName enum but no longer exist in the backend.' | translate }}
         </p>
