@@ -77,10 +77,6 @@ export class GroupDetailsRowComponent {
   }
 
   doDelete(group: Group): void {
-    // Safety net: template [disabled] prevents native clicks, but programmatic or assistive
-    // technology interactions could still invoke this handler.
-    if (this.isDeleteDisabled()) return;
-
     this.matDialog.open(DeleteGroupDialog, { data: group })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

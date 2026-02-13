@@ -119,6 +119,20 @@ describe('GroupComboboxProvider', () => {
         { label: 'group2', value: 'group2' },
       ]);
     });
+
+    it('applies both localOnly filters and excludedIds together', async () => {
+      provider = new GroupComboboxProvider(userService, { localOnly: true, excludedIds: [1] });
+
+      const options = await lastValueFrom(provider.fetch('test'));
+
+      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0, [
+        ['local', '=', true],
+        ['immutable', '=', false],
+      ]);
+      expect(options).toEqual([
+        { label: 'group2', value: 'group2' },
+      ]);
+    });
   });
 
   describe('initialOptions feature', () => {
