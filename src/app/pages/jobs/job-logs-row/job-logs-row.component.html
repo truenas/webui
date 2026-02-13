@@ -5,7 +5,7 @@
   @if (job().arguments.length > 0) {
     <div class="logs arguments-editor">
       <ix-code-editor
-        [formControl]="argumentsControl()"
+        [formControl]="argumentsControl"
         [language]="CodeEditorLanguage.Json"
       ></ix-code-editor>
       <ix-copy-button [text]="job().arguments | json"></ix-copy-button>

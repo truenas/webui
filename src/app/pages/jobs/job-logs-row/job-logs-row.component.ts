@@ -1,7 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, computed, input,
+  Component, effect, input,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,7 +34,11 @@ export class JobLogsRowComponent {
   readonly getCredentialsCreationSource = getCredentialsCreationSource;
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
 
-  protected readonly argumentsControl = computed(() => {
-    return new FormControl({ value: JSON.stringify(this.job().arguments, null, 2), disabled: true });
-  });
+  protected readonly argumentsControl = new FormControl({ value: '', disabled: true });
+
+  constructor() {
+    effect(() => {
+      this.argumentsControl.setValue(JSON.stringify(this.job().arguments, null, 2));
+    });
+  }
 }
