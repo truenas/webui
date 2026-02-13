@@ -84,7 +84,7 @@
           {{ 'These alert classes are defined in AlertClassName enum but no longer exist in the backend.' | translate }}
         </p>
         <div class="class-list">
-          @for (item of staleInUi(); track item) {
+          @for (item of staleInUi(); track $index) {
             <div class="class-item">
               <span class="class-id">{{ item }}</span>
             </div>
