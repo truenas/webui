@@ -17,6 +17,7 @@ import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-ti
 const user = {
   uid: 2937,
   username: 'test-user',
+  local: true,
   password_age: 1,
   password_history: [],
   password_change_required: false,
@@ -125,5 +126,12 @@ describe('UserPasswordCardComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialog, {
       data: 'test-password',
     });
+  });
+
+  it('does not show Generate One-Time Password button for directory service users', async () => {
+    spectator.setInput('user', { ...user, local: false });
+
+    const button = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    expect(button).toBeNull();
   });
 });

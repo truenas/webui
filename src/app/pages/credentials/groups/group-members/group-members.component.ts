@@ -72,6 +72,12 @@ export class GroupMembersComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([groups, users]) => {
       const group = groups[0];
+
+      if (!group?.local) {
+        this.router.navigate(['/', 'credentials', 'groups']);
+        return;
+      }
+
       this.group.set(group);
       this.users.set(users);
       this.selectedMembers = users.filter((user) => group.users.includes(user.id));

@@ -206,6 +206,27 @@ describe('UserAccessCardComponent', () => {
     expect(rootLockButton).toBeTruthy();
   });
 
+  it('should not show Lock User button for directory service users', async () => {
+    spectator.setInput('user', { ...mockUser, local: false });
+
+    const lockButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Lock User' }));
+    expect(lockButton).toBeNull();
+  });
+
+  it('should not show Unlock User button for directory service users', async () => {
+    spectator.setInput('user', { ...mockUser, local: false, locked: true });
+
+    const unlockButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Unlock User' }));
+    expect(unlockButton).toBeNull();
+  });
+
+  it('should not show Clear Two-Factor Authentication button for directory service users', async () => {
+    spectator.setInput('user', { ...mockUser, local: false, twofactor_auth_configured: true });
+
+    const clearTfaButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    expect(clearTfaButton).toBeNull();
+  });
+
   describe('API Keys', () => {
     it('shows API keys count', () => {
       const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(8) .flex-container');

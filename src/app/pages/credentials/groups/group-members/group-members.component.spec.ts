@@ -20,6 +20,7 @@ const fakeGroupDataSource = [{
   gid: 1000,
   group: 'dummy-group',
   builtin: false,
+  local: true,
   smb: true,
   users: [41],
 }] as Group[];
@@ -102,6 +103,33 @@ describe('GroupMembersComponent', () => {
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
+  });
+});
+
+describe('GroupMembersComponent - directory service group', () => {
+  const nonLocalGroup = [{ ...fakeGroupDataSource[0], local: false }] as Group[];
+  const createNonLocalComponent = createRoutingFactory({
+    component: GroupMembersComponent,
+    imports: [ReactiveFormsModule, DualListBoxComponent],
+    providers: [
+      mockApi([
+        mockCall('group.query', nonLocalGroup),
+        mockCall('user.query', []),
+      ]),
+      mockProvider(DialogService),
+      mockAuth(),
+      mockWindow({
+        navigator: {
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+      }),
+    ],
+    params: { pk: '1' },
+  });
+
+  it('redirects to groups list for directory service groups', () => {
+    const spectator = createNonLocalComponent();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 });

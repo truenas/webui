@@ -115,6 +115,12 @@ export class UserAccessCardComponent {
     return !user.locked && (!user.builtin || user.username === 'root');
   });
 
+  protected shouldShowActions = computed(() => {
+    const user = this.user();
+    if (!user.local) return false;
+    return this.shouldShowLockButton() || user.locked || user.twofactor_auth_configured;
+  });
+
   protected get auditLink(): string {
     return this.urlOptions.buildUrl('/system/audit', {
       searchQuery: {
