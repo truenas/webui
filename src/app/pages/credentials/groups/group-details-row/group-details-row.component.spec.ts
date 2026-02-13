@@ -158,6 +158,15 @@ describe('GroupDetailsRowComponent', () => {
     expect(await deleteButton.isDisabled()).toBe(true);
   });
 
+  it('should show directory service tooltip for Active Directory groups', () => {
+    spectator.setInput('group', { ...dummyGroup, local: false });
+
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    expect(spectator.component['deleteTooltip']()).toBe(
+      'This group is managed by a directory service and cannot be deleted.',
+    );
+  });
+
   it('should open DeleteUserGroup when Delete button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();

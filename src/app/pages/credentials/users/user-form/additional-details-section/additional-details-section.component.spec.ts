@@ -505,4 +505,32 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(defaultPermsCheckbox).not.toBeNull();
     });
   });
+
+  describe('primary and auxiliary group mutual exclusion', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          editingUser: mockUser,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('removes primary group from auxiliary groups when primary group changes', () => {
+      // Set auxiliary groups to include group 102 and 103
+      spectator.component.form.controls.groups.patchValue([102, 103]);
+
+      // Change primary group to 102 (which is in auxiliary groups)
+      spectator.component.form.controls.group.patchValue(102);
+
+      // Group 102 should be filtered out of auxiliary groups
+      expect(spectator.component.form.controls.groups.value).toEqual([103]);
+    });
+
+    it('does not exclude auxiliary groups from primary group combobox', () => {
+      spectator.component.form.controls.groups.patchValue([102, 103]);
+
+      expect(spectator.component.groupComboboxProvider.excludedIds).toEqual([]);
+    });
+  });
 });

@@ -304,7 +304,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         ['immutable', '=', false],
       ]]).pipe(
         map((groups) => {
-          const primaryGroupId = Number(this.form.controls.group.value);
+          const primaryGroupId = this.form.controls.group.value;
           return groups
             .filter((group) => group.id !== primaryGroupId)
             .map((group) => group.group);
@@ -442,30 +442,15 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
         if (primaryGroupId == null) return;
         const auxGroups = this.form.controls.groups.value;
-        const filtered = auxGroups.filter((id) => Number(id) !== Number(primaryGroupId));
+        const filtered = auxGroups.filter((id) => id !== primaryGroupId);
         if (filtered.length !== auxGroups.length) {
           this.form.controls.groups.patchValue(filtered);
         }
       });
 
     this.form.controls.groups.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((groups) => {
-        this.groupComboboxProvider.excludedIds = groups.map((id) => Number(id));
-      });
-
-    this.form.controls.groups.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe((groups) => {
-        const primaryGroupId = this.form.controls.group.value;
-        if (primaryGroupId != null) {
-          const filtered = groups.filter((id) => Number(id) !== Number(primaryGroupId));
-          if (filtered.length !== groups.length) {
-            this.form.controls.groups.patchValue(filtered);
-            return;
-          }
-        }
-
         const currentRole = this.userFormStore.role();
         const requiredGroup = this.roleGroupMap.get(currentRole);
         const groupNames = groups.map((id) => this.groupNameCache.get(id));
