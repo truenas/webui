@@ -159,8 +159,11 @@ describe('GroupDetailsRowComponent', () => {
     expect(await deleteButton.isDisabled()).toBe(true);
   });
 
-  it('should show directory service tooltip for non-local groups', () => {
+  it('should show directory service tooltip for non-local groups', async () => {
     spectator.setInput('group', { ...dummyGroup, local: false });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    expect(deleteButton).toBeTruthy();
 
     const tooltipDirective = spectator.query(MatTooltip);
     expect(tooltipDirective.message).toBe(

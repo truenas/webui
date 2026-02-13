@@ -52,16 +52,18 @@ export class GroupDetailsRowComponent {
   }
 
   protected isDeleteDisabled(): boolean {
-    return !this.group()?.local
-      || Boolean(this.group()?.roles?.length)
-      || Boolean(this.group()?.users?.length);
+    const group = this.group();
+    return !group?.local
+      || Boolean(group?.roles?.length)
+      || Boolean(group?.users?.length);
   }
 
   protected deleteTooltip(): string | null {
-    if (!this.group()?.local) {
+    const group = this.group();
+    if (!group?.local) {
       return this.translate.instant('This group is managed by a directory service and cannot be deleted.');
     }
-    if (Boolean(this.group()?.roles?.length) || Boolean(this.group()?.users?.length)) {
+    if (group?.roles?.length || group?.users?.length) {
       return this.translate.instant('Groups with privileges or members cannot be deleted.');
     }
     return null;

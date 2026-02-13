@@ -73,19 +73,26 @@ export class GroupMembersComponent implements OnInit {
         this.api.call('user.query', [[['local', '=', true]]]),
       ])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([groups, users]) => {
-      const group = groups[0];
+    ).subscribe({
+      next: ([groups, users]) => {
+        const group = groups[0];
 
-      if (!group?.local) {
-        this.snackbar.error(this.translate.instant('Cannot manage members for directory service groups.'));
+        if (!group?.local) {
+          this.snackbar.error(this.translate.instant('Cannot manage members for directory service groups.'));
+          this.router.navigate(['/', 'credentials', 'groups']);
+          return;
+        }
+
+        this.group.set(group);
+        this.users.set(users);
+        this.selectedMembers = users.filter((user) => group.users.includes(user.id));
+        this.isLoading.set(false);
+      },
+      error: (error: unknown) => {
+        this.isLoading.set(false);
+        this.errorHandler.showErrorModal(error);
         this.router.navigate(['/', 'credentials', 'groups']);
-        return;
-      }
-
-      this.group.set(group);
-      this.users.set(users);
-      this.selectedMembers = users.filter((user) => group.users.includes(user.id));
-      this.isLoading.set(false);
+      },
     });
   }
 
