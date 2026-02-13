@@ -52,54 +52,52 @@ describe('AlertClassesTabComponent', () => {
     expect(spectator.component).toBeTruthy();
   });
 
-  it('should not call API before authentication', () => {
+  it('should show waiting message before authentication', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
-    expect(spectator.component.isAuthenticated()).toBe(false);
+    expect(spectator.query('.not-authenticated')).toExist();
   });
 
-  it('should auto-check once authenticated', () => {
+  it('should auto-check once authenticated and show last checked time', () => {
     spectator.detectChanges();
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
-    expect(spectator.component.lastCheckedFormatted()).toBeTruthy();
+    expect(spectator.query('.last-checked')).toExist();
   });
 
-  it('should identify classes missing from enum', () => {
+  it('should show classes missing from enum in error section', () => {
     spectator.detectChanges();
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    const missing = spectator.component.missingFromEnum();
-    expect(missing).toContainEqual({
-      id: 'BrandNewBackendAlert',
-      title: 'Brand New Alert',
-      category: 'System',
-    });
+    const errorSection = spectator.query('.section.error');
+    expect(errorSection).toExist();
+    expect(errorSection).toContainText('BrandNewBackendAlert');
+    expect(errorSection).toContainText('Brand New Alert');
+    expect(errorSection).toContainText('System');
   });
 
-  it('should identify classes in enum but missing enhancement registry entry', () => {
+  it('should not show AppUpdate in missing enhancement section', () => {
     spectator.detectChanges();
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    const missingEnh = spectator.component.missingEnhancement();
-    const appUpdateInMissing = missingEnh.some((item) => item.id === (AlertClassName.AppUpdate as string));
-    // AppUpdate IS in the registry (byClass), so it should NOT be in missingEnhancement
-    expect(appUpdateInMissing).toBe(false);
+    const warningItems = spectator.queryAll('.section.warning .class-id');
+    const warningTexts = warningItems.map((el) => el.textContent.trim());
+    expect(warningTexts).not.toContain(AlertClassName.AppUpdate);
   });
 
-  it('should identify stale classes in UI', () => {
+  it('should show stale classes section', () => {
     spectator.detectChanges();
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    const stale = spectator.component.staleInUi();
-    expect(stale.length).toBeGreaterThan(0);
-    expect(stale).not.toContain(AlertClassName.AppUpdate);
+    const staleSection = spectator.query('.section.stale');
+    expect(staleSection).toExist();
+    expect(staleSection.textContent).not.toContain(AlertClassName.AppUpdate);
   });
 
   it('should display error message in UI when API fails', () => {
@@ -110,25 +108,33 @@ describe('AlertClassesTabComponent', () => {
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    expect(spectator.component.error()).toContain('Connection failed');
-    expect(spectator.component.loading()).toBe(false);
     expect(spectator.query('.error-message')).toContainText('Connection failed');
+    expect(spectator.query('button[mat-button]')).not.toBeDisabled();
   });
 
-  it('should not auto-check when autoCheck is disabled', () => {
-    spectator.component.autoCheck.set(false);
+  it('should not auto-check when autoCheck checkbox is unchecked', () => {
     spectator.detectChanges();
+    const checkboxInput = spectator.query('mat-checkbox input') as HTMLInputElement;
+    checkboxInput.click();
+    spectator.detectChanges();
+
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
   });
 
-  it('should run comparison when Check Now is clicked', () => {
-    spectator.component.autoCheck.set(false);
+  it('should run comparison when Check Now button is clicked', () => {
+    spectator.detectChanges();
+    const checkboxInput = spectator.query('mat-checkbox input') as HTMLInputElement;
+    checkboxInput.click();
     spectator.detectChanges();
 
-    spectator.component.runComparison();
+    isAuthenticated$.next(true);
+    spectator.detectChanges();
+
+    spectator.click('button[mat-button]');
+    spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
   });

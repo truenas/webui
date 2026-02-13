@@ -1,6 +1,6 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, NgZone, OnDestroy, OnInit, Renderer2,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -43,6 +43,7 @@ const retryIntervalMs = 100;
     TranslateModule,
   ],
   providers: [],
+  host: { '(document:keydown)': 'handleKeyboardShortcut($event)' },
   templateUrl: './websocket-debug-panel.component.html',
   styleUrls: ['./websocket-debug-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -159,7 +160,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     this.store$.dispatch(WebSocketDebugActions.togglePanel());
   }
 
-  @HostListener('document:keydown', ['$event'])
   handleKeyboardShortcut(event: KeyboardEvent): void {
     if (event.ctrlKey && event.shiftKey && event.key === 'X') {
       event.preventDefault();
