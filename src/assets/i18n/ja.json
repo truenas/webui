@@ -95,7 +95,7 @@
   "STIG requires FIPS to be enabled.": "STIG では、FIPS を有効にする必要があります。",
   "STIG requires maximum password age of {days} days.": "STIG では、パスワードの最大有効期間が {days} 日である必要があります。",
   "STIG requires minimum password age of {days} days.": "STIG では、パスワードの最小有効期間が {days} 日である必要があります。",
-  "STIG requires minimum password length of {length} characters.": "	STIG では、最小パスワード長として {length} 文字が必要です。",
+  "STIG requires minimum password length of {length} characters.": "STIG では、最小パスワード長として {length} 文字が必要です。",
   "STIG requires password history length of {length} passwords.": "STIG では、パスワード履歴の長さ {length} のパスワードが必要です。",
   "STIG requires Upper, Lower, Number, and Special complexity rules.": "STIGは、大文字、小文字、数字、特殊文字の複雑性ルールを要求します。",
   "Storage Documentation": "ストレージに関するドキュメント",
