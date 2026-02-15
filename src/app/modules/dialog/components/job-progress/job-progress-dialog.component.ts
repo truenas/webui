@@ -156,17 +156,12 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
         this.dialogRef.close();
       },
       complete: () => {
-        switch (this.job.state) {
-          case JobState.Failed:
-            this.jobFailure.emit(this.job);
-            break;
-          case JobState.Aborted:
-            this.jobAborted.emit(this.job);
-            break;
-          case JobState.Success:
-          default:
-            this.jobSuccess.emit(this.job);
-            break;
+        if (this.isAbortingJob || this.job.state === JobState.Aborted) {
+          this.jobAborted.emit(this.job);
+        } else if (this.job.state === JobState.Failed) {
+          this.jobFailure.emit(this.job);
+        } else {
+          this.jobSuccess.emit(this.job);
         }
 
         this.dialogRef.close();
@@ -194,14 +189,14 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   }
 
   abortJob(): void {
+    this.isAbortingJob = true;
+    this.cdr.markForCheck();
+
     this.api.call('core.job_abort', [this.job.id]).pipe(
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     )
-      .subscribe(() => {
-        this.isAbortingJob = true;
-        this.cdr.markForCheck();
-      });
+      .subscribe();
   }
 
   /**
