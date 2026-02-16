@@ -45,12 +45,10 @@ export class UserDetailHeaderComponent {
   });
 
   protected doEdit(): void {
-    if (!this.user().local) return;
     this.slideIn.open(UserFormComponent, { data: this.user() });
   }
 
   protected doDelete(): void {
-    if (!this.user().local) return;
     this.matDialog
       .open(DeleteUserDialog, { data: this.user() })
       .afterClosed()

@@ -61,6 +61,8 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     }
 
     return groups$.pipe(
+      // Client-side filtering: excluded groups are removed after fetch,
+      // so a page may return fewer results than pageSize.
       map((groups) => {
         if (this.excludedIds.length) {
           return groups.filter((group) => !this.excludedIds.includes(group.id));

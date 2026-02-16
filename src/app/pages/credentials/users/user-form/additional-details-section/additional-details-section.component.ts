@@ -444,14 +444,17 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         if (filtered.length !== auxGroups.length) {
           this.form.controls.groups.patchValue(filtered);
           const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);
-          this.snackbar.success(
-            this.translate.instant('{groupName} was removed from auxiliary groups.', { groupName }),
-          );
+          this.snackbar.open({
+            message: this.translate.instant('{groupName} was removed from auxiliary groups.', { groupName }),
+          });
         }
       });
 
     this.form.controls.groups.valueChanges
-      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((auxGroupIds) => {
         this.groupComboboxProvider = new GroupComboboxProvider(
           this.userService,
@@ -463,9 +466,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         if (primaryGroupId != null && auxGroupIds.includes(primaryGroupId)) {
           const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);
           this.form.controls.group.patchValue(null);
-          this.snackbar.success(
-            this.translate.instant('{groupName} was removed as primary group.', { groupName }),
-          );
+          this.snackbar.open({
+            message: this.translate.instant('{groupName} was removed as primary group.', { groupName }),
+          });
         }
       });
 

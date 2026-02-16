@@ -534,9 +534,9 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       spectator.component.form.controls.group.patchValue(102);
 
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-        'test-group-2 was removed from auxiliary groups.',
-      );
+      expect(spectator.inject(SnackbarService).open).toHaveBeenCalledWith({
+        message: 'test-group-2 was removed from auxiliary groups.',
+      });
     });
 
     it('clears primary group and shows snackbar when it is added to auxiliary groups', () => {
@@ -545,9 +545,9 @@ describe('AdditionalDetailsSectionComponent', () => {
       spectator.component.form.controls.groups.patchValue([101, 103]);
 
       expect(spectator.component.form.controls.group.value).toBeNull();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-        'test-group was removed as primary group.',
-      );
+      expect(spectator.inject(SnackbarService).open).toHaveBeenCalledWith({
+        message: 'test-group was removed as primary group.',
+      });
     });
   });
 });

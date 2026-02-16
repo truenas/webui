@@ -78,6 +78,7 @@ export class GroupMembersComponent implements OnInit {
         const group = groups[0];
 
         if (!group?.local) {
+          this.isLoading.set(false);
           this.snackbar.error(this.translate.instant('Cannot manage members for directory service groups.'));
           this.router.navigate(['/', 'credentials', 'groups']);
           return;

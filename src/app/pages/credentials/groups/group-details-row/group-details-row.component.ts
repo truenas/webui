@@ -77,6 +77,7 @@ export class GroupDetailsRowComponent {
   }
 
   doDelete(group: Group): void {
+    if (this.isDeleteDisabled()) return;
     this.matDialog.open(DeleteGroupDialog, { data: group })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
