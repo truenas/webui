@@ -800,7 +800,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     display: none;
     height: 100vh;
     position: absolute;
-    transition: 200ms;
     width: 100vw;
     z-index: 3;
   }
