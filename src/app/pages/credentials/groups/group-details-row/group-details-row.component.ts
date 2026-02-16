@@ -47,7 +47,7 @@ export class GroupDetailsRowComponent {
   readonly delete = output<number>();
   protected readonly Role = Role;
 
-  doEdit(group: Group): void {
+  protected doEdit(group: Group): void {
     this.slideIn.open(GroupFormComponent, { data: group });
   }
 
@@ -69,14 +69,14 @@ export class GroupDetailsRowComponent {
     return null;
   });
 
-  openGroupMembersForm(): void {
+  protected openGroupMembersForm(): void {
     if (this.group().immutable) {
       return;
     }
     this.router.navigate(['/', 'credentials', 'groups', this.group().id, 'members']);
   }
 
-  doDelete(group: Group): void {
+  protected doDelete(group: Group): void {
     if (this.isDeleteDisabled()) return;
     this.matDialog.open(DeleteGroupDialog, { data: group })
       .afterClosed()

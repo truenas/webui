@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { getDirectoryServiceTooltip } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -40,15 +41,16 @@ export class UserDetailHeaderComponent {
   protected loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
 
   protected readonly directoryServiceTooltip = computed(() => {
-    if (this.user().local) return '';
-    return this.translate.instant('This user is managed by a directory service and cannot be modified.');
+    return getDirectoryServiceTooltip(this.user(), this.translate);
   });
 
   protected doEdit(): void {
+    if (!this.user().local) return;
     this.slideIn.open(UserFormComponent, { data: this.user() });
   }
 
   protected doDelete(): void {
+    if (!this.user().local) return;
     this.matDialog
       .open(DeleteUserDialog, { data: this.user() })
       .afterClosed()

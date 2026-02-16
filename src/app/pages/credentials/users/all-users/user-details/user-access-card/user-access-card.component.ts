@@ -16,7 +16,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { hasShellAccess } from 'app/helpers/user.helper';
+import { getDirectoryServiceTooltip, hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -117,15 +117,15 @@ export class UserAccessCardComponent {
     return !user.locked && (!user.builtin || user.username === 'root');
   });
 
-  // Directory service users see the actions section but with disabled buttons and tooltips.
+  // Actions section is shown when the user has relevant lockable or 2FA state.
+  // For directory service users who match these conditions, buttons are shown but disabled with tooltips.
   protected shouldShowActions = computed(() => {
     const user = this.user();
     return this.shouldShowLockButton() || user.locked || user.twofactor_auth_configured;
   });
 
   protected readonly directoryServiceTooltip = computed(() => {
-    if (this.user().local) return '';
-    return this.translate.instant('This user is managed by a directory service and cannot be modified.');
+    return getDirectoryServiceTooltip(this.user(), this.translate);
   });
 
   protected get auditLink(): string {
@@ -138,6 +138,7 @@ export class UserAccessCardComponent {
   }
 
   protected toggleLockStatus(): void {
+    if (!this.user().local) return;
     const { locked, username, id } = this.user();
     const message = locked
       ? this.translate.instant('Are you sure you want to unlock "{user}" user?', { user: username })
@@ -182,6 +183,7 @@ export class UserAccessCardComponent {
   }
 
   protected onClearTwoFactorAuth(): void {
+    if (!this.user().local) return;
     const username = this.user().username;
     this.dialogService.confirm({
       title: this.translate.instant('Clear Two-Factor Authentication'),
