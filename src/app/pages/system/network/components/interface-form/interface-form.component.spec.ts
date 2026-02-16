@@ -565,6 +565,7 @@ describe('InterfaceFormComponent', () => {
         expect.objectContaining({
           failover_critical: true,
           failover_group: 1,
+          ipv6_auto: false,
         }),
       ]);
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
