@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { map, shareReplay } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -10,7 +11,6 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -38,7 +38,6 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
   private translate = inject(TranslateService);
   private gpuService = inject(GpuService);
   private dialog = inject(DialogService);
-  private api = inject(ApiService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
   private destroyRef = inject(DestroyRef);
 
@@ -49,7 +48,15 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
   });
 
   readonly helptext = helptextVmWizard;
-  readonly gpuOptions$ = this.gpuService.getGpuOptions();
+
+  private readonly gpuPciChoices$ = this.gpuService.getRawGpuPciChoices().pipe(
+    shareReplay({ refCount: true, bufferSize: 1 }),
+  );
+
+  readonly gpuOptions$ = this.gpuPciChoices$.pipe(
+    map((choices) => this.gpuService.transformGpuChoicesToOptions(choices)),
+  );
+
   criticalGpus = new Map<string, string>();
 
   ngOnInit(): void {
@@ -59,6 +66,7 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
       this.destroyRef,
       this.translate.instant('Cannot Select GPU'),
       this.translate.instant('System critical GPUs cannot be used for VMs'),
+      this.gpuPciChoices$,
     );
   }
 

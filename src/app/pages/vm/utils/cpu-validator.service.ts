@@ -52,7 +52,7 @@ export class CpuValidatorService {
   /**
    * Start loading maxVcpus immediately
    */
-  private getMaxVcpus(): Observable<number> {
+  getMaxVcpus(): Observable<number> {
     if (!this.maximumCpus$) {
       this.maximumCpus$ = this.api.call('vm.maximum_supported_vcpus').pipe(shareReplay({
         refCount: false,

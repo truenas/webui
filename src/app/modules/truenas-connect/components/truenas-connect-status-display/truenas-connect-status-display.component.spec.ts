@@ -1,5 +1,6 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TruenasConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
 
 describe('TruenasConnectStatusDisplayComponent', () => {
@@ -65,5 +66,46 @@ describe('TruenasConnectStatusDisplayComponent', () => {
 
     expect(spectator.query('.status-disabled')).toBeTruthy();
     expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('DISABLED');
+  });
+
+  it('should not show tier badge when tier is null', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', null);
+    spectator.detectChanges();
+
+    expect(spectator.query('.tier-badge')).not.toExist();
+  });
+
+  it('should show Foundation tier badge when tier is FOUNDATION', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', TruenasConnectTier.Foundation);
+    spectator.detectChanges();
+
+    const badge = spectator.query('.tier-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('tier-foundation');
+    expect(badge).toContainText('Tier: Foundation');
+  });
+
+  it('should show Plus tier badge when tier is PLUS', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', TruenasConnectTier.Plus);
+    spectator.detectChanges();
+
+    const badge = spectator.query('.tier-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('tier-plus');
+    expect(badge).toContainText('Tier: Plus');
+  });
+
+  it('should show Business tier badge when tier is BUSINESS', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', TruenasConnectTier.Business);
+    spectator.detectChanges();
+
+    const badge = spectator.query('.tier-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('tier-business');
+    expect(badge).toContainText('Tier: Business');
   });
 });

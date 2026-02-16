@@ -4967,7 +4967,9 @@
       "Create User",
       "New User"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials/users"
