@@ -15,6 +15,7 @@
   "Init Working Directory": "",
   "Reboot of the other node is required for GPOS STIG changes.": "",
   "Reboot of this node is required for GPOS STIG changes.": "",
+  "Tier: {tier}": "",
   "Wait for graceful {action}": "",
   "Wait for graceful {action}, then force": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\nParece que tu sesión estuvo inactiva durante más de {lifetime} segundos.<br>\nPor razones de seguridad, vamos a cerrar tu sesión a las {time}.\n",
