@@ -114,9 +114,11 @@ describe('GroupDetailsRowComponent', () => {
       expect(await membersButton.isDisabled()).toBe(true);
     });
 
-    it('should not navigate to members form when clicking disabled Members button for immutable groups', () => {
+    it('should not navigate to members form when clicking disabled Members button for immutable groups', async () => {
       spectator.setInput('group', { ...dummyGroup, immutable: true });
-      spectator.component.openGroupMembersForm();
+
+      const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
+      await membersButton.click();
 
       expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
     });

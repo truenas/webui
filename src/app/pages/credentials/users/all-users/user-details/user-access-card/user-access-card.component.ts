@@ -117,9 +117,16 @@ export class UserAccessCardComponent {
     return !user.locked && (!user.builtin || user.username === 'root');
   });
 
-  // Actions section is shown when the user has relevant lockable or 2FA state.
+  private hasAccountWriteRole = computed(() => {
+    const roles = this.currentUser()?.privilege?.roles?.$set || [];
+    return roles.includes(Role.FullAdmin) || roles.includes(Role.AccountWrite);
+  });
+
+  // Actions section is shown when the user has relevant lockable or 2FA state
+  // and the current user has the AccountWrite role (since all action buttons require it).
   // For directory service users who match these conditions, buttons are shown but disabled with tooltips.
   protected shouldShowActions = computed(() => {
+    if (!this.hasAccountWriteRole()) return false;
     const user = this.user();
     return this.shouldShowLockButton() || user.locked || user.twofactor_auth_configured;
   });
@@ -164,6 +171,7 @@ export class UserAccessCardComponent {
           ? this.translate.instant('User unlocked')
           : this.translate.instant('User locked'),
       );
+      this.reloadUsers.emit();
     });
   }
 

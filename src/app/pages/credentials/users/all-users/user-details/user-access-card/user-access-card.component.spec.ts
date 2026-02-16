@@ -69,7 +69,7 @@ function createTestComponent(
       mockProvider(AuthService, {
         getGlobalTwoFactorConfig: jest.fn(() => of(globalTwoFactorConfig)),
         hasRole: jest.fn(() => of(true)),
-        user$: of({ pw_name: 'testuser' }),
+        user$: of({ pw_name: 'testuser', privilege: { roles: { $set: [Role.FullAdmin] } } }),
       }),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -337,7 +337,7 @@ describe('UserAccessCardComponent', () => {
             enabled: true,
           })),
           hasRole: jest.fn(() => of(true)),
-          user$: of({ pw_name: 'differentuser' }), // Different user
+          user$: of({ pw_name: 'differentuser', privilege: { roles: { $set: [Role.FullAdmin] } } }),
         }),
         mockProvider(SnackbarService),
         mockProvider(DialogService, {
