@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatTooltip } from '@angular/material/tooltip';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -206,25 +207,37 @@ describe('UserAccessCardComponent', () => {
     expect(rootLockButton).toBeTruthy();
   });
 
-  it('should not show Lock User button for directory service users', async () => {
+  it('should show disabled Lock User button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...mockUser, local: false });
 
-    const lockButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Lock User' }));
-    expect(lockButton).toBeNull();
+    const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
+    expect(await lockButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
   });
 
-  it('should not show Unlock User button for directory service users', async () => {
+  it('should show disabled Unlock User button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...mockUser, local: false, locked: true });
 
-    const unlockButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Unlock User' }));
-    expect(unlockButton).toBeNull();
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock User' }));
+    expect(await unlockButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
   });
 
-  it('should not show Clear Two-Factor Authentication button for directory service users', async () => {
+  it('should show disabled Clear Two-Factor Authentication button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...mockUser, local: false, twofactor_auth_configured: true });
 
-    const clearTfaButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
-    expect(clearTfaButton).toBeNull();
+    const clearTfaButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    expect(await clearTfaButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
   });
 
   describe('API Keys', () => {

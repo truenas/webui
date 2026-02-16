@@ -7,6 +7,7 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -46,6 +47,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     MatCardHeader,
     MatCardActions,
     MatCardContent,
+    MatTooltip,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,
@@ -115,12 +117,15 @@ export class UserAccessCardComponent {
     return !user.locked && (!user.builtin || user.username === 'root');
   });
 
-  // Directory service users are fully managed externally; lock/unlock, 2FA clear,
-  // and other account actions should not be available from the local UI.
+  // Directory service users see the actions section but with disabled buttons and tooltips.
   protected shouldShowActions = computed(() => {
     const user = this.user();
-    if (!user.local) return false;
     return this.shouldShowLockButton() || user.locked || user.twofactor_auth_configured;
+  });
+
+  protected readonly directoryServiceTooltip = computed(() => {
+    if (this.user().local) return '';
+    return this.translate.instant('This user is managed by a directory service and cannot be modified.');
   });
 
   protected get auditLink(): string {

@@ -2,10 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -24,6 +26,7 @@ const user = {
   last_password_change: {
     $date: 1697030400000,
   },
+  roles: [Role.FullAdmin],
 } as User;
 
 describe('UserPasswordCardComponent', () => {
@@ -128,10 +131,23 @@ describe('UserPasswordCardComponent', () => {
     });
   });
 
-  it('does not show Generate One-Time Password button for directory service users', async () => {
-    spectator.setInput('user', { ...user, local: false });
+  it('shows disabled Generate OTP button with tooltip for users without roles', async () => {
+    spectator.setInput('user', { ...user, roles: [] });
 
-    const button = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
-    expect(button).toBeNull();
+    const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    expect(await button.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find(
+      (tip) => tip.message === 'Generating a one-time password requires the user to have TrueNAS access roles.',
+    );
+    expect(tooltip).toBeTruthy();
+  });
+
+  it('shows enabled Generate OTP button for non-local users with roles', async () => {
+    spectator.setInput('user', { ...user, local: false, roles: [Role.FullAdmin] });
+
+    const button = await loader.getHarness(MatButtonHarness.with({ text: /Generate One-Time Password/ }));
+    expect(await button.isDisabled()).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, DestroyRef, input, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
@@ -6,6 +6,7 @@ import {
   MatCardActions,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, of, switchMap } from 'rxjs';
@@ -37,6 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FormatDateTimePipe,
     MatCardActions,
+    MatTooltip,
     RequiresRolesDirective,
     TestDirective,
     TnIconComponent,
@@ -61,6 +63,13 @@ export class UserPasswordCardComponent {
   loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
 
   protected readonly searchableElements = userPasswordCardElements;
+
+  protected readonly isOtpDisabled = computed(() => !this.user().roles?.length);
+
+  protected readonly otpDisabledTooltip = computed(() => {
+    if (!this.isOtpDisabled()) return '';
+    return this.translate.instant('Generating a one-time password requires the user to have TrueNAS access roles.');
+  });
 
   protected generateOneTimePassword(): void {
     const { username } = this.user();

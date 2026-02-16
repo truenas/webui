@@ -18,6 +18,7 @@ import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
@@ -76,6 +77,7 @@ describe('AdditionalDetailsSectionComponent', () => {
           },
         }),
       }),
+      mockProvider(SnackbarService),
       mockApi([
         mockCall('user.shell_choices', {
           '/usr/sbin/nologin': 'nologin',
@@ -525,6 +527,27 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       // Group 102 should be filtered out of auxiliary groups
       expect(spectator.component.form.controls.groups.value).toEqual([103]);
+    });
+
+    it('shows snackbar when primary group is removed from auxiliary groups', () => {
+      spectator.component.form.controls.groups.patchValue([102, 103]);
+
+      spectator.component.form.controls.group.patchValue(102);
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'test-group-2 was removed from auxiliary groups.',
+      );
+    });
+
+    it('clears primary group and shows snackbar when it is added to auxiliary groups', () => {
+      spectator.component.form.controls.group.patchValue(101);
+
+      spectator.component.form.controls.groups.patchValue([101, 103]);
+
+      expect(spectator.component.form.controls.group.value).toBeNull();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'test-group was removed as primary group.',
+      );
     });
   });
 });

@@ -41,6 +41,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
@@ -87,6 +88,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private translate = inject(TranslateService);
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
   private userService = inject(UserService);
+  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   editingUser = input<User>();
@@ -124,6 +126,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ['immutable', '=', false],
   ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    tap((options) => {
+      options.forEach((option) => this.groupNameCache.set(option.value, option.label));
+    }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
@@ -214,10 +219,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           return;
         }
 
-        groupOptions.forEach((group) => {
-          this.groupNameCache.set(group.value, group.label);
-        });
-
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
         if (groupId) {
@@ -304,10 +305,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         ['immutable', '=', false],
       ]]).pipe(
         map((groups) => {
-          const primaryGroupId = this.form.controls.group.value;
-          return groups
-            .filter((group) => group.id !== primaryGroupId)
-            .map((group) => group.group);
+          return groups.map((group) => group.group);
         }),
       );
     };
@@ -445,6 +443,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         const filtered = auxGroups.filter((id) => id !== primaryGroupId);
         if (filtered.length !== auxGroups.length) {
           this.form.controls.groups.patchValue(filtered);
+          const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);
+          this.snackbar.success(
+            this.translate.instant('{groupName} was removed from auxiliary groups.', { groupName }),
+          );
         }
       });
 
@@ -453,9 +455,18 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       .subscribe((auxGroupIds) => {
         this.groupComboboxProvider = new GroupComboboxProvider(
           this.userService,
-          { valueField: 'id', localOnly: true, excludedIds: auxGroupIds },
+          { valueField: 'id', localOnly: true },
         );
         this.cdr.markForCheck();
+
+        const primaryGroupId = this.form.controls.group.value;
+        if (primaryGroupId != null && auxGroupIds.includes(primaryGroupId)) {
+          const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);
+          this.form.controls.group.patchValue(null);
+          this.snackbar.success(
+            this.translate.instant('{groupName} was removed as primary group.', { groupName }),
+          );
+        }
       });
 
     this.form.controls.groups.valueChanges

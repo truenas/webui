@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -86,11 +87,15 @@ describe('UserDetailHeaderComponent', () => {
     );
   });
 
-  it('does not show Edit button for local users', async () => {
+  it('shows disabled Edit button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...dummyUser, local: false });
 
-    const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
-    expect(editButton).toBeNull();
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    expect(await editButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
   });
 
   it('does not show Delete button for an immutable user', async () => {
@@ -107,11 +112,15 @@ describe('UserDetailHeaderComponent', () => {
     expect(deleteButton).toBeNull();
   });
 
-  it('does not show Delete button for directory service users', async () => {
+  it('shows disabled Delete button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...dummyUser, local: false });
 
-    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
-    expect(deleteButton).toBeNull();
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    expect(await deleteButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
   });
 
   it('should open DeleteUserDialog when Delete button is pressed', async () => {

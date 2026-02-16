@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -20,6 +21,7 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
+    MatTooltip,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,
@@ -30,17 +32,25 @@ export class UserDetailHeaderComponent {
   private slideIn = inject(SlideIn);
   private matDialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   user = input.required<User>();
 
   protected readonly Role = Role;
   protected loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
 
+  protected readonly directoryServiceTooltip = computed(() => {
+    if (this.user().local) return '';
+    return this.translate.instant('This user is managed by a directory service and cannot be modified.');
+  });
+
   protected doEdit(): void {
+    if (!this.user().local) return;
     this.slideIn.open(UserFormComponent, { data: this.user() });
   }
 
   protected doDelete(): void {
+    if (!this.user().local) return;
     this.matDialog
       .open(DeleteUserDialog, { data: this.user() })
       .afterClosed()
