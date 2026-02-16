@@ -416,12 +416,7 @@ export class ContainerFormComponent implements OnInit {
     return this.dialogService
       .jobDialog(job$, { title: this.translate.instant('Creating Container') })
       .afterClosed().pipe(
-        map((job) => {
-          if (!job?.result) {
-            throw new Error('Container creation was cancelled');
-          }
-          return job.result;
-        }),
+        map((job) => job.result),
       );
   }
 

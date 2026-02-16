@@ -181,6 +181,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       catchError((error: unknown) => {
         console.error('Combobox autocomplete fetch failed:', error);
         this.hasErrorInOptions = true;
+        this.loading = false;
+        this.cdr.markForCheck();
         return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),
