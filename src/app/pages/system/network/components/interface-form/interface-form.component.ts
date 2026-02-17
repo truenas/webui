@@ -442,6 +442,7 @@ export class InterfaceFormComponent implements OnInit {
 
   private prepareSubmitParams(): NetworkInterfaceCreate | NetworkInterfaceUpdate {
     const formValues = this.form.getRawValue();
+
     let params = {
       name: formValues.name,
       description: formValues.description,
