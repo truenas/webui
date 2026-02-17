@@ -347,6 +347,10 @@ export class AuthService implements OnDestroy {
           return of(LoginResult.Redirect);
         }
 
+        if (result.response_type === LoginExResponseType.Denied) {
+          return of(LoginResult.Denied);
+        }
+
         return of(LoginResult.IncorrectDetails);
       }),
     );
