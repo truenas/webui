@@ -83,6 +83,14 @@
           }
         </ix-list>
 
+        @if (showNvidiaCheckbox()) {
+          <ix-checkbox
+            formControlName="nvidia"
+            [label]="'Install NVIDIA Drivers' | translate"
+            [tooltip]="tooltips.install_nvidia_driver | translate"
+          ></ix-checkbox>
+        }
+
         <ix-checkbox
           formControlName="enable_image_updates"
           [label]="'Check for docker image updates' | translate"
