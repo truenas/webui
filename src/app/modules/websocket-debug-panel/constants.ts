@@ -25,7 +25,10 @@ export const tabs = {
   WEBSOCKET: 'websocket',
   MOCK_CONFIG: 'mock-configurations',
   ENCLOSURE_MOCK: 'enclosure-mock',
+  ALERT_CLASSES: 'alert-classes',
 } as const;
+
+export type DebugTab = typeof tabs[keyof typeof tabs];
 
 // Export file naming
 export const exportFilePrefix = 'mock-configs';
