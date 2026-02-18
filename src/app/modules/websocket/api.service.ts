@@ -3,6 +3,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   catchError,
+  concat,
   EMPTY,
   filter,
   finalize,
@@ -11,12 +12,14 @@ import {
   Observable,
   of,
   OperatorFunction,
+  shareReplay,
   startWith,
   Subject,
   switchMap,
   take,
   takeUntil,
   throwError,
+  withLatestFrom,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiErrorName } from 'app/enums/api.enum';
@@ -119,7 +122,7 @@ export class ApiService {
     const callResponse$ = this.wsHandler.responses$.pipe(
       filter((message) => 'id' in message && message.id === uuid),
       this.getErrorSwitchMap(method, uuid),
-      map((message) => message.result),
+      map((message) => message.result as ApiJobResponse<M>),
       take(1),
       catchError((error: unknown) => {
         // When a job exists in the store, save the API error details for later enrichment
@@ -139,8 +142,10 @@ export class ApiService {
           }),
         );
       }),
+      shareReplay({ bufferSize: 1, refCount: false }),
     );
-    return this.store$.pipe(
+
+    const jobStream$ = this.store$.pipe(
       select(selectJobWithCallId(uuid)),
       filter((job): job is Job<ApiJobResponse<M>> => !!job),
       observeJob(),
@@ -153,6 +158,19 @@ export class ApiService {
         return throwError(() => error);
       }),
       takeUntil(merge(this.clearSubscriptions$, callResponse$)),
+    );
+
+    const resultMerge$ = callResponse$.pipe(
+      withLatestFrom(this.store$.pipe(
+        select(selectJobWithCallId(uuid)),
+        filter((job): job is Job<ApiJobResponse<M>> => !!job),
+      )),
+      map(([result, job]) => ({ ...job, result })),
+      take(1),
+    );
+
+    return concat(jobStream$, resultMerge$).pipe(
+      takeUntil(this.clearSubscriptions$),
       finalize(() => this.jobApiErrors.delete(uuid)),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
