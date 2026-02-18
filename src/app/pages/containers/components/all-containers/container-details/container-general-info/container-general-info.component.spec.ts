@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerStatus } from 'app/enums/container.enum';
+import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -123,7 +123,7 @@ describe('ContainerGeneralInfoComponent', () => {
 
   it('shows capabilities policy when available', () => {
     spectator.setInput('container', fakeContainer({
-      capabilities_policy: 'ALLOW',
+      capabilities_policy: ContainerCapabilitiesPolicy.Allow,
     }));
 
     const cardContent = spectator.query('mat-card-content');
@@ -132,7 +132,7 @@ describe('ContainerGeneralInfoComponent', () => {
 
   it('shows Default idmap type', () => {
     spectator.setInput('container', fakeContainer({
-      idmap: { type: 'DEFAULT' },
+      idmap: { type: ContainerIdmapType.Default },
     }));
 
     const cardContent = spectator.query('mat-card-content');
@@ -141,7 +141,7 @@ describe('ContainerGeneralInfoComponent', () => {
 
   it('shows Isolated idmap type with slice', () => {
     spectator.setInput('container', fakeContainer({
-      idmap: { type: 'ISOLATED', slice: 5 },
+      idmap: { type: ContainerIdmapType.Isolated, slice: 5 },
     }));
 
     const cardContent = spectator.query('mat-card-content');

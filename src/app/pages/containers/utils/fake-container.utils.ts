@@ -1,4 +1,4 @@
-import { ContainerStatus } from 'app/enums/container.enum';
+import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 
 export function fakeContainer(overrides: Partial<Container> = {}): Container {
@@ -17,8 +17,8 @@ export function fakeContainer(overrides: Partial<Container> = {}): Container {
     initenv: {},
     inituser: null,
     initgroup: null,
-    idmap: { type: 'DEFAULT' },
-    capabilities_policy: 'DEFAULT',
+    idmap: { type: ContainerIdmapType.Default },
+    capabilities_policy: ContainerCapabilitiesPolicy.Default,
     capabilities_state: {},
     status: {
       state: ContainerStatus.Stopped,

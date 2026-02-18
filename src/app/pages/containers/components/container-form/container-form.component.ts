@@ -330,7 +330,7 @@ export class ContainerFormComponent implements OnInit {
       initdir: container.initdir || '',
       inituser: container.inituser || '',
       initgroup: container.initgroup || '',
-      capabilities_policy: container.capabilities_policy as ContainerCapabilitiesPolicy,
+      capabilities_policy: container.capabilities_policy,
     });
 
     if (container.initenv && Object.keys(container.initenv).length > 0) {
@@ -512,7 +512,7 @@ export class ContainerFormComponent implements OnInit {
     if (form.inituser !== (this.editingContainer.inituser || '')) payload.inituser = form.inituser || null;
     if (form.initgroup !== (this.editingContainer.initgroup || '')) payload.initgroup = form.initgroup || null;
 
-    if (form.capabilities_policy !== (this.editingContainer.capabilities_policy as ContainerCapabilitiesPolicy)) {
+    if (form.capabilities_policy !== this.editingContainer.capabilities_policy) {
       payload.capabilities_policy = form.capabilities_policy;
     }
 
@@ -572,11 +572,11 @@ export class ContainerFormComponent implements OnInit {
     const idmapType = this.form.controls.idmap_type.value;
     switch (idmapType) {
       case ContainerIdmapType.Isolated:
-        return { type: 'ISOLATED', slice: this.form.controls.idmap_slice.value };
+        return { type: ContainerIdmapType.Isolated, slice: this.form.controls.idmap_slice.value };
       case ContainerIdmapType.Privileged:
         return null;
       default:
-        return { type: 'DEFAULT' };
+        return { type: ContainerIdmapType.Default };
     }
   }
 

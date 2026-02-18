@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -49,8 +49,8 @@ describe('ContainerFormComponent', () => {
     initenv: { TEST: 'value' },
     inituser: 'root',
     initgroup: 'root',
-    idmap: { type: 'DEFAULT' },
-    capabilities_policy: 'DEFAULT',
+    idmap: { type: ContainerIdmapType.Default },
+    capabilities_policy: ContainerCapabilitiesPolicy.Default,
     capabilities_state: {},
     status: {
       state: ContainerStatus.Running,
@@ -650,42 +650,57 @@ describe('ContainerFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('sends default idmap when Default is selected', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['form'].patchValue({ idmap_type: ContainerIdmapType.Default });
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const payload = spectator.component['buildIdmapPayload']();
-      expect(payload).toEqual({ type: 'DEFAULT' });
-    });
+    async function submitWithIdmap(idmapType: ContainerIdmapType, idmapSlice?: number | null): Promise<void> {
+      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      await nameInput.setValue('idmap-test');
 
-    it('sends null idmap when Privileged is selected', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['form'].patchValue({ idmap_type: ContainerIdmapType.Privileged });
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const payload = spectator.component['buildIdmapPayload']();
-      expect(payload).toBeNull();
-    });
-
-    it('sends isolated idmap with slice when Isolated is selected with a slice', () => {
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['form'].patchValue({
-        idmap_type: ContainerIdmapType.Isolated,
-        idmap_slice: 5,
+        pool: 'pool1',
+        image: 'ubuntu:22.04',
+        idmap_type: idmapType,
+        ...(idmapSlice !== undefined ? { idmap_slice: idmapSlice } : {}),
       });
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const payload = spectator.component['buildIdmapPayload']();
-      expect(payload).toEqual({ type: 'ISOLATED', slice: 5 });
+      spectator.detectChanges();
+
+      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await submitButton.click();
+    }
+
+    it('sends default idmap when Default is selected', async () => {
+      const api = spectator.inject(ApiService);
+      await submitWithIdmap(ContainerIdmapType.Default);
+
+      expect(api.job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({ idmap: { type: ContainerIdmapType.Default } }),
+      ]);
     });
 
-    it('sends isolated idmap with null slice when Isolated is selected without a slice', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['form'].patchValue({
-        idmap_type: ContainerIdmapType.Isolated,
-        idmap_slice: null,
-      });
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const payload = spectator.component['buildIdmapPayload']();
-      expect(payload).toEqual({ type: 'ISOLATED', slice: null });
+    it('sends null idmap when Privileged is selected', async () => {
+      const api = spectator.inject(ApiService);
+      await submitWithIdmap(ContainerIdmapType.Privileged);
+
+      expect(api.job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({ idmap: null }),
+      ]);
+    });
+
+    it('sends isolated idmap with slice when Isolated is selected with a slice', async () => {
+      const api = spectator.inject(ApiService);
+      await submitWithIdmap(ContainerIdmapType.Isolated, 5);
+
+      expect(api.job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({ idmap: { type: ContainerIdmapType.Isolated, slice: 5 } }),
+      ]);
+    });
+
+    it('sends isolated idmap with null slice when Isolated is selected without a slice', async () => {
+      const api = spectator.inject(ApiService);
+      await submitWithIdmap(ContainerIdmapType.Isolated, null);
+
+      expect(api.job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({ idmap: { type: ContainerIdmapType.Isolated, slice: null } }),
+      ]);
     });
   });
 });

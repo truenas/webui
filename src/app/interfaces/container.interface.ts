@@ -1,8 +1,9 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
   AllowedImageOs,
+  ContainerCapabilitiesPolicy,
   ContainerDeviceType,
-
+  ContainerIdmapType,
   ContainerNetworkType,
   ContainerNicDeviceType,
   ContainerRemote,
@@ -25,7 +26,7 @@ export interface ContainerStats {
 }
 
 export interface ContainerIdmap {
-  type: string;
+  type: ContainerIdmapType;
   slice?: number | null;
 }
 
@@ -45,7 +46,7 @@ export interface Container {
   inituser: string | null;
   initgroup: string | null;
   idmap: ContainerIdmap | null;
-  capabilities_policy: string;
+  capabilities_policy: ContainerCapabilitiesPolicy;
   capabilities_state: Record<string, unknown>;
   status: {
     state: ContainerStatus;
