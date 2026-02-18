@@ -418,6 +418,7 @@ export class ContainerFormComponent implements OnInit {
       .afterClosed().pipe(
         switchMap(() => this.api.call('container.query', [[['name', '=', payload.name]]])),
         map((containers) => containers[0]),
+        filter((container): container is Container => container !== undefined),
       );
   }
 
