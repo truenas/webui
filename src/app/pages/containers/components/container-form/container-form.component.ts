@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, Observable, of, take, tap,
+  filter, map, Observable, of, switchMap, take, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
@@ -416,7 +416,8 @@ export class ContainerFormComponent implements OnInit {
     return this.dialogService
       .jobDialog(job$, { title: this.translate.instant('Creating Container') })
       .afterClosed().pipe(
-        map((job) => job.result),
+        switchMap(() => this.api.call('container.query', [[['name', '=', payload.name]]])),
+        map((containers) => containers[0]),
       );
   }
 

@@ -83,7 +83,13 @@ describe('ContainerFormComponent', () => {
         mockCall('container.update', existingContainer),
         mockCall('container.get_instance', existingContainer),
         mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
-        mockCall('container.query', []),
+        mockCall('container.query', (params) => {
+          const filters = params?.[0] as unknown[];
+          if (Array.isArray(filters) && filters.length > 0) {
+            return [createdContainer];
+          }
+          return [];
+        }),
       ]),
       mockProvider(SlideInRef, {
         getData: jest.fn(() => undefined as Container | undefined),
@@ -103,7 +109,7 @@ describe('ContainerFormComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of({ result: createdContainer }),
+          afterClosed: () => of(fakeSuccessfulJob(createdContainer)),
         })),
       }),
       mockProvider(Router, {
