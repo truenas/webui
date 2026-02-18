@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -36,7 +36,6 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   usedInSubsystems: number;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manage-ports-dialog',
   templateUrl: './manage-ports-dialog.component.html',
@@ -68,6 +67,7 @@ export class ManagePortsDialog implements OnInit {
   private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
@@ -133,7 +133,7 @@ export class ManagePortsDialog implements OnInit {
       .open(PortFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Port Added'));
@@ -145,7 +145,7 @@ export class ManagePortsDialog implements OnInit {
     this.slideIn.open(PortFormComponent, { data: port })
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Port Updated'));
@@ -179,7 +179,7 @@ export class ManagePortsDialog implements OnInit {
             this.loader.withLoader(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.nvmeOfStore.reloadPorts();
       });

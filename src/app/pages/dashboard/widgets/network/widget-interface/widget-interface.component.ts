@@ -4,7 +4,6 @@ import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { ChartData } from 'chart.js';
@@ -34,7 +33,6 @@ import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } fr
 import { DashboardNetworkInterface, getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-interface',
   templateUrl: './widget-interface.component.html',

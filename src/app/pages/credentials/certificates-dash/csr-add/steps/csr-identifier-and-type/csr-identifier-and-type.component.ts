@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { pick } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -20,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-csr-identifier-and-type',
   templateUrl: './csr-identifier-and-type.component.html',
@@ -43,6 +42,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);
+  private destroyRef = inject(DestroyRef);
 
   readonly profileSelected = output<CertificateProfile>();
 
@@ -100,7 +100,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private loadProfiles(): void {
     this.api.call('webui.crypto.csr_profiles')
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe((profiles) => {
         this.profiles = profiles;
         const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));
@@ -111,7 +111,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private emitEventOnProfileChange(): void {
     this.form.controls.profile.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((profileName) => {
         const profile = this.profiles[profileName];
         this.profileSelected.emit(profile);

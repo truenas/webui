@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, output, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, input, output, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, Router, RouterLink, RouterLinkActive,
 } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
@@ -32,7 +32,6 @@ import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/compo
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/vdevs/components/vdev-group-node/vdev-group-node.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vdevs-list',
   templateUrl: './vdevs-list.component.html',
@@ -66,6 +65,7 @@ export class VDevsListComponent implements OnInit {
   private router = inject(Router);
   protected vDevsStore = inject(VDevsStore);
   private layoutService = inject(LayoutService);
+  private destroyRef = inject(DestroyRef);
 
   poolId = input.required<number>();
   showMobileDetails = output<boolean>();
@@ -112,7 +112,7 @@ export class VDevsListComponent implements OnInit {
 
   private setupTree(): void {
     this.vDevsStore.nodes$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(
         (nodes) => {
           this.createDataSource(nodes);
@@ -132,7 +132,7 @@ export class VDevsListComponent implements OnInit {
       );
 
     this.vDevsStore.selectedBranch$
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((selectedBranch: VDevNestedDataNode[]) => {
         selectedBranch.forEach((node) => this.treeControl.expand(node));
       });
@@ -182,7 +182,7 @@ export class VDevsListComponent implements OnInit {
     this.route.params.pipe(
       map((params) => params.guid as string),
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((guid) => {
       this.vDevsStore.selectNodeByGuid(guid);
       this.cdr.markForCheck();

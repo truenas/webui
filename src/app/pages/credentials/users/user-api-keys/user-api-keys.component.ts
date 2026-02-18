@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
@@ -49,7 +49,6 @@ import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/c
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-api-keys',
   templateUrl: './user-api-keys.component.html',
@@ -82,6 +81,7 @@ export class UserApiKeysComponent implements OnInit {
   private authService = inject(AuthService);
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   protected searchQuery: SearchQuery<ApiKey>;
   protected searchProperties: SearchProperty<ApiKey>[] = [];
@@ -190,7 +190,7 @@ export class UserApiKeysComponent implements OnInit {
   openForm(apiKey?: ApiKey): void {
     this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dataProvider.load());
   }
 
@@ -204,7 +204,7 @@ export class UserApiKeysComponent implements OnInit {
       filter(Boolean),
       tap(() => this.loader.open()),
       switchMap(() => this.api.call('api_key.delete', [apiKey.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => this.dataProvider.load(),
       error: (error: unknown) => {
@@ -250,7 +250,7 @@ export class UserApiKeysComponent implements OnInit {
   private handleUsernameQueryParams(): void {
     this.route.queryParams.pipe(
       filter((params) => params.userName),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((params) => {
       this.onSearch({
         isBasicQuery: true,

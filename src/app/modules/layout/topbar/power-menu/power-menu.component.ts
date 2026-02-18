@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
@@ -16,7 +16,6 @@ import { powerMenuElements } from 'app/modules/layout/topbar/power-menu/power-me
 import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-power-menu',
   templateUrl: './power-menu.component.html',
@@ -37,6 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class PowerMenuComponent {
   private matDialog = inject(MatDialog);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly tooltips = helptextTopbar.tooltips;
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -47,7 +47,7 @@ export class PowerMenuComponent {
       width: '430px',
     }).afterClosed().pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((reason: string) => {
       this.router.navigate(['/system-tasks/restart'], {
         skipLocationChange: true,
@@ -62,7 +62,7 @@ export class PowerMenuComponent {
       data: true,
     }).afterClosed().pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((reason: string) => {
       this.router.navigate(['/system-tasks/shutdown'], {
         skipLocationChange: true,

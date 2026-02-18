@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, forkJoin, filter } from 'rxjs';
@@ -26,7 +26,6 @@ export interface StartServiceDialogResult {
   startAutomatically: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-start-service-dialog',
   templateUrl: './start-service-dialog.component.html',
@@ -53,6 +52,7 @@ export class StartServiceDialog implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
   serviceName = inject<ServiceName>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   startAutomaticallyControl = new FormControl(true, { nonNullable: true });
   protected isLoading = false;
@@ -96,7 +96,7 @@ export class StartServiceDialog implements OnInit {
     }
 
     forkJoin(requests)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           if (result.startAutomatically) {
@@ -129,7 +129,7 @@ export class StartServiceDialog implements OnInit {
     this.store$.select(selectService(this.serviceName))
       .pipe(
         filter((service) => !!service),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((service) => {
         this.service = service;

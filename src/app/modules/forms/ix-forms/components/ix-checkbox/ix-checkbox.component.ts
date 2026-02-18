@@ -5,14 +5,12 @@ import {
 } from '@angular/forms';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { MatHint } from '@angular/material/form-field';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-checkbox',
   styleUrls: ['./ix-checkbox.component.scss'],

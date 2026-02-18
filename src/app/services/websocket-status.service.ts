@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject, combineLatest,
   map,
   tap,
 } from 'rxjs';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketStatusService {
+  private destroyRef = inject(DestroyRef);
+
   private readonly connectionEstablished$ = new BehaviorSubject(false);
   readonly isConnected$ = this.connectionEstablished$.asObservable();
 
@@ -38,7 +39,7 @@ export class WebSocketStatusService {
   );
 
   constructor() {
-    this.isActiveSession$.pipe(untilDestroyed(this)).subscribe();
+    this.isActiveSession$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   setLoginStatus(isLoggedIn: boolean): void {

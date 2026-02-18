@@ -1,6 +1,6 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { IxTableHeaderCellDirective } from 'app/modules/ix-table/directives/ix-header-cell.directive';
@@ -10,7 +10,6 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-table-head, thead[ix-table-head]',
   templateUrl: './ix-table-head.component.html',
@@ -28,6 +27,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly columns = input.required<Column<T, ColumnComponent<T>>[]>();
   readonly dataProvider = input.required<DataProvider<T>>();
@@ -39,7 +39,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataProvider().currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider().currentPage$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.cdr.detectChanges();
     });
   }

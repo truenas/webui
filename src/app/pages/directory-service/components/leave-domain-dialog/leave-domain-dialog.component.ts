@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-leave-domain-dialog',
   templateUrl: './leave-domain-dialog.component.html',
@@ -43,6 +42,7 @@ export class LeaveDomainDialog {
   private dialogRef = inject<MatDialogRef<LeaveDomainDialog>>(MatDialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
     username: ['', Validators.required],
@@ -71,7 +71,7 @@ export class LeaveDomainDialog {
       },
     )
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           // Job completed successfully

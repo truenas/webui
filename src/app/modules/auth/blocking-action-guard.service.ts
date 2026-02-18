@@ -1,10 +1,10 @@
 import { ComponentType } from '@angular/cdk/portal';
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild,
 } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, of, switchMap, take, tap,
   combineLatest,
@@ -14,7 +14,6 @@ import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/passwo
 import { TwoFactorSetupDialog } from 'app/pages/credentials/users/two-factor-setup-dialog/two-factor-setup-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -22,6 +21,7 @@ export class BlockingActionGuardService implements CanActivateChild {
   private authService = inject(AuthService);
   private wsStatus = inject(WebSocketStatusService);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   private twoFactorDialogOpen = false;
   private dialogRef: MatDialogRef<TwoFactorSetupDialog> | null = null;
@@ -34,7 +34,7 @@ export class BlockingActionGuardService implements CanActivateChild {
 
     // Reset state when user logs out
     this.wsStatus.isAuthenticated$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isAuthenticated) => {
       if (!isAuthenticated) {
         this.twoFactorDialogOpen = false;

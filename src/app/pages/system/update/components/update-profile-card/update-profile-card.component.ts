@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, inject, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, of, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -15,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-update-profile-card',
   styleUrls: ['update-profile-card.component.scss'],
@@ -38,6 +37,7 @@ export class UpdateProfileCard implements OnChanges {
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   readonly currentProfileId = input.required<string>();
   readonly profileChoices = input.required<UpdateProfileChoices>();
@@ -115,7 +115,7 @@ export class UpdateProfileCard implements OnChanges {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Switched to {profile} update profile', { profile: selectedProfile?.name }));

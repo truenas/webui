@@ -631,7 +631,7 @@ describe('DirectoryServicesComponent', () => {
       // Mock jobDialog to return a never-resolving observable to check loading state
       const mockJobProgressDialogRef = {
         afterClosed: () => NEVER, // Never emits to keep loading
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
 
@@ -654,7 +654,7 @@ describe('DirectoryServicesComponent', () => {
       // Mock dialogService to return success
       const mockJobProgressDialogRef = {
         afterClosed: () => of({ description: 'Directory Service cache has been rebuilt.' } as Job),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
 
@@ -676,7 +676,7 @@ describe('DirectoryServicesComponent', () => {
       // Mock jobDialog to return an observable that errors
       const mockJobProgressDialogRef = {
         afterClosed: () => throwError(() => new Error('Cache rebuild failed')),
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
 
@@ -715,7 +715,7 @@ describe('DirectoryServicesComponent', () => {
       // Mock jobDialog to return a never-resolving observable to simulate ongoing operation
       const mockJobProgressDialogRef = {
         afterClosed: () => NEVER,
-        getSubscriptionLimiterInstance: jest.fn(),
+        getDestroyRef: jest.fn(),
       } as unknown as JobProgressDialogRef<unknown>;
       jobDialogSpy.mockReturnValue(mockJobProgressDialogRef);
 

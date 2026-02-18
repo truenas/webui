@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import {
@@ -59,7 +58,6 @@ export const initialState: DashboardState = {
  * It does not know or care about data used inside the widgets.
  * It also doesn't care about edit mode.
  */
-@UntilDestroy()
 @Injectable()
 export class DashboardStore extends ComponentStore<DashboardState> {
   private authService = inject(AuthService);

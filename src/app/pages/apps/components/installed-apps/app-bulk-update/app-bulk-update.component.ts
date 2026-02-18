@@ -1,5 +1,8 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal, TrackByFunction, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TrackByFunction,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -9,7 +12,6 @@ import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -34,7 +36,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-bulk-update',
   templateUrl: './app-bulk-update.component.html',
@@ -70,7 +71,7 @@ export class AppBulkUpdateComponent {
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private apps = inject<App[]>(MAT_DIALOG_DATA);
-  private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly expandedItems = signal<string[]>([]);
   readonly loadingMap = signal<Map<string, boolean>>(new Map());
@@ -150,7 +151,7 @@ export class AppBulkUpdateComponent {
 
     this.appService
       .getAppUpgradeSummary(name, version)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (summary) => {
           const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
@@ -200,7 +201,7 @@ export class AppBulkUpdateComponent {
       .job('core.bulk', ['app.upgrade', payload])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogRef.close();
@@ -226,7 +227,7 @@ export class AppBulkUpdateComponent {
           return Object.entries(newValues).find(([app, version]) => oldValues[app] !== version);
         }),
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([appName, version]) => {
         const app = this.bulkItems.get(appName)?.item;

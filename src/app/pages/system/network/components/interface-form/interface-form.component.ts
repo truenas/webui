@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
@@ -69,7 +69,6 @@ import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-interface-form',
   templateUrl: './interface-form.component.html',
@@ -113,6 +112,7 @@ export class InterfaceFormComponent implements OnInit {
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
   private matDialog = inject(MatDialog);
   private systemGeneralService = inject(SystemGeneralService);
+  private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<{
     interfaces?: NetworkInterface[];
@@ -254,7 +254,7 @@ export class InterfaceFormComponent implements OnInit {
 
   private checkFailoverDisabled(): void {
     this.networkService.getIsHaEnabled().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isHaEnabled) => {
       this.isHaEnabled$.next(isHaEnabled);
     });
@@ -304,11 +304,11 @@ export class InterfaceFormComponent implements OnInit {
       ? this.api.call('interface.update', [this.existingInterface.id, params])
       : this.api.call('interface.create', [params]);
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-        this.api.call('interface.network_config_to_be_removed').pipe(untilDestroyed(this)).subscribe((configToRemove) => {
+        this.api.call('interface.network_config_to_be_removed').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((configToRemove) => {
           if (configToRemove && Object.keys(configToRemove).length > 0) {
             this.matDialog.open(DefaultGatewayDialog, {
               width: '600px',
@@ -373,7 +373,7 @@ export class InterfaceFormComponent implements OnInit {
 
   private validateNameOnTypeChange(): void {
     this.form.controls.type.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((type: NetworkInterfaceType) => {
         if (!this.existingInterface) {
           const name = this.generateNextAvailableNameByType(type);
@@ -413,7 +413,7 @@ export class InterfaceFormComponent implements OnInit {
         ]);
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([isHaLicensed, failoverNode]) => {
       this.isHaLicensed = isHaLicensed;
       if (isHaLicensed) {
@@ -441,7 +441,8 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private prepareSubmitParams(): NetworkInterfaceCreate | NetworkInterfaceUpdate {
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
+
     let params = {
       name: formValues.name,
       description: formValues.description,

@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,7 +32,6 @@ import {
   ViewCertificateDialog,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-certificate-edit',
   templateUrl: './certificate-edit.component.html',
@@ -61,6 +60,7 @@ export class CertificateEditComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private matDialog = inject(MatDialog);
   slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CertificateWrite];
 
@@ -142,7 +142,7 @@ export class CertificateEditComponent implements OnInit {
     }
 
     this.api.job('certificate.update', [this.certificate.id, payload])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.isLoading = false;

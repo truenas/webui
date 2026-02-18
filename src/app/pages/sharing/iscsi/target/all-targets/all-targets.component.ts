@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   filter,
@@ -20,7 +20,6 @@ import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-all-targets',
   styleUrls: ['./all-targets.component.scss'],
@@ -40,6 +39,7 @@ export class AllTargetsComponent implements OnInit {
   private iscsiService = inject(IscsiService);
   private matDialog = inject(MatDialog);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
@@ -63,7 +63,7 @@ export class AllTargetsComponent implements OnInit {
     );
 
     this.iscsiService.listenForDataRefresh()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newTarget) => {
         if (newTarget) {
           this.dataProvider.expandedRow = newTarget;
@@ -94,7 +94,7 @@ export class AllTargetsComponent implements OnInit {
     this.matDialog
       .open(DeleteTargetDialog, { data: target, width: '600px' })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.dataProvider.load();
         this.dataProvider.expandedRow = null;
@@ -108,7 +108,7 @@ export class AllTargetsComponent implements OnInit {
     );
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ response }) => {
       this.dataProvider.load();
       this.dataProvider.expandedRow = response;

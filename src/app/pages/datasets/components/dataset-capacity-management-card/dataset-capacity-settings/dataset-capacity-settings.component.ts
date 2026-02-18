@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-capacity-settings',
   templateUrl: './dataset-capacity-settings.component.html',
@@ -55,6 +54,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<DatasetDetails | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -126,7 +126,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   private setFormRelations(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       Object.entries(this.inheritRelations).forEach(([inheritField, valueField]) => {
         if (values[inheritField as keyof DatasetCapacitySettingsComponent['inheritRelations']]) {
           this.form.controls[valueField].disable({ emitEvent: false });
@@ -171,7 +171,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     const payload = this.getChangedFormValues();
 
     this.api.call('pool.dataset.update', [this.dataset.id, payload])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isLoading.set(false);

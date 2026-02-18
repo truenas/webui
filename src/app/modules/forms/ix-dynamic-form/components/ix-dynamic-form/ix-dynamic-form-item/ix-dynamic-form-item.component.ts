@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
@@ -36,7 +36,6 @@ import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dynamic-form-item',
   styleUrls: ['./ix-dynamic-form-item.component.scss'],
@@ -64,6 +63,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 })
 export class IxDynamicFormItemComponent implements OnInit {
   private changeDetectorRef = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly dynamicForm = input.required<UntypedFormGroup>();
   readonly dynamicSchema = input.required<DynamicFormSchemaNode>();
@@ -91,7 +91,7 @@ export class IxDynamicFormItemComponent implements OnInit {
         }),
         filter((x) => x != null),
         distinctUntilChanged(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.changeDetectorRef.markForCheck();
       });

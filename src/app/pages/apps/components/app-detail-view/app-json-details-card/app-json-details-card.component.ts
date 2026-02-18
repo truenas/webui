@@ -2,12 +2,10 @@ import {
   ChangeDetectionStrategy, Component,
   input,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-json-details-card',
   templateUrl: './app-json-details-card.component.html',

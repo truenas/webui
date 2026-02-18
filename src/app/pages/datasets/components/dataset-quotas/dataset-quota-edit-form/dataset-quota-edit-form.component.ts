@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, Observable, of, switchMap,
@@ -28,7 +28,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-quota-edit-form',
   templateUrl: './dataset-quota-edit-form.component.html',
@@ -60,6 +59,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     datasetId: string;
     id: number;
   }, boolean>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -170,7 +171,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         this.errorHandler.handleValidationErrors(error, this.form);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -210,7 +211,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         this.isFormLoading.set(true);
         return this.api.call('pool.dataset.set_quota', [this.datasetId, payload]);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));

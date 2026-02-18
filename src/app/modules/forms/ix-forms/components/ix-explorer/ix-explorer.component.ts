@@ -5,7 +5,6 @@ import { MatInput } from '@angular/material/input';
 import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent, TreeModel, TreeModule,
 } from '@bugsplat/angular-tree-component';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
@@ -25,7 +24,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-explorer',
   templateUrl: './ix-explorer.component.html',

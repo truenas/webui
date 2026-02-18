@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
@@ -34,7 +34,6 @@ import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-li
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-jbof-list',
   templateUrl: './jbof-list.component.html',
@@ -64,6 +63,7 @@ export class JbofListComponent implements OnInit {
   private translate = inject(TranslateService);
   private emptyService = inject(EmptyService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.JbofWrite];
   protected readonly searchableElements = jbofListElements;
@@ -113,11 +113,11 @@ export class JbofListComponent implements OnInit {
   ngOnInit(): void {
     const request$ = this.api.call('jbof.query').pipe(
       tap((jbofs) => this.jbofs = jbofs),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider(request$);
     this.getJbofs();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -125,7 +125,7 @@ export class JbofListComponent implements OnInit {
   protected openForm(jbof?: Jbof): void {
     this.slideIn.open(JbofFormComponent, { data: jbof }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getJbofs());
   }
 
@@ -145,7 +145,7 @@ export class JbofListComponent implements OnInit {
 
         return this.api.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => this.getJbofs(),
       error: (error: unknown) => {
@@ -163,7 +163,7 @@ export class JbofListComponent implements OnInit {
     forkJoin([
       this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
       this.api.call('jbof.licensed'),
-    ]).pipe(untilDestroyed(this)).subscribe(([jbofsLength, licensedLength]) => {
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([jbofsLength, licensedLength]) => {
       this.canAddJbof.set(licensedLength > jbofsLength);
     });
   }

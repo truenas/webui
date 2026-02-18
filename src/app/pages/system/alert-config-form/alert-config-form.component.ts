@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
@@ -27,7 +27,6 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alert-config-form',
   templateUrl: './alert-config-form.component.html',
@@ -58,6 +57,7 @@ export class AlertConfigFormComponent implements OnInit {
   protected translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
   private formBuilder = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AlertWrite];
 
@@ -96,7 +96,7 @@ export class AlertConfigFormComponent implements OnInit {
       this.api.call('alert.list_categories'),
       this.api.call('alertclasses.config'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([categories, alertConfig]) => {
           this.categories = categories;
@@ -154,7 +154,7 @@ export class AlertConfigFormComponent implements OnInit {
 
     this.api.call('alertclasses.update', [payload]).pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));
     }).add(() => {

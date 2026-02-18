@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, of, pairwise, startWith,
@@ -23,7 +23,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloudsync-provider',
   templateUrl: './cloudsync-provider.component.html',
@@ -50,6 +49,7 @@ export class CloudSyncProviderComponent implements OnInit {
   private translate = inject(TranslateService);
   private cloudCredentialService = inject(CloudCredentialService);
   private snackbarService = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly save = output<CloudSyncCredential>();
   readonly loading = output<boolean>();
@@ -95,7 +95,7 @@ export class CloudSyncProviderComponent implements OnInit {
           this.cdr.markForCheck();
           return EMPTY;
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: (creds) => {
           this.credentials = creds;
@@ -119,7 +119,7 @@ export class CloudSyncProviderComponent implements OnInit {
 
     const payload = this.existingCredential.provider;
     this.api.call('cloudsync.credentials.verify', [payload]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (response) => {
         if (response.valid) {
@@ -152,7 +152,7 @@ export class CloudSyncProviderComponent implements OnInit {
       .pipe(
         startWith(undefined),
         pairwise(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(([previousCreds, currentCreds]) => {
         const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
         const isCurrentValueExists = currentCreds != null;
@@ -168,7 +168,7 @@ export class CloudSyncProviderComponent implements OnInit {
         }
 
         this.loading.emit(true);
-        this.cloudCredentialService.getCloudSyncCredentials().pipe(untilDestroyed(this)).subscribe({
+        this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: (creds) => {
             this.credentials = creds;
             this.emitSelectedCredential(currentCreds as number);

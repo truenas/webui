@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -59,7 +59,6 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   selected: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-list',
   templateUrl: './snapshot-list.component.html',
@@ -98,6 +97,7 @@ export class SnapshotListComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
   searchQuery = signal('');
@@ -145,7 +145,7 @@ export class SnapshotListComponent implements OnInit {
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
           take(1),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((snapshots) => {
           snapshots.forEach((snapshot) => snapshot.selected = checked);
           this.dataProvider.setRows([]);
@@ -210,7 +210,7 @@ export class SnapshotListComponent implements OnInit {
 
   private listenForShowExtraColumnsChange(): void {
     this.showExtraColumnsControl.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.toggleExtraColumns());
   }
 
@@ -233,7 +233,7 @@ export class SnapshotListComponent implements OnInit {
         }));
         return this.snapshots;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.onListFiltered(this.searchQuery());
       this.cdr.markForCheck();
@@ -273,7 +273,7 @@ export class SnapshotListComponent implements OnInit {
 
   private toggleExtraColumns(): void {
     this.dialogService.confirm(this.getConfirmOptions())
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (confirmed) {
           this.loadingExtraColumns$.next(true);
@@ -284,7 +284,7 @@ export class SnapshotListComponent implements OnInit {
           this.actions$.pipe(
             ofType(snapshotsLoaded),
             take(1),
-            untilDestroyed(this),
+            takeUntilDestroyed(this.destroyRef),
           ).subscribe(() => {
             this.loadingExtraColumns$.next(false);
           });
@@ -301,7 +301,7 @@ export class SnapshotListComponent implements OnInit {
   doBatchDelete(data: ZfsSnapshotUi[]): void {
     this.matDialog.open(SnapshotBatchDeleteDialog, { data, disableClose: true })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.selectedSnapshots.forEach((snapshot) => snapshot.selected = false);
         this.cdr.markForCheck();

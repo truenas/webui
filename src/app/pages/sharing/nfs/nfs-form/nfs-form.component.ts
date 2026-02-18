@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -47,7 +46,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nfs-form',
   templateUrl: './nfs-form.component.html',
@@ -91,6 +89,7 @@ export class NfsFormComponent implements OnInit {
   } | undefined, boolean>>(SlideInRef);
 
   private validatorsService = inject(IxValidatorsService);
+  private destroyRef = inject(DestroyRef);
 
   existingNfsShare: NfsShare | undefined;
   defaultNfsShare: NfsShare | undefined;
@@ -226,7 +225,7 @@ export class NfsFormComponent implements OnInit {
           this.isLoading.set(true);
         }),
         switchMap(() => request$),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
           if (this.isNew) {
@@ -247,7 +246,7 @@ export class NfsFormComponent implements OnInit {
 
   private checkForNfsSecurityField(): void {
     this.api.call('nfs.config')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((nfsConfig) => {
         this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
       });

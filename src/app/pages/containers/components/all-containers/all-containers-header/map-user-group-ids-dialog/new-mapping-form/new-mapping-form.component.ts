@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, output, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { Observable, switchMap } from 'rxjs';
@@ -24,7 +26,6 @@ import {
 } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-new-mapping-form',
   templateUrl: './new-mapping-form.component.html',
@@ -47,6 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class NewMappingFormComponent implements OnChanges, OnInit {
+  private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -110,7 +112,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.resetFormOnTypeChanges();
@@ -128,7 +130,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
   }
 
   private handleMapDirectlyChanges(): void {
-    this.form.controls.mapDirectly.valueChanges.pipe(untilDestroyed(this)).subscribe((mapDirectly) => {
+    this.form.controls.mapDirectly.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((mapDirectly) => {
       if (mapDirectly) {
         this.form.controls.instanceUidOrGid.clearValidators();
       } else {

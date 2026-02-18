@@ -1,12 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -40,9 +42,6 @@ enum EncryptionType {
   Passphrase = 'passphrase',
 }
 
-@UntilDestroy({
-  arrayName: 'subscriptions',
-})
 @Component({
   selector: 'ix-encryption-options-dialog',
   templateUrl: './encryption-options-dialog.component.html',
@@ -64,7 +63,7 @@ enum EncryptionType {
     RequiresRolesDirective,
   ],
 })
-export class EncryptionOptionsDialog implements OnInit {
+export class EncryptionOptionsDialog implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
@@ -75,6 +74,7 @@ export class EncryptionOptionsDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   data = inject<EncryptionOptionsDialogData>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({
     inherit_encryption: [false],
@@ -136,6 +136,10 @@ export class EncryptionOptionsDialog implements OnInit {
     this.setControlDependencies();
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+  }
+
   onSubmit(): void {
     if (this.form.value.inherit_encryption) {
       // Only try to change to inherit if not currently inheriting
@@ -152,7 +156,7 @@ export class EncryptionOptionsDialog implements OnInit {
 
   private setToInherit(): void {
     this.api.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.showSuccessMessage();
@@ -183,7 +187,7 @@ export class EncryptionOptionsDialog implements OnInit {
       { title: this.translate.instant('Updating key type') },
     )
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.showSuccessMessage();
@@ -201,7 +205,7 @@ export class EncryptionOptionsDialog implements OnInit {
 
   private loadPbkdf2iters(): void {
     this.api.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (datasets: Dataset[]) => {
           const pbkdf2iters = datasets[0].pbkdf2iters;

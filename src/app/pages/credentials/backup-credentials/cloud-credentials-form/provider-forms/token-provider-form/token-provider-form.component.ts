@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -13,7 +13,6 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-token-provider-form',
   templateUrl: './token-provider-form.component.html',
@@ -29,6 +28,7 @@ import {
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   private readonly oauthComponent = viewChild(OauthProviderComponent);
 
@@ -56,7 +56,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
   }
 
   ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+    this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
       const oauthComponent = this.oauthComponent();
       if (this.hasOAuth && oauthComponent) {

@@ -70,6 +70,7 @@ describe('ContainerRowComponent', () => {
       mockProvider(ContainersStore, {
         selectedContainer: () => container,
         selectContainer: jest.fn(),
+        reload: jest.fn(),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({

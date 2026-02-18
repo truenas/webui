@@ -1,12 +1,10 @@
 import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-table-pager-show-more',
   templateUrl: './ix-table-pager-show-more.component.html',

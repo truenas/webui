@@ -2,13 +2,12 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError } from '@angular/material/form-field';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -49,7 +48,6 @@ import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { LicenseService } from 'app/services/license.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-target-form',
   templateUrl: './target-form.component.html',
@@ -209,14 +207,14 @@ export class TargetFormComponent implements OnInit {
   ngOnInit(): void {
     // Load FC hosts for validation
     this.api.call('fc.fc_host.query').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((hosts) => {
       this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
     });
 
     // Load available FC port choices
     this.api.call('fcport.port_choices', [false]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((portsData) => {
       this.availableFcPorts.set(Object.keys(portsData));
     });
@@ -267,7 +265,7 @@ export class TargetFormComponent implements OnInit {
           fcPortValues,
         ).pipe(map(() => target));
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (response) => {
         this.isLoading.set(false);
@@ -353,7 +351,7 @@ export class TargetFormComponent implements OnInit {
 
   private loadFibreChannelPorts(): void {
     this.fcService.loadTargetPorts(this.editingTarget.id).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((ports) => {
       this.form.controls.fcPorts.clear();
 

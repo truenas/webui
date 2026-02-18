@@ -10,17 +10,12 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 
 describe('WebSocketConnectionGuard', () => {
   let spectator: SpectatorService<WebSocketConnectionGuard>;
-  const isClosed$ = new BehaviorSubject(false);
-  const isAccessRestricted$ = new BehaviorSubject(false);
+  let isClosed$: BehaviorSubject<boolean>;
+  let isAccessRestricted$: BehaviorSubject<boolean>;
 
   const createService = createServiceFactory({
     service: WebSocketConnectionGuard,
     providers: [
-      mockProvider(WebSocketHandlerService, {
-        isClosed$,
-        isAccessRestricted$,
-        isSystemShuttingDown: false,
-      }),
       mockProvider(MatDialog, {
         openDialogs: [],
       }),
@@ -40,14 +35,26 @@ describe('WebSocketConnectionGuard', () => {
   });
 
   beforeEach(() => {
-    spectator = createService();
-    isClosed$.next(false);
-    isAccessRestricted$.next(false);
     sessionStorage.clear();
+    isClosed$ = new BehaviorSubject(false);
+    isAccessRestricted$ = new BehaviorSubject(false);
+    spectator = createService({
+      providers: [
+        mockProvider(WebSocketHandlerService, {
+          isClosed$,
+          isAccessRestricted$,
+          isSystemShuttingDown: false,
+        }),
+      ],
+    });
 
     // Reset window.location.search
     const windowMock = spectator.inject(WINDOW) as { sessionStorage: Storage; location: { search: string } };
     windowMock.location.search = '';
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
   });
 
   describe('resetUi on WebSocket disconnect', () => {

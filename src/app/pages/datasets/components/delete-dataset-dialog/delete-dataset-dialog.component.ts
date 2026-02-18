@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of,
@@ -29,7 +29,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-delete-dataset-dialog',
   templateUrl: './delete-dataset-dialog.component.html',
@@ -60,6 +59,7 @@ export class DeleteDatasetDialog implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);
   dataset = inject<VolumesListDataset>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetDelete];
 
@@ -102,7 +102,7 @@ export class DeleteDatasetDialog implements OnInit {
 
         return of(error);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -136,7 +136,7 @@ export class DeleteDatasetDialog implements OnInit {
     combineLatest([
       this.api.call('pool.dataset.attachments', [this.dataset.id]),
       this.api.call('pool.dataset.processes', [this.dataset.id]),
-    ]).pipe(this.loader.withLoader(), untilDestroyed(this))
+    ]).pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([attachments, processes]) => {
           this.attachments = attachments;

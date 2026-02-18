@@ -1,6 +1,8 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
+import {
+  DestroyRef, inject, Injectable, OnDestroy,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Sort, SortDirection } from '@angular/material/sort';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY, Observable, Subscription, catchError,
@@ -40,7 +42,6 @@ const initialState: InstalledAppsState = {
   },
 };
 
-@UntilDestroy()
 @Injectable()
 export class InstalledAppsStore extends ComponentStore<InstalledAppsState> implements OnDestroy {
   private appsService = inject(ApplicationsService);
@@ -48,6 +49,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private appsStats = inject(AppsStatsService);
   private dockerStore = inject(DockerStore);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly isLoading$ = this.select((state) => state.isLoading);
@@ -74,7 +76,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         this.handleError(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   });
 
@@ -86,7 +88,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         this.handleError(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   });
 
@@ -115,7 +117,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         );
       }),
       tap(() => this.patchState({ isLoading: false })),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   }
 
@@ -129,7 +131,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
         this.handleApiEvent(apiEvent);
         this.patchState({ isLoading: false });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

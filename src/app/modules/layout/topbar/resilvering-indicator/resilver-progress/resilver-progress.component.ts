@@ -1,11 +1,11 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -13,7 +13,6 @@ import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-resilver-progress',
   templateUrl: './resilver-progress.component.html',
@@ -35,6 +34,7 @@ export class ResilverProgressDialog implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   tooltip: string;
   hideCancel = false;
@@ -50,7 +50,7 @@ export class ResilverProgressDialog implements OnInit {
   readonly PoolScanState = PoolScanState;
 
   ngOnInit(): void {
-    this.api.subscribe('pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('pool.scan').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!event || !event.fields.scan.function.includes(PoolScanFunction.Resilver)) {
         return;

@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, input, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, OnDestroy, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -27,7 +27,6 @@ import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-lis
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-details-row',
   templateUrl: './snapshot-details-row.component.html',
@@ -56,6 +55,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private matDialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly snapshot = input.required<ZfsSnapshotUi>();
 
@@ -72,7 +72,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getSnapshotInfo();
     this.holdControl.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.doHoldOrRelease());
   }
 
@@ -94,7 +94,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     )
       .pipe(
         map((snapshots) => ({ ...snapshots[0], selected: this.snapshot().selected })),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (snapshot) => {
@@ -114,7 +114,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
     this.api.call(holdOrRelease, [this.snapshotInfo.name])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {
           this.holdControl.setValue(!this.holdControl.value, { emitEvent: false });

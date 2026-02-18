@@ -1,10 +1,9 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -18,7 +17,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-restart',
   templateUrl: './restart.component.html',
@@ -44,6 +42,7 @@ export class RestartComponent implements OnInit {
   private wsStatus = inject(WebSocketStatusService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
@@ -55,10 +54,10 @@ export class RestartComponent implements OnInit {
     this.location.replaceState('/signin');
 
     this.matDialog.closeAll();
-    this.api.job('system.reboot', [reason]).pipe(untilDestroyed(this)).subscribe({
+    this.api.job('system.reboot', [reason]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (error: unknown) => { // error on restart
         this.errorHandler.showErrorModal(error)
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => {
             this.authService.clearAuthToken();
             this.router.navigate(['/signin']);

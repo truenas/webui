@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor,
   NgControl,
@@ -9,7 +10,6 @@ import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -24,7 +24,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 type InputValue = string | number | null;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-input',
   templateUrl: './ix-input.component.html',
@@ -55,6 +54,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   controlDirective = inject(NgControl);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
@@ -257,7 +257,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.controlDirective.control?.valueChanges?.pipe(
       debounceTime(100),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((value: string) => {
       const existingOption = this.findExistingOption(value);
 

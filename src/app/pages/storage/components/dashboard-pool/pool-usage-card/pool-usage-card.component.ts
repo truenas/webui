@@ -6,7 +6,6 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -23,7 +22,6 @@ import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-dis
 
 const maxPct = 80;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-pool-usage-card',
   templateUrl: './pool-usage-card.component.html',

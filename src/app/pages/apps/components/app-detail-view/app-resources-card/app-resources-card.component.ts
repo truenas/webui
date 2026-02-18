@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
+} from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, throttleTime } from 'rxjs';
@@ -10,7 +11,6 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-resources-card',
   templateUrl: './app-resources-card.component.html',
@@ -26,6 +26,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 export class AppResourcesCardComponent implements OnInit {
   private api = inject(ApiService);
   private dockerStore = inject(DockerStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly isLoading = input<boolean>();
   readonly cpuPercentage = signal(0);
@@ -42,7 +43,7 @@ export class AppResourcesCardComponent implements OnInit {
     this.api.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(2000),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((update) => {
       if (update?.cpu?.cpu?.usage) {
         this.cpuPercentage.set(parseInt(update.cpu.cpu.usage.toFixed(1)));

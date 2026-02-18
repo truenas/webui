@@ -1,9 +1,9 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, OnInit, AfterViewInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterViewInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,7 +22,6 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vdevs',
   templateUrl: './vdevs.component.html',
@@ -49,6 +48,7 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private breakpointObserver = inject(BreakpointObserver);
   protected vDevsStore = inject(VDevsStore);
+  private destroyRef = inject(DestroyRef);
 
   protected poolId = signal<number | null>(null);
   protected poolName = signal<string>('');
@@ -91,7 +91,7 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.breakpointObserver
       .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           this.isMobileView.set(true);
@@ -103,7 +103,7 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   }
 
   private getPool(): void {
-    this.api.call('pool.query', [[['id', '=', this.poolId()]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.api.call('pool.query', [[['id', '=', this.poolId()]]]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pools) => {
       if (pools.length) {
         this.poolName.set(pools[0]?.name);
       }

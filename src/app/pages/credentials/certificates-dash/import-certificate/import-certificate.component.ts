@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { of } from 'rxjs';
@@ -28,7 +28,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-certificate-add',
   templateUrl: './import-certificate.component.html',
@@ -59,6 +58,7 @@ export class ImportCertificateComponent {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
     name: ['', [
@@ -100,7 +100,7 @@ export class ImportCertificateComponent {
     const payload = this.getPayload();
 
     this.api.job('certificate.create', [payload])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.isLoading.set(false);

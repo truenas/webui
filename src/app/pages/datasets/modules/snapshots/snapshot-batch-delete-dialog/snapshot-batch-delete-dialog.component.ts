@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
@@ -7,7 +8,6 @@ import {
 } from '@angular/material/expansion';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, finalize, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,7 +23,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-batch-delete-dialog',
   templateUrl: './snapshot-batch-delete-dialog.component.html',
@@ -55,6 +54,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private snapshots = inject<ZfsSnapshot[]>(MAT_DIALOG_DATA);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
 
@@ -101,7 +101,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
       finalize(() => this.isDeleting.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (results: CoreBulkResponse<boolean>[]) => {
         results.forEach((item) => {

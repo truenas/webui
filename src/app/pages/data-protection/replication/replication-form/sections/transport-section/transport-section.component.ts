@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isNull, omitBy } from 'lodash-es';
 import { of } from 'rxjs';
@@ -20,7 +19,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-transport-section',
   templateUrl: './transport-section.component.html',

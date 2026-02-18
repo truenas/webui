@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -24,7 +24,6 @@ import { setEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/
 import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-mock-tab',
   standalone: true,
@@ -44,6 +43,7 @@ import { AppState } from 'app/store';
 export class EnclosureMockTabComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store<AppState>);
+  private destroyRef = inject(DestroyRef);
 
   validationError: string | null = null;
 
@@ -121,7 +121,7 @@ export class EnclosureMockTabComponent implements OnInit {
 
   private setupFormListeners(): void {
     // Disable/enable form controls based on enabled state
-    this.form.controls.enabled.valueChanges.pipe(untilDestroyed(this)).subscribe((enabled) => {
+    this.form.controls.enabled.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((enabled) => {
       if (enabled) {
         this.form.controls.controllerModel.enable();
         this.form.controls.expansionModels.enable();
@@ -143,7 +143,7 @@ export class EnclosureMockTabComponent implements OnInit {
 
   private loadCurrentConfig(): void {
     this.store.select(selectEnclosureMockConfig)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((config) => {
         this.form.patchValue({
           enabled: config.enabled,

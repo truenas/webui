@@ -168,6 +168,9 @@ describe('JobProgressDialogComponent', () => {
       await abortButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
+
+      const abortingButton = await loader.getHarness(MatButtonHarness.with({ text: 'Aborting...' }));
+      expect(await abortingButton.isDisabled()).toBe(true);
     });
 
     it('emits jobAborted and closes when job update from middleware shows that it was aborted', () => {
@@ -180,6 +183,33 @@ describe('JobProgressDialogComponent', () => {
       job$.complete();
 
       expect(emitSpy).toHaveBeenCalledWith(newJob);
+      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('aborting with job completing as Success', () => {
+    it('emits jobAborted when abort was requested but job completed with Success', async () => {
+      const freshJob$ = new BehaviorSubject({
+        ...testJob,
+        abortable: true,
+      } as Job);
+      await setupTest({ job$: freshJob$ });
+
+      const abortedSpy = jest.spyOn(spectator.component.jobAborted, 'emit');
+      const successSpy = jest.spyOn(spectator.component.jobSuccess, 'emit');
+
+      const abortButton = await loader.getHarness(MatButtonHarness.with({ text: 'Abort' }));
+      await abortButton.click();
+
+      const completedJob = {
+        ...testJob,
+        state: JobState.Success,
+      } as Job;
+      freshJob$.next(completedJob);
+      freshJob$.complete();
+
+      expect(abortedSpy).toHaveBeenCalledWith(completedJob);
+      expect(successSpy).not.toHaveBeenCalled();
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     });
   });

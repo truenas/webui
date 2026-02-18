@@ -1,15 +1,19 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, NgZone, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTabsModule } from '@angular/material/tabs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
+import { AlertClassesTabComponent } from './components/alert-classes-tab/alert-classes-tab.component';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
-import { storageKeys } from './constants';
+import { storageKeys, tabs } from './constants';
 import * as WebSocketDebugActions from './store/websocket-debug.actions';
 import {
   selectIsPanelOpen, selectActiveTab, selectHasActiveMocks,
@@ -25,7 +29,6 @@ const panelWidthMax = 900;
 const maxRetryAttempts = 30;
 const retryIntervalMs = 100;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-websocket-debug-panel',
   standalone: true,
@@ -36,8 +39,11 @@ const retryIntervalMs = 100;
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
     EnclosureMockTabComponent,
+    AlertClassesTabComponent,
+    TranslateModule,
   ],
   providers: [],
+  host: { '(document:keydown)': 'handleKeyboardShortcut($event)' },
   templateUrl: './websocket-debug-panel.component.html',
   styleUrls: ['./websocket-debug-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,23 +55,15 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   private ngZone = inject(NgZone);
   // Ensure the service is instantiated
   enclosureMockService = inject(EnclosureMockService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);
   readonly activeTab$ = this.store$.select(selectActiveTab);
   readonly hasActiveMocks$ = this.store$.select(selectHasActiveMocks);
+  private readonly tabIndexMap = [tabs.WEBSOCKET, tabs.MOCK_CONFIG, tabs.ENCLOSURE_MOCK, tabs.ALERT_CLASSES];
+
   readonly selectedTabIndex$ = this.activeTab$.pipe(
-    map((tab) => {
-      if (tab === 'websocket') {
-        return 0;
-      }
-      if (tab === 'mock-configurations') {
-        return 1;
-      }
-      if (tab === 'enclosure-mock') {
-        return 2;
-      }
-      return 0;
-    }),
+    map((tab) => Math.max(0, this.tabIndexMap.indexOf(tab))),
   );
 
   protected panelWidth = panelWidthDefault;
@@ -95,7 +93,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     });
 
     // Manage body margin when panel opens/closes
-    this.isPanelOpen$.pipe(untilDestroyed(this)).subscribe((isOpen) => {
+    this.isPanelOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isOpen) => {
       this.isPanelOpen = isOpen;
       this.updateAdminLayoutMargin(isOpen);
     });
@@ -154,12 +152,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number): void {
-    let tab: 'websocket' | 'mock-configurations' | 'enclosure-mock' = 'websocket';
-    if (index === 1) {
-      tab = 'mock-configurations';
-    } else if (index === 2) {
-      tab = 'enclosure-mock';
-    }
+    const tab = this.tabIndexMap[index] ?? tabs.WEBSOCKET;
     this.store$.dispatch(WebSocketDebugActions.setActiveTab({ tab }));
   }
 
@@ -167,7 +160,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     this.store$.dispatch(WebSocketDebugActions.togglePanel());
   }
 
-  @HostListener('document:keydown', ['$event'])
   handleKeyboardShortcut(event: KeyboardEvent): void {
     if (event.ctrlKey && event.shiftKey && event.key === 'X') {
       event.preventDefault();

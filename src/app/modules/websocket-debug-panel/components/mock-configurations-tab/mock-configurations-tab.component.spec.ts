@@ -16,7 +16,7 @@ describe('MockConfigurationsTabComponent', () => {
             messages: [],
             mockConfigs: [],
             isPanelOpen: false,
-            activeTab: 'mock',
+            activeTab: 'mock-configurations',
             messageLimit: 15,
             hasActiveMocks: false,
           },

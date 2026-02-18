@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, EMPTY, switchMap } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
@@ -13,7 +13,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-show-logs-dialog',
   templateUrl: './show-logs-dialog.component.html',
@@ -34,6 +33,7 @@ export class ShowLogsDialog {
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   job = inject<Job>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
 
   downloadLogs(): void {
@@ -43,7 +43,7 @@ export class ShowLogsDialog {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { switchMap, forkJoin, finalize } from 'rxjs';
@@ -25,7 +25,6 @@ import {
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-storage-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss'],
@@ -51,6 +50,7 @@ export class StorageCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
   protected systemDatasetPool = signal<string | null>(null);
@@ -82,7 +82,7 @@ export class StorageCardComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([systemDatasetConfig, resilverConfig]) => {
         this.systemDatasetPool.set(systemDatasetConfig.pool);
@@ -102,7 +102,7 @@ export class StorageCardComponent implements OnInit {
       }),
       filter((response) => !!response.response),
       tap(() => this.loadConfig()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

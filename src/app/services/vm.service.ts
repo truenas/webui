@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
@@ -26,7 +26,6 @@ import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/st
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class VmService {
   private api = inject(ApiService);
@@ -37,6 +36,7 @@ export class VmService {
   private download = inject(DownloadService);
   private matDialog = inject(MatDialog);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   hasVirtualizationSupport$ = new BehaviorSubject<boolean>(true);
   private checkMemory$ = new Subject<void>();
@@ -256,7 +256,7 @@ export class VmService {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.checkMemory();
