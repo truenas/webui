@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { containerCapabilitiesPolicyLabels, containerTimeLabels } from 'app/enums/container.enum';
+import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -59,6 +59,7 @@ export class ContainerGeneralInfoComponent {
 
   protected readonly Role = Role;
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
+  protected readonly containerIdmapTypeLabels = containerIdmapTypeLabels;
   protected readonly containerTimeLabels = containerTimeLabels;
 
   editContainer(): void {

@@ -9,11 +9,12 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ContainerStatus } from 'app/enums/container.enum';
+import { ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -48,7 +49,7 @@ describe('ContainerFormComponent', () => {
     initenv: { TEST: 'value' },
     inituser: 'root',
     initgroup: 'root',
-    idmap: { type: 'none' },
+    idmap: { type: 'DEFAULT' },
     capabilities_policy: 'DEFAULT',
     capabilities_state: {},
     status: {
@@ -529,6 +530,162 @@ describe('ContainerFormComponent', () => {
       // Should still only show one pool selector (in basic view)
       const poolSelects = spectator.queryAll('ix-select[formControlName="pool"]');
       expect(poolSelects).toHaveLength(1);
+    });
+  });
+
+  describe('idmap fields', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows ID Map Type in advanced mode for create', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const idmapSelect = await loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' }));
+      expect(idmapSelect).toBeTruthy();
+    });
+
+    it('shows slice input when Isolated is selected', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const idmapSelect = await loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' }));
+      await idmapSelect.setValue('Isolated');
+      spectator.detectChanges();
+
+      const sliceInput = await loader.getHarness(IxInputHarness.with({ label: 'ID Map Slice' }));
+      expect(sliceInput).toBeTruthy();
+    });
+
+    it('shows privileged warning when Privileged is selected', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const idmapSelect = await loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' }));
+      await idmapSelect.setValue('Privileged');
+      spectator.detectChanges();
+
+      const warning = spectator.query('ix-warning');
+      expect(warning).toBeTruthy();
+    });
+
+    it('does not show slice input for Default idmap type', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      await expect(
+        loader.getHarness(IxInputHarness.with({ label: 'ID Map Slice' })),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('idmap fields in edit mode', () => {
+    const createEditComponent = createComponentFactory({
+      component: ContainerFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('container.pool_choices', { pool1: 'pool1' }),
+          mockCall('lxc.config', {
+            bridge: 'lxdbr0',
+            v4_network: null,
+            v6_network: null,
+            preferred_pool: 'pool1',
+          }),
+          mockJob('container.create'),
+          mockCall('container.update', existingContainer),
+          mockCall('container.get_instance', existingContainer),
+          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic' }),
+          mockCall('container.query', []),
+        ]),
+        mockProvider(SlideInRef, {
+          getData: jest.fn(() => existingContainer as Container | undefined),
+          close: jest.fn(),
+          requireConfirmationWhen: jest.fn(),
+        }),
+        mockProvider(ContainersStore, { initialize: jest.fn() }),
+        mockProvider(MatDialog),
+        mockProvider(DialogService),
+        mockProvider(Router),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createEditComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show ID Map Type in edit mode', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      await expect(
+        loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' })),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('capabilities policy options', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('has only Default and Allow All options', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const capabilitiesSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Capabilities Policy' }));
+      const options = await capabilitiesSelect.getOptionLabels();
+      expect(options).toEqual(['Default', 'Allow All']);
+    });
+  });
+
+  describe('idmap payload', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('sends default idmap when Default is selected', () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({ idmap_type: ContainerIdmapType.Default });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const payload = spectator.component['buildIdmapPayload']();
+      expect(payload).toEqual({ type: 'DEFAULT' });
+    });
+
+    it('sends null idmap when Privileged is selected', () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({ idmap_type: ContainerIdmapType.Privileged });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const payload = spectator.component['buildIdmapPayload']();
+      expect(payload).toBeNull();
+    });
+
+    it('sends isolated idmap with slice when Isolated is selected with a slice', () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        idmap_type: ContainerIdmapType.Isolated,
+        idmap_slice: 5,
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const payload = spectator.component['buildIdmapPayload']();
+      expect(payload).toEqual({ type: 'ISOLATED', slice: 5 });
+    });
+
+    it('sends isolated idmap with null slice when Isolated is selected without a slice', () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        idmap_type: ContainerIdmapType.Isolated,
+        idmap_slice: null,
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const payload = spectator.component['buildIdmapPayload']();
+      expect(payload).toEqual({ type: 'ISOLATED', slice: null });
     });
   });
 });

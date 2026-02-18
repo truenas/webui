@@ -17,7 +17,7 @@ export function fakeContainer(overrides: Partial<Container> = {}): Container {
     initenv: {},
     inituser: null,
     initgroup: null,
-    idmap: { type: 'none' },
+    idmap: { type: 'DEFAULT' },
     capabilities_policy: 'DEFAULT',
     capabilities_state: {},
     status: {

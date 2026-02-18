@@ -127,6 +127,34 @@ describe('ContainerGeneralInfoComponent', () => {
     }));
 
     const cardContent = spectator.query('mat-card-content');
-    expect(cardContent).toContainText('Capabilities Policy: Allow');
+    expect(cardContent).toContainText('Capabilities Policy: Allow All');
+  });
+
+  it('shows Default idmap type', () => {
+    spectator.setInput('container', fakeContainer({
+      idmap: { type: 'DEFAULT' },
+    }));
+
+    const cardContent = spectator.query('mat-card-content');
+    expect(cardContent).toContainText('ID Map Type: Default');
+  });
+
+  it('shows Isolated idmap type with slice', () => {
+    spectator.setInput('container', fakeContainer({
+      idmap: { type: 'ISOLATED', slice: 5 },
+    }));
+
+    const cardContent = spectator.query('mat-card-content');
+    expect(cardContent).toContainText('ID Map Type: Isolated');
+    expect(cardContent).toContainText('Slice: 5');
+  });
+
+  it('shows Privileged when idmap is null', () => {
+    spectator.setInput('container', fakeContainer({
+      idmap: null,
+    }));
+
+    const cardContent = spectator.query('mat-card-content');
+    expect(cardContent).toContainText('ID Map Type: Privileged');
   });
 });

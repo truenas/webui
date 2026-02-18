@@ -24,6 +24,11 @@ export interface ContainerStats {
   };
 }
 
+export interface ContainerIdmap {
+  type: string;
+  slice?: number | null;
+}
+
 export interface Container {
   id: number;
   uuid: string;
@@ -39,9 +44,7 @@ export interface Container {
   initenv: Record<string, unknown>;
   inituser: string | null;
   initgroup: string | null;
-  idmap: {
-    type: string;
-  };
+  idmap: ContainerIdmap | null;
   capabilities_policy: string;
   capabilities_state: Record<string, unknown>;
   status: {
@@ -59,6 +62,7 @@ export type CreateContainer = Partial<Omit<Container, 'id' | 'dataset' | 'status
     name: string;
     version: string;
   };
+  idmap?: ContainerIdmap | null;
 };
 
 export type UpdateContainer = Partial<Pick<Container,

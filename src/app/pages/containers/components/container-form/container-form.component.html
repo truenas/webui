@@ -162,13 +162,40 @@
           </ix-list>
         </ix-fieldset>
 
+        @if (!isEditMode()) {
+          <ix-fieldset [title]="'ID Mapping' | translate">
+            <ix-select
+              formControlName="idmap_type"
+              [label]="'ID Map Type' | translate"
+              [options]="idmapTypeOptions$"
+              [hideEmpty]="true"
+              [tooltip]="'Controls how user/group IDs are mapped between the container and the host' | translate"
+            ></ix-select>
+
+            @if (isIsolatedIdmap()) {
+              <ix-input
+                formControlName="idmap_slice"
+                type="number"
+                [label]="'ID Map Slice' | translate"
+                [tooltip]="'Optional slice number (1-999) for isolated ID mapping. Leave empty to let the system auto-assign a unique slice.' | translate"
+              ></ix-input>
+            }
+
+            @if (isPrivilegedIdmap()) {
+              <ix-warning
+                [message]="'Privileged containers share the host UID/GID space. This is a security risk and should only be used when absolutely necessary.' | translate"
+              ></ix-warning>
+            }
+          </ix-fieldset>
+        }
+
         <ix-fieldset [title]="'Capabilities' | translate">
           <ix-select
             formControlName="capabilities_policy"
             [label]="'Capabilities Policy' | translate"
             [options]="capabilitiesPolicyOptions$"
             [hideEmpty]="true"
-            [tooltip]="'Default rules for capabilities: DEFAULT (allow most capabilities but drop dangerous ones), ALLOW (keep all capabilities), or DENY (drop all capabilities)' | translate"
+            [tooltip]="'Default rules for capabilities: DEFAULT (allow most capabilities but drop dangerous ones) or ALLOW (keep all capabilities)' | translate"
           ></ix-select>
         </ix-fieldset>
       }
