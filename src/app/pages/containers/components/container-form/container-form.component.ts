@@ -408,7 +408,7 @@ export class ContainerFormComponent implements OnInit {
     this.form.controls.environment_variables.removeAt(index);
   }
 
-  private createContainer(): Observable<Container> {
+  private createContainer(): Observable<Container | undefined> {
     const payload = this.getCreatePayload();
 
     const job$ = this.api.job('container.create', [payload]);
@@ -418,7 +418,6 @@ export class ContainerFormComponent implements OnInit {
       .afterClosed().pipe(
         switchMap(() => this.api.call('container.query', [[['name', '=', payload.name]]])),
         map((containers) => containers[0]),
-        filter((container): container is Container => container !== undefined),
       );
   }
 
