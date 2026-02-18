@@ -31,13 +31,38 @@
               ></ix-explorer>
             }
             @case (VmDeviceType.Disk) {
-              <ix-combobox
-                formControlName="path"
-                [label]="'Zvol' | translate"
-                [tooltip]="helptext.zvol_path_tooltip | translate"
-                [provider]="zvolProvider"
-                [required]="true"
-              ></ix-combobox>
+              @if (isNew) {
+                <ix-radio-group
+                  [formControl]="newOrExistingControl"
+                  [options]="newOrExistingOptions$"
+                ></ix-radio-group>
+              }
+
+              @if (newOrExistingControl.value === 'new') {
+                <ix-select
+                  formControlName="datastore"
+                  [label]="'Zvol Location' | translate"
+                  [required]="true"
+                  [options]="datastoreOptions$"
+                  [tooltip]="helptext.datastore_tooltip | translate"
+                ></ix-select>
+
+                <ix-input
+                  formControlName="volsize"
+                  [label]="'Size' | translate"
+                  [required]="true"
+                  [format]="formatter.memorySizeFormatting"
+                  [parse]="formatter.memorySizeParsing"
+                ></ix-input>
+              } @else {
+                <ix-select
+                  formControlName="path"
+                  [label]="'Zvol' | translate"
+                  [tooltip]="helptext.zvol_path_tooltip | translate"
+                  [options]="zvolOptions$"
+                  [required]="true"
+                ></ix-select>
+              }
 
               <ix-select
                 formControlName="type"
