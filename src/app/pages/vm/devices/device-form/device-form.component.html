@@ -55,13 +55,13 @@
                   [parse]="formatter.memorySizeParsing"
                 ></ix-input>
               } @else {
-                <ix-combobox
+                <ix-select
                   formControlName="path"
                   [label]="'Zvol' | translate"
                   [tooltip]="helptext.zvol_path_tooltip | translate"
-                  [provider]="zvolProvider"
+                  [options]="zvolOptions$"
                   [required]="true"
-                ></ix-combobox>
+                ></ix-select>
               }
 
               <ix-select
