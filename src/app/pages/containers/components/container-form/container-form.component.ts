@@ -21,6 +21,7 @@ import {
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   ContainerCapabilitiesPolicy,
+  containerCapabilitiesPolicyLabels,
   ContainerIdmapType,
   containerIdmapTypeLabels,
   containerTimeLabels,
@@ -116,10 +117,7 @@ export class ContainerFormComponent implements OnInit {
 
   protected readonly timeOptions$ = of(mapToOptions(containerTimeLabels, this.translate));
 
-  protected readonly capabilitiesPolicyOptions$ = of([
-    { label: this.translate.instant('Default'), value: ContainerCapabilitiesPolicy.Default },
-    { label: this.translate.instant('Allow All'), value: ContainerCapabilitiesPolicy.Allow },
-  ]);
+  protected readonly capabilitiesPolicyOptions$ = of(mapToOptions(containerCapabilitiesPolicyLabels, this.translate));
 
   protected readonly idmapTypeOptions$ = of(mapToOptions(containerIdmapTypeLabels, this.translate));
   protected readonly isPrivilegedIdmap = signal(false);
@@ -480,7 +478,7 @@ export class ContainerFormComponent implements OnInit {
     if (form.inituser !== null && form.inituser !== '') payload.inituser = form.inituser;
     if (form.initgroup !== null && form.initgroup !== '') payload.initgroup = form.initgroup;
 
-    if (form.capabilities_policy) payload.capabilities_policy = form.capabilities_policy;
+    payload.capabilities_policy = form.capabilities_policy;
 
     payload.idmap = this.buildIdmapPayload();
 

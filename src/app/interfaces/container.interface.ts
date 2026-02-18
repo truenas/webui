@@ -79,6 +79,7 @@ export type UpdateContainer = Partial<Pick<Container,
   | 'initenv'
   | 'inituser'
   | 'initgroup'
+  | 'idmap'
   | 'capabilities_policy'
   | 'capabilities_state'
 >>;
