@@ -3,7 +3,7 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   BehaviorSubject,
-  firstValueFrom, of,
+  firstValueFrom, lastValueFrom, of,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -179,6 +179,38 @@ describe('ApiService', () => {
       });
 
       expect(update).toEqual(updatedJobUpdate);
+    });
+
+    it('should include API call response as job result in final emission', async () => {
+      const fakeUuid = 'fakeUUID-result';
+      const mockJobId = 10;
+      const apiResult = { id: 'created-resource' };
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      jest.spyOn(require('uuid'), 'v4').mockReturnValue(fakeUuid);
+
+      const completedJob = {
+        ...jobUpdate,
+        id: mockJobId,
+        message_ids: [fakeUuid],
+        state: JobState.Success,
+        time_finished: { $date: 123456789 },
+        result: null,
+      } as Job;
+
+      mockStore$.overrideSelector(selectJobs, [completedJob]);
+      mockStore$.refreshState();
+
+      const result$ = spectator.service.job('boot.attach', ['something', {}]);
+      const resultPromise = lastValueFrom(result$);
+
+      responses$.next({
+        jsonrpc: '2.0',
+        id: fakeUuid,
+        result: apiResult,
+      });
+
+      const finalJob = await resultPromise;
+      expect(finalJob.result).toEqual(apiResult);
     });
 
     it('should throw on a failed job', async () => {
