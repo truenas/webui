@@ -56,6 +56,7 @@ export class TruenasConnectStatusModalComponent {
 
   protected currentView = signal<ModalView>(ModalView.Status);
   protected selectedInterfaces = signal<string[]>([]);
+  protected isInterfaceSelectorValid = signal(true);
 
   protected isLoading = signal(false);
   protected isConnecting = signal(false);
@@ -179,11 +180,19 @@ export class TruenasConnectStatusModalComponent {
       .subscribe();
   }
 
+  protected showStatusModal(): void {
+    this.currentView.set(ModalView.Status);
+  }
+
   protected showInterfaceSelector(): void {
     this.currentView.set(ModalView.InterfaceSelector);
   }
 
   protected onInterfacesSelected(interfaces: string[]): void {
     this.selectedInterfaces.set(interfaces);
+  }
+
+  protected onValidationStateChanged(isValid: boolean): void {
+    this.isInterfaceSelectorValid.set(isValid);
   }
 }

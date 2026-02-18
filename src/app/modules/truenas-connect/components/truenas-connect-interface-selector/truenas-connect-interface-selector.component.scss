@@ -50,10 +50,7 @@
   flex: 1;
   font-size: 14px;
   gap: 8px;
-
-  &.custom {
-    align-items: center;
-  }
+  align-items: center;
 }
 
 .interface-name {
@@ -62,10 +59,13 @@
   color: var(--fg1);
   font-family: monospace;
   padding: 2px 8px;
+  text-align: center;
 }
 
 .interface-address {
   color: var(--fg2);
+  font-family: monospace;
+  text-wrap: wrap;
 }
 
 .custom-ip-input {
@@ -90,4 +90,10 @@
   &::placeholder {
     color: var(--fg2);
   }
+}
+
+.error-message {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 2px;
 }

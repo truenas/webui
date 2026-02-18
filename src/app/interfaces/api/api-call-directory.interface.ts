@@ -560,6 +560,23 @@ export interface ApiCallDirectory {
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.websocket_local_ip': { params: void; response: string };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
+  'interface.ip_in_use': {
+    params: {
+      ipv4: boolean;
+      ipv6: boolean;
+      ipv6_link_local: boolean;
+      loopback: boolean;
+      any: boolean;
+      static: boolean;
+      interfaces: string[];
+    }[];
+    response: {
+      type: string;
+      address: string;
+      netmask: string;
+      broadcast?: string;
+    }[];
+  };
 
   // IPMI
   'ipmi.chassis.identify': { params: [IpmiChassisIdentifyParams]; response: void };

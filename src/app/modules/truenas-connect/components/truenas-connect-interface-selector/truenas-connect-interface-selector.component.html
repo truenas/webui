@@ -4,29 +4,25 @@
   </p>
 
   <div class="interface-list">
-    @for (interface of interfaces(); track interface.name) {
+    @for (interface of interfaces(); track interface.address) {
       <label
         class="interface-item"
-        [class.selected]="isSelected(interface.name)"
-        ixTest="tnc-interface-item"
+        [class.selected]="isSelected(interface.address)"
       >
         <mat-checkbox
-          [checked]="isSelected(interface.name)"
-          (change)="toggleInterface(interface.name)"
-          [attr.ixTest]="'tnc-interface-checkbox-' + interface.name"
+          [checked]="isSelected(interface.address)"
+          (change)="toggleInterface(interface.address)"
         ></mat-checkbox>
         <span class="interface-details">
-          <span class="interface-name">{{ interface.name }}</span>
+          <span class="interface-name">{{ interface.kind }}</span>
           <span class="interface-address">{{ interface.address }}</span>
         </span>
       </label>
     }
 
-    <!-- Custom IP input -->
     <label
       class="interface-item"
       [class.selected]="customEnabled()"
-      ixTest="tnc-interface-item-custom"
     >
       <mat-checkbox
         [checked]="customEnabled()"
@@ -35,15 +31,22 @@
       ></mat-checkbox>
       <span class="interface-details custom">
         <span class="interface-name">{{ "Custom" | translate }}</span>
-        <input
-          type="text"
-          [formControl]="customIpControl"
-          placeholder="{{ 'Enter IP address' | translate }}"
-          class="custom-ip-input"
-          ixTest="tnc-custom-ip-input"
-          (click)="$event.stopPropagation()"
-        />
+        <div class="custom-ip-container">
+          <input
+            type="text"
+            [formControl]="customIpControl"
+            placeholder="{{ 'Enter IP address' | translate }}"
+            class="custom-ip-input"
+            ixTest="tnc-custom-ip-input"
+            (click)="$event.stopPropagation()"
+          />
+        </div>
       </span>
     </label>
   </div>
+  @if (customEnabled() && customIpControl.invalid && (customIpControl.dirty || customIpControl.touched)) {
+    <div class="error-message">
+      {{ "Please enter a valid IP address" | translate }}
+    </div>
+  }
 </div>

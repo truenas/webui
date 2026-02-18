@@ -15,6 +15,7 @@
   } @else if (currentView() === ModalView.InterfaceSelector) {
     <ix-truenas-connect-interface-selector
       (interfacesSelected)="onInterfacesSelected($event)"
+      (isValid)="onValidationStateChanged($event)"
     ></ix-truenas-connect-interface-selector>
   } @else {
     <ix-truenas-connect-status-display
@@ -30,9 +31,17 @@
       {{ "Loading..." | translate }}
     </button>
   } @else if (currentView() === ModalView.InterfaceSelector) {
+  <button
+    color="secondary"
+    mat-button
+    (click)="showStatusModal()"
+  >
+      {{ "Go back" | translate }}
+  </button>
     <button
       color="primary"
       mat-button
+      [disabled]="selectedInterfaces().length < 1 || !isInterfaceSelectorValid()"
       (click)="connect()"
     >
       @if (isConnecting()) {
