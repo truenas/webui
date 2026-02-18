@@ -271,9 +271,7 @@ export class DeviceFormComponent implements OnInit {
     ),
   );
 
-  readonly zvolProvider = new SimpleAsyncComboboxProvider(
-    this.api.call('vm.device.disk_choices').pipe(choicesToOptions()),
-  );
+  readonly zvolOptions$ = this.api.call('vm.device.disk_choices').pipe(choicesToOptions());
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
@@ -347,8 +345,8 @@ export class DeviceFormComponent implements OnInit {
       this.updateDisplayFormForType(null);
     }
 
-    this.newOrExistingControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      this.setDiskFormValidators(value);
+    this.newOrExistingControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.setDiskFormValidators(value as 'new' | 'existing');
     });
 
     if (this.slideInData?.virtualMachineId) {

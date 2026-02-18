@@ -472,7 +472,7 @@ describe('DeviceFormComponent', () => {
         expect(values).not.toHaveProperty('Zvol');
       });
 
-      it('shows Zvol combobox when Use existing is selected', async () => {
+      it('shows Zvol select when Use existing is selected', async () => {
         await form.fillForm({ Type: 'Disk' });
         const radioGroup = await loader.getHarness(IxRadioGroupHarness);
         await radioGroup.setValue('Use existing disk image');
