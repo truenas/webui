@@ -8,7 +8,6 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { formatDuration, intervalToDuration } from 'date-fns';
 import { of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -42,8 +41,6 @@ import { AccessFormComponent } from 'app/pages/system/advanced/access/access-for
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
-import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
-import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -89,14 +86,6 @@ export class AccessCardComponent implements OnInit {
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-
-  readonly sessionTimeout$ = this.store$.pipe(
-    waitForPreferences,
-    map((preferences) => {
-      return preferences.lifetime ? preferences.lifetime : defaultPreferences.lifetime;
-    }),
-    toLoadingState(),
-  );
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
@@ -200,13 +189,6 @@ export class AccessCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.updateSessions();
-    });
-  }
-
-  asDuration(sessionTimeout: number): string {
-    const duration = intervalToDuration({ start: 0, end: sessionTimeout * 1000 });
-    return formatDuration(duration, {
-      format: ['days', 'hours', 'minutes', 'seconds'],
     });
   }
 

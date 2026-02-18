@@ -6,18 +6,6 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
       <ix-fieldset [title]="fieldsetTitle | translate">
-        <ix-combobox
-          [formControlName]="language.fcName"
-          [label]="language.label | translate"
-          [tooltip]="language.tooltip | translate"
-          [provider]="language.provider"
-          [required]="true"
-        ></ix-combobox>
-
-        @if (!(isEnterprise$ | async) || true) {
-          <p class="language-hint" [innerHtml]="language.hint | translate"></p>
-        }
-
         <ix-select
           [label]="kbdMap.label | translate"
           [options]="kbdMap.options"
@@ -30,16 +18,6 @@
           [provider]="timezone.provider"
           [required]="true"
         ></ix-combobox>
-        <ix-select
-          [label]="dateFormat.label | translate"
-          [options]="dateFormat.options"
-          [formControlName]="dateFormat.fcName"
-        ></ix-select>
-        <ix-select
-          [label]="timeFormat.label | translate"
-          [options]="timeFormat.options"
-          [formControlName]="timeFormat.fcName"
-        ></ix-select>
       </ix-fieldset>
 
       <ix-form-actions>

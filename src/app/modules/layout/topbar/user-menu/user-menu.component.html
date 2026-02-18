@@ -47,6 +47,17 @@
         </button>
       }
 
+      <button
+        name="settings-preferences"
+        mat-menu-item
+        ixTest="preferences"
+        [ixUiSearch]="searchableElements.elements.preferences"
+        (click)="openPreferencesForm()"
+      >
+        <tn-icon size="lg" name="cog" library="mdi"></tn-icon>
+        {{ 'Preferences' | translate }}
+      </button>
+
       <a
         name="settings-api"
         ixTest="api-keys"

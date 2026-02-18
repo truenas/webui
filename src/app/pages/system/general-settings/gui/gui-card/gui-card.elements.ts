@@ -8,9 +8,6 @@ export const guiCardElements = {
     gui: {
       anchor: 'gui-card',
     },
-    theme: {
-      hierarchy: [T('Theme')],
-    },
     sslCertificate: {
       hierarchy: [T('SSL Certificate')],
     },

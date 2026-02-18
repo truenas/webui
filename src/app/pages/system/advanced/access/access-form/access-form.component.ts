@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -23,9 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
-import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
-import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
-import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 import {
   waitForAdvancedConfig,
@@ -43,7 +39,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxInputComponent,
     IxCheckboxComponent,
     IxTextareaComponent,
     FormActionsComponent,
@@ -70,11 +65,6 @@ export class AccessFormComponent implements OnInit {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   form = this.fb.nonNullable.group({
-    token_lifetime: [defaultPreferences.lifetime, [
-      Validators.required,
-      Validators.min(30), // Min value allowed is 30 seconds.
-      Validators.max(2147482), // Max value is 2147482 seconds, or 24 days, 20 hours, 31 minutes, and 22 seconds.
-    ]],
     ds_auth: [false],
     login_banner: [null as string | null],
   });
@@ -86,12 +76,6 @@ export class AccessFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
-      if (preferences.lifetime) {
-        this.form.controls.token_lifetime.setValue(preferences.lifetime);
-      }
-    });
-
     this.store$.pipe(waitForGeneralConfig, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.form.controls.ds_auth.setValue(config.ds_auth);
     });
@@ -108,8 +92,6 @@ export class AccessFormComponent implements OnInit {
         take(1),
         takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
-        this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.getRawValue().token_lifetime }));
-
         const bannerChanged = this.form.controls.login_banner.dirty;
 
         if (bannerChanged || this.isEnterprise) {
