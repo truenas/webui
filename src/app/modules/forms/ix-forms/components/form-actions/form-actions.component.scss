@@ -65,5 +65,6 @@
 @media (max-width: $breakpoint-sm) {
   :host {
     padding-bottom: max(10%, 5vh);
+    padding-bottom: max(10%, 5dvh, env(safe-area-inset-bottom, 0px));
   }
 }

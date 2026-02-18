@@ -15,6 +15,7 @@
 
   @media (max-width: $breakpoint-sm) {
     height: 100vh;
+    height: 100dvh;
     padding-top: 0;
     top: 0;
     width: 100%;
@@ -48,8 +49,6 @@ body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   width: 100%;
 
   @media (max-width: $breakpoint-sm) {
-    height: calc(100vh - 75px);
-    margin-top: 75px;
     -webkit-overflow-scrolling: touch;
   }
 

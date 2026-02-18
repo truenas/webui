@@ -3,6 +3,7 @@
 
 .mat-sidenav-container {
   height: 100vh;
+  height: 100dvh;
 }
 
 .product-type {
@@ -87,6 +88,7 @@ ix-jw-modal {
 .slidein-nav {
   background-color: var(--contrast-darker);
   height: calc(100vh - 48px);
+  height: calc(100dvh - 48px);
   left: -239px;
   overflow: auto;
   position: absolute;
@@ -114,6 +116,7 @@ ix-jw-modal {
   display: flex;
   flex-direction: column;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow: auto;
 }
 

@@ -1,9 +1,19 @@
+@import 'scss-imports/variables';
+
 :host {
   display: block;
   left: 0;
   position: absolute;
   top: 0;
   width: 100%;
+  z-index: 10;
+
+  @media (max-width: $breakpoint-sm) {
+    left: auto;
+    margin: 0 -20px;
+    position: sticky;
+    width: calc(100% + 40px);
+  }
 }
 
 .ix-slidein-title-bar {
