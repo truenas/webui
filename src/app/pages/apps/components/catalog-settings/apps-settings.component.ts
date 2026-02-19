@@ -186,7 +186,7 @@ export class AppsSettingsComponent implements OnInit {
     forkJoin([
       this.api.call('catalog.update', [{ preferred_trains: values.preferred_trains } as CatalogUpdate]),
       this.api.job('docker.update', [{
-        nvidia: values.nvidia,
+        ...(this.showNvidiaCheckbox() ? { nvidia: values.nvidia } : {}),
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
         registry_mirrors: values.registry_mirrors,

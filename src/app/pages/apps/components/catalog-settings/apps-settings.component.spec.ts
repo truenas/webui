@@ -23,6 +23,32 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
+function getNvidiaProviders(
+  config: Partial<DockerConfig>,
+  nvidiaPresent: boolean,
+): unknown[] {
+  return [
+    mockApi([
+      mockCall('catalog.update'),
+      mockCall('catalog.trains', ['stable', 'community', 'test']),
+      mockCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
+      mockCall('docker.status'),
+      mockCall('docker.config', {
+        enable_image_updates: false,
+        address_pools: [],
+        pool: 'test-pool',
+        ...config,
+      } as DockerConfig),
+      mockCall('docker.nvidia_present', nvidiaPresent),
+      mockJob('docker.update', fakeSuccessfulJob()),
+    ]),
+    mockProvider(DialogService),
+    mockProvider(FormErrorHandlerService),
+    mockAuth(),
+    mockProvider(DockerStore, { initialize: jest.fn() }),
+  ];
+}
+
 describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
@@ -207,9 +233,23 @@ describe('AppsSettingsComponent', () => {
       ],
     }]);
   });
+
+  it('submits nvidia as true when user enables the nvidia checkbox', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Install NVIDIA Drivers': true,
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [
+      expect.objectContaining({ nvidia: true }),
+    ]);
+  });
 });
 
-describe('AppsSettingsComponent - nvidia without GPU', () => {
+describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
 
@@ -223,25 +263,8 @@ describe('AppsSettingsComponent - nvidia without GPU', () => {
     component: AppsSettingsComponent,
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
-      mockApi([
-        mockCall('catalog.update'),
-        mockCall('catalog.trains', ['stable', 'community', 'test']),
-        mockCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
-        mockCall('docker.status'),
-        mockCall('docker.config', {
-          enable_image_updates: false,
-          nvidia: true,
-          address_pools: [],
-          pool: 'test-pool',
-        } as DockerConfig),
-        mockCall('docker.nvidia_present', false),
-        mockJob('docker.update', fakeSuccessfulJob()),
-      ]),
-      mockProvider(DialogService),
+      ...getNvidiaProviders({ nvidia: true }, false),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(FormErrorHandlerService),
-      mockAuth(),
-      mockProvider(DockerStore, { initialize: jest.fn() }),
     ],
   });
 
@@ -271,25 +294,8 @@ describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
     component: AppsSettingsComponent,
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
-      mockApi([
-        mockCall('catalog.update'),
-        mockCall('catalog.trains', ['stable', 'community', 'test']),
-        mockCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
-        mockCall('docker.status'),
-        mockCall('docker.config', {
-          enable_image_updates: false,
-          nvidia: false,
-          address_pools: [],
-          pool: 'test-pool',
-        } as DockerConfig),
-        mockCall('docker.nvidia_present', false),
-        mockJob('docker.update', fakeSuccessfulJob()),
-      ]),
-      mockProvider(DialogService),
+      ...getNvidiaProviders({ nvidia: false }, false),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(FormErrorHandlerService),
-      mockAuth(),
-      mockProvider(DockerStore, { initialize: jest.fn() }),
     ],
   });
 
