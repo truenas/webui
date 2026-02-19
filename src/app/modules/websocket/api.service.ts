@@ -156,6 +156,8 @@ export class ApiService {
         }
         return throwError(() => error);
       }),
+      // callResponse$ no longer emits on success (see switchMap → EMPTY above).
+      // It remains in the merge to propagate errors when no job was created.
       takeUntil(merge(this.clearSubscriptions$, callResponse$)),
       finalize(() => this.jobApiErrors.delete(uuid)),
     ) as Observable<Job<ApiJobResponse<M>>>;
