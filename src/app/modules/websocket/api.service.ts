@@ -121,6 +121,10 @@ export class ApiService {
       this.getErrorSwitchMap(method, uuid),
       map((message) => message.result),
       take(1),
+      // On success, don't emit — let observeJob() handle completion via the store.
+      // Emitting here would cause takeUntil to cancel the store subscription before
+      // the final job update (with time_finished/result) reaches the store.
+      switchMap(() => EMPTY),
       catchError((error: unknown) => {
         // When a job exists in the store, save the API error details for later enrichment
         // and let observeJob() handle the failure with full job data (including logs_excerpt).
