@@ -1,6 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -15,24 +16,42 @@ describe('AlertClassesTabComponent', () => {
       id: 'APPLICATIONS',
       title: 'Applications',
       classes: [
-        { id: AlertClassName.AppUpdate, title: 'Application Update Available', level: 'INFO' },
+        {
+          id: AlertClassName.AppUpdate,
+          title: 'Application Update Available',
+          level: 'INFO',
+          product_types: [ProductType.CommunityEdition, ProductType.Enterprise],
+        },
       ],
     },
     {
       id: 'SYSTEM',
       title: 'System',
       classes: [
-        { id: 'BrandNewBackendAlert' as AlertClassName, title: 'Brand New Alert', level: 'WARNING' },
+        {
+          id: 'BrandNewBackendAlert' as AlertClassName,
+          title: 'Brand New Alert',
+          level: 'WARNING',
+          product_types: [ProductType.CommunityEdition, ProductType.Enterprise],
+        },
       ],
     },
   ] as AlertCategory[];
 
+  const defaultProductType = ProductType.CommunityEdition;
+
+  function setupApiMock(api: ApiService, categories = mockCategories, productType = defaultProductType): void {
+    (api.call as jest.Mock).mockImplementation((method: string) => {
+      if (method === 'alert.list_categories') return of(categories);
+      if (method === 'system.product_type') return of(productType);
+      return of(null);
+    });
+  }
+
   const createComponent = createComponentFactory({
     component: AlertClassesTabComponent,
     providers: [
-      mockProvider(ApiService, {
-        call: jest.fn(() => of(mockCategories)),
-      }),
+      mockProvider(ApiService),
     ],
     detectChanges: false,
   });
@@ -46,6 +65,7 @@ describe('AlertClassesTabComponent', () => {
         }),
       ],
     });
+    setupApiMock(spectator.inject(ApiService));
   });
 
   it('should create', () => {
@@ -65,6 +85,7 @@ describe('AlertClassesTabComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.product_type');
     expect(spectator.query('.last-checked')).toExist();
   });
 
@@ -98,6 +119,17 @@ describe('AlertClassesTabComponent', () => {
     const staleSection = spectator.query('.section.stale');
     expect(staleSection).toExist();
     expect(staleSection.textContent).not.toContain(AlertClassName.AppUpdate);
+  });
+
+  it('should not show enterprise-only classes as stale on community edition', () => {
+    spectator.detectChanges();
+    isAuthenticated$.next(true);
+    spectator.detectChanges();
+
+    const staleSection = spectator.query('.section.stale');
+    expect(staleSection.textContent).not.toContain(AlertClassName.NoCriticalFailoverInterfaceFound);
+    expect(staleSection.textContent).not.toContain(AlertClassName.LicenseHasExpired);
+    expect(staleSection.textContent).not.toContain(AlertClassName.UsbStorage);
   });
 
   it('should display error message in UI when API fails', () => {
@@ -137,5 +169,6 @@ describe('AlertClassesTabComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.product_type');
   });
 });

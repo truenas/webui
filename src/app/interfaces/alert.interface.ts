@@ -1,6 +1,7 @@
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface Alert {
@@ -31,6 +32,7 @@ export interface AlertClass {
   id: AlertClassName;
   level: AlertLevel;
   title: string;
+  product_types: ProductType[];
   proactive_support?: boolean;
 }
 
