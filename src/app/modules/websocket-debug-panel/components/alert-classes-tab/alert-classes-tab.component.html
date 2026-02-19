@@ -81,7 +81,7 @@
       <div class="section stale" role="region" aria-labelledby="stale-ui-heading">
         <h3 id="stale-ui-heading">{{ 'Stale in UI' | translate }} ({{ staleInUi().length }})</h3>
         <p class="section-description">
-          {{ 'These alert classes are defined in AlertClassName enum but no longer exist in the backend.' | translate }}
+          {{ 'These alert classes are defined in AlertClassName enum but were not returned by the backend. They may be genuinely stale or restricted to a different product type (the backend only returns classes applicable to the current system).' | translate }}
         </p>
         <div class="class-list">
           @for (item of staleInUi(); track $index) {

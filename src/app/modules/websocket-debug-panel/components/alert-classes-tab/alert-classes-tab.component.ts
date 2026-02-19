@@ -6,10 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
-import { forkJoin } from 'rxjs';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
-import { getAlertClassProductTypes } from 'app/enums/alert-class-product-type.constant';
-import { ProductType } from 'app/enums/product-type.enum';
 import { AlertCategory } from 'app/interfaces/alert.interface';
 import { smartAlertRegistry } from 'app/modules/alerts/services/alert-enhancement.registry';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -63,14 +60,11 @@ export class AlertClassesTabComponent {
     this.loading.set(true);
     this.error.set(null);
 
-    forkJoin([
-      this.api.call('alert.list_categories'),
-      this.api.call('system.product_type'),
-    ]).pipe(
+    this.api.call('alert.list_categories').pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: ([categories, productType]) => {
-        this.compareClasses(categories, productType);
+      next: (categories: AlertCategory[]) => {
+        this.compareClasses(categories);
         this.loading.set(false);
         this.lastCheckedFormatted.set(format(new Date(), 'yyyy-MM-dd HH:mm:ss'));
       },
@@ -82,7 +76,7 @@ export class AlertClassesTabComponent {
     });
   }
 
-  private compareClasses(categories: AlertCategory[], productType: ProductType): void {
+  private compareClasses(categories: AlertCategory[]): void {
     const enumValues = new Set(Object.values(AlertClassName) as string[]);
     const registryKeys = new Set(Object.keys(smartAlertRegistry.byClass));
 
@@ -119,10 +113,7 @@ export class AlertClassesTabComponent {
     const backendClassIds = new Set(backendClasses.keys());
     this.staleInUi.set(
       [...enumValues]
-        .filter((id) => {
-          if (backendClassIds.has(id)) return false;
-          return getAlertClassProductTypes(id as AlertClassName).includes(productType);
-        })
+        .filter((id) => !backendClassIds.has(id))
         .toSorted((a, b) => a.localeCompare(b)),
     );
   }
