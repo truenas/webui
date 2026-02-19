@@ -88,14 +88,18 @@ ix-jw-modal {
 .slidein-nav {
   background-color: var(--contrast-darker);
   height: calc(100vh - 48px);
-  height: calc(100dvh - 48px);
-  left: -239px;
   overflow: auto;
   position: absolute;
   top: 48px;
-  transition: 200ms;
+  will-change: transform;
+  transition: transform 200ms;
+  transform: translateX(-239px);
   width: 239px;
   z-index: 100;
+
+  &.slidein-open {
+    transform: translateX(0);
+  }
 
   &.slidein-nav-sm {
     @media #{$media-gt-sm} {
