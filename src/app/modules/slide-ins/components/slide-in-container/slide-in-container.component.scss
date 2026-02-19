@@ -5,7 +5,8 @@
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight
+  height: calc(100vh - 48px - 75px); // Fallback for browsers without dvh support
+  height: calc(100dvh - 48px - 75px);
   padding-top: 75px;
   position: fixed;
   right: 0;

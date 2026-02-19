@@ -8,6 +8,7 @@
   width: 100%;
 
   @media (max-width: $breakpoint-sm) {
+    background-color: var(--bg2);
     left: auto;
     margin: 0 -20px;
     position: sticky;

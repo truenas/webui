@@ -17,7 +17,8 @@
 }
 
 .login-form {
-  min-height: 100vh;
+  min-height: 100vh; // Fallback for browsers without dvh support
+  min-height: 100dvh;
 }
 
 .page-wrap {
@@ -25,6 +26,7 @@
   background-color: var(--bg1);
   display: flex;
   height: 100vh;
+  height: 100dvh;
   padding: 0;
 }
 
@@ -84,6 +86,7 @@
   align-items: center;
   display: flex;
   height: 100vh;
+  height: 100dvh;
   justify-content: center;
 
   >div {
@@ -119,6 +122,7 @@
 
   .card-bottom {
     padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* Not sure how to workaround browser bug.
