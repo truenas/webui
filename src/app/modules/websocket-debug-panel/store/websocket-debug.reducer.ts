@@ -1,7 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
-import { defaultMessageLimit, tabs } from 'app/modules/websocket-debug-panel/constants';
+import { DebugTab, defaultMessageLimit, tabs } from 'app/modules/websocket-debug-panel/constants';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { addMessageWithLimit } from 'app/modules/websocket-debug-panel/utils/reducer-utils';
@@ -16,7 +16,7 @@ export interface WebSocketDebugState {
   messages: WebSocketDebugMessage[];
   mockConfigs: MockConfig[];
   isPanelOpen: boolean;
-  activeTab: string;
+  activeTab: DebugTab;
   messageLimit: number;
   prefilledMockConfig: PrefilledMockConfig | null;
   enclosureMock: {

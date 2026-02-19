@@ -163,10 +163,10 @@ describe('WebSocketDebugReducer', () => {
     });
 
     it('should set active tab', () => {
-      const action = WebSocketDebugActions.setActiveTab({ tab: 'mock' });
+      const action = WebSocketDebugActions.setActiveTab({ tab: 'mock-configurations' });
       const state = webSocketDebugReducer(initialState, action);
 
-      expect(state.activeTab).toBe('mock');
+      expect(state.activeTab).toBe('mock-configurations');
     });
   });
 
@@ -256,7 +256,7 @@ describe('WebSocketDebugReducer', () => {
           },
         ],
         isPanelOpen: true,
-        activeTab: 'mock',
+        activeTab: 'mock-configurations',
       };
 
       const action = WebSocketDebugActions.addMockConfig({ config: mockConfig1 });
@@ -264,7 +264,7 @@ describe('WebSocketDebugReducer', () => {
 
       expect(state.messages).toEqual(stateWithData.messages);
       expect(state.isPanelOpen).toBe(true);
-      expect(state.activeTab).toBe('mock');
+      expect(state.activeTab).toBe('mock-configurations');
       expect(state.mockConfigs).toHaveLength(1);
     });
   });
@@ -359,7 +359,7 @@ describe('WebSocketDebugReducer', () => {
           response: { type: 'success', result: {} },
         }],
         isPanelOpen: true,
-        activeTab: 'enclosure',
+        activeTab: 'enclosure-mock',
       };
 
       const action = WebSocketDebugActions.toggleEnclosureMock({ enabled: true });
@@ -368,7 +368,7 @@ describe('WebSocketDebugReducer', () => {
       expect(state.messages).toEqual(stateWithData.messages);
       expect(state.mockConfigs).toEqual(stateWithData.mockConfigs);
       expect(state.isPanelOpen).toBe(true);
-      expect(state.activeTab).toBe('enclosure');
+      expect(state.activeTab).toBe('enclosure-mock');
       expect(state.enclosureMock.enabled).toBe(true);
     });
   });
