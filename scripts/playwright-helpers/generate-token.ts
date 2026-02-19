@@ -7,19 +7,17 @@ import WebSocket from 'ws';
 interface AuthCredentials {
   username?: string;
   password?: string;
-  tokenTtl?: number;
 }
 
 interface WebSocketResponse {
   id: string;
-  result?: string;
+  result?: string | { reconnect_token?: string };
   error?: { message: string };
 }
 
 const defaultCredentials: AuthCredentials = {
   username: process.env.AUTH_USERNAME || 'root',
   password: process.env.AUTH_PASSWORD || 'testing',
-  tokenTtl: 7200,
 };
 
 // Read environment from file
@@ -58,7 +56,7 @@ function sendWebSocketMessage(ws: WebSocket, message: object): void {
   ws.send(JSON.stringify(message));
 }
 
-async function waitForWebSocketMessage(ws: WebSocket, expectedId: string): Promise<string> {
+async function waitForWebSocketMessage(ws: WebSocket, expectedId: string): Promise<WebSocketResponse['result']> {
   return new Promise((resolve, reject) => {
     ws.onmessage = (event) => {
       try {
@@ -95,7 +93,7 @@ async function generateDevToken(credentials: AuthCredentials = {}): Promise<stri
     // Wait for connection to open
     await waitForWebSocketOpen(ws);
 
-    // Send login request
+    // Send login request with reconnect_token option
     sendWebSocketMessage(ws, {
       jsonrpc: '2.0',
       id: 'dev-login',
@@ -104,22 +102,18 @@ async function generateDevToken(credentials: AuthCredentials = {}): Promise<stri
         mechanism: 'PASSWORD_PLAIN',
         username: creds.username,
         password: creds.password,
+        login_options: { reconnect_token: true },
       }],
     });
 
-    // Wait for login response
-    await waitForWebSocketMessage(ws, 'dev-login');
+    // Wait for login response containing the reconnect token
+    const loginResult = await waitForWebSocketMessage(ws, 'dev-login');
 
-    // Send token generation request
-    sendWebSocketMessage(ws, {
-      jsonrpc: '2.0',
-      id: 'dev-token',
-      method: 'auth.generate_token',
-      params: [creds.tokenTtl, {}, false, false],
-    });
+    if (typeof loginResult === 'object' && loginResult?.reconnect_token) {
+      return loginResult.reconnect_token;
+    }
 
-    // Wait for token response
-    return await waitForWebSocketMessage(ws, 'dev-token');
+    throw new Error('Login response did not contain a reconnect token');
   } finally {
     ws.close();
   }
