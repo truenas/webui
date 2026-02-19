@@ -12,7 +12,6 @@ import {
   combineLatest,
   filter,
   forkJoin,
-  map,
   of,
   take,
 } from 'rxjs';
@@ -124,7 +123,7 @@ export class AppsSettingsComponent implements OnInit {
     combineLatest([
       this.api.call('catalog.config'),
       this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
-      this.api.call('docker.nvidia_present').pipe(map(Boolean)),
+      this.api.call('docker.nvidia_present'),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([catalogConfig, dockerConfig, hasNvidiaCard]) => {

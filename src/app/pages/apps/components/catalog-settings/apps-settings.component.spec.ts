@@ -256,3 +256,51 @@ describe('AppsSettingsComponent - nvidia without GPU', () => {
     expect(nvidiaCheckbox).toBeTruthy();
   });
 });
+
+describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
+  let spectator: Spectator<AppsSettingsComponent>;
+  let loader: HarnessLoader;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn((): undefined => undefined),
+  };
+
+  const createComponent = createComponentFactory({
+    component: AppsSettingsComponent,
+    imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
+    providers: [
+      mockApi([
+        mockCall('catalog.update'),
+        mockCall('catalog.trains', ['stable', 'community', 'test']),
+        mockCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
+        mockCall('docker.status'),
+        mockCall('docker.config', {
+          enable_image_updates: false,
+          nvidia: false,
+          address_pools: [],
+          pool: 'test-pool',
+        } as DockerConfig),
+        mockCall('docker.nvidia_present', false),
+        mockJob('docker.update', fakeSuccessfulJob()),
+      ]),
+      mockProvider(DialogService),
+      mockProvider(SlideInRef, slideInRef),
+      mockProvider(FormErrorHandlerService),
+      mockAuth(),
+      mockProvider(DockerStore, { initialize: jest.fn() }),
+    ],
+  });
+
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = jest.fn();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('hides nvidia checkbox when no GPU is present and no drivers are installed', async () => {
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Install NVIDIA Drivers' }));
+    expect(nvidiaCheckbox).toBeNull();
+  });
+});
