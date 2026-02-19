@@ -1,5 +1,3 @@
-@import 'scss-imports/cssvars';
-
 :host {
   color: var(--fg1);
   display: block;
@@ -25,13 +23,6 @@
 
     .mat-mdc-select-arrow-wrapper {
       width: max-content;
-    }
-  }
-
-  // 16px prevents iOS Safari auto-zoom on input focus
-  @media (max-width: $breakpoint-sm) {
-    input {
-      font-size: 16px;
     }
   }
 
