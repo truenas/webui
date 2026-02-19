@@ -101,6 +101,7 @@
   .page-wrap {
     bottom: 0;
     height: 100vh;
+    height: 100dvh;
     left: 0;
     max-width: 100%;
     overflow-x: hidden;
@@ -112,6 +113,7 @@
 
   .mat-mdc-card {
     min-height: 100vh;
+    min-height: 100dvh;
     top: 0;
   }
 

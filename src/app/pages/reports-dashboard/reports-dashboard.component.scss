@@ -62,6 +62,7 @@ cdk-virtual-scroll-viewport {
 
   @media(max-width: $breakpoint-sm) {
     height: 100vh;
+    height: 100dvh;
 
     &::ng-deep {
       .cdk-virtual-scroll-content-wrapper {
