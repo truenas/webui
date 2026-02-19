@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -15,12 +14,9 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { allThemes } from 'app/modules/theme/theme.constants';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { AppState } from 'app/store';
-import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
-import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @Component({
@@ -55,25 +51,11 @@ export class GuiCardComponent {
     toLoadingState(),
   );
 
-  readonly preferences$ = this.store$.pipe(
-    waitForPreferences,
-    toLoadingState(),
-  );
-
-  private preferencesSignal = toSignal(this.preferences$);
-
-  protected themeLabel = computed(() => {
-    const preferences = this.preferencesSignal();
-    const theme = preferences?.value?.userTheme;
-    return allThemes.find((themeItem) => themeItem.name === theme)?.label;
-  });
-
   readonly helptext = helptext;
 
   openSettings(): void {
     this.slideIn.open(GuiFormComponent).pipe(
-      filter((response) => !response.response),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.store$.dispatch(guiFormClosedWithoutSaving()));
+    ).subscribe();
   }
 }

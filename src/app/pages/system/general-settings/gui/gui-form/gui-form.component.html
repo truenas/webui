@@ -11,12 +11,6 @@
       (submit)="onSubmit()"
     >
       <ix-fieldset [title]="helptext.guiTitle | translate">
-        <ix-select
-          formControlName="theme"
-          [label]="'Theme' | translate"
-          [options]="options.themes"
-          [required]="true"
-        ></ix-select>
         <ix-with-manage-certificates-link>
           <ix-select
             formControlName="ui_certificate"

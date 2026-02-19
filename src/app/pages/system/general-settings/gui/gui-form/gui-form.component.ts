@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { of } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -26,15 +26,12 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
-import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
-import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -61,7 +58,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private sysGeneralService = inject(SystemGeneralService);
-  private themeService = inject(ThemeService);
   private api = inject(ApiService);
   private wsManager = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
@@ -80,7 +76,6 @@ export class GuiFormComponent implements OnInit {
   protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
-    theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
     ui_v6address: [[] as string[]],
@@ -93,7 +88,6 @@ export class GuiFormComponent implements OnInit {
   });
 
   options = {
-    themes: of(this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name }))),
     ui_certificate: this.sysGeneralService.uiCertificateOptions().pipe(choicesToOptions()),
     ui_address: this.sysGeneralService.ipChoicesv4().pipe(choicesToOptions()),
     ui_v6address: this.sysGeneralService.ipChoicesv6().pipe(choicesToOptions()),
@@ -116,7 +110,6 @@ export class GuiFormComponent implements OnInit {
     });
 
     this.loadCurrentValues();
-    this.setupThemePreview();
   }
 
   ngOnInit(): void {
@@ -148,7 +141,6 @@ export class GuiFormComponent implements OnInit {
       ...values,
       ui_certificate: parseInt(values.ui_certificate),
     };
-    delete params.theme;
 
     if (this.isStigMode()) {
       delete params.usage_collection;
@@ -175,9 +167,7 @@ export class GuiFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
         this.store$.dispatch(generalConfigUpdated());
-        this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading.set(false);
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
       },
@@ -260,15 +250,12 @@ export class GuiFormComponent implements OnInit {
   }
 
   private loadCurrentValues(): void {
-    combineLatest([
-      this.store$.pipe(waitForGeneralConfig),
-      this.store$.pipe(waitForPreferences),
-    ]).pipe(
+    this.store$.pipe(
+      waitForGeneralConfig,
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([config, preferences]) => {
+    ).subscribe((config) => {
       this.configData = config;
       this.formGroup.patchValue({
-        theme: preferences.userTheme,
         ui_certificate: config.ui_certificate?.id?.toString(),
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,
@@ -280,14 +267,6 @@ export class GuiFormComponent implements OnInit {
         ui_consolemsg: config.ui_consolemsg,
       });
       this.isFormLoading.set(false);
-    });
-  }
-
-  private setupThemePreview(): void {
-    this.formGroup.controls.theme.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((theme) => {
-      this.store$.dispatch(themeChangedInGuiForm({ theme }));
     });
   }
 }

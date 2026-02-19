@@ -19,6 +19,13 @@ export const userMenuElements = {
         T('User password'),
       ],
     },
+    preferences: {
+      hierarchy: [T('Preferences')],
+      synonyms: [
+        T('Session Timeout'), T('Token Lifetime'), T('Theme'),
+        T('Language'), T('Date Format'), T('Time Format'),
+      ],
+    },
     guide: {
       hierarchy: [T('Guide')],
     },

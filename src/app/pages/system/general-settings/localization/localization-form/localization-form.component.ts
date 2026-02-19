@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -6,31 +5,25 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { omit, sortBy } from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { LanguageService } from 'app/modules/language/language.service';
-import { LocaleService } from 'app/modules/language/locale.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-localization-form',
@@ -49,43 +42,27 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatButton,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class LocalizationFormComponent implements OnInit {
   private sysGeneralService = inject(SystemGeneralService);
   private fb = inject(FormBuilder);
-  localeService = inject(LocaleService);
   protected api = inject(ApiService);
-  protected langService = inject(LanguageService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<LocalizationSettings, boolean>>(SlideInRef);
-  private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
   fieldsetTitle = helptext.localeTitle;
 
   isFormLoading = signal<boolean>(false);
 
-  sortLanguagesByName = true;
   protected localizationSettings: LocalizationSettings;
 
   formGroup = this.fb.nonNullable.group({
-    language: ['', [Validators.required]],
     kbdmap: [''],
     timezone: ['', [Validators.required]],
-    date_format: [''],
-    time_format: [''],
   });
-
-  protected language = {
-    fcName: 'language',
-    label: helptext.language.label,
-    tooltip: helptext.language.tooltip,
-    hint: helptext.language.hint,
-    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
-  };
 
   protected kbdMap = {
     fcName: 'kbdmap',
@@ -101,20 +78,6 @@ export class LocalizationFormComponent implements OnInit {
     ))),
   };
 
-  protected dateFormat = {
-    fcName: 'date_format',
-    label: helptext.dateFormat.label,
-    options: of<Option[]>([]),
-  };
-
-  protected timeFormat = {
-    fcName: 'time_format',
-    label: helptext.timeFormat.label,
-    options: of<Option[]>([]),
-  };
-
-  protected isEnterprise$ = this.store$.select(selectIsEnterprise);
-
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
@@ -129,46 +92,23 @@ export class LocalizationFormComponent implements OnInit {
     }
   }
 
-  private setTimeOptions(tz: string): void {
-    const timeOptions = this.localeService.getTimeFormatOptions(tz);
-    this.timeFormat.options = of(timeOptions);
-    const dateOptions = this.localeService.getDateFormatOptions(tz);
-    this.dateFormat.options = of(dateOptions);
-  }
-
   protected setupForm(): void {
-    this.setTimeOptions(this.localizationSettings.timezone);
     this.formGroup.patchValue({
-      language: this.localizationSettings.language,
       kbdmap: this.localizationSettings.kbdMap,
       timezone: this.localizationSettings.timezone,
-      date_format: this.localizationSettings.dateFormat,
-      time_format: this.localizationSettings.timeFormat,
     });
   }
 
   protected submit(): void {
     const values = this.formGroup.getRawValue();
     this.isFormLoading.set(true);
-    this.window.localStorage.setItem('language', values.language);
-    this.window.localStorage.setItem('dateFormat', values.date_format);
-    this.window.localStorage.setItem('timeFormat', values.time_format);
-    this.store$.dispatch(localizationFormSubmitted({
-      dateFormat: values.date_format,
-      timeFormat: values.time_format,
-      language: values.language,
-    }));
 
-    const payload = omit(values, ['date_format', 'time_format', 'language']);
-
-    this.api.call('system.general.update', [payload]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.call('system.general.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading.set(false);
         this.slideInRef.close({ response: true });
-        this.langService.setLanguage(values.language);
-        this.setTimeOptions(payload.timezone);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

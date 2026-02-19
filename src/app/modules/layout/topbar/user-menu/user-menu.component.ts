@@ -7,6 +7,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map, of, switchMap } from 'rxjs';
@@ -17,8 +18,11 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import {
   ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
+import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 
 @Component({
   selector: 'ix-user-menu',
@@ -42,6 +46,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class UserMenuComponent {
   private matDialog = inject(MatDialog);
+  private slideIn = inject(SlideIn);
+  private store$ = inject(Store);
   private authService = inject(AuthService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -64,6 +70,13 @@ export class UserMenuComponent {
 
   openChangePasswordDialog(): void {
     this.matDialog.open(ChangePasswordDialog);
+  }
+
+  openPreferencesForm(): void {
+    this.slideIn.open(PreferencesFormComponent).pipe(
+      filter((response) => !response.response),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.store$.dispatch(guiFormClosedWithoutSaving()));
   }
 
   onTwoFactorAuth(): void {

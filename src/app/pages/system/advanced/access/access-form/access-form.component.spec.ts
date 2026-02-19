@@ -10,15 +10,12 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
-import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
-import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -62,9 +59,6 @@ describe('AccessFormComponent', () => {
           },
         },
         selectors: [{
-          selector: selectPreferences,
-          value: { lifetime: 300 } as Preferences,
-        }, {
           selector: selectGeneralConfig,
           value: { ds_auth: true },
         }, {
@@ -87,7 +81,6 @@ describe('AccessFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'Session Timeout': '300',
       'Login Banner': 'test',
       'Allow Directory Service users to access WebUI': true,
     });
@@ -99,7 +92,6 @@ describe('AccessFormComponent', () => {
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Session Timeout': '60',
       'Login Banner': '',
       'Allow Directory Service users to access WebUI': false,
     });
@@ -107,7 +99,6 @@ describe('AccessFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 60 }));
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.general.update', [{
       ds_auth: false,
     }]);
