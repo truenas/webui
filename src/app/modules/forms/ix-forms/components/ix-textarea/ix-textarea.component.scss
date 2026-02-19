@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 :host {
   display: block;
   margin-bottom: 12px;
@@ -27,6 +29,13 @@
   font-size: 12px;
   position: relative;
   width: 100%;
+
+  // 16px prevents iOS Safari auto-zoom on input focus
+  @media (max-width: $breakpoint-sm) {
+    textarea {
+      font-size: 16px;
+    }
+  }
 
   textarea {
     max-height: 250px;

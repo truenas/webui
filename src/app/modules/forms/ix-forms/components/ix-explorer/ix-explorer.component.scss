@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 :host {
   color: var(--fg1);
   display: block;
@@ -19,6 +21,13 @@
   flex-direction: row;
   font-size: 12px;
   position: relative;
+
+  // 16px prevents iOS Safari auto-zoom on input focus
+  @media (max-width: $breakpoint-sm) {
+    input {
+      font-size: 16px;
+    }
+  }
 
   input {
     min-height: 26px;
