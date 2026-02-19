@@ -44,13 +44,6 @@
   font-size: 12px;
   position: relative;
 
-  // 16px prevents iOS Safari auto-zoom on input focus
-  @media (max-width: $breakpoint-sm) {
-    ::ng-deep .mat-mdc-select-trigger {
-      font-size: 16px !important;
-    }
-  }
-
   ::ng-deep {
     .mat-mdc-select-value {
       padding: 5.1px 8px;
@@ -65,6 +58,8 @@
       width: 0;
     }
   }
+
+  @include prevent-ios-autozoom('::ng-deep .mat-mdc-select-trigger', $important: true);
 
   &:focus-within {
     border-color: var(--primary);

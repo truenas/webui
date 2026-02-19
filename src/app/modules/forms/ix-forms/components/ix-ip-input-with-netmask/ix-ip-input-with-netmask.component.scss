@@ -28,12 +28,7 @@
     }
   }
 
-  // 16px prevents iOS Safari auto-zoom on input focus
-  @media (max-width: $breakpoint-sm) {
-    input {
-      font-size: 16px;
-    }
-  }
+  @include prevent-ios-autozoom;
 
   input,
   .select {

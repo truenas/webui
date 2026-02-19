@@ -30,12 +30,7 @@
   position: relative;
   width: 100%;
 
-  // 16px prevents iOS Safari auto-zoom on input focus
-  @media (max-width: $breakpoint-sm) {
-    textarea {
-      font-size: 16px;
-    }
-  }
+  @include prevent-ios-autozoom('textarea');
 
   textarea {
     max-height: 250px;
