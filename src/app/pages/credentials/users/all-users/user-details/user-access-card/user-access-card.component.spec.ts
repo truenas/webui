@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatTooltip } from '@angular/material/tooltip';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -68,7 +69,7 @@ function createTestComponent(
       mockProvider(AuthService, {
         getGlobalTwoFactorConfig: jest.fn(() => of(globalTwoFactorConfig)),
         hasRole: jest.fn(() => of(true)),
-        user$: of({ pw_name: 'testuser' }),
+        user$: of({ pw_name: 'testuser', privilege: { roles: { $set: [Role.FullAdmin] } } }),
       }),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -206,6 +207,39 @@ describe('UserAccessCardComponent', () => {
     expect(rootLockButton).toBeTruthy();
   });
 
+  it('should show disabled Lock User button with tooltip for directory service users', async () => {
+    spectator.setInput('user', { ...mockUser, local: false });
+
+    const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
+    expect(await lockButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
+  });
+
+  it('should show disabled Unlock User button with tooltip for directory service users', async () => {
+    spectator.setInput('user', { ...mockUser, local: false, locked: true });
+
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock User' }));
+    expect(await unlockButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
+  });
+
+  it('should show disabled Clear Two-Factor Authentication button with tooltip for directory service users', async () => {
+    spectator.setInput('user', { ...mockUser, local: false, twofactor_auth_configured: true });
+
+    const clearTfaButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    expect(await clearTfaButton.isDisabled()).toBe(true);
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    expect(tooltip).toBeTruthy();
+  });
+
   describe('API Keys', () => {
     it('shows API keys count', () => {
       const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(8) .flex-container');
@@ -303,7 +337,7 @@ describe('UserAccessCardComponent', () => {
             enabled: true,
           })),
           hasRole: jest.fn(() => of(true)),
-          user$: of({ pw_name: 'differentuser' }), // Different user
+          user$: of({ pw_name: 'differentuser', privilege: { roles: { $set: [Role.FullAdmin] } } }),
         }),
         mockProvider(SnackbarService),
         mockProvider(DialogService, {

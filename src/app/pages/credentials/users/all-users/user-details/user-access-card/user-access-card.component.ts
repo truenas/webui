@@ -7,6 +7,7 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -15,7 +16,7 @@ import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { hasShellAccess } from 'app/helpers/user.helper';
+import { getDirectoryServiceTooltip, hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -46,6 +47,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     MatCardHeader,
     MatCardActions,
     MatCardContent,
+    MatTooltip,
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,
@@ -115,6 +117,24 @@ export class UserAccessCardComponent {
     return !user.locked && (!user.builtin || user.username === 'root');
   });
 
+  private hasAccountWriteRole = computed(() => {
+    const roles = this.currentUser()?.privilege?.roles?.$set || [];
+    return roles.includes(Role.FullAdmin) || roles.includes(Role.AccountWrite);
+  });
+
+  // Actions section is shown when the user has relevant lockable or 2FA state
+  // and the current user has the AccountWrite role (since all action buttons require it).
+  // For directory service users who match these conditions, buttons are shown but disabled with tooltips.
+  protected shouldShowActions = computed(() => {
+    if (!this.hasAccountWriteRole()) return false;
+    const user = this.user();
+    return this.shouldShowLockButton() || user.locked || user.twofactor_auth_configured;
+  });
+
+  protected readonly directoryServiceTooltip = computed(() => {
+    return getDirectoryServiceTooltip(this.user(), this.translate);
+  });
+
   protected get auditLink(): string {
     return this.urlOptions.buildUrl('/system/audit', {
       searchQuery: {
@@ -125,6 +145,7 @@ export class UserAccessCardComponent {
   }
 
   protected toggleLockStatus(): void {
+    if (!this.user().local) return;
     const { locked, username, id } = this.user();
     const message = locked
       ? this.translate.instant('Are you sure you want to unlock "{user}" user?', { user: username })
@@ -150,6 +171,7 @@ export class UserAccessCardComponent {
           ? this.translate.instant('User unlocked')
           : this.translate.instant('User locked'),
       );
+      this.reloadUsers.emit();
     });
   }
 
@@ -169,6 +191,7 @@ export class UserAccessCardComponent {
   }
 
   protected onClearTwoFactorAuth(): void {
+    if (!this.user().local) return;
     const username = this.user().username;
     this.dialogService.confirm({
       title: this.translate.instant('Clear Two-Factor Authentication'),

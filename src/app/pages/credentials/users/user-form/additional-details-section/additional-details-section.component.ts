@@ -41,6 +41,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
@@ -87,6 +88,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private translate = inject(TranslateService);
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
   private userService = inject(UserService);
+  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   editingUser = input<User>();
@@ -124,12 +126,15 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ['immutable', '=', false],
   ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    tap((options) => {
+      options.forEach((option) => this.groupNameCache.set(option.value, option.label));
+    }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
+  protected groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
     this.userService,
-    { valueField: 'id' },
+    { valueField: 'id', localOnly: true },
   );
 
   protected readonly roleGroupMap = new Map<Role, string>([
@@ -145,15 +150,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return homeValue !== defaultHomePath;
   }
 
-  groupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[
-      ['name', '^', query],
-      ['local', '=', true],
-      ['immutable', '=', false],
-    ]]).pipe(
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
+  protected groupsProvider: ChipsProvider = this.createGroupsProvider();
 
   readonly form = this.fb.group({
     full_name: ['' as string],
@@ -221,10 +218,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
           return;
         }
-
-        groupOptions.forEach((group) => {
-          this.groupNameCache.set(group.value, group.label);
-        });
 
         const groupLabel = this.roleGroupMap.get(selectedRole);
         const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
@@ -302,6 +295,20 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     }
 
     return this.form.controls.sudo_commands_nopasswd.value?.join(', ') || '';
+  }
+
+  private createGroupsProvider(): ChipsProvider {
+    return (query: string) => {
+      return this.api.call('group.query', [[
+        ['name', '^', query],
+        ['local', '=', true],
+        ['immutable', '=', false],
+      ]]).pipe(
+        map((groups) => {
+          return groups.map((group) => group.group);
+        }),
+      );
+    };
   }
 
   private resolveGroupNames(ids: number[]): void {
@@ -424,6 +431,46 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         this.form.controls.home_mode.enable();
       }
     });
+
+    this.form.controls.group.valueChanges
+      .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((primaryGroupId) => {
+        this.groupsProvider = this.createGroupsProvider();
+        this.cdr.markForCheck();
+
+        if (primaryGroupId == null) return;
+        const auxGroups = this.form.controls.groups.value;
+        const filtered = auxGroups.filter((id) => id !== primaryGroupId);
+        if (filtered.length !== auxGroups.length) {
+          this.form.controls.groups.patchValue(filtered);
+          const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);
+          this.snackbar.open({
+            message: this.translate.instant('{groupName} was removed from auxiliary groups.', { groupName }),
+          });
+        }
+      });
+
+    this.form.controls.groups.valueChanges
+      .pipe(
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((auxGroupIds) => {
+        this.groupComboboxProvider = new GroupComboboxProvider(
+          this.userService,
+          { valueField: 'id', localOnly: true },
+        );
+        this.cdr.markForCheck();
+
+        const primaryGroupId = this.form.controls.group.value;
+        if (primaryGroupId != null && auxGroupIds.includes(primaryGroupId)) {
+          const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);
+          this.form.controls.group.patchValue(null);
+          this.snackbar.open({
+            message: this.translate.instant('{groupName} was removed as primary group.', { groupName }),
+          });
+        }
+      });
 
     this.form.controls.groups.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
