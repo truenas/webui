@@ -1,5 +1,5 @@
 ##NODE temporary builder image
-from node:22-bookworm as uibuilder
+from node:24-bookworm as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN corepack enable
