@@ -7878,12 +7878,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chart.js@npm:~4.4.4":
-  version: 4.4.9
-  resolution: "chart.js@npm:4.4.9"
+"chart.js@npm:~4.5.1":
+  version: 4.5.1
+  resolution: "chart.js@npm:4.5.1"
   dependencies:
     "@kurkle/color": "npm:^0.3.0"
-  checksum: 10/b19adf26347589fccf8efa314d927284674c46d2a934869bc8dda1ee56e3cd2fffa627bd0b6c6e16e2cc876b2c3880e106e48f22737138f06293f8373c8ae9f9
+  checksum: 10/a8dd3385371ad7e4c173d35176b7aed457ae27b45550248ecc854bf60a794541f56f3921850dc1f3c65985ef43beea37172b73899eb620d9cb4908de2ce93136
   languageName: node
   linkType: hard
 
@@ -15109,20 +15109,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng2-charts@npm:~6.0.1":
-  version: 6.0.1
-  resolution: "ng2-charts@npm:6.0.1"
+"ng2-charts@npm:~8.0.0":
+  version: 8.0.0
+  resolution: "ng2-charts@npm:8.0.0"
   dependencies:
     lodash-es: "npm:^4.17.15"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/cdk": ">=17.0.0"
-    "@angular/common": ">=17.0.0"
-    "@angular/core": ">=17.0.0"
-    "@angular/platform-browser": ">=17.0.0"
+    "@angular/cdk": ">=19.0.0"
+    "@angular/common": ">=19.0.0"
+    "@angular/core": ">=19.0.0"
+    "@angular/platform-browser": ">=19.0.0"
     chart.js: ^3.4.0 || ^4.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/c22a180a999639a12141abbc0ba7cd7534de0a7bd695680258af0a12aa94fdfd56ff5ed96093186f453fd9238c0e4be8022c57b868cecf65deff17d1c506d6db
+  checksum: 10/e9e335d708172a405bc58cd072d6ebed0a10b879e007480b769acc684fab4ee9f52550ca9bf8081c589843abae3ffb4c52ffe6e66f513d43ef61fb035642bb71
   languageName: node
   linkType: hard
 
@@ -18556,7 +18556,7 @@ __metadata:
     "@xterm/xterm": "npm:~5.5.0"
     angular-eslint: "npm:~21.1.0"
     angular-resize-event: "npm:^3.2.0"
-    chart.js: "npm:~4.4.4"
+    chart.js: "npm:~4.5.1"
     chartjs-adapter-date-fns: "npm:~3.0.0"
     cheerio: "npm:~1.0.0"
     codemirror: "npm:~6.0.1"
@@ -18601,7 +18601,7 @@ __metadata:
     ng-lazyload-image: "npm:~9.1.3"
     ng-mocks: "npm:~14.15.0"
     ng-qrcode: "npm:~18.0.0"
-    ng2-charts: "npm:~6.0.1"
+    ng2-charts: "npm:~8.0.0"
     ng2-fittext: "npm:~2.0.0"
     ngx-drag-drop: "npm:~18.0.2"
     ngx-img-fallback: "npm:^3.0.0"
