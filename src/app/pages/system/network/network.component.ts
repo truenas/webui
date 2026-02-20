@@ -2,21 +2,25 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyR
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatFormField, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { Navigation, Router } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
+import ipRegex from 'ip-regex';
 import {
-  firstValueFrom, lastValueFrom, Observable, switchMap,
+  combineLatest, firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -37,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @Component({
   selector: 'ix-network',
@@ -45,21 +50,20 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     UiSearchDirective,
-    MatCard,
-    MatCardContent,
     MatFormField,
     MatInput,
     ReactiveFormsModule,
     TestDirective,
     FormsModule,
     MatError,
-    MatCardActions,
     MatButton,
     InterfacesCardComponent,
     NetworkConfigurationCardComponent,
     StaticRoutesCardComponent,
     IpmiCardComponent,
     TranslateModule,
+    TnBannerComponent,
+    TnBannerActionDirective,
   ],
   providers: [
     InterfacesStore,
@@ -97,6 +101,8 @@ export class NetworkComponent implements OnInit {
   private uniqueIps: string[] = [];
   private affectedServices: string[] = [];
   checkinInterval: Interval;
+  newSystemUrls: string[] = [];
+  willLoseUiAccess = false;
 
   private navigation: Navigation | null;
   helptext = helptextInterfaces;
@@ -147,6 +153,9 @@ export class NetworkComponent implements OnInit {
 
     this.hasPendingChanges = await this.getPendingChanges();
     this.handleWaitingCheckIn(await this.getCheckInWaitingSeconds());
+    if (this.hasPendingChanges) {
+      this.detectPendingIpChange();
+    }
     this.cdr.markForCheck();
   }
 
@@ -168,6 +177,9 @@ export class NetworkComponent implements OnInit {
 
     this.hasPendingChanges = hasPendingChanges;
     this.handleWaitingCheckIn(checkinWaitingSeconds);
+    if (this.hasPendingChanges) {
+      this.detectPendingIpChange();
+    }
     this.cdr.markForCheck();
   }
 
@@ -199,6 +211,8 @@ export class NetworkComponent implements OnInit {
           } else {
             this.checkinRemaining = null;
             this.checkinWaiting = false;
+            this.newSystemUrls = [];
+            this.willLoseUiAccess = false;
             clearInterval(this.checkinInterval);
             this.window.location.reload(); // should just refresh after the timer goes off
           }
@@ -210,6 +224,8 @@ export class NetworkComponent implements OnInit {
     } else {
       this.checkinWaiting = false;
       this.checkinRemaining = null;
+      this.newSystemUrls = [];
+      this.willLoseUiAccess = false;
       if (this.checkinInterval) {
         clearInterval(this.checkinInterval);
       }
@@ -334,6 +350,8 @@ export class NetworkComponent implements OnInit {
         this.checkinWaiting = false;
         clearInterval(this.checkinInterval);
         this.checkinRemaining = null;
+        this.newSystemUrls = [];
+        this.willLoseUiAccess = false;
         this.cdr.markForCheck();
       });
   }
@@ -364,6 +382,8 @@ export class NetworkComponent implements OnInit {
             this.interfacesStore.loadInterfaces();
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
+            this.newSystemUrls = [];
+            this.willLoseUiAccess = false;
             this.snackbar.success(
               this.translate.instant(helptextInterfaces.changesRolledBack),
             );
@@ -374,6 +394,157 @@ export class NetworkComponent implements OnInit {
 
   protected goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
+  }
+
+  private detectPendingIpChange(): void {
+    const currentHostname = this.window.location.hostname.replace(/^\[|\]$/g, '');
+    const isIpHostname = ipRegex({ exact: true }).test(currentHostname);
+
+    combineLatest([
+      this.api.call('interface.query'),
+      this.store$.pipe(waitForGeneralConfig, take(1)),
+    ]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(([interfaces, generalConfig]) => {
+      if (isIpHostname) {
+        const pendingIps = interfaces
+          .filter((iface) => this.hasAliasesChanged(iface))
+          .flatMap((iface) => iface.aliases || [])
+          .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet
+            || alias.type === NetworkInterfaceAliasType.Inet6)
+          .map((alias) => alias.address)
+          .filter((ip) => !ip.startsWith('fe80::') && !ip.startsWith('169.254.'));
+
+        if (!pendingIps.includes(currentHostname)) {
+          const { protocol, port } = this.window.location;
+          this.newSystemUrls = [...new Set(pendingIps)].map((ip) => {
+            const host = ip.includes(':') ? `[${ip}]` : ip;
+            const portSuffix = port ? `:${port}` : '';
+            return `${protocol}//${host}${portSuffix}/ui/network`;
+          });
+        } else {
+          this.newSystemUrls = [];
+        }
+      } else {
+        this.newSystemUrls = [];
+      }
+
+      this.willLoseUiAccess = this.checkWillLoseUiAccess(interfaces, generalConfig);
+      this.cdr.markForCheck();
+    });
+  }
+
+  private checkWillLoseUiAccess(
+    interfaces: NetworkInterface[],
+    generalConfig: SystemGeneralConfig,
+  ): boolean {
+    const allPendingIpv4 = interfaces
+      .flatMap((iface) => iface.aliases || [])
+      .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet)
+      .map((alias) => alias.address);
+
+    const allPendingIpv6 = interfaces
+      .flatMap((iface) => iface.aliases || [])
+      .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet6)
+      .map((alias) => alias.address);
+
+    const v4WillBeLost = generalConfig.ui_address.length > 0
+      && !generalConfig.ui_address.includes('0.0.0.0')
+      && !generalConfig.ui_address.some((addr) => allPendingIpv4.includes(addr));
+
+    const v6WillBeLost = generalConfig.ui_v6address.length > 0
+      && !generalConfig.ui_v6address.includes('::')
+      && !generalConfig.ui_v6address.some((addr) => allPendingIpv6.includes(addr));
+
+    return v4WillBeLost || v6WillBeLost;
+  }
+
+  private hasAliasesChanged(iface: NetworkInterface): boolean {
+    const pendingAddresses = (iface.aliases || [])
+      .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet
+        || alias.type === NetworkInterfaceAliasType.Inet6)
+      .map((alias) => alias.address)
+      .sort((a, b) => a.localeCompare(b));
+
+    const activeAddresses = (iface.state?.aliases || [])
+      .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet
+        || alias.type === NetworkInterfaceAliasType.Inet6)
+      .map((alias) => alias.address)
+      .sort((a, b) => a.localeCompare(b));
+
+    if (pendingAddresses.length !== activeAddresses.length) {
+      return true;
+    }
+
+    return pendingAddresses.some((addr, index) => addr !== activeAddresses[index]);
+  }
+
+  protected commitAndOpenNewUi(): void {
+    this.api
+      .call('interface.services_restarted_on_sync')
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((services) => {
+        if (services.length > 0) {
+          const ips: string[] = [];
+          services.forEach((item) => {
+            const systemService = (item as unknown as { 'system-service': string })['system-service'];
+            if (systemService) {
+              this.affectedServices.push(systemService);
+            }
+            if (item.service) {
+              this.affectedServices.push(item.service);
+            }
+            item.ips.forEach((ip) => {
+              ips.push(ip);
+            });
+          });
+
+          ips.forEach((ip) => {
+            if (!this.uniqueIps.includes(ip)) {
+              this.uniqueIps.push(ip);
+            }
+          });
+        }
+
+        this.dialogService
+          .confirm({
+            title: this.translate.instant(helptextInterfaces.commitChangesTitle),
+            message: this.translate.instant(helptextInterfaces.commitChangesWarning),
+            hideCheckbox: false,
+            buttonText: this.translate.instant(helptextInterfaces.commitButton),
+          })
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((confirm: boolean) => {
+            if (!confirm) {
+              return;
+            }
+
+            const tabs = this.newSystemUrls.map((url) => this.window.open(url, '_blank'));
+
+            this.api
+              .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
+              .pipe(
+                this.loader.withLoader(),
+                this.errorHandler.withErrorHandler(),
+                switchMap(() => this.getCheckInWaitingSeconds()),
+                takeUntilDestroyed(this.destroyRef),
+              )
+              .subscribe({
+                next: (checkInSeconds) => {
+                  this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
+                  this.interfacesStore.loadInterfaces();
+                  this.handleWaitingCheckIn(checkInSeconds, true);
+                  this.cdr.markForCheck();
+                },
+                error: () => {
+                  tabs.forEach((tab) => tab?.close());
+                },
+              });
+          });
+      });
   }
 
   private openInterfaceForEditFromRoute(): void {

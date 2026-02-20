@@ -8,12 +8,14 @@ import {
   createComponentFactory,
   mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface, PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -37,6 +39,7 @@ import {
 import { NetworkComponent } from 'app/pages/system/network/network.component';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { NetworkService } from 'app/services/network.service';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('NetworkComponent', () => {
   let spectator: Spectator<NetworkComponent>;
@@ -131,6 +134,14 @@ describe('NetworkComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
       }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectGeneralConfig,
+            value: { ui_address: ['0.0.0.0'], ui_v6address: ['::'] },
+          },
+        ],
+      }),
     ],
   });
 
@@ -159,7 +170,7 @@ describe('NetworkComponent', () => {
     expect(api.call).toHaveBeenCalledWith('interface.has_pending_changes');
     expect(api.call).toHaveBeenCalledWith('interface.checkin_waiting');
 
-    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
+    expect(spectator.query('.pending-changes')).toContainText(helptextInterfaces.pendingChangesText);
   });
 
   it('reverts changes when user presses Revert Changes', async () => {
@@ -170,7 +181,7 @@ describe('NetworkComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('interface.rollback');
 
-    expect(spectator.query('.pending-changes-card')).not.toExist();
+    expect(spectator.query('.pending-changes')).not.toExist();
   });
 
   it('shows testing prompt with a countdown when Test Changes is pressed', async () => {
@@ -188,7 +199,7 @@ describe('NetworkComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
 
-    expect(spectator.query('.pending-changes-card'))
+    expect(spectator.query('.pending-changes'))
       .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '60'));
 
     // Wait a bit and verify countdown decreases
@@ -196,7 +207,7 @@ describe('NetworkComponent', () => {
       setTimeout(resolve, 1100);
     });
     spectator.detectChanges();
-    expect(spectator.query('.pending-changes-card'))
+    expect(spectator.query('.pending-changes'))
       .toContainText(helptextInterfaces.pendingCheckinText.replace('{x}', '59'));
   });
 
@@ -246,6 +257,125 @@ describe('NetworkComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('interface.cancel_rollback');
 
-    expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pendingChangesText);
+    expect(spectator.query('.pending-changes')).toContainText(helptextInterfaces.pendingChangesText);
+  });
+
+  describe('IP change detection', () => {
+    const changedInterface = {
+      id: '1',
+      type: NetworkInterfaceType.Physical,
+      name: 'eth0',
+      state: {
+        aliases: [{ address: '192.168.1.3', netmask: 24, type: NetworkInterfaceAliasType.Inet }],
+      },
+      aliases: [{ address: '192.168.1.4', netmask: 24, type: NetworkInterfaceAliasType.Inet }],
+    } as PhysicalNetworkInterface;
+
+    const unchangedInterface = {
+      id: '2',
+      type: NetworkInterfaceType.Physical,
+      name: 'eth1',
+      state: {
+        aliases: [{ address: '10.0.0.1', netmask: 24, type: NetworkInterfaceAliasType.Inet }],
+      },
+      aliases: [{ address: '10.0.0.1', netmask: 24, type: NetworkInterfaceAliasType.Inet }],
+    } as PhysicalNetworkInterface;
+
+    let windowMock: Record<string, unknown>;
+
+    beforeEach(() => {
+      windowMock = spectator.inject<Record<string, unknown>>(WINDOW);
+      (windowMock as { location: { hostname: string; protocol: string; port: string } }).location.hostname = '192.168.1.3';
+      (windowMock as { location: { protocol: string } }).location.protocol = 'http:';
+      (windowMock as { location: { port: string } }).location.port = '4200';
+
+      api.mockCall('interface.query', () => [changedInterface, unchangedInterface]);
+    });
+
+    async function triggerIpChangeDetection(): Promise<void> {
+      wasEditMade = true;
+      await spectator.component.loadCheckinStatusAfterChange();
+      spectator.detectComponentChanges();
+    }
+
+    it('only shows IPs from interfaces that actually changed', async () => {
+      await triggerIpChangeDetection();
+
+      expect(spectator.component.newSystemUrls).toEqual(['http://192.168.1.4:4200/ui/network']);
+    });
+
+    it('shows confirmation dialog when Test and Open UI is clicked', async () => {
+      await triggerIpChangeDetection();
+
+      (spectator.component as unknown as { commitAndOpenNewUi(): void }).commitAndOpenNewUi();
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 50);
+      });
+
+      expect(api.call).toHaveBeenCalledWith('interface.services_restarted_on_sync');
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: helptextInterfaces.commitChangesTitle,
+          message: helptextInterfaces.commitChangesWarning,
+        }),
+      );
+    });
+
+    it('shows UI access loss warning when all ui_address bindings would be orphaned', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectGeneralConfig, {
+        ui_address: ['192.168.1.3'],
+        ui_v6address: ['fe80::1'],
+      });
+      store$.refreshState();
+
+      await triggerIpChangeDetection();
+
+      expect(spectator.component.willLoseUiAccess).toBe(true);
+    });
+
+    it('does not show UI access loss warning when 0.0.0.0 is in ui_address', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectGeneralConfig, {
+        ui_address: ['0.0.0.0'],
+        ui_v6address: [],
+      });
+      store$.refreshState();
+
+      await triggerIpChangeDetection();
+
+      expect(spectator.component.willLoseUiAccess).toBe(false);
+    });
+
+    it('does not show UI access loss warning when a ui_address still exists in pending aliases', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectGeneralConfig, {
+        ui_address: ['10.0.0.1'],
+        ui_v6address: [],
+      });
+      store$.refreshState();
+
+      await triggerIpChangeDetection();
+
+      expect(spectator.component.willLoseUiAccess).toBe(false);
+    });
+
+    it('opens new tabs and starts checkin countdown when confirmation is accepted', async () => {
+      await triggerIpChangeDetection();
+
+      (spectator.component as unknown as { commitAndOpenNewUi(): void }).commitAndOpenNewUi();
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      spectator.detectComponentChanges();
+
+      expect((windowMock as { open: jest.Mock }).open).toHaveBeenCalledWith(
+        'http://192.168.1.4:4200/ui/network',
+        '_blank',
+      );
+      expect(api.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
+      expect(spectator.component.checkinWaiting).toBe(true);
+      expect(spectator.component.checkinRemaining).toBe(60);
+    });
   });
 });

@@ -5,60 +5,107 @@
   <div class="content">
     <div class="left-column">
       @if (hasPendingChanges) {
-        <mat-card class="pending-changes-card">
-          <mat-card-content>
-            @if (!checkinWaiting) {
-              <div>
-                <p>{{ helptext.pendingChangesText | translate }}</p>
+        <div class="pending-changes">
+          @if (!checkinWaiting) {
+            <div class="timeout-field-row">
+              <span>
+                {{ helptext.checkinText | translate }}
+                <mat-form-field floatPlaceholder="never" id="timeout-field">
+                  <input
+                    #checkinTimeoutField="ngModel"
+                    matInput
+                    type="number"
+                    ixTest="checkin-timeout"
+                    required
+                    [min]="checkinTimeoutMinValue"
+                    [pattern]="checkinTimeoutPattern"
+                    [(ngModel)]="checkinTimeout"
+                  />
+                </mat-form-field>
+                {{ helptext.checkinText2 | translate }}
+              </span>
 
-                <p>
-                  {{ helptext.checkinText | translate }}
-                  <mat-form-field floatPlaceholder="never" id="timeout-field">
-                    <input
-                      #checkinTimeoutField="ngModel"
-                      matInput
-                      type="number"
-                      ixTest="checkin-timeout"
-                      required
-                      [min]="checkinTimeoutMinValue"
-                      [pattern]="checkinTimeoutPattern"
-                      [(ngModel)]="checkinTimeout"
-                    />
-                  </mat-form-field>
-                  {{ helptext.checkinText2 | translate }}
-                </p>
+              @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
+                <mat-error>
+                  {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
+                </mat-error>
+              }
+            </div>
 
-                @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
-                  <mat-error>
-                    <span>
-                      {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
-                    </span>
-                  </mat-error>
-                }
-              </div>
-            } @else {
-              <div>
-                <p>
-                  {{ helptext.pendingCheckinText | translate: { x: checkinRemaining } }}
-                </p>
-              </div>
+            @if (willLoseUiAccess) {
+              <tn-banner
+                type="error"
+                [heading]="helptext.uiAccessLossHeading | translate"
+                [message]="helptext.uiAccessLossMessage | translate"
+              />
             }
-          </mat-card-content>
 
-          <mat-card-actions class="interface-pending-actions">
-            @if (!checkinWaiting) {
-              <button
-                mat-button
-                ixTest="test-changes"
-                [disabled]="isHaEnabled() || isCheckinTimeoutFieldInvalid"
-                (click)="commitPendingChanges()"
+            @if (newSystemUrls.length === 0) {
+              <tn-banner
+                type="info"
+                [heading]="helptext.pendingChangesText | translate"
               >
-                {{ helptext.commitButton | translate }}
-              </button>
+                <button
+                  tnBannerAction
+                  mat-button
+                  ixTest="revert-changes"
+                  [disabled]="isHaEnabled()"
+                  (click)="rollbackPendingChanges()"
+                >
+                  {{ helptext.revertChangesButton | translate }}
+                </button>
+                <button
+                  tnBannerAction
+                  mat-button
+                  ixTest="test-changes"
+                  [disabled]="isHaEnabled() || isCheckinTimeoutFieldInvalid"
+                  (click)="commitPendingChanges()"
+                >
+                  {{ helptext.commitButton | translate }}
+                </button>
+              </tn-banner>
+            } @else {
+              <tn-banner
+                type="warning"
+                [heading]="helptext.ipAddressChangedHeading | translate"
+                [message]="helptext.ipAddressChangedMessage | translate"
+              >
+                <button
+                  tnBannerAction
+                  mat-button
+                  ixTest="revert-changes"
+                  [disabled]="isHaEnabled()"
+                  (click)="rollbackPendingChanges()"
+                >
+                  {{ helptext.revertChangesButton | translate }}
+                </button>
+                <button
+                  tnBannerAction
+                  mat-button
+                  ixTest="test-and-open-ui"
+                  [disabled]="isHaEnabled() || isCheckinTimeoutFieldInvalid"
+                  (click)="commitAndOpenNewUi()"
+                >
+                  {{ helptext.commitAndOpenUiButton | translate }}
+                </button>
+              </tn-banner>
             }
-
-            @if (checkinWaiting) {
+          } @else {
+            <tn-banner
+              type="warning"
+              [heading]="helptext.pendingCheckinText | translate: { x: checkinRemaining }"
+            >
               <button
+                tnBannerAction
+                mat-button
+                ixTest="revert-changes"
+                [disabled]="isHaEnabled()"
+                (click)="rollbackPendingChanges()"
+              >
+                {{ helptext.revertChangesButton | translate }}
+              </button>
+              <button
+                tnBannerAction
                 mat-button
                 ixTest="save-changes"
                 [disabled]="isHaEnabled()"
@@ -66,17 +113,8 @@
               >
                 {{ helptext.keepButton | translate }}
               </button>
-            }
-
-            <button
-              mat-button
-              ixTest="revert-changes"
-              [disabled]="isHaEnabled()"
-              (click)="rollbackPendingChanges()"
-            >
-              {{ helptext.revertChangesButton | translate }}
-            </button>
-          </mat-card-actions>
+            </tn-banner>
+          }
 
           @if (isHaEnabled()) {
             <div class="disabled-notice">
@@ -91,7 +129,7 @@
               ).
             </div>
           }
-        </mat-card>
+        </div>
       }
       <ix-interfaces-card
         (interfacesUpdated)="loadCheckinStatusAfterChange()"
