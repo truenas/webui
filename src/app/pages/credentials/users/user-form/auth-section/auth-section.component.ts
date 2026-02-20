@@ -120,6 +120,7 @@ export class AuthSectionComponent implements OnInit {
 
         // Manually apply field disabled states since emitEvent: false
         // skips the valueChanges handlers in setPasswordFieldRelations().
+        // Keep in sync with setPasswordFieldRelations() if field relationships change.
         if (this.editingUser().password_disabled) {
           this.form.controls.password.disable({ emitEvent: false });
           this.form.controls.password_confirm.disable({ emitEvent: false });
