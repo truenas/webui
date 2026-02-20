@@ -109,7 +109,9 @@ export class AuthSectionComponent implements OnInit {
     effect(() => {
       if (this.editingUser()) {
         // Use emitEvent: false to prevent cross-field value change handlers
-        // from interfering (e.g., ssh_password_enabled handler resetting password_disabled)
+        // from interfering (e.g., ssh_password_enabled handler resetting password_disabled).
+        // This is safe because the store is already hydrated directly via
+        // setupEditUserForm() in user-form.component.ts before this runs.
         this.form.patchValue({
           password_disabled: this.editingUser().password_disabled,
           ssh_password_enabled: this.editingUser().ssh_password_enabled,
