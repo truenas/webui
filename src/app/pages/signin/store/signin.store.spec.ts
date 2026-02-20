@@ -531,6 +531,11 @@ describe('SigninStore', () => {
       const message = spectator.service.getLoginErrorMessage(LoginResult.NoOtp, true);
       expect(message).toBe('Incorrect or expired OTP. Please try again.');
     });
+
+    it('returns correct error message for Denied result', () => {
+      const message = spectator.service.getLoginErrorMessage(LoginResult.Denied);
+      expect(message).toBe('Login denied. Please ensure proper roles have been granted to the user.');
+    });
   });
 
   describe('completeLogin behavior', () => {

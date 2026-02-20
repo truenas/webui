@@ -598,6 +598,20 @@ describe('AuthService', () => {
       const initResult = await firstValueFrom(spectator.service.initializeSession());
       expect(initResult).toBe(LoginResult.NoToken);
     });
+
+    it('handles Denied response', async () => {
+      const apiService = spectator.inject(MockApiService);
+      apiService.mockCall('auth.login_ex', {
+        response_type: LoginExResponseType.Denied,
+      } as LoginExResponse);
+
+      const result = await firstValueFrom(spectator.service.login('admin', 'password'));
+      expect(result.loginResult).toBe(LoginResult.Denied);
+
+      // Verify session cannot be initialized when denied
+      const initResult = await firstValueFrom(spectator.service.initializeSession());
+      expect(initResult).toBe(LoginResult.NoToken);
+    });
   });
 
   // Note: Tests for setupAuthenticationUpdate, setupWsConnectionUpdate, and ngOnDestroy

@@ -79,6 +79,10 @@ export class SigninStore extends ComponentStore<SigninState> {
       return this.translate.instant('User is lacking permissions to access WebUI.');
     }
 
+    if (loginResult === LoginResult.Denied) {
+      return this.translate.instant('Login denied. Please ensure proper roles have been granted to the user.');
+    }
+
     return isOtpError
       ? this.translate.instant('Incorrect or expired OTP. Please try again.')
       : this.translate.instant('Wrong username or password. Please try again.');
