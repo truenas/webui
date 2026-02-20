@@ -16526,11 +16526,11 @@ __metadata:
   linkType: hard
 
 "qs@npm:^6.14.0":
-  version: 6.14.1
-  resolution: "qs@npm:6.14.1"
+  version: 6.15.0
+  resolution: "qs@npm:6.15.0"
   dependencies:
     side-channel: "npm:^1.1.0"
-  checksum: 10/34b5ab00a910df432d55180ef39c1d1375e550f098b5ec153b41787f1a6a6d7e5f9495593c3b112b77dbc6709d0ae18e55b82847a4c2bbbb0de1e8ccbb1794c5
+  checksum: 10/a3458f2f389285c3512e0ebc55522ee370ac7cb720ba9f0eff3e30fb2bb07631caf556c08e2a3d4481a371ac14faa9ceb7442a0610c5a7e55b23a5bdee7b701c
   languageName: node
   linkType: hard
 
@@ -18273,15 +18273,15 @@ __metadata:
   linkType: hard
 
 "tar@npm:^7.4.3, tar@npm:^7.5.2":
-  version: 7.5.7
-  resolution: "tar@npm:7.5.7"
+  version: 7.5.9
+  resolution: "tar@npm:7.5.9"
   dependencies:
     "@isaacs/fs-minipass": "npm:^4.0.0"
     chownr: "npm:^3.0.0"
     minipass: "npm:^7.1.2"
     minizlib: "npm:^3.1.0"
     yallist: "npm:^5.0.0"
-  checksum: 10/0d6938dd32fe5c0f17c8098d92bd9889ee0ed9d11f12381b8146b6e8c87bb5aa49feec7abc42463f0597503d8e89e4c4c0b42bff1a5a38444e918b4878b7fd21
+  checksum: 10/1213cdde9c22d6acf8809ba5d2a025212ce3517bc99c4a4c6981b7dc0489bf3b164db9c826c9517680889194c9ba57448c8ff0da35eca9a60bb7689bf0b3897d
   languageName: node
   linkType: hard
 
