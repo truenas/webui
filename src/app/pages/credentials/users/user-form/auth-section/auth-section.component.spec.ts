@@ -182,7 +182,34 @@ describe('AuthSectionComponent', () => {
     });
 
     // TODO: it shows "Change Password" field when editing a user that has a password
-    // TODO: shows Disable Password ticked when editing a user that has no password
+
+    it('shows Disable Password ticked when editing a user that has password disabled', async () => {
+      sshAccess.set(true);
+      spectator.setInput('editingUser', {
+        password_disabled: true,
+        ssh_password_enabled: false,
+        sshpubkey: 'ssh-rsa AAAAB3...',
+      });
+      spectator.detectChanges();
+
+      expect(await form.getValues()).toMatchObject({
+        'Disable Password': true,
+      });
+    });
+
+    it('shows Disable Password ticked when editing a user with password disabled and ssh_password_enabled inconsistency', async () => {
+      sshAccess.set(true);
+      spectator.setInput('editingUser', {
+        password_disabled: true,
+        ssh_password_enabled: true,
+        sshpubkey: '',
+      });
+      spectator.detectChanges();
+
+      expect(await form.getValues()).toMatchObject({
+        'Disable Password': true,
+      });
+    });
 
     it('shows different set of fields when system is in STIG mode', async () => {
       isStigMode.set(true);

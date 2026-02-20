@@ -108,11 +108,13 @@ export class AuthSectionComponent implements OnInit {
 
     effect(() => {
       if (this.editingUser()) {
+        // Use emitEvent: false to prevent cross-field value change handlers
+        // from interfering (e.g., ssh_password_enabled handler resetting password_disabled)
         this.form.patchValue({
           password_disabled: this.editingUser().password_disabled,
           ssh_password_enabled: this.editingUser().ssh_password_enabled,
           sshpubkey: this.editingUser().sshpubkey,
-        });
+        }, { emitEvent: false });
       }
     });
 
@@ -232,6 +234,7 @@ export class AuthSectionComponent implements OnInit {
       if (isDisabled) {
         this.form.controls.password.disable();
         this.form.controls.password_confirm.disable();
+        this.form.controls.ssh_password_enabled.setValue(false, { emitEvent: false });
         this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
       } else {
         this.form.controls.password.enable();
