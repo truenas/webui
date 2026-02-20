@@ -120,14 +120,10 @@ export class AuthSectionComponent implements OnInit {
 
         // Manually apply field disabled states since emitEvent: false
         // skips the valueChanges handlers in setPasswordFieldRelations().
-        // Keep in sync with setPasswordFieldRelations() if field relationships change.
         if (this.editingUser().password_disabled) {
-          this.form.controls.password.disable({ emitEvent: false });
-          this.form.controls.password_confirm.disable({ emitEvent: false });
-          this.form.controls.ssh_password_enabled.setValue(false, { emitEvent: false });
-          this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
+          this.applyPasswordDisabledState(true);
         } else if (this.editingUser().ssh_password_enabled) {
-          this.form.controls.password_disabled.disable({ emitEvent: false });
+          this.applySshPasswordEnabledState(true);
         }
       }
     });
@@ -241,31 +237,35 @@ export class AuthSectionComponent implements OnInit {
     return null;
   }
 
+  private applyPasswordDisabledState(isDisabled: boolean): void {
+    if (isDisabled) {
+      this.form.controls.password.disable({ emitEvent: false });
+      this.form.controls.password_confirm.disable({ emitEvent: false });
+      this.form.controls.ssh_password_enabled.setValue(false, { emitEvent: false });
+      this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
+    } else {
+      this.form.controls.password.enable({ emitEvent: false });
+      this.form.controls.password_confirm.enable({ emitEvent: false });
+      this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
+    }
+  }
+
+  private applySshPasswordEnabledState(sshPasswordEnabled: boolean): void {
+    if (sshPasswordEnabled) {
+      this.form.controls.password_disabled.disable({ emitEvent: false });
+      this.form.controls.password_disabled.setValue(false, { emitEvent: false });
+    } else {
+      this.form.controls.password_disabled.enable({ emitEvent: false });
+    }
+  }
+
   private setPasswordFieldRelations(): void {
     this.form.controls.password_disabled.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((isDisabled) => {
-      if (isDisabled) {
-        this.form.controls.password.disable();
-        this.form.controls.password_confirm.disable();
-        this.form.controls.ssh_password_enabled.setValue(false, { emitEvent: false });
-        this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
-      } else {
-        this.form.controls.password.enable();
-        this.form.controls.password_confirm.enable();
-        this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
-      }
-    });
+    ).subscribe((isDisabled) => this.applyPasswordDisabledState(isDisabled));
 
     this.form.controls.ssh_password_enabled.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((sshPasswordEnabled) => {
-      if (sshPasswordEnabled) {
-        this.form.controls.password_disabled.disable({ emitEvent: false });
-        this.form.controls.password_disabled.setValue(false);
-      } else {
-        this.form.controls.password_disabled.enable({ emitEvent: false });
-      }
-    });
+    ).subscribe((sshPasswordEnabled) => this.applySshPasswordEnabledState(sshPasswordEnabled));
   }
 }
