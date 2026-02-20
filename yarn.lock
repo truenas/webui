@@ -6051,12 +6051,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.14.0":
-  version: 22.16.3
-  resolution: "@types/node@npm:22.16.3"
+"@types/node@npm:^24.0.0":
+  version: 24.10.13
+  resolution: "@types/node@npm:24.10.13"
   dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 10/b71fe7abf242091e2f303b400b27f677c311b03a3125bf5532e06aff8a4cd41944bcc6f70a0666834e4352228607e676bc8082fa38d3739d3e1460a20d5c51d2
+    undici-types: "npm:~7.16.0"
+  checksum: 10/c779d14cf17758a9d603e0c0978c8045bd070e259617ec16f4ddac419ec11aac0e0cf2bb013dab008fdbd2f46c39f82397884662bbdfabeb19bef0079679ea48
   languageName: node
   linkType: hard
 
@@ -18544,7 +18544,7 @@ __metadata:
     "@types/js-yaml": "npm:~4.0.8"
     "@types/lodash-es": "npm:~4.17.12"
     "@types/mime-types": "npm:~2.1.1"
-    "@types/node": "npm:^22.14.0"
+    "@types/node": "npm:^24.0.0"
     "@types/uuid": "npm:~10.0.0"
     "@types/vinyl": "npm:~2.0.12"
     "@types/ws": "npm:~8.18.1"
@@ -18995,10 +18995,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.21.0":
-  version: 6.21.0
-  resolution: "undici-types@npm:6.21.0"
-  checksum: 10/ec8f41aa4359d50f9b59fa61fe3efce3477cc681908c8f84354d8567bb3701fafdddf36ef6bff307024d3feb42c837cf6f670314ba37fc8145e219560e473d14
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 10/db43439f69c2d94cc29f75cbfe9de86df87061d6b0c577ebe9bb3255f49b22c50162a7d7eb413b0458b6510b8ca299ac7cff38c3a29fbd31af9f504bcf7fbc0d
   languageName: node
   linkType: hard
 
