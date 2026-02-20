@@ -21,6 +21,9 @@ import {
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   ContainerCapabilitiesPolicy,
+  containerCapabilitiesPolicyLabels,
+  ContainerIdmapType,
+  containerIdmapTypeLabels,
   containerTimeLabels,
   ContainerTime,
   ContainerRemote,
@@ -33,6 +36,7 @@ import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
   ContainerEnvVariablesFormGroup,
+  ContainerIdmap,
   CreateContainer,
   UpdateContainer,
 } from 'app/interfaces/container.interface';
@@ -44,6 +48,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
@@ -82,6 +87,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     TranslateModule,
     FormActionsComponent,
+    WarningComponent,
   ],
   providers: [ContainerConfigStore],
   host: {
@@ -111,11 +117,11 @@ export class ContainerFormComponent implements OnInit {
 
   protected readonly timeOptions$ = of(mapToOptions(containerTimeLabels, this.translate));
 
-  protected readonly capabilitiesPolicyOptions$ = of([
-    { label: this.translate.instant('Default'), value: ContainerCapabilitiesPolicy.Default },
-    { label: this.translate.instant('Allow'), value: ContainerCapabilitiesPolicy.Allow },
-    { label: this.translate.instant('Deny'), value: ContainerCapabilitiesPolicy.Deny },
-  ]);
+  protected readonly capabilitiesPolicyOptions$ = of(mapToOptions(containerCapabilitiesPolicyLabels, this.translate));
+
+  protected readonly idmapTypeOptions$ = of(mapToOptions(containerIdmapTypeLabels, this.translate));
+  protected readonly isPrivilegedIdmap = signal(false);
+  protected readonly isIsolatedIdmap = signal(false);
 
   protected readonly forbiddenNames$ = this.api.call('container.query', [
     [], { select: ['name'], order_by: ['name'] },
@@ -173,6 +179,8 @@ export class ContainerFormComponent implements OnInit {
     initdir: [null as string | null],
     inituser: [null as string | null],
     initgroup: [null as string | null],
+    idmap_type: [ContainerIdmapType.Default],
+    idmap_slice: [null as number | null],
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
     environment_variables: new FormArray<ContainerEnvVariablesFormGroup>([]),
     use_default_network: [true],
@@ -230,6 +238,21 @@ export class ContainerFormComponent implements OnInit {
       }
     });
 
+    this.form.controls.idmap_type.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((idmapType) => {
+      this.isPrivilegedIdmap.set(idmapType === ContainerIdmapType.Privileged);
+      this.isIsolatedIdmap.set(idmapType === ContainerIdmapType.Isolated);
+
+      if (idmapType === ContainerIdmapType.Isolated) {
+        this.form.controls.idmap_slice.setValidators([Validators.min(1), Validators.max(999)]);
+      } else {
+        this.form.controls.idmap_slice.clearValidators();
+        this.form.controls.idmap_slice.setValue(null);
+      }
+      this.form.controls.idmap_slice.updateValueAndValidity();
+    });
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -250,6 +273,8 @@ export class ContainerFormComponent implements OnInit {
       initdir: null,
       inituser: null,
       initgroup: null,
+      idmap_type: ContainerIdmapType.Default,
+      idmap_slice: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       use_default_network: true,
       usb_devices: [],
@@ -303,7 +328,7 @@ export class ContainerFormComponent implements OnInit {
       initdir: container.initdir || '',
       inituser: container.inituser || '',
       initgroup: container.initgroup || '',
-      capabilities_policy: container.capabilities_policy as ContainerCapabilitiesPolicy,
+      capabilities_policy: container.capabilities_policy,
     });
 
     if (container.initenv && Object.keys(container.initenv).length > 0) {
@@ -453,7 +478,9 @@ export class ContainerFormComponent implements OnInit {
     if (form.inituser !== null && form.inituser !== '') payload.inituser = form.inituser;
     if (form.initgroup !== null && form.initgroup !== '') payload.initgroup = form.initgroup;
 
-    if (form.capabilities_policy) payload.capabilities_policy = form.capabilities_policy;
+    payload.capabilities_policy = form.capabilities_policy;
+
+    payload.idmap = this.buildIdmapPayload();
 
     const envVars = this.getEnvironmentVariablesPayload();
     if (Object.keys(envVars).length > 0) {
@@ -483,7 +510,7 @@ export class ContainerFormComponent implements OnInit {
     if (form.inituser !== (this.editingContainer.inituser || '')) payload.inituser = form.inituser || null;
     if (form.initgroup !== (this.editingContainer.initgroup || '')) payload.initgroup = form.initgroup || null;
 
-    if (form.capabilities_policy !== (this.editingContainer.capabilities_policy as ContainerCapabilitiesPolicy)) {
+    if (form.capabilities_policy !== this.editingContainer.capabilities_policy) {
       payload.capabilities_policy = form.capabilities_policy;
     }
 
@@ -537,6 +564,18 @@ export class ContainerFormComponent implements OnInit {
     }
     // Fallback if no colon found - shouldn't happen with our current data
     return { name: imageString, version: '' };
+  }
+
+  private buildIdmapPayload(): ContainerIdmap | null {
+    const idmapType = this.form.controls.idmap_type.value;
+    switch (idmapType) {
+      case ContainerIdmapType.Isolated:
+        return { type: ContainerIdmapType.Isolated, slice: this.form.controls.idmap_slice.value };
+      case ContainerIdmapType.Privileged:
+        return null;
+      default:
+        return { type: ContainerIdmapType.Default };
+    }
   }
 
   private getEnvironmentVariablesPayload(): Record<string, string> {
