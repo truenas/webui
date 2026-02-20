@@ -13,22 +13,15 @@ import {
   Observable,
   of,
   ReplaySubject,
-  Subject,
-  Subscription,
   switchMap,
   take,
   tap,
-  timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
-import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
-import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
-import {
-  AuthenticatorLoginLevel, LoginExMechanism, LoginExResponse, LoginExResponseType,
-} from 'app/interfaces/auth.interface';
+import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,18 +49,10 @@ export class AuthService implements OnDestroy {
   // Store pending authentication data before session initialization
   private pendingAuthData: {
     userInfo: LoggedInUser;
-    authenticator?: AuthenticatorLoginLevel;
   } | null = null;
 
   // Flag to prevent premature adminUiInitialized dispatch
   private sessionInitialized = false;
-
-  /**
-   * This is 10 seconds less than 300 seconds which is the default life
-   * time of a token generated with auth.generate_token. The 10 seconds
-   * difference is to allow for delays in request send/receive
-   */
-  private readonly tokenRegenerationTimeMillis = 290 * 1000;
 
   private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
@@ -78,10 +63,7 @@ export class AuthService implements OnDestroy {
     return Boolean(this.token) && this.token !== 'null';
   }
 
-  private generateTokenSubscription: Subscription | null;
-
   readonly user$ = this.loggedInUser$.asObservable();
-  private readonly checkIsTokenAllowed$ = new Subject<void>();
 
   readonly isLocalUser$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
@@ -117,7 +99,6 @@ export class AuthService implements OnDestroy {
   constructor() {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
-    this.setupPeriodicTokenGeneration();
     this.setupTokenUpdate();
   }
 
@@ -163,7 +144,9 @@ export class AuthService implements OnDestroy {
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
     const loginCall$ = otp
       ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
-      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }]);
+      : this.api.call('auth.login_ex', [{
+          mechanism: LoginExMechanism.PasswordPlain, username, password, login_options: { reconnect_token: true },
+        }]);
 
     return loginCall$.pipe(
       switchMap((result) => this.processLoginResult(result).pipe(
@@ -212,6 +195,7 @@ export class AuthService implements OnDestroy {
     return this.api.call('auth.login_ex', [{
       mechanism: LoginExMechanism.TokenPlain,
       token: this.token,
+      login_options: { reconnect_token: true },
     }]).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
       catchError((error: unknown) => {
@@ -286,7 +270,7 @@ export class AuthService implements OnDestroy {
       return of(LoginResult.NoToken);
     }
 
-    const { userInfo, authenticator } = this.pendingAuthData;
+    const { userInfo } = this.pendingAuthData;
 
     // Now safe to set the user and initialize the app
     this.loggedInUser$.next(userInfo);
@@ -299,19 +283,6 @@ export class AuthService implements OnDestroy {
 
     // Clear pending data
     this.pendingAuthData = null;
-
-    if (authenticator === AuthenticatorLoginLevel.Level1) {
-      this.checkIsTokenAllowed$.next();
-      return this.latestTokenGenerated$.pipe(
-        take(1),
-        map(() => LoginResult.Success),
-        catchError(() => {
-          // Clean up on error
-          this.cleanupFailedSession();
-          return of(LoginResult.NoToken);
-        }),
-      );
-    }
 
     return of(LoginResult.Success);
   }
@@ -328,8 +299,12 @@ export class AuthService implements OnDestroy {
           // Store authentication data but don't initialize session yet
           this.pendingAuthData = {
             userInfo: result.user_info,
-            authenticator: result?.authenticator,
           };
+
+          // Store reconnect token from the login response
+          if (result.reconnect_token) {
+            this.latestTokenGenerated$.next(result.reconnect_token);
+          }
 
           // Return success but session is not initialized
           return of(LoginResult.Success);
@@ -352,32 +327,6 @@ export class AuthService implements OnDestroy {
     );
   }
 
-  private setupPeriodicTokenGeneration(): void {
-    this.checkIsTokenAllowed$.pipe(
-      filterAsync(() => this.wsStatus.isAuthenticated$),
-      switchMap(() => this.api.call('auth.mechanism_choices').pipe(
-        catchError((wsError: unknown) => {
-          console.error(wsError);
-          return of<AuthMechanism[]>([]);
-        }),
-      )),
-      map((choices) => choices.includes(AuthMechanism.TokenPlain)),
-    ).subscribe((canGenerateToken) => {
-      if (!canGenerateToken) {
-        this.latestTokenGenerated$.next(null);
-        return;
-      }
-      if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
-        this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
-          switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
-          filter(Boolean),
-          switchMap(() => this.api.call('auth.generate_token')),
-          tap((token) => this.latestTokenGenerated$.next(token)),
-        ).subscribe();
-      }
-    });
-  }
-
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
     return this.api.call('auth.me').pipe(
       tap((loggedInUser) => {
@@ -393,12 +342,7 @@ export class AuthService implements OnDestroy {
       next: (isAuthenticated) => {
         if (isAuthenticated && this.sessionInitialized) {
           this.store$.dispatch(adminUiInitialized());
-        } else if (this.generateTokenSubscription) {
-          this.latestTokenGenerated$?.complete();
-          this.latestTokenGenerated$ = new ReplaySubject<string>(1);
-          this.setupTokenUpdate();
-          this.generateTokenSubscription.unsubscribe();
-          this.generateTokenSubscription = null;
+        } else if (!isAuthenticated) {
           this.cachedGlobalTwoFactorConfig$.next(null);
         }
       },
@@ -429,12 +373,5 @@ export class AuthService implements OnDestroy {
     // Reset session state
     this.sessionInitialized = false;
     this.pendingAuthData = null;
-  }
-
-  protected cleanupFailedSession(): void {
-    this.sessionInitialized = false;
-    this.pendingAuthData = null;
-    this.loggedInUser$.next(null);
-    this.wsStatus.setLoginStatus(false);
   }
 }

@@ -7,7 +7,6 @@ import {
   STORAGE_STRATEGIES,
   StorageStrategyStub, withLocalStorage,
 } from 'ngx-webstorage';
-import * as rxjs from 'rxjs';
 import {
   BehaviorSubject, firstValueFrom,
   of,
@@ -17,7 +16,6 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
-import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -36,7 +34,6 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
-  let timer$: BehaviorSubject<0>;
 
   const authMeUser = {
     pw_dir: 'dir',
@@ -73,11 +70,11 @@ describe('AuthService', () => {
       mockProvider(LocalStorageService),
       mockApi([
         mockCall('auth.me', authMeUser),
-        mockCall('auth.generate_token', 'DUMMY_TOKEN'),
         mockCall('auth.logout'),
         mockCall('auth.login_ex', {
           authenticator: AuthenticatorLoginLevel.Level1,
           response_type: LoginExResponseType.Success,
+          reconnect_token: 'DUMMY_TOKEN',
           user_info: {
             privilege: { webui_access: true },
             account_attributes: [
@@ -86,11 +83,6 @@ describe('AuthService', () => {
             ],
           },
         } as LoginExResponse),
-        mockCall('auth.mechanism_choices', [
-          AuthMechanism.PasswordPlain,
-          AuthMechanism.TokenPlain,
-          AuthMechanism.OtpToken,
-        ]),
         mockCall('auth.twofactor.config', {
           enabled: true,
           id: 1,
@@ -121,14 +113,10 @@ describe('AuthService', () => {
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
     });
-    timer$ = new BehaviorSubject(0);
-    jest.spyOn(rxjs, 'timer').mockReturnValue(timer$.asObservable());
   });
 
   describe('Login', () => {
     it('initializes auth session with triggers and token with username/password login', async () => {
-      timer$.next(0);
-
       // First login
       const loginResult = await firstValueFrom(spectator.service.login('dummy', 'dummy'));
       expect(loginResult).toEqual({
@@ -138,63 +126,53 @@ describe('AuthService', () => {
         }),
       });
 
-      // Mock isAuthenticated$ for token generation flow
-      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
-      timer$.next(0);
-
       // Then initialize session
       const initResult = await firstValueFrom(spectator.service.initializeSession());
       expect(initResult).toBe(LoginResult.Success);
 
-      // Check token generation happened
+      // Check reconnect token was stored from login response
       const token = await firstValueFrom(spectator.service.authToken$);
       expect(token).toBe('DUMMY_TOKEN');
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.login_ex',
-        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+        [{
+          mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy', login_options: { reconnect_token: true },
+        }],
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('initializes auth session with triggers and token with token login', async () => {
-      timer$.next(0);
       // Set the token before calling loginWithToken
       spectator.service.setQueryToken('DUMMY_TOKEN');
 
       const loginResult = await firstValueFrom(spectator.service.loginWithToken());
       expect(loginResult).toBe(LoginResult.Success);
 
-      // Mock isAuthenticated$ for token generation flow
-      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
-      timer$.next(0);
-
       // Token generation now happens in initializeSession
       const initResult = await firstValueFrom(spectator.service.initializeSession());
       expect(initResult).toBe(LoginResult.Success);
 
-      // Check token generation happened
+      // Check reconnect token was stored from login response
       const token = await firstValueFrom(spectator.service.authToken$);
       expect(token).toBe('DUMMY_TOKEN');
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.login_ex',
-        [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN' }],
+        [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN', login_options: { reconnect_token: true } }],
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('initializes auth session with triggers and without token with username/password OTP login', () => {
-      timer$.next(0);
-
       const api = spectator.inject(ApiService);
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'auth.login_ex') {
           return of({
             authenticator: AuthenticatorLoginLevel.Level1,
             response_type: LoginExResponseType.Success,
+            reconnect_token: null,
             user_info: {
               privilege: { webui_access: true },
               account_attributes: [
@@ -203,12 +181,6 @@ describe('AuthService', () => {
               ],
             },
           } as LoginExResponse);
-        }
-        if (method === 'auth.mechanism_choices') {
-          return of([
-            AuthMechanism.PasswordPlain,
-            AuthMechanism.OtpToken,
-          ]);
         }
         return of();
       });
@@ -227,19 +199,19 @@ describe('AuthService', () => {
       });
       expect(api.call).toHaveBeenCalledWith(
         'auth.login_ex',
-        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+        [{
+          mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy', login_options: { reconnect_token: true },
+        }],
       );
       expect(api.call).not.toHaveBeenCalledWith('auth.me');
-      expect(api.call).not.toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('initializes auth session with LEVEL_2 with no token support.', () => {
-      timer$.next(0);
-
       // Mock the auth.login_ex response for LEVEL_2 authentication
       spectator.inject(MockApiService).mockCall('auth.login_ex', {
         authenticator: AuthenticatorLoginLevel.Level2,
         response_type: LoginExResponseType.Success,
+        reconnect_token: null,
         user_info: {
           privilege: { webui_access: true },
         },
@@ -263,21 +235,16 @@ describe('AuthService', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.login_ex',
-        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+        [{
+          mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy', login_options: { reconnect_token: true },
+        }],
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.generate_token');
     });
 
     it('emits correct isLocalUser$', async () => {
-      timer$.next(0);
-
       const loginResult = await firstValueFrom(spectator.service.login('dummy', 'dummy'));
       expect(loginResult.loginResult).toBe(LoginResult.Success);
-
-      // Mock isAuthenticated$ for token generation flow
-      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
-      timer$.next(0);
 
       // Initialize session to set the user data
       const initResult = await firstValueFrom(spectator.service.initializeSession());
@@ -360,7 +327,7 @@ describe('AuthService', () => {
       await firstValueFrom(spectator.service.loginWithToken());
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.login_ex',
-        [{ mechanism: LoginExMechanism.TokenPlain, token }],
+        [{ mechanism: LoginExMechanism.TokenPlain, token, login_options: { reconnect_token: true } }],
       );
 
       // Test HTTPS
@@ -369,12 +336,16 @@ describe('AuthService', () => {
       await firstValueFrom(spectator.service.loginWithToken());
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.login_ex',
-        [{ mechanism: LoginExMechanism.TokenPlain, token }],
+        [{ mechanism: LoginExMechanism.TokenPlain, token, login_options: { reconnect_token: true } }],
       );
     });
   });
 
   describe('getGlobalTwoFactorConfig', () => {
+    beforeEach(() => {
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+    });
+
     it('fetches global two-factor config from API on first call', async () => {
       const result = await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
 
@@ -405,6 +376,10 @@ describe('AuthService', () => {
   });
 
   describe('globalTwoFactorConfigUpdated', () => {
+    beforeEach(() => {
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+    });
+
     it('clears cached config when called', async () => {
       await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
       spectator.service.globalTwoFactorConfigUpdated();
@@ -422,6 +397,10 @@ describe('AuthService', () => {
   });
 
   describe('isTwoFactorSetupRequired', () => {
+    beforeEach(() => {
+      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
+    });
+
     it('returns false when global two-factor is disabled', async () => {
       spectator.inject(MockApiService).mockCall('auth.twofactor.config', {
         enabled: false,
@@ -467,12 +446,7 @@ describe('AuthService', () => {
 
   describe('requiredPasswordChanged', () => {
     it('updates password change status', async () => {
-      timer$.next(0);
       await firstValueFrom(spectator.service.login('dummy', 'dummy'));
-
-      // Mock isAuthenticated$ for token generation flow
-      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
-      timer$.next(0);
 
       await firstValueFrom(spectator.service.initializeSession());
 
@@ -518,18 +492,13 @@ describe('AuthService', () => {
       apiService.mockCall('auth.login_ex', {
         authenticator: AuthenticatorLoginLevel.Level1,
         response_type: LoginExResponseType.Success,
+        reconnect_token: 'DUMMY_TOKEN',
         user_info: authMeUser,
       } as LoginExResponse);
-
-      // Mock isAuthenticated$ to return true for token generation flow
-      (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
 
       // Login first
       const loginResult = await firstValueFrom(spectator.service.login('admin', 'password'));
       expect(loginResult.loginResult).toBe(LoginResult.Success);
-
-      // Trigger timer for token generation
-      timer$.next(0);
 
       // Then initialize session
       const result = await firstValueFrom(spectator.service.initializeSession());
@@ -544,6 +513,7 @@ describe('AuthService', () => {
       apiService.mockCall('auth.login_ex', {
         authenticator: AuthenticatorLoginLevel.Level2,
         response_type: LoginExResponseType.Success,
+        reconnect_token: null,
         user_info: authMeUser,
       } as LoginExResponse);
 
@@ -564,6 +534,7 @@ describe('AuthService', () => {
       apiService.mockCall('auth.login_ex', {
         authenticator: AuthenticatorLoginLevel.Level2,
         response_type: LoginExResponseType.Success,
+        reconnect_token: null,
         user_info: authMeUser,
       } as LoginExResponse);
 
@@ -587,6 +558,7 @@ describe('AuthService', () => {
         response_type: LoginExResponseType.Success,
         user_info: authMeUser,
         authenticator: AuthenticatorLoginLevel.Level1,
+        reconnect_token: 'DUMMY_TOKEN',
       } as LoginExResponse);
 
       const result = await firstValueFrom(spectator.service.login('admin', 'password'));
