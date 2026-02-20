@@ -195,6 +195,11 @@ describe('AuthSectionComponent', () => {
       expect(await form.getValues()).toMatchObject({
         'Disable Password': true,
       });
+
+      expect(await form.getDisabledState()).toMatchObject({
+        'Disable Password': false,
+        'Allow SSH Login with Password (not recommended)': true,
+      });
     });
 
     it('shows Disable Password ticked when editing a user with password disabled and ssh_password_enabled inconsistency', async () => {
@@ -208,6 +213,11 @@ describe('AuthSectionComponent', () => {
 
       expect(await form.getValues()).toMatchObject({
         'Disable Password': true,
+      });
+
+      expect(await form.getDisabledState()).toMatchObject({
+        'Disable Password': false,
+        'Allow SSH Login with Password (not recommended)': true,
       });
     });
 

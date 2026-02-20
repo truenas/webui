@@ -117,6 +117,17 @@ export class AuthSectionComponent implements OnInit {
           ssh_password_enabled: this.editingUser().ssh_password_enabled,
           sshpubkey: this.editingUser().sshpubkey,
         }, { emitEvent: false });
+
+        // Manually apply field disabled states since emitEvent: false
+        // skips the valueChanges handlers in setPasswordFieldRelations().
+        if (this.editingUser().password_disabled) {
+          this.form.controls.password.disable({ emitEvent: false });
+          this.form.controls.password_confirm.disable({ emitEvent: false });
+          this.form.controls.ssh_password_enabled.setValue(false, { emitEvent: false });
+          this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
+        } else if (this.editingUser().ssh_password_enabled) {
+          this.form.controls.password_disabled.disable({ emitEvent: false });
+        }
       }
     });
 
