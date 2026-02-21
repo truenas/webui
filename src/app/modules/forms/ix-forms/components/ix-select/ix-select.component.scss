@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 :host {
   display: block;
   margin-bottom: 12px;
@@ -56,6 +58,8 @@
       width: 0;
     }
   }
+
+  @include prevent-ios-autozoom('::ng-deep .mat-mdc-select-trigger', $important: true);
 
   &:focus-within {
     border-color: var(--primary);

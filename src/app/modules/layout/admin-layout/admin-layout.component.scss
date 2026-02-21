@@ -2,7 +2,8 @@
 @import 'scss-imports/variables';
 
 .mat-sidenav-container {
-  height: 100vh;
+  height: 100vh; // Fallback for browsers without dvh support
+  height: 100dvh;
 }
 
 .product-type {
@@ -87,6 +88,7 @@ ix-jw-modal {
 .slidein-nav {
   background-color: var(--contrast-darker);
   height: calc(100vh - 48px);
+  height: calc(100dvh - 48px);
   overflow: auto;
   position: absolute;
   top: 48px;
@@ -119,6 +121,7 @@ ix-jw-modal {
   display: flex;
   flex-direction: column;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow: auto;
 }
 
@@ -134,7 +137,7 @@ ix-jw-modal {
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
-    padding-bottom: 96px !important;
+    padding-bottom: max(96px, env(safe-area-inset-bottom, 0px)) !important;
   }
 
   &.has-console-footer {
