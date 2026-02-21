@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 :host {
   color: var(--fg1);
   display: block;
@@ -19,6 +21,8 @@
   flex-direction: row;
   font-size: 12px;
   position: relative;
+
+  @include prevent-ios-autozoom;
 
   input {
     min-height: 26px;

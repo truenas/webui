@@ -64,6 +64,8 @@
 // so we add some bottom padding to prevent that.
 @media (max-width: $breakpoint-sm) {
   :host {
+    // Fallback for browsers without dvh/env() support
     padding-bottom: max(10%, 5vh);
+    padding-bottom: max(10%, 5dvh, env(safe-area-inset-bottom, 0px));
   }
 }
