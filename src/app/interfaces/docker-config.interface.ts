@@ -5,6 +5,7 @@ export interface DockerConfig {
   pool: string;
   dataset: string;
   enable_image_updates: boolean;
+  nvidia: boolean;
   address_pools: DockerAddressPool[];
   migrate_applications?: boolean;
   registry_mirrors?: RegistryMirror[];
@@ -22,6 +23,7 @@ export interface DockerAddressPool {
 
 export interface DockerConfigUpdate {
   pool?: string | null;
+  nvidia?: boolean;
   address_pools?: DockerAddressPool[];
   enable_image_updates?: boolean;
   registry_mirrors?: RegistryMirror[];

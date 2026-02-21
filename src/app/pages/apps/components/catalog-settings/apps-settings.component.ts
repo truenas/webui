@@ -77,10 +77,12 @@ export class AppsSettingsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected isFormLoading = signal(false);
+  protected showNvidiaCheckbox = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   protected form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
+    nvidia: [false],
     enable_image_updates: [true],
     address_pools: new FormArray<FormGroup<{
       base: FormControl<string>;
@@ -98,6 +100,7 @@ export class AppsSettingsComponent implements OnInit {
 
   readonly tooltips = {
     preferred_trains: helptextApps.settingsForm.preferredTrains.tooltip,
+    install_nvidia_driver: helptextApps.settingsForm.installNvidiaDriver.tooltip,
     registry_mirrors: helptextApps.settingsForm.registryMirrors.generalTooltip,
   };
 
@@ -120,9 +123,12 @@ export class AppsSettingsComponent implements OnInit {
     combineLatest([
       this.api.call('catalog.config'),
       this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
+      this.api.call('docker.nvidia_present'),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([catalogConfig, dockerConfig]) => {
+      .subscribe(([catalogConfig, dockerConfig, hasNvidiaCard]) => {
+        this.showNvidiaCheckbox.set(hasNvidiaCard || dockerConfig.nvidia);
+
         dockerConfig.address_pools.forEach(() => {
           this.addAddressPool();
         });
@@ -136,6 +142,7 @@ export class AppsSettingsComponent implements OnInit {
 
         this.form.patchValue({
           preferred_trains: catalogConfig.preferred_trains,
+          nvidia: dockerConfig.nvidia,
           enable_image_updates: dockerConfig.enable_image_updates,
           address_pools: dockerConfig.address_pools,
           registry_mirrors: dockerConfig.registry_mirrors || [],
@@ -179,6 +186,7 @@ export class AppsSettingsComponent implements OnInit {
     forkJoin([
       this.api.call('catalog.update', [{ preferred_trains: values.preferred_trains } as CatalogUpdate]),
       this.api.job('docker.update', [{
+        ...(this.showNvidiaCheckbox() ? { nvidia: values.nvidia } : {}),
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
         registry_mirrors: values.registry_mirrors,
