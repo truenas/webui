@@ -225,9 +225,13 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
     const payload = this.computePayload();
 
+    // In edit mode, remove properties that haven't changed to avoid
+    // unnecessary zfs inherit calls. Values are always primitives
+    // (strings, numbers, the inherit symbol), so JSON.stringify is
+    // used as a safety net against future non-primitive values.
     if (this.initialPayload) {
       for (const key of Object.keys(payload)) {
-        if (payload[key] === this.initialPayload[key]) {
+        if (JSON.stringify(payload[key]) === JSON.stringify(this.initialPayload[key])) {
           delete payload[key];
         }
       }
@@ -348,7 +352,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       special_small_block_size_custom: customValue,
     });
 
-    this.initialPayload = this.computePayload();
+    if (!this.initialPayload) {
+      this.initialPayload = this.computePayload();
+    }
   }
 
   private updateAclMode(): void {

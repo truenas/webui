@@ -136,7 +136,7 @@ export class ZvolFormComponent implements OnInit {
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
   private originalVolsize: number | null = null;
-  private initialRawValues: Record<string, unknown> | null = null;
+  private initialPayload: Record<string, unknown> | null = null;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -286,7 +286,9 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
-            this.initialRawValues = this.form.getRawValue() as Record<string, unknown>;
+            if (!this.initialPayload) {
+              this.initialPayload = this.computeEditPayload();
+            }
           } else {
             let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
             parentDatasetId.pop();
@@ -307,7 +309,9 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
-                this.initialRawValues = this.form.getRawValue() as Record<string, unknown>;
+                if (!this.initialPayload) {
+                  this.initialPayload = this.computeEditPayload();
+                }
 
                 this.cdr.markForCheck();
               },
@@ -601,6 +605,39 @@ export class ZvolFormComponent implements OnInit {
     }
   }
 
+  private computeEditPayload(): Record<string, unknown> {
+    const data = this.getPayload(
+      this.form.getRawValue(),
+    ) as Record<string, unknown>;
+
+    // Transform special_small_block_size
+    const transformedValue = transformSpecialSmallBlockSizeForPayload(
+      data.special_small_block_size as WithInherit<OnOff>,
+      data.special_small_block_size_custom as number | null | undefined,
+    );
+    if (transformedValue === undefined || transformedValue === inherit) {
+      delete data.special_small_block_size;
+    } else {
+      data.special_small_block_size = transformedValue;
+    }
+    delete data.special_small_block_size_custom;
+
+    // Remove encryption fields — they're disabled in edit mode
+    // and not relevant for diffing ZFS properties.
+    delete data.inherit_encryption;
+    delete data.encryption;
+    delete data.encryption_options;
+    delete data.key;
+    delete data.generate_key;
+    delete data.passphrase;
+    delete data.confirm_passphrase;
+    delete data.pbkdf2iters;
+    delete data.encryption_type;
+    delete data.algorithm;
+
+    return data;
+  }
+
   private getPayload(data: ZvolFormData): ZvolFormData {
     data.type = DatasetType.Volume;
 
@@ -753,21 +790,16 @@ export class ZvolFormComponent implements OnInit {
         delete data.encryption_type;
         delete data.algorithm;
 
-        if (this.initialRawValues) {
-          const currentRaw = this.form.getRawValue() as Record<string, unknown>;
-          for (const key of Object.keys(data) as (keyof ZvolFormData)[]) {
-            if (key === 'special_small_block_size') {
-              const sameSize = currentRaw.special_small_block_size
-                === this.initialRawValues.special_small_block_size;
-              const sameCustom = currentRaw.special_small_block_size_custom
-                === this.initialRawValues.special_small_block_size_custom;
-              if (sameSize && sameCustom) {
-                delete data[key];
-              }
-              continue;
-            }
-            if (key in this.initialRawValues && currentRaw[key] === this.initialRawValues[key]) {
-              delete data[key];
+        // In edit mode, remove properties that haven't changed to avoid
+        // unnecessary zfs inherit calls. Compares computed payloads (not raw
+        // form values) so transformed fields like special_small_block_size
+        // are handled uniformly.
+        if (this.initialPayload) {
+          const currentPayload = this.computeEditPayload();
+          for (const key of Object.keys(currentPayload)) {
+            if (key in this.initialPayload
+              && JSON.stringify(currentPayload[key]) === JSON.stringify(this.initialPayload[key])) {
+              delete (data as Record<string, unknown>)[key];
             }
           }
         }
