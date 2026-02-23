@@ -35,10 +35,10 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
+        type="submit"
         color="primary"
         ixTest="associate-target"
         [disabled]="form.invalid || isLoading()"
-        (click)="onSubmit()"
       >
         {{ 'Associate' | translate }}
       </button>
