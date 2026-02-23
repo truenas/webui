@@ -29,9 +29,9 @@
 
     ix-empty {
       tn-icon {
-        font-size: 100px !important;
         height: 60px !important;
         margin: 10px 0 30px;
+        width: 60px !important;
       }
     }
   }
@@ -87,7 +87,6 @@
     padding: 13px 20px;
 
     tn-icon {
-      font-size: 20px;
       margin-left: 15px;
 
       &:focus,

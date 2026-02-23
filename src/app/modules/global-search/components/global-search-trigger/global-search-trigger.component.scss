@@ -6,10 +6,14 @@
   width: 100%;
 
   @media(max-width: $breakpoint-xs) {
+    align-items: center;
+    display: flex;
+    height: 48px;
+    justify-content: center;
     position: absolute;
     right: 0;
-    top: 8px;
-    width: 10vw;
+    top: 0;
+    width: 48px;
   }
 }
 
@@ -60,7 +64,10 @@
     transform: translateY(-50%);
 
     @media(max-width: $breakpoint-xs) {
-      font-size: 28px;
+      height: 28px;
+      position: static;
+      transform: none;
+      width: 28px;
     }
   }
 
