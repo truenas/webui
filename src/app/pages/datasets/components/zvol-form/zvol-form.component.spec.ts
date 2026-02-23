@@ -396,6 +396,25 @@ describe('ZvolFormComponent', () => {
       }]);
     });
 
+    it('sends inherit for special_small_block_size when changed from local to inherit', async () => {
+      // Simulate a zvol with special_small_block_size locally set to 128 KiB
+      const component = spectator.component as unknown as {
+        initialPayload: Record<string, unknown>;
+      };
+      component.initialPayload.special_small_block_size = 131072;
+
+      // User changes to Inherit
+      spectator.component.form.controls.special_small_block_size.setValue(inherit);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall[1][1].special_small_block_size).toBe(inherit);
+    });
+
     it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
       // Set up a zvol with original size of 1 GiB (1073741824 bytes)
       (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;

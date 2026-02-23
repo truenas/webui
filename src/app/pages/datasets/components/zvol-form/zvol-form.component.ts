@@ -62,6 +62,22 @@ import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.
 import { getUserProperty, removeUnchangedProperties, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+/**
+ * Encryption-related form fields cleaned up after encryption processing
+ * in both editSubmit() and computeEditPayload(). Kept as a shared
+ * constant so the two code paths stay in sync.
+ */
+const encryptionFormFields: readonly string[] = [
+  'inherit_encryption',
+  'key',
+  'generate_key',
+  'passphrase',
+  'confirm_passphrase',
+  'pbkdf2iters',
+  'encryption_type',
+  'algorithm',
+];
+
 @Component({
   selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
@@ -609,18 +625,23 @@ export class ZvolFormComponent implements OnInit {
    * Computes a payload containing only diffable ZFS properties for edit mode.
    * Excludes volsize/force_size (handled separately by readonly/alignment logic)
    * and encryption fields (disabled in edit mode).
+   *
+   * This is the single source of truth for special_small_block_size
+   * transformation — the inherit symbol is preserved so the diff can
+   * detect changes from a local value to inherited.
    */
   private computeEditPayload(): Record<string, unknown> {
     const data = this.getPayload(
       this.form.getRawValue(),
     ) as Record<string, unknown>;
 
-    // Transform special_small_block_size
+    // Transform special_small_block_size from UI toggle to API value.
+    // Keeps inherit so the diff can detect local→inherited changes.
     const transformedValue = transformSpecialSmallBlockSizeForPayload(
       data.special_small_block_size as WithInherit<OnOff>,
       data.special_small_block_size_custom as number | null | undefined,
     );
-    if (transformedValue === undefined || transformedValue === inherit) {
+    if (transformedValue === undefined) {
       delete data.special_small_block_size;
     } else {
       data.special_small_block_size = transformedValue;
@@ -633,16 +654,11 @@ export class ZvolFormComponent implements OnInit {
 
     // Remove encryption fields — they're disabled in edit mode
     // and not relevant for diffing ZFS properties.
-    delete data.inherit_encryption;
     delete data.encryption;
     delete data.encryption_options;
-    delete data.key;
-    delete data.generate_key;
-    delete data.passphrase;
-    delete data.confirm_passphrase;
-    delete data.pbkdf2iters;
-    delete data.encryption_type;
-    delete data.algorithm;
+    for (const field of encryptionFormFields) {
+      delete data[field];
+    }
 
     return data;
   }
@@ -779,31 +795,28 @@ export class ZvolFormComponent implements OnInit {
           data.encryption_options.algorithm = data.algorithm;
         }
 
-        // Delete all encryption-related fields when editing
-        delete data.inherit_encryption;
-        delete data.key;
-        delete data.generate_key;
-        delete data.passphrase;
-        delete data.confirm_passphrase;
-        delete data.pbkdf2iters;
-        delete data.encryption_type;
-        delete data.algorithm;
+        // Delete individual encryption form fields after processing.
+        for (const field of encryptionFormFields) {
+          delete (data as Record<string, unknown>)[field];
+        }
 
         // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
-        // Uses the same removeUnchangedProperties helper as the dataset form.
-        // computeEditPayload() is the single source of truth for field
-        // transformations (e.g. special_small_block_size), so changed values
-        // are copied back into data from its output.
+        // computeEditPayload() is the single source of truth for ZFS property
+        // transformations. We clear all diff-managed keys from data, then merge
+        // back only the ones that actually changed.
         if (this.initialPayload) {
           const currentPayload = this.computeEditPayload();
           removeUnchangedProperties(currentPayload, this.initialPayload);
-          for (const key of Object.keys(this.initialPayload)) {
-            if (key in currentPayload) {
-              (data as Record<string, unknown>)[key] = currentPayload[key];
-            } else {
-              delete (data as Record<string, unknown>)[key];
-            }
+
+          const allDiffKeys = new Set([
+            ...Object.keys(this.initialPayload),
+            ...Object.keys(currentPayload),
+          ]);
+          for (const key of allDiffKeys) {
+            delete (data as Record<string, unknown>)[key];
           }
+
+          Object.assign(data, currentPayload);
         }
 
         let canSubmit = true;
