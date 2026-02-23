@@ -135,3 +135,22 @@ export function transformSpecialSmallBlockSizeForPayload(
   // For any other value (like null or number), return undefined to delete from payload
   return undefined;
 }
+
+/**
+ * Removes properties from payload that haven't changed compared to the
+ * initial payload. Used during dataset/zvol edits to avoid sending
+ * unchanged properties, which would cause unnecessary zfs inherit calls.
+ *
+ * Uses strict equality (===) — all payload values are expected to be
+ * primitives (strings, numbers) or the inherit symbol.
+ */
+export function removeUnchangedProperties(
+  payload: Record<string, unknown>,
+  initialPayload: Record<string, unknown>,
+): void {
+  for (const key of Object.keys(payload)) {
+    if (key in initialPayload && payload[key] === initialPayload[key]) {
+      delete payload[key];
+    }
+  }
+}

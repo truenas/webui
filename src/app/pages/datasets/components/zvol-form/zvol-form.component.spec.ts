@@ -377,9 +377,23 @@ describe('ZvolFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
         volsize: 2147483648,
+        force_size: false,
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('only includes changed ZFS properties in update payload', async () => {
+      await mainDetails.setValues({
+        Comments: 'new comment',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
+        comments: 'new comment',
+      }]);
     });
 
     it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
@@ -404,7 +418,7 @@ describe('ZvolFormComponent', () => {
       expect(updateCall[1][1].volsize).toBe(1075904512);
     });
 
-    it('preserves original size when change is below 0.1% threshold', async () => {
+    it('does not send volsize when change is below 0.1% threshold', async () => {
       // Set up a zvol with original size of 1 GiB (1073741824 bytes)
       (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
 
@@ -421,8 +435,8 @@ describe('ZvolFormComponent', () => {
         .find(([method]) => method === 'pool.dataset.update');
 
       expect(updateCall).toBeDefined();
-      // Should use original volsize to avoid precision loss
-      expect(updateCall[1][1].volsize).toBe(1073741824);
+      // Size didn't meaningfully change — don't send it
+      expect(updateCall[1][1].volsize).toBeUndefined();
     });
   });
 

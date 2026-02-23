@@ -47,7 +47,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
-import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
+import { getUserProperty, removeUnchangedProperties, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -225,16 +225,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
     const payload = this.computePayload();
 
-    // In edit mode, remove properties that haven't changed to avoid
-    // unnecessary zfs inherit calls. Values are always primitives
-    // (strings, numbers, the inherit symbol), so JSON.stringify is
-    // used as a safety net against future non-primitive values.
     if (this.initialPayload) {
-      for (const key of Object.keys(payload)) {
-        if (JSON.stringify(payload[key]) === JSON.stringify(this.initialPayload[key])) {
-          delete payload[key];
-        }
-      }
+      removeUnchangedProperties(payload, this.initialPayload);
     }
 
     return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;

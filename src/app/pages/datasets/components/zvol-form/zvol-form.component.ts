@@ -59,7 +59,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
-import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
+import { getUserProperty, removeUnchangedProperties, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -605,6 +605,11 @@ export class ZvolFormComponent implements OnInit {
     }
   }
 
+  /**
+   * Computes a payload containing only diffable ZFS properties for edit mode.
+   * Excludes volsize/force_size (handled separately by readonly/alignment logic)
+   * and encryption fields (disabled in edit mode).
+   */
   private computeEditPayload(): Record<string, unknown> {
     const data = this.getPayload(
       this.form.getRawValue(),
@@ -621,6 +626,10 @@ export class ZvolFormComponent implements OnInit {
       data.special_small_block_size = transformedValue;
     }
     delete data.special_small_block_size_custom;
+
+    // Remove non-ZFS fields that have their own handling in editSubmit.
+    delete data.volsize;
+    delete data.force_size;
 
     // Remove encryption fields — they're disabled in edit mode
     // and not relevant for diffing ZFS properties.
@@ -790,15 +799,15 @@ export class ZvolFormComponent implements OnInit {
         delete data.encryption_type;
         delete data.algorithm;
 
-        // In edit mode, remove properties that haven't changed to avoid
-        // unnecessary zfs inherit calls. Compares computed payloads (not raw
-        // form values) so transformed fields like special_small_block_size
-        // are handled uniformly.
+        // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
+        // Uses the same removeUnchangedProperties helper as the dataset form.
         if (this.initialPayload) {
           const currentPayload = this.computeEditPayload();
-          for (const key of Object.keys(currentPayload)) {
-            if (key in this.initialPayload
-              && JSON.stringify(currentPayload[key]) === JSON.stringify(this.initialPayload[key])) {
+          removeUnchangedProperties(currentPayload, this.initialPayload);
+          // currentPayload now only contains changed ZFS properties.
+          // Remove from data any ZFS property that was filtered out.
+          for (const key of Object.keys(this.initialPayload)) {
+            if (!(key in currentPayload)) {
               delete (data as Record<string, unknown>)[key];
             }
           }
@@ -825,20 +834,27 @@ export class ZvolFormComponent implements OnInit {
             // User changed the size, use the parsed value and round to block size
             data.volsize = this.alignVolsizeToBlocksize(parsedVolsize, volblocksizeIntegerValue);
           } else {
-            // User didn't change the size, use the original value to avoid precision loss
-            data.volsize = this.originalVolsize;
+            // User didn't change the size — don't send it at all
+            delete data.volsize;
           }
 
-          let roundedVolSize = datasets[0].volsize.parsed;
+          if (data.volsize !== undefined) {
+            let roundedVolSize = datasets[0].volsize.parsed;
 
-          if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
-            roundedVolSize = datasets[0].volsize.parsed
-              + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
-          }
+            if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
+              roundedVolSize = datasets[0].volsize.parsed
+                + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+            }
 
-          if (data.volsize && data.volsize < roundedVolSize) {
-            canSubmit = false;
+            if (data.volsize < roundedVolSize) {
+              canSubmit = false;
+            }
           }
+        }
+
+        // force_size is only relevant when volsize is being changed
+        if (data.volsize === undefined) {
+          delete data.force_size;
         }
 
         if (canSubmit) {
