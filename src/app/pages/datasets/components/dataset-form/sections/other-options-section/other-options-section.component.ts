@@ -90,6 +90,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
+  private initialPayload: Record<string, unknown> | null = null;
 
   readonly form = this.formBuilder.group({
     comments: [''],
@@ -222,6 +223,20 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
+    const payload = this.computePayload();
+
+    if (this.initialPayload) {
+      for (const key of Object.keys(payload)) {
+        if (payload[key] === this.initialPayload[key]) {
+          delete payload[key];
+        }
+      }
+    }
+
+    return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
+  }
+
+  private computePayload(): Record<string, unknown> {
     const values = this.form.value;
 
     const payload = {
@@ -246,7 +261,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       payload.aclmode = AclMode.Inherit;
     }
 
-    return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
+    return payload;
   }
 
   private checkIfDedupIsSupported(): void {
@@ -332,6 +347,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       special_small_block_size: specialSmallBlockSizeValue,
       special_small_block_size_custom: customValue,
     });
+
+    this.initialPayload = this.computePayload();
   }
 
   private updateAclMode(): void {

@@ -136,6 +136,7 @@ export class ZvolFormComponent implements OnInit {
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
   private originalVolsize: number | null = null;
+  private initialRawValues: Record<string, unknown> | null = null;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -285,6 +286,7 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
+            this.initialRawValues = this.form.getRawValue() as Record<string, unknown>;
           } else {
             let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
             parentDatasetId.pop();
@@ -305,6 +307,7 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
+                this.initialRawValues = this.form.getRawValue() as Record<string, unknown>;
 
                 this.cdr.markForCheck();
               },
@@ -749,6 +752,25 @@ export class ZvolFormComponent implements OnInit {
         delete data.pbkdf2iters;
         delete data.encryption_type;
         delete data.algorithm;
+
+        if (this.initialRawValues) {
+          const currentRaw = this.form.getRawValue() as Record<string, unknown>;
+          for (const key of Object.keys(data) as (keyof ZvolFormData)[]) {
+            if (key === 'special_small_block_size') {
+              const sameSize = currentRaw.special_small_block_size
+                === this.initialRawValues.special_small_block_size;
+              const sameCustom = currentRaw.special_small_block_size_custom
+                === this.initialRawValues.special_small_block_size_custom;
+              if (sameSize && sameCustom) {
+                delete data[key];
+              }
+              continue;
+            }
+            if (key in this.initialRawValues && currentRaw[key] === this.initialRawValues[key]) {
+              delete data[key];
+            }
+          }
+        }
 
         let canSubmit = true;
         if (data.volsize !== undefined) {

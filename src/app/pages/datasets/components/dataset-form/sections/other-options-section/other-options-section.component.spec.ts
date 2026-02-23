@@ -291,34 +291,41 @@ describe('OtherOptionsSectionComponent', () => {
       });
     });
 
-    it('returns update payload when getPayload() is called', () => {
+    it('returns empty payload when nothing has changed', () => {
       spectator.setInput({
         existing: existingDataset,
         parent: parentDataset,
       });
 
+      expect(spectator.component.getPayload()).toEqual({});
+    });
+
+    it('only includes changed properties in update payload', () => {
+      spectator.setInput({
+        existing: existingDataset,
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        comments: 'new comment',
+      });
+
       expect(spectator.component.getPayload()).toEqual({
-        comments: '',
-        atime: inherit,
-        compression: 'LZJB',
-        sync: inherit,
-        checksum: 'SHA256',
-        copies: inherit,
-        deduplication: inherit,
-        exec: inherit,
-        readonly: OnOff.Off,
-        recordsize: inherit,
-        snapdev: DatasetSnapdev.Hidden,
-        snapdir: inherit,
-        special_small_block_size: inherit,
-        aclmode: AclMode.Discard,
-        acltype: DatasetAclType.Posix,
+        comments: 'new comment',
       });
     });
 
-    it('sends INHERIT for snapdir when form value is INHERIT', () => {
+    it('sends INHERIT for snapdir when changed from local to inherit', () => {
+      const datasetWithLocalSnapdir = {
+        ...existingDataset,
+        snapdir: {
+          value: DatasetSnapdir.Visible,
+          source: ZfsPropertySource.Local,
+        },
+      } as Dataset;
+
       spectator.setInput({
-        existing: existingDataset,
+        existing: datasetWithLocalSnapdir,
         parent: parentDataset,
       });
 
@@ -330,9 +337,18 @@ describe('OtherOptionsSectionComponent', () => {
       expect(payload.snapdir).toBe(inherit);
     });
 
-    it('sends INHERIT for copies when form value is INHERIT', () => {
+    it('sends INHERIT for copies when changed from local to inherit', () => {
+      const datasetWithLocalCopies = {
+        ...existingDataset,
+        copies: {
+          value: '2',
+          parsed: 2,
+          source: ZfsPropertySource.Local,
+        },
+      } as Dataset;
+
       spectator.setInput({
-        existing: existingDataset,
+        existing: datasetWithLocalCopies,
         parent: parentDataset,
       });
 

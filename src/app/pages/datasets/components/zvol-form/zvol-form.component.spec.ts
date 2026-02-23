@@ -376,13 +376,6 @@ describe('ZvolFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
-        comments: '',
-        compression: 'LZ4',
-        deduplication: 'OFF',
-        force_size: false,
-        readonly: 'INHERIT',
-        snapdev: 'INHERIT',
-        sync: 'STANDARD',
         volsize: 2147483648,
       }]);
 
