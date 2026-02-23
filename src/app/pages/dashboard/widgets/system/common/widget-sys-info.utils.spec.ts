@@ -1,15 +1,8 @@
-import { Codename } from 'app/enums/codename.enum';
 import {
   getProductEnclosure, getProductImageSrc, getServerProduct, getSystemVersion,
 } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
 describe('getSystemVersion', () => {
-  it('should return the correct system version when valid input is provided', () => {
-    expect(getSystemVersion('25.10.0-MASTER-20250126-184805', Codename.Goldeye)).toBe(
-      '25.10.0-MASTER-20250126-184805 - Goldeye',
-    );
-  });
-
   it('should initial version if second argument is skipped', () => {
     expect(getSystemVersion('25.10.0-MASTER-20250126-184805')).toBe(
       '25.10.0-MASTER-20250126-184805',

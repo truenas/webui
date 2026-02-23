@@ -53,7 +53,6 @@
     "./src/app/enums/app-state.enum.ts",
     "./src/app/enums/chart-schema-type.enum.ts",
     "./src/app/enums/cloudsync-provider.enum.ts",
-    "./src/app/enums/codename.enum.ts",
     "./src/app/enums/compression-type.enum.ts",
     "./src/app/enums/dataset.enum.ts",
     "./src/app/enums/deduplication-setting.enum.ts",

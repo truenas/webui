@@ -82,7 +82,7 @@ export class WidgetSysInfoActiveComponent {
     }),
   ), { requireSync: true });
 
-  version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
+  version = computed(() => getSystemVersion(this.systemInfo().version));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
     this.realElapsedSeconds();

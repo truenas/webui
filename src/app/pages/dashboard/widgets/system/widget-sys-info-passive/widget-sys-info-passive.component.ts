@@ -93,7 +93,7 @@ export class WidgetSysInfoPassiveComponent {
   ), { requireSync: true });
 
   isWaitingForEnabledHa = computed(() => !this.systemInfo() && !this.canFailover() && !this.isHaEnabled());
-  version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
+  version = computed(() => getSystemVersion(this.systemInfo().version));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
     this.realElapsedSeconds();
