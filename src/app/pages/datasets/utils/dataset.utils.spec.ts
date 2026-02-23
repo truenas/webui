@@ -1,5 +1,8 @@
+import { inherit } from 'app/enums/with-inherit.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { datasetNameSortComparer, doesDatasetOrChildrenHaveShares, doesDatasetHaveShares } from 'app/pages/datasets/utils/dataset.utils';
+import {
+  datasetNameSortComparer, doesDatasetOrChildrenHaveShares, doesDatasetHaveShares, removeUnchangedProperties,
+} from 'app/pages/datasets/utils/dataset.utils';
 
 describe('datasetNameSortComparer', () => {
   it('sorts dataset paths in natural order maintaining parent-child relations', () => {
@@ -112,5 +115,35 @@ describe('doesDatasetHaveShares', () => {
       ],
     } as DatasetDetails;
     expect(doesDatasetHaveShares(dataset)).toBe(false);
+  });
+});
+
+describe('removeUnchangedProperties', () => {
+  it('removes properties that match the initial payload', () => {
+    const payload = { sync: 'STANDARD', compression: 'LZ4' };
+    const initial = { sync: 'STANDARD', compression: 'LZ4' };
+    removeUnchangedProperties(payload, initial);
+    expect(payload).toEqual({});
+  });
+
+  it('keeps properties that differ from the initial payload', () => {
+    const payload = { sync: 'ALWAYS', compression: 'LZ4' };
+    const initial = { sync: 'STANDARD', compression: 'LZ4' };
+    removeUnchangedProperties(payload, initial);
+    expect(payload).toEqual({ sync: 'ALWAYS' });
+  });
+
+  it('preserves new properties not present in the initial payload', () => {
+    const payload = { sync: 'STANDARD', comments: 'new' };
+    const initial = { sync: 'STANDARD' };
+    removeUnchangedProperties(payload, initial);
+    expect(payload).toEqual({ comments: 'new' });
+  });
+
+  it('compares the inherit symbol correctly with ===', () => {
+    const payload = { readonly: inherit, sync: inherit };
+    const initial = { readonly: inherit, sync: 'STANDARD' };
+    removeUnchangedProperties(payload, initial);
+    expect(payload).toEqual({ sync: inherit });
   });
 });

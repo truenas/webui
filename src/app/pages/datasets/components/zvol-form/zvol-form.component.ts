@@ -639,7 +639,7 @@ export class ZvolFormComponent implements OnInit {
     // Keeps inherit so the diff can detect local→inherited changes.
     const transformedValue = transformSpecialSmallBlockSizeForPayload(
       data.special_small_block_size as WithInherit<OnOff>,
-      data.special_small_block_size_custom as number | null | undefined,
+      data.special_small_block_size_custom as number | null,
     );
     if (transformedValue === undefined) {
       delete data.special_small_block_size;
@@ -858,7 +858,9 @@ export class ZvolFormComponent implements OnInit {
           }
         }
 
-        // force_size is only relevant when volsize is being changed
+        // force_size is only relevant when volsize is being changed.
+        // It survives the diff loop above because computeEditPayload()
+        // excludes it from the diffable set (it has dedicated handling here).
         if (data.volsize === undefined) {
           delete data.force_size;
         }
