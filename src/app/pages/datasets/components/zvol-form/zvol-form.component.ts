@@ -286,7 +286,7 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
-            if (!this.initialPayload) {
+            if (!this.isNew && !this.initialPayload) {
               this.initialPayload = this.computeEditPayload();
             }
           } else {
@@ -309,7 +309,7 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
-                if (!this.initialPayload) {
+                if (!this.isNew && !this.initialPayload) {
                   this.initialPayload = this.computeEditPayload();
                 }
 
@@ -758,19 +758,9 @@ export class ZvolFormComponent implements OnInit {
           delete data.volsize;
         }
 
-        // Handle special_small_block_size transformation
-        const transformedValue = transformSpecialSmallBlockSizeForPayload(
-          data.special_small_block_size as WithInherit<OnOff>,
-          data.special_small_block_size_custom,
-        );
-        if (transformedValue === undefined || transformedValue === inherit) {
-          // For zvols, delete the property when inherit or undefined
-          delete data.special_small_block_size;
-        } else {
-          data.special_small_block_size = transformedValue;
-        }
-
-        // Remove UI-only field
+        // Remove UI-only fields; actual special_small_block_size
+        // transformation is handled by computeEditPayload().
+        delete data.special_small_block_size;
         delete data.special_small_block_size_custom;
 
         if (data.inherit_encryption) {
@@ -801,13 +791,16 @@ export class ZvolFormComponent implements OnInit {
 
         // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
         // Uses the same removeUnchangedProperties helper as the dataset form.
+        // computeEditPayload() is the single source of truth for field
+        // transformations (e.g. special_small_block_size), so changed values
+        // are copied back into data from its output.
         if (this.initialPayload) {
           const currentPayload = this.computeEditPayload();
           removeUnchangedProperties(currentPayload, this.initialPayload);
-          // currentPayload now only contains changed ZFS properties.
-          // Remove from data any ZFS property that was filtered out.
           for (const key of Object.keys(this.initialPayload)) {
-            if (!(key in currentPayload)) {
+            if (key in currentPayload) {
+              (data as Record<string, unknown>)[key] = currentPayload[key];
+            } else {
               delete (data as Record<string, unknown>)[key];
             }
           }
@@ -846,7 +839,7 @@ export class ZvolFormComponent implements OnInit {
                 + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
             }
 
-            if (data.volsize < roundedVolSize) {
+            if ((data.volsize as number) < roundedVolSize) {
               canSubmit = false;
             }
           }
