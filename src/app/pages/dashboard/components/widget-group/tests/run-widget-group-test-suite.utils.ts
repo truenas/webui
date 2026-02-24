@@ -136,7 +136,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot' });
       expect(errorComponent).toExist();
-      expect(errorComponent?.message()).toBe('Borked widget is not supported.');
+      expect(errorComponent?.message()).toBe('Borked card is not supported.');
     });
 
     it('renders error when widget does not support slot size', () => {
@@ -156,7 +156,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot:nth-child(1)' });
       expect(errorComponent).toExist();
-      expect(errorComponent?.message()).toBe('System Information – Active widget does not support quarter size.');
+      expect(errorComponent?.message()).toBe('System Information – Active card does not support quarter size.');
     });
   });
 }
