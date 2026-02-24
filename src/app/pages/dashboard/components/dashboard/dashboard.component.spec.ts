@@ -181,7 +181,7 @@ describe('DashboardComponent', () => {
       const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
       await resetButton.click();
 
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Default widgets restored');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Default cards restored');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

@@ -88,7 +88,7 @@ export class DashboardComponent implements OnInit {
     large: true,
     icon: tnIconMarker('view-dashboard', 'mdi'),
     title: this.translate.instant('Your dashboard is currently empty!'),
-    message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
+    message: this.translate.instant('Start adding cards to personalize it. Click on the "Configure" button to enter edit mode.'),
   };
 
   ngOnInit(): void {
@@ -184,8 +184,8 @@ export class DashboardComponent implements OnInit {
 
   protected onReset(): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Restore default widgets'),
-      message: this.translate.instant('Are you sure you want to restore the default set of widgets?'),
+      title: this.translate.instant('Restore default cards'),
+      message: this.translate.instant('Are you sure you want to restore the default set of cards?'),
       hideCheckbox: true,
       buttonText: this.translate.instant('Restore'),
     })
@@ -196,7 +196,7 @@ export class DashboardComponent implements OnInit {
         }
 
         this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
-        this.snackbar.success(this.translate.instant('Default widgets restored'));
+        this.snackbar.success(this.translate.instant('Default cards restored'));
       });
   }
 
