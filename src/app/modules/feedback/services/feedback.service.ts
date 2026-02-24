@@ -119,6 +119,9 @@ export class FeedbackService {
           }
           return false;
         },
+        onclone: (_doc, element) => {
+          this.sanitizeUnsupportedCssColors(element);
+        },
         ...options,
       }).then((canvas) => {
         canvas.toBlob((blob) => {
@@ -375,5 +378,20 @@ export class FeedbackService {
         return of(false);
       }),
     );
+  }
+
+  /**
+   * html2canvas cannot parse modern CSS color() functions (e.g. color(srgb ...)).
+   * This strips them from inline styles on the cloned DOM to prevent rendering errors.
+   */
+  private sanitizeUnsupportedCssColors(element: HTMLElement): void {
+    const colorFnRegex = /color\([^)]+\)/g;
+
+    for (const el of Array.from(element.querySelectorAll<HTMLElement>('*'))) {
+      const style = el.getAttribute('style');
+      if (style?.match(colorFnRegex)) {
+        el.setAttribute('style', style.replace(colorFnRegex, 'transparent'));
+      }
+    }
   }
 }
