@@ -292,12 +292,16 @@ export class AppSchemaService {
     schemaPathToNode?: string,
   ): HierarchicalObjectMap<ChartFormValue>[] {
     return list.map((listItem: HierarchicalObjectMap<ChartFormValue>) => {
-      // TODO: Consider refactoring.
       if (schemaNode?.schema?.items?.[0]?.schema?.type === ChartSchemaType.Dict) {
         return this.serializeFormGroup(listItem, appSchema, schemaPathToNode);
       }
 
-      return this.serializeFormValue(listItem[Object.keys(listItem)[0]], appSchema, schemaNode, schemaPathToNode);
+      const keys = Object.keys(listItem);
+      if (keys.length > 1) {
+        return this.serializeFormGroup(listItem, appSchema, schemaPathToNode);
+      }
+
+      return this.serializeFormValue(listItem[keys[0]], appSchema, schemaNode, schemaPathToNode);
     }) as HierarchicalObjectMap<ChartFormValue>[];
   }
 
