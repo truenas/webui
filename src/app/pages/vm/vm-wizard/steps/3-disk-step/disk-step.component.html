@@ -55,7 +55,7 @@
 
     @if (selectedZvolOtherVmNames.length > 0) {
       <tn-banner
-        style="display: block; margin-bottom: 24px"
+        class="zvol-warning"
         type="warning"
         [heading]="'This zvol is already in use by {vmNames}.'
           | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
