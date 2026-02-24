@@ -688,7 +688,7 @@ export class DeviceFormComponent implements OnInit {
 
       // Handle creating a new zvol for disk devices
       if (this.typeControl.value === VmDeviceType.Disk && this.newOrExistingControl.value === 'new') {
-        const randomSuffix = Math.random().toString(36).substring(7);
+        const randomSuffix = crypto.randomUUID().slice(0, 8);
         const vmName = this.vmName?.replace(/\s+/g, '-') || 'vm';
         const zvolName = `${this.diskForm.value.datastore}/${vmName}-${randomSuffix}`;
 
