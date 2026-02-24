@@ -109,7 +109,16 @@ export class FeedbackService {
         allowTaint: true,
         useCORS: true,
         imageTimeout: 0,
-        ignoreElements: (element) => element.classList.contains('cdk-overlay-container'),
+        ignoreElements: (element) => {
+          if (element.classList.contains('cdk-overlay-pane')) {
+            return !element.classList.contains('slide-in-panel');
+          }
+          if (element.classList.contains('cdk-overlay-backdrop')) {
+            return !element.classList.contains('custom-slide-in-backdrop')
+              && !element.classList.contains('custom-slide-in-nobackdrop');
+          }
+          return false;
+        },
         ...options,
       }).then((canvas) => {
         canvas.toBlob((blob) => {
