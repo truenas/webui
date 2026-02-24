@@ -6,7 +6,7 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, debounceTime, map, shareReplay } from 'rxjs/operators';
+import { catchError, debounceTime, map, shareReplay, tap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDeviceType, VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -42,6 +42,7 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
 @Component({
   selector: 'ix-disk-step',
   templateUrl: './disk-step.component.html',
+  styleUrls: ['./disk-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -105,7 +106,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     this.api.call('vm.device.query'),
     this.api.call('vm.query', [[], { select: ['id', 'name'] }]),
   ]).pipe(
-    map(([choices, allDevices, vms]) => {
+    tap(([choices, allDevices, vms]) => {
       const diskDevices = allDevices.filter(
         (device): device is VmDiskDevice => device.attributes.dtype === VmDeviceType.Disk,
       );
@@ -116,11 +117,12 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
         null,
         null,
       );
-      return this.annotatedZvolOptions.map((option) => ({
-        label: option.label,
-        value: option.value,
-      }));
     }),
+    map(() => this.annotatedZvolOptions.map((option) => ({
+      label: option.label,
+      value: option.value,
+    }))),
+    catchError(() => of([])),
   );
 
   readonly datastoreOptions$ = this.api

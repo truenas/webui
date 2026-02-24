@@ -9,7 +9,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -346,7 +346,7 @@ export class DeviceFormComponent implements OnInit {
       this.api.call('vm.device.query'),
       this.api.call('vm.query', [[], { select: ['id', 'name'] }]),
     ]).pipe(
-      map(([choices, allDevices, vms]) => {
+      tap(([choices, allDevices, vms]) => {
         const diskDevices = allDevices.filter(
           (device): device is VmDiskDevice => device.attributes.dtype === VmDeviceType.Disk,
         );
@@ -357,8 +357,9 @@ export class DeviceFormComponent implements OnInit {
           this.slideInData?.virtualMachineId ?? null,
           existingDiskPath,
         );
-        return this.annotatedZvolOptions.map((option) => this.toSelectOption(option));
       }),
+      map(() => this.annotatedZvolOptions.map((option) => this.toSelectOption(option))),
+      catchError(() => of([])),
     );
   }
 

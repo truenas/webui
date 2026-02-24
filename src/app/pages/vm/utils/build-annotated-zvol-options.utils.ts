@@ -42,9 +42,11 @@ export function buildAnnotatedZvolOptions(
     const usedByCurrentVm = currentVmId !== null
       && filteredUsages.some((usage) => usage.vmId === currentVmId);
 
-    const otherVmNames = filteredUsages
-      .filter((usage) => usage.vmId !== currentVmId)
-      .map((usage) => usage.vmName);
+    const otherVmNames = [...new Set(
+      filteredUsages
+        .filter((usage) => usage.vmId !== currentVmId)
+        .map((usage) => usage.vmName),
+    )];
 
     return {
       label, value, usedByCurrentVm, otherVmNames,
