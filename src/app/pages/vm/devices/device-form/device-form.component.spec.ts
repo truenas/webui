@@ -14,6 +14,7 @@ import {
 import { transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -100,6 +101,13 @@ describe('DeviceFormComponent', () => {
           '/dev/zvol/bassein/zvol1': 'bassein/zvol1',
           '/dev/zvol/bassein/zvol+with+spaces': 'bassein/zvol with spaces',
         }),
+        mockCall('vm.device.query', [
+          { vm: 2, attributes: { dtype: VmDeviceType.Disk, path: '/dev/zvol/bassein/zvol1' } },
+        ] as VmDiskDevice[]),
+        mockCall('vm.query', [
+          { id: 1, name: 'test-vm' },
+          { id: 2, name: 'other-vm' },
+        ] as VirtualMachine[]),
         mockCall('vm.device.usb_controller_choices', {
           'piix3-uhci': 'piix3-uhci',
           'pci-ohci': 'pci-ohci',
