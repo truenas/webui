@@ -49,6 +49,7 @@
                 <button
                   tnBannerAction
                   mat-button
+                  color="primary"
                   ixTest="test-changes"
                   [disabled]="isHaEnabled() || isCheckinTimeoutFieldInvalid"
                   (click)="commitPendingChanges()"
@@ -84,7 +85,7 @@
             }
           } @else {
             <tn-banner
-              type="warning"
+              type="info"
               [heading]="helptext.pendingCheckinText | translate: { x: checkinRemaining }"
             >
               <button
@@ -99,6 +100,7 @@
               <button
                 tnBannerAction
                 mat-button
+                color="primary"
                 ixTest="save-changes"
                 [disabled]="isHaEnabled()"
                 (click)="checkInNow()"

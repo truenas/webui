@@ -9,7 +9,7 @@ export const helptextInterfaces = {
   pendingCheckinDialogText: T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
  Changes are automatically reverted after the testing delay if they are not permanently applied.'),
 
-  pendingCheckinText: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless SAVE CHANGES is chosen to make them permanent.'),
+  pendingCheckinText: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless saved.'),
 
   commitChangesTitle: T('Test Changes'),
   commitChangesWarning: T('Test network interface changes? Network connectivity can be interrupted.'),
