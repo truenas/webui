@@ -295,7 +295,7 @@
           mat-button
           color="primary"
           ixTest="save"
-          [disabled]="typeSpecificForm.invalid || (!isNew && typeSpecificForm.pristine) || isLoading"
+          [disabled]="typeSpecificForm.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
