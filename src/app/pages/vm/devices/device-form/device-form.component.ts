@@ -7,7 +7,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, forkJoin, of } from 'rxjs';
+import { TnBannerComponent } from '@truenas/ui-components';
+import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -23,8 +24,9 @@ import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions, nicChoicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
+import { SelectOption } from 'app/interfaces/option.interface';
 import {
-  VmDevice, VmDeviceUpdate,
+  VmDevice, VmDeviceUpdate, VmDiskDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -45,6 +47,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  AnnotatedZvolOption, buildAnnotatedZvolOptions,
+} from 'app/pages/vm/utils/build-annotated-zvol-options.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
@@ -76,6 +81,7 @@ const specifyCustom = T('Specify custom');
     IxErrorsComponent,
     FormActionsComponent,
     TranslateModule,
+    TnBannerComponent,
   ],
 })
 export class DeviceFormComponent implements OnInit {
@@ -271,7 +277,8 @@ export class DeviceFormComponent implements OnInit {
     ),
   );
 
-  readonly zvolOptions$ = this.api.call('vm.device.disk_choices').pipe(choicesToOptions());
+  zvolOptions$: Observable<SelectOption[]>;
+  private annotatedZvolOptions: AnnotatedZvolOption[] = [];
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
@@ -315,6 +322,12 @@ export class DeviceFormComponent implements OnInit {
 
   private virtualMachineId: number;
 
+  get selectedZvolOtherVmNames(): string[] {
+    const selectedPath = this.diskForm.controls.path.value;
+    const match = this.annotatedZvolOptions.find((opt) => opt.value === selectedPath);
+    return match?.otherVmNames ?? [];
+  }
+
   constructor() {
     const slideInRef = this.slideInRef;
 
@@ -323,6 +336,30 @@ export class DeviceFormComponent implements OnInit {
     });
     this.slideInData = slideInRef.getData();
     this.vmName = this.slideInData?.vmName;
+
+    const existingDiskPath = this.slideInData?.device?.attributes?.dtype === VmDeviceType.Disk
+      ? (this.slideInData.device as VmDiskDevice).attributes.path
+      : null;
+
+    this.zvolOptions$ = forkJoin([
+      this.api.call('vm.device.disk_choices'),
+      this.api.call('vm.device.query'),
+      this.api.call('vm.query', [[], { select: ['id', 'name'] }]),
+    ]).pipe(
+      map(([choices, allDevices, vms]) => {
+        const diskDevices = allDevices.filter(
+          (device): device is VmDiskDevice => device.attributes.dtype === VmDeviceType.Disk,
+        );
+        this.annotatedZvolOptions = buildAnnotatedZvolOptions(
+          choices,
+          diskDevices,
+          vms,
+          this.slideInData?.virtualMachineId ?? null,
+          existingDiskPath,
+        );
+        return this.annotatedZvolOptions.map((option) => this.toSelectOption(option));
+      }),
+    );
   }
 
   ngOnInit(): void {
@@ -361,6 +398,17 @@ export class DeviceFormComponent implements OnInit {
 
     this.handleDeviceTypeChange();
     this.setupRawFileExistsTracking();
+  }
+
+  private toSelectOption(option: AnnotatedZvolOption): SelectOption {
+    if (option.usedByCurrentVm) {
+      return {
+        label: `${option.label} (${this.translate.instant('attached')})`,
+        value: option.value,
+        disabled: true,
+      };
+    }
+    return { label: option.label, value: option.value };
   }
 
   setVirtualMachineId(): void {

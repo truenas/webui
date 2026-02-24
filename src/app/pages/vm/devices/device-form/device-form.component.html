@@ -62,6 +62,14 @@
                   [options]="zvolOptions$"
                   [required]="true"
                 ></ix-select>
+
+                @if (selectedZvolOtherVmNames.length > 0) {
+                  <tn-banner
+                    type="warning"
+                    [heading]="'This zvol is already in use by {vmNames}.'
+                      | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
+                  ></tn-banner>
+                }
               }
 
               <ix-select

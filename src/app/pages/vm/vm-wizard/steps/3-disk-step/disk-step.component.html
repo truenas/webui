@@ -52,6 +52,15 @@
       [required]="true"
       [tooltip]="helptext.hdd_path_tooltip | translate"
     ></ix-select>
+
+    @if (selectedZvolOtherVmNames.length > 0) {
+      <tn-banner
+        style="display: block; margin-bottom: 24px"
+        type="warning"
+        [heading]="'This zvol is already in use by {vmNames}.'
+          | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
+      ></tn-banner>
+    }
   }
 
   <ix-form-actions>

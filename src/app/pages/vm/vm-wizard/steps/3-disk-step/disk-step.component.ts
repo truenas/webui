@@ -4,15 +4,17 @@ import { FormBuilder, Validators, ReactiveFormsModule, ValidatorFn, AbstractCont
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { catchError, debounceTime, shareReplay } from 'rxjs/operators';
+import { TnBannerComponent } from '@truenas/ui-components';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, debounceTime, map, shareReplay } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -23,6 +25,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  AnnotatedZvolOption, buildAnnotatedZvolOptions,
+} from 'app/pages/vm/utils/build-annotated-zvol-options.utils';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -52,6 +57,7 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
     TestDirective,
     MatStepperNext,
     TranslateModule,
+    TnBannerComponent,
   ],
 })
 export class DiskStepComponent implements OnInit, SummaryProvider {
@@ -92,7 +98,30 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     },
   ]);
 
-  readonly hddPathOptions$ = this.api.call('vm.device.disk_choices').pipe(choicesToOptions());
+  private annotatedZvolOptions: AnnotatedZvolOption[] = [];
+
+  readonly hddPathOptions$ = forkJoin([
+    this.api.call('vm.device.disk_choices'),
+    this.api.call('vm.device.query'),
+    this.api.call('vm.query', [[], { select: ['id', 'name'] }]),
+  ]).pipe(
+    map(([choices, allDevices, vms]) => {
+      const diskDevices = allDevices.filter(
+        (device): device is VmDiskDevice => device.attributes.dtype === VmDeviceType.Disk,
+      );
+      this.annotatedZvolOptions = buildAnnotatedZvolOptions(
+        choices,
+        diskDevices,
+        vms,
+        null,
+        null,
+      );
+      return this.annotatedZvolOptions.map((option) => ({
+        label: option.label,
+        value: option.value,
+      }));
+    }),
+  );
 
   readonly datastoreOptions$ = this.api
     .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
@@ -110,6 +139,12 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
 
   get isImportingImage(): boolean {
     return this.form.controls.import_image.value;
+  }
+
+  get selectedZvolOtherVmNames(): string[] {
+    const selectedPath = this.form.controls.hdd_path.value;
+    const match = this.annotatedZvolOptions.find((opt) => opt.value === selectedPath);
+    return match?.otherVmNames ?? [];
   }
 
   /**

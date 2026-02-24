@@ -6,7 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { VmDiskMode } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -35,6 +37,12 @@ describe('DiskStepComponent', () => {
         mockCall('vm.device.disk_choices', {
           '/dev/zvol/poolio/test-327brn': 'poolio/test-327brn',
         }),
+        mockCall('vm.device.query', [
+          { vm: 1, attributes: { dtype: VmDeviceType.Disk, path: '/dev/zvol/poolio/test-327brn' } },
+        ] as VmDiskDevice[]),
+        mockCall('vm.query', [
+          { id: 1, name: 'existing-vm' },
+        ] as VirtualMachine[]),
       ]),
       mockProvider(FreeSpaceValidatorService, {
         validate: () => of(null),
