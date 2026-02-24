@@ -8,7 +8,7 @@ import {
   createComponentFactory,
   mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -319,45 +319,6 @@ describe('NetworkComponent', () => {
           message: helptextInterfaces.commitChangesWarning,
         }),
       );
-    });
-
-    it('shows UI access loss warning when all ui_address bindings would be orphaned', async () => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectGeneralConfig, {
-        ui_address: ['192.168.1.3'],
-        ui_v6address: ['fe80::1'],
-      });
-      store$.refreshState();
-
-      await triggerIpChangeDetection();
-
-      expect(spectator.component.willLoseUiAccess).toBe(true);
-    });
-
-    it('does not show UI access loss warning when 0.0.0.0 is in ui_address', async () => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectGeneralConfig, {
-        ui_address: ['0.0.0.0'],
-        ui_v6address: [],
-      });
-      store$.refreshState();
-
-      await triggerIpChangeDetection();
-
-      expect(spectator.component.willLoseUiAccess).toBe(false);
-    });
-
-    it('does not show UI access loss warning when a ui_address still exists in pending aliases', async () => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectGeneralConfig, {
-        ui_address: ['10.0.0.1'],
-        ui_v6address: [],
-      });
-      store$.refreshState();
-
-      await triggerIpChangeDetection();
-
-      expect(spectator.component.willLoseUiAccess).toBe(false);
     });
 
     it('opens new tabs and starts checkin countdown when confirmation is accepted', async () => {

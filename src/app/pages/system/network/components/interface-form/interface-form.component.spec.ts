@@ -17,9 +17,11 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
@@ -27,6 +29,7 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -42,6 +45,9 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
+import { systemConfigLoaded } from 'app/store/system-config/system-config.actions';
+import { systemConfigReducer } from 'app/store/system-config/system-config.reducer';
+import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 import { productTypeLoaded } from 'app/store/system-info/system-info.actions';
 import { systemInfoReducer } from 'app/store/system-info/system-info.reducer';
 import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
@@ -84,6 +90,7 @@ describe('InterfaceFormComponent', () => {
       StoreModule.forRoot({
         [haInfoStateKey]: haInfoReducer,
         [systemInfoStateKey]: systemInfoReducer,
+        [systemConfigStateKey]: systemConfigReducer,
       }, {
         initialState: {
           [haInfoStateKey]: {
@@ -100,6 +107,13 @@ describe('InterfaceFormComponent', () => {
             },
             isIxHardware: false,
             buildYear: 2024,
+          },
+          [systemConfigStateKey]: {
+            generalConfig: {
+              ui_address: ['0.0.0.0'],
+              ui_v6address: ['::'],
+            },
+            advancedConfig: null,
           },
         },
       }),
@@ -164,6 +178,7 @@ describe('InterfaceFormComponent', () => {
         withErrorHandler: () => (source$: unknown) => source$,
       }),
       mockProvider(SnackbarService),
+      mockProvider(UiSearchProvider),
     ],
   });
 
@@ -424,6 +439,62 @@ describe('InterfaceFormComponent', () => {
         MTU: '1500',
         'IP Address': '10.2.3.4/24',
       });
+    });
+  });
+
+  describe('UI-bound IP validation', () => {
+    it('hides delete button for UI-bound alias and shows banner', () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ interface: existingInterface }) }),
+        ],
+      });
+
+      const store$ = spectator.inject(Store);
+      store$.dispatch(systemConfigLoaded({
+        generalConfig: { ui_address: ['10.2.3.4'], ui_v6address: ['::'] } as SystemGeneralConfig,
+        advancedConfig: null as AdvancedConfig,
+      }));
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      expect(spectator.component.protectedIps).toContain('10.2.3.4');
+      expect(spectator.component.isProtectedAlias(0)).toBe(true);
+      expect(spectator.component.form.controls.aliases.at(0).controls.address.disabled).toBe(true);
+      expect(spectator.component.form.controls.aliases.errors).toBeNull();
+    });
+
+    it('shows delete button for non-UI-bound alias', () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ interface: existingInterface }) }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      expect(spectator.component.isProtectedAlias(0)).toBe(false);
+    });
+
+    it('does not protect IPs when ui_address is wildcard 0.0.0.0', () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ interface: existingInterface }) }),
+        ],
+      });
+
+      const store$ = spectator.inject(Store);
+      store$.dispatch(systemConfigLoaded({
+        generalConfig: { ui_address: ['0.0.0.0'], ui_v6address: ['::'] } as SystemGeneralConfig,
+        advancedConfig: null as AdvancedConfig,
+      }));
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      expect(spectator.component.protectedIps).toEqual([]);
     });
   });
 

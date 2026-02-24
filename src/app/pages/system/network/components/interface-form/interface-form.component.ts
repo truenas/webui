@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -44,6 +45,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -51,6 +53,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -67,6 +70,7 @@ import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -114,6 +118,8 @@ export class InterfaceFormComponent implements OnInit {
   private systemGeneralService = inject(SystemGeneralService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
+  private router = inject(Router);
+  private uiSearchProvider = inject(UiSearchProvider);
   slideInRef = inject<SlideInRef<{
     interfaces?: NetworkInterface[];
     interface?: NetworkInterface;
@@ -124,6 +130,7 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly defaultMtu = 1500;
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
+  protected protectedIps: string[] = [];
 
   protected isLoading = signal(false);
   isHaLicensed = false;
@@ -249,6 +256,7 @@ export class InterfaceFormComponent implements OnInit {
 
     if (this.existingInterface) {
       this.setInterfaceForEdit(this.existingInterface);
+      this.loadProtectedIps(this.existingInterface);
     }
   }
 
@@ -429,6 +437,43 @@ export class InterfaceFormComponent implements OnInit {
         }
       }
       this.cdr.markForCheck();
+    });
+  }
+
+  private loadProtectedIps(nic: NetworkInterface): void {
+    this.store$.pipe(waitForGeneralConfig, take(1)).subscribe((generalConfig) => {
+      const uiBoundIps = [
+        ...generalConfig.ui_address,
+        ...generalConfig.ui_v6address,
+      ].filter((ip) => ip !== '0.0.0.0' && ip !== '::');
+
+      this.protectedIps = nic.aliases
+        .map((alias) => alias.address)
+        .filter((ip) => uiBoundIps.includes(ip));
+
+      this.disableProtectedAliases();
+    });
+  }
+
+  protected isProtectedAlias(index: number): boolean {
+    const address = this.form.controls.aliases.at(index)?.getRawValue()?.address;
+    if (!address) return false;
+    const ip = address.split('/')[0];
+    return this.protectedIps.includes(ip);
+  }
+
+  private disableProtectedAliases(): void {
+    this.form.controls.aliases.controls.forEach((group, index) => {
+      if (this.isProtectedAlias(index)) {
+        group.controls.address.disable();
+      }
+    });
+  }
+
+  protected navigateToGuiSettings(): void {
+    this.slideInRef.close({ response: false });
+    this.router.navigate(['/system', 'general']).then(() => {
+      this.uiSearchProvider.select(guiCardElements.elements.ipv4Address);
     });
   }
 

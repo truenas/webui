@@ -32,14 +32,6 @@
               }
             </div>
 
-            @if (willLoseUiAccess) {
-              <tn-banner
-                type="error"
-                [heading]="helptext.uiAccessLossHeading | translate"
-                [message]="helptext.uiAccessLossMessage | translate"
-              />
-            }
-
             @if (newSystemUrls.length === 0) {
               <tn-banner
                 type="info"

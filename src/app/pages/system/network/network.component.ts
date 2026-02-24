@@ -11,16 +11,15 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import {
-  combineLatest, firstValueFrom, lastValueFrom, Observable, switchMap,
+  firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -41,7 +40,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
-import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @Component({
   selector: 'ix-network',
@@ -102,7 +100,6 @@ export class NetworkComponent implements OnInit {
   private affectedServices: string[] = [];
   checkinInterval: Interval;
   newSystemUrls: string[] = [];
-  willLoseUiAccess = false;
 
   private navigation: Navigation | null;
   helptext = helptextInterfaces;
@@ -212,7 +209,6 @@ export class NetworkComponent implements OnInit {
             this.checkinRemaining = null;
             this.checkinWaiting = false;
             this.newSystemUrls = [];
-            this.willLoseUiAccess = false;
             clearInterval(this.checkinInterval);
             this.window.location.reload(); // should just refresh after the timer goes off
           }
@@ -225,7 +221,6 @@ export class NetworkComponent implements OnInit {
       this.checkinWaiting = false;
       this.checkinRemaining = null;
       this.newSystemUrls = [];
-      this.willLoseUiAccess = false;
       if (this.checkinInterval) {
         clearInterval(this.checkinInterval);
       }
@@ -351,7 +346,6 @@ export class NetworkComponent implements OnInit {
         clearInterval(this.checkinInterval);
         this.checkinRemaining = null;
         this.newSystemUrls = [];
-        this.willLoseUiAccess = false;
         this.cdr.markForCheck();
       });
   }
@@ -383,7 +377,6 @@ export class NetworkComponent implements OnInit {
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
             this.newSystemUrls = [];
-            this.willLoseUiAccess = false;
             this.snackbar.success(
               this.translate.instant(helptextInterfaces.changesRolledBack),
             );
@@ -400,12 +393,9 @@ export class NetworkComponent implements OnInit {
     const currentHostname = this.window.location.hostname.replace(/^\[|\]$/g, '');
     const isIpHostname = ipRegex({ exact: true }).test(currentHostname);
 
-    combineLatest([
-      this.api.call('interface.query'),
-      this.store$.pipe(waitForGeneralConfig, take(1)),
-    ]).pipe(
+    this.api.call('interface.query').pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([interfaces, generalConfig]) => {
+    ).subscribe((interfaces) => {
       if (isIpHostname) {
         const pendingIps = interfaces
           .filter((iface) => this.hasAliasesChanged(iface))
@@ -429,34 +419,8 @@ export class NetworkComponent implements OnInit {
         this.newSystemUrls = [];
       }
 
-      this.willLoseUiAccess = this.checkWillLoseUiAccess(interfaces, generalConfig);
       this.cdr.markForCheck();
     });
-  }
-
-  private checkWillLoseUiAccess(
-    interfaces: NetworkInterface[],
-    generalConfig: SystemGeneralConfig,
-  ): boolean {
-    const allPendingIpv4 = interfaces
-      .flatMap((iface) => iface.aliases || [])
-      .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet)
-      .map((alias) => alias.address);
-
-    const allPendingIpv6 = interfaces
-      .flatMap((iface) => iface.aliases || [])
-      .filter((alias) => alias.type === NetworkInterfaceAliasType.Inet6)
-      .map((alias) => alias.address);
-
-    const v4WillBeLost = generalConfig.ui_address.length > 0
-      && !generalConfig.ui_address.includes('0.0.0.0')
-      && !generalConfig.ui_address.some((addr) => allPendingIpv4.includes(addr));
-
-    const v6WillBeLost = generalConfig.ui_v6address.length > 0
-      && !generalConfig.ui_v6address.includes('::')
-      && !generalConfig.ui_v6address.some((addr) => allPendingIpv6.includes(addr));
-
-    return v4WillBeLost || v6WillBeLost;
   }
 
   private hasAliasesChanged(iface: NetworkInterface): boolean {

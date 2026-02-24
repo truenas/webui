@@ -54,6 +54,4 @@ export const helptextInterfaces = {
 
   deleteDialogText: T('This change can interrupt connectivity and must be tested before making permanent. '),
 
-  uiAccessLossHeading: T('UI Access Will Be Lost'),
-  uiAccessLossMessage: T('The pending network changes will remove all IP addresses that the UI is currently bound to. You will lose access to the UI after committing these changes. Go to General Settings to update the UI address configuration, or revert these changes.'),
 };
