@@ -15,7 +15,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ɵɵRouterLink } from '@angular/router/testing';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnIconRegistryService } from '@truenas/ui-components';
 import {
   filter, map, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -91,9 +91,10 @@ export class TopbarComponent implements OnInit {
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private domSanitizer = inject(DomSanitizer);
   private destroyRef = inject(DestroyRef);
+  private iconRegistry = inject(TnIconRegistryService);
+  private navService = inject(NavigationService);
 
   updateIsDone: Subscription;
-
   updateDialog: MatDialogRef<UpdateDialog>;
   private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
@@ -103,11 +104,8 @@ export class TopbarComponent implements OnInit {
   tooltips = helptextTopbar.tooltips;
   protected searchableElements = toolBarElements;
 
-  private navService = inject(NavigationService);
-
   menuItems = this.navService.menuItems;
   pageTitle = '';
-
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
@@ -155,11 +153,6 @@ export class TopbarComponent implements OnInit {
     ).subscribe((url) => {
       this.updatePageTitle(url);
     });
-
-    // this.matIconRegistry.addSvgIcon(
-    //   'truenas_logo',
-    //   this.domSanitizer.bypassSecurityTrustResourceUrl('assets/images/logo.svg'),
-    // );
 
     this.store$.select(selectUpdateJobs).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((jobs) => {
       const job = jobs[0];

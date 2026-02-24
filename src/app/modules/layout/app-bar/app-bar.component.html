@@ -12,7 +12,8 @@
           (click)="onItemClick(item)"
         >
           <tn-icon
-            library="mdi"
+            library="custom"
+            size="lg"
             [name]="item.status === 'open' ? item.iconActive : item.icon"
             [ngClass]="
               item.status === 'open' ? 'text-background' : 'text-foreground'
