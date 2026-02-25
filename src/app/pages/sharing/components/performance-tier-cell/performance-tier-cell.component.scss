@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+.job-status-badge {
+  line-height: initial;
+  padding: 0 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tier-label {
+  white-space: nowrap;
+}
