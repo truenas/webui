@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -24,7 +25,7 @@ import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-setting
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 function getNvidiaProviders(
-  config: Partial<DockerConfig>,
+  advancedConfig: Partial<AdvancedConfig>,
   nvidiaPresent: boolean,
 ): unknown[] {
   return [
@@ -37,9 +38,10 @@ function getNvidiaProviders(
         enable_image_updates: false,
         address_pools: [],
         pool: 'test-pool',
-        ...config,
       } as DockerConfig),
-      mockCall('docker.nvidia_present', nvidiaPresent),
+      mockCall('system.advanced.nvidia_present', nvidiaPresent),
+      mockCall('system.advanced.config', { nvidia: false, ...advancedConfig } as AdvancedConfig),
+      mockCall('system.advanced.update'),
       mockJob('docker.update', fakeSuccessfulJob()),
     ]),
     mockProvider(DialogService),
@@ -58,7 +60,6 @@ describe('AppsSettingsComponent', () => {
       { base: '172.17.0.0/12', size: 12 },
     ],
     enable_image_updates: false,
-    nvidia: false,
     registry_mirrors: [
       { url: 'https://registry1.example.com', insecure: false },
       { url: 'https://registry2.example.com', insecure: false },
@@ -90,7 +91,9 @@ describe('AppsSettingsComponent', () => {
         } as CatalogConfig),
         mockCall('docker.status'),
         mockCall('docker.config', dockerConfig),
-        mockCall('docker.nvidia_present', true),
+        mockCall('system.advanced.nvidia_present', true),
+        mockCall('system.advanced.config', { nvidia: false } as AdvancedConfig),
+        mockCall('system.advanced.update'),
         mockJob('docker.update', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
@@ -183,7 +186,7 @@ describe('AppsSettingsComponent', () => {
   });
 
   it('shows nvidia checkbox when nvidia GPU is present', async () => {
-    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Install NVIDIA Drivers' }));
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
     expect(nvidiaCheckbox).toBeTruthy();
   });
 
@@ -220,7 +223,6 @@ describe('AppsSettingsComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
-      nvidia: false,
       enable_image_updates: true,
       address_pools: [
         { base: '172.17.0.0/12', size: 12 },
@@ -232,20 +234,20 @@ describe('AppsSettingsComponent', () => {
         { url: 'http://insecure.example.com', insecure: true },
       ],
     }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: false }]);
   });
 
   it('submits nvidia as true when user enables the nvidia checkbox', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Install NVIDIA Drivers': true,
+      'Enable NVIDIA GPU Support': true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [
-      expect.objectContaining({ nvidia: true }),
-    ]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
   });
 });
 
@@ -264,6 +266,7 @@ describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
       ...getNvidiaProviders({ nvidia: true }, false),
+
       mockProvider(SlideInRef, slideInRef),
     ],
   });
@@ -275,7 +278,7 @@ describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
   });
 
   it('shows nvidia checkbox when nvidia drivers are installed even if GPU is absent', async () => {
-    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Install NVIDIA Drivers' }));
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
     expect(nvidiaCheckbox).toBeTruthy();
   });
 });
@@ -295,6 +298,7 @@ describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
       ...getNvidiaProviders({ nvidia: false }, false),
+
       mockProvider(SlideInRef, slideInRef),
     ],
   });
@@ -306,7 +310,7 @@ describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
   });
 
   it('hides nvidia checkbox when no GPU is present and no drivers are installed', async () => {
-    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Install NVIDIA Drivers' }));
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
     expect(nvidiaCheckbox).toBeNull();
   });
 });

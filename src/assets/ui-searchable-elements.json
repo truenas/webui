@@ -1523,7 +1523,7 @@
       "System",
       "Advanced Settings",
       "NVIDIA Drivers",
-      "Install NVIDIA Drivers"
+      "Enable NVIDIA GPU Support"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -1533,7 +1533,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "install-nvidia-drivers",
+    "anchor": "enable-nvidia-gpu-support",
     "triggerAnchor": null,
     "section": "ui"
   },

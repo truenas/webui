@@ -639,7 +639,6 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
-  'docker.nvidia_present': { params: void; response: boolean };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -828,6 +827,7 @@ export interface ApiCallDirectory {
 
   // System
   'system.advanced.config': { params: void; response: AdvancedConfig };
+  'system.advanced.nvidia_present': { params: void; response: boolean };
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.advanced.sed_global_password_is_set': { params: void; response: boolean };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
