@@ -1,0 +1,39 @@
+<h1 mat-dialog-title>{{ 'Change Performance Tier' | translate }}</h1>
+
+<div mat-dialog-content>
+  <div class="dataset-name">
+    <strong>{{ 'Dataset' | translate }}:</strong> {{ data.datasetName }}
+  </div>
+
+  <div class="tier-change">
+    <span class="tier-chip current">{{ currentTierLabel | translate }}</span>
+    <span class="arrow">&rarr;</span>
+    <span class="tier-chip new">{{ newTierLabel | translate }}</span>
+  </div>
+
+  <form [formGroup]="form">
+    <ix-checkbox
+      formControlName="moveExistingData"
+      [label]="'Move existing data' | translate"
+      [tooltip]="'When checked, existing data will be migrated to the new performance tier. This may take some time depending on the amount of data.' | translate"
+    ></ix-checkbox>
+  </form>
+</div>
+
+<mat-dialog-actions align="end">
+  <button
+    mat-button
+    ixTest="cancel"
+    [mat-dialog-close]="false"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+  <button
+    mat-flat-button
+    color="primary"
+    ixTest="apply"
+    (click)="onApply()"
+  >
+    {{ 'Apply' | translate }}
+  </button>
+</mat-dialog-actions>

@@ -60,6 +60,7 @@ describe('NfsListComponent', () => {
         mockCall('sharing.nfs.query', shares as NfsShare[]),
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),
+        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
