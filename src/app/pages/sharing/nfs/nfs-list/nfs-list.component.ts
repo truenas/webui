@@ -5,12 +5,13 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import { filter, of, tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -39,6 +40,13 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ChangeTierDialogComponent, ChangeTierDialogData,
+} from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import {
+  performanceTierColumn,
+} from 'app/pages/sharing/components/performance-tier-cell/performance-tier-cell.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -86,6 +94,8 @@ export class NfsListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
+  private matDialog = inject(MatDialog);
+  private tierService = inject(SharingTierService);
 
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
@@ -95,6 +105,7 @@ export class NfsListComponent implements OnInit {
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<NfsShare>;
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  tierEnabled = signal(false);
 
   nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -139,6 +150,10 @@ export class NfsListComponent implements OnInit {
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),
     }),
+    performanceTierColumn({
+      title: this.translate.instant('Performance Tier'),
+      hidden: true,
+    }),
     actionsWithMenuColumn({
       actions: [
         {
@@ -148,6 +163,12 @@ export class NfsListComponent implements OnInit {
             this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } })
               .onSuccess(() => this.refresh(), this.destroyRef);
           },
+        },
+        {
+          iconName: tnIconMarker('swap-horizontal', 'mdi'),
+          tooltip: this.translate.instant('Change Performance Tier'),
+          hidden: (row) => of(!this.tierEnabled() || !row.tier),
+          onClick: (row) => this.openChangeTierDialog(row),
         },
         {
           iconName: tnIconMarker('delete', 'mdi'),
@@ -190,6 +211,8 @@ export class NfsListComponent implements OnInit {
         this.refresh();
       },
     });
+
+    this.loadTierConfig();
   }
 
   private setDefaultSort(): void {
@@ -222,6 +245,39 @@ export class NfsListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
+  }
+
+  private loadTierConfig(): void {
+    this.tierService.getTierConfig().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (config) => {
+        if (config.enabled) {
+          this.tierEnabled.set(true);
+          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Performance Tier'));
+          if (tierColumn) {
+            tierColumn.hidden = false;
+          }
+          this.columns = [...this.columns];
+          this.cdr.markForCheck();
+        }
+      },
+    });
+  }
+
+  private openChangeTierDialog(row: NfsShare): void {
+    if (!row.tier) return;
+
+    this.matDialog.open(ChangeTierDialogComponent, {
+      data: {
+        datasetName: row.path,
+        currentTier: row.tier.tier_type,
+        shareName: row.path,
+      } as ChangeTierDialogData,
+    }).afterClosed().pipe(
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.refresh());
   }
 
   private onChangeEnabledState(row: NfsShare): void {

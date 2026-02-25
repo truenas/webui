@@ -1,0 +1,12 @@
+<span class="tier-label">{{ tierLabel() }}</span>
+
+@if (tierJob(); as job) {
+  <button
+    mat-stroked-button
+    class="job-status-badge"
+    [ngClass]="jobStatusClass()"
+    (click)="openMigrationDialog($event)"
+  >
+    {{ jobStatusLabel() }}
+  </button>
+}
