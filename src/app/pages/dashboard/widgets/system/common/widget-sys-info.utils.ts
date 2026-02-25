@@ -33,7 +33,3 @@ export function getProductEnclosure(systemProduct: string): ProductEnclosure | n
   }
   return ProductEnclosure.Rackmount;
 }
-
-export function getSystemVersion(version: string): string {
-  return version;
-}

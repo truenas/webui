@@ -1,14 +1,6 @@
 import {
-  getProductEnclosure, getProductImageSrc, getServerProduct, getSystemVersion,
+  getProductEnclosure, getProductImageSrc, getServerProduct,
 } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
-
-describe('getSystemVersion', () => {
-  it('should initial version if second argument is skipped', () => {
-    expect(getSystemVersion('25.10.0-MASTER-20250126-184805')).toBe(
-      '25.10.0-MASTER-20250126-184805',
-    );
-  });
-});
 
 describe('getServerProduct', () => {
   it('should return the correct image path for provided product', () => {

@@ -115,7 +115,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Edition: Enterprise',
-      'Version: 25.10.0-MASTER-20250126-184805 - Goldeye',
+      'Version: 25.10.0-MASTER-20250126-184805',
       'Support License: Gold Contract,  Expires on 2025-01-01',
       'System Serial: AA-00001',
       'Uptime: 23 hours 12 minutes as of 10:34',
