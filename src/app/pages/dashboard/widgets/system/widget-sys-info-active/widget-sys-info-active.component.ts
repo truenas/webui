@@ -13,6 +13,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
+import { HarborIconComponent } from 'app/modules/harbor-icon/harbor-icon.component';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -35,6 +36,7 @@ import {
   imports: [
     MatCard,
     MatCardContent,
+    HarborIconComponent,
     TnIconComponent,
     ProductImageComponent,
     MatButton,

@@ -9,14 +9,7 @@
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <tn-icon
-            [name]="
-              isIxHardware()
-                ? tnIconMarker('harbor-logo', 'custom')
-                : tnIconMarker('harbor-logo-type', 'custom')
-            "
-            [fullSize]="true"
-          ></tn-icon>
+          <ix-harbor-icon name="app-harbor-logo-type"></ix-harbor-icon>
         </div>
 
         <ix-product-image

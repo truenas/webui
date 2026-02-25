@@ -52,8 +52,24 @@ export const appBarReducer = createReducer(
 
     return [...state.map((i) => ({ ...i, status: 'minimized' as const })), { ...item, status: 'open' as const }];
   }),
-  on(appBarClosed, (state, { stateName }) => state.filter((item) => item.state !== stateName)),
-  on(appBarMinimized, (state, { stateName }) => updateItem(state, stateName, { status: 'minimized' as const })),
+  on(appBarClosed, (state, { stateName }) => {
+    const newState = state.filter((item) => item.state !== stateName);
+    return newState.map((item) => {
+      if (item.state === 'desktop') {
+        return { ...item, status: 'open' as const };
+      }
+      return { ...item, status: 'minimized' as const };
+    });
+  }),
+  on(appBarMinimized, (state, { stateName }) => state.map((item) => {
+    if (item.state === stateName) {
+      return { ...item, status: 'minimized' as const };
+    }
+    if (item.state === 'desktop') {
+      return { ...item, status: 'open' as const };
+    }
+    return { ...item, status: 'minimized' as const };
+  })),
   on(appBarAdded, (state, { item }) => {
     const itemExists = state.some((i) => i.state === item.state);
     if (itemExists) {
