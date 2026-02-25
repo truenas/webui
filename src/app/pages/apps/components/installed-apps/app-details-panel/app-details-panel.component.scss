@@ -1,0 +1,5 @@
+@import 'mixins/cards';
+
+.cards {
+  @include details-cards();
+}
