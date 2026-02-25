@@ -19,18 +19,16 @@
   </button>
 </div>
 
-<div class="drag-handle" cdkDragHandle>
-  <tn-icon name="drag-horizontal" library="mdi"></tn-icon>
-</div>
 
-<div class="edit-and-delete">
+
+<div class="edit-and-delete flex items-center">
   <button
     mat-icon-button
     [attr.aria-label]="'Edit group' | translate"
     [ixTest]="['edit-group', 'widget' + index()]"
     (click)="edit.emit()"
   >
-    <tn-icon name="pencil" library="mdi"></tn-icon>
+    <tn-icon class="size-5!" name="pencil" library="mdi"></tn-icon>
   </button>
   <button
     mat-icon-button
@@ -38,6 +36,9 @@
     [ixTest]="['delete-group', 'widget' + index()]"
     (click)="delete.emit()"
   >
-    <tn-icon name="delete" library="mdi"></tn-icon>
+    <tn-icon class="size-5!" name="delete" library="mdi"></tn-icon>
+  </button>
+  <button cdkDragHandle mat-icon-button>
+    <tn-icon class="size-5!" name="drag-horizontal" library="mdi"></tn-icon>
   </button>
 </div>

@@ -1,4 +1,4 @@
-@import 'scss-imports/cssvars';
+@import "scss-imports/cssvars";
 
 .card {
   box-sizing: border-box;
@@ -110,11 +110,11 @@
   }
 }
 
-
 .card-content {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding-bottom: 0;
   padding-right: 0;
 
@@ -225,6 +225,7 @@
   align-items: center;
   display: flex;
   justify-content: center;
+  margin-top: auto;
   padding: 16px 16px 32px;
 }
 

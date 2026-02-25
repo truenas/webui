@@ -23,7 +23,7 @@
         <mat-grid-list
           [cols]="isTwoTilesInRow ? 2 : 1"
           [gutterSize]="isThreeTilesInColumn ? '7px' : '12px'"
-          [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '153px') : '300px'"
+          [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '153px') : 'fit'"
         >
           @for (poolInfo of poolsInfo().slice(0, 6); track poolInfo.name) {
             <mat-grid-tile class="grid-tile">
@@ -128,9 +128,10 @@
                 *ixRequiresRoles="requiredRoles"
                 class="create-new"
                 ixTest="create-pool"
+                [class.skimpy-create-new]="isThreeTilesInColumn"
                 [routerLink]="['/storage', 'create']"
                 >
-                <tn-icon name="database" library="mdi" class="create-pool-icon" [fullSize]="true"></tn-icon>
+                <tn-icon name="database" library="mdi" class="create-pool-icon"></tn-icon>
                 <span>{{ 'Create Pool' | translate }}</span>
               </a>
             </mat-grid-tile>

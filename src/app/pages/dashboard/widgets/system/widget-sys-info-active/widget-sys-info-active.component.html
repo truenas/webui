@@ -1,9 +1,22 @@
 <mat-card [class]="['card', size()]">
+  <mat-card-header class="border-b! pb-5!">
+    <h3>
+      {{ "System Information" | translate }}
+    </h3>
+  </mat-card-header>
+
   <mat-card-content class="card-content">
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <tn-icon [name]="isIxHardware() ? tnIconMarker('harbor-logo', 'custom') : tnIconMarker('harbor-logo-type', 'custom')" [fullSize]="true"></tn-icon>
+          <tn-icon
+            [name]="
+              isIxHardware()
+                ? tnIconMarker('harbor-logo', 'custom')
+                : tnIconMarker('harbor-logo-type', 'custom')
+            "
+            [fullSize]="true"
+          ></tn-icon>
         </div>
 
         <ix-product-image
@@ -53,16 +66,18 @@
       </div>
 
       <div class="content-right">
-        <div class="header">
+        <div class="header flex items-center">
           <h3>{{ 'System Information' | translate }}</h3>
 
           <button
             mat-icon-button
             ixTest="system-go-to-reports"
+            matTooltipPosition="above"
+            [matTooltip]="'System Reports' | translate"
             [attr.aria-label]="'System Reports' | translate"
             [routerLink]="['/reportsdashboard', 'system']"
           >
-            <tn-icon name="chart-box" library="mdi" size="lg" [tnTooltip]="'System Reports' | translate"></tn-icon>
+            <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
           </button>
         </div>
 
