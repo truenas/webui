@@ -75,6 +75,7 @@ describe('SmbListComponent', () => {
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
       ]),
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),

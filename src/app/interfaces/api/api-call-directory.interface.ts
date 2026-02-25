@@ -1,5 +1,6 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -295,6 +296,7 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import {
   SimilarIssue,
   SimilarIssuesParams,
@@ -994,6 +996,12 @@ export interface ApiCallDirectory {
   'pool.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
   'pool.snapshot.release': { params: [string]; response: void };
   'pool.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+
+  // ZFS Tier
+  'zfs.tier.config': { params: void; response: ZfsTierConfig };
+  'zfs.tier.rewrite_job_status': { params: [tierJobId: number]; response: ZfsTierRewriteJobEntry };
+  'zfs.tier.rewrite_job_abort': { params: [tierJobId: number]; response: void };
+  'pool.dataset.set_tier': { params: [datasetName: string, tier: DatasetTier]; response: void };
 }
 
 /**

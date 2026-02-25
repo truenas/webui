@@ -75,6 +75,7 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

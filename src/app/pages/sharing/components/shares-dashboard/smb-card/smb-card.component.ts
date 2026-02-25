@@ -1,8 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, DestroyRef, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
@@ -41,8 +44,15 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ChangeTierDialogComponent, ChangeTierDialogData,
+} from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import {
+  performanceTierColumn,
+} from 'app/pages/sharing/components/performance-tier-cell/performance-tier-cell.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
@@ -87,6 +97,10 @@ export class SmbCardComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
+  private matDialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+  private tierService = inject(SharingTierService);
+  tierEnabled = signal(false);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
@@ -113,6 +127,7 @@ export class SmbCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      cssClass: 'tight-toggle',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
@@ -120,7 +135,12 @@ export class SmbCardComponent implements OnInit {
       title: this.translate.instant('Audit Logging'),
       getValue: (row) => Boolean(row.audit?.enable),
     }),
+    performanceTierColumn({
+      title: this.translate.instant('Performance Tier'),
+      hidden: true,
+    }),
     actionsWithMenuColumn({
+      cssClass: 'tight-actions',
       actions: [
         {
           iconName: tnIconMarker('pencil', 'mdi'),
@@ -140,6 +160,12 @@ export class SmbCardComponent implements OnInit {
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
         {
+          iconName: tnIconMarker('swap-horizontal', 'mdi'),
+          tooltip: this.translate.instant('Change Performance Tier'),
+          hidden: (row) => of(!this.tierEnabled() || !row.tier),
+          onClick: (row) => this.openChangeTierDialog(row),
+        },
+        {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
@@ -157,6 +183,8 @@ export class SmbCardComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
     this.dataProvider.load();
+
+    this.loadTierConfig();
   }
 
   protected openForm(row?: SmbShare): void {
@@ -223,6 +251,39 @@ export class SmbCardComponent implements OnInit {
         },
       });
     }
+  }
+
+  private loadTierConfig(): void {
+    this.tierService.getTierConfig().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (config) => {
+        if (config.enabled) {
+          this.tierEnabled.set(true);
+          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Performance Tier'));
+          if (tierColumn) {
+            tierColumn.hidden = false;
+          }
+          this.columns = [...this.columns];
+          this.cdr.markForCheck();
+        }
+      },
+    });
+  }
+
+  private openChangeTierDialog(row: SmbShare): void {
+    if (!row.tier) return;
+
+    this.matDialog.open(ChangeTierDialogComponent, {
+      data: {
+        datasetName: row.path,
+        currentTier: row.tier.tier_type,
+        shareName: row.name,
+      } as ChangeTierDialogData,
+    }).afterClosed().pipe(
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   private showLockedPathDialog(path: string): void {

@@ -1,4 +1,5 @@
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
+import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 
 export interface NfsShare {
   aliases: string[];
@@ -17,6 +18,7 @@ export interface NfsShare {
   ro: boolean;
   expose_snapshots?: boolean;
   security: NfsSecurityProvider[];
+  tier?: SharingTierInfo | null;
 }
 
 export type NfsShareUpdate = Partial<Omit<NfsShare, 'id' | 'locked'>>;

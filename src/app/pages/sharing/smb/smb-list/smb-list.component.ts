@@ -11,6 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -51,7 +52,14 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ChangeTierDialogComponent, ChangeTierDialogData,
+} from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import {
+  performanceTierColumn,
+} from 'app/pages/sharing/components/performance-tier-cell/performance-tier-cell.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
@@ -101,6 +109,9 @@ export class SmbListComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
+  private matDialog = inject(MatDialog);
+  private tierService = inject(SharingTierService);
+  tierEnabled = signal(false);
 
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
@@ -135,6 +146,10 @@ export class SmbListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
       getValue: (row) => Boolean(row.audit?.enable),
+    }),
+    performanceTierColumn({
+      title: this.translate.instant('Performance Tier'),
+      hidden: true,
     }),
     actionsWithMenuColumn({
       actions: [
@@ -194,6 +209,12 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
+          iconName: tnIconMarker('swap-horizontal', 'mdi'),
+          tooltip: this.translate.instant('Change Performance Tier'),
+          hidden: (row) => of(!this.tierEnabled() || !row.tier),
+          onClick: (row) => this.openChangeTierDialog(row),
+        },
+        {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
@@ -237,6 +258,8 @@ export class SmbListComponent implements OnInit {
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
+
+    this.loadTierConfig();
   }
 
   private setDefaultSort(): void {
@@ -272,6 +295,39 @@ export class SmbListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private loadTierConfig(): void {
+    this.tierService.getTierConfig().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (config) => {
+        if (config.enabled) {
+          this.tierEnabled.set(true);
+          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Performance Tier'));
+          if (tierColumn) {
+            tierColumn.hidden = false;
+          }
+          this.columns = [...this.columns];
+          this.cdr.markForCheck();
+        }
+      },
+    });
+  }
+
+  private openChangeTierDialog(row: SmbShare): void {
+    if (!row.tier) return;
+
+    this.matDialog.open(ChangeTierDialogComponent, {
+      data: {
+        datasetName: row.path,
+        currentTier: row.tier.tier_type,
+        shareName: row.name,
+      } as ChangeTierDialogData,
+    }).afterClosed().pipe(
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   private lockedPathDialog(path: string): void {
