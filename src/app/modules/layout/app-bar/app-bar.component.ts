@@ -5,8 +5,10 @@ import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TnIconComponent } from '@truenas/ui-components';
 import { take } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AppBarItem } from 'app/interfaces/app-bar.interface';
 import { MenuItem } from 'app/interfaces/menu-item.interface';
+import { HarborIconComponent } from 'app/modules/harbor-icon/harbor-icon.component';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { appBarOpened } from 'app/store/app-bar/app-bar.actions';
 import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
@@ -15,7 +17,7 @@ import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
   selector: 'ix-app-bar',
   templateUrl: './app-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnIconComponent, RouterLink, AsyncPipe, NgClass],
+  imports: [TnIconComponent, HarborIconComponent, RouterLink, AsyncPipe, NgClass],
 })
 export class AppBarComponent implements OnInit {
   private store = inject(Store);
@@ -23,6 +25,17 @@ export class AppBarComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   readonly appBarState$ = this.store.select(selectAppBarState);
+  readonly sortedAppBarState$ = this.appBarState$.pipe(
+    map((items) => {
+      const desktopItem = items.find((item) => item.state === 'desktop');
+      if (!desktopItem) {
+        return items;
+      }
+
+      return [desktopItem, ...items.filter((item) => item.state !== 'desktop')];
+    }),
+  );
+
   private router = inject(Router);
 
   ngOnInit(): void {

@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Store } from '@ngrx/store'; // 新增
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
+import { HarborIconComponent } from 'app/modules/harbor-icon/harbor-icon.component';
 import { NavigationService } from 'app/services/navigation/navigation.service';
-import { appBarOpened } from 'app/store/app-bar/app-bar.actions'; // 新增
+import { appBarOpened } from 'app/store/app-bar/app-bar.actions';
 
 @Component({
   selector: 'ix-desktop',
   templateUrl: './desktop.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnIconComponent, TranslateModule],
+  imports: [HarborIconComponent, TranslateModule],
 })
 export class DesktopComponent {
   readonly isLoading = false;
