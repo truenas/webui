@@ -1,0 +1,31 @@
+.dataset-name {
+  margin-bottom: 16px;
+}
+
+.tier-change {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .arrow {
+    font-size: 18px;
+  }
+}
+
+.tier-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+
+  &.current {
+    background: var(--alt-bg2);
+  }
+
+  &.new {
+    background: var(--primary);
+    color: var(--primary-txt);
+  }
+}
