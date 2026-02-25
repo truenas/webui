@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -48,7 +48,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-form',
   templateUrl: './replication-form.component.html',
@@ -85,6 +84,7 @@ export class ReplicationFormComponent implements OnInit {
   private keychainCredentials = inject(KeychainCredentialService);
   private authService = inject(AuthService);
   slideInRef = inject<SlideInRef<ReplicationTask | undefined, ReplicationTask | false>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly generalSection = viewChild.required(GeneralSectionComponent);
   protected readonly transportSection = viewChild.required(TransportSectionComponent);
@@ -179,7 +179,7 @@ export class ReplicationFormComponent implements OnInit {
 
     this.isLoading.set(true);
     operation$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(
         {
           next: (response) => {
@@ -220,7 +220,7 @@ export class ReplicationFormComponent implements OnInit {
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
         debounceTime(0),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.countEligibleManualSnapshots();
@@ -262,7 +262,7 @@ export class ReplicationFormComponent implements OnInit {
         }
         return of({ eligible: 0, total: 0 });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (eligibleSnapshots) => {
         this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
@@ -298,11 +298,13 @@ export class ReplicationFormComponent implements OnInit {
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
         debounceTime(0),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.updateExplorers());
 
-    this.transportSection().form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.transportSection().form.controls.ssh_credentials.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
       this.targetSection().form.controls.target_dataset.reset();
     });
   }
@@ -330,7 +332,7 @@ export class ReplicationFormComponent implements OnInit {
           this.sshCredentials = sshCredentials;
           return this.transportSection().form.controls.ssh_credentials.valueChanges;
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
@@ -345,7 +347,7 @@ export class ReplicationFormComponent implements OnInit {
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
-        }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
+        }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.generalSection().form.controls.sudo.setValue(useSudo);
           this.isSudoDialogShown = true;
         });

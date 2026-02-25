@@ -60,8 +60,7 @@ describe('SmbCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbCardComponent,
-    imports: [
-      IxTablePagerShowMoreComponent,
+    imports: [IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(
@@ -90,6 +89,11 @@ describe('SmbCardComponent', () => {
         })),
       }),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectServices,

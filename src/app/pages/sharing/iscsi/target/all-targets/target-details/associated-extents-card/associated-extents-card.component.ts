@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, switchMap, take,
@@ -17,14 +18,12 @@ import {
   AssociatedTargetDialogData, IscsiExtent, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-associated-extents-card',
   styleUrls: ['./associated-extents-card.component.scss'],
@@ -38,7 +37,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     TestDirective,
     TranslateModule,
     MatIconButton,
-    IxIconComponent,
+    TnIconComponent,
     MatCardContent,
     RequiresRolesDirective,
     MatTooltip,
@@ -53,6 +52,7 @@ export class AssociatedExtentsCardComponent {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();
 
@@ -98,7 +98,7 @@ export class AssociatedExtentsCardComponent {
     }).afterClosed()
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.getTargetExtents());
   }
 
@@ -114,7 +114,7 @@ export class AssociatedExtentsCardComponent {
       filter(Boolean),
       switchMap(() => this.iscsiService.deleteTargetExtent(extent.id).pipe(this.loader.withLoader())),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getTargetExtents());
   }
 
@@ -126,7 +126,7 @@ export class AssociatedExtentsCardComponent {
       this.iscsiService.getTargetExtents(),
     ]).pipe(
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
       finalize(() => this.isLoadingExtents.set(false)),
     ).subscribe(([extents, targetExtents]) => {
       this.extents.set(extents);

@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, signal, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -27,7 +27,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-quota-add-form',
   templateUrl: './dataset-quota-add-form.component.html',
@@ -59,6 +58,8 @@ export class DatasetQuotaAddFormComponent {
     quotaType: DatasetQuotaType;
     datasetId: string;
   }, boolean>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -132,7 +133,7 @@ export class DatasetQuotaAddFormComponent {
 
     const quotas = this.getQuotas();
     this.api.call('pool.dataset.set_quota', [this.datasetId, quotas])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));

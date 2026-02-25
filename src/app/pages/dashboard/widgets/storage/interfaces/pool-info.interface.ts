@@ -1,8 +1,8 @@
+import { tnIconMarker } from '@truenas/ui-components';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 export interface ItemInfo {
-  icon: MarkedIcon;
+  icon: string;
   level: StatusLevel;
   label: string;
   value: string;
@@ -16,12 +16,12 @@ export enum StatusLevel {
 }
 
 export const statusIcons = {
-  error: iconMarker('error'),
-  checkCircle: iconMarker('check_circle'),
-  mdiAlert: iconMarker('mdi-alert'),
-  mdiCloseCircle: iconMarker('mdi-close-circle'),
-  arrowCircleRight: iconMarker('arrow_circle_right'),
-  neutral: iconMarker('mdi-minus-circle'),
+  error: tnIconMarker('error', 'material'),
+  checkCircle: tnIconMarker('check_circle', 'material'),
+  mdiAlert: tnIconMarker('alert', 'mdi'),
+  mdiCloseCircle: tnIconMarker('close-circle', 'mdi'),
+  arrowCircleRight: tnIconMarker('arrow_circle_right', 'material'),
+  neutral: tnIconMarker('minus-circle', 'mdi'),
 };
 
 export interface PoolInfo {

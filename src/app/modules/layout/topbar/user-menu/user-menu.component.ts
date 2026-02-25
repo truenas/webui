@@ -1,26 +1,24 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { filter, map } from 'rxjs';
+import { filter, map, of, switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { userMenuElements } from 'app/modules/layout/topbar/user-menu/user-menu.elements';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-menu',
   templateUrl: './user-menu.component.html',
@@ -29,7 +27,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     MatTooltip,
     MatMenuTrigger,
-    IxIconComponent,
     TnIconComponent,
     MatMenu,
     MatMenuItem,
@@ -45,14 +42,22 @@ export class UserMenuComponent {
   private matDialog = inject(MatDialog);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly tooltips = helptextTopbar.tooltips;
   protected searchableElements = userMenuElements;
   protected readonly AccountAttribute = AccountAttribute;
 
   protected loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
-  protected isTwoFactorEnabledGlobally$ = this.authService.getGlobalTwoFactorConfig().pipe(
-    map((config) => config.enabled),
+  protected isTwoFactorEnabledGlobally$ = this.authService.user$.pipe(
+    switchMap((user) => {
+      if (!user) {
+        return of(false);
+      }
+      return this.authService.getGlobalTwoFactorConfig().pipe(
+        map((config) => config.enabled),
+      );
+    }),
   );
 
   openChangePasswordDialog(): void {
@@ -65,7 +70,7 @@ export class UserMenuComponent {
 
   onSignOut(): void {
     this.authService.logout()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.router.navigate(['/signin']);
       });

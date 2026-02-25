@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -6,8 +7,8 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -16,14 +17,11 @@ import { Role } from 'app/enums/role.enum';
 import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alert-settings2',
   templateUrl: './alert-settings2.component.html',
@@ -40,7 +38,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatCardContent,
     MatList,
     MatListItem,
-    IxIconComponent,
+    TnIconComponent,
     IxInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -51,6 +49,7 @@ export class AlertSettings2Component implements OnInit {
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private themeService = inject(ThemeService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
 
@@ -71,7 +70,7 @@ export class AlertSettings2Component implements OnInit {
 
   private loadCategories(): void {
     this.api.call('alert.list_categories').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (categories) => {
         this.categories = categories;
@@ -83,7 +82,7 @@ export class AlertSettings2Component implements OnInit {
 
   private loadClassesConfig(): void {
     this.api.call('alertclasses.config').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (alertConfig) => {
         this.alertClasses = alertConfig;
@@ -94,7 +93,7 @@ export class AlertSettings2Component implements OnInit {
 
   private loadPolicyOptions(): void {
     this.api.call('alert.list_policies').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (policies) => {
         this.policyOptions = policies;
@@ -130,7 +129,7 @@ export class AlertSettings2Component implements OnInit {
     this.searchControl.valueChanges.pipe(
       debounceTime(100),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
       const option = this.searchOptions.find((opt) => opt.value === value)
         || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
@@ -164,23 +163,23 @@ export class AlertSettings2Component implements OnInit {
   getIconName(level: AlertLevel): string {
     switch (level) {
       case AlertLevel.Info:
-        return 'info';
+        return 'information';
       case AlertLevel.Notice:
-        return 'event';
+        return 'calendar';
       case AlertLevel.Alert:
-        return 'notifications_active';
+        return 'bell-ring';
       case AlertLevel.Warning:
-        return 'warning';
+        return 'alert';
       case AlertLevel.Critical:
-        return 'local_fire_department';
+        return 'fire';
       case AlertLevel.Error:
-        return 'error';
+        return 'alert-circle';
       case AlertLevel.Emergency:
-        return 'crisis_alert';
+        return 'alert-octagon';
       default:
-        return 'info';
+        return 'information';
     }
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }

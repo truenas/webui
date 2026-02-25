@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -15,7 +16,6 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AclEditorListComponent } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -37,7 +37,6 @@ import {
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-editor-save-controls.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-acl-editor',
   templateUrl: 'dataset-acl-editor.component.html',
@@ -55,7 +54,7 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
     AclEditorListComponent,
     MatButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     AclEditorSaveControlsComponent,
     MatAnchor,
     RouterLink,
@@ -73,6 +72,7 @@ export class DatasetAclEditorComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private matDialog = inject(MatDialog);
   private formBuilder = inject(NonNullableFormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   datasetPath: string;
   isLoading: boolean;
@@ -107,7 +107,7 @@ export class DatasetAclEditorComponent implements OnInit {
     this.store.setState((state) => ({ ...state, returnUrl }));
 
     this.store.state$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         if (this.acl === null && state.acl === null) {
           this.router.navigate(['/sharing']);
@@ -144,7 +144,7 @@ export class DatasetAclEditorComponent implements OnInit {
       } as StripAclModalData,
     })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wasStripped) => {
         if (!wasStripped) {
           return;

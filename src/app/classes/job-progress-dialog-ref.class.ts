@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { DestroyRef } from '@angular/core';
 import { outputToObservable } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -24,7 +24,7 @@ export class JobProgressDialogRef<T> {
     ).pipe(take(1));
   }
 
-  getSubscriptionLimiterInstance(): Component {
-    return this.matDialogRef.componentInstance as Component;
+  getDestroyRef(): DestroyRef {
+    return this.matDialogRef.componentInstance.destroyRef;
   }
 }

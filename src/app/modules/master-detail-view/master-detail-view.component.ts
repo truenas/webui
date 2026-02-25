@@ -1,14 +1,13 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
-import { Component, ChangeDetectionStrategy, AfterViewInit, signal, ChangeDetectorRef, input, output, DOCUMENT, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit, signal, ChangeDetectorRef, DestroyRef, input, output, DOCUMENT, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationSkipped, NavigationStart, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { FocusService } from 'app/services/focus.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-master-detail-view',
   templateUrl: './master-detail-view.component.html',
@@ -27,6 +26,7 @@ export class MasterDetailViewComponent<T> implements AfterViewInit {
   private router = inject(Router);
   private focusService = inject(FocusService);
   private document = inject<Document>(DOCUMENT);
+  private destroyRef = inject(DestroyRef);
 
   readonly selectedItem = input<T | null>(null);
   readonly showDetails = input<boolean | null>(true);
@@ -38,7 +38,7 @@ export class MasterDetailViewComponent<T> implements AfterViewInit {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationSkipped || event instanceof NavigationStart),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.toggleShowMobileDetails(false));
   }
@@ -46,7 +46,7 @@ export class MasterDetailViewComponent<T> implements AfterViewInit {
   ngAfterViewInit(): void {
     this.breakpointObserver
       .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state: BreakpointState) => {
         this.isMobileView.set(!!state.matches);
       });

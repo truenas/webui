@@ -72,6 +72,11 @@ describe('NvmeOfCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectServices,

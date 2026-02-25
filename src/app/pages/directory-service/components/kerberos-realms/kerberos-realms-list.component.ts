@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
@@ -16,8 +17,6 @@ import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -37,7 +36,6 @@ import { kerberosRealmsListElements } from 'app/pages/directory-service/componen
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-kerberos-realms-list',
   templateUrl: './kerberos-realms-list.component.html',
@@ -52,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatToolbarRow,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -70,6 +68,7 @@ export class KerberosRealmsListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   readonly paginator = input(true);
   readonly inCard = input(false);
@@ -100,17 +99,17 @@ export class KerberosRealmsListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(KerberosRealmsFormComponent, { data: row }).pipe(
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => this.getKerberosRealms());
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
@@ -120,7 +119,7 @@ export class KerberosRealmsListComponent implements OnInit {
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('kerberos.realm.delete', [row.id])),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               error: (error: unknown) => {
                 this.errorHandler.showErrorModal(error);
@@ -151,12 +150,12 @@ export class KerberosRealmsListComponent implements OnInit {
         });
       }),
       tap((kerberosRealsm) => this.kerberosRealsm = kerberosRealsm),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
     this.setDefaultSort();
     this.getKerberosRealms();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -176,7 +175,7 @@ export class KerberosRealmsListComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(KerberosRealmsFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getKerberosRealms());
   }
 

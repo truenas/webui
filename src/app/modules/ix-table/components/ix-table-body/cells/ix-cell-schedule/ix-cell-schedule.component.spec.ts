@@ -43,6 +43,6 @@ describe('IxCellScheduleComponent', () => {
   it('shows crontab string when schedule is passed', () => {
     spectator.component.setRow({ scheduleField: schedule });
     spectator.fixture.detectChanges();
-    expect(spectator.element.textContent!.trim()).toBe('At 10:15, only on Saturday, February through May');
+    expect(spectator.element.textContent!.trim()).toBe('At 10:15 (10:15 AM), only on Saturday, February through May');
   });
 });

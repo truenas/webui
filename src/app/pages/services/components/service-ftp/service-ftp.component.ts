@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-service-ftp',
   templateUrl: './service-ftp.component.html',
@@ -76,6 +75,7 @@ export class ServiceFtpComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   iecFormatter = inject(IxFormatterService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SharingFtpWrite];
@@ -144,7 +144,7 @@ export class ServiceFtpComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadConfig();
-    this.form.controls.tls.valueChanges.pipe(untilDestroyed(this)).subscribe((tlsEnabled) => {
+    this.form.controls.tls.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((tlsEnabled) => {
       if (!tlsEnabled) {
         this.form.controls.ssltls_certificate.patchValue(null);
       }
@@ -164,7 +164,7 @@ export class ServiceFtpComponent implements OnInit {
 
     this.isFormLoading.set(true);
     this.api.call('ftp.update', [values])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
@@ -185,7 +185,7 @@ export class ServiceFtpComponent implements OnInit {
   private loadConfig(): void {
     this.isFormLoading.set(true);
     this.api.call('ftp.config')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (config) => {
           this.form.patchValue({

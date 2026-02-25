@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
@@ -31,7 +30,6 @@ const defaultCategory: PoolManagerTopologyCategory = {
   draidSpareDisks: null,
   draidDataDisks: null,
 };
-@UntilDestroy()
 @Component({
   selector: 'ix-existing-configuration-preview',
   templateUrl: './existing-configuration-preview.component.html',

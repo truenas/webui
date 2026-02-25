@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,7 +12,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
@@ -140,7 +140,7 @@ describe('AccessCardComponent', () => {
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {
-    const terminateButton = await loader.getHarness(IxIconHarness.with({ name: 'exit_to_app' }));
+    const terminateButton = await loader.getHarness(TnIconHarness.with({ name: 'mdi-exit-to-app' }));
     await terminateButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

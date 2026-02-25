@@ -1,8 +1,9 @@
 import { NgClass, AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLinkActive } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   DndDropEvent, DndDropzoneDirective, DndDraggableDirective, DndDragImageRefDirective,
 } from 'ngx-drag-drop';
@@ -11,7 +12,6 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
@@ -47,7 +47,6 @@ type DiskOrGroup = EnclosureDisk | EnclosureGroup;
 
 const noEnclosureId = 'no-enclosure';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manual-selection-disks',
   templateUrl: './manual-selection-disks.component.html',
@@ -62,7 +61,8 @@ const noEnclosureId = 'no-enclosure';
     DiskIconComponent,
     DndDragImageRefDirective,
     DiskInfoComponent,
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
     AsyncPipe,
     TreeViewComponent,
@@ -77,9 +77,12 @@ export class ManualSelectionDisksComponent implements OnInit {
   private translate = inject(TranslateService);
   protected store$ = inject(ManualDiskSelectionStore);
   protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly enclosures = input.required<Enclosure[]>();
   readonly isSedEncryption = input<boolean>(false);
+
+  protected readonly enclosureTooltip = this.translate.instant('Enclosure');
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
   treeControl: TreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
@@ -112,7 +115,7 @@ export class ManualSelectionDisksComponent implements OnInit {
       this.store$.inventory$,
       this.filtersUpdated,
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([disks, filterValues]) => {
         const filteredDisks = this.filterDisks(disks, filterValues);
         const disksInEnclosures = this.mapDisksToEnclosures(filteredDisks, this.enclosures());

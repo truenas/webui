@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   interval, tap, Subscription, distinctUntilChanged, startWith,
 } from 'rxjs';
@@ -7,13 +7,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class PingService {
   private wsHandler = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly pingTimeoutMillis = 20 * 1000;
   private pingSubscription: Subscription | null = null;
@@ -41,7 +41,7 @@ export class PingService {
     this.wsStatus.isConnected$.pipe(
       startWith(this.wsStatus.isConnected),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isConnected) => {
       if (isConnected) {
         this.setupPing();
@@ -62,7 +62,7 @@ export class PingService {
         method: 'core.ping',
         params: [],
       })),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +20,6 @@ import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/inter
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -27,7 +27,6 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alert-config-form',
   templateUrl: './alert-config-form.component.html',
@@ -40,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TestDirective,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     ReactiveFormsModule,
@@ -58,6 +57,7 @@ export class AlertConfigFormComponent implements OnInit {
   protected translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
   private formBuilder = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AlertWrite];
 
@@ -96,7 +96,7 @@ export class AlertConfigFormComponent implements OnInit {
       this.api.call('alert.list_categories'),
       this.api.call('alertclasses.config'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([categories, alertConfig]) => {
           this.categories = categories;
@@ -154,7 +154,7 @@ export class AlertConfigFormComponent implements OnInit {
 
     this.api.call('alertclasses.update', [payload]).pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));
     }).add(() => {

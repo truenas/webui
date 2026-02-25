@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -6,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -28,8 +28,8 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -51,7 +51,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-subsystem',
   styleUrls: ['./add-subsystem.component.scss'],
@@ -65,7 +64,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     MatStep,
     MatStepLabel,
     MatStepper,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
     MatButton,
     MatStepperNext,
     TestDirective,
@@ -91,6 +90,7 @@ export class AddSubsystemComponent {
   private nvmeOfService = inject(NvmeOfService);
   private store$ = inject<Store<AppState>>(Store);
   private matDialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
@@ -126,7 +126,7 @@ export class AddSubsystemComponent {
       tap(() => this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.NvmeOf }))),
       finalize(() => this.isLoading.set(false)),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ subsystem, relatedErrors }) => {
       if (subsystem && relatedErrors?.length > 0) {
         this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {

@@ -16,10 +16,11 @@
   <mat-card-content>
     @if (!subsystem().namespaces?.length) {
       <div class="no-namespaces-warning">
-        <ix-icon
-          name="mdi-alert"
+        <tn-icon
+          name="alert"
+          library="mdi"
           class="icon"
-        ></ix-icon>
+        ></tn-icon>
 
         <div>
           {{ helptext.noNamespacesWarning | translate }}
@@ -40,7 +41,7 @@
                   [matTooltip]="'Delete namespace' | translate"
                   (click)="onDeleteNamespace(namespace)"
                 >
-                  <ix-icon name="mdi-delete"></ix-icon>
+                  <tn-icon name="delete" library="mdi"></tn-icon>
                 </button>
               </span>
             </span>

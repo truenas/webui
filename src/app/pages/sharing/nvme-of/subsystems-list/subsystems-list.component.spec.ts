@@ -52,6 +52,7 @@ const mockSubsystems: NvmeOfSubsystemDetails[] = [
 describe('SubsystemsListComponent', () => {
   let spectator: Spectator<SubsystemsListComponent>;
   let loader: HarnessLoader;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: SubsystemsListComponent,
@@ -73,7 +74,7 @@ describe('SubsystemsListComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const mockSubsystemsDataProvicer = new ArrayDataProvider<NvmeOfSubsystemDetails>();
     mockSubsystemsDataProvicer.setRows(mockSubsystems);
     spectator = createComponent({
@@ -82,10 +83,10 @@ describe('SubsystemsListComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('shows table rows', async () => {
-    const table = await loader.getHarness(IxTableHarness);
     const expectedRows = [
       ['Name', 'Namespaces', 'Ports', 'Hosts', ''],
       ['subsys-1', '2', '4', '3', ''],

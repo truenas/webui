@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -37,7 +36,6 @@ import { SyslogCardComponent } from './syslog/syslog-card/syslog-card.component'
 import { SystemSecurityCardComponent } from './system-security/system-security-card/system-security-card.component';
 import { TunableCardComponent } from './tunable/tunable-card/tunable-card.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-advanced-settings',
   templateUrl: './advanced-settings.component.html',

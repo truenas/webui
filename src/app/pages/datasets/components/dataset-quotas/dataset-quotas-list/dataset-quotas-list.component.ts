@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
@@ -22,7 +23,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -52,7 +52,6 @@ interface QuotaData {
   helpTextKey: 'users' | 'groups';
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-quotas-list',
   templateUrl: './dataset-quotas-list.component.html',
@@ -85,6 +84,7 @@ export class DatasetQuotasListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   private emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   readonly emptyValue = '—';
@@ -159,12 +159,12 @@ export class DatasetQuotasListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row: DatasetQuota) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row: DatasetQuota) => this.doDelete(row),
           hidden: (row: DatasetQuota) => of(!(row.quota > 0 || row.obj_quota > 0)),
@@ -224,7 +224,7 @@ export class DatasetQuotasListComponent implements OnInit {
   getQuotas(): void {
     this.isLoading = true;
     this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
-      .pipe(untilDestroyed(this)).subscribe({
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
           this.quotas = quotas.filter(isQuotaSet);
@@ -253,7 +253,7 @@ export class DatasetQuotasListComponent implements OnInit {
     this.api.call(
       'pool.dataset.get_quota',
       [this.datasetId, this.quotaType, this.invalidFilter],
-    ).pipe(untilDestroyed(this)).subscribe({
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         if (quotas?.length) {
           this.invalidQuotas = quotas;
@@ -267,7 +267,7 @@ export class DatasetQuotasListComponent implements OnInit {
     this.showAllQuotas = !this.showAllQuotas;
     const confirm$ = !this.showAllQuotas ? this.confirmFilterQuotas() : this.confirmShowAllQuotas();
 
-    confirm$.pipe(untilDestroyed(this)).subscribe((confirmed) => {
+    confirm$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       if (confirmed) {
         this.getQuotas();
       } else {
@@ -299,7 +299,7 @@ export class DatasetQuotasListComponent implements OnInit {
         this.handleError(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -312,12 +312,12 @@ export class DatasetQuotasListComponent implements OnInit {
       data: { quotaType: this.quotaType, datasetId: this.datasetId },
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getQuotas());
   }
 
   private getQuotaType(): void {
-    this.route.data.pipe(untilDestroyed(this)).subscribe((data: QuotaData) => {
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data: QuotaData) => {
       this.quotaType = data.quotaType;
       this.quotaObjType = data.quotaObjType;
       this.helpTextKey = data.helpTextKey;
@@ -349,7 +349,7 @@ export class DatasetQuotasListComponent implements OnInit {
       data: { quotaType: this.quotaType, datasetId: this.datasetId, id: row.id },
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getQuotas());
   }
 
@@ -367,7 +367,7 @@ export class DatasetQuotasListComponent implements OnInit {
         this.handleError(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

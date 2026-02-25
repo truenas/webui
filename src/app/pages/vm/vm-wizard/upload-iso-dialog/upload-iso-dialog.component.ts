@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, of, Subject, Subscription, takeUntil, tap,
@@ -26,7 +25,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-upload-iso-dialog',
   templateUrl: './upload-iso-dialog.component.html',
@@ -163,7 +161,6 @@ export class UploadIsoDialogComponent implements OnDestroy {
     ).subscribe(() => {
       // Remove the confirmation handler
       this.loader.removeConfirmationBeforeClose();
-
 
       if (this.cancelUpload) {
         this.cancelUpload();

@@ -18,7 +18,6 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -38,7 +37,6 @@ describe('GlobalSearchComponent', () => {
       ReactiveFormsModule,
       MatDialogModule,
       TranslateModule.forRoot(),
-      IxIconComponent,
       A11yModule,
       EmptyComponent,
       GlobalSearchResultsComponent,
@@ -102,7 +100,7 @@ describe('GlobalSearchComponent', () => {
       {
         hierarchy: ['Search Documentation for «{value}»'],
         section: GlobalSearchSection.Help,
-        targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=Filtered',
+        targetHref: 'https://harboros.ai/docs/scale/24.10/search/?query=Filtered',
       },
     ]);
 
@@ -131,7 +129,7 @@ describe('GlobalSearchComponent', () => {
         {
           hierarchy: ['Search Documentation for «{value}»'],
           section: GlobalSearchSection.Help,
-          targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=Unknown',
+          targetHref: 'https://harboros.ai/docs/scale/24.10/search/?query=Unknown',
         },
       ]);
       expect(spectator.component.searchResults).toHaveLength(1);

@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -20,7 +20,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,7 +29,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-kmip',
   templateUrl: './kmip.component.html',
@@ -42,7 +40,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatProgressBar,
     MatCardContent,
     IxFieldsetComponent,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -63,6 +61,7 @@ export class KmipComponent implements OnInit {
   private systemGeneralService = inject(SystemGeneralService);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   protected isKmipEnabled = signal(false);
   protected isSyncPending = signal(false);
@@ -96,7 +95,7 @@ export class KmipComponent implements OnInit {
 
   protected onSyncKeysPressed(): void {
     this.isLoading.set(true);
-    this.api.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kmip.sync_keys').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.dialogService.info(
           helptextSystemKmip.syncInfoDialog.title,
@@ -113,7 +112,7 @@ export class KmipComponent implements OnInit {
 
   protected onClearSyncKeysPressed(): void {
     this.isLoading.set(true);
-    this.api.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kmip.clear_sync_pending_keys').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.dialogService.info(
           helptextSystemKmip.clearSyncKeyInfoDialog.title,
@@ -136,7 +135,7 @@ export class KmipComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Settings saved.'));
@@ -149,7 +148,7 @@ export class KmipComponent implements OnInit {
       this.api.call('kmip.config'),
       this.api.call('kmip.kmip_sync_pending'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([config, isSyncPending]) => {
           this.form.patchValue(config);

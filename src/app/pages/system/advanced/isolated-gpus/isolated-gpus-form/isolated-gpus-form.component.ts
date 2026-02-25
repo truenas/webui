@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, ChangeDetectorRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -27,7 +27,6 @@ import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-isolated-gpus-form',
   templateUrl: './isolated-gpus-form.component.html',
@@ -58,6 +57,7 @@ export class IsolatedGpusFormComponent implements OnInit {
   private dialog = inject(DialogService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
@@ -84,7 +84,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     this.store$.pipe(
       waitForAdvancedConfig,
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
       this.formGroup.setValue({
         isolated_gpu_pci_ids: config.isolated_gpu_pci_ids,
@@ -95,7 +95,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     // Setup critical GPU prevention
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
       this.formGroup.controls.isolated_gpu_pci_ids,
-      this,
+      this.destroyRef,
       this.translate.instant('Cannot Isolate GPU'),
       this.translate.instant('System critical GPUs cannot be isolated'),
     );
@@ -106,7 +106,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     const { isolated_gpu_pci_ids: isolatedGpuPciIds } = this.formGroup.value;
 
     this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isFormLoading.set(false);

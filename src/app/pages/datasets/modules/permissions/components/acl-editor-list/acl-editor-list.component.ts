@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PermissionsItemComponent } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
 import { PermissionItem } from 'app/pages/datasets/modules/permissions/interfaces/permission-item.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -22,7 +22,7 @@ import {
   imports: [
     PermissionsItemComponent,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
   ],
 })

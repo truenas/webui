@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   switchMap, filter, tap, Observable,
 } from 'rxjs';
@@ -15,7 +16,6 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -34,7 +34,6 @@ import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pag
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-credentials-card',
   templateUrl: './cloud-credentials-card.component.html',
@@ -66,6 +65,7 @@ export class CloudCredentialsCardComponent implements OnInit {
   private dialog = inject(DialogService);
   private cloudCredentialService = inject(CloudCredentialService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly searchableElements = cloudCredentialsCardElements;
@@ -89,12 +89,12 @@ export class CloudCredentialsCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
@@ -109,13 +109,13 @@ export class CloudCredentialsCardComponent implements OnInit {
   ngOnInit(): void {
     const credentials$ = this.api.call('cloudsync.credentials.query').pipe(
       tap((credentials) => this.credentials = credentials),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
     this.setDefaultSort();
 
     this.getProviders()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCredentials();
       });
@@ -146,7 +146,7 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(CloudCredentialsFormComponent)
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCredentials();
       });
@@ -161,7 +161,7 @@ export class CloudCredentialsCardComponent implements OnInit {
         } as CloudCredentialFormInput,
       },
     );
-    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
+    close$.pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.getCredentials();
     });
   }
@@ -180,7 +180,7 @@ export class CloudCredentialsCardComponent implements OnInit {
         filter(Boolean),
         switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.getCredentials();

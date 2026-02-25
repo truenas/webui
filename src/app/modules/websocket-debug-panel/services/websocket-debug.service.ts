@@ -27,7 +27,8 @@ export class WebSocketDebugService {
       id: uuidv4(),
       timestamp: new Date().toISOString(),
       direction: 'out',
-      message,
+      // Deep clone to prevent NgRx strictActionImmutability from freezing the original message
+      message: structuredClone(message),
       isMocked,
       methodName: message.method,
     };
@@ -52,7 +53,8 @@ export class WebSocketDebugService {
       id: uuidv4(),
       timestamp: new Date().toISOString(),
       direction: 'in',
-      message,
+      // Deep clone to prevent NgRx strictActionImmutability from freezing the original message
+      message: structuredClone(message),
       isMocked,
       methodName,
     };

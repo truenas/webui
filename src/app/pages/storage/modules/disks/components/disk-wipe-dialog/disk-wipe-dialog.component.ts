@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -21,7 +21,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-wipe-dialog',
   templateUrl: './disk-wipe-dialog.component.html',
@@ -51,6 +50,8 @@ export class DiskWipeDialog {
     diskName: string;
     exportedPool: string;
   }>(MAT_DIALOG_DATA);
+
+  private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
@@ -86,7 +87,7 @@ export class DiskWipeDialog {
     })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.wipeDisk());
   }
@@ -102,7 +103,7 @@ export class DiskWipeDialog {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogService.generalDialog({

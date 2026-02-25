@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -18,7 +18,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -27,7 +26,6 @@ import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/tr
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
@@ -39,12 +37,11 @@ import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/dis
     MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxIconComponent,
+    TnIconComponent,
     IxSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
-    MatTooltip,
     TestDirective,
     TranslateModule,
     TranslateOptionsPipe,
@@ -58,6 +55,7 @@ export class DiskBulkEditComponent {
   private snackbarService = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<Disk[], DiskFormResponse>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -71,6 +69,7 @@ export class DiskBulkEditComponent {
 
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulkEdit;
+  protected readonly disksTooltip = this.translate.instant(helptextDisks.bulkEdit.disks.tooltip);
   readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
   readonly advpowermgmtOptions$ = of(
     helptextDisks.advancedPowerManagementOptions,
@@ -137,7 +136,7 @@ export class DiskBulkEditComponent {
     this.isLoading = true;
     this.api
       .job('core.bulk', ['disk.update', req])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {

@@ -1,10 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { MatNavListItemHarness } from '@angular/material/list/testing';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconComponent, TnSpriteLoaderService } from '@truenas/ui-components';
 import { MenuItemType } from 'app/interfaces/menu-item.interface';
+import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -62,6 +64,11 @@ describe('NavigationComponent', () => {
       mockProvider(SidenavService, {
         isOpenSecondaryMenu: false,
         menuName: '',
+      }),
+      mockProvider(AlertNavBadgeService, {
+        getBadgeCountsSignal: jest.fn(() => signal(new Map())),
+        getBadgeCountForPath: jest.fn(() => 0),
+        hasCriticalAlerts: jest.fn(() => false),
       }),
     ],
   });

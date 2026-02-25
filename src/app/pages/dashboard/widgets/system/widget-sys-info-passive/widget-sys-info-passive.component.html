@@ -3,14 +3,7 @@
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <ix-icon
-            [name]="
-              isIxHardware()
-                ? iconMarker('ix-harbor-logo')
-                : iconMarker('ix-harbor-logo-type')
-            "
-            [fullSize]="true"
-          ></ix-icon>
+          <tn-icon [name]="isIxHardware() ? tnIconMarker('harbor-logo', 'custom') : tnIconMarker('harbor-logo-type', 'custom')" [fullSize]="true"></tn-icon>
         </div>
 
         <ix-product-image
@@ -21,18 +14,13 @@
           [isEnterprise]="!!isEnterprise()"
           [isIxHardware]="!!isIxHardware()"
         >
-          <span>{{ "Standby" | translate }}</span>
+          <span>{{ 'Standby' | translate }}</span>
         </ix-product-image>
 
         @if (systemInfo()?.system_serial && isIxHardware()) {
           <div class="hostname">
             @if (isLoaded()) {
-              <span
-                [matTooltip]="
-                  'Hostname: {hostname}'
-                    | translate: { hostname: systemInfo()?.hostname }
-                "
-              >
+              <span [matTooltip]="'Hostname: {hostname}' | translate: { hostname: systemInfo()?.hostname }">
                 {{ systemInfo()?.hostname }}
               </span>
             }
@@ -46,9 +34,7 @@
               color="primary"
               [ixTest]="['widget-sysinfo', 'update-running']"
               [disabled]="true"
-            >
-              {{ "Update in Progress" | translate }}
-            </button>
+            >{{ 'Update in Progress' | translate }}</button>
           }
 
           @if (isHaLicensed() && !isUpdateRunning()) {
@@ -65,9 +51,9 @@
               (click)="openDialog()"
             >
               @if (!isHaEnabled()) {
-                <ix-icon name="mdi-alert"></ix-icon>
+                <tn-icon name="alert" library="mdi"></tn-icon>
               }
-              {{ "Initiate Failover" | translate }}
+              {{ 'Initiate Failover' | translate }}
             </button>
           }
         </div>
@@ -75,21 +61,18 @@
 
       <div class="content-right">
         <div class="header">
-          <h3>
-            {{ "System Information" | translate }}
-            <small>{{ "standby" | translate }}</small>
-          </h3>
+          <h3>{{ 'System Information' | translate }} <small>{{ 'standby' | translate }}</small></h3>
         </div>
 
         <mat-list>
           <mat-list-item>
-            <strong>{{ "Platform" | translate }}:</strong>
+            <strong>{{ 'Platform' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
                 @if (systemInfo()?.platform && isIxHardware()) {
                   {{ systemInfo().platform }}
                 } @else {
-                  {{ "Generic" }}
+                  {{ 'Generic' }}
                 }
               </span>
             } @else {
@@ -97,23 +80,23 @@
             }
           </mat-list-item>
 
-          <mat-list-item>
-            <strong>{{ "Edition" | translate }}:</strong>
-            @if (isLoaded()) {
-              <span>
-                @if (isEnterprise()) {
-                  {{ "Enterprise" | translate }}
-                } @else {
-                  {{ "Community" | translate }}
-                }
-              </span>
-            } @else {
-              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>
-            }
-          </mat-list-item>
+<!--          <mat-list-item>-->
+<!--            <strong>{{ 'Edition' | translate }}:</strong>-->
+<!--            @if (isLoaded()) {-->
+<!--              <span>-->
+<!--                @if (isEnterprise()) {-->
+<!--                  {{ 'Enterprise' | translate }}-->
+<!--                } @else {-->
+<!--                  {{ 'Community' | translate }}-->
+<!--                }-->
+<!--              </span>-->
+<!--            } @else {-->
+<!--              <ng-container *ngTemplateOutlet="skeletonLoader"></ng-container>-->
+<!--            }-->
+<!--          </mat-list-item>-->
 
           <mat-list-item>
-            <strong>{{ "Version" | translate }}:</strong>
+            <strong>{{ 'Version' | translate }}:</strong>
             @if (isLoaded()) {
               <div class="copy-version">
                 <div class="copy-version-text" [matTooltip]="version()">
@@ -131,24 +114,19 @@
           @if (systemInfo()?.license) {
             <mat-list-item>
               <div class="license-info">
-                <div class="title">{{ "Support License" | translate }}:</div>
+                <div class="title">{{ 'Support License' | translate }}:</div>
                 <div class="info">
                   <div>
                     {{
-                      "{license} Contract,"
-                        | translate
-                          : {
-                              license: getLabelForContractType(
-                                systemInfo().license.contract_type
-                              ),
-                            }
+                      '{license} Contract,' | translate:
+                      {
+                        license: getLabelForContractType(systemInfo().license.contract_type),
+                      }
                     }}
                   </div>
                   <div>
                     {{
-                      "Expires on {date}"
-                        | translate
-                          : { date: systemInfo().license.contract_end.$value }
+                      'Expires on {date}' | translate: { date: systemInfo().license.contract_end.$value }
                     }}
                   </div>
                 </div>
@@ -158,14 +136,14 @@
 
           @if (systemInfo()?.system_serial && isIxHardware()) {
             <mat-list-item>
-              <strong>{{ "System Serial" | translate }}:</strong>
+              <strong>{{ 'System Serial' | translate }}:</strong>
               <span>
                 {{ systemInfo().system_serial }}
               </span>
             </mat-list-item>
           } @else {
             <mat-list-item>
-              <strong>{{ "Hostname" | translate }}:</strong>
+              <strong>{{ 'Hostname' | translate }}:</strong>
               @if (isLoaded()) {
                 <span>
                   {{ systemInfo()?.hostname }}
@@ -177,7 +155,7 @@
           }
 
           <mat-list-item>
-            <strong>{{ "Uptime" | translate }}:</strong>
+            <strong>{{ 'Uptime' | translate }}:</strong>
             @if (isLoaded()) {
               <span>
                 {{ uptime() | uptime: datetime() }}
@@ -187,25 +165,23 @@
             }
           </mat-list-item>
         </mat-list>
-      </div>
+     </div>
     </div>
 
     @if (!isHaLicensed()) {
       <div [class]="['empty', 'container', size()]">
-        <ix-icon class="icon" name="mdi-widgets"></ix-icon>
+        <tn-icon class="icon" name="widgets" library="mdi"></tn-icon>
         <h3>
-          <div>{{ "This system is not licensed for HA." | translate }}</div>
-          <small>{{
-            "Configure dashboard to edit this widget." | translate
-          }}</small>
+          <div>{{ 'This system is not licensed for HA.' | translate }}</div>
+          <small>{{ 'Configure dashboard to edit this widget.' | translate }}</small>
         </h3>
       </div>
     }
 
     @if (isWaitingForEnabledHa()) {
       <div [class]="['empty', 'container', size()]">
-        <ix-icon class="icon" name="mdi-timer-cog-outline"></ix-icon>
-        <h3>{{ "Waiting for standby controller" | translate }}</h3>
+        <tn-icon class="icon" name="timer-cog-outline" library="mdi"></tn-icon>
+        <h3>{{ 'Waiting for standby controller' | translate }}</h3>
       </div>
     }
   </mat-card-content>

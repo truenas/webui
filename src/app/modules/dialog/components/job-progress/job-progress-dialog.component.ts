@@ -1,19 +1,19 @@
 import { DecimalPipe } from '@angular/common';
-import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
   Observable, Subscription, map,
 } from 'rxjs';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -45,7 +45,6 @@ export interface JobProgressDialogConfig<Result> {
   canMinimize?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-job-progress-dialog',
   templateUrl: './job-progress-dialog.component.html',
@@ -57,9 +56,8 @@ export interface JobProgressDialogConfig<Result> {
     MatProgressBar,
     MatDialogActions,
     MatButton,
-    MatIconButton,
     MatDialogClose,
-    IxIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
     DecimalPipe,
     TestDirective,
@@ -71,6 +69,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
+  readonly destroyRef = inject(DestroyRef);
 
   readonly jobSuccess = output<Job<T>>();
   readonly jobFailure = output<unknown>();
@@ -122,7 +121,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
     this.cdr.markForCheck();
 
     this.data.job$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (job) => {
         this.job = job;
@@ -157,21 +156,20 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
         this.dialogRef.close();
       },
       complete: () => {
-        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (this.job.state) {
           case JobState.Failed:
             this.jobFailure.emit(this.job);
-            this.dialogRef.close();
             break;
           case JobState.Aborted:
             this.jobAborted.emit(this.job);
-            this.dialogRef.close();
             break;
           case JobState.Success:
+          default:
             this.jobSuccess.emit(this.job);
-            this.dialogRef.close();
             break;
         }
+
+        this.dialogRef.close();
 
         if (this.realtimeLogsSubscribed) {
           logsSubscription?.unsubscribe();
@@ -198,7 +196,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   abortJob(): void {
     this.api.call('core.job_abort', [this.job.id]).pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe(() => {
         this.isAbortingJob = true;
@@ -215,7 +213,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
     this.realtimeLogsSubscribed = true;
     this.cdr.markForCheck();
     return this.api.subscribe(`filesystem.file_tail_follow:${JSON.stringify({ path: this.job.logs_path })}`)
-      .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
+      .pipe(map((apiEvent) => apiEvent.fields), takeUntilDestroyed(this.destroyRef))
       .subscribe((logs) => {
         if (logs?.data && typeof logs.data === 'string') {
           this.realtimeLogs += logs.data;

@@ -1,70 +1,90 @@
-<form novalidate role="form" aria-label="Sign In Form" [formGroup]="form"
-  (submit)="hasTwoFactor ? loginWithOtp() : login()">
+<form novalidate role="form" aria-label="Sign In Form" [formGroup]="form" (submit)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
-  <ix-input formControlName="username" autocomplete="username" name="username" class="username-input"
-    [prefixIcon]="iconMarker('person')" [label]="'Username' | translate"></ix-input>
+    <ix-input
+      formControlName="username"
+      autocomplete="username"
+      name="username"
+      class="username-input"
+      [prefixIcon]="tnIconMarker('account', 'mdi')"
+      [label]="'Username' | translate"
+    ></ix-input>
 
-  <ix-input formControlName="password" type="password" name="password" autocomplete="current-password"
-    [prefixIcon]="iconMarker('mdi-lock')" [label]="'Password' | translate"></ix-input>
+    <ix-input
+      formControlName="password"
+      type="password"
+      name="password"
+      autocomplete="current-password"
+      [prefixIcon]="tnIconMarker('lock', 'mdi')"
+      [label]="'Password' | translate"
+    ></ix-input>
 
+    @if (showSecurityWarning) {
+      <ix-insecure-connection></ix-insecure-connection>
+    }
 
-  <button class="submit-button flex items-center gap-2" mat-button type="submit" color="primary" ixTest="log-in"
-    [disabled]="isFormDisabled()">
-    <span class="flex items-center gap-2 h-full">
+    <button
+      class="submit-button"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="log-in"
+      [disabled]="isFormDisabled()"
+    >
+      <span class="flex items-center gap-2 h-full">
       @if (isLoading()) {
-      <ix-icon name="mdi-loading" class="animate-spin" />
+      <tn-icon name="loading" library="mdi" class="animate-spin"></tn-icon>
       }
       {{ "Log In" | translate }}
-    </span>
-  </button>
-  @if (isLastLoginAttemptFailed) {
-  <div class="error">
-    <p [innerHTML]="lastLoginError"></p>
-  </div>
-  }
-
-  <div class="mt-4">
-    @if (showSecurityWarning) {
-    <ix-insecure-connection></ix-insecure-connection>
-    }
-  </div>
-
-  }
-  @if (hasTwoFactor) {
-  <p>
-    {{
-    "2FA has been configured for this account. Enter the OTP to continue."
-    | translate
-    }}
-  </p>
-
-  <ix-input formControlName="otp" autocomplete="one-time-code" [prefixIcon]="iconMarker('phonelink')"
-    [label]="'Two-Factor Authentication Code' | translate" [required]="true"></ix-input>
-
-  @if (showSecurityWarning) {
-  <ix-insecure-connection></ix-insecure-connection>
-  }
-
-  <div>
-    <button class="submit-button" mat-button type="submit" color="primary" ixTest="log-in"
-      [disabled]="isFormDisabled()">
-      <span class="flex items-center gap-2 h-full">
-        @if (isLoading()) {
-        <ix-icon name="mdi-loading" class="animate-spin" />
-        }
-        {{ "Proceed" | translate }}
       </span>
     </button>
-    <button class="submit-button" mat-button type="button" ixTest="otp-log-in" [disabled]="isFormDisabled()"
-      (click)="cancelOtpLogin()">
-      {{ "Cancel" | translate }}
-    </button>
-  </div>
-
-  @if (isLastOtpAttemptFailed) {
-  <div class="error">
-    <p>{{ lastLoginError }}</p>
-  </div>
+    @if (isLastLoginAttemptFailed) {
+      <div class="error">
+        <p [innerHTML]="lastLoginError"></p>
+      </div>
+    }
   }
+  @if (hasTwoFactor) {
+    <p>
+      {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
+    </p>
+
+    <ix-input
+      formControlName="otp"
+      autocomplete="one-time-code"
+      [prefixIcon]="tnIconMarker('cellphone-link', 'mdi')"
+      [label]="'Two-Factor Authentication Code' | translate"
+      [required]="true"
+    ></ix-input>
+
+    @if (showSecurityWarning) {
+      <ix-insecure-connection></ix-insecure-connection>
+    }
+
+    <div>
+      <button
+        class="submit-button"
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="log-in"
+        [disabled]="isFormDisabled()"
+      >
+        {{ 'Proceed' | translate }}
+      </button>
+      <button
+        class="submit-button"
+        mat-button
+        type="button"
+        ixTest="otp-log-in"
+        [disabled]="isFormDisabled()"
+        (click)="cancelOtpLogin()"
+      >{{ 'Cancel' | translate }}</button>
+    </div>
+
+    @if (isLastOtpAttemptFailed) {
+      <div class="error">
+        <p>{{ lastLoginError }}</p>
+      </div>
+    }
   }
 </form>

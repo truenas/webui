@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { BehaviorSubject, filter, switchMap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -15,11 +16,10 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -41,7 +41,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nfs-card',
   templateUrl: './nfs-card.component.html',
@@ -51,7 +50,7 @@ import { selectService } from 'app/store/services/services.selectors';
     MatCard,
     MatToolbarRow,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     ServiceStateButtonComponent,
     RequiresRolesDirective,
     MatButton,
@@ -66,6 +65,7 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     RouterLink,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
@@ -76,12 +76,14 @@ export class NfsCardComponent implements OnInit {
   private dialogService = inject(DialogService);
   private store$ = inject<Store<ServicesState>>(Store);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
   protected readonly emptyConfig = nfsCardEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'nfs'];
 
   columns = createTable<NfsShare>([
     textColumn({
@@ -102,12 +104,12 @@ export class NfsCardComponent implements OnInit {
       cssClass: 'tight-actions',
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -120,7 +122,7 @@ export class NfsCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const nfsShares$ = this.api.call('sharing.nfs.query').pipe(untilDestroyed(this));
+    const nfsShares$ = this.api.call('sharing.nfs.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -129,7 +131,7 @@ export class NfsCardComponent implements OnInit {
   protected openForm(row?: NfsShare): void {
     this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dataProvider.load();
     });
@@ -143,7 +145,7 @@ export class NfsCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('sharing.nfs.delete', [nfs.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();
@@ -159,7 +161,7 @@ export class NfsCardComponent implements OnInit {
 
     this.api.call('sharing.nfs.update', [row.id, { [param]: !row[param] }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();

@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -19,11 +20,10 @@ import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -49,7 +49,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-rsync-task-card',
   templateUrl: './rsync-task-card.component.html',
@@ -60,7 +59,7 @@ import { AppState } from 'app/store';
     MatToolbarRow,
     TestDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     RequiresRolesDirective,
     MatButton,
@@ -71,6 +70,7 @@ import { AppState } from 'app/store';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
@@ -83,9 +83,11 @@ export class RsyncTaskCardComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'rsync'];
 
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
@@ -129,19 +131,19 @@ export class RsyncTaskCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
@@ -157,7 +159,7 @@ export class RsyncTaskCardComponent implements OnInit {
     const rsyncTasks$ = this.api.call('rsynctask.query').pipe(
       map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
       tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<RsyncTaskUi>(rsyncTasks$);
     this.getRsyncTasks();
@@ -178,7 +180,7 @@ export class RsyncTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('rsynctask.delete', [row.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getRsyncTasks();
@@ -191,7 +193,7 @@ export class RsyncTaskCardComponent implements OnInit {
 
   openForm(row?: RsyncTaskUi): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getRsyncTasks();
       });
@@ -218,7 +220,7 @@ export class RsyncTaskCardComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
@@ -241,7 +243,7 @@ export class RsyncTaskCardComponent implements OnInit {
         task.state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
           .subscribe((job: Job) => {
             task.state = { state: job.state };
             task.job = job;
@@ -256,7 +258,7 @@ export class RsyncTaskCardComponent implements OnInit {
   private onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
     this.api
       .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled } as RsyncTaskUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.getRsyncTasks();

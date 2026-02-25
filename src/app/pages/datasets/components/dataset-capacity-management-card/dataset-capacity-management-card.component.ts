@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, OnInit, input, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnChanges, OnInit, input, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { maxBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -30,7 +30,6 @@ import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dat
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-capacity-management-card',
   templateUrl: './dataset-capacity-management-card.component.html',
@@ -58,6 +57,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   private cdr = inject(ChangeDetectorRef);
   private datasetStore = inject(DatasetTreeStore);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -119,7 +119,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.User, []]),
         this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.Group, []]),
       ])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([userQuotas, groupQuotas]) => {
         this.userQuotas = userQuotas.filter(isQuotaSet).length;
@@ -143,7 +143,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         return maxBy(datasetWithQuotas, (dataset) => dataset.quota.parsed);
       }),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (dataset) => {
         this.inheritedQuotasDataset = dataset;
@@ -158,7 +158,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   editDataset(): void {
     this.slideIn.open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });

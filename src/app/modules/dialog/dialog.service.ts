@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
@@ -19,7 +18,6 @@ import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/jo
 import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -129,7 +127,7 @@ export class DialogService {
    *  .afterClosed()
    *  .pipe(
    *    this.errorHandler.catchError(),
-   *    untilDestroyed(this),
+   *    takeUntilDestroyed(this.destroyRef),
    *  )
    *  .subscribe(() => {
    *    // Job completed.

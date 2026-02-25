@@ -1,17 +1,15 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import cronstrue from 'cronstrue/i18n';
-import { format, parse } from 'date-fns';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { LanguageService } from 'app/modules/language/language.service';
-import { LocaleService } from 'app/modules/language/locale.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { addTwelveHourTimeFormat, formatTimeWith12Hour } from 'app/modules/scheduler/utils/time-format.utils';
 
 @Pipe({
   name: 'scheduleDescription',
 })
 export class ScheduleDescriptionPipe implements PipeTransform {
-  private localeService = inject(LocaleService);
   private language = inject(LanguageService);
   private translate = inject(TranslateService);
 
@@ -20,12 +18,13 @@ export class ScheduleDescriptionPipe implements PipeTransform {
     try {
       const crontab = scheduleToCrontab(schedule);
       const cronstrueOptions = {
-        use24HourTimeFormat: this.localeService.getPreferredTimeFormat() === 'HH:mm:ss',
+        use24HourTimeFormat: true,
         verbose: true,
         locale: this.language.currentLanguage,
       };
 
-      const description = cronstrue.toString(crontab, cronstrueOptions);
+      let description = cronstrue.toString(crontab, cronstrueOptions);
+      description = addTwelveHourTimeFormat(description);
 
       if (schedule.begin && schedule.end) {
         return this.translate.instant('{crontabDescription}, from {startHour} to {endHour}', {
@@ -43,8 +42,6 @@ export class ScheduleDescriptionPipe implements PipeTransform {
   }
 
   private formatTime(time: string): string {
-    const parsedDate = parse(time, 'HH:mm', new Date());
-
-    return format(parsedDate, this.localeService.getShortTimeFormat());
+    return formatTimeWith12Hour(time);
   }
 }

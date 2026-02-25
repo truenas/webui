@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { AddSubsystemHostsComponent } from './add-subsystem-hosts.component';
 
@@ -51,7 +51,7 @@ describe('AddSubsystemHostsComponent', () => {
     expect(hostItems).toHaveLength(2);
     expect(hostItems[0]).toHaveText('nqn.2014-01.org');
     expect(hostItems[1]).toHaveText('nqn.2014-02.org');
-    expect(hostItems[1]).toHaveDescendant('ix-icon[name="mdi-key"]');
+    expect(hostItems[1]).toHaveDescendant('tn-icon[name="key"]');
   });
 
   it('adds a host when host is added via the menu is called', () => {
@@ -76,7 +76,7 @@ describe('AddSubsystemHostsComponent', () => {
     hostsControl.setValue(hosts);
     spectator.detectComponentChanges();
 
-    const removeButton = await loader.getHarness(IxIconHarness.with({ name: 'clear' }));
+    const removeButton = await loader.getHarness(TnIconHarness.with({ name: 'close' }));
     await removeButton.click();
 
     expect(hostsControl.value).toEqual([hosts[1]]);

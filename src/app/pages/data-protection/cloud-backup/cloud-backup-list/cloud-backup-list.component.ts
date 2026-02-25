@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject, computed } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, output, signal, inject, computed } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
@@ -17,7 +18,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -41,7 +41,6 @@ import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-list',
   templateUrl: './cloud-backup-list.component.html',
@@ -70,6 +69,7 @@ export class CloudBackupListComponent {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
@@ -115,19 +115,19 @@ export class CloudBackupListComponent {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -160,7 +160,7 @@ export class CloudBackupListComponent {
         this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» has started.', { name: row.description }));
       }),
       switchMap(() => this.api.job('cloud_backup.sync', [row.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (job: Job) => {
         if (job.state === JobState.Success) {
@@ -192,7 +192,7 @@ export class CloudBackupListComponent {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.dataProvider().load());
   }
 
@@ -207,7 +207,7 @@ export class CloudBackupListComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.loader.withLoader())),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
@@ -228,7 +228,7 @@ export class CloudBackupListComponent {
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.dataProvider().load(),
         error: (error: unknown) => {

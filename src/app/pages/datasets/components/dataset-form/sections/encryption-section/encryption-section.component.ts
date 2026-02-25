@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -18,7 +18,6 @@ import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-encryption-section',
   templateUrl: './encryption-section.component.html',
@@ -37,6 +36,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly parent = input<Dataset>();
   readonly advancedMode = input<boolean>();
@@ -107,7 +107,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+    this.form.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => {
       this.formValidityChange.emit(status === 'VALID');
     });
   }

@@ -381,7 +381,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   .mat-mdc-dialog-container {
     border-radius: var(--mdc-dialog-container-shape);
-    max-width: 700px;
+    max-width: 800px;
 
     :not(.mat-mdc-dialog-content) {
       > form {
@@ -423,9 +423,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
       min-height: 40px;
     }
 
-    .more-info .ix-icon {
-      margin: 0 4px;
-    }
   }
 
   .mat-spinner circle {
@@ -730,10 +727,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     padding-left: 3px;
   }
 
-  tree-node-content .ix-icon {
-    vertical-align: top;
-  }
-
   tree-node-content span {
     line-height: 25px;
     padding-left: 3px;
@@ -816,7 +809,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     .mat-mdc-list-item-unscoped-content > a {
       background-color: var(--bg2);
 
-      ix-icon,
       tn-icon {
         color: var(--primary);
       }

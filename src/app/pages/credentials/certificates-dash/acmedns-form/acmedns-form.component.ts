@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -37,7 +37,6 @@ interface DnsAuthenticatorList {
   variables: string[];
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-acmedns-form',
   templateUrl: './acmedns-form.component.html',
@@ -66,6 +65,7 @@ export class AcmednsFormComponent implements OnInit {
   private formErrorHandlerService = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   slideInRef = inject<SlideInRef<DnsAuthenticator | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
@@ -123,7 +123,7 @@ export class AcmednsFormComponent implements OnInit {
 
     // Listen to authenticator type changes
     this.form.controls.authenticator.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((authenticatorType) => {
         this.onAuthenticatorTypeChanged(authenticatorType);
       });
@@ -134,7 +134,7 @@ export class AcmednsFormComponent implements OnInit {
     this.getAuthenticatorSchemas()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((schemas: AuthenticatorSchema[]) => {
         this.setAuthenticatorOptions(schemas);
@@ -227,7 +227,7 @@ export class AcmednsFormComponent implements OnInit {
     ['cloudflare_email', 'api_key', 'api_token'].forEach((fieldName) => {
       const control = attributes.get(fieldName);
       if (control) {
-        control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+        control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           attributes.updateValueAndValidity();
         });
       }
@@ -264,7 +264,7 @@ export class AcmednsFormComponent implements OnInit {
       request$ = this.api.call('acme.dns.authenticator.create', [values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close({ response: true });

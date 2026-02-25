@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
 import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-console-footer',
   templateUrl: './console-footer.component.html',
@@ -16,6 +15,7 @@ import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-pa
 export class ConsoleFooterComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private messagesStore = inject(ConsoleMessagesStore);
+  private destroyRef = inject(DestroyRef);
 
   private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
 
@@ -31,7 +31,7 @@ export class ConsoleFooterComponent implements OnInit {
   }
 
   private scrollToBottomOnNewMessages(): void {
-    this.lastThreeLogLines$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.lastThreeLogLines$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       try {
         this.messageContainer().nativeElement.scroll({ top: this.messageContainer().nativeElement.scrollHeight });
       } catch {}

@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { finalize, take } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
@@ -15,7 +14,6 @@ import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/al
 import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-connections-card/iscsi-connections-card.component';
 import { IscsiGroupsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-groups-card/iscsi-groups-card.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-target-details',
   templateUrl: './target-details.component.html',
@@ -31,6 +29,7 @@ import { IscsiGroupsCardComponent } from 'app/pages/sharing/iscsi/target/all-tar
 })
 export class TargetDetailsComponent {
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();
 
@@ -67,7 +66,7 @@ export class TargetDetailsComponent {
       .pipe(
         take(1),
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((ports) => {
         this.targetPorts.set(ports);

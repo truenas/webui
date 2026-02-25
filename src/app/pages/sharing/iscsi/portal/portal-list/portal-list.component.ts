@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, switchMap, tap,
 } from 'rxjs';
@@ -15,7 +16,6 @@ import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -36,7 +36,6 @@ import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/p
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-portal-list',
   templateUrl: './portal-list.component.html',
@@ -71,6 +70,7 @@ export class PortalListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = portalListElements;
 
@@ -109,17 +109,17 @@ export class PortalListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(PortalFormComponent, { data: row }).pipe(
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => this.refresh());
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({
@@ -130,7 +130,7 @@ export class PortalListComponent implements OnInit {
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               next: () => this.refresh(),
               error: (error: unknown) => {
@@ -148,7 +148,7 @@ export class PortalListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+    this.iscsiService.getIpChoices().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((choices) => {
       this.ipChoices = new Map(Object.entries(choices));
     });
     const portals$ = this.api.call('iscsi.portal.query', []).pipe(
@@ -156,12 +156,12 @@ export class PortalListComponent implements OnInit {
     );
 
     this.iscsiService.listenForDataRefresh()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
     this.dataProvider = new AsyncDataProvider(portals$);
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -169,7 +169,7 @@ export class PortalListComponent implements OnInit {
   protected doAdd(): void {
     this.slideIn.open(PortalFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }
 

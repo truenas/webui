@@ -5,11 +5,11 @@ import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
@@ -28,6 +28,7 @@ import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 const unreadAlerts = [
   {
     id: '1',
+    key: 'unread-key-1',
     dismissed: false,
     formatted: 'Unread 1',
     datetime: { $date: 1641811015 },
@@ -35,6 +36,7 @@ const unreadAlerts = [
   },
   {
     id: '2',
+    key: 'unread-key-2',
     dismissed: false,
     formatted: 'Unread 2',
     datetime: { $date: 1641810015 },
@@ -45,12 +47,14 @@ const unreadAlerts = [
 const dismissedAlerts = [
   {
     id: '3',
+    key: 'dismissed-key-3',
     dismissed: true,
     formatted: 'Dismissed 3',
     datetime: { $date: 1641790015 },
   },
   {
     id: '4',
+    key: 'dismissed-key-4',
     dismissed: true,
     formatted: 'Dismissed 4',
     datetime: { $date: 1641780015 },
@@ -88,7 +92,6 @@ describe('AlertsPanelComponent', () => {
         },
       }),
       EffectsModule.forRoot([AlertEffects]),
-      NavigateAndHighlightDirective,
     ],
     declarations: [
       MockComponent(AlertComponent),
@@ -109,6 +112,8 @@ describe('AlertsPanelComponent', () => {
 
     api = spectator.inject(ApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
+
+    spectator.detectChanges();
   });
 
   it('loads alerts when adminUiInitialized is dispatched', () => {
@@ -119,6 +124,11 @@ describe('AlertsPanelComponent', () => {
 
   it('selects HA status from store and passes it to the ix-alert', () => {
     expect(alertPanel.unreadAlertComponents[0].isHaLicensed).toBe(true);
+
+    // Switch to dismissed view to check dismissed alerts
+    spectator.component.setSeverityFilter('dismissed');
+    spectator.detectChanges();
+
     expect(alertPanel.dismissedAlertComponents[0].isHaLicensed).toBe(true);
   });
 
@@ -126,16 +136,36 @@ describe('AlertsPanelComponent', () => {
     const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
     expect(unreadAlertComponents).toHaveLength(2);
-    expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[1]);
-    expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[0]);
+    expect(unreadAlertComponents[0].alert).toEqual({
+      ...unreadAlerts[1],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
+    expect(unreadAlertComponents[1].alert).toEqual({
+      ...unreadAlerts[0],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
   });
 
   it('shows a list of dismissed alerts', () => {
+    // Switch to dismissed view
+    spectator.component.setSeverityFilter('dismissed');
+    spectator.detectChanges();
+
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
     expect(dismissedAlertComponents).toHaveLength(2);
-    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[0]);
-    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[1]);
+    expect(dismissedAlertComponents[0].alert).toEqual({
+      ...dismissedAlerts[0],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
+    expect(dismissedAlertComponents[1].alert).toEqual({
+      ...dismissedAlerts[1],
+      duplicateCount: 1,
+      category: SmartAlertCategory.System,
+    });
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
@@ -146,11 +176,24 @@ describe('AlertsPanelComponent', () => {
 
     expect(alertPanel.dismissAllButton).not.toExist();
 
+    // Switch to dismissed view to check all dismissed alerts
+    spectator.component.setSeverityFilter('dismissed');
+    spectator.detectChanges();
+
     expect(alertPanel.dismissedAlertComponents).toHaveLength(4);
+
+    // Switch back to all view to verify no unread alerts
+    spectator.component.setSeverityFilter('all');
+    spectator.detectChanges();
+
     expect(alertPanel.unreadAlertsSection).not.toExist();
   });
 
   it('reopens all alerts when Reopen All Alerts is pressed', () => {
+    // Switch to dismissed view to see the reopen button
+    spectator.component.setSeverityFilter('dismissed');
+    spectator.detectChanges();
+
     spectator.click(alertPanel.reopenAllButton!);
 
     expect(api.call).toHaveBeenCalledWith('alert.restore', ['3']);
@@ -158,7 +201,16 @@ describe('AlertsPanelComponent', () => {
 
     expect(alertPanel.reopenAllButton).not.toExist();
 
+    // Switch back to all view to check unread alerts
+    spectator.component.setSeverityFilter('all');
+    spectator.detectChanges();
+
     expect(alertPanel.unreadAlertComponents).toHaveLength(4);
+
+    // Switch to dismissed view to verify no dismissed alerts
+    spectator.component.setSeverityFilter('dismissed');
+    spectator.detectChanges();
+
     expect(alertPanel.dismissedAlertsSection).not.toExist();
   });
 
@@ -172,6 +224,7 @@ describe('AlertsPanelComponent', () => {
       collection: 'alert.list',
       fields: {
         id: 'new',
+        key: 'new-alert-key',
         dismissed: false,
         formatted: 'New Alert',
         datetime: { $date: 1641819015 },
@@ -192,6 +245,7 @@ describe('AlertsPanelComponent', () => {
       collection: 'alert.list',
       fields: {
         id: '1',
+        key: 'unread-key-1',
         dismissed: true,
         formatted: 'Unread 1',
         datetime: { $date: 1641811015 },
@@ -200,6 +254,11 @@ describe('AlertsPanelComponent', () => {
     spectator.detectChanges();
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+
+    // Switch to dismissed view to check dismissed alerts
+    spectator.component.setSeverityFilter('dismissed');
+    spectator.detectChanges();
+
     expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
   });
 

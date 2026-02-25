@@ -15,5 +15,11 @@ export const alertRemoved = createAction('[Alerts API] Alert Removed', props<{ i
 export const dismissAlertPressed = createAction('[Alert Panel] Dismiss Pressed', props<{ id: string }>());
 export const reopenAlertPressed = createAction('[Alert Panel] Reopen Pressed', props<{ id: string }>());
 
-export const dismissAllAlertsPressed = createAction('[Alert Panel] Dismiss All Pressed');
-export const reopenAllAlertsPressed = createAction('[Alert Panel] Reopen All Pressed');
+export const dismissAllAlertsPressed = createAction(
+  '[Alert Panel] Dismiss All Pressed',
+  props<{ alertIds?: string[] }>(),
+);
+export const reopenAllAlertsPressed = createAction(
+  '[Alert Panel] Reopen All Pressed',
+  props<{ alertIds?: string[] }>(),
+);

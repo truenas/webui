@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-installed-app-badge',
   styleUrls: ['./installed-app-badge.component.scss'],
@@ -23,6 +24,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 export class InstalledAppBadgeComponent {
   private installedAppsStore = inject(InstalledAppsStore);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly app = input.required<AvailableApp>();
 
@@ -36,7 +38,7 @@ export class InstalledAppBadgeComponent {
             && app.metadata.train === this.app().train;
         });
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (apps) => {
         if (apps.length) {

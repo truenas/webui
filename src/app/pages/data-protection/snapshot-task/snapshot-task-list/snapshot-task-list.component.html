@@ -55,7 +55,7 @@
                 [ixTest]="[task.dataset, task.naming_schema, 'edit']"
                 (click)="doEdit(task)"
               >
-                <ix-icon name="edit"></ix-icon>
+                <tn-icon name="pencil" library="mdi"></tn-icon>
                 <span>{{ 'Edit' | translate }}</span>
               </button>
               <button
@@ -64,7 +64,7 @@
                 [ixTest]="[task.dataset, task.naming_schema, 'delete']"
                 (click)="doDelete(task)"
               >
-                <ix-icon name="mdi-delete"></ix-icon>
+                <tn-icon name="delete" library="mdi"></tn-icon>
                 <span>{{ 'Delete' | translate }}</span>
               </button>
             </div>

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import {
   MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
 } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
 import { of } from 'rxjs';
@@ -14,8 +14,8 @@ import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,7 +40,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-subject/csr-subject.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-csr-add',
   templateUrl: './csr-add.component.html',
@@ -66,7 +65,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
     MatStepperNext,
     TranslateModule,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
 })
 export class CsrAddComponent {
@@ -75,6 +74,7 @@ export class CsrAddComponent {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
@@ -146,7 +146,7 @@ export class CsrAddComponent {
 
     const payload = this.preparePayload();
     this.api.job('certificate.create', [payload])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.isLoading.set(false);

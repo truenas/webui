@@ -1,8 +1,8 @@
 import { PercentPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
 import { filter, switchMap } from 'rxjs/operators';
@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-active-pool-scan',
   imports: [
@@ -37,6 +36,7 @@ export class ActivePoolScanComponent {
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   readonly scan = input.required<PoolScanUpdate>();
   readonly pool = input.required<Pool>();
@@ -77,7 +77,7 @@ export class ActivePoolScanComponent {
       filter(Boolean),
       switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Stop])),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -85,7 +85,7 @@ export class ActivePoolScanComponent {
     this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Pause])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -94,7 +94,7 @@ export class ActivePoolScanComponent {
     this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

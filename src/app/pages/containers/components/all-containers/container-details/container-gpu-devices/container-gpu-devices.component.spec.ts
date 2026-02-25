@@ -3,7 +3,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceType, ContainerGpuType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType, containerGpuType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -28,13 +28,13 @@ describe('ContainerGpuDevicesComponent', () => {
     {
       id: 1,
       dtype: ContainerDeviceType.Gpu,
-      gpu_type: ContainerGpuType.Nvidia,
+      gpu_type: containerGpuType.Nvidia,
       pci_address: '0000:19:00.0',
     },
     {
       id: 2,
       dtype: ContainerDeviceType.Gpu,
-      gpu_type: ContainerGpuType.Amd,
+      gpu_type: containerGpuType.Amd,
       pci_address: '0000:1a:00.0',
     },
   ];
@@ -66,8 +66,8 @@ describe('ContainerGpuDevicesComponent', () => {
         isLoading: () => false,
         devices: () => devices,
         gpuChoices: () => ({
-          '0000:19:00.0': ContainerGpuType.Nvidia,
-          '0000:1a:00.0': ContainerGpuType.Amd,
+          '0000:19:00.0': containerGpuType.Nvidia,
+          '0000:1a:00.0': containerGpuType.Amd,
         }),
         loadDevices: jest.fn(),
       }),

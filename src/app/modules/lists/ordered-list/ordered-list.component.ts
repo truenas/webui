@@ -1,22 +1,21 @@
 import {
   CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag,
 } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ControlValueAccessor } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ordered-listbox',
   styleUrls: ['./ordered-list.component.scss'],
@@ -30,7 +29,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     CdkDrag,
     MatSlideToggle,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     IxErrorsComponent,
     TranslateModule,
   ],
@@ -38,6 +37,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -96,7 +96,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   }
 
   ngOnInit(): void {
-    this.options().pipe(untilDestroyed(this)).subscribe((options) => {
+    this.options().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
       this.items = options;
       this.orderOptions();
       this.cdr.markForCheck();

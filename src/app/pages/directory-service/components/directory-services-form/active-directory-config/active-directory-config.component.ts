@@ -5,7 +5,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
@@ -17,7 +16,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IdmapConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/idmap-config/idmap-config.component';
 import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/trusted-domains-config/trusted-domains-config.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-active-directory-config',
   templateUrl: './active-directory-config.component.html',

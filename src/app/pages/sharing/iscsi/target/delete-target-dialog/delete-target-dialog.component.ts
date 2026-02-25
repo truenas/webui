@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-delete-target-dialog',
   templateUrl: './delete-target-dialog.component.html',
@@ -48,6 +47,7 @@ export class DeleteTargetDialog implements OnInit {
   private iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   target = inject<IscsiTarget>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
@@ -62,7 +62,7 @@ export class DeleteTargetDialog implements OnInit {
   ngOnInit(): void {
     this.getTargetExtents();
 
-    this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
+    this.iscsiService.getGlobalSessions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       (sessions) => {
         sessions.forEach((session) => {
           if (Number(session.target.split(':')[1]) === this.target.id) {
@@ -80,7 +80,7 @@ export class DeleteTargetDialog implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogRef.close(true);
@@ -90,7 +90,7 @@ export class DeleteTargetDialog implements OnInit {
   private getTargetExtents(): void {
     this.iscsiService.getTargetExtents().pipe(
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((extents) => {
       this.targetExtents.set(extents.filter((extent) => extent.target === this.target.id));
     });

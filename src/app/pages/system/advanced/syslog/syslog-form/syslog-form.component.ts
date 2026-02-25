@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl, FormArray } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -33,7 +33,6 @@ import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslo
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'ix-syslog-form',
   templateUrl: 'syslog-form.component.html',
@@ -63,11 +62,12 @@ export class SyslogFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private formErrorHandler = inject(FormErrorHandlerService);
   slideInRef = inject<SlideInRef<SyslogConfig, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   readonly form = this.fb.group({
     fqdn_syslog: [false],
@@ -118,6 +118,9 @@ export class SyslogFormComponent implements OnInit {
       return of(this.form.dirty);
     });
     this.syslogConfig = this.slideInRef.getData();
+    this.destroyRef.onDestroy(() => {
+      this.subscriptions.forEach((sub) => sub.unsubscribe());
+    });
   }
 
   ngOnInit(): void {
@@ -134,7 +137,7 @@ export class SyslogFormComponent implements OnInit {
 
       // Add conditional validation for TLS certificate
       const subscription = serverGroup.controls.transport.valueChanges.pipe(
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe((transport) => {
         const tlsCertControl = serverGroup.controls.tls_certificate;
         if (transport === SyslogTransport.Tls) {
@@ -176,7 +179,7 @@ export class SyslogFormComponent implements OnInit {
         this.formErrorHandler.handleValidationErrors(error, this.form);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -206,7 +209,7 @@ export class SyslogFormComponent implements OnInit {
         // Watch for transport changes
         this.subscriptions.push(
           serverGroup.controls.transport.valueChanges.pipe(
-            untilDestroyed(this),
+            takeUntilDestroyed(this.destroyRef),
           ).subscribe((transport) => {
             const tlsCertControl = serverGroup.controls.tls_certificate;
             if (transport === SyslogTransport.Tls) {

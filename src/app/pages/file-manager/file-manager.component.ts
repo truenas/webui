@@ -10,8 +10,9 @@ import {
   inject,
   ElementRef,
   ViewChild,
+  DestroyRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -21,8 +22,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { firstValueFrom, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
@@ -30,18 +32,16 @@ import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
+import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult } from './folder-picker-dialog/folder-picker-dialog.component';
 import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-dialog.component';
 import { QuickLookDialogComponent, QuickLookDialogData } from './quick-look-dialog/quick-look-dialog.component';
-import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult } from './folder-picker-dialog/folder-picker-dialog.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-file-manager',
   standalone: true,
@@ -55,7 +55,7 @@ import { FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialog
     MatProgressSpinnerModule,
     MatTooltipModule,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
     PageHeaderComponent,
   ],
   templateUrl: './file-manager.component.html',
@@ -76,6 +76,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   private destroy$ = new Subject<void>();
 
@@ -704,14 +705,14 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter((newName: string | null) => !!newName && newName !== currentName),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((newName: string) => {
         const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
         const newPath = `${parentPath}/${newName}`;
 
         this.api.call('filesystem.rename', [{ src: item.path, dst: newPath }])
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
               this.snackbar.success(this.translate.instant('Renamed successfully'));
@@ -750,7 +751,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter((newName: string | null) => !!newName),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((newName: string) => {
         const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
@@ -763,7 +764,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
           .afterClosed()
           .pipe(
             this.errorHandler.withErrorHandler(),
-            untilDestroyed(this),
+            takeUntilDestroyed(this.destroyRef),
           )
           .subscribe(() => {
             this.snackbar.success(this.translate.instant('Copied successfully'));
@@ -793,7 +794,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.performDelete(itemsToDelete, hasDirectories);
@@ -812,7 +813,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.performDelete([item], isDirectory);
@@ -842,7 +843,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     this.isLoadingUsbDrives.set(true);
 
     this.api.call('usb.drive.query')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (drives) => {
           this.usbDrives.set(drives);
@@ -896,11 +897,11 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.api.call('usb.drive.eject', [{ id: drive.id }])
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
               this.snackbar.success(this.translate.instant('USB drive ejected safely'));
@@ -964,13 +965,13 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter((folderName: string | null) => !!folderName),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((folderName: string) => {
         const newPath = `${this.currentPath()}/${folderName}`;
 
         this.api.call('filesystem.mkdir', [{ path: newPath }])
-          .pipe(untilDestroyed(this))
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
               this.snackbar.success(this.translate.instant('Folder created successfully'));
@@ -1005,7 +1006,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed()
       .pipe(
         filter((result: FolderPickerDialogResult | undefined): result is FolderPickerDialogResult => !!result),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((result) => {
         this.performMove(selectedPaths, result.path);
@@ -1023,7 +1024,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         const count = sourcePaths.length;

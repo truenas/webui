@@ -1,13 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-header-cell-checkbox',
   templateUrl: './ix-header-cell-checkbox.component.html',
@@ -20,6 +19,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxHeaderCellCheckboxComponent<T> extends ColumnComponent<T> {
+  private destroyRef = inject(DestroyRef);
+
   onColumnCheck: (checked: boolean) => void;
 
   onCheckboxChange(event: MatCheckboxChange): void {
@@ -29,7 +30,7 @@ export class IxHeaderCellCheckboxComponent<T> extends ColumnComponent<T> {
   get allChecked$(): Observable<boolean> {
     return this.dataProvider.currentPage$.pipe(
       map((rows) => rows.every((row) => row[this.propertyName])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   }
 }

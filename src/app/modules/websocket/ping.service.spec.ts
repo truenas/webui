@@ -8,24 +8,25 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 describe('PingService', () => {
   let spectator: SpectatorService<PingService>;
   let wsHandler: WebSocketHandlerService;
-  const isConnected$ = new BehaviorSubject(false);
+  let isConnected$: BehaviorSubject<boolean>;
 
   const createService = createServiceFactory({
     service: PingService,
-    providers: [
-      mockProvider(WebSocketHandlerService, {
-        scheduleCall: jest.fn(),
-      }),
-      mockProvider(WebSocketStatusService, {
-        isConnected$,
-        get isConnected() { return isConnected$.value; },
-      }),
-    ],
   });
 
   beforeEach(() => {
-    isConnected$.next(false); // Reset connection state
-    spectator = createService();
+    isConnected$ = new BehaviorSubject(false);
+    spectator = createService({
+      providers: [
+        mockProvider(WebSocketHandlerService, {
+          scheduleCall: jest.fn(),
+        }),
+        mockProvider(WebSocketStatusService, {
+          isConnected$,
+          get isConnected() { return isConnected$.value; },
+        }),
+      ],
+    });
     wsHandler = spectator.inject(WebSocketHandlerService);
     jest.clearAllMocks();
   });

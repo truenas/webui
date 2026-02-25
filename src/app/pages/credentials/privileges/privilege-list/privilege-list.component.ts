@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   filter, map, shareReplay, switchMap, take,
@@ -19,7 +20,6 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
@@ -41,7 +41,6 @@ import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privile
 import { privilegesListElements } from 'app/pages/credentials/privileges/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-privilege-list',
   templateUrl: './privilege-list.component.html',
@@ -70,6 +69,7 @@ export class PrivilegeListComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
@@ -107,12 +107,12 @@ export class PrivilegeListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           hidden: (row) => of(!!row.builtin_name),
@@ -160,7 +160,7 @@ export class PrivilegeListComponent implements OnInit {
   openForm(privilege?: Privilege): void {
     this.slideIn.open(PrivilegeFormComponent, { data: privilege }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getPrivileges();
     });
@@ -179,7 +179,7 @@ export class PrivilegeListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.call('privilege.delete', [privilege.id])),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {

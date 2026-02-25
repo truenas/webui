@@ -10,7 +10,7 @@
     padding: 0 !important;
   }
 
-  > .mat-mdc-card {
+  >.mat-mdc-card {
     margin: 0;
   }
 }
@@ -42,7 +42,7 @@
   padding: 0 0 18px !important;
 }
 
-.mat-mdc-card .mat-mdc-card-content > div {
+.mat-mdc-card .mat-mdc-card-content>div {
   padding: 0;
 }
 
@@ -78,12 +78,12 @@
   height: 100vh;
   justify-content: center;
 
-  > div {
+  >div {
     animation: loading 2s linear infinite;
     opacity: 0.3;
     width: 100px;
 
-    ix-icon {
+    tn-icon {
       fill: var(--fg1);
     }
   }
@@ -115,7 +115,7 @@
   *  Apparently 100vw is actually viewport width + scrollbar width
   *  if vertical scrollbar is present
   */
-  .page-wrap > * {
+  .page-wrap>* {
     max-width: 100%;
     width: 100%;
   }

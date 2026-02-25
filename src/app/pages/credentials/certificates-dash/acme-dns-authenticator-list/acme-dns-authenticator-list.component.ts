@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { switchMap, filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -12,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -30,7 +30,6 @@ import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certific
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-acme-dns-authenticator-list',
   templateUrl: './acme-dns-authenticator-list.component.html',
@@ -60,6 +59,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly searchableElements = acmeDnsAuthenticatorListElements;
@@ -78,12 +78,12 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
@@ -98,7 +98,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   ngOnInit(): void {
     const authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(
       tap((authenticators) => this.authenticators = authenticators),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<DnsAuthenticator>(authenticators$);
     this.setDefaultSort();
@@ -120,7 +120,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(AcmednsFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getAuthenticators();
     });
@@ -129,7 +129,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   doEdit(authenticator: DnsAuthenticator): void {
     this.slideIn.open(AcmednsFormComponent, { data: authenticator }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getAuthenticators();
     });
@@ -152,7 +152,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.getAuthenticators();

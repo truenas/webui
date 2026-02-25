@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, map, switchMap, tap,
@@ -38,7 +38,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cron-list',
   templateUrl: './cron-list.component.html',
@@ -73,6 +72,7 @@ export class CronListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private matDialog = inject(MatDialog);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronElements;
@@ -143,11 +143,11 @@ export class CronListComponent implements OnInit {
         }));
       }),
       tap((cronjobs) => this.cronjobs = cronjobs),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -158,7 +158,7 @@ export class CronListComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(CronFormComponent)
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCronJobs();
       });
@@ -166,7 +166,7 @@ export class CronListComponent implements OnInit {
 
   protected doEdit(row: CronjobRow): void {
     this.slideIn.open(CronFormComponent, { data: row })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCronJobs();
       });
@@ -179,7 +179,7 @@ export class CronListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cronjob.run', [row.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         const message = row.enabled
@@ -198,7 +198,7 @@ export class CronListComponent implements OnInit {
     this.matDialog.open(CronDeleteDialog, {
       data: row,
     }).afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getCronJobs();
       });

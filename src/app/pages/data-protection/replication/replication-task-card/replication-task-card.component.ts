@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, of, switchMap, tap,
 } from 'rxjs';
@@ -18,11 +19,10 @@ import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -56,7 +56,6 @@ import {
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-task-card',
   templateUrl: './replication-task-card.component.html',
@@ -67,7 +66,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatToolbarRow,
     TestDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     MatTooltip,
     RequiresRolesDirective,
     MatButton,
@@ -78,6 +77,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class ReplicationTaskCardComponent implements OnInit {
@@ -90,12 +90,14 @@ export class ReplicationTaskCardComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private download = inject(DownloadService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   replicationTasks: ReplicationTask[] = [];
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly emptyConfig = replicationTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'replication'];
 
   columns = createTable<ReplicationTask>([
     textColumn({
@@ -129,32 +131,32 @@ export class ReplicationTaskCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editReplicationTask(row),
         },
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('restore'),
+          iconName: tnIconMarker('restore', 'mdi'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-download'),
+          iconName: tnIconMarker('download', 'mdi'),
           tooltip: this.translate.instant('Download encryption keys'),
           hidden: (row) => of(!row.has_encrypted_dataset_keys),
           onClick: (row) => this.downloadKeys(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -171,7 +173,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       extra: { check_dataset_encryption_keys: true },
     }]).pipe(
       tap((replicationTasks) => this.replicationTasks = replicationTasks),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
@@ -192,7 +194,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('replication.delete', [replicationTask.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getReplicationTasks();
@@ -206,13 +208,13 @@ export class ReplicationTaskCardComponent implements OnInit {
   protected addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getReplicationTasks());
   }
 
   private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getReplicationTasks());
   }
 
@@ -235,7 +237,7 @@ export class ReplicationTaskCardComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((job: Job) => {
       this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
@@ -249,7 +251,9 @@ export class ReplicationTaskCardComponent implements OnInit {
     const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
+    dialog.afterClosed()
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.getReplicationTasks());
   }
 
   protected downloadKeys(row: ReplicationTask): void {
@@ -261,14 +265,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     })
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe();
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
     this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.getReplicationTasks();

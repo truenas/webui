@@ -1,37 +1,30 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  OnChanges,
-  OnInit, Signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, Signal, viewChild,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
   getDate, isBefore,
   startOfMonth, differenceInCalendarMonths,
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-scheduler-preview-column',
   templateUrl: './scheduler-preview-column.component.html',
   styleUrls: ['./scheduler-preview-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
     TestDirective,
     MatDialogClose,
-    IxIconComponent,
+    TnIconButtonComponent,
     MatCalendar,
     SchedulerDateExamplesComponent,
     TranslateModule,
@@ -39,6 +32,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
+  private destroyRef = inject(DestroyRef);
+
   readonly crontab = input.required<string>();
   readonly timezone = input.required<string>();
 
@@ -73,7 +68,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     this.calendar().stateChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onCalendarUpdated());
   }
 

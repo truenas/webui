@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -15,8 +16,6 @@ import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -36,7 +35,6 @@ import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/compon
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-kerberos-keytabs-list',
   templateUrl: './kerberos-keytabs-list.component.html',
@@ -51,7 +49,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatToolbarRow,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -70,6 +68,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly paginator = input(true);
   readonly inCard = input(false);
@@ -89,17 +88,17 @@ export class KerberosKeytabsListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(KerberosKeytabsFormComponent, { data: row }).pipe(
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => this.getKerberosKeytabs());
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
@@ -109,7 +108,7 @@ export class KerberosKeytabsListComponent implements OnInit {
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('kerberos.keytab.delete', [row.id])),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               error: (error: unknown) => {
                 this.errorHandler.showErrorModal(error);
@@ -132,7 +131,7 @@ export class KerberosKeytabsListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
     this.getKerberosKeytabs();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
 
@@ -145,7 +144,7 @@ export class KerberosKeytabsListComponent implements OnInit {
 
   private checkActiveDirectoryStatus(): void {
     this.api.call('directoryservices.status').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((status) => {
       this.isActiveDirectoryEnabled.set(
         status.type === DirectoryServiceType.ActiveDirectory
@@ -169,7 +168,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(KerberosKeytabsFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getKerberosKeytabs());
   }
 
@@ -196,7 +195,7 @@ export class KerberosKeytabsListComponent implements OnInit {
             { title: this.translate.instant('Sync Keytab') },
           ).afterClosed();
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {

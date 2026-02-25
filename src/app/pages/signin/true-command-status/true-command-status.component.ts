@@ -1,11 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-true-command-status',
   templateUrl: './true-command-status.component.html',
@@ -14,7 +12,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     TranslateModule,
     AsyncPipe,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class TrueCommandStatusComponent {

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor,
   NgControl,
@@ -9,24 +10,20 @@ import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 type InputValue = string | number | null;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-input',
   templateUrl: './ix-input.component.html',
@@ -34,11 +31,11 @@ type InputValue = string | number | null;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     MatInput,
     MatAutocompleteTrigger,
     MatIconButton,
-    MatTooltip,
     MatAutocomplete,
     ReactiveFormsModule,
     MatOption,
@@ -57,10 +54,11 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   controlDirective = inject(NgControl);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
-  readonly prefixIcon = input<MarkedIcon>();
+  readonly prefixIcon = input<string>();
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
@@ -259,7 +257,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.controlDirective.control?.valueChanges?.pipe(
       debounceTime(100),
       distinctUntilChanged(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((value: string) => {
       const existingOption = this.findExistingOption(value);
 

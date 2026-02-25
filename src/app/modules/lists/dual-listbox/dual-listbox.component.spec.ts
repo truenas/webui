@@ -198,7 +198,7 @@ describe('DualListBoxComponent', () => {
     spectator.setInput('listItemIcon', 'mdi-account');
     spectator.detectChanges();
 
-    const icons = spectator.queryAll('ix-icon');
+    const icons = spectator.queryAll('tn-icon');
     expect(icons.length).toBeGreaterThan(0);
   });
 

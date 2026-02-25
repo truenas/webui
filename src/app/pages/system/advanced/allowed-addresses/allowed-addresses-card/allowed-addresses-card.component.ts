@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap, take,
 } from 'rxjs';
@@ -16,7 +16,6 @@ import { Role } from 'app/enums/role.enum';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -43,7 +42,6 @@ interface AllowedAddressRow {
   address: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-allowed-addresses-card',
   styleUrls: ['../../../general-settings/common-settings-card.scss', './allowed-addresses-card.component.scss'],
@@ -75,6 +73,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   private systemGeneralService = inject(SystemGeneralService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = allowedAddressesCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -90,7 +89,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.promptDeleteAllowedAddress(row),
           requiredRoles: [Role.SystemGeneralWrite],
@@ -106,7 +105,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   ngOnInit(): void {
     const config$ = this.api.call('system.general.config').pipe(
       map((config) => this.getAddressesSourceFromConfig(config)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<AllowedAddressRow>(config$);
     this.getAllowedAddresses();
@@ -119,7 +118,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       tap(() => {
         this.getAllowedAddresses();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -131,7 +130,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => this.deleteAllowedAddress(row),
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
@@ -157,7 +156,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       tap(() => {
         this.getAllowedAddresses();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isDeleting.set(false);

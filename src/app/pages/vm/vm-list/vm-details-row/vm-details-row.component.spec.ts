@@ -5,12 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
@@ -137,8 +137,8 @@ describe('VirtualMachineDetailsRowComponent', () => {
     spectator.setInput('vm', stoppedVirtualMachine);
 
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: /Start/ }));
-    const startIcon = await startButton.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
-    expect(await startIcon.getName()).toBe('mdi-play-circle');
+    const startIcon = await startButton.getHarness(TnIconHarness.with({ name: 'play-circle' }));
+    expect(await startIcon.getName()).toBe('play-circle');
 
     await startButton.click();
 
@@ -155,8 +155,8 @@ describe('VirtualMachineDetailsRowComponent', () => {
   it('should call service to stop the VM', async () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: /Stop/ }));
 
-    const stopIcon = await stopButton.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
-    expect(await stopIcon.getName()).toBe('mdi-stop-circle');
+    const stopIcon = await stopButton.getHarness(TnIconHarness.with({ name: 'stop-circle' }));
+    expect(await stopIcon.getName()).toBe('stop-circle');
 
     await stopButton.click();
 
@@ -184,9 +184,9 @@ describe('VirtualMachineDetailsRowComponent', () => {
 
     it('should show Resume button for suspended VM', async () => {
       const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: /Resume/ }));
-      const resumeIcon = await resumeButton.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+      const resumeIcon = await resumeButton.getHarness(TnIconHarness.with({ name: 'play-circle' }));
 
-      expect(await resumeIcon.getName()).toBe('mdi-play-circle');
+      expect(await resumeIcon.getName()).toBe('play-circle');
       expect(resumeButton).toBeTruthy();
     });
 

@@ -1,5 +1,5 @@
-import { Injectable, EventEmitter, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Injectable, EventEmitter, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from 'environments/environment';
 import { tap } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
@@ -9,11 +9,11 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConnectionData } from 'app/interfaces/terminal.interface';
 
-@UntilDestroy()
 @Injectable()
 export class ShellService {
   private window = inject<Window>(WINDOW);
   private webSocket = inject(WEBSOCKET);
+  private destroyRef = inject(DestroyRef);
 
   private encoder = new TextEncoder();
   private ws$: WebSocketSubject<unknown>;
@@ -46,10 +46,10 @@ export class ShellService {
       tap((response: MessageEvent<ArrayBuffer | string>) => {
         this.onMessage(response);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
 
-    this.shellConnected.pipe(untilDestroyed(this)).subscribe({
+    this.shellConnected.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (event) => {
         this.isConnected = event.connected;
       },

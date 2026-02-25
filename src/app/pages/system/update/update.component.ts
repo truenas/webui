@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -23,7 +23,6 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -46,7 +45,6 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-update',
   styleUrls: ['update.component.scss'],
@@ -60,7 +58,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     RequiresRolesDirective,
     NgxSkeletonLoaderModule,
     MatButton,
-    IxIconComponent,
+    TnIconComponent,
     ReactiveFormsModule,
     PageHeaderComponent,
     UpdateProfileCard,
@@ -78,6 +76,7 @@ export class UpdateComponent implements OnInit {
   private sysGenService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
@@ -204,7 +203,7 @@ export class UpdateComponent implements OnInit {
     ])
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([profileChoices, updateStatus, updateConfig]) => {
         if (profileChoices) {
@@ -229,7 +228,7 @@ export class UpdateComponent implements OnInit {
 
   protected manualUpdate(): void {
     this.offerToSaveConfiguration()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.router.navigate(['/system/update/manualupdate']);
       });
@@ -241,7 +240,7 @@ export class UpdateComponent implements OnInit {
         switchMap(() => this.confirmUpdate()),
         switchMap(() => this.update()),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.dialogService.closeAllDialogs();

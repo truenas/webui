@@ -6,7 +6,7 @@
     [ixTest]="['stop', vm().id]"
     (click)="doStop()"
   >
-    <ix-icon name="mdi-stop-circle"></ix-icon>
+    <tn-icon name="stop-circle" library="mdi"></tn-icon>
     <span>{{ 'Stop' | translate }}</span>
   </button>
 
@@ -17,7 +17,7 @@
     [ixTest]="['restart', vm().id]"
     (click)="doRestart()"
   >
-    <ix-icon name="replay"></ix-icon>
+    <tn-icon name="restart" library="mdi"></tn-icon>
     <span>{{ 'Restart' | translate }}</span>
   </button>
 
@@ -28,7 +28,7 @@
     [ixTest]="['power_off', vm().id]"
     (click)="doPowerOff()"
   >
-    <ix-icon name="power_settings_new"></ix-icon>
+    <tn-icon name="power" library="mdi"></tn-icon>
     <span>{{ 'Power Off' | translate }}</span>
   </button>
 } @else if (vmStateInfo().isSuspended) {
@@ -39,7 +39,7 @@
     [ixTest]="['resume', vm().id]"
     (click)="doStart()"
   >
-    <ix-icon name="mdi-play-circle"></ix-icon>
+    <tn-icon name="play-circle" library="mdi"></tn-icon>
     <span>{{ 'Resume' | translate }}</span>
   </button>
 
@@ -50,7 +50,7 @@
     [ixTest]="['power_off', vm().id]"
     (click)="doPowerOff()"
   >
-    <ix-icon name="power_settings_new"></ix-icon>
+    <tn-icon name="power" library="mdi"></tn-icon>
     <span>{{ 'Power Off' | translate }}</span>
   </button>
 } @else {
@@ -61,7 +61,7 @@
     [attr.aria-label]="'Start' | translate"
     (click)="doStart()"
   >
-    <ix-icon name="mdi-play-circle"></ix-icon>
+    <tn-icon name="play-circle" library="mdi"></tn-icon>
     <span>{{ 'Start' | translate }}</span>
   </button>
 }
@@ -72,7 +72,7 @@
   [attr.aria-label]="'Edit' | translate"
   (click)="doEdit()"
 >
-  <ix-icon name="edit"></ix-icon>
+  <tn-icon name="pencil" library="mdi"></tn-icon>
   <span>{{ 'Edit' | translate }}</span>
 </button>
 
@@ -83,7 +83,7 @@
   [ixTest]="['delete', vm().id]"
   (click)="doDelete()"
 >
-  <ix-icon name="mdi-delete"></ix-icon>
+  <tn-icon name="delete" library="mdi"></tn-icon>
   <span>{{ 'Delete' | translate }}</span>
 </button>
 
@@ -93,7 +93,7 @@
   [ixTest]="['devices', vm().id]"
   (click)="openDevices()"
 >
-  <ix-icon name="device_hub"></ix-icon>
+  <tn-icon name="hub" library="mdi"></tn-icon>
   <span>{{ 'Devices' | translate }}</span>
 </button>
 
@@ -104,7 +104,7 @@
   [ixTest]="['clone', vm().id]"
   (click)="doClone()"
 >
-  <ix-icon name="filter_none"></ix-icon>
+  <tn-icon name="content-copy" library="mdi"></tn-icon>
   <span>{{ 'Clone' | translate }}</span>
 </button>
 
@@ -115,7 +115,7 @@
     [ixTest]="['open_display', vm().id]"
     (click)="openDisplay()"
   >
-    <ix-icon name="settings_ethernet"></ix-icon>
+    <tn-icon name="monitor" library="mdi"></tn-icon>
     <span>{{ 'Display' | translate }}</span>
   </button>
 }
@@ -127,7 +127,7 @@
     [attr.aria-label]="'Serial Shell' | translate"
     (click)="openSerialShell()"
   >
-    <ix-icon name="keyboard_arrow_right"></ix-icon>
+    <tn-icon name="chevron-right" library="mdi"></tn-icon>
     <span>{{ 'Serial Shell' | translate }}</span>
   </button>
 }
@@ -139,7 +139,7 @@
   [attr.aria-label]="'Download Logs' | translate"
   (click)="downloadLogs()"
 >
-  <ix-icon name="content_paste"></ix-icon>
+  <tn-icon name="content-paste" library="mdi"></tn-icon>
   <span>{{ 'Download Logs' | translate }}</span>
 </button>
 

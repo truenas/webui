@@ -1,11 +1,11 @@
 <div class="advanced-search">
   <span class="prefix-icon" [matTooltip]="errorMessages?.[0]?.message">
     @if (!queryInputValue) {
-      <ix-icon name="mdi-text-search-variant"></ix-icon>
+      <tn-icon name="text-search-variant" library="mdi"></tn-icon>
     } @else if (hasQueryErrors) {
-      <ix-icon name="warning"></ix-icon>
+      <tn-icon name="alert" library="mdi"></tn-icon>
     } @else {
-      <ix-icon name="done"></ix-icon>
+      <tn-icon name="check" library="mdi"></tn-icon>
     }
   </span>
 
@@ -25,7 +25,7 @@
     (click)="switchToBasic.emit()"
     (keydown.enter)="switchToBasic.emit()"
   >
-    <ix-icon name="mdi-tune"></ix-icon>
+    <tn-icon name="tune" library="mdi"></tn-icon>
     {{ 'Basic' | translate }}
   </span>
 
@@ -40,7 +40,7 @@
     (click)="onResetInput()"
     (keydown.enter)="$event.preventDefault(); onResetInput()"
   >
-    <ix-icon name="mdi-close-circle"></ix-icon>
+    <tn-icon name="close-circle" library="mdi"></tn-icon>
   </span>
 </div>
 

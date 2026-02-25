@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -20,6 +19,7 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
+import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -41,7 +41,6 @@ const initialState: SigninState = {
 
 const tokenParam = 'token' as const;
 
-@UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
   private api = inject(ApiService);
@@ -58,6 +57,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private failoverValidation = inject(FailoverValidationService);
   private window = inject<Window>(WINDOW);
   private store$ = inject<Store<AppState>>(Store);
+  private sessionTimeoutService = inject(SessionTimeoutService);
 
   loginBanner$ = this.select((state) => state.loginBanner);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
@@ -229,6 +229,10 @@ export class SigninStore extends ComponentStore<SigninState> {
       take(1),
       switchMap((isTokenWithinTimeline) => {
         if (!isTokenWithinTimeline) {
+          // Token existed but expired - show session expired message
+          if (this.authService.hasAuthToken) {
+            this.sessionTimeoutService.showSessionExpiredMessage();
+          }
           this.authService.clearAuthToken();
           return of(LoginResult.NoToken);
         }
@@ -239,9 +243,17 @@ export class SigninStore extends ComponentStore<SigninState> {
 
         return this.authService.loginWithToken().pipe(
           this.withFailoverValidation(),
+          tap((result) => {
+            // Token was rejected by server - show session expired message
+            // Only for IncorrectDetails (invalid token), not NoAccess (user lacks permissions) or Redirect
+            if (result === LoginResult.IncorrectDetails) {
+              this.sessionTimeoutService.showSessionExpiredMessage();
+            }
+          }),
         );
       }),
       catchError((error: unknown) => {
+        // Auto-login failed - show error modal only (not session expired, as the error could be network-related)
         this.errorHandler.showErrorModal(error);
         return of(LoginResult.NoAccess);
       }),

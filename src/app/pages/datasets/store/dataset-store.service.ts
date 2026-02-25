@@ -44,14 +44,34 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     return selectedBranch;
   });
 
+  /**
+   * details for the currently selected dataset in the menu.
+   * will be `null` if nothing is currently selected *or* if the store is
+   * awaiting `pool.dataset.details` to finish with updated information.
+   */
   readonly selectedDataset$ = this.select(
     this.selectedBranch$,
-    (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 1] : null),
+    this.isLoading$,
+    (selectedBranch, isLoading) => {
+      if (isLoading) {
+        return null;
+      }
+      return selectedBranch ? selectedBranch[selectedBranch.length - 1] : null;
+    },
   );
 
+  /**
+   * details for the immediate parent of `selectedDataset$` in the menu.
+   */
   readonly selectedParentDataset$ = this.select(
     this.selectedBranch$,
-    (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 2] : null),
+    this.isLoading$,
+    (selectedBranch, isLoading) => {
+      if (isLoading) {
+        return null;
+      }
+      return selectedBranch ? selectedBranch[selectedBranch.length - 2] : null;
+    },
   );
 
   readonly loadDatasets = this.effect((triggers$: Observable<void>) => {

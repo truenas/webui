@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, take,
@@ -24,7 +26,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-select-pool-dialog',
   templateUrl: './select-pool-dialog.component.html',
@@ -54,6 +55,7 @@ export class SelectPoolDialog implements OnInit {
   private dialogRef = inject<MatDialogRef<SelectPoolDialog>>(MatDialogRef);
   private snackbar = inject(SnackbarService);
   private dockerStore = inject(DockerStore);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -78,7 +80,7 @@ export class SelectPoolDialog implements OnInit {
     const { pool, migrateApplications } = this.form.getRawValue();
 
     this.dockerStore.setDockerPool(pool, migrateApplications).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(
         this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
@@ -92,7 +94,7 @@ export class SelectPoolDialog implements OnInit {
       this.dockerStore.selectedPool$.pipe(take(1)),
       this.appService.getPoolList(),
     ])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([selectedPool, pools]) => {
           this.form.patchValue({
@@ -128,7 +130,7 @@ export class SelectPoolDialog implements OnInit {
       message: this.translate.instant(helptextApps.noPool.message),
       hideCheckbox: true,
       buttonText: this.translate.instant(helptextApps.noPool.action),
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       this.dialogRef.close(false);
       if (!confirmed) {
         return;

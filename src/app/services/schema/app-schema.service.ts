@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import {
   Validators, AbstractControl, FormGroup, ValidatorFn,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { parseString } from 'cron-parser';
 import { isArray, isEqual, isPlainObject } from 'lodash-es';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
@@ -68,14 +67,12 @@ interface ToggleFieldHiddenOrDisabledValue {
   isNew: boolean;
 }
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class AppSchemaService {
   protected filesystemService = inject(FilesystemService);
   private urlValidationService = inject(UrlValidationService);
-
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;

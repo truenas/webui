@@ -1,13 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfHost, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -25,11 +25,13 @@ describe('ManageHostsDialog', () => {
     {
       id: 1,
       hostnqn: 'nqn.2014-08.org.nvmexpress',
+      description: '',
       dhchap_key: '1234567890',
     },
     {
       id: 2,
       hostnqn: 'nqn.2014-09.org.nvmexpress',
+      description: '',
     },
   ] as NvmeOfHost[];
   const createComponent = createComponentFactory({
@@ -66,6 +68,9 @@ describe('ManageHostsDialog', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: {} })),
       }),
+      mockProvider(MatDialogRef, {
+        close: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -78,14 +83,14 @@ describe('ManageHostsDialog', () => {
 
   it('shows a list of hosts', async () => {
     expect(await table.getCellTexts()).toEqual([
-      ['NQN', 'Has Host Authentication', 'Used In Subsystems', ''],
-      ['nqn.2014-08.org.nvmexpress', 'Yes', '2', ''],
-      ['nqn.2014-09.org.nvmexpress', 'No', '1', ''],
+      ['NQN', 'Description', 'Has Host Authentication', 'Used In Subsystems', ''],
+      ['nqn.2014-08.org.nvmexpress', '', 'Yes', '2', ''],
+      ['nqn.2014-09.org.nvmexpress', '', 'No', '1', ''],
     ]);
   });
 
   it('opens host form when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'nqn.2014-08.org.nvmexpress');
+    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'nqn.2014-08.org.nvmexpress');
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -96,7 +101,7 @@ describe('ManageHostsDialog', () => {
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
-    const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'nqn.2014-08.org.nvmexpress');
+    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'nqn.2014-08.org.nvmexpress');
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {

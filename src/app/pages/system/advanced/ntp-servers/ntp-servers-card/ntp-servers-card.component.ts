@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -12,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -31,7 +31,6 @@ import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-se
 import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ntp-servers-card',
   templateUrl: './ntp-servers-card.component.html',
@@ -58,6 +57,7 @@ export class NtpServersCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
   protected readonly searchableElements = ntpServersElements;
@@ -92,13 +92,13 @@ export class NtpServersCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -111,7 +111,7 @@ export class NtpServersCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const ntpServers$ = this.api.call('system.ntpserver.query').pipe(untilDestroyed(this));
+    const ntpServers$ = this.api.call('system.ntpserver.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
     this.loadItems();
   }
@@ -133,7 +133,7 @@ export class NtpServersCardComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.api.call('system.ntpserver.delete', [server.id])),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadItems();
     });
@@ -142,14 +142,14 @@ export class NtpServersCardComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(NtpServersFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadItems());
   }
 
   doEdit(server: NtpServer): void {
     this.slideIn.open(NtpServersFormComponent, { data: server }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadItems());
   }
 }

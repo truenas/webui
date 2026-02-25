@@ -3,9 +3,7 @@
     mat-button
     [ixTest]="['alert', 'services']"
     [routerLink]="['/', 'system', 'alert-settings', 'services']"
-  >
-    {{ "Alert Services" | translate }}
-  </button>
+  >{{ 'Alert Services' | translate }}</button>
 </ix-page-header>
 
 <ng-container>
@@ -20,7 +18,7 @@
               mat-button
               [ixTest]="[category.id, '-class-', 'configure']"
             >
-              {{ "Configure" | translate }}
+              {{ 'Configure' | translate }}
             </button>
           </div>
         </mat-toolbar-row>
@@ -30,28 +28,22 @@
               <mat-list-item>
                 <div class="list-item">
                   <div class="wrapper title">
-                    <div class="column-header">{{ "Alert" | translate }}</div>
+                    <div class="column-header">{{ 'Alert' | translate }}</div>
                     <div class="column-cell">{{ cls.title | translate }}</div>
                   </div>
 
                   <div class="wrapper state-button">
-                    <div class="column-header">
-                      {{ "Severity Level" | translate }}
-                    </div>
+                    <div class="column-header">{{ 'Severity Level' | translate }}</div>
                     <div class="column-cell">
-                      <ix-icon
-                        class="icon"
-                        [name]="getIconName(getLevel(cls))"
-                        [style.color]="getLevelColor(getLevel(cls))"
-                      />{{ getLevel(cls) }}
+                      <tn-icon class="icon" library="mdi" [name]="getIconName(getLevel(cls))" [style.color]="getLevelColor(getLevel(cls))"/>{{ getLevel(cls) }}
                     </div>
                   </div>
 
                   <div class="wrapper freq">
-                    <div class="column-header">
-                      {{ "Frequency" | translate }}
-                    </div>
-                    <div class="column-cell">{{ getPolicy(cls) }}</div>
+                    <div class="column-header">{{ 'Frequency' | translate }}</div>
+                    <div
+                      class="column-cell"
+                    >{{ getPolicy(cls) }}</div>
                   </div>
                 </div>
               </mat-list-item>
@@ -60,17 +52,21 @@
         </mat-card-content>
       </mat-card>
     }
+
   </div>
   <div class="search-container">
     <div class="search-card">
       <ix-input
-        [prefixIcon]="iconMarker('search')"
+        [prefixIcon]="tnIconMarker('magnify', 'mdi')"
         [formControl]="searchControl"
         [placeholder]="'Search Alert Categories' | translate"
         [autocompleteOptions]="searchOptions"
       ></ix-input>
       @for (category of categories; track category) {
-        <div class="section" (click)="categoryClick(category.id)">
+        <div
+          class="section"
+          (click)="categoryClick(category.id)"
+        >
           {{ category.title | translate }}
         </div>
       }

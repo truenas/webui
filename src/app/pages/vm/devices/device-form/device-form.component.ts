@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -50,7 +50,6 @@ import { NetworkService } from 'app/services/network.service';
 
 const specifyCustom = T('Specify custom');
 
-@UntilDestroy()
 @Component({
   selector: 'ix-device-form',
   templateUrl: './device-form.component.html',
@@ -93,6 +92,8 @@ export class DeviceFormComponent implements OnInit {
     device?: VmDevice;
     vmName?: string;
   } | undefined, boolean>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
   protected formatter = inject(IxFormatterService);
@@ -312,7 +313,7 @@ export class DeviceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.usbForm.controls.usb.disable();
-    this.usbForm.controls.device.valueChanges.pipe(untilDestroyed(this)).subscribe((device) => {
+    this.usbForm.controls.device.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((device) => {
       if (device === specifyCustom) {
         this.usbForm.controls.usb.enable();
       } else {
@@ -322,7 +323,7 @@ export class DeviceFormComponent implements OnInit {
 
     // Handle display type changes for new devices
     if (this.isNew) {
-      this.displayForm.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((displayType) => {
+      this.displayForm.controls.type.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((displayType) => {
         this.updateDisplayFormForType(displayType);
       });
 
@@ -405,14 +406,14 @@ export class DeviceFormComponent implements OnInit {
   generateMacAddress(): void {
     this.api.call('vm.random_mac').pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((randomMac) => {
       this.nicForm.patchValue({ mac: randomMac });
     });
   }
 
   handleDeviceTypeChange(): void {
-    this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+    this.typeControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((type) => {
       if (type === VmDeviceType.Nic && this.nicForm.value.mac === '') {
         this.generateMacAddress();
       }
@@ -426,7 +427,7 @@ export class DeviceFormComponent implements OnInit {
    * - Does not update exists when path is manually typed (handled by shouldIncludeExistsField)
    */
   setupRawFileExistsTracking(): void {
-    this.rawFileForm.controls.path.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.rawFileForm.controls.path.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const explorer = this.rawFileExplorer();
       const selectedNode = explorer?.lastSelectedNode();
 
@@ -447,7 +448,7 @@ export class DeviceFormComponent implements OnInit {
     // if the user were to submit a nonexistent path without a size, (which is allowed) it would affect
     // the path field with an API error asking the user to provide the size. so, providing the size should
     // clear the error message.
-    this.rawFileForm.controls.size.valueChanges.pipe(untilDestroyed(this)).subscribe((size) => {
+    this.rawFileForm.controls.size.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((size) => {
       if (size) {
         this.rawFileForm.controls.path.updateValueAndValidity();
       }
@@ -502,7 +503,7 @@ export class DeviceFormComponent implements OnInit {
       ])
         .pipe(
           this.errorHandler.withErrorHandler(),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         )
         .subscribe(([passthroughDevices, advancedConfig]) => {
           const dev = this.pciForm.controls.pptdev.value;
@@ -510,7 +511,7 @@ export class DeviceFormComponent implements OnInit {
             this.dialogService.confirm({
               title: this.translate.instant('Warning'),
               message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
-            }).pipe(untilDestroyed(this)).subscribe((confirmed) => confirmed && this.onSend());
+            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => confirmed && this.onSend());
           } else {
             this.onSend();
           }
@@ -534,7 +535,7 @@ export class DeviceFormComponent implements OnInit {
       : this.api.call('vm.device.update', [this.existingDevice.id, update]);
 
     request$
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           if (this.isNew) {
@@ -641,7 +642,7 @@ export class DeviceFormComponent implements OnInit {
    */
   private hideDisplayIfCannotBeAdded(): void {
     this.api.call('vm.get_display_devices', [this.virtualMachineId])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((devices) => {
         const spiceDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Spice);
         const vncDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Vnc);

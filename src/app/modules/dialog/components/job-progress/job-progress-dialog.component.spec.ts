@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -13,7 +14,6 @@ import {
   JobProgressDialog,
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -189,8 +189,9 @@ describe('JobProgressDialogComponent', () => {
       canMinimize: true,
     });
 
-    const minimizeButton = await loader.getHarness(IxIconHarness.with({ name: 'remove' }));
-    await minimizeButton.click();
+    const icon = await loader.getHarnessOrNull(TnIconButtonHarness.with({ name: 'minus' }));
+    expect(icon).not.toBeNull();
+    await icon.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });

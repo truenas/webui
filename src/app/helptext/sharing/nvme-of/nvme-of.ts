@@ -10,6 +10,8 @@ Requires an Enterprise license, RDMA-capable system and network equipment.'),
 Try this if having issues with certain clients, such as hypervisors that may require specific capabilities.'),
   implementationDisabledTooltip: T('This field cannot be changed while the NVMe service is running. Please stop the service first.'),
 
+  hostNqnTooltip: T('NVMe Qualified Name (NQN) uniquely identifies the host. Format: nqn.YYYY-MM.reverse-domain-name[:optional-id]. Example: nqn.2014-08.com.example:host1'),
+  hostDescriptionTooltip: T('Optional description or label to help identify this host when multiple NQNs are listed.'),
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
   noDhText: T("Don't use DH key exchange."),
   generateHostKeyDisabled: T('Please enter Host NQN first.'),

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,7 +29,6 @@ import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-service-ups',
   templateUrl: './service-ups.component.html',
@@ -60,6 +59,7 @@ export class ServiceUpsComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -159,7 +159,7 @@ export class ServiceUpsComponent implements OnInit {
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
 
-    this.form.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+    this.form.controls.mode.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((mode) => {
       if (mode === UpsMode.Master) {
         this.form.controls.remotehost.disable();
         this.form.controls.remoteport.disable();
@@ -178,7 +178,7 @@ export class ServiceUpsComponent implements OnInit {
 
   private loadConfig(): void {
     this.api.call('ups.config')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
@@ -203,7 +203,7 @@ export class ServiceUpsComponent implements OnInit {
 
     this.isFormLoading.set(true);
     this.api.call('ups.update', [params as UpsConfigUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);

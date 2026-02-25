@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
@@ -12,7 +13,6 @@ import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-n
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -30,7 +30,6 @@ import {
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-service-extra-actions',
   templateUrl: './service-extra-actions.component.html',
@@ -39,7 +38,7 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
     MatIconButton,
     TestDirective,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     RequiresRolesDirective,
     MatMenuItem,
@@ -56,6 +55,7 @@ export class ServiceExtraActionsComponent {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   readonly service = input.required<Service>();
   readonly requiredRoles = input<Role[]>([]);
@@ -125,7 +125,7 @@ export class ServiceExtraActionsComponent {
         observeJob(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         complete: () => this.snackbar.success(this.translate.instant('Service started')),
@@ -138,7 +138,7 @@ export class ServiceExtraActionsComponent {
         observeJob(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         complete: () => this.snackbar.success(this.translate.instant('Service stopped')),

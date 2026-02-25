@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, Observable, of, switchMap,
   take,
@@ -18,8 +19,6 @@ import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -52,7 +51,6 @@ interface BootEnvironmentUi extends BootEnvironment {
   selected?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-bootenv-list',
   templateUrl: './bootenv-list.component.html',
@@ -69,7 +67,7 @@ interface BootEnvironmentUi extends BootEnvironment {
     TestDirective,
     UiSearchDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -89,6 +87,7 @@ export class BootEnvironmentListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
@@ -110,7 +109,7 @@ export class BootEnvironmentListComponent implements OnInit {
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
           take(1),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((bootEnvs) => {
           bootEnvs.forEach((bootEnv) => bootEnv.selected = checked);
           this.dataProvider.setRows([]);
@@ -153,34 +152,34 @@ export class BootEnvironmentListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-check-decagram'),
+          iconName: tnIconMarker('check-decagram', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Activate'),
           hidden: (row) => of(!row.can_activate || row.activated),
           onClick: (row) => this.doActivate(row),
         },
         {
-          iconName: iconMarker('bookmark_border'),
+          iconName: tnIconMarker('bookmark-outline', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Keep'),
           hidden: (row) => of(row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: iconMarker('bookmark'),
+          iconName: tnIconMarker('bookmark', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Unkeep'),
           hidden: (row) => of(!row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: iconMarker('mdi-content-copy'),
+          iconName: tnIconMarker('content-copy', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Clone'),
           onClick: (row) => this.doClone(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           hidden: (row) => of(row.active || row.activated),
@@ -215,7 +214,7 @@ export class BootEnvironmentListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.setDefaultSort();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -223,7 +222,7 @@ export class BootEnvironmentListComponent implements OnInit {
   protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }
 
@@ -251,7 +250,7 @@ export class BootEnvironmentListComponent implements OnInit {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Scrub Started'));
     });
@@ -261,7 +260,7 @@ export class BootEnvironmentListComponent implements OnInit {
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.matDialog.open(BootPoolDeleteDialog, { data })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         bootenvs.forEach((bootenv) => delete bootenv.selected);
         this.refresh();
@@ -281,7 +280,7 @@ export class BootEnvironmentListComponent implements OnInit {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }
 
@@ -299,7 +298,7 @@ export class BootEnvironmentListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.refresh());
     } else {
       this.dialogService.confirm({
@@ -314,7 +313,7 @@ export class BootEnvironmentListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.refresh());
     }
   }

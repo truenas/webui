@@ -1,13 +1,13 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 
 describe('DatasetIconComponent', () => {
   let spectator: Spectator<DatasetIconComponent>;
-  let ixIcon: IxIconHarness;
+  let tnIcon: TnIconHarness;
   const createComponent = createComponentFactory({
     component: DatasetIconComponent,
   });
@@ -20,7 +20,7 @@ describe('DatasetIconComponent', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ixIcon = await loader.getHarness(IxIconHarness);
+    tnIcon = await loader.getHarness(TnIconHarness);
   }
 
   it('shows an icon for a root dataset', async () => {
@@ -28,7 +28,7 @@ describe('DatasetIconComponent', () => {
       name: 'root',
     } as DatasetDetails);
 
-    expect(await ixIcon.getName()).toBe('ix-dataset-root');
+    expect(await tnIcon.getName()).toBe('app-dataset-root');
   });
 
   it('shows an icon for an ordinary datasets', async () => {
@@ -37,7 +37,7 @@ describe('DatasetIconComponent', () => {
       type: DatasetType.Filesystem,
     } as DatasetDetails);
 
-    expect(await ixIcon.getName()).toBe('ix-dataset');
+    expect(await tnIcon.getName()).toBe('app-dataset');
   });
 
   it('shows an icon for a zvol', async () => {
@@ -46,6 +46,6 @@ describe('DatasetIconComponent', () => {
       type: DatasetType.Volume,
     } as DatasetDetails);
 
-    expect(await ixIcon.getName()).toBe('mdi-database');
+    expect(await tnIcon.getName()).toBe('mdi-database');
   });
 });

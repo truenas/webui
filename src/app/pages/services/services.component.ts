@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, of } from 'rxjs';
@@ -38,7 +38,6 @@ import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-services',
   templateUrl: './services.component.html',
@@ -69,6 +68,7 @@ export class ServicesComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = servicesElements;
   protected readonly requiredRoles = [Role.ServiceWrite];
@@ -144,7 +144,7 @@ export class ServicesComponent implements OnInit {
         ...service,
         name: serviceNames.get(service.service) || service.service,
       }))),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (services) => {
         this.services = services;
@@ -173,7 +173,7 @@ export class ServicesComponent implements OnInit {
           this.store$.dispatch(serviceChanged({ service }));
           return of(EMPTY);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

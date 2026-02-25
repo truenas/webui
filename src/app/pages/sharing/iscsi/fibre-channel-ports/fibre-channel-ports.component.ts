@@ -1,12 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal, OnInit, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, signal, OnInit, computed, inject, DestroyRef } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
 import {
   catchError,
@@ -16,7 +16,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -40,7 +39,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-fibre-channel-ports',
   templateUrl: './fibre-channel-ports.component.html',
@@ -69,6 +67,7 @@ export class FibreChannelPortsComponent implements OnInit {
   private matDialog = inject(MatDialog);
   protected emptyService = inject(EmptyService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = fibreChannelPortsElements;
   protected searchQuery = signal<string>('');
@@ -125,7 +124,7 @@ export class FibreChannelPortsComponent implements OnInit {
         disableSorting: true,
         actions: [
           {
-            iconName: iconMarker('edit'),
+            iconName: tnIconMarker('pencil', 'mdi'),
             tooltip: this.translate.instant('Edit'),
             onClick: (row) => this.doEdit(row),
             hidden: (row) => of(!row.isPhysical),
@@ -148,7 +147,7 @@ export class FibreChannelPortsComponent implements OnInit {
       .pipe(
         filter(Boolean),
         tap(() => this.loadTable()),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe();
   }
 
@@ -172,7 +171,7 @@ export class FibreChannelPortsComponent implements OnInit {
       .pipe(
         finalize(() => this.isLoading.set(false)),
         catchError(this.errorHandler.withErrorHandler()),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {
         this.rows.set(buildPortsTableRow(hosts, ports, statuses));

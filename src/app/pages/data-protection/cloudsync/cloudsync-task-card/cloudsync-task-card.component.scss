@@ -2,8 +2,14 @@
   align-items: center;
   display: flex;
 
-  ix-icon {
-    margin-left: 5px;
+  a {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  tn-icon {
+    margin-left: auto;
   }
 }
 

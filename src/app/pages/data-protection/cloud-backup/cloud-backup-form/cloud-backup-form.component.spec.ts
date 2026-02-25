@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -115,6 +116,13 @@ describe('CloudBackupFormComponent', () => {
       }),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(TnSpriteLoaderService, {
+        ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
+        getIconUrl: jest.fn(),
+        getSafeIconUrl: jest.fn(),
+        isSpriteLoaded: jest.fn(() => true),
+        getSpriteConfig: jest.fn(),
+      }),
     ],
   });
 

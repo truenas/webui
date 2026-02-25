@@ -1,5 +1,5 @@
 <span class="prefix-icon">
-  <ix-icon name="search"></ix-icon>
+  <tn-icon name="magnify" library="mdi"></tn-icon>
 </span>
 
 <input
@@ -22,7 +22,7 @@
     (click)="switchToAdvanced.emit()"
     (keydown.enter)="$event.preventDefault(); switchToAdvanced.emit()"
   >
-    <ix-icon name="mdi-tune"></ix-icon>
+    <tn-icon name="tune" library="mdi"></tn-icon>
     {{ 'Advanced' | translate }}
   </span>
 }
@@ -38,6 +38,6 @@
     (click)="resetInput()"
     (keydown.enter)="$event.preventDefault(); resetInput()"
   >
-    <ix-icon name="mdi-close-circle"></ix-icon>
+    <tn-icon name="close-circle" library="mdi"></tn-icon>
   </span>
 }

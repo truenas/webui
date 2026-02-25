@@ -204,7 +204,7 @@ describe('AuthSectionComponent', () => {
     });
 
     it('shows SSH fields when SSH Access is enabled', async () => {
-      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Key' }))).toBeTruthy();
+      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'SSH Public Keys (Authorized Keys)' }))).toBeTruthy();
       expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }))).toBeTruthy();
     });
 
@@ -213,10 +213,10 @@ describe('AuthSectionComponent', () => {
       await form.fillForm({ 'Disable Password': true });
 
       // SSH key field should still be available for SSH access
-      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Key' }))).toBeTruthy();
+      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'SSH Public Keys (Authorized Keys)' }))).toBeTruthy();
 
       // User can enter an SSH key to enable SSH access
-      await form.fillForm({ 'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+      await form.fillForm({ 'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
         sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
@@ -243,7 +243,7 @@ describe('AuthSectionComponent', () => {
 
     it('updates the store when SSH fields are changed', async () => {
       await form.fillForm({
-        'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
       });
 
       expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
@@ -264,7 +264,7 @@ describe('AuthSectionComponent', () => {
       });
 
       expect(await form.getValues()).toMatchObject({
-        'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
         'Allow SSH Login with Password (not recommended)': true,
       });
     });
@@ -285,7 +285,7 @@ describe('AuthSectionComponent', () => {
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
 
       // Adding SSH key should remove SSH access error
-      await form.fillForm({ 'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+      await form.fillForm({ 'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
     });
   });
@@ -406,7 +406,7 @@ describe('AuthSectionComponent', () => {
       await form.fillForm({
         Password: 'test-password',
         'Confirm Password': 'test-password',
-        'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        'SSH Public Keys (Authorized Keys)': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
         'Allow SSH Login with Password (not recommended)': true,
       });
 

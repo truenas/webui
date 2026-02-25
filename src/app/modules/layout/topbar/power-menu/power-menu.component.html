@@ -7,7 +7,7 @@
   [matMenuTriggerFor]="powerMenu"
   [ixUiSearch]="searchableElements.elements.powerMenu"
 >
-  <ix-icon class="!text-foreground" name="ix-power_settings_new"></ix-icon>
+  <tn-icon class="!text-foreground" size="lg" name="app-power_settings_new" library="custom"></tn-icon>
 </button>
 <mat-menu #powerMenu="matMenu">
   <button
@@ -30,7 +30,7 @@
     [ixUiSearch]="searchableElements.elements.shutDown"
     (click)="onShutdown()"
   >
-    <ix-icon name="power_settings_new"></ix-icon>
+    <tn-icon size="lg" name="power" library="mdi"></tn-icon>
     {{ 'Shut Down' | translate }}
   </button>
 </mat-menu>

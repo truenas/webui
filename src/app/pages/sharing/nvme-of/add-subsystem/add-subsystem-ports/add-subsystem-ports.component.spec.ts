@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { AddSubsystemPortsComponent } from './add-subsystem-ports.component';
@@ -105,7 +105,7 @@ describe('AddSubsystemPortsComponent', () => {
     portsControl.setValue(ports);
     spectator.detectComponentChanges();
 
-    const removeButton = await loader.getHarness(IxIconHarness.with({ name: 'clear' }));
+    const removeButton = await loader.getHarness(TnIconHarness.with({ name: 'close' }));
     await removeButton.click();
 
     expect(portsControl.value).toEqual([ports[1]]);

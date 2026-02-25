@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import {
   filter, map, throttleTime,
@@ -21,7 +21,6 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -45,7 +44,6 @@ import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-interfaces-card',
   templateUrl: './interfaces-card.component.html',
@@ -79,6 +77,7 @@ export class InterfacesCardComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private networkService = inject(NetworkService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = interfacesCardElements.elements;
 
@@ -124,12 +123,12 @@ export class InterfacesCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('refresh'),
+          iconName: tnIconMarker('refresh', 'mdi'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => combineLatest([
             of(!this.isPhysical(row)),
@@ -141,14 +140,14 @@ export class InterfacesCardComponent implements OnInit {
           onClick: (row) => this.onReset(row),
         },
         {
-          iconName: iconMarker(''),
+          iconName: tnIconMarker('', 'mdi'),
           hidden: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
           disabled: () => of(true),
           tooltip: this.translate.instant(helptextInterfaces.haEnabledResetMessage),
           onClick: (): void => { },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           requiredRoles: this.requiredRoles,
           dynamicTooltip: () => this.isHaEnabled$.pipe(
             map((isHaEnabled) => (isHaEnabled
@@ -174,7 +173,7 @@ export class InterfacesCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.interfacesStore$.loadInterfaces();
-    this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+    this.interfacesStore$.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.interfaces = state.interfaces;
       this.dataProvider.setRows(state.interfaces);
@@ -199,7 +198,7 @@ export class InterfacesCardComponent implements OnInit {
 
   private checkFailoverDisabled(): void {
     this.networkService.getIsHaEnabled().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isHaEnabled) => {
       this.isHaEnabled$.next(isHaEnabled);
       this.cdr.markForCheck();
@@ -214,7 +213,7 @@ export class InterfacesCardComponent implements OnInit {
     })
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.interfacesUpdated.emit();
         this.interfacesStore$.loadInterfaces();
@@ -228,7 +227,7 @@ export class InterfacesCardComponent implements OnInit {
       },
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.interfacesUpdated.emit();
       this.interfacesStore$.loadInterfaces();
@@ -241,7 +240,7 @@ export class InterfacesCardComponent implements OnInit {
       message: this.translate.instant(helptextInterfaces.deleteDialogText),
       buttonText: this.translate.instant('Delete'),
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.makeDeleteCall(row));
   }
 
@@ -251,7 +250,7 @@ export class InterfacesCardComponent implements OnInit {
       message: this.translate.instant(helptextInterfaces.deleteDialogText),
       buttonText: this.translate.instant('Reset'),
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.makeDeleteCall(row));
   }
 
@@ -260,7 +259,7 @@ export class InterfacesCardComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.interfacesUpdated.emit();
@@ -274,7 +273,7 @@ export class InterfacesCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         throttleTime(1000),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((updates) => {
         const updatedInterfaces = Object.keys(updates);

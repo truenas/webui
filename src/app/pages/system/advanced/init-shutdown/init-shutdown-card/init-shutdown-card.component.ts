@@ -1,12 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   switchMap, filter, tap,
 } from 'rxjs';
@@ -16,8 +17,6 @@ import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -40,7 +39,6 @@ import {
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-init-shutdown-card',
   templateUrl: './init-shutdown-card.component.html',
@@ -51,7 +49,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     MatToolbarRow,
     TestDirective,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     MatButton,
     MatTooltip,
@@ -73,6 +71,7 @@ export class InitShutdownCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShutdownCardElements;
@@ -104,12 +103,12 @@ export class InitShutdownCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
           requiredRoles: this.requiredRoles,
@@ -131,7 +130,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   private loadScripts(): void {
     if (!this.dataProvider) {
-      const scripts$ = this.api.call('initshutdownscript.query').pipe(untilDestroyed(this));
+      const scripts$ = this.api.call('initshutdownscript.query').pipe(takeUntilDestroyed(this.destroyRef));
       this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
     }
     this.dataProvider.load();
@@ -151,7 +150,7 @@ export class InitShutdownCardComponent implements OnInit {
         switchMap(() => this.api.call('initshutdownscript.delete', [row.id])),
         filter(Boolean),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Script deleted.'));
@@ -168,7 +167,7 @@ export class InitShutdownCardComponent implements OnInit {
       switchMap(() => this.slideIn.open(InitShutdownFormComponent, { data: row })),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

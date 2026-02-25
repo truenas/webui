@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, computed, OnInit, signal, inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton, MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -11,11 +11,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { ɵɵRouterLink } from '@angular/router/testing';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, TnIconRegistryService } from '@truenas/ui-components';
 import {
   filter, map, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -28,7 +28,6 @@ import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-requi
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { AboutNasDialog } from 'app/modules/layout/topbar/about-nas-dialog/about-nas-dialog.component';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -36,12 +35,14 @@ import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
+import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
+import { RebootInfoDialogSuppressionService } from 'app/services/reboot-info-dialog-suppression.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -50,7 +51,6 @@ import { selectHasConsoleFooter } from 'app/store/system-config/system-config.se
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-topbar',
   templateUrl: './topbar.component.html',
@@ -61,7 +61,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     MatToolbarRow,
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
@@ -88,11 +88,13 @@ export class TopbarComponent implements OnInit {
   private translate = inject(TranslateService);
   private tnc = inject(TruenasConnectService);
   private apiService = inject<ApiService>(ApiService);
-  // private matIconRegistry = inject(MatIconRegistry);
+  private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private domSanitizer = inject(DomSanitizer);
+  private destroyRef = inject(DestroyRef);
+  private iconRegistry = inject(TnIconRegistryService);
+  private navService = inject(NavigationService);
 
   updateIsDone: Subscription;
-
   updateDialog: MatDialogRef<UpdateDialog>;
   private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
@@ -102,11 +104,8 @@ export class TopbarComponent implements OnInit {
   tooltips = helptextTopbar.tooltips;
   protected searchableElements = toolBarElements;
 
-  private navService = inject(NavigationService);
-
   menuItems = this.navService.menuItems;
   pageTitle = '';
-
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
@@ -129,7 +128,7 @@ export class TopbarComponent implements OnInit {
   });
 
   constructor() {
-    this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
+    this.systemGeneralService.updateRunningNoticeSent.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateNotificationSent = true;
       this.cdr.markForCheck();
     });
@@ -137,7 +136,7 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.isEnterprise()) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         this.cdr.markForCheck();
       });
@@ -150,17 +149,12 @@ export class TopbarComponent implements OnInit {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((url) => {
       this.updatePageTitle(url);
     });
 
-    // this.matIconRegistry.addSvgIcon(
-    //   'truenas_logo',
-    //   this.domSanitizer.bypassSecurityTrustResourceUrl('assets/images/logo.svg'),
-    // );
-
-    this.store$.select(selectUpdateJobs).pipe(untilDestroyed(this)).subscribe((jobs) => {
+    this.store$.select(selectUpdateJobs).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((jobs) => {
       const job = jobs[0];
       if (!job) {
         this.updateIsRunning = false;
@@ -177,7 +171,9 @@ export class TopbarComponent implements OnInit {
 
       // When update starts on HA system, listen for 'finish', then quit listening
       if (this.isHaLicensed) {
-        this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(untilDestroyed(this)).subscribe(() => {
+        this.updateIsDone = this.systemGeneralService.updateIsDone$.pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe(() => {
           this.updateIsRunning = false;
           this.updateIsDone.unsubscribe();
         });
@@ -233,11 +229,23 @@ export class TopbarComponent implements OnInit {
   }
 
   showUpdateDialog(): void {
-    this.matDialog.open(UpdateDialog);
+    const title = this.translate.instant('Update in Progress');
+    const message = this.updateText();
+
+    this.updateDialog = this.matDialog.open(UpdateDialog, {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      position: topbarDialogPosition,
+      data: {
+        title,
+        message,
+      },
+    });
   }
 
   showRebootInfoDialog(): void {
-    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe(() => {
+    this.checkRebootInfo().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.shownDialog.set(false);
     });
   }
@@ -255,6 +263,7 @@ export class TopbarComponent implements OnInit {
       }),
       tap(() => this.hasRebootRequiredReasons.set(true)),
       filter(() => !this.shownDialog()),
+      filter(() => !this.updateIsRunning && !this.rebootInfoSuppression.isSuppressed()),
       tap(() => this.shownDialog.set(true)),
       switchMap(() => this.matDialog.open(RebootRequiredDialog, { minWidth: '400px' }).afterClosed()),
     );

@@ -1,9 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, map, take, tap,
 } from 'rxjs/operators';
@@ -13,8 +16,6 @@ import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -39,7 +40,6 @@ export interface ContainerImageUi extends ContainerImage {
   selected?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-docker-images-list',
   templateUrl: './docker-images-list.component.html',
@@ -56,7 +56,7 @@ export interface ContainerImageUi extends ContainerImage {
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     IxTableBodyComponent,
     IxTablePagerComponent,
@@ -70,6 +70,7 @@ export class DockerImagesListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private fileSizePipe = inject(FileSizePipe);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerImagesListElements;
@@ -91,7 +92,7 @@ export class DockerImagesListComponent implements OnInit {
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
           take(1),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((images) => {
           images.forEach((image) => image.selected = checked);
           this.dataProvider.setRows([]);
@@ -122,7 +123,7 @@ export class DockerImagesListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete([row]),
@@ -145,21 +146,21 @@ export class DockerImagesListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
 
   doAdd(): void {
     this.slideIn.open(PullImageFormComponent)
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 
   doDelete(images: ContainerImageUi[]): void {
     this.matDialog.open(DockerImageDeleteDialog, { data: this.prepareImages(images) })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 

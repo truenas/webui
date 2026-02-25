@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -17,7 +17,6 @@ export interface DownloadKeyDialogParams {
   name: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-download-key-dialog',
   templateUrl: './download-key-dialog.component.html',
@@ -38,6 +37,7 @@ export class DownloadKeyDialog {
   private loader = inject(LoaderService);
   private download = inject(DownloadService);
   private data = inject<DownloadKeyDialogParams>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected helptext = helptextDownloadKey;
   protected wasDownloaded = signal(false);
@@ -57,7 +57,7 @@ export class DownloadKeyDialog {
       fileName: this.filename,
       mimeType: 'application/json',
     })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.wasDownloaded.set(true),
         error: (error: unknown) => {

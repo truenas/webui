@@ -219,7 +219,7 @@ a new application key, log in to the Backblaze account, go to the \
     },
     driveType: {
       tooltip: T(
-        'Type of Microsoft acount. Logging in to a Microsoft account \
+        'Type of Microsoft account. Logging in to a Microsoft account \
  automatically chooses the correct account type.',
       ),
     },

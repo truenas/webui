@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
@@ -21,7 +21,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-save-debug-button',
   templateUrl: './save-debug-button.component.html',
@@ -40,6 +39,7 @@ export class SaveDebugButtonComponent {
   private download = inject(DownloadService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElement = saveDebugElement;
 
@@ -54,7 +54,7 @@ export class SaveDebugButtonComponent {
       .pipe(
         filter(Boolean),
         switchMap(() => this.saveDebug()),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

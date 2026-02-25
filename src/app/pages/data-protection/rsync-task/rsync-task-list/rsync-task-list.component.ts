@@ -1,9 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -18,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -52,7 +52,6 @@ import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsyn
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-rsync-task-list',
   templateUrl: './rsync-task-list.component.html',
@@ -90,6 +89,7 @@ export class RsyncTaskListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = rsyncTaskListElements;
@@ -179,18 +179,18 @@ export class RsyncTaskListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('mdi-play-circle'),
+          iconName: tnIconMarker('play-circle', 'mdi'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.runNow(row),
         },
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.edit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.delete(row),
@@ -208,7 +208,7 @@ export class RsyncTaskListComponent implements OnInit {
     const request$ = this.api.call('rsynctask.query');
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -240,20 +240,20 @@ export class RsyncTaskListComponent implements OnInit {
           );
         }),
         switchMap(() => this.api.job('rsynctask.run', [row.id])),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.refresh());
   }
 
   protected add(): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 
   protected edit(row: RsyncTask): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 
@@ -272,7 +272,7 @@ export class RsyncTaskListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.refresh());
   }

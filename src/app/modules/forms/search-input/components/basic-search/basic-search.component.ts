@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -15,7 +15,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./basic-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatInput,
     MatTooltip,
     ReactiveFormsModule,

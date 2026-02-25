@@ -1,8 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, computed, effect, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, OnInit, signal,
+} from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Gallery, GalleryItem, GalleryModule, ImageItem,
@@ -23,7 +24,6 @@ import { AppJsonDetailsCardComponent } from 'app/pages/apps/components/app-detai
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-detail-view',
   templateUrl: './app-detail-view.component.html',
@@ -50,6 +50,7 @@ export class AppDetailViewComponent implements OnInit {
   private applicationsStore = inject(AppsStore);
   private gallery = inject(Gallery);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly app = signal<AvailableApp | null>(null);
   readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
@@ -88,7 +89,7 @@ export class AppDetailViewComponent implements OnInit {
           }),
         );
       }),
-    ).pipe(untilDestroyed(this)).subscribe({
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (app) => {
         this.isLoading.set(false);
 

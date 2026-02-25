@@ -2,14 +2,13 @@
   <h4 class="crontab-header">
     {{ 'Schedule Preview' | translate }}
     <div class="close-wrapper" [attr.aria-label]="'Close scheduler' | translate">
-      <button
+      <tn-icon-button
         class="close-btn"
-        mat-icon-button
+        name="close"
+        library="mdi"
         ixTest="close-scheduler"
         [matDialogClose]
-      >
-        <ix-icon name="cancel"></ix-icon>
-      </button>
+      ></tn-icon-button>
     </div>
   </h4>
   <div class="crontab">{{ crontab() }}</div>

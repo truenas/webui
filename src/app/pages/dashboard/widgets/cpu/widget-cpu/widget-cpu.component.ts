@@ -7,11 +7,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs/operators';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeData } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -34,7 +34,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TestDirective,
     MatTooltip,
     RouterLink,
-    IxIconComponent,
+    TnIconComponent,
     CpuChartGaugeComponent,
     MatList,
     MatListItem,

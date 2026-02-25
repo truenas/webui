@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
@@ -13,7 +13,6 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-log-wizard-step',
   templateUrl: './log-wizard-step.component.html',
@@ -33,6 +32,7 @@ export class LogWizardStepComponent implements OnInit {
   private store = inject(PoolManagerStore);
   private addVdevsStore = inject(AddVdevsStore);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
@@ -50,7 +50,7 @@ export class LogWizardStepComponent implements OnInit {
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
       map((pool) => pool?.topology[VDevType.Log]),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (logTopology) => {
         if (!logTopology?.length) {

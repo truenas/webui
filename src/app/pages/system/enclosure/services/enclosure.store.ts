@@ -1,5 +1,4 @@
 import { computed, Injectable, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
 import {
@@ -35,7 +34,6 @@ const initialState: EnclosureState = {
   selectedSide: undefined,
 };
 
-@UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   private api = inject(ApiService);

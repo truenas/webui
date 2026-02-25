@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, model, OnChanges, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -8,8 +9,8 @@ import { MatHint } from '@angular/material/form-field';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { catchError, debounceTime, shareReplay, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
@@ -17,7 +18,6 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -25,7 +25,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 export type IxSelectValue = SelectOptionValueType;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-select',
   styleUrls: ['./ix-select.component.scss'],
@@ -36,7 +35,7 @@ export type IxSelectValue = SelectOptionValueType;
     MatSelect,
     FormsModule,
     MatSelectTrigger,
-    IxIconComponent,
+    TnIconComponent,
     ReactiveFormsModule,
     MatOption,
     MatTooltip,
@@ -56,6 +55,7 @@ export type IxSelectValue = SelectOptionValueType;
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
@@ -127,10 +127,12 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
 
   ngOnInit(): void {
     if (this.multiple()) {
-      this.controlDirective.control?.valueChanges?.pipe(debounceTime(0), untilDestroyed(this)).subscribe(() => {
-        this.updateSelectAllState();
-        this.cdr.markForCheck();
-      });
+      this.controlDirective.control?.valueChanges
+        ?.pipe(debounceTime(0), takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.updateSelectAllState();
+          this.cdr.markForCheck();
+        });
     }
   }
 
@@ -176,7 +178,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
       );
 
       this.optsSubscription?.unsubscribe();
-      this.optsSubscription = this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
+      this.optsSubscription = this.opts$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((opts) => {
         this.opts = opts;
       });
     }

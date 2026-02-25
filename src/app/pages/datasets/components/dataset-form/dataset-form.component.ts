@@ -1,9 +1,9 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, viewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -41,7 +41,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
@@ -75,6 +74,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     datasetId: string;
     isNew?: boolean;
   }, Dataset>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
@@ -164,7 +165,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.nameAndOptionsSection().form.controls.share_type.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((datasetPreset) => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((datasetPreset) => {
         this.datasetPreset = datasetPreset;
       });
   }
@@ -180,7 +181,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         return isValidLengthAndDepth;
       }),
       switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (dataset) => {
         this.parentDataset = dataset;
@@ -205,7 +206,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
     this.isLoading.set(true);
 
-    forkJoin(requests).pipe(untilDestroyed(this)).subscribe({
+    forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([existingDataset, parent]) => {
         this.existingDataset = existingDataset;
         this.parentDataset = parent;
@@ -242,7 +243,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
           switchMap((isAcl) => combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)])),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
         const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;

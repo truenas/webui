@@ -25,7 +25,7 @@
         ixTest="edit-selected"
         (click)="edit(selectedDisks)"
       >
-        <ix-icon name="edit"></ix-icon>
+        <tn-icon name="pencil" library="mdi"></tn-icon>
         <span>
           @if (selectedDisks.length === 1) {
             {{ 'Edit Disk' | translate }}
@@ -63,7 +63,7 @@
             [ixTest]="[disk.name, 'edit']"
             (click)="edit([disk])"
           >
-            <ix-icon name="edit"></ix-icon>
+            <tn-icon name="pencil" library="mdi"></tn-icon>
             <span>{{ 'Edit' | translate }}</span>
           </button>
 
@@ -75,7 +75,7 @@
               [ixTest]="[disk.name, 'wipe']"
               (click)="wipe(disk)"
             >
-              <ix-icon name="delete_sweep"></ix-icon>
+              <tn-icon name="delete-sweep" library="mdi"></tn-icon>
               <span>{{ 'Wipe' | translate }}</span>
             </button>
           }
@@ -88,7 +88,7 @@
               [ixTest]="[disk.name, 'unlock']"
               (click)="unlock(disk)"
             >
-              <ix-icon name="mdi-lock-open-variant"></ix-icon>
+              <tn-icon name="lock-open-variant" library="mdi"></tn-icon>
               <span>{{ 'Unlock' | translate }}</span>
             </button>
 
@@ -99,7 +99,7 @@
               [ixTest]="[disk.name, 'reset-sed']"
               (click)="resetSed(disk)"
             >
-              <ix-icon name="mdi-restart"></ix-icon>
+              <tn-icon name="restart" library="mdi"></tn-icon>
               <span>{{ 'SED Reset' | translate }}</span>
             </button>
           }

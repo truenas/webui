@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   filter, switchMap,
@@ -17,7 +17,6 @@ import {
 } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-subsystems-details-header',
   imports: [
@@ -35,6 +34,7 @@ export class SubsystemsDetailsHeaderComponent {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
@@ -56,7 +56,7 @@ export class SubsystemsDetailsHeaderComponent {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.subsystemRemoved.emit();
       });

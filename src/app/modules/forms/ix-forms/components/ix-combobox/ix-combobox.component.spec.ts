@@ -1,7 +1,7 @@
 import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { FormControl } from '@ngneat/reactive-forms'; // cspell:ignore ngneat
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
@@ -77,11 +77,16 @@ describe('IxComboboxComponent', () => {
       expect(spectator.query('input')).toHaveValue('new value');
     });
 
-    it('form control value is set to custom value if [allowCustomValue] enabled', () => {
+    it('form control value is set to custom value if [allowCustomValue] enabled', fakeAsync(() => {
+      spectator.component.ngOnInit();
       spectator.setHostInput('allowCustomValue', true);
+      spectator.setHostInput('provider', new SimpleComboboxProvider([]));
       spectator.typeInElement('/my-custom-1', 'input');
+
+      // Wait for debounced value update
+      tick(300);
       expect(formControl.value).toBe('/my-custom-1');
-    });
+    }));
 
     it('if [allowCustomValue] is disabled and user types custom value.', () => {
       spectator.setHostInput('allowCustomValue', false);
@@ -95,7 +100,7 @@ describe('IxComboboxComponent', () => {
         { label: 'test1', value: 'value1' },
         { label: 'test2', value: 'value2' },
         { label: 'test3', value: 'value3' },
-        { label: 'badtest', value: 'value4' },
+        { label: 'badtest', value: 'value4' }, // cspell:ignore badtest
       ];
 
       spectator.setHostInput('provider', new SimpleComboboxProvider(provider));
@@ -184,6 +189,65 @@ describe('IxComboboxComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
+      discardPeriodicTasks();
+    }));
+
+    it('respects custom debounceTime input', fakeAsync(() => {
+      const options = [
+        { label: 'Option 1', value: 'opt1' },
+        { label: 'Option 2', value: 'opt2' },
+      ];
+      const provider = new FakeProvider(options);
+      const fetchSpy = jest.spyOn(provider, 'fetch');
+
+      spectator.setHostInput('provider', provider);
+      spectator.setHostInput('debounceTime', 500);
+      spectator.component.ngOnInit();
+
+      spectator.typeInElement('test', 'input');
+
+      // Should call fetch after custom debounce time
+      tick(500);
+      expect(fetchSpy).toHaveBeenCalledWith('test');
+
+      discardPeriodicTasks();
+    }));
+  });
+
+  describe('clearing input with validation errors', () => {
+    it('triggers validation update when manually deleting all text', fakeAsync(() => {
+      spectator.component.ngOnInit();
+      spectator.setHostInput('allowCustomValue', true);
+      spectator.setHostInput('provider', new SimpleComboboxProvider([]));
+      tick(300);
+
+      // Set up component state with invalid value
+      const input = spectator.query('input') as HTMLInputElement;
+      spectator.component.textContent = 'invaliduser';
+      spectator.component.value = 'invaliduser';
+      spectator.component.selectedOption = null;
+      input.value = 'invaliduser';
+
+      // Manually set an error on the form control to simulate async validation error
+      formControl.setValue('invaliduser');
+      formControl.setErrors({ customError: { message: 'Value does not exist' } });
+      spectator.detectChanges();
+
+      // Verify error is present
+      expect(formControl.errors).toEqual({ customError: { message: 'Value does not exist' } });
+      expect(formControl.value).toBe('invaliduser');
+
+      // Spy on updateValueAndValidity to ensure it's called
+      const updateSpy = jest.spyOn(formControl, 'updateValueAndValidity');
+
+      // Simulate clearing the input by calling onChanged with empty string
+      spectator.component.onChanged('');
+      spectator.detectChanges();
+
+      // Verify updateValueAndValidity was called and value is cleared
+      expect(updateSpy).toHaveBeenCalled();
+      expect(formControl.value).toBeNull();
+
       discardPeriodicTasks();
     }));
   });

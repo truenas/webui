@@ -42,7 +42,7 @@ module.exports = {
     '<rootDir>/dist/',
   ],
   transformIgnorePatterns: [
-    `node_modules/(?!${esmPatterns.join('|')})`
+    `node_modules/(?!.*(${esmPatterns.join('|')}))`
   ],
   reporters: [
     "default",

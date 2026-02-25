@@ -8,3 +8,7 @@ export const rebootInfoLoaded = createAction(
     otherNodeRebootInfo: SystemRebootInfo | null;
   }>(),
 );
+
+export const refreshRebootInfo = createAction(
+  '[Reboot Info] Refresh Reboot Info',
+);

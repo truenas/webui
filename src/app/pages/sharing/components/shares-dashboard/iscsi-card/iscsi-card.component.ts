@@ -1,15 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, Observable, startWith, tap,
 } from 'rxjs';
@@ -20,10 +20,9 @@ import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -49,7 +48,6 @@ import { LicenseService } from 'app/services/license.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-card',
   templateUrl: './iscsi-card.component.html',
@@ -59,7 +57,7 @@ import { selectService } from 'app/store/services/services.selectors';
     MatCard,
     MatToolbarRow,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     ServiceStateButtonComponent,
     RequiresRolesDirective,
     MatButton,
@@ -75,6 +73,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     MatTooltip,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -87,6 +86,7 @@ export class IscsiCardComponent implements OnInit {
   private iscsiService = inject(IscsiService);
   private cdr = inject(ChangeDetectorRef);
   private license = inject(LicenseService);
+  private destroyRef = inject(DestroyRef);
 
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
   requiredRoles = [
@@ -103,6 +103,7 @@ export class IscsiCardComponent implements OnInit {
 
   protected readonly searchableElements = iscsiCardElements;
   protected readonly emptyConfig = iscsiCardEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'iscsi'];
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
 
@@ -124,12 +125,12 @@ export class IscsiCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -165,7 +166,7 @@ export class IscsiCardComponent implements OnInit {
       tap((targets) => {
         this.targets.set(targets);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
     this.setDefaultSort();
@@ -183,7 +184,7 @@ export class IscsiCardComponent implements OnInit {
 
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dataProvider.load();
     });
@@ -193,7 +194,7 @@ export class IscsiCardComponent implements OnInit {
     this.matDialog
       .open(DeleteTargetDialog, { data: iscsi, width: '600px' })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }
 

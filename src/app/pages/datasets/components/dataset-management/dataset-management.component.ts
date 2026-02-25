@@ -5,15 +5,15 @@ import {
 } from '@angular/cdk/layout';
 import { CdkTreeNodePadding } from '@angular/cdk/tree';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, NavigationSkipped, NavigationStart, Router,
   RouterLink, RouterLinkActive,
 } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash-es';
 import { Subject, Subscription } from 'rxjs';
@@ -36,7 +36,6 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import {
   TreeVirtualScrollViewComponent,
@@ -60,7 +59,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-management',
   templateUrl: './dataset-management.component.html',
@@ -71,7 +69,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FakeProgressBarComponent,
     BasicSearchComponent,
     DatasetNodeComponent,
-    IxIconComponent,
+    TnIconComponent,
     RouterLink,
     MatIconButton,
     CdkTreeNodePadding,
@@ -102,6 +100,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
@@ -178,7 +177,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationSkipped || event instanceof NavigationStart),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.closeMobileDetails());
   }
@@ -195,7 +194,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   ngAfterViewInit(): void {
     this.breakpointObserver
       .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           this.isMobileView = true;
@@ -214,7 +213,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private listenForLoading(): void {
-    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+    this.isLoading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isLoading) => {
       this.isLoading = isLoading;
       this.cdr.markForCheck();
 
@@ -267,7 +266,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private setupTree(): void {
-    this.datasetStore.datasets$.pipe(untilDestroyed(this)).subscribe({
+    this.datasetStore.datasets$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (datasets) => {
         this.createDataSource(datasets);
         this.expandDatasetBranch();
@@ -277,7 +276,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
 
     this.datasetStore.selectedBranch$
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (selectedBranch: DatasetDetails[]) => {
           selectedBranch.forEach((datasetFromSelectedBranch) => {
@@ -345,7 +344,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           );
         }),
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((datasetId) => {
         this.datasetStore.selectDatasetById(datasetId);
@@ -355,7 +354,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
-        .pipe(debounceTime(5), untilDestroyed(this))
+        .pipe(debounceTime(5), takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (scrollLeft: number) => {
             this.window.dispatchEvent(new Event('resize'));
@@ -376,7 +375,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForTreeResizing(): void {
     this.subscription.add(
       this.treeWidthChange$
-        .pipe(distinctUntilChanged(), untilDestroyed(this))
+        .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (event: ResizedEvent) => {
             this.ixTreeHeaderWidth = Math.round(event.newRect.width);

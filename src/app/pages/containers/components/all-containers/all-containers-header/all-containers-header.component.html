@@ -1,11 +1,32 @@
 <button
   mat-button
-  ixTest="global-configuration"
-  [ixUiSearch]="searchableElements.elements.settings"
-  (click)="onGlobalConfiguration()"
+  ixTest="configuration-menu"
+  [matMenuTriggerFor]="configMenu"
 >
-  {{ 'Settings' | translate }}
+  {{ 'Configuration' | translate }}
+  <tn-icon name="mdi-menu-down" class="menu-caret"></tn-icon>
 </button>
+
+<mat-menu #configMenu="matMenu" overlapTrigger="false">
+  <button
+    mat-menu-item
+    ixTest="global-configuration"
+    [ixUiSearch]="searchableElements.elements.settings"
+    (click)="onGlobalConfiguration()"
+  >
+    {{ 'Settings' | translate }}
+  </button>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-menu-item
+    ixTest="map-user-group-ids"
+    [ixUiSearch]="searchableElements.elements.mapUserGroupIds"
+    (click)="onMapUserGroupIds()"
+  >
+    {{ 'Map User/Group IDs' | translate }}
+  </button>
+</mat-menu>
 
 @if (config()) {
   <button

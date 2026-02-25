@@ -1,9 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, TemplateRef, inject } from '@angular/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -15,7 +15,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     NgxPopperjsModule,
     NgTemplateOutlet,
-    IxIconComponent,
+    TnIconComponent,
     CastPipe,
     TestDirective,
   ],

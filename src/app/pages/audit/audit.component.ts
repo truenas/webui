@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnDestroy, OnInit, viewChild, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, inject, OnDestroy, OnInit, viewChild,
+} from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -30,7 +31,6 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-audit',
   templateUrl: './audit.component.html',
@@ -56,6 +56,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   protected dataProvider: AuditApiDataProvider;
   private hasInitialized = false;
@@ -124,9 +125,11 @@ export class AuditComponent implements OnInit, OnDestroy {
       direction: SortDirection.Desc,
       active: 1,
     }, true);
-    this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
-      this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.currentPage$
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .subscribe((auditEntries) => {
+        this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
+        this.cdr.markForCheck();
+      });
   }
 }

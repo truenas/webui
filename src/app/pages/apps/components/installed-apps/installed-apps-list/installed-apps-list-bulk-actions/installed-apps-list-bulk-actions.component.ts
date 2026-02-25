@@ -6,16 +6,14 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-installed-apps-list-bulk-actions',
   templateUrl: './installed-apps-list-bulk-actions.component.html',
@@ -26,7 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatMenu,
     MatMenuItem,
     RequiresRolesDirective,
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     TranslateModule,
     TestDirective,

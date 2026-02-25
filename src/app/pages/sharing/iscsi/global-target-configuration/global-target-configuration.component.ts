@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -21,6 +21,7 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -32,7 +33,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-target-configuration',
   templateUrl: './global-target-configuration.component.html',
@@ -62,10 +62,13 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected isLoading = signal(false);
   isHaSystem = false;
+  private originalBasename: string | null = null;
 
   form = this.fb.nonNullable.group({
     basename: ['', Validators.required],
@@ -103,6 +106,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     this.loadFormValues();
     this.listenForHaStatus();
     this.checkForRdmaSupport();
+    this.setupBasenameValidation();
   }
 
   onSubmit(): void {
@@ -110,7 +114,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     const values = { ...this.form.value } as IscsiGlobalConfigUpdate;
 
     this.api.call('iscsi.global.update', [values])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.isLoading.set(false);
@@ -128,8 +132,9 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private loadFormValues(): void {
     this.isLoading.set(true);
 
-    this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
+        this.originalBasename = config.basename;
         this.form.patchValue(config);
         this.isLoading.set(false);
       },
@@ -141,7 +146,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   }
 
   private listenForHaStatus(): void {
-    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHa) => {
+    this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHa) => {
       this.isHaSystem = isHa;
 
       if (!isHa) {
@@ -161,7 +166,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       this.api.call('rdma.capable_protocols'),
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([capableProtocols, isEnterprise]) => {
       const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser) && isEnterprise;
       if (hasRdmaSupport) {
@@ -169,6 +174,28 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       } else {
         this.form.controls.iser.disable();
       }
+    });
+  }
+
+  private setupBasenameValidation(): void {
+    this.form.controls.basename.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      const basenameControl = this.form.controls.basename;
+
+      // Only apply pattern validation if the basename value has been changed from the original
+      if (value !== this.originalBasename) {
+        basenameControl.setValidators([
+          Validators.required,
+          this.validatorsService.withMessage(
+            Validators.pattern(/^[a-z0-9.:-]+$/),
+            this.translate.instant('Only lowercase alphanumeric characters and . : - are allowed.'),
+          ),
+        ]);
+      } else {
+        // If value matches original, only require it to be non-empty
+        basenameControl.setValidators([Validators.required]);
+      }
+
+      basenameControl.updateValueAndValidity({ emitEvent: false });
     });
   }
 }

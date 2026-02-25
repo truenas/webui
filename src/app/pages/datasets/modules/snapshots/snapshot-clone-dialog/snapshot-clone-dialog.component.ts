@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
 } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -17,7 +17,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-clone-dialog',
   templateUrl: './snapshot-clone-dialog.component.html',
@@ -45,6 +44,7 @@ export class SnapshotCloneDialog implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private snapshotName = inject<string>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
@@ -71,7 +71,7 @@ export class SnapshotCloneDialog implements OnInit {
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.wasDatasetCloned = true;

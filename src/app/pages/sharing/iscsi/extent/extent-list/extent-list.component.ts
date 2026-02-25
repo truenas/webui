@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,7 +15,6 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -36,7 +36,6 @@ import {
 import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-extent-list',
   templateUrl: './extent-list.component.html',
@@ -68,6 +67,7 @@ export class ExtentListComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = extentListElements;
 
@@ -118,17 +118,17 @@ export class ExtentListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (extent) => {
             this.slideIn.open(ExtentFormComponent, { wide: true, data: extent }).pipe(
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => this.refresh());
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.showDeleteDialog(row),
           requiredRoles: this.requiredRoles,
@@ -143,16 +143,16 @@ export class ExtentListComponent implements OnInit {
   ngOnInit(): void {
     const extents$ = this.iscsiService.getExtents().pipe(
       tap((extents) => this.extents = extents),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
 
     this.iscsiService.listenForDataRefresh()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
 
     this.dataProvider = new AsyncDataProvider(extents$);
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -160,14 +160,14 @@ export class ExtentListComponent implements OnInit {
   protected doAdd(): void {
     this.slideIn.open(ExtentFormComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }
 
   private showDeleteDialog(extent: IscsiExtent): void {
     this.matDialog.open(DeleteExtentDialog, { data: extent })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.refresh());
   }
 

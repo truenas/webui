@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,10 +8,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 type State = Record<string, AppStats>;
 
-@UntilDestroy()
 @Injectable()
 export class AppsStatsService extends ComponentStore<State> {
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   constructor() {
     super({});
@@ -23,7 +23,7 @@ export class AppsStatsService extends ComponentStore<State> {
 
   subscribeToUpdates(): void {
     this.api.subscribe('app.stats')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => this.onStatisticsReceived(event.fields));
   }
 

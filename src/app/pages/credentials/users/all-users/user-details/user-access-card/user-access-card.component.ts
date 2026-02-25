@@ -1,15 +1,15 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, output, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import { hasShellAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -34,7 +33,6 @@ import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-user-access-card',
   templateUrl: './user-access-card.component.html',
@@ -43,7 +41,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   imports: [
     MatButton,
     MatCard,
-    IxIconComponent,
+    TnIconComponent,
     MatCardTitle,
     MatCardHeader,
     MatCardActions,
@@ -67,6 +65,7 @@ export class UserAccessCardComponent {
   private downloadService = inject(DownloadService);
   private urlOptions = inject(UrlOptionsService);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   user = input.required<User>();
   reloadUsers = output();
@@ -86,10 +85,10 @@ export class UserAccessCardComponent {
 
   readonly sshAccessStatus = computed<string | null>(() => {
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {
-      return this.translate.instant('SSH Key Set & Password Login Enabled');
+      return this.translate.instant('SSH Key Authentication & Password Login Enabled');
     }
     if (this.user().sshpubkey) {
-      return this.translate.instant('SSH Key Set');
+      return this.translate.instant('SSH Key Authentication Enabled');
     }
     if (this.user().ssh_password_enabled) {
       return this.translate.instant('SSH Password Login Enabled');
@@ -144,7 +143,7 @@ export class UserAccessCardComponent {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(
         locked
@@ -164,7 +163,7 @@ export class UserAccessCardComponent {
   protected onAddApiKey(): void {
     this.slideIn
       .open(ApiKeyFormComponent, { data: { username: this.user().username } })
-      .pipe(untilDestroyed(this)).subscribe(() => {
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.reloadUsers.emit();
       });
   }
@@ -182,7 +181,7 @@ export class UserAccessCardComponent {
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
       )),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Two-Factor Authentication settings cleared'));
       this.reloadUsers.emit();

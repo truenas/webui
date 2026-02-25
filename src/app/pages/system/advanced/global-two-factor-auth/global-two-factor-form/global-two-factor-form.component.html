@@ -10,6 +10,7 @@
       <ix-fieldset>
         <ix-checkbox
           formControlName="enabled"
+          id="enable-2fa-global"
           [label]="'Enable Two Factor Authentication Globally' | translate"
           [warning]="twoFactorConfig.enabled ? '' : enableWarning"
         ></ix-checkbox>
@@ -20,6 +21,7 @@
         ></ix-input>
         <ix-checkbox
           formControlName="ssh"
+          id="enable-2fa-ssh"
           [label]="'Enable Two Factor Authentication for SSH' | translate"
         ></ix-checkbox>
       </ix-fieldset>

@@ -1,11 +1,12 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, NgZone, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, NgZone, OnDestroy, OnInit, Renderer2,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatTabsModule } from '@angular/material/tabs';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
@@ -26,15 +27,13 @@ const panelWidthMax = 900;
 const maxRetryAttempts = 30;
 const retryIntervalMs = 100;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-websocket-debug-panel',
   standalone: true,
   imports: [
     AsyncPipe,
     MatTabsModule,
-    MatButtonModule,
-    IxIconComponent,
+    TnIconButtonComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
     EnclosureMockTabComponent,
@@ -51,6 +50,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   private ngZone = inject(NgZone);
   // Ensure the service is instantiated
   enclosureMockService = inject(EnclosureMockService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);
   readonly activeTab$ = this.store$.select(selectActiveTab);
@@ -97,7 +97,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     });
 
     // Manage body margin when panel opens/closes
-    this.isPanelOpen$.pipe(untilDestroyed(this)).subscribe((isOpen) => {
+    this.isPanelOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isOpen) => {
       this.isPanelOpen = isOpen;
       this.updateAdminLayoutMargin(isOpen);
     });

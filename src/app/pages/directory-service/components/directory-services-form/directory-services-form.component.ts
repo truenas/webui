@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -6,7 +7,6 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
@@ -42,7 +42,6 @@ import { IpaConfigComponent } from './ipa-config/ipa-config.component';
 import { LdapConfigComponent } from './ldap-config/ldap-config.component';
 import { DirectoryServiceValidationService } from './services/directory-service-validation.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-directory-services-form',
   templateUrl: './directory-services-form.component.html',
@@ -79,6 +78,7 @@ export class DirectoryServicesFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private validationService = inject(DirectoryServiceValidationService);
   slideInRef = inject<SlideInRef<DirectoryServicesConfig | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
@@ -217,7 +217,7 @@ export class DirectoryServicesFormComponent implements OnInit {
       .afterClosed()
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -235,7 +235,7 @@ export class DirectoryServicesFormComponent implements OnInit {
       message: this.translate.instant('Directory service will be disabled and all settings will be lost. Are you sure you want to continue?'),
       buttonText: this.translate.instant('Clear'),
     }).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((confirmed) => {
       if (!confirmed) {
         return;
@@ -249,7 +249,7 @@ export class DirectoryServicesFormComponent implements OnInit {
         .afterClosed()
         .pipe(
           finalize(() => this.isLoading.set(false)),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         )
         .subscribe({
           next: () => {
@@ -304,7 +304,7 @@ export class DirectoryServicesFormComponent implements OnInit {
   private setupFormWatchers(): void {
     // Watch for main form status changes (validity)
     this.form.statusChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.updateFormValidity();
     });
@@ -312,7 +312,7 @@ export class DirectoryServicesFormComponent implements OnInit {
     this.form.controls.service_type.valueChanges.pipe(
       debounceTime(300), // Add debounce to prevent rapid changes
       distinctUntilChanged(), // Only emit when value actually changes
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((serviceType) => {
       // Check if we're trying to change service type while the current service is enabled
       // This prevents data loss and ensures users understand they need to disable the service first
@@ -328,7 +328,7 @@ export class DirectoryServicesFormComponent implements OnInit {
             currentType: this.getServiceTypeDisplayName(currentServiceType),
             newType: this.getServiceTypeDisplayName(serviceType),
           }),
-        ).pipe(untilDestroyed(this)).subscribe(() => {
+        ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           // Revert to previous service type after user dismisses the dialog
           this.form.controls.service_type.setValue(currentServiceType, { emitEvent: false });
           this.cdr.markForCheck();

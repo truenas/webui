@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -10,9 +11,9 @@ import {
   MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -33,7 +34,6 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -50,7 +50,6 @@ export enum DisconnectOption {
   Delete = 'delete',
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-export-disconnect-modal',
   styleUrls: ['./export-disconnect-modal.component.scss'],
@@ -72,7 +71,7 @@ export enum DisconnectOption {
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class ExportDisconnectModalComponent implements OnInit {
@@ -90,6 +89,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private store = inject(Store);
   pool = inject<Pool>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextVolumes;
 
@@ -192,7 +192,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       },
     )
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.handleDisconnectJobSuccess(value);
@@ -242,7 +242,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.restartServices = true;
@@ -285,7 +285,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([attachments, processes, systemConfig, poolCount, isHaEnabled, failoverConfig]) => {
         this.attachments = attachments;
@@ -305,7 +305,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.showUnknownStatusDetachWarning = this.pool.status === PoolStatus.Unknown;
 
     this.form.controls.destroy.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.resetNameInputValidState());
   }
 

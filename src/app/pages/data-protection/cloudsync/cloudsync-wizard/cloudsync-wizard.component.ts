@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, forwardRef, Signal, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge,
@@ -13,8 +13,8 @@ import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -23,7 +23,6 @@ import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsy
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync-provider.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloudsync-wizard',
   templateUrl: './cloudsync-wizard.component.html',
@@ -37,7 +36,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
     MatStepperModule,
     TranslateModule,
     AsyncPipe,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
 })
 export class CloudSyncWizardComponent {
@@ -47,6 +46,7 @@ export class CloudSyncWizardComponent {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   readonly whatAndWhen: Signal<CloudSyncWhatAndWhenComponent>
     = viewChild(forwardRef(() => CloudSyncWhatAndWhenComponent));
@@ -91,7 +91,7 @@ export class CloudSyncWizardComponent {
     const payload = this.whatAndWhen().getPayload();
 
     this.createTask(payload).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));

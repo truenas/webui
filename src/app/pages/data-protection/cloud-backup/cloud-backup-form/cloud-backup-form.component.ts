@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
 import {
   debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
@@ -44,7 +45,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 
 type FormValue = CloudBackupFormComponent['form']['value'];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-form',
   templateUrl: './cloud-backup-form.component.html',
@@ -68,6 +68,8 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     MatButton,
     TestDirective,
     TranslateModule,
+    TnBannerComponent,
+    TnBannerActionDirective,
   ],
 })
 export class CloudBackupFormComponent implements OnInit {
@@ -79,6 +81,7 @@ export class CloudBackupFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);
   slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup | false>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   get isNew(): boolean {
     return !this.editingTask;
@@ -145,6 +148,8 @@ export class CloudBackupFormComponent implements OnInit {
   protected readonly CloudSyncProviderName = CloudSyncProviderName;
 
   readonly helptext = helptextCloudBackup;
+  readonly storjAccountUrl = 'https://www.storj.io/get-started';
+  readonly documentationUrl = 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/';
 
   constructor() {
     const slideInRef = this.slideInRef;
@@ -175,7 +180,7 @@ export class CloudBackupFormComponent implements OnInit {
   loadBucketOptions(credentialId: number): void {
     this.isLoading.set(true);
     this.cloudCredentialService.getBuckets(credentialId)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (buckets) => {
           const bucketOptions = buckets.map((bucket) => ({
@@ -190,14 +195,8 @@ export class CloudBackupFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
         },
         error: (error: unknown) => {
-          console.error(error);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.bucketOptions$ = of([this.newBucketOption]);
-          this.bucketOptions$ = of([
-            {
-              label: 'something',
-              value: 'whatever',
-              disabled: false,
-            }]);
           this.isLoading.set(false);
         },
       });
@@ -269,7 +268,7 @@ export class CloudBackupFormComponent implements OnInit {
       request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response: CloudBackup) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));
@@ -288,7 +287,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   private listenForCredentialsChanges(): void {
     this.form.controls.credentials.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((credentialId) => {
         if (credentialId !== (this.editingTask?.credentials?.id || null)) {
           this.form.controls.bucket.patchValue('');
@@ -309,7 +308,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   private listenForBucketChanges(): void {
     this.form.controls.bucket.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         if (value === newOption) {
           this.form.controls.bucket_input.patchValue('');
@@ -326,7 +325,7 @@ export class CloudBackupFormComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.setBucketNodeProvider();
@@ -335,7 +334,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   private listenForTakeSnapshotChanges(): void {
     this.form.controls.snapshot.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((takeSnapshot) => {
         if (takeSnapshot) {
           this.form.controls.absolute_paths.setValue(false);

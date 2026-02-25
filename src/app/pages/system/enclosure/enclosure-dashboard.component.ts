@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -13,7 +13,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ViewElementsMenuComponent } from 'app/pages/system/enclosure/components/enclosure-header/view-elements-menu/view-elements-menu.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-enclosure-dashboard',
   templateUrl: './enclosure-dashboard.component.html',
@@ -39,6 +38,7 @@ export class EnclosureDashboardComponent {
   private route = inject(ActivatedRoute);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly isJbofLicensed$ = this.api.call('jbof.licensed');
 
@@ -60,10 +60,10 @@ export class EnclosureDashboardComponent {
 
   constructor() {
     this.enclosureStore.initiate(null);
-    this.enclosureStore.listenForDiskUpdates().pipe(untilDestroyed(this)).subscribe();
+    this.enclosureStore.listenForDiskUpdates().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.route.paramMap
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         const enclosure = params.get('enclosure');
         if (!enclosure) {

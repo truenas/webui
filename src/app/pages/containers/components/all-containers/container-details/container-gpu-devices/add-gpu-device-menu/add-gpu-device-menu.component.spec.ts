@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ContainerDeviceType, ContainerGpuType, ContainerType } from 'app/enums/container.enum';
+import { ContainerDeviceType, containerGpuType, ContainerType } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -25,8 +25,8 @@ describe('AddGpuDeviceMenuComponent', () => {
     type: ContainerType.Container,
   });
   const gpuChoices = {
-    '0000:19:00.0': ContainerGpuType.Nvidia,
-    '0000:1a:00.0': ContainerGpuType.Amd,
+    '0000:19:00.0': containerGpuType.Nvidia,
+    '0000:1a:00.0': containerGpuType.Amd,
   };
   const createComponent = createComponentFactory({
     component: AddGpuDeviceMenuComponent,
@@ -52,7 +52,7 @@ describe('AddGpuDeviceMenuComponent', () => {
         devices: () => [
           {
             dtype: ContainerDeviceType.Gpu,
-            gpu_type: ContainerGpuType.Nvidia,
+            gpu_type: containerGpuType.Nvidia,
             pci_address: '0000:19:00.0',
           } as ContainerDevice,
         ] as ContainerDevice[],

@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +19,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-license',
   templateUrl: './license.component.html',
@@ -47,6 +46,7 @@ export class LicenseComponent {
   private translate = inject(TranslateService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
@@ -72,7 +72,7 @@ export class LicenseComponent {
     this.isFormLoading = true;
 
     const { license } = this.form.getRawValue();
-    this.api.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.license_update', [license]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.slideInRef.close({ response: true });

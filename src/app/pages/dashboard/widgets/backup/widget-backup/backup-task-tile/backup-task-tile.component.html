@@ -15,7 +15,7 @@
       <ul>
         <li>
           <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
-            <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+            <tn-icon library="mdi" [name]="tile.failedSend ? 'alert' : 'check-circle'"></tn-icon>
           </span>
           <span class="label">
             {{ '{tasks, plural, =1 {# send task} other {# send tasks} }' | translate : { tasks: tile.totalSend } }}
@@ -23,7 +23,7 @@
         </li>
         <li>
           <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
-            <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+            <tn-icon library="mdi" [name]="tile.failedReceive ? 'alert' : 'check-circle'"></tn-icon>
           </span>
           <span class="label">
             {{ '{tasks, plural, =1 {# receive task} other {# receive tasks} }' | translate : { tasks: tile.totalReceive } }}
@@ -31,7 +31,7 @@
         </li>
         <li>
           <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
-            <ix-icon [name]="tile.failedSend + tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+            <tn-icon library="mdi" [name]="tile.failedSend + tile.failedReceive ? 'alert' : 'check-circle'"></tn-icon>
           </span>
           <span class="label">
             {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}

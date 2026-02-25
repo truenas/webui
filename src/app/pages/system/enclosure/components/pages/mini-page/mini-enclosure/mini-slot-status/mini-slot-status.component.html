@@ -1,31 +1,31 @@
 @if (slot().pool_info; as poolInfo) {
   @if (poolInfo.vdev_type === vDevType.Spare || poolInfo.vdev_type?.includes('spare')) {
-    <ix-icon name="mdi-database-plus" class="status-icon status-spare"></ix-icon>
+    <tn-icon name="database-plus" library="mdi" class="status-icon status-spare"></tn-icon>
   } @else {
     @switch (poolInfo.disk_status) {
         @case (EnclosureDiskStatus.Online) {
-          <ix-icon name="check_circle" class="status-icon status-online"></ix-icon>
+          <tn-icon name="check-circle" library="mdi" class="status-icon status-online"></tn-icon>
         }
         @case (EnclosureDiskStatus.Faulted) {
-          <ix-icon name="error" class="status-icon status-faulted"></ix-icon>
+          <tn-icon name="alert-circle" library="mdi" class="status-icon status-faulted"></tn-icon>
         }
         @case (EnclosureDiskStatus.Degraded) {
-          <ix-icon name="error" class="status-icon status-degraded"></ix-icon>
+          <tn-icon name="alert-circle" library="mdi" class="status-icon status-degraded"></tn-icon>
         }
         @case (EnclosureDiskStatus.Unknown) {
-          <ix-icon name="mdi-help-circle" class="status-icon status-unknown"></ix-icon>
+          <tn-icon name="help-circle" library="mdi" class="status-icon status-unknown"></tn-icon>
         }
         @case (EnclosureDiskStatus.Offline) {
-          <ix-icon name="mdi-minus-circle" class="status-icon status-offline"></ix-icon>
+          <tn-icon name="minus-circle" library="mdi" class="status-icon status-offline"></tn-icon>
         }
         @case (EnclosureDiskStatus.Unavail) {
-          <ix-icon name="mdi-minus-circle" class="status-icon status-unavailable"></ix-icon>
+          <tn-icon name="minus-circle" library="mdi" class="status-icon status-unavailable"></tn-icon>
         }
         @case (EnclosureDiskStatus.Removed) {
-          <ix-icon name="mdi-minus-circle" class="status-icon status-removed"></ix-icon>
+          <tn-icon name="minus-circle" library="mdi" class="status-icon status-removed"></tn-icon>
         }
         @default {
-          <ix-icon name="check_circle" class="status-icon"></ix-icon>
+          <tn-icon name="check-circle" library="mdi" class="status-icon"></tn-icon>
         }
       }
   }
@@ -37,10 +37,11 @@
   }
 }
 @else {
-  <ix-icon
-    name="mdi-circle-outline"
+  <tn-icon
+    name="circle-outline"
+    library="mdi"
     class="status-icon status-empty"
-  ></ix-icon>
+  ></tn-icon>
 
   {{ slot().dev ? ('Unassigned' | translate) : ('Empty' | translate) }}
 }

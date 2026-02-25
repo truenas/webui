@@ -4,7 +4,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,7 +17,6 @@ export interface StopVmDialogData {
   forceAfterTimeout: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-stop-vm-dialog',
   templateUrl: './stop-vm-dialog.component.html',

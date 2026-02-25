@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, effect, input, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import uniqBy from 'lodash-es/uniqBy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -12,7 +12,6 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-connections-card',
   styleUrls: ['./iscsi-connections-card.component.scss'],
@@ -30,6 +29,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class IscsiConnectionsCardComponent {
   private api = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();
 
@@ -49,7 +49,7 @@ export class IscsiConnectionsCardComponent {
       .pipe(
         take(1),
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((sessions) => {
         // Remove duplicates using lodash's uniqBy

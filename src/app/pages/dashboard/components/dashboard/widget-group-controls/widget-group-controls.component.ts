@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TnIconComponent } from '@truenas/ui-components';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -15,7 +15,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     MatIconButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     CdkDragHandle,
   ],

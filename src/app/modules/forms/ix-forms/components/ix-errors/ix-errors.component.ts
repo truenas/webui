@@ -1,23 +1,21 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
-import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validators/array-length-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 type SomeError = Record<string, unknown>;
 
 export const ixManualValidateError = 'ixManualValidateError';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-errors',
   templateUrl: './ix-errors.component.html',
@@ -25,8 +23,8 @@ export const ixManualValidateError = 'ixManualValidateError';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatError,
-    IxIconComponent,
-    MatTooltip,
+    TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })
@@ -34,6 +32,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private liveAnnouncer = inject(LiveAnnouncer);
+  private destroyRef = inject(DestroyRef);
 
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
@@ -135,7 +134,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
     this.statusChangeSubscription = this.control().statusChanges.pipe(
       filter((status) => status !== 'PENDING'),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.handleErrors();
     });

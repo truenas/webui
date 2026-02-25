@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, Observable, of, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -13,7 +14,6 @@ import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult 
 import { KeychainCredentialUsedBy, KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -34,7 +34,6 @@ import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credent
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ssh-connection-card',
   templateUrl: './ssh-connection-card.component.html',
@@ -66,6 +65,7 @@ export class SshConnectionCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private keychainCredentialService = inject(KeychainCredentialService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshConnectionsCardElements;
@@ -80,12 +80,12 @@ export class SshConnectionCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
@@ -100,14 +100,14 @@ export class SshConnectionCardComponent implements OnInit {
   ngOnInit(): void {
     const credentials$ = this.keychainCredentialService.getSshConnections().pipe(
       tap((credentials) => this.credentials = credentials),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
 
     this.keychainCredentialService.refetchSshConnections
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getCredentials());
   }
 
@@ -125,13 +125,13 @@ export class SshConnectionCardComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(SshConnectionFormComponent)
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getCredentials());
   }
 
   protected doEdit(credential: KeychainSshCredentials): void {
     this.slideIn.open(SshConnectionFormComponent, { data: credential })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.getCredentials());
   }
 
@@ -158,7 +158,7 @@ export class SshConnectionCardComponent implements OnInit {
         credential.id,
         result.secondaryCheckbox ? keypairId : null,
       )),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getCredentials();
     });

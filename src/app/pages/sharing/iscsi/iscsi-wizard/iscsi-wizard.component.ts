@@ -8,7 +8,6 @@ import {
   MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -48,8 +47,8 @@ import { newOption } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -64,7 +63,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wizard-step.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi-wizard',
   templateUrl: './iscsi-wizard.component.html',
@@ -87,7 +85,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
     MatStepperPrevious,
     RequiresRolesDirective,
     TranslateModule,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
 })
 export class IscsiWizardComponent implements OnInit {
@@ -275,10 +273,10 @@ export class IscsiWizardComponent implements OnInit {
       return of(this.form.dirty);
     });
 
-    this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
+    this.iscsiService.getExtents().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((extents) => {
       this.namesInUse.set(extents.map((extent) => extent.name));
     });
-    this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
+    this.iscsiService.getTargets().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((targets) => {
       this.namesInUse.set(targets.map((target) => target.name));
     });
   }
@@ -337,7 +335,9 @@ export class IscsiWizardComponent implements OnInit {
     this.form.controls.extent.controls.volsize.disable();
     this.form.controls.options.controls.listen.disable();
 
-    this.form.controls.target.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
+    this.form.controls.target.controls.target.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((target) => {
       if (target === newOption) {
         this.form.controls.options.enable();
         this.form.controls.target.controls.mode.setValue(IscsiTargetMode.Iscsi);
@@ -459,7 +459,7 @@ export class IscsiWizardComponent implements OnInit {
 
     if (requests.length) {
       this.loader.open(this.translate.instant('Rollback'));
-      forkJoin(requests).pipe(untilDestroyed(this)).subscribe({
+      forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => this.loader.close(),
         error: () => this.loader.close(),
       });

@@ -1,13 +1,21 @@
 @if (label() || tooltip()) {
-<ix-label [label]="label()" [tooltip]="tooltip()" [required]="required()"
-  [ixTestOverride]="controlDirective.name || ''"></ix-label>
+  <ix-label
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
+    [ixTestOverride]="controlDirective.name || ''"
+  ></ix-label>
 }
 
-<div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly()">
+<div
+  class="input-container"
+  [class.disabled]="isDisabled"
+  [class.readonly]="readonly()"
+>
   @if (prefixIcon()) {
-  <span class="prefix-icon">
-    <ix-icon [name]="prefixIcon()"></ix-icon>
-  </span>
+    <span class="prefix-icon">
+      <tn-icon [name]="prefixIcon()"></tn-icon>
+    </span>
   }
 
   <!--
@@ -19,67 +27,115 @@
       • a plain input (NO MatAutocompleteTrigger) otherwise — keeps it password‑manager friendly.
   -->
   @if (autocompleteOptions()) {
-  <input #ixInput #trigger="matAutocompleteTrigger" matInput [class.prefix-padding]="prefixIcon()"
-    [class.password-field]="isPasswordField()" [class.has-reset-input-icon]="shouldShowResetInput()"
-    [required]="required()" [readonly]="readonly()" [disabled]="isDisabled" [type]="getType()" [value]="formatted"
-    [autocomplete]="autocomplete()" [maxLength]="maxLength()" [matAutocomplete]="auto" [placeholder]="placeholder()"
-    [ixTest]="controlDirective.name" [attr.aria-label]="label()" [attr.name]="controlDirective.name"
-    [attr.id]="controlDirective.name" (input)="input(ixInput)" (focus)="focus(ixInput)" (blur)="blurred()" />
+    <input
+      #ixInput
+      #trigger="matAutocompleteTrigger"
+      matInput
+      [class.prefix-padding]="prefixIcon()"
+      [class.password-field]="isPasswordField()"
+      [class.has-reset-input-icon]="shouldShowResetInput()"
+      [required]="required()"
+      [readonly]="readonly()"
+      [disabled]="isDisabled"
+      [type]="getType()"
+      [value]="formatted"
+      [autocomplete]="autocomplete()"
+      [maxLength]="maxLength()"
+      [matAutocomplete]="auto"
+      [placeholder]="placeholder()"
+      [ixTest]="controlDirective.name"
+      [attr.aria-label]="label()"
+      [attr.name]="controlDirective.name"
+      [attr.id]="controlDirective.name"
+      (input)="input(ixInput)"
+      (focus)="focus(ixInput)"
+      (blur)="blurred()"
+    />
   } @else {
-  <input #ixInput matInput [class.prefix-padding]="prefixIcon()" [class.password-field]="isPasswordField()"
-    [class.has-reset-input-icon]="shouldShowResetInput()" [required]="required()" [readonly]="readonly()"
-    [disabled]="isDisabled" [type]="getType()" [value]="formatted" [autocomplete]="autocomplete()"
-    [maxLength]="maxLength()" [placeholder]="placeholder()" [ixTest]="controlDirective.name" [attr.aria-label]="label()"
-    [attr.name]="controlDirective.name" [attr.id]="controlDirective.name" (input)="input(ixInput)"
-    (focus)="focus(ixInput)" (blur)="blurred()" />
+    <input
+      #ixInput
+      matInput
+      [class.prefix-padding]="prefixIcon()"
+      [class.password-field]="isPasswordField()"
+      [class.has-reset-input-icon]="shouldShowResetInput()"
+      [required]="required()"
+      [readonly]="readonly()"
+      [disabled]="isDisabled"
+      [type]="getType()"
+      [value]="formatted"
+      [autocomplete]="autocomplete()"
+      [maxLength]="maxLength()"
+      [placeholder]="placeholder()"
+      [ixTest]="controlDirective.name"
+      [attr.aria-label]="label()"
+      [attr.name]="controlDirective.name"
+      [attr.id]="controlDirective.name"
+      (input)="input(ixInput)"
+      (focus)="focus(ixInput)"
+      (blur)="blurred()"
+    />
   }
 
   @if (shouldShowResetInput()) {
-  <span class="reset-input">
-    <ix-icon name="mdi-close-circle" (click)="resetInput()"></ix-icon>
-  </span>
+    <span class="reset-input">
+      <tn-icon name="close-circle" library="mdi" (click)="resetInput()"></tn-icon>
+    </span>
   }
 
-  @if (type() === "password") {
-  <button mat-icon-button type="button" class="toggle_pw" [ixTest]="['toggle-password', controlDirective.name]"
-    [attr.aria-label]="
-        showPassword
-          ? ('Hide Password' | translate)
-          : ('Show Password' | translate)
-      " (click)="onPasswordToggled()" (keydown.enter)="$event.stopPropagation()">
-    @if (showPassword) {
-    <ix-icon name="visibility" [matTooltip]="'Hide' | translate"></ix-icon>
-    } @else {
-    <ix-icon name="visibility_off" [matTooltip]="'Show' | translate">
-    </ix-icon>
-    }
-  </button>
+  @if (type() === 'password') {
+    <button
+      mat-icon-button
+      type="button"
+      class="toggle_pw"
+      [ixTest]="['toggle-password', controlDirective.name]"
+      [attr.aria-label]="showPassword ? ('Hide Password' | translate) : ('Show Password' | translate)"
+      (click)="onPasswordToggled()"
+      (keydown.enter)="$event.stopPropagation()"
+    >
+      @if (showPassword) {
+        <tn-icon
+          name="eye"
+          library="mdi"
+          [tnTooltip]="'Hide' | translate"
+        ></tn-icon>
+      } @else {
+        <tn-icon
+          name="eye-off"
+          library="mdi"
+          [tnTooltip]="'Show' | translate">
+        </tn-icon>
+      }
+    </button>
   }
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
     @if (filteredOptions?.length) {
-    @for (option of filteredOptions; track trackByIdentity(option)) {
-    <mat-option class="option" [value]="option" [ixTest]="[controlDirective.name, option.value]">
-      {{ option.label | translate }}
-    </mat-option>
-    }
+      @for (option of filteredOptions; track trackByIdentity(option)) {
+        <mat-option
+          class="option"
+          [value]="option"
+          [ixTest]="[controlDirective.name, option.value]"
+        >
+          {{ option.label | translate }}
+        </mat-option>
+      }
     }
   </mat-autocomplete>
 </div>
 
 @if (invalid) {
-<div>
-  <mat-error>
-    <div [innerHTML]="invalidMessage()"></div>
-  </mat-error>
-</div>
+  <div>
+    <mat-error>
+      <div [innerHTML]="invalidMessage()"></div>
+    </mat-error>
+  </div>
 }
 
 @let control = controlDirective.control;
 @if (control) {
-<ix-errors [control]="control" [label]="label()"></ix-errors>
+  <ix-errors [control]="control" [label]="label()"></ix-errors>
 }
 
 @if (hint()) {
-<mat-hint>{{ hint() }}</mat-hint>
+  <mat-hint>{{ hint() }}</mat-hint>
 }

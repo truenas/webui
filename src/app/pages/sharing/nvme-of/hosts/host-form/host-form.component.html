@@ -11,7 +11,14 @@
           class="host-nqn"
           formControlName="hostnqn"
           [label]="'Host NQN' | translate"
+          [tooltip]="helptext.hostNqnTooltip | translate"
           [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="description"
+          [label]="'Description' | translate"
+          [tooltip]="helptext.hostDescriptionTooltip | translate"
         ></ix-input>
       </ix-fieldset>
 

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import {
   MatStepper, MatStep, MatStepLabel, MatStepperPrevious, MatStepperNext,
 } from '@angular/material/stepper';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { pick } from 'lodash-es';
 import {
@@ -22,8 +22,8 @@ import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -48,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vm-wizard',
   templateUrl: './vm-wizard.component.html',
@@ -75,7 +74,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
     RequiresRolesDirective,
     MatStepperNext,
     TranslateModule,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
 })
 export class VmWizardComponent implements OnInit {
@@ -89,6 +88,7 @@ export class VmWizardComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private errorParser = inject(ErrorParserService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly osStep = viewChild.required(OsStepComponent);
   // TODO: Should be protected, but used in the test.
@@ -178,7 +178,7 @@ export class VmWizardComponent implements OnInit {
 
     startFlow$.pipe(
       switchMap((vm) => this.createDevices(vm, importedZvolPath)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe({
         next: () => {
@@ -209,7 +209,7 @@ export class VmWizardComponent implements OnInit {
 
   private setDefaultsFromOs(): void {
     this.osStep().form.controls.os.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((os) => {
         if (os === VmOs.Windows) {
           this.cpuAndMemoryStep().form.patchValue({

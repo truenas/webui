@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerGpuType } from 'app/enums/container.enum';
+import { containerGpuType } from 'app/enums/container.enum';
 import { Container, ContainerDeviceEntry } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
@@ -29,8 +29,8 @@ describe('ContainerDevicesStore', () => {
   ] as ContainerDeviceEntry[];
 
   const gpuChoices = {
-    '0000:19:00.0': ContainerGpuType.Nvidia,
-    '0000:1a:00.0': ContainerGpuType.Amd,
+    '0000:19:00.0': containerGpuType.Nvidia,
+    '0000:1a:00.0': containerGpuType.Amd,
   };
 
   const createService = createServiceFactory({

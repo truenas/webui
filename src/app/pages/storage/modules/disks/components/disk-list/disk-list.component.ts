@@ -7,6 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   filter, forkJoin, map, Observable, Subject, take,
 } from 'rxjs';
@@ -22,7 +23,6 @@ import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.in
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
@@ -67,7 +67,7 @@ interface DiskUi extends Disk {
     UiSearchDirective,
     MatButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     IxTableComponent,
     IxTableEmptyDirective,

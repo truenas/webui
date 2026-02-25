@@ -1,22 +1,27 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
-  AsyncValidatorFn, FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  endWith, forkJoin, Observable, of,
+  endWith, Observable, of,
 } from 'rxjs';
 import {
-  catchError, debounceTime, filter, map, switchMap, take, tap,
+  debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -67,13 +72,11 @@ import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
@@ -111,7 +114,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private datasetService = inject(DatasetService);
   private translate = inject(TranslateService);
   private router = inject(Router);
-  private userService = inject(UserService);
   protected loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -124,6 +126,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     existingSmbShare?: SmbShare;
     defaultSmbShare?: SmbShare;
   } | undefined, boolean>>(SlideInRef);
+
+  private destroyRef = inject(DestroyRef);
 
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;
@@ -184,6 +188,74 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     return this.isNew || this.form.dirty;
   }
 
+  private readonly basicControlNames = new Set([
+    'purpose',
+    'path',
+    'name',
+    'comment',
+    'enabled',
+    'remote_path',
+  ]);
+
+  private hasAdvancedErrorsInternal(): boolean {
+    return Object.entries(this.form.controls).some(([controlName, control]) => {
+      if (this.basicControlNames.has(controlName)) {
+        return false;
+      }
+
+      if (control.disabled) {
+        return false;
+      }
+
+      return control.invalid;
+    });
+  }
+
+  private isFieldEnabledForPurpose(fieldName: string, purpose: SmbSharePurpose): boolean {
+    return presetEnabledFields[purpose]?.includes(fieldName as never) ?? false;
+  }
+
+  get isNewTimeMachineShare(): boolean {
+    const currentPurpose = this.form.controls.purpose.value;
+
+    // For new shares, check if Time Machine will be enabled
+    if (this.isNew) {
+      // Time Machine is enabled if purpose is TimeMachineShare OR if timemachine field is enabled and checked
+      const isTimeMachinePurpose = currentPurpose === SmbSharePurpose.TimeMachineShare;
+      const hasTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
+      return isTimeMachinePurpose || hasTimeMachineField;
+    }
+
+    // For existing shares, only trigger restart if Time Machine functionality actually changes
+    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
+    const existingIsTimeMachine = this.existingSmbShare?.purpose === SmbSharePurpose.TimeMachineShare
+      || !!existingTimeMachine;
+
+    const hasCurrentTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
+    const currentIsTimeMachine = currentPurpose === SmbSharePurpose.TimeMachineShare || hasCurrentTimeMachineField;
+
+    return existingIsTimeMachine !== currentIsTimeMachine;
+  }
+
+  get isNewHomeShare(): boolean {
+    const homeShare = this.form.controls.home.value;
+    const existingHomeShare = (this.existingSmbShare?.options as LegacySmbShareOptions)?.home;
+
+    return typeof homeShare === 'boolean'
+      && ((this.isNew && homeShare) || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
+  }
+
+  get wasPathChanged(): boolean {
+    if (this.isNew || !this.existingSmbShare?.path) {
+      return false;
+    }
+
+    const currentPath = this.form.controls.path.value?.replace(/\/$/, '') || '';
+    const existingPath = this.existingSmbShare.path.replace(/\/$/, '') || '';
+
+    return currentPath !== existingPath;
+  }
+
   protected rootNodes = signal<ExplorerNodeData[]>([]);
 
   private auditValidator(): ValidatorFn {
@@ -210,46 +282,40 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     };
   }
 
-  private groupsExistValidator(): AsyncValidatorFn {
-    return (control): Observable<ValidationErrors | null> => {
-      const groups = control.value as string[];
+  private setupAuditValidation(): void {
+    const auditGroup = this.form.controls.audit;
+    const enableControl = auditGroup.controls.enable;
 
-      if (!groups || groups.length === 0) {
-        return of(null);
-      }
+    enableControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.updateAuditValidationState();
+      });
 
-      // Move debounce BEFORE the API calls to prevent firing them on every keystroke
-      return of(groups).pipe(
-        debounceTime(500),
-        switchMap((debouncedGroups) => {
-          const groupChecks = debouncedGroups.map((groupName: string) => {
-            return this.userService.getGroupByName(groupName).pipe(
-              map(() => ({ groupName, exists: true })),
-              catchError(() => of({ groupName, exists: false })),
-            );
-          });
-          return forkJoin(groupChecks);
-        }),
-        map((results) => {
-          const nonExistentGroups = results
-            .filter((result) => !result.exists)
-            .map((result) => result.groupName);
+    this.updateAuditValidationState();
+  }
 
-          if (nonExistentGroups.length > 0) {
-            return {
-              groupsDoNotExist: {
-                message: this.translate.instant(
-                  'The following groups do not exist: {groups}',
-                  { groups: nonExistentGroups.join(', ') },
-                ),
-              },
-            };
-          }
+  private updateAuditValidationState(): void {
+    const auditGroup = this.form.controls.audit;
+    auditGroup.updateValueAndValidity({ emitEvent: true });
+    // Don't mark as touched here - let normal form interaction handle it
+    // The validator will still prevent submission
+  }
 
-          return null;
-        }),
-      );
-    };
+  private openAdvancedOptionsIfInvalid(): void {
+    this.form.updateValueAndValidity({ emitEvent: false });
+
+    if (this.hasAdvancedErrorsInternal()) {
+      this.isAdvancedMode = true;
+      this.updateAuditValidationState();
+    }
+  }
+
+  protected toggleAdvancedMode(): void {
+    this.isAdvancedMode = !this.isAdvancedMode;
+
+    if (this.isAdvancedMode) {
+      this.updateAuditValidationState();
+    }
   }
 
   protected form = this.formBuilder.group({
@@ -327,7 +393,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   private setupExplorerRootNodes(): void {
     this.filesystemService.getTopLevelDatasetsNodes().pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (nodes) => {
         this.rootNodes.set(nodes);
@@ -360,23 +426,20 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.setupMangleWarning();
     this.setupPathControl();
     this.setupAclControl();
+    this.setupAuditValidation();
+    this.openAdvancedOptionsIfInvalid();
   }
 
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
       this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
-    this.form.controls.audit.controls.watch_list.addAsyncValidators([
-      this.groupsExistValidator(),
-    ]);
-    this.form.controls.audit.controls.ignore_list.addAsyncValidators([
-      this.groupsExistValidator(),
-    ]);
+    // Duplicate check removed - already handled in ngOnInit() via openAdvancedOptionsIfInvalid()
   }
 
   private setupAclControl(): void {
     this.form.controls.acl
-      .valueChanges.pipe(debounceTime(100), untilDestroyed(this))
+      .valueChanges.pipe(debounceTime(100), takeUntilDestroyed(this.destroyRef))
       .subscribe((acl) => {
         this.checkAndShowStripAclWarning(this.form.controls.path.value, acl);
       });
@@ -406,14 +469,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant(helptextSharingSmb.manglingDialog.action),
         hideCancel: true,
       })),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe();
   }
 
   private setupAutoDatasetCreationControl(): void {
     this.form.controls.auto_dataset_creation.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((autoCreate) => {
       if (!autoCreate) {
         this.form.controls.dataset_naming_schema.setValue(null);
@@ -434,7 +497,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
         this.setNameFromPath();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe((path) => {
         this.checkAndShowStripAclWarning(path, this.form.controls.acl.value);
@@ -455,14 +518,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private setupAfpWarning(): void {
-    this.form.controls.afp.valueChanges.pipe(untilDestroyed(this))
+    this.form.controls.afp.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value: boolean) => {
         this.afpConfirmEnable(value);
       });
   }
 
   private setupPurposeControl(): void {
-    this.form.controls.purpose.valueChanges.pipe(untilDestroyed(this))
+    this.form.controls.purpose.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.showLegacyWarning.set(value === SmbSharePurpose.LegacyShare);
         this.updateExtensionsWarning();
@@ -506,7 +569,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     this.api
       .call('filesystem.stat', [path])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((stat) => {
         if (stat.acl) {
           this.wasStripAclWarningShown = true;
@@ -554,7 +617,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant(helptextSharingSmb.stripACLDialog.button),
         hideCancel: true,
       })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 
@@ -605,7 +668,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant(helptextSharingSmb.afpDialogButton),
         hideCancel: false,
       })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((dialogResult: boolean) => {
         if (!dialogResult) {
           afpControl.setValue(!value);
@@ -614,6 +677,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   protected submit(): void {
+    if (this.form.invalid || this.isAsyncValidatorPending) {
+      this.form.markAllAsTouched();
+      if (this.hasAdvancedErrorsInternal()) {
+        this.isAdvancedMode = true;
+      }
+      return;
+    }
+
     const smbShare = { ...this.form.value } as SmbShare;
     const purpose = smbShare.purpose;
     const presetFields = presetEnabledFields[purpose] ?? [];
@@ -676,7 +747,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       switchMap((smbShareResponse) => this.shouldRedirectToAclEdit().pipe(
         map((shouldRedirect) => ({ smbShareResponse, shouldRedirect })),
       )),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ smbShareResponse, shouldRedirect }) => {
         this.isLoading.set(false);
@@ -687,7 +758,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
             buttonText: this.translate.instant('Configure'),
             cancelText: this.translate.instant('No'),
             hideCheckbox: true,
-          }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
+          }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isConfigure) => {
             if (isConfigure) {
               const homeShare = this.form.controls.home.value;
               this.router.navigate(
@@ -824,7 +895,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.api.call('smb.config')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((config) => {
         this.smbConfig.set(config);

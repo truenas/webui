@@ -2,8 +2,7 @@ import { Component, ChangeDetectionStrategy, computed, input, inject } from '@an
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -14,7 +13,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./truenas-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     RouterLink,
   ],
 })
@@ -39,25 +38,17 @@ export class TruenasLogoComponent {
 
   readonly logoTypeIcon = computed(() => {
     return this.useWhite()
-      ? iconMarker('ix-harbor-logo-type')
-      : iconMarker('ix-harbor-logo-type-color');
+      ? tnIconMarker('harbor-logo-type', 'custom')
+      : tnIconMarker('harbor-logo-type-color', 'custom');
   });
 
   readonly logoMarkIcon = computed(() => {
     return this.useWhite()
-      ? iconMarker('ix-harbor-logo-mark')
-      : iconMarker('ix-harbor-logo-mark-color');
+      ? tnIconMarker('harbor-logo-mark', 'custom')
+      : tnIconMarker('harbor-logo-mark-color', 'custom');
   });
 
   readonly fullSizeIcon = computed(() => {
-    return iconMarker('ix-harbor-logo');
-    // if (this.isEnterprise()) {
-    //   return this.useWhite()
-    //     ? iconMarker('ix-harbor-logo')
-    //     : iconMarker('ix-harbor-logo');
-    // }
-    // return this.useWhite()
-    //   ? iconMarker('ix-harbor-logo')
-    //   : iconMarker('ix-harbor-logo');
+    return tnIconMarker('harbor-logo', 'custom');
   });
 }

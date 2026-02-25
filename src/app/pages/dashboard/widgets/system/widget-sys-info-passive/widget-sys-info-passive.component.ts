@@ -1,14 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map,
@@ -19,8 +19,6 @@ import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -35,7 +33,6 @@ import {
   selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-widget-sys-info-passive',
   templateUrl: './widget-sys-info-passive.component.html',
@@ -44,7 +41,7 @@ import {
   imports: [
     MatCard,
     MatCardContent,
-    IxIconComponent,
+    TnIconComponent,
     ProductImageComponent,
     MatButton,
     TestDirective,
@@ -66,6 +63,7 @@ export class WidgetSysInfoPassiveComponent {
   private router = inject(Router);
   private localeService = inject(LocaleService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   size = input.required<SlotSize>();
 
@@ -120,11 +118,11 @@ export class WidgetSysInfoPassiveComponent {
       buttonText: this.translate.instant(helptextSystemFailover.failoverButton),
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
     });
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }

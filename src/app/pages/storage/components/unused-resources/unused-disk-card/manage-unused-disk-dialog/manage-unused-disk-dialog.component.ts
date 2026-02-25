@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -7,7 +8,6 @@ import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { groupBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -24,7 +24,6 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manage-unused-disk-dialog',
   templateUrl: './manage-unused-disk-dialog.component.html',
@@ -54,6 +53,7 @@ export class ManageUnusedDiskDialog implements OnInit {
   cdr = inject(ChangeDetectorRef);
   private dialogRef = inject<MatDialogRef<ManageUnusedDiskDialog>>(MatDialogRef);
   resource = inject<ManageUnusedDiskDialogResource>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -132,7 +132,7 @@ export class ManageUnusedDiskDialog implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.toPool.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.toPool.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value === AddToPoolType.New) {
         this.form.controls.pool.reset();
         this.form.controls.pool.setErrors(null);

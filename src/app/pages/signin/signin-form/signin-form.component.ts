@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, effect, inject, input } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, firstValueFrom,
@@ -19,15 +19,12 @@ import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.inte
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-signin-form',
   templateUrl: './signin-form.component.html',
@@ -35,6 +32,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnIconComponent,
     FormsModule,
     ReactiveFormsModule,
     InsecureConnectionComponent,
@@ -42,7 +40,6 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     TranslateModule,
     IxInputComponent,
     TestDirective,
-    IxIconComponent,
   ],
 })
 export class SigninFormComponent implements OnInit {
@@ -54,6 +51,7 @@ export class SigninFormComponent implements OnInit {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   disabled = input.required<boolean>();
 
@@ -89,7 +87,7 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         performance.mark('Login page ready');
@@ -101,7 +99,7 @@ export class SigninFormComponent implements OnInit {
   ngOnInit(): void {
     this.form.valueChanges.pipe(
       distinctUntilChanged(isEqual),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isLastLoginAttemptFailed = false;
@@ -122,7 +120,7 @@ export class SigninFormComponent implements OnInit {
     const formValues = this.form.getRawValue();
     this.cdr.markForCheck();
     this.authService.login(formValues.username, formValues.password).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult, loginResponse }) => {
         if (loginResult === LoginResult.Success) {
@@ -194,7 +192,7 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ({ loginResult }) => {
         if (loginResult === LoginResult.Success) {
@@ -212,7 +210,7 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 
   protected handleError(errorMessage: TranslatedString): void {
     this.signinStore.setLoadingState(false);

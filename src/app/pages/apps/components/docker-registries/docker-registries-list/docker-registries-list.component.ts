@@ -1,8 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -11,7 +14,6 @@ import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registr
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -33,7 +35,6 @@ import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-r
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-docker-registries-list',
   templateUrl: './docker-registries-list.component.html',
@@ -64,6 +65,7 @@ export class DockerRegistriesListComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerRegistriesListElements;
@@ -88,12 +90,12 @@ export class DockerRegistriesListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.onDelete(row),
@@ -136,7 +138,7 @@ export class DockerRegistriesListComponent implements OnInit {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
     })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }
 
@@ -144,7 +146,7 @@ export class DockerRegistriesListComponent implements OnInit {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { registry: row, isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
     })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.dataProvider.load());
   }
 
@@ -165,7 +167,7 @@ export class DockerRegistriesListComponent implements OnInit {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.dataProvider.load());
   }

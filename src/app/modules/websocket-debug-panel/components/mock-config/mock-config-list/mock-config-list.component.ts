@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, inject, untracked,
 } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MockConfigFormComponent } from 'app/modules/websocket-debug-panel/components/mock-config/mock-config-form/mock-config-form.component';
 import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import {
@@ -29,11 +29,11 @@ const maxObjectKeysPreview = 3;
   standalone: true,
   imports: [
     MatButton,
-    MatIconButton,
     MatSlideToggle,
     MatTooltip,
     TranslateModule,
-    IxIconComponent,
+    TnIconComponent,
+    TnIconButtonComponent,
     MockConfigFormComponent,
   ],
   templateUrl: './mock-config-list.component.html',

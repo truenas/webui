@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +20,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -45,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-nfs-list',
   templateUrl: './nfs-list.component.html',
@@ -84,6 +82,7 @@ export class NfsListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
@@ -136,17 +135,17 @@ export class NfsListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
             this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } }).pipe(
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => this.refresh());
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
             this.dialog.confirm({
@@ -156,12 +155,12 @@ export class NfsListComponent implements OnInit {
               buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               next: () => {
                 this.api.call('sharing.nfs.delete', [row.id]).pipe(
                   this.loader.withLoader(),
-                  untilDestroyed(this),
+                  takeUntilDestroyed(this.destroyRef),
                 ).subscribe({
                   next: () => this.refresh(),
                 });
@@ -180,12 +179,12 @@ export class NfsListComponent implements OnInit {
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.nfs.query').pipe(
       tap((shares) => this.nfsShares = shares),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
     this.setDefaultSort();
     this.refresh();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -201,7 +200,7 @@ export class NfsListComponent implements OnInit {
   protected doAdd(): void {
     this.slideIn.open(NfsFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.refresh();
@@ -230,7 +229,7 @@ export class NfsListComponent implements OnInit {
 
   private onChangeEnabledState(row: NfsShare): void {
     this.api.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();

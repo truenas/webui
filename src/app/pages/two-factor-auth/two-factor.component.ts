@@ -1,16 +1,16 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, input, output, signal, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, input, output, signal, inject, computed } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, of, EMPTY,
-  combineLatest,
+  combineLatest, map,
 } from 'rxjs';
 import {
   catchError,
@@ -19,6 +19,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,7 +30,6 @@ import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-two-factor',
   templateUrl: './two-factor.component.html',
@@ -62,6 +62,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = twoFactorElements;
 
@@ -70,6 +71,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   protected isFormLoading = signal(false);
   globalTwoFactorEnabled = signal(false);
   showQrCodeWarning = false;
+  currentSessionIs2fa = signal(false);
 
   protected readonly showSkipButton = computed(() => {
     return this.isSetupDialog() && !this.userTwoFactorAuthConfigured();
@@ -79,7 +81,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
-    if (this.userTwoFactorAuthConfigured()) {
+    if (this.userTwoFactorAuthConfigured() && !this.currentSessionIs2fa()) {
+      return this.translate.instant(helptext2fa.firstSetUp);
+    }
+    if (this.userTwoFactorAuthConfigured() && this.currentSessionIs2fa()) {
       return this.translate.instant(helptext2fa.allSetUp);
     }
     return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
@@ -113,7 +118,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
     ])
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([userConfig, globalConfig]) => {
           this.isDataLoading.set(false);
@@ -121,6 +126,12 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
         },
       });
+
+    this.api.call('auth.sessions').pipe(
+      map((sessionsList) => sessionsList.find((session) => {
+        return session.current && session.credentials === CredentialType.TwoFactor;
+      })),
+    ).subscribe((session) => this.currentSessionIs2fa.set(!!session));
   }
 
   protected renewSecretOrEnable2Fa(): void {
@@ -129,7 +140,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       switchMap(() => this.renewSecretForUser()),
       tap(() => this.isFormLoading.set(false)),
       catchError((error: unknown) => this.handleError(error)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -152,6 +163,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
     this.setQrWarningState(true);
 
+    this.currentSessionIs2fa.set(false);
+
     return this.authService.user$.pipe(
       take(1),
       filter((user) => !!user),
@@ -160,7 +173,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       tap(() => {
         this.userTwoFactorAuthConfigured.set(true);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   }
 
@@ -188,7 +201,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.skipSetup.emit();
     });
@@ -220,9 +233,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
         this.isFormLoading.set(false);
         this.userTwoFactorAuthConfigured.set(false);
         this.setQrWarningState(false);
+        this.currentSessionIs2fa.set(false);
       }),
       catchError((error: unknown) => this.handleError(error)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

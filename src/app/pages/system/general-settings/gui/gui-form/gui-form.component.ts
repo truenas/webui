@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
@@ -38,7 +38,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-gui-form',
   templateUrl: './gui-form.component.html',
@@ -74,6 +73,7 @@ export class GuiFormComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   protected isFormLoading = signal(true);
   configData: SystemGeneralConfig;
@@ -122,7 +122,7 @@ export class GuiFormComponent implements OnInit {
   ngOnInit(): void {
     this.api.call('system.security.config').pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((config: SystemSecurityConfig) => {
       const isStigMode = config.enable_gpos_stig;
       this.isStigMode.set(isStigMode);
@@ -134,7 +134,7 @@ export class GuiFormComponent implements OnInit {
   }
 
   private replaceHrefWhenWsConnected(href: string): void {
-    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
         this.window.location.replace(href);
@@ -172,7 +172,7 @@ export class GuiFormComponent implements OnInit {
         this.isFormLoading.set(true);
         return this.api.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
@@ -223,7 +223,7 @@ export class GuiFormComponent implements OnInit {
       }).pipe(
         tap(() => this.slideInRef.close({ response: true })),
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         const hostname = this.window.location.hostname;
         const protocol = this.window.location.protocol;
@@ -241,7 +241,7 @@ export class GuiFormComponent implements OnInit {
         this.loader.open();
         this.wsManager.prepareShutdown(); // not really shutting down, just stop websocket detection temporarily
         this.api.call('system.general.ui_restart').pipe(
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe({
           next: () => {
             this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
@@ -264,7 +264,7 @@ export class GuiFormComponent implements OnInit {
       this.store$.pipe(waitForGeneralConfig),
       this.store$.pipe(waitForPreferences),
     ]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([config, preferences]) => {
       this.configData = config;
       this.formGroup.patchValue({
@@ -285,7 +285,7 @@ export class GuiFormComponent implements OnInit {
 
   private setupThemePreview(): void {
     this.formGroup.controls.theme.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((theme) => {
       this.store$.dispatch(themeChangedInGuiForm({ theme }));
     });

@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -41,6 +42,7 @@ import { ReplicationRestoreDialog } from 'app/pages/data-protection/replication/
 import { DownloadService } from 'app/services/download.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { ReplicationWizardComponent } from '../replication-wizard/replication-wizard.component';
 
 const tasks = [{
   id: 1,
@@ -74,7 +76,7 @@ const tasks = [{
   state: {
     state: TaskState.Hold,
     datetime: {
-      $date: new Date().getTime() - 50000,
+      $date: new Date('2026-01-19T23:59:10Z').getTime(),
     },
     reason: 'Pool pewl is offline.',
   },
@@ -114,6 +116,9 @@ describe('ReplicationListComponent', () => {
   let spectator: Spectator<ReplicationListComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
+
+  beforeEach(() => fakeDate(new Date('2026-01-20T00:00:00Z')));
+  afterEach(() => restoreDate());
 
   const createComponent = createComponentFactory({
     component: ReplicationListComponent,
@@ -194,6 +199,20 @@ describe('ReplicationListComponent', () => {
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('replication.run', [1]);
+  });
+
+  it('shows wizard when the add button is pressed', async () => {
+    await table.expandRow(0);
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      ReplicationWizardComponent,
+      {
+        wide: true,
+      },
+    );
   });
 
   it('shows form to edit an existing interface when edit button is pressed', async () => {

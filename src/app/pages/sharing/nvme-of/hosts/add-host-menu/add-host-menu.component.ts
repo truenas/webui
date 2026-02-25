@@ -1,29 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-host-menu',
   templateUrl: './add-host-menu.component.html',
+  styleUrl: './add-host-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxIconComponent,
+    TnIconComponent,
     MatButton,
     MatMenu,
     MatMenuItem,
@@ -38,6 +38,7 @@ export class AddHostMenuComponent {
   private slideIn = inject(SlideIn);
   private matDialog = inject(MatDialog);
   private nvmeOfStore = inject(NvmeOfStore);
+  private destroyRef = inject(DestroyRef);
 
   hosts = input.required<NvmeOfHost[]>();
   showAllowAnyHost = input(false);
@@ -61,7 +62,7 @@ export class AddHostMenuComponent {
       .open(HostFormComponent)
       .pipe(
         filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((response) => {
         this.selectHost(response.response);

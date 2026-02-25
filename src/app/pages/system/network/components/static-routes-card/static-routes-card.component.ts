@@ -1,18 +1,18 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
@@ -35,7 +35,6 @@ import {
 import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
 import { staticRoutesCardElements } from 'app/pages/system/network/components/static-routes-card/static-routes-card.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-static-routes',
   templateUrl: './static-routes-card.component.html',
@@ -65,6 +64,7 @@ export class StaticRoutesCardComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = staticRoutesCardElements.elements;
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
@@ -83,12 +83,12 @@ export class StaticRoutesCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
@@ -103,7 +103,7 @@ export class StaticRoutesCardComponent implements OnInit {
   ngOnInit(): void {
     const staticRoutes$ = this.api.call('staticroute.query').pipe(
       tap((staticRoutes) => this.staticRoutes = staticRoutes),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<StaticRoute>(staticRoutes$);
     this.setDefaultSort();
@@ -125,7 +125,7 @@ export class StaticRoutesCardComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(StaticRouteFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getStaticRoutes();
     });
@@ -134,7 +134,7 @@ export class StaticRoutesCardComponent implements OnInit {
   doEdit(route: StaticRoute): void {
     this.slideIn.open(StaticRouteFormComponent, { data: route }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.getStaticRoutes();
     });
@@ -144,7 +144,7 @@ export class StaticRoutesCardComponent implements OnInit {
     this.matDialog.open(StaticRouteDeleteDialog, {
       data: route,
     }).afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.getStaticRoutes();
       });

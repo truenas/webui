@@ -18,7 +18,7 @@
         (click)="onValueChanged(index + 1)"
         (blur)="onTouch()"
       >
-        <ix-icon [name]="value >= index + 1 ? iconMarker('mdi-star') : iconMarker('mdi-star-outline')"></ix-icon>
+        <tn-icon [name]="value >= index + 1 ? tnIconMarker('star', 'mdi') : tnIconMarker('star-outline', 'mdi')"></tn-icon>
       </button>
     </div>
   }

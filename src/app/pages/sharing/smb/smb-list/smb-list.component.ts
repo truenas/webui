@@ -1,14 +1,21 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   filter, of, take, tap,
 } from 'rxjs';
@@ -24,7 +31,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -54,7 +60,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
@@ -94,6 +99,7 @@ export class SmbListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
 
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
@@ -133,18 +139,18 @@ export class SmbListComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
             this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } }).pipe(
               take(1),
               filter((response) => !!response.response),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe(() => this.dataProvider.load());
           },
         },
         {
-          iconName: iconMarker('share'),
+          iconName: tnIconMarker('share-variant', 'mdi'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => {
             if (row.locked) {
@@ -156,13 +162,13 @@ export class SmbListComponent implements OnInit {
                 : row.name;
               this.loader.open();
               this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
-                .pipe(untilDestroyed(this))
+                .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe((shareAcl) => {
                   this.loader.close();
                   this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
                     take(1),
                     filter((response) => !!response.response),
-                    untilDestroyed(this),
+                    takeUntilDestroyed(this.destroyRef),
                   ).subscribe(() => {
                     this.dataProvider.load();
                   });
@@ -171,7 +177,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: iconMarker('security'),
+          iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
@@ -188,7 +194,7 @@ export class SmbListComponent implements OnInit {
           },
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
@@ -199,13 +205,13 @@ export class SmbListComponent implements OnInit {
               buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
-              untilDestroyed(this),
+              takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               next: () => {
                 this.api.call('sharing.smb.delete', [row.id]).pipe(
                   this.loader.withLoader(),
                   this.errorHandler.withErrorHandler(),
-                  untilDestroyed(this),
+                  takeUntilDestroyed(this.destroyRef),
                 ).subscribe(() => {
                   this.dataProvider.load();
                 });
@@ -223,12 +229,12 @@ export class SmbListComponent implements OnInit {
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.smb.query').pipe(
       tap((shares) => this.smbShares = shares),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
     this.dataProvider.load();
     this.setDefaultSort();
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
@@ -245,7 +251,7 @@ export class SmbListComponent implements OnInit {
     this.slideIn.open(SmbFormComponent).pipe(
       take(1),
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();
@@ -278,7 +284,7 @@ export class SmbListComponent implements OnInit {
   private onChangeEnabledState(row: SmbShare): void {
     this.api.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
       this.loader.withLoader(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.dataProvider.load();

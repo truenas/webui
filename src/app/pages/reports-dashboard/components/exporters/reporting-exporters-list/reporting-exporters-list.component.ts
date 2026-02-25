@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
@@ -16,7 +17,6 @@ import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -37,7 +37,6 @@ import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/com
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-reporting-exporters-list',
   templateUrl: './reporting-exporters-list.component.html',
@@ -71,6 +70,7 @@ export class ReportingExporterListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.ReportingWrite];
   protected readonly searchableElements = reportingExportersElements;
@@ -100,7 +100,7 @@ export class ReportingExporterListComponent implements OnInit {
           ),
         );
         this.api.call('reporting.exporters.update', [row.id, { enabled: checked }]).pipe(
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe({
           complete: () => {
             this.loader.close();
@@ -113,12 +113,12 @@ export class ReportingExporterListComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
-          iconName: iconMarker('mdi-delete'),
+          iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           requiredRoles: this.requiredRoles,
@@ -159,7 +159,7 @@ export class ReportingExporterListComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(ReportingExportersFormComponent).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => this.getExporters(),
     });
@@ -176,7 +176,7 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private getExporters(): void {
-    this.api.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('reporting.exporters.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
         this.onListFiltered(this.searchQuery());
@@ -206,7 +206,7 @@ export class ReportingExporterListComponent implements OnInit {
   private doEdit(exporter: ReportingExporter): void {
     this.slideIn.open(ReportingExportersFormComponent, { data: exporter }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => this.getExporters(),
     });
@@ -222,7 +222,7 @@ export class ReportingExporterListComponent implements OnInit {
       filter(Boolean),
       tap(() => this.loader.open(this.translate.instant('Deleting exporter'))),
       switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id])),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (deleted) => {
         if (deleted) {

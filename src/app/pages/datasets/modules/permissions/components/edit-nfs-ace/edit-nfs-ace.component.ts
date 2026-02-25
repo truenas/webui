@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { fromPairs } from 'lodash-es';
 import { of } from 'rxjs';
@@ -36,7 +36,6 @@ import {
   nfsFormPermsTypeLabels,
 } from './edit-nfs-ace-form.types';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-edit-nfs-ace',
   templateUrl: './edit-nfs-ace.component.html',
@@ -57,6 +56,7 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   private formBuilder = inject(FormBuilder);
   private store = inject(DatasetAclEditorStore);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   readonly ace = input.required<NfsAclItem>();
 
@@ -122,10 +122,10 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
 
   private setFormListeners(): void {
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onAceUpdated());
     this.form.statusChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onFormStatusUpdated());
   }
 

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness, tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -75,9 +76,9 @@ describe('ErrorDialog', () => {
       expect(message).toHaveText(baseError.message);
     });
 
-    it('shows default error icon when no custom icon provided', () => {
-      const icon = spectator.query('ix-icon.error-warning-icon');
-      expect(icon).toExist();
+    it('shows default error icon when no custom icon provided', async () => {
+      const icon = await loader.getHarnessOrNull(TnIconHarness.with({ name: 'alert-circle' }));
+      expect(icon).not.toBeNull();
     });
 
     it('does not show hint section when not provided', () => {
@@ -116,10 +117,10 @@ describe('ErrorDialog', () => {
   });
 
   describe('custom icon', () => {
-    it('shows custom icon when provided', () => {
+    it('shows custom icon when provided', async () => {
       const errorWithIcon = {
         ...baseError,
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
       } as ErrorReport;
 
       spectator = createComponent({
@@ -130,12 +131,11 @@ describe('ErrorDialog', () => {
           },
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const icon = spectator.query('ix-icon.error-warning-icon');
-      expect(icon).toExist();
-      // Check that the component rendered with the custom icon
-      const title = spectator.query('.err-title');
-      expect(title.innerHTML).toContain('ix-cloud-off');
+      const icon = await loader.getHarnessOrNull(TnIconHarness);
+      expect(icon).not.toBeNull();
+      expect(await icon.getName()).toBe('app-cloud-off');
     });
   });
 
@@ -320,6 +320,62 @@ describe('ErrorDialog', () => {
       // The copy button should include all details including trace
       const copyButton = spectator.query('ix-copy-button');
       expect(copyButton).toExist();
+    });
+  });
+
+  describe('logs excerpt in details', () => {
+    const errorWithLogsExcerpt = {
+      ...baseError,
+      details: [
+        { label: 'Logs Excerpt', value: 'container-1  | Error: something failed\ncontainer-1  | Exiting' },
+      ],
+    } as ErrorReport;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: errorWithLogsExcerpt,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('hides logs excerpt by default with Show link', () => {
+      const viewDetailsLink = spectator.query(byText('View Details'));
+      spectator.click(viewDetailsLink);
+
+      expect(spectator.query(byText('Logs Excerpt:'))).toExist();
+      const showLinks = spectator.queryAll(byText('Show'));
+      expect(showLinks).toHaveLength(1);
+      expect(spectator.query(byText('container-1  | Error: something failed'))).not.toExist();
+    });
+
+    it('shows logs excerpt content when Show is clicked', () => {
+      const viewDetailsLink = spectator.query(byText('View Details'));
+      spectator.click(viewDetailsLink);
+
+      const showLink = spectator.query(byText('Show'));
+      spectator.click(showLink);
+
+      const preElement = spectator.query('.detail-value pre');
+      expect(preElement).toExist();
+      expect(preElement).toHaveText('container-1  | Error: something failed\ncontainer-1  | Exiting');
+
+      expect(spectator.query(byText('Hide'))).toExist();
+    });
+
+    it('hides logs excerpt content when Hide is clicked', () => {
+      const viewDetailsLink = spectator.query(byText('View Details'));
+      spectator.click(viewDetailsLink);
+
+      spectator.click(spectator.query(byText('Show')));
+      spectator.click(spectator.query(byText('Hide')));
+
+      expect(spectator.query(byText('container-1  | Error: something failed'))).not.toExist();
+      expect(spectator.query(byText('Show'))).toExist();
     });
   });
 });

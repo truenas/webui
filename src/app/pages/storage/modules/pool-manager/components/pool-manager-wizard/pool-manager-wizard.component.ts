@@ -1,17 +1,17 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, output, ViewChild, viewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -21,10 +21,9 @@ import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
-  UseIxIconsInStepperComponent,
-} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+  UseIconsInStepperComponent,
+} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -50,7 +49,6 @@ import { MetadataWizardStepComponent } from './steps/7-metadata-wizard-step/meta
 import { DedupWizardStepComponent } from './steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-wizard-step.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-pool-manager-wizard',
   templateUrl: './pool-manager-wizard.component.html',
@@ -64,8 +62,8 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     MatStep,
     StepActivationDirective,
     MatStepLabel,
-    IxIconComponent,
-    MatTooltip,
+    TnIconComponent,
+    TnTooltipDirective,
     GeneralWizardStepComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
@@ -77,7 +75,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    UseIxIconsInStepperComponent,
+    UseIconsInStepperComponent,
   ],
   providers: [
     PoolManagerValidationService,
@@ -100,6 +98,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('generalStep') generalStep: GeneralWizardStepComponent;
   @ViewChild('enclosureStep') enclosureStep: EnclosureWizardStepComponent;
@@ -152,13 +151,14 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         this.existingPool = pool;
         this.cdr.markForCheck();
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
     return this.topLevelWarningsForEachStep?.[step];
   }
+
 
   getTopLevelErrorForStep(step: PoolCreationWizardStep): string {
     return this.topLevelErrorsForEachStep?.[step] || '';
@@ -194,7 +194,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         }).afterClosed();
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.generalStep?.form?.markAsPristine();
       this.enclosureStep?.form?.markAsPristine();
@@ -221,7 +221,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   }
 
   private listenForStartOver(): void {
-    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.stepper().selectedIndex = 0;
       this.activatedSteps = {};
     });
@@ -230,16 +230,20 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private connectToStore(): void {
     this.store.initialize();
 
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+    this.store.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
       this.state = state;
       this.cdr.markForCheck();
     });
 
-    this.poolManagerValidation.getTopLevelWarningsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
+    this.poolManagerValidation.getTopLevelWarningsForEachStep().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((warnings) => {
       this.topLevelWarningsForEachStep = warnings;
     });
 
-    this.poolManagerValidation.getTopLevelErrorsForEachStep().pipe(untilDestroyed(this)).subscribe((warnings) => {
+    this.poolManagerValidation.getTopLevelErrorsForEachStep().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((warnings) => {
       this.topLevelErrorsForEachStep = warnings;
     });
   }
@@ -250,7 +254,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       this.systemStore$.select(selectHasEnclosureSupport),
     ]).pipe(
       map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
       if (result) {
@@ -295,7 +299,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Pool updated successfully'));
@@ -309,7 +313,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       message: this.translate.instant('The contents of all added disks will be erased.'),
     }).pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         if (!this.existingPool) {

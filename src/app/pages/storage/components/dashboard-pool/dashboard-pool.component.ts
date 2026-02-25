@@ -1,13 +1,14 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges, inject, computed,
+  ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject, computed,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,7 +24,6 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -44,7 +44,6 @@ import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.compon
 import { SedLockedWarningComponent } from './sed-locked-warning/sed-locked-warning.component';
 import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dashboard-pool',
   templateUrl: './dashboard-pool.component.html',
@@ -60,7 +59,7 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
     MatTooltip,
     TestDirective,
     UiSearchDirective,
-    IxIconComponent,
+    TnIconComponent,
     VDevsCardComponent,
     PoolUsageCardComponent,
     StorageHealthCardComponent,
@@ -82,6 +81,7 @@ export class DashboardPoolComponent implements OnChanges {
   private snackbar = inject(SnackbarService);
   private store = inject(PoolsDashboardStore);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private destroyRef = inject(DestroyRef);
 
   readonly pool = input<Pool>();
   readonly rootDataset = input<Dataset>();
@@ -90,6 +90,7 @@ export class DashboardPoolComponent implements OnChanges {
 
   protected readonly requiredRoles = [Role.PoolWrite];
   protected readonly searchableElements = dashboardPoolElements;
+
   protected isOnline = computed(() => {
     return this.pool().status === PoolStatus.Online;
   });
@@ -113,7 +114,7 @@ export class DashboardPoolComponent implements OnChanges {
         data: this.pool(),
       })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((needRefresh: boolean) => {
         if (!needRefresh) {
           return;
@@ -141,7 +142,7 @@ export class DashboardPoolComponent implements OnChanges {
           this.store.loadDashboard();
         }),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -162,7 +163,7 @@ export class DashboardPoolComponent implements OnChanges {
         this.store.loadDashboard();
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -170,7 +171,7 @@ export class DashboardPoolComponent implements OnChanges {
     this.matDialog
       .open(AutotrimDialog, { data: this.pool() })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }
 

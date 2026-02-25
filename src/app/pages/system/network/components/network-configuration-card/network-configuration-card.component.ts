@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { combineLatest, filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -15,7 +16,6 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -27,7 +27,6 @@ import {
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-network-configuration-card',
   templateUrl: './network-configuration-card.component.html',
@@ -42,7 +41,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     MatCardContent,
     MatList,
     MatListItem,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     CastPipe,
   ],
@@ -55,6 +54,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   private searchDirectives = inject(UiSearchDirectivesService);
   private actions$ = inject(Actions);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly networkConfigurationCardElements = networkConfigurationCardElements;
 
@@ -65,7 +65,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
 
-    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
+    this.actions$.pipe(ofType(networkInterfacesChanged), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
@@ -154,7 +154,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   onSettingsClicked(): void {
     this.slideIn.open(NetworkConfigurationComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
@@ -168,7 +168,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     ])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([summary, config]) => {
         this.isLoading = false; // TODO: Add loading indication in UI.

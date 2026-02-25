@@ -1,21 +1,5 @@
 <div mat-dialog-title class="dialog-title-with-logo">
-  <img
-    class="title-logo"
-    src="assets/images/truenas-connect-logo-horizontal.svg"
-    alt="HarborOS Connect"
-  />
-  @if (status() === TncStatus.Active) {
-    <button
-      mat-icon-button
-      class="disable-service-button"
-      ixTest="tnc-disable-service"
-      [matTooltip]="'Disable Service' | translate"
-      [disabled]="isDisabling()"
-      (click)="disableService()"
-    >
-      <ix-icon name="ix-cloud-off"></ix-icon>
-    </button>
-  }
+  <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
 </div>
 <mat-divider></mat-divider>
 <mat-dialog-content>
@@ -41,7 +25,7 @@
         ixTest="tnc-documentation-link"
       >
         {{ "Learn more about TrueNAS Connect" | translate }}
-        <ix-icon name="mdi-open-in-new" aria-hidden="true"></ix-icon>
+        <tn-icon name="open-in-new" library="mdi" size="sm" aria-hidden="true" style="margin-top: -2px"></tn-icon>
         <span class="sr-only">{{ "opens in a new tab" | translate }}</span>
       </a>
     </div>
@@ -53,6 +37,15 @@
       {{ "Loading..." | translate }}
     </button>
   } @else if (status() === TncStatus.Active) {
+    <button
+      color="warn"
+      mat-button
+      ixTest="tnc-disable-service"
+      [disabled]="isDisabling()"
+      (click)="disableService()"
+    >
+      {{ "Disable" | translate }}
+    </button>
     <button
       color="primary"
       mat-button

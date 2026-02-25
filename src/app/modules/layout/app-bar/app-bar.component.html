@@ -1,23 +1,28 @@
 <aside
-  class="h-[calc(100vh-134px)] z-10 flex fixed w-[110px] left-0 top-[104px] flex-col overflow-hidden"
+  class="h-[calc(100vh-134px)] z-10 flex fixed w-27.5 left-0 top-26 flex-col overflow-hidden"
 >
   <div class="flex-1 flex flex-col gap-4 justify-center">
-    <div class="grid gap-[clamp(8px,2vh,16px)] text-center mx-auto">
-      @for (item of appBarState$ | async; track item) {
+    <div class="grid gap-4 text-center mx-auto">
+      @for (item of sortedAppBarState$ | async; track item) {
         <button
           matMiniFab
-          class="cursor-pointer size-[clamp(36px,5vh,50px)] rounded-full relative flex items-center justify-center"
+          class="cursor-pointer size-12.5 rounded-full relative flex items-center justify-center"
           [ngClass]="item.status === 'open' ? 'bg-primary' : 'bg-background'"
           [routerLink]="getRouterLink(item.state)"
           (click)="onItemClick(item)"
         >
-          <ix-icon
-            class="text-[clamp(18px,3vh,24px)]!"
+          <tn-icon
+            class="size-6"
             [name]="item.status === 'open' ? item.iconActive : item.icon"
-            [ngClass]="
-              item.status === 'open' ? 'text-background' : 'text-foreground'
-            "
-          />
+            [ngClass]="[
+              item.status === 'open' ? 'text-background!' : 'text-foreground!',
+              item.state === 'desktop' ? '' : 'hidden'
+            ]"
+          ></tn-icon>
+
+          <div class="size-6" [ngClass]="item.state === 'desktop' ? 'hidden' : ''">
+            <ix-harbor-icon [name]="item.status === 'open' ? item.iconActive : item.icon"></ix-harbor-icon>
+          </div>
         </button>
       }
     </div>

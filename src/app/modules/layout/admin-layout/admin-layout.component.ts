@@ -1,15 +1,14 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDrawerMode, MatSidenav, MatSidenavContainer,
 } from '@angular/material/sidenav';
-import { Router, RouterOutlet } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { map, Subject } from 'rxjs';
+import { filter, map, Subject } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { hashMessage } from 'app/helpers/hash-message';
@@ -17,7 +16,8 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LanguageService } from 'app/modules/language/language.service';
 import { AppBarComponent } from 'app/modules/layout/app-bar/app-bar.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
@@ -31,7 +31,6 @@ import {
   selectCopyrightHtml, selectIsEnterprise, selectProductType, waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
@@ -56,11 +55,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
   private languageService = inject(LanguageService);
   private sessionTimeoutService = inject(SessionTimeoutService);
+  router = inject(Router);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private destroyRef = inject(DestroyRef);
   private destroy$ = new Subject<void>();
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
-  protected readonly iconMarker = iconMarker;
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
@@ -70,14 +71,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   // angular tooltips are unable to display HTML content, so we just remove the `<br>` tags
   // credit <https://github.com/JackW6809> for the replace pattern!
   readonly copyrightText = computed(() => this.copyrightHtml().replace(/<br\s*\/?>/gi, '\n'));
-
   isInit = false;
 
-  router = inject(Router);
-
-  protected currentMessageHref = computed(
-    () => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`,
-  );
+  protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
   get sidenavWidth(): string {
     return this.sidenavService.sidenavWidth;
@@ -121,10 +117,62 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     performance.measure('Login', 'Login Start', 'Admin Init');
     this.sessionTimeoutService.start();
     this.themeService.loadTheme$.next('');
-    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
     this.listenForSidenavChanges();
+    this.setupGlobalHighlightHandler();
+  }
+
+  /**
+   * Global handler for pending UI highlights from alert navigation.
+   * Listens to router navigation events and automatically handles pending highlights
+   * after navigation completes and components have rendered.
+   */
+  private setupGlobalHighlightHandler(): void {
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      // Wait for components to render and register their directives
+      setTimeout(() => this.handlePendingHighlight(), searchDelayConst);
+    });
+  }
+
+  private handlePendingHighlight(): void {
+    const pendingElement = this.searchDirectives.pendingUiHighlightElement;
+    if (!pendingElement) {
+      return;
+    }
+
+    // Try to find the directive immediately
+    const directive = this.searchDirectives.get(pendingElement);
+
+    if (directive) {
+      directive.highlight(pendingElement);
+      this.searchDirectives.setPendingUiHighlightElement(null);
+    } else {
+      // Directive not found yet (table data still loading) - wait for it to be registered
+      const subscription = this.searchDirectives.directiveAdded$.pipe(
+        filter((added) => !!added),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe(() => {
+        const foundDirective = this.searchDirectives.get(pendingElement);
+        if (foundDirective) {
+          foundDirective.highlight(pendingElement);
+          this.searchDirectives.setPendingUiHighlightElement(null);
+          subscription.unsubscribe();
+        }
+      });
+
+      // Set a timeout to clean up if directive is never found
+      setTimeout(() => {
+        if (this.searchDirectives.pendingUiHighlightElement === pendingElement) {
+          this.searchDirectives.setPendingUiHighlightElement(null);
+          subscription.unsubscribe();
+        }
+      }, 10000); // 10 second timeout
+    }
   }
 
   ngAfterViewInit(): void {
@@ -153,7 +201,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private listenForSidenavChanges(): void {
-    this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
+    this.sideNavs?.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.sidenavService.setSidenav(this.sideNavs.first);
     });
   }

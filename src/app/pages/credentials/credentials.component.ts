@@ -6,13 +6,11 @@ import {
   MatDrawerContent,
 } from '@angular/material/sidenav';
 import { RouterOutlet, RouterModule } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-credentials',
   templateUrl: './credentials.component.html',

@@ -21,19 +21,20 @@
         (change)="toggleDuplicateNotifications()">
         Duplicate alerts
       </mat-checkbox>
-      <button mat-icon-button 
-              matTooltip="Clear messages" 
-              class="clear-button"
-              ixTest="websocket-debug-clear-messages"
-              (click)="clearMessages()">
-        <ix-icon name="mdi-delete-outline"></ix-icon>
-      </button>
+      <tn-icon-button
+        name="delete-outline"
+        library="mdi"
+        tooltip="Clear messages"
+        class="clear-button"
+        ixTest="websocket-debug-clear-messages"
+        (click)="clearMessages()"
+      ></tn-icon-button>
     </div>
   </div>
 
   @if (!hasMessages) {
     <div class="empty-state">
-      <ix-icon name="mdi-message-text-outline" class="empty-icon"></ix-icon>
+      <tn-icon name="message-text-outline" library="mdi" class="empty-icon"></tn-icon>
       <p>No messages yet</p>
     </div>
   } @else {
@@ -48,9 +49,9 @@
           <div class="message-header">
           <span class="direction-icon">
             @if (message.direction === 'out') {
-              <ix-icon name="mdi-arrow-right" class="icon-out"></ix-icon>
+              <tn-icon name="arrow-right" library="mdi" class="icon-out"></tn-icon>
             } @else {
-              <ix-icon name="mdi-arrow-left" class="icon-in"></ix-icon>
+              <tn-icon name="arrow-left" library="mdi" class="icon-in"></tn-icon>
             }
           </span>
           
@@ -63,38 +64,37 @@
           <span class="timestamp">{{ message.formattedTime }}</span>
           
           @if (canCreateMock(message)) {
-            <button mat-icon-button
-                    matTooltip="Create mock from response"
-                    class="mock-button"
-                    ixTest="websocket-debug-create-mock"
-                    [attr.aria-label]="'Create mock from response'"
-                    (click)="createMockFromMessage(message); $event.stopPropagation()">
-              <ix-icon name="mdi-plus"></ix-icon>
-            </button>
+            <tn-icon-button
+              name="plus"
+              library="mdi"
+              tooltip="Create mock from response"
+              class="mock-button"
+              ixTest="websocket-debug-create-mock"
+              [attr.aria-label]="'Create mock from response'"
+              (click)="createMockFromMessage(message); $event.stopPropagation()"
+            ></tn-icon-button>
           }
 
-          <button mat-icon-button
-                  matTooltip="Copy message"
-                  class="copy-button"
-                  ixTest="websocket-debug-copy-message"
-                  [attr.aria-label]="'Copy message'"
-                  (click)="copyMessage(message); $event.stopPropagation()">
-            <ix-icon name="mdi-content-copy"></ix-icon>
-          </button>
+          <tn-icon-button
+            name="content-copy"
+            library="mdi"
+            tooltip="Copy message"
+            class="copy-button"
+            ixTest="websocket-debug-copy-message"
+            [attr.aria-label]="'Copy message'"
+            (click)="copyMessage(message); $event.stopPropagation()"
+          ></tn-icon-button>
 
-          <button mat-icon-button 
-                  class="toggle-button"
-                  ixTest="websocket-debug-toggle-message"
-                  matTooltip="Toggle message details"
-                  [attr.aria-label]="message.isExpanded ? 'Collapse message details' : 'Expand message details'"
-                  [attr.aria-expanded]="message.isExpanded"
-                  (click)="toggleMessage(message.id)">
-            @if (message.isExpanded) {
-              <ix-icon name="mdi-chevron-down"></ix-icon>
-            } @else {
-              <ix-icon name="mdi-chevron-right"></ix-icon>
-            }
-          </button>
+          <tn-icon-button
+            library="mdi"
+            class="toggle-button"
+            ixTest="websocket-debug-toggle-message"
+            tooltip="Toggle message details"
+            [name]="message.isExpanded ? 'chevron-down' : 'chevron-right'"
+            [attr.aria-label]="message.isExpanded ? 'Collapse message details' : 'Expand message details'"
+            [attr.aria-expanded]="message.isExpanded"
+            (click)="toggleMessage(message.id)"
+          ></tn-icon-button>
         </div>
         
         @if (!message.isExpanded) {

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -6,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Observable,
@@ -43,7 +43,6 @@ interface DatasetFormGroup {
   file?: FormControl<File[]>;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-dataset-unlock',
   templateUrl: './dataset-unlock.component.html',
@@ -77,6 +76,7 @@ export class DatasetUnlockComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private upload = inject(UploadService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -112,7 +112,7 @@ export class DatasetUnlockComponent implements OnInit {
     this.pk = this.aroute.snapshot.params['datasetId'] as string;
     this.getEncryptionSummary();
 
-    this.form.controls.use_file.valueChanges.pipe(untilDestroyed(this)).subscribe((useFile) => {
+    this.form.controls.use_file.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useFile) => {
       if (useFile) {
         this.form.controls.file.enable();
         this.form.controls.datasets.disable();
@@ -124,7 +124,7 @@ export class DatasetUnlockComponent implements OnInit {
 
     this.form.controls.file.valueChanges.pipe(
       switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((key: string) => {
       this.form.controls.key.setValue(key);
     });
@@ -141,7 +141,7 @@ export class DatasetUnlockComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job) => {
         this.processSummary(job.result);
@@ -173,7 +173,7 @@ export class DatasetUnlockComponent implements OnInit {
 
         (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
           switchMap((files: File[]) => (!files?.length ? of('{}') : from(files[0].text()))),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((textFromFile) => {
           const key = (JSON.parse(textFromFile) as Record<string, string>)[result.name];
           if (key) {
@@ -209,7 +209,7 @@ export class DatasetUnlockComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job) => {
         this.openUnlockDialog(payload, job.result);
@@ -252,7 +252,7 @@ export class DatasetUnlockComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job) => {
         this.openSummaryDialog(payload as DatasetUnlockParams, job.result);

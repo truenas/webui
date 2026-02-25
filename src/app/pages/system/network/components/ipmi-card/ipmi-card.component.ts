@@ -1,17 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { filter, of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -28,7 +28,6 @@ import {
 } from 'app/pages/system/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-form/ipmi-form.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ipmi-card',
   templateUrl: './ipmi-card.component.html',
@@ -53,6 +52,7 @@ export class IpmiCardComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
+  private destroyRef = inject(DestroyRef);
   private window = inject<Window>(WINDOW);
 
   protected readonly searchableElements = ipmiCardElements.elements;
@@ -64,13 +64,13 @@ export class IpmiCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: iconMarker('edit'),
+          iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
           hidden: (row) => of(!this.canOpen(row)),
-          iconName: iconMarker('launch'),
+          iconName: tnIconMarker('open-in-new', 'mdi'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.onOpen(row),
         },
@@ -84,7 +84,7 @@ export class IpmiCardComponent implements OnInit {
   protected readonly hasIpmi$ = this.api.call('ipmi.is_loaded');
 
   ngOnInit(): void {
-    const ipmi$ = this.api.call('ipmi.lan.query').pipe(untilDestroyed(this));
+    const ipmi$ = this.api.call('ipmi.lan.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
     this.loadIpmiEntries();
   }
@@ -97,7 +97,7 @@ export class IpmiCardComponent implements OnInit {
     this.slideIn.open(IpmiFormComponent, { data: ipmi.id })
       .pipe(
         filter((response) => !!response.response),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => this.loadIpmiEntries());
   }
 

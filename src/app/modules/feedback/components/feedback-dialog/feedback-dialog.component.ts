@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, of,
@@ -20,14 +19,12 @@ import { FileTicketLicensedComponent } from 'app/modules/feedback/components/fil
 import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-feedback-dialog',
   templateUrl: './feedback-dialog.component.html',
@@ -36,10 +33,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     FakeProgressBarComponent,
     MatDialogTitle,
-    MatIconButton,
+    TnIconButtonComponent,
     MatDialogClose,
     TestDirective,
-    IxIconComponent,
     NgxSkeletonLoaderModule,
     IxButtonGroupComponent,
     ReactiveFormsModule,
@@ -57,6 +53,7 @@ export class FeedbackDialog implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<MatDialogRef<FeedbackDialog>>(MatDialogRef);
   private requestedType = inject<FeedbackType>(MAT_DIALOG_DATA);
+  private destroyRef = inject(DestroyRef);
 
   protected isLoading = false;
   protected isLoadingTypes = false;
@@ -93,7 +90,7 @@ export class FeedbackDialog implements OnInit {
     this.cdr.markForCheck();
 
     this.feedbackService.checkIfReviewAllowed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isReviewAllowed) => {
         this.allowedTypes = [];
 

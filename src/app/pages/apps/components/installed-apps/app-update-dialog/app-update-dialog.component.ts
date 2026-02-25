@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent } from '@angular/materi
 import { MatFormField } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,8 +15,8 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -44,7 +45,7 @@ interface Version {
     FormActionsComponent,
     MatButton,
     RequiresRolesDirective,
-    IxIconComponent,
+    TnIconComponent,
   ],
 })
 export class AppUpdateDialog {
@@ -92,5 +93,41 @@ export class AppUpdateDialog {
 
   originalOrder(): number {
     return 0;
+  }
+
+  getVersionLabel(libraryVersion: string, humanVersion: string): string {
+    return formatVersionWithRevision(libraryVersion, humanVersion);
+  }
+
+  getLatestAppVersion(): string {
+    // Use latest_app_version if available, otherwise extract from latest_human_version
+    return this.dialogConfig.upgradeSummary.latest_app_version
+      || extractAppVersion(
+        this.dialogConfig.upgradeSummary.latest_human_version,
+        this.dialogConfig.upgradeSummary.latest_version,
+      );
+  }
+
+  hasAppVersionChange(): boolean {
+    // Use dialogConfig.upgradeSummary directly to avoid timing issues with selectedVersion
+    const currentAppVersion = extractAppVersion(
+      this.dialogConfig.appInfo.human_version,
+      this.dialogConfig.appInfo.version,
+    );
+    // Use the latest_app_version field from the API if available
+    const latestAppVersion = this.dialogConfig.upgradeSummary.latest_app_version;
+
+    // If backend provides latest_app_version, use it for comparison
+    // Otherwise, extract from latest_human_version as fallback
+    if (latestAppVersion !== undefined) {
+      return currentAppVersion !== latestAppVersion;
+    }
+
+    // Fallback: extract from latest_human_version
+    const extractedLatestAppVersion = extractAppVersion(
+      this.dialogConfig.upgradeSummary.latest_human_version,
+      this.dialogConfig.upgradeSummary.latest_version,
+    );
+    return currentAppVersion !== extractedLatestAppVersion;
   }
 }

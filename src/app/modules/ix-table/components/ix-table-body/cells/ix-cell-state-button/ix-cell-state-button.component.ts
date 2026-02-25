@@ -1,13 +1,14 @@
 import { NgClass } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, effect, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, OnInit, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, filter, Observable, tap,
 } from 'rxjs';
@@ -19,7 +20,6 @@ import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directo
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
@@ -36,7 +36,6 @@ interface RowState {
   };
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-cell-state-button',
   templateUrl: './ix-cell-state-button.component.html',
@@ -46,7 +45,7 @@ interface RowState {
     MatButton,
     NgClass,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     TestDirective,
     JobStateDisplayPipe,
@@ -57,6 +56,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   private readonly rowUpdateEffect = effect(() => {
     this.setupRow();
@@ -168,7 +168,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 

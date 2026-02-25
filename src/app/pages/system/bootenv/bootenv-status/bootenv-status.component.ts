@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -6,8 +7,8 @@ import {
 } from '@angular/material/expansion';
 import { MatList, MatListItem } from '@angular/material/list';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -15,7 +16,6 @@ import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.inter
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
@@ -46,7 +46,6 @@ export interface BootPoolActionEvent {
   node: VDevItem;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-bootenv-status',
   templateUrl: './bootenv-status.component.html',
@@ -64,7 +63,7 @@ export interface BootPoolActionEvent {
     BootenvNodeItemComponent,
     MatIconButton,
     TestDirective,
-    IxIconComponent,
+    TnIconComponent,
     TranslateModule,
     FormatDateTimePipe,
     TreeViewComponent,
@@ -83,6 +82,7 @@ export class BootStatusListComponent implements OnInit {
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = bootEnvStatusElements;
 
@@ -112,7 +112,7 @@ export class BootStatusListComponent implements OnInit {
   private loadPoolInstance(): void {
     this.api.call('boot.get_state').pipe(
       tap(() => this.isLoading.set(true)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (poolInstance) => {
         this.poolInstance = poolInstance;
@@ -130,14 +130,14 @@ export class BootStatusListComponent implements OnInit {
   attach(): void {
     this.matDialog.open(BootPoolAttachDialog)
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
     this.matDialog.open(BootPoolReplaceDialog, { data: diskPath })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadPoolInstance());
   }
 
@@ -147,7 +147,7 @@ export class BootStatusListComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.router.navigate(['/', 'system', 'boot']);

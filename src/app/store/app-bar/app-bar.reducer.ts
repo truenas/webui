@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
+import { tnIconMarker } from '@truenas/ui-components';
 import { AppBarItem } from 'app/interfaces/app-bar.interface';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import {
   appBarOpened,
   appBarClosed,
@@ -29,8 +29,8 @@ function loadStateFromStorage(): AppBarItem[] {
     {
       status: 'open',
       name: 'Desktop',
-      icon: iconMarker('mdi-monitor'),
-      iconActive: iconMarker('mdi-monitor'),
+      icon: tnIconMarker('monitor', 'mdi'),
+      iconActive: tnIconMarker('monitor', 'mdi'),
       state: 'desktop',
     },
   ];

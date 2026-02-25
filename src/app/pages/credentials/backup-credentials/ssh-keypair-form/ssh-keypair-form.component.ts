@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,7 +22,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -31,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-ssh-keypair-form',
   templateUrl: './ssh-keypair-form.component.html',
@@ -51,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormActionsComponent,
     MatIconButton,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     TranslateModule,
@@ -70,6 +69,7 @@ export class SshKeypairFormComponent implements OnInit {
   private loader = inject(LoaderService);
   private download = inject(DownloadService);
   slideInRef = inject<SlideInRef<KeychainSshKeyPair | undefined, boolean>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
@@ -125,7 +125,7 @@ export class SshKeypairFormComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((keyPair) => {
         this.form.patchValue({
@@ -167,7 +167,7 @@ export class SshKeypairFormComponent implements OnInit {
       }]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('SSH Keypair created'));

@@ -7,10 +7,11 @@
     {{ row().name }}
   </span>
   @if (row().isHomeBase) {
-    <ix-icon
+    <tn-icon
       class="home-icon"
-      name="folder_shared"
-      [matTooltip]="'Home Share' | translate"
-    ></ix-icon>
+      name="folder-account"
+      library="mdi"
+      [tnTooltip]="'Home Share' | translate"
+    ></tn-icon>
   }
 </span>

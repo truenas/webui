@@ -1,13 +1,13 @@
 <div class="icon">
   @switch (item().type) {
     @case (PermissionsItem.Group) {
-      <ix-icon name="people"></ix-icon>
+      <tn-icon name="account-multiple" library="mdi"></tn-icon>
     }
     @case (PermissionsItem.Other) {
-      <ix-icon name="groups"></ix-icon>
+      <tn-icon name="account-group" library="mdi"></tn-icon>
     }
     @default {
-      <ix-icon name="person"></ix-icon>
+      <tn-icon name="account" library="mdi"></tn-icon>
     }
   }
 </div>

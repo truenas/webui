@@ -12,7 +12,7 @@
             [class.active]="currentPath().startsWith(location.path)"
             (click)="onLocationClick(location)"
           >
-            <ix-icon [name]="location.icon" matListItemIcon></ix-icon>
+            <tn-icon matListItemIcon [name]="location.icon"></tn-icon>
             <span matListItemTitle>{{ location.name }}</span>
           </a>
         }
@@ -26,17 +26,17 @@
         <button
           mat-icon-button
           [disabled]="!canGoUp()"
-          (click)="goUp()"
           [matTooltip]="'Go Up' | translate"
+          (click)="goUp()"
         >
-          <ix-icon name="mdi-arrow-up"></ix-icon>
+          <tn-icon name="arrow-up" library="mdi"></tn-icon>
         </button>
 
         <div class="breadcrumb">
           @for (crumb of breadcrumbs(); track crumb.path; let last = $last) {
             @if (!last) {
               <span class="crumb" (click)="navigateTo(crumb.path)">{{ crumb.name }}</span>
-              <ix-icon name="mdi-chevron-right" class="separator"></ix-icon>
+              <tn-icon name="chevron-right" library="mdi" class="separator"></tn-icon>
             } @else {
               <span class="crumb current">{{ crumb.name }}</span>
             }
@@ -52,7 +52,7 @@
           </div>
         } @else if (items().length === 0) {
           <div class="empty-state">
-            <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
+            <tn-icon name="folder-open" library="mdi" class="empty-icon"></tn-icon>
             <p>{{ 'No subfolders' | translate }}</p>
           </div>
         } @else {
@@ -61,7 +61,7 @@
               class="folder-item"
               (dblclick)="onItemDoubleClick(item)"
             >
-              <ix-icon name="mdi-folder" class="folder-icon"></ix-icon>
+              <tn-icon name="folder" library="mdi" class="folder-icon"></tn-icon>
               <span class="folder-name">{{ item.name }}</span>
             </div>
           }

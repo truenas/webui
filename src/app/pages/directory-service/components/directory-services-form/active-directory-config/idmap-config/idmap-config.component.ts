@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of, tap } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
@@ -16,7 +15,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-idmap-config',
   templateUrl: './idmap-config.component.html',
@@ -33,6 +31,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 })
 export class IdmapConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   idmap = input.required<PrimaryDomainIdmap>();
   idmapUpdated = output<[useDefaultIdmap: boolean, primaryDomainIdmap: PrimaryDomainIdmap]>();
@@ -90,7 +89,7 @@ export class IdmapConfigComponent implements OnInit {
         const { use_default_idmap: useDefaultIdmap, ...idmapPayload } = value;
         this.idmapUpdated.emit([useDefaultIdmap, idmapPayload as PrimaryDomainIdmap]);
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -107,7 +106,7 @@ export class IdmapConfigComponent implements OnInit {
 
   private listenToTypeChanges(): void {
     this.form.controls.idmap_domain.controls.idmap_backend.value$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (type: IdmapBackend) => {
         this.setupFromIdmapBackend(type);

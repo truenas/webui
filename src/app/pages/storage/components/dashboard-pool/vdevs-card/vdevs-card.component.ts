@@ -5,8 +5,8 @@ import {
 } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -19,7 +19,6 @@ import {
   TopologyDisk,
   VDevItem,
 } from 'app/interfaces/storage.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { vDevsCardElements } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.elements';
@@ -38,7 +37,6 @@ export type EmptyDiskObject = Record<
   string, string | number | boolean | string[] | EnclosureAndSlot
 >;
 
-@UntilDestroy()
 @Component({
   selector: 'ix-vdevs-card',
   templateUrl: './vdevs-card.component.html',
@@ -54,7 +52,8 @@ export type EmptyDiskObject = Record<
     TestDirective,
     MatCardContent,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })
@@ -67,6 +66,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly searchableElements = vDevsCardElements;
+  protected readonly vdevsHelpTooltip = this.translate.instant('A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together');
   notAssignedDev = this.translate.instant('VDEVs not assigned');
 
   topologyState: TopologyState = {

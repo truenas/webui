@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, OnInit, signal, Signal, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, map, Subscription, switchMap, tap,
@@ -21,7 +23,6 @@ import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-logs',
   templateUrl: './container-logs.component.html',
@@ -47,6 +48,7 @@ export class ContainerLogsComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   private logContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('logContainer', { read: ElementRef });
 
@@ -68,7 +70,7 @@ export class ContainerLogsComponent implements OnInit {
     }
 
     combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(([params, parentParams]) => {
       this.appName = parentParams.appId as string;
       this.train = parentParams.train as string;
@@ -102,7 +104,7 @@ export class ContainerLogsComponent implements OnInit {
         })}`);
       }),
       map((apiEvent) => apiEvent.fields),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (log: AppContainerLog) => {
         this.isLoading.set(false);

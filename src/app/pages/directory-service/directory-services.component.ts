@@ -1,8 +1,9 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,8 +11,8 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
   forkJoin,
 } from 'rxjs';
@@ -33,8 +34,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -57,7 +56,6 @@ interface DataCard {
   onLeavePressed?: () => void;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-directory-services',
   templateUrl: './directory-services.component.html',
@@ -65,7 +63,7 @@ interface DataCard {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     EmptyComponent,
-    IxIconComponent,
+    TnIconComponent,
     RequiresRolesDirective,
     MatButton,
     MatIconButton,
@@ -99,6 +97,7 @@ export class DirectoryServicesComponent implements OnInit {
   private searchDirectives = inject(UiSearchDirectivesService);
   private snackbarService = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
@@ -122,7 +121,7 @@ export class DirectoryServicesComponent implements OnInit {
     title: this.translate.instant('Directory services are disabled.'),
     message: this.translate.instant('Configure directory services to see details.'),
     large: true,
-    icon: iconMarker('mdi-account-box'),
+    icon: tnIconMarker('account-box', 'mdi'),
   };
 
   constructor() {
@@ -158,7 +157,7 @@ export class DirectoryServicesComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([servicesState, directoryServicesConfig]) => {
         this.directoryServicesConfig.set(directoryServicesConfig);
@@ -307,7 +306,7 @@ export class DirectoryServicesComponent implements OnInit {
   private subscribeToDirectoryServicesStatus(): void {
     this.api.subscribe('directoryservices.status')
       .pipe(
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((event) => {
         const status = event.fields as DirectoryServicesStatus;
@@ -334,7 +333,7 @@ export class DirectoryServicesComponent implements OnInit {
       hideCheckbox: true,
       message: this.translate.instant(helptextDashboard.advancedEdit.message),
     })
-      .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
+      .pipe(filter((confirmed) => !confirmed), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         // Hide settings back, if user cancels.
         expansionPanel.close();
@@ -352,7 +351,7 @@ export class DirectoryServicesComponent implements OnInit {
       data: this.directoryServicesConfig(),
     }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refreshCards());
   }
 
@@ -377,7 +376,7 @@ export class DirectoryServicesComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.refreshCards();
@@ -404,7 +403,7 @@ export class DirectoryServicesComponent implements OnInit {
       .afterClosed()
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: ({ description }) => {

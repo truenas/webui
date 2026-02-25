@@ -1,4 +1,4 @@
-import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,7 +11,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 
 describe('DatasetFormService', () => {
-  let spectator: SpectatorService<DatasetFormService>;
   const dataset = {} as Dataset;
   const createService = createServiceFactory({
     service: DatasetFormService,
@@ -19,21 +18,30 @@ describe('DatasetFormService', () => {
       mockApi([
         mockCall('pool.dataset.query', [dataset]),
       ]),
-      mockProvider(DialogService, {
-        warn: jest.fn(() => of(true)),
-      }),
+      mockProvider(DialogService),
       mockProvider(SlideIn),
     ],
   });
 
-  beforeEach(() => spectator = createService());
+  let spectator: ReturnType<typeof createService>;
+  let service: DatasetFormService;
+  let dialogService: DialogService;
+  let api: ApiService;
+
+  beforeEach(() => {
+    spectator = createService();
+    service = spectator.service as DatasetFormService;
+    dialogService = spectator.inject(DialogService);
+    api = spectator.inject(ApiService);
+    jest.spyOn(dialogService, 'warn').mockReturnValue(of(true));
+  });
 
   describe('ensurePathLimits', () => {
     it('checks parent path, shows error if it is too long and closes slide in', async () => {
       const wrongPath = 'a'.repeat(maxDatasetPath);
-      await firstValueFrom(spectator.service.checkAndWarnForLengthAndDepth(wrongPath));
+      await firstValueFrom(service.checkAndWarnForLengthAndDepth(wrongPath));
 
-      expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
+      expect(dialogService.warn).toHaveBeenCalledWith(
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooLongWarning,
       );
@@ -41,9 +49,9 @@ describe('DatasetFormService', () => {
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
       const wrongPath = '/'.repeat(maxDatasetNesting);
-      await firstValueFrom(spectator.service.checkAndWarnForLengthAndDepth(wrongPath));
+      await firstValueFrom(service.checkAndWarnForLengthAndDepth(wrongPath));
 
-      expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
+      expect(dialogService.warn).toHaveBeenCalledWith(
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooDeepWarning,
       );
@@ -52,9 +60,9 @@ describe('DatasetFormService', () => {
 
   describe('loadDataset', () => {
     it('loads dataset by id', async () => {
-      const loadedDataset = await firstValueFrom(spectator.service.loadDataset('test'));
+      const loadedDataset = await firstValueFrom(service.loadDataset('test'));
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
       expect(loadedDataset).toEqual(dataset);
     });
   });
@@ -66,12 +74,46 @@ describe('DatasetFormService', () => {
       ];
 
       const optionsWithInherit = await firstValueFrom(of(options).pipe(
-        spectator.service.addInheritOption('new'),
+        service.addInheritOption('new'),
       ));
 
       expect(optionsWithInherit).toEqual([
         { label: 'Inherit (new)', value: inherit },
         { label: 'original', value: 'original' },
+      ]);
+    });
+
+    it('converts uppercase enum values to title case', async () => {
+      const options = [
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' },
+      ];
+
+      const optionsWithInherit = await firstValueFrom(of(options).pipe(
+        spectator.service.addInheritOption('OFF'),
+      ));
+
+      expect(optionsWithInherit).toEqual([
+        { label: 'Inherit (Off)', value: inherit },
+        { label: 'On', value: 'ON' },
+        { label: 'Off', value: 'OFF' },
+      ]);
+    });
+
+    it('does not convert values that are not in the whitelist', async () => {
+      const options = [
+        { label: '128K', value: '128K' },
+        { label: '256K', value: '256K' },
+      ];
+
+      const optionsWithInherit = await firstValueFrom(of(options).pipe(
+        spectator.service.addInheritOption('128K'),
+      ));
+
+      expect(optionsWithInherit).toEqual([
+        { label: 'Inherit (128K)', value: inherit },
+        { label: '128K', value: '128K' },
+        { label: '256K', value: '256K' },
       ]);
     });
   });

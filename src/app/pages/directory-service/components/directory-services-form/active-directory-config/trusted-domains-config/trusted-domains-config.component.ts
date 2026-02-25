@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -6,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
@@ -51,7 +51,6 @@ interface AllTrustedDomainsIdmapFieldsInterface {
   sssd_compat: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-trusted-domains-config',
   templateUrl: './trusted-domains-config.component.html',
@@ -70,6 +69,7 @@ interface AllTrustedDomainsIdmapFieldsInterface {
 })
 export class TrustedDomainsConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly helptextAd = helptextActiveDirectory;
   protected readonly helptext = helptextIdmap.idmap;
@@ -115,7 +115,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
 
   private watchForFormChanges(): void {
     this.form.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         const trustedDomains = value.trustedDomains;
         const builtCustomDomains: DomainIdmap[] = [];
@@ -273,7 +273,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
     formGroup: FormGroup<Controls<AllTrustedDomainsIdmapFieldsInterface>>,
   ): void {
     formGroup.controls.idmap_backend.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((backend) => {
         this.setupBackendValidators(formGroup, backend);
       });

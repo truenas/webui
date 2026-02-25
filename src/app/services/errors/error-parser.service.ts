@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
 import { ApiErrorName, apiErrorNames } from 'app/enums/api.enum';
 import {
@@ -13,7 +14,7 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
-import { ErrorReport, ErrorDetails, traceDetailLabel } from 'app/interfaces/error-report.interface';
+import { ErrorReport, ErrorDetails, traceDetailLabel, logsExcerptDetailLabel } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
@@ -154,7 +155,7 @@ export class ErrorParserService {
       return {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network connection was closed or timed out. Try again later.'),
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
         details: this.extractErrorDetails(error),
       };
     }
@@ -163,7 +164,7 @@ export class ErrorParserService {
         title: this.translate.instant('Network Error'),
         message: this.translate.instant('Network resource is not reachable, verify your network settings and health.'),
         hint: this.translate.instant('Double check that your nameservers and gateway are properly configured.'),
-        icon: 'ix-cloud-off',
+        icon: tnIconMarker('cloud-off', 'custom'),
         actions: [
           {
             label: this.translate.instant('Network Settings'),
@@ -205,10 +206,30 @@ export class ErrorParserService {
       message = this.translate.instant('Unknown error');
     }
 
+    let details: ErrorDetails[];
+    let title: string;
+    if (failedJob.apiErrorDetails) {
+      details = this.extractErrorDetails(failedJob.apiErrorDetails);
+      title = failedJob.apiErrorDetails.trace?.class || job.exc_info?.type || job.state;
+    } else {
+      details = [];
+      if (job.exc_info?.type) {
+        details.push({ label: 'Error Type', value: job.exc_info.type });
+      }
+      if (job.exception) {
+        details.push({ label: traceDetailLabel, value: job.exception });
+      }
+      title = job.exc_info?.type || job.state;
+    }
+    if (job.logs_excerpt) {
+      details.push({ label: logsExcerptDetailLabel, value: job.logs_excerpt });
+    }
+
     return {
-      title: job.state,
+      title,
       message,
       stackTrace: job.logs_excerpt || job.exception,
+      details: details.length > 0 ? details : undefined,
       // display a `View Details` button and `Download Logs` button on any failed job dialogs
       actions: [{
         label: this.translate.instant('View Details'),

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
@@ -51,7 +51,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-replication-what-and-where',
   templateUrl: './replication-what-and-where.component.html',
@@ -87,6 +86,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);
   slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly customRetentionVisibleChange = output<boolean>();
 
@@ -196,7 +196,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.updateExplorersOnChanges();
     this.updateExplorers();
 
-    this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.source_datasets_from.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
       this.form.controls.source_datasets.setValue([]);
       if (value === DatasetSource.Local) {
@@ -210,7 +212,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       this.checkCustomVisible();
     });
 
-    this.form.controls.custom_snapshots.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.custom_snapshots.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.form.controls.custom_snapshots.enabled) {
         if (value) {
           // Only enable schema_or_regex & naming_schema & name_regex for remote sources
@@ -228,7 +230,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       this.checkCustomVisible();
     });
 
-    this.form.controls.schema_or_regex.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.schema_or_regex.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.form.controls.schema_or_regex.enabled) {
         if (value === SnapshotNamingOption.NameRegex) {
           this.form.controls.name_regex.enable();
@@ -241,7 +243,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       this.checkCustomVisible();
     });
 
-    this.form.controls.target_dataset_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.target_dataset_from.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       this.form.controls.target_dataset.setValue('');
       this.disableTransportAndSudo(this.form.value.source_datasets_from, value);
       if (value === DatasetSource.Local) {
@@ -257,7 +259,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.encryption_inherit.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.encryption_inherit.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value) {
         this.disableEncryption();
       } else {
@@ -265,7 +267,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.encryption.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.encryption.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value && !this.form.controls.encryption_inherit.value) {
         this.enableEncryption();
       } else {
@@ -273,7 +275,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.encryption_key_format.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.encryption_key_format.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
       if (this.form.controls.encryption_key_format.enabled) {
         if (value === EncryptionKeyFormat.Hex) {
           this.form.controls.encryption_key_generate.enable();
@@ -286,7 +290,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.encryption_key_generate.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.encryption_key_generate.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
       if (this.form.controls.encryption_key_generate.enabled) {
         if (value) {
           this.form.controls.encryption_key_hex.disable();
@@ -296,7 +302,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.encryption_key_location_truenasdb.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.encryption_key_location_truenasdb.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
       if (this.form.controls.encryption_key_location_truenasdb.enabled) {
         if (value) {
           this.form.controls.encryption_key_location.disable();
@@ -306,25 +314,25 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }
     });
 
-    this.form.controls.source_datasets.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.source_datasets.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       this.genTaskName(value || [], this.form.value.target_dataset || '');
       this.getSnapshots();
     });
 
-    this.form.controls.target_dataset.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+    this.form.controls.target_dataset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       this.genTaskName(this.form.value.source_datasets || [], value || '');
     });
 
     merge(
       this.form.controls.naming_schema.valueChanges,
       this.form.controls.name_regex.valueChanges,
-    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => this.getSnapshots());
+    ).pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef)).subscribe(() => this.getSnapshots());
 
     merge(
       this.form.controls.ssh_credentials_source.valueChanges,
       this.form.controls.ssh_credentials_target.valueChanges,
     )
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
@@ -339,7 +347,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
-        }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
+        }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
           this.isSudoDialogShown = true;
         });
@@ -439,7 +447,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           }
           return of({ eligible: 0, total: 0 });
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: (snapshotCount: EligibleManualSnapshotsCount) => {
           let snapexpl = '';
@@ -500,7 +508,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .getReplicationTasks()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(
         (tasks: ReplicationTask[]) => {
@@ -519,7 +527,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.existReplicationOptions$ = of(options);
           this.cdr.markForCheck();
 
-          this.form.controls.exist_replication.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+          this.form.controls.exist_replication.valueChanges.pipe(
+            takeUntilDestroyed(this.destroyRef),
+          ).subscribe((value: number) => {
             const selectedTask = tasks.find((task) => task.id === value);
             if (selectedTask) {
               this.loadReplicationTask(selectedTask);
@@ -533,7 +543,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   private loadSshConnections(): void {
     this.keychainCredentials.getSshConnections()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((connections) => {
         this.sshCredentials = connections;
       });
@@ -631,7 +641,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
         debounceTime(0),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.updateExplorers());
   }

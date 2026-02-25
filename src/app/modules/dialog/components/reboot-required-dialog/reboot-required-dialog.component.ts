@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
@@ -17,7 +16,6 @@ import { AppState } from 'app/store';
 import { selectCanFailover, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-reboot-required-dialog',
   templateUrl: './reboot-required-dialog.component.html',
@@ -40,6 +38,7 @@ export class RebootRequiredDialog {
   private fb = inject(NonNullableFormBuilder);
   private dialogRef = inject<MatDialogRef<RebootRequiredDialog>>(MatDialogRef);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
@@ -65,7 +64,7 @@ export class RebootRequiredDialog {
   }
 
   rebootRemoteNode(): void {
-    this.reboot.restartRemote().pipe(untilDestroyed(this)).subscribe(() => {
+    this.reboot.restartRemote().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.dialogRef.close();
     });
   }

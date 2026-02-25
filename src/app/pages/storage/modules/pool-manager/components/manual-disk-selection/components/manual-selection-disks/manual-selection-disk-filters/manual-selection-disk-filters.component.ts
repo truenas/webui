@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, input, output, inject, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, output, inject, OnChanges } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { tnIconMarker } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -10,14 +11,12 @@ import { redundantListToUniqueOptions } from 'app/helpers/operators/options.oper
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 
 export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['filterForm']['value'];
 
-@UntilDestroy()
 @Component({
   selector: 'ix-manual-selection-disk-filters',
   templateUrl: './manual-selection-disk-filters.component.html',
@@ -34,6 +33,7 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
 export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   store$ = inject(ManualDiskSelectionStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly isSedEncryption = input<boolean>(false);
   readonly filtersUpdated = output<ManualDiskSelectionFilters>();
@@ -65,7 +65,7 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.filterForm.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.filtersUpdated.emit(value);
       });
@@ -83,5 +83,5 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
     }
   }
 
-  protected readonly iconMarker = iconMarker;
+  protected readonly tnIconMarker = tnIconMarker;
 }
