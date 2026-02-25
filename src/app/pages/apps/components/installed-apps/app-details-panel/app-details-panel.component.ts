@@ -11,7 +11,6 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
 @Component({
   selector: 'ix-app-details-panel',
   templateUrl: './app-details-panel.component.html',
-  styleUrls: ['./app-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

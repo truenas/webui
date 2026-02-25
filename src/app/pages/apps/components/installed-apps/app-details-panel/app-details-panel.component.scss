@@ -1,8 +1,0 @@
-@import 'scss-imports/variables';
-
-.cards {
-  @media (max-width: $breakpoint-tablet) {
-    height: auto;
-    overflow: visible;
-  }
-}
