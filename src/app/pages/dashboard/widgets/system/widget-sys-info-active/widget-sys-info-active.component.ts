@@ -2,13 +2,13 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
@@ -36,7 +36,6 @@ import {
     MatCard,
     MatCardContent,
     TnIconComponent,
-    TnTooltipDirective,
     ProductImageComponent,
     MatButton,
     TestDirective,
@@ -50,6 +49,7 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
+    MatCardHeader,
   ],
 })
 export class WidgetSysInfoActiveComponent {
