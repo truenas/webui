@@ -3,8 +3,8 @@ import { Component, ChangeDetectionStrategy, input, computed, HostBinding, injec
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { HarborIconComponent } from 'app/modules/harbor-icon/harbor-icon.component';
 import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
 @Component({
@@ -13,9 +13,9 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
   styleUrls: ['./product-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    HarborIconComponent,
     NgClass,
     MatTooltip,
-    TnIconComponent,
     NgxSkeletonLoaderModule,
     TranslateModule,
   ],

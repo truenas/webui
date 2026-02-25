@@ -28,6 +28,7 @@ import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-requi
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
+import { HarborIconComponent } from 'app/modules/harbor-icon/harbor-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { AboutNasDialog } from 'app/modules/layout/topbar/about-nas-dialog/about-nas-dialog.component';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
@@ -76,6 +77,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     TestDirective,
     MatButtonModule, MatMenuModule,
     ɵɵRouterLink,
+    HarborIconComponent,
   ],
 })
 export class TopbarComponent implements OnInit {
