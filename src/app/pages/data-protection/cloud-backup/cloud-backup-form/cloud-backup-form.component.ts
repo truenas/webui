@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
+import { TnBannerComponent } from '@truenas/ui-components';
 import {
   debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
@@ -69,7 +69,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     TestDirective,
     TranslateModule,
     TnBannerComponent,
-    TnBannerActionDirective,
+    // TnBannerActionDirective,
   ],
 })
 export class CloudBackupFormComponent implements OnInit {
