@@ -10,7 +10,8 @@
       @include details-cards();
 
       @media (max-width: $breakpoint-tablet) {
-        overflow: hidden;
+        height: auto;
+        overflow: visible;
       }
 
       .card {
