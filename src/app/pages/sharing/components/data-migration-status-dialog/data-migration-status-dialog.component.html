@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>
+  {{ 'Data Migration' | translate }}
+  <button
+    mat-stroked-button
+    class="status-button"
+    [ngClass]="statusClass"
+  >
+    {{ statusLabel }}
+  </button>
+</h1>
+
+<div mat-dialog-content>
+  <div class="dataset-name">
+    <strong>{{ 'Dataset' | translate }}:</strong> {{ job?.dataset_name }}
+  </div>
+
+  <div class="migration-direction">
+    <span class="tier-label">{{ sourceTier }}</span>
+    <span class="arrow">&rarr;</span>
+    <span class="tier-label">{{ targetTier }}</span>
+  </div>
+
+  @if (job?.stats) {
+    <mat-progress-bar
+      mode="determinate"
+      [value]="progressPercent"
+    />
+
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-label">{{ 'Data Transferred' | translate }}</div>
+        <div class="stat-value">
+          {{ job.stats.count_bytes | ixFileSize }}
+          /
+          {{ job.stats.total_bytes | ixFileSize }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">{{ 'Items Completed' | translate }}</div>
+        <div class="stat-value">{{ job.stats.success }} / {{ job.stats.total_items }}</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">{{ 'Failures' | translate }}</div>
+        <div class="stat-value">{{ job.stats.failures }}</div>
+      </div>
+    </div>
+  }
+</div>
+
+<mat-dialog-actions>
+  @if (isRunning) {
+    <button
+      mat-button
+      color="warn"
+      (click)="onAbort()"
+    >
+      {{ 'Abort' | translate }}
+    </button>
+  }
+  <span class="spacer"></span>
+  <button
+    mat-button
+    [mat-dialog-close]="false"
+  >
+    {{ 'Close' | translate }}
+  </button>
+</mat-dialog-actions>

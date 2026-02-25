@@ -54,6 +54,7 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
@@ -205,6 +206,9 @@ export interface ApiJobDirectory {
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };
   'vm.restart': { params: [id: number]; response: void };
   'vm.stop': { params: VmStopParams; response: void };
+
+  // ZFS Tier
+  'zfs.tier.rewrite_job_create': { params: [{ dataset_name: string }]; response: ZfsTierRewriteJobEntry };
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;
