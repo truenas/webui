@@ -43,8 +43,11 @@ export class SlideInContainerComponent implements AfterViewInit {
 
   @HostBinding('class.slide-in-visible') protected isVisible = false;
   @HostBinding('class.slide-in-hidden') protected isHidden = true;
+  @HostBinding('attr.role') protected role = 'dialog';
+  @HostBinding('attr.aria-modal') protected ariaModal = 'true';
   @HostBinding('style.width') protected width = '480px';
   @HostBinding('style.max-width') protected maxWidth = '480px';
+  protected isFocusTrapActive = false;
   private isWide = false;
 
   @HostListener('transitionend', ['$event'])
@@ -84,6 +87,7 @@ export class SlideInContainerComponent implements AfterViewInit {
     // Set state immediately to prevent race conditions
     this.isVisible = false;
     this.isHidden = true;
+    this.isFocusTrapActive = false;
     this.cdr.markForCheck();
     this.removeKeydownListener();
 
@@ -109,6 +113,8 @@ export class SlideInContainerComponent implements AfterViewInit {
     );
 
     slideIn$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.isFocusTrapActive = true;
+      this.cdr.markForCheck();
       this.focusFirstElement();
       this.addKeydownListener();
     });
@@ -120,13 +126,16 @@ export class SlideInContainerComponent implements AfterViewInit {
     requestAnimationFrame(() => {
       const container = this.elementRef.nativeElement as HTMLElement;
 
-      // Try multiple selectors in order of preference
-      const closeButton = container.querySelector<HTMLElement>(
+      // Try to find the close button element
+      const closeTarget = container.querySelector<HTMLElement>(
         '#ix-close-icon, [aria-label*="Close"], [aria-label*="close"], .close-button, button[data-close]',
-      ) || container.querySelector<HTMLElement>('button[type="button"]:last-of-type');
+      );
 
-      if (closeButton) {
-        closeButton.focus();
+      if (closeTarget) {
+        // The target may be a custom component (e.g. tn-icon-button) wrapping a native button.
+        // Try to focus the native button inside, or the element itself if it's directly focusable.
+        const focusable = closeTarget.querySelector<HTMLElement>('button, [tabindex]') || closeTarget;
+        focusable.focus();
       } else {
         this.focusService.focusFirstFocusableElement(container);
       }
