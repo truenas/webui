@@ -6949,14 +6949,14 @@ __metadata:
   linkType: hard
 
 "ajv@npm:^6.12.4":
-  version: 6.12.6
-  resolution: "ajv@npm:6.12.6"
+  version: 6.14.0
+  resolution: "ajv@npm:6.14.0"
   dependencies:
     fast-deep-equal: "npm:^3.1.1"
     fast-json-stable-stringify: "npm:^2.0.0"
     json-schema-traverse: "npm:^0.4.1"
     uri-js: "npm:^4.2.2"
-  checksum: 10/48d6ad21138d12eb4d16d878d630079a2bda25a04e745c07846a4ad768319533031e28872a9b3c5790fa1ec41aabdf2abed30a56e5a03ebc2cf92184b8ee306c
+  checksum: 10/c71f14dd2b6f2535d043f74019c8169f7aeb1106bafbb741af96f34fdbf932255c919ddd46344043d03b62ea0ccb319f83667ec5eedf612393f29054fe5ce4a5
   languageName: node
   linkType: hard
 
@@ -7878,12 +7878,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chart.js@npm:~4.4.4":
-  version: 4.4.9
-  resolution: "chart.js@npm:4.4.9"
+"chart.js@npm:~4.5.1":
+  version: 4.5.1
+  resolution: "chart.js@npm:4.5.1"
   dependencies:
     "@kurkle/color": "npm:^0.3.0"
-  checksum: 10/b19adf26347589fccf8efa314d927284674c46d2a934869bc8dda1ee56e3cd2fffa627bd0b6c6e16e2cc876b2c3880e106e48f22737138f06293f8373c8ae9f9
+  checksum: 10/a8dd3385371ad7e4c173d35176b7aed457ae27b45550248ecc854bf60a794541f56f3921850dc1f3c65985ef43beea37172b73899eb620d9cb4908de2ce93136
   languageName: node
   linkType: hard
 
@@ -14729,7 +14729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.0.3, minimatch@npm:^10.1.1":
+"minimatch@npm:^10.0.3, minimatch@npm:^10.1.1, minimatch@npm:^9.0.3 || ^10.0.1":
   version: 10.1.1
   resolution: "minimatch@npm:10.1.1"
   dependencies:
@@ -14739,11 +14739,11 @@ __metadata:
   linkType: hard
 
 "minimatch@npm:^3.1.1, minimatch@npm:^3.1.2":
-  version: 3.1.2
-  resolution: "minimatch@npm:3.1.2"
+  version: 3.1.3
+  resolution: "minimatch@npm:3.1.3"
   dependencies:
     brace-expansion: "npm:^1.1.7"
-  checksum: 10/e0b25b04cd4ec6732830344e5739b13f8690f8a012d73445a4a19fbc623f5dd481ef7a5827fde25954cd6026fede7574cc54dc4643c99d6c6b653d6203f94634
+  checksum: 10/d430c40785fdb42c9fc1a36b9c9e3b08146044bd0f2fd043b05afb436aa4eaf6cdcb7756939ab8fc01664cd75d6335fd5043b2fe2aa084756927ffc77c1e3597
   languageName: node
   linkType: hard
 
@@ -14753,15 +14753,6 @@ __metadata:
   dependencies:
     brace-expansion: "npm:^2.0.1"
   checksum: 10/126b36485b821daf96d33b5c821dac600cc1ab36c87e7a532594f9b1652b1fa89a1eebcaad4dff17c764dce1a7ac1531327f190fed5f97d8f6e5f889c116c429
-  languageName: node
-  linkType: hard
-
-"minimatch@npm:^9.0.3 || ^10.0.1":
-  version: 10.0.3
-  resolution: "minimatch@npm:10.0.3"
-  dependencies:
-    "@isaacs/brace-expansion": "npm:^5.0.0"
-  checksum: 10/d5b8b2538b367f2cfd4aeef27539fddeee58d1efb692102b848e4a968a09780a302c530eb5aacfa8c57f7299155fb4b4e85219ad82664dcef5c66f657111d9b8
   languageName: node
   linkType: hard
 
@@ -15109,20 +15100,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng2-charts@npm:~6.0.1":
-  version: 6.0.1
-  resolution: "ng2-charts@npm:6.0.1"
+"ng2-charts@npm:~8.0.0":
+  version: 8.0.0
+  resolution: "ng2-charts@npm:8.0.0"
   dependencies:
     lodash-es: "npm:^4.17.15"
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/cdk": ">=17.0.0"
-    "@angular/common": ">=17.0.0"
-    "@angular/core": ">=17.0.0"
-    "@angular/platform-browser": ">=17.0.0"
+    "@angular/cdk": ">=19.0.0"
+    "@angular/common": ">=19.0.0"
+    "@angular/core": ">=19.0.0"
+    "@angular/platform-browser": ">=19.0.0"
     chart.js: ^3.4.0 || ^4.0.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/c22a180a999639a12141abbc0ba7cd7534de0a7bd695680258af0a12aa94fdfd56ff5ed96093186f453fd9238c0e4be8022c57b868cecf65deff17d1c506d6db
+  checksum: 10/e9e335d708172a405bc58cd072d6ebed0a10b879e007480b769acc684fab4ee9f52550ca9bf8081c589843abae3ffb4c52ffe6e66f513d43ef61fb035642bb71
   languageName: node
   linkType: hard
 
@@ -16526,11 +16517,11 @@ __metadata:
   linkType: hard
 
 "qs@npm:^6.14.0":
-  version: 6.14.1
-  resolution: "qs@npm:6.14.1"
+  version: 6.15.0
+  resolution: "qs@npm:6.15.0"
   dependencies:
     side-channel: "npm:^1.1.0"
-  checksum: 10/34b5ab00a910df432d55180ef39c1d1375e550f098b5ec153b41787f1a6a6d7e5f9495593c3b112b77dbc6709d0ae18e55b82847a4c2bbbb0de1e8ccbb1794c5
+  checksum: 10/a3458f2f389285c3512e0ebc55522ee370ac7cb720ba9f0eff3e30fb2bb07631caf556c08e2a3d4481a371ac14faa9ceb7442a0610c5a7e55b23a5bdee7b701c
   languageName: node
   linkType: hard
 
@@ -18273,15 +18264,15 @@ __metadata:
   linkType: hard
 
 "tar@npm:^7.4.3, tar@npm:^7.5.2":
-  version: 7.5.7
-  resolution: "tar@npm:7.5.7"
+  version: 7.5.9
+  resolution: "tar@npm:7.5.9"
   dependencies:
     "@isaacs/fs-minipass": "npm:^4.0.0"
     chownr: "npm:^3.0.0"
     minipass: "npm:^7.1.2"
     minizlib: "npm:^3.1.0"
     yallist: "npm:^5.0.0"
-  checksum: 10/0d6938dd32fe5c0f17c8098d92bd9889ee0ed9d11f12381b8146b6e8c87bb5aa49feec7abc42463f0597503d8e89e4c4c0b42bff1a5a38444e918b4878b7fd21
+  checksum: 10/1213cdde9c22d6acf8809ba5d2a025212ce3517bc99c4a4c6981b7dc0489bf3b164db9c826c9517680889194c9ba57448c8ff0da35eca9a60bb7689bf0b3897d
   languageName: node
   linkType: hard
 
@@ -18556,7 +18547,7 @@ __metadata:
     "@xterm/xterm": "npm:~5.5.0"
     angular-eslint: "npm:~21.1.0"
     angular-resize-event: "npm:^3.2.0"
-    chart.js: "npm:~4.4.4"
+    chart.js: "npm:~4.5.1"
     chartjs-adapter-date-fns: "npm:~3.0.0"
     cheerio: "npm:~1.0.0"
     codemirror: "npm:~6.0.1"
@@ -18601,7 +18592,7 @@ __metadata:
     ng-lazyload-image: "npm:~9.1.3"
     ng-mocks: "npm:~14.15.0"
     ng-qrcode: "npm:~18.0.0"
-    ng2-charts: "npm:~6.0.1"
+    ng2-charts: "npm:~8.0.0"
     ng2-fittext: "npm:~2.0.0"
     ngx-drag-drop: "npm:~18.0.2"
     ngx-img-fallback: "npm:^3.0.0"

@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo, ContractType } from 'app/interfaces/system-info.interface';
@@ -34,7 +33,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
     remote_info: {
       platform: 'TRUENAS-M40-HA',
       version: '25.10.0-MASTER-20250126-184805',
-      codename: Codename.Goldeye,
       license: {
         contract_type: ContractType.Gold,
         contract_end: {
@@ -128,7 +126,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
         'Edition: Enterprise',
-        'Version: 25.10.0-MASTER-20250126-184805 - Goldeye',
+        'Version: 25.10.0-MASTER-20250126-184805',
         'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Uptime: 1 minute 17 seconds as of 10:34',
@@ -161,7 +159,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.query('.container.empty h3 div')).toHaveText('This system is not licensed for HA.');
-      expect(spectator.query('.container.empty h3 small')).toHaveText('Configure dashboard to edit this widget.');
+      expect(spectator.query('.container.empty h3 small')).toHaveText('Configure dashboard to edit this card.');
     });
 
     it('shows hostname near product image when system serial is present', () => {

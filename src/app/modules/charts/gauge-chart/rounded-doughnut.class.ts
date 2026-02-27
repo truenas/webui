@@ -17,11 +17,16 @@ class RoundedDoughnutController extends DoughnutController {
 
       chartElem.draw(ctx);
 
-      const view = chartElem.getProps(['innerRadius', 'outerRadius', 'startAngle', 'endAngle', 'x', 'y']);
-      const radius = (view.outerRadius + view.innerRadius) / 2;
-      const thickness = (view.outerRadius - view.innerRadius) / 2;
-      const angle = Math.PI / 2 - view.startAngle;
-      const angle2 = Math.PI / 2 - view.endAngle;
+      const {
+        innerRadius, outerRadius, startAngle, endAngle,
+        x: xNullable, y: yNullable,
+      } = chartElem.getProps(['innerRadius', 'outerRadius', 'startAngle', 'endAngle', 'x', 'y']);
+      const x = xNullable ?? 0;
+      const y = yNullable ?? 0;
+      const radius = (outerRadius + innerRadius) / 2;
+      const thickness = (outerRadius - innerRadius) / 2;
+      const angle = Math.PI / 2 - startAngle;
+      const angle2 = Math.PI / 2 - endAngle;
 
       ctx.save();
 
@@ -31,7 +36,7 @@ class RoundedDoughnutController extends DoughnutController {
 
       if (index === 0) {
         ctx.fillStyle = chartElem.options.backgroundColor;
-        ctx.translate(view.x, view.y);
+        ctx.translate(x, y);
         ctx.beginPath();
         ctx.arc(
           radius * Math.sin(angle),
@@ -41,12 +46,12 @@ class RoundedDoughnutController extends DoughnutController {
           2 * Math.PI,
         );
         ctx.closePath();
-        ctx.translate(-view.x, -view.y);
+        ctx.translate(-x, -y);
         ctx.fill();
       }
       if (index === 1) {
         ctx.fillStyle = chartElem.options.backgroundColor;
-        ctx.translate(view.x, view.y);
+        ctx.translate(x, y);
         ctx.beginPath();
         ctx.arc(
           radius * Math.sin(angle2),
@@ -56,13 +61,13 @@ class RoundedDoughnutController extends DoughnutController {
           2 * Math.PI,
         );
         ctx.closePath();
-        ctx.translate(-view.x, -view.y);
+        ctx.translate(-x, -y);
         ctx.fill();
       }
 
       if (index === 1) {
         ctx.fillStyle = tempBackgroundColor;
-        ctx.translate(view.x, view.y);
+        ctx.translate(x, y);
         ctx.beginPath();
         ctx.arc(
           radius * Math.sin(angle),
@@ -72,18 +77,18 @@ class RoundedDoughnutController extends DoughnutController {
           2 * Math.PI,
         );
         ctx.closePath();
-        ctx.translate(-view.x, -view.y);
+        ctx.translate(-x, -y);
         ctx.fill();
 
         ctx.fillStyle = '#0000';
         ctx.beginPath();
-        ctx.arc(view.x, view.y, radius - 2.2 * thickness, 0, 2 * Math.PI);
+        ctx.arc(x, y, radius - 2.2 * thickness, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fill();
 
         ctx.fillStyle = '#0000';
         ctx.beginPath();
-        ctx.arc(view.x, view.y, radius - 3.2 * thickness, 0, 2 * Math.PI);
+        ctx.arc(x, y, radius - 3.2 * thickness, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fill();
       }

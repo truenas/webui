@@ -72,7 +72,7 @@ export class WidgetGroupComponent {
       return {
         component: WidgetErrorComponent,
         inputs: {
-          message: this.translate.instant('{type} widget is not supported.', {
+          message: this.translate.instant('{type} card is not supported.', {
             type: definition?.name || widget.type,
           }),
         },
@@ -95,7 +95,7 @@ export class WidgetGroupComponent {
       return {
         component: WidgetErrorComponent,
         inputs: {
-          message: this.translate.instant('{type} widget does not support {size} size.', {
+          message: this.translate.instant('{type} card does not support {size} size.', {
             type: definition?.name || widget.type,
             size: slotSize,
           }),

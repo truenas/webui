@@ -91,6 +91,22 @@ describe('UserService', () => {
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
     });
+
+    it('includes extra filters in the query', async () => {
+      const mockGroups = [{ id: 1, name: 'local-group', builtin: false } as Group];
+
+      jest.spyOn(apiService, 'call').mockReturnValue(of(mockGroups));
+
+      await firstValueFrom(spectator.service.groupQueryDsCache('test', false, 0, [
+        ['local', '=', true],
+        ['immutable', '=', false],
+      ]));
+
+      expect(apiService.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true], ['immutable', '=', false], ['group', '~', '(?i).*test']],
+        { limit: 50, offset: 0, order_by: ['builtin'] },
+      ]);
+    });
   });
 
   describe('smbGroupQueryDsCache', () => {

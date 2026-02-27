@@ -22,12 +22,12 @@ export class SnackbarService {
       announcementMessage: options.message,
       politeness: options.politeness ?? 'polite',
       duration: options.duration ?? 4000,
-      verticalPosition: options.verticalPosition ?? 'bottom',
-      panelClass: options.panelClass,
+      verticalPosition: options.verticalPosition ?? 'top',
+      panelClass: options.panelClass || 'ix-snackbar-high-priority',
       data: {
         message: options.message,
-        icon: options.icon,
-        iconCssColor: options.iconCssColor,
+        icon: options.icon ?? tnIconMarker('information', 'mdi'),
+        iconCssColor: options.iconCssColor || 'var(--primary)',
         button: options.button,
       },
     };
@@ -45,7 +45,6 @@ export class SnackbarService {
       icon: tnIconMarker('check', 'mdi'),
       iconCssColor: 'var(--green)',
       politeness: 'assertive',
-      panelClass: 'ix-snackbar-high-priority',
       verticalPosition: 'top',
     });
   }

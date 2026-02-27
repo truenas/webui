@@ -1,7 +1,7 @@
 <div class="mobile-reorder-buttons">
   <button
     mat-icon-button
-    [attr.aria-label]="'Move widget up' | translate"
+    [attr.aria-label]="'Move card up' | translate"
     [ixTest]="['move-up', 'widget' + index()]"
     [disabled]="!canMoveUp()"
     (click)="moveUp.emit()"
@@ -10,7 +10,7 @@
   </button>
   <button
     mat-icon-button
-    [attr.aria-label]="'Move widget down' | translate"
+    [attr.aria-label]="'Move card down' | translate"
     [ixTest]="['move-down', 'widget' + index()]"
     [disabled]="!canMoveDown()"
     (click)="moveDown.emit()"
