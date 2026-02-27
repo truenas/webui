@@ -5,7 +5,7 @@
 >
   @if (!isLoading()) {
     <div class="icon-div">
-      <tn-icon class="icon" customSize="90px" [name]="getIcon()"></tn-icon>
+      <tn-icon class="icon" [customSize]="conf().large ? '90px' : '50px'" [name]="getIcon()"></tn-icon>
     </div>
   }
 
