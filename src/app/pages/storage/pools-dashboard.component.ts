@@ -17,6 +17,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
+import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
@@ -90,5 +91,9 @@ export class PoolsDashboardComponent implements OnInit {
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.store.loadDashboard());
+  }
+
+  protected onTiering(): void {
+    this.slideIn.open(TierConfigFormComponent);
   }
 }
