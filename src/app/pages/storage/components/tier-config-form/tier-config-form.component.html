@@ -1,0 +1,38 @@
+<ix-modal-header
+  [title]="'Tiering' | translate"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
+      <ix-fieldset [title]="'Tiering Configuration' | translate">
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+        ></ix-checkbox>
+        <ix-input
+          formControlName="max_concurrent_jobs"
+          type="number"
+          [label]="'Max Concurrent Jobs' | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="min_available_space"
+          type="number"
+          [label]="'Minimum Available Space (GiB)' | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="formGroup.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

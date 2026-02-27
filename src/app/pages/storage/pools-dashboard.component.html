@@ -13,6 +13,10 @@
     {{ 'Disks' | translate }}
   </a>
 
+  <button mat-button ixTest="tiering" (click)="onTiering()">
+    {{ 'Tiering' | translate }}
+  </button>
+
   @if (!hasNoPools() && !arePoolsLoading()) {
     <a
       *ixRequiresRoles="requiredRoles"
