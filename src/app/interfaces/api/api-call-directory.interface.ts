@@ -1000,6 +1000,7 @@ export interface ApiCallDirectory {
 
   // ZFS Tier
   'zfs.tier.config': { params: void; response: ZfsTierConfig };
+  'zfs.tier.update': { params: [Partial<ZfsTierConfig>]; response: ZfsTierConfig };
   'zfs.tier.rewrite_job_status': { params: [{ tier_job_id: string }]; response: ZfsTierRewriteJobEntry };
   'zfs.tier.rewrite_job_cancel': { params: [{ tier_job_id: string }]; response: void };
   'zfs.tier.dataset_set_tier': { params: [{ dataset_name: string; tier_type: DatasetTier; move_existing_data?: boolean }]; response: ZfsTierRewriteJobEntry };
