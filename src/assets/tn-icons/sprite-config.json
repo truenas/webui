@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=8962f3a332",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=e0693ec8ca",
   "icons": [
     "app-account_circle",
     "app-assignment",
@@ -52,7 +52,6 @@
     "app-smb-share",
     "app-ssd",
     "app-ssd-mirror",
-    "app-topbar-logo",
     "app-true-cloud",
     "app-webshare",
     "apps",
