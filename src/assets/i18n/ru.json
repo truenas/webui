@@ -25,7 +25,7 @@
   "Stale in UI": "Устаревшие в интерфейсе",
   "These alert classes are defined in AlertClassName enum but no longer exist in the backend.": "Эти классы предупреждений определены в перечислении AlertClassName, но больше не существуют в серверной части.",
   "These alert classes are in the AlertClassName enum but have no entry in the smartAlertRegistry.byClass enhancement registry.": "Эти классы предупреждений содержатся в перечислении AlertClassName, но не имеют записи в реестре расширений smartAlertRegistry.byClass.",
-  "These alert classes exist in the backend but are not defined in AlertClassName enum. They need to be added to the enum and the enhancement registry.": "Эти классы предупреждений существуют в серверной части, но не определены в перечислении AlertClassName. Их необходимо добавить в перечисление и реестре расширений.",
+  "These alert classes exist in the backend but are not defined in AlertClassName enum. They need to be added to the enum and the enhancement registry.": "Эти классы предупреждений существуют в серверной части, но не определены в перечислении AlertClassName. Их необходимо добавить в перечисление и реестр расширений.",
   "Token Lifetime": "Срок годности токена",
   "Waiting for authentication to check alert classes...": "Ожидание проверки подлинности для проверки классов предупреждений...",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Похоже, что ваш сеанс был неактивен более {lifetime} секунд.<br>\n              По соображениям безопасности мы выйдем из системы в любое время.\n",
