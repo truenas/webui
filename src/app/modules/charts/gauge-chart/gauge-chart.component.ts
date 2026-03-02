@@ -11,6 +11,11 @@ const defaultWidth = 250;
 const gapPercentage = 17;
 const gapRotation = 45 * 5;
 
+export interface GaugeSegment {
+  value: number;
+  color: string;
+}
+
 // TODO: Similar, but not exactly like view-chart-gauge
 @Component({
   selector: 'ix-gauge-chart',
@@ -25,7 +30,9 @@ export class GaugeChartComponent {
   themeService = inject(ThemeService);
 
   label = input('');
+  sublabel = input('');
   value = input.required<number>();
+  segments = input<GaugeSegment[]>();
 
   colorFill = input<string, string>('', {
     transform: (color: string) => this.conversionColor(color),
@@ -64,20 +71,37 @@ export class GaugeChartComponent {
   };
 
   chartData = computed(() => {
-    return [
-      {
-        data: [
-          this.value(),
-          100 - this.value(),
-          (gapPercentage / 100) * 2 * [this.value(), 100 - this.value()].reduce((sum, x) => sum + x, 0),
-        ],
-        backgroundColor: [this.colorFill(), this.colorBlank(), '#000000'],
-        hoverBackgroundColor: [this.colorFill(), this.colorBlank(), '#000000'],
+    const segmentsInput = this.segments();
+    if (segmentsInput?.length) {
+      const values = segmentsInput.map((segment) => segment.value);
+      const totalUsed = values.reduce((sum, val) => sum + val, 0);
+      const blankValue = Math.max(0, 100 - totalUsed);
+      const allValues = [...values, blankValue];
+      const gapValue = (gapPercentage / 100) * 2 * allValues.reduce((sum, val) => sum + val, 0);
+      const colors = [...segmentsInput.map((segment) => this.conversionColor(segment.color)), this.colorBlank()];
+
+      return [{
+        data: [...allValues, gapValue],
+        backgroundColor: [...colors, '#000000'],
+        hoverBackgroundColor: [...colors, '#000000'],
         borderColor: this.colorBlank(),
         hoverBorderColor: this.colorBlank(),
-        type: 'roundedDoughnut',
-      },
-    ];
+        type: 'roundedDoughnut' as const,
+      }];
+    }
+
+    return [{
+      data: [
+        this.value(),
+        100 - this.value(),
+        (gapPercentage / 100) * 2 * [this.value(), 100 - this.value()].reduce((sum, x) => sum + x, 0),
+      ],
+      backgroundColor: [this.colorFill(), this.colorBlank(), '#000000'],
+      hoverBackgroundColor: [this.colorFill(), this.colorBlank(), '#000000'],
+      borderColor: this.colorBlank(),
+      hoverBorderColor: this.colorBlank(),
+      type: 'roundedDoughnut' as const,
+    }];
   });
 
   private conversionColor(color: string): string {

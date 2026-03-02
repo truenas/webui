@@ -10,10 +10,11 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -33,27 +34,14 @@ describe('PoolUsageCardComponent', () => {
     ],
     providers: [
       ThemeService,
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+      }),
       provideMockStore({
         selectors: [
           { selector: selectTheme, value: 'ix-dark' },
         ],
       }),
-      mockProvider(
-        WidgetResourcesService,
-        {
-          realtimeUpdates$: of({
-            fields: {
-              pools: {
-                dozer: {
-                  available: 899688274,
-                  used: 3384541603,
-                  total: 4284239877,
-                },
-              },
-            },
-          }),
-        },
-      ),
       mockWindow({
         sessionStorage: {
           getItem: () => 'ix-dark',
@@ -74,6 +62,9 @@ describe('PoolUsageCardComponent', () => {
           healthy: true,
           name: 'bingo',
           status: 'ONLINE',
+          used: 3384541603,
+          available: 899688274,
+
           topology: {
             data: [{
               disk: 'sda',
@@ -84,14 +75,7 @@ describe('PoolUsageCardComponent', () => {
             }],
           },
         } as Pool,
-        rootDataset: {
-          used: {
-            parsed: 3384541603,
-          },
-          available: {
-            parsed: 899688274,
-          },
-        } as Dataset,
+        rootDataset: {} as Dataset,
       },
     });
   });
@@ -107,14 +91,20 @@ describe('PoolUsageCardComponent', () => {
   });
 
   it('renders component values when usage is above 80%', () => {
-    spectator.setInput('rootDataset', {
-      used: {
-        parsed: 2199792913690,
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 516000806915,
+
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
       },
-      available: {
-        parsed: 516000806915,
-      },
-    } as Dataset);
+    } as Pool);
 
     expect(spectator.query('.capacity-caption')).toHaveText('Usable Capacity: 2.47 TiB');
     expect(spectator.query('.used-caption')).toHaveText('Used: 2 TiB');
@@ -130,14 +120,20 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Safe);
     expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Everything is fine');
 
-    spectator.setInput('rootDataset', {
-      used: {
-        parsed: 2199792913690,
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 516000806915,
+
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
       },
-      available: {
-        parsed: 516000806915,
-      },
-    } as Dataset);
+    } as Pool);
 
     expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
     expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 80% of available space');
@@ -152,5 +148,62 @@ describe('PoolUsageCardComponent', () => {
     const link = spectator.query('mat-card-header a');
     expect(link).toHaveText('View Datasets');
     expect(link).toHaveAttribute('href', '/datasets/bingo');
+  });
+
+  it('does not show tier breakdown when tiering is disabled', () => {
+    expect(spectator.query('.tier-breakdown')).not.toExist();
+  });
+
+  it('does not show tier breakdown when tiering is enabled but no special vdev', () => {
+    const tierService = spectator.inject(SharingTierService);
+    jest.spyOn(tierService, 'getTierConfig').mockReturnValue(of({ enabled: true } as ZfsTierConfig));
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.query('.tier-breakdown')).not.toExist();
+  });
+
+  it('shows tier breakdown when tiering is enabled and pool has special vdev', () => {
+    const tierService = spectator.inject(SharingTierService);
+    jest.spyOn(tierService, 'getTierConfig').mockReturnValue(of({ enabled: true } as ZfsTierConfig));
+
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 3384541603,
+      available: 899688274,
+      total: 4284229877,
+      special_class_used: 536870912,
+      special_class_available: 1610612736,
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+        special: [{
+          disk: 'nvme0',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.query('.list-caption')).not.toExist();
+
+    const tierBreakdown = spectator.query('.tier-breakdown');
+    expect(tierBreakdown).toExist();
+
+    const tierRows = spectator.queryAll('.tier-row');
+    expect(tierRows).toHaveLength(2);
+
+    const performanceStats = tierRows[0].querySelector('.tier-stats');
+    expect(performanceStats).toHaveText('512 MiB of 2 GiB');
+
+    const regularStats = tierRows[1].querySelector('.tier-stats');
+    expect(regularStats).toBeTruthy();
   });
 });
