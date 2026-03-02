@@ -7,11 +7,12 @@ class RoundedDoughnutController extends DoughnutController {
   override draw(): void {
     const ctx = this.chart.ctx;
     const meta = this.getMeta();
+    const lastVisibleIndex = meta.data.length - 2;
 
-    let tempBackgroundColor: Color;
+    let previousColor: Color;
 
     (meta.data as elements.ArcElement[]).forEach((chartElem, index) => {
-      if (index === 2) {
+      if (index > lastVisibleIndex) {
         return;
       }
 
@@ -25,37 +26,18 @@ class RoundedDoughnutController extends DoughnutController {
       const y = yNullable ?? 0;
       const radius = (outerRadius + innerRadius) / 2;
       const thickness = (outerRadius - innerRadius) / 2;
-      const angle = Math.PI / 2 - startAngle;
-      const angle2 = Math.PI / 2 - endAngle;
+      const startCapAngle = Math.PI / 2 - startAngle;
+      const endCapAngle = Math.PI / 2 - endAngle;
 
       ctx.save();
 
       if (index === 0) {
-        tempBackgroundColor = chartElem.options.backgroundColor;
-      }
-
-      if (index === 0) {
         ctx.fillStyle = chartElem.options.backgroundColor;
         ctx.translate(x, y);
         ctx.beginPath();
         ctx.arc(
-          radius * Math.sin(angle),
-          radius * Math.cos(angle),
-          0.9 * thickness,
-          0,
-          2 * Math.PI,
-        );
-        ctx.closePath();
-        ctx.translate(-x, -y);
-        ctx.fill();
-      }
-      if (index === 1) {
-        ctx.fillStyle = chartElem.options.backgroundColor;
-        ctx.translate(x, y);
-        ctx.beginPath();
-        ctx.arc(
-          radius * Math.sin(angle2),
-          radius * Math.cos(angle2),
+          radius * Math.sin(startCapAngle),
+          radius * Math.cos(startCapAngle),
           0.9 * thickness,
           0,
           2 * Math.PI,
@@ -65,13 +47,29 @@ class RoundedDoughnutController extends DoughnutController {
         ctx.fill();
       }
 
-      if (index === 1) {
-        ctx.fillStyle = tempBackgroundColor;
+      if (index > 0) {
+        ctx.fillStyle = previousColor;
         ctx.translate(x, y);
         ctx.beginPath();
         ctx.arc(
-          radius * Math.sin(angle),
-          radius * Math.cos(angle),
+          radius * Math.sin(startCapAngle),
+          radius * Math.cos(startCapAngle),
+          0.9 * thickness,
+          0,
+          2 * Math.PI,
+        );
+        ctx.closePath();
+        ctx.translate(-x, -y);
+        ctx.fill();
+      }
+
+      if (index === lastVisibleIndex) {
+        ctx.fillStyle = chartElem.options.backgroundColor;
+        ctx.translate(x, y);
+        ctx.beginPath();
+        ctx.arc(
+          radius * Math.sin(endCapAngle),
+          radius * Math.cos(endCapAngle),
           0.9 * thickness,
           0,
           2 * Math.PI,
@@ -92,6 +90,8 @@ class RoundedDoughnutController extends DoughnutController {
         ctx.closePath();
         ctx.fill();
       }
+
+      previousColor = chartElem.options.backgroundColor;
       ctx.restore();
     });
   }
