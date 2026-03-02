@@ -86,7 +86,7 @@ export const helptextApps = {
       tooltip: T('Please specify trains from which UI should retrieve available applications for the catalog.'),
     },
     installNvidiaDriver: {
-      tooltip: T('Enable or disable the NVIDIA GPU support overlay.'),
+      tooltip: T('Enable or disable NVIDIA GPU support.'),
     },
 
     registryMirrors: {

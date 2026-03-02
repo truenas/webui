@@ -203,7 +203,9 @@ export class AppsSettingsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.store$.dispatch(advancedConfigUpdated());
+          if (this.showNvidiaCheckbox()) {
+            this.store$.dispatch(advancedConfigUpdated());
+          }
           this.snackbar.success(this.translate.instant('Settings saved'));
           this.slideInRef.close({ response: true });
         },
