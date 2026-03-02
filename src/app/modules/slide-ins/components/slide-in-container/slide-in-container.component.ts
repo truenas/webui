@@ -44,7 +44,11 @@ export class SlideInContainerComponent implements AfterViewInit {
   @HostBinding('class.slide-in-visible') protected isVisible = false;
   @HostBinding('class.slide-in-hidden') protected isHidden = true;
   @HostBinding('attr.role') protected role = 'dialog';
-  @HostBinding('attr.aria-modal') protected ariaModal = 'true';
+  @HostBinding('attr.aria-modal') protected get ariaModal(): string | null {
+    return this.isVisible ? 'true' : null;
+  }
+
+  @HostBinding('attr.aria-label') protected ariaLabel = 'Slide-in form';
   @HostBinding('style.width') protected width = '480px';
   @HostBinding('style.max-width') protected maxWidth = '480px';
   protected isFocusTrapActive = false;
@@ -113,6 +117,7 @@ export class SlideInContainerComponent implements AfterViewInit {
     );
 
     slideIn$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (!this.isVisible) return;
       this.isFocusTrapActive = true;
       this.cdr.markForCheck();
       this.focusFirstElement();
