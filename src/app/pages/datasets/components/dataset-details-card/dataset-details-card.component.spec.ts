@@ -8,6 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -22,6 +23,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ChangeTierDialogComponent } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
 
 const dataset = {
   id: 'pool/child',
@@ -47,6 +49,7 @@ const dataset = {
     value: DatasetCaseSensitivity.Insensitive,
     source: ZfsPropertySource.Local,
   },
+  tier: { tier_type: DatasetTier.Regular, tier_job: null },
   user_properties: {
     comments: {
       parsed: 'Test comment',
@@ -131,6 +134,7 @@ describe('DatasetDetailsCardComponent', () => {
         'Enable Atime:': 'ON',
         'ZFS Deduplication:': 'OFF',
         'Case Sensitivity:': 'OFF',
+        'Storage Tier:': 'Regular',
         'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });
@@ -146,6 +150,37 @@ describe('DatasetDetailsCardComponent', () => {
         DatasetFormComponent,
         { wide: true, data: { datasetId: 'pool/child', isNew: false } },
       );
+    });
+
+    it('opens change tier dialog when Change link is clicked', () => {
+      setupTest({ dataset });
+
+      spectator.click('.change-tier-link');
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangeTierDialogComponent, {
+        data: {
+          datasetName: 'pool/child',
+          currentTier: DatasetTier.Regular,
+          shareName: '',
+        },
+      });
+    });
+
+    it('shows tier job status when a tier job is running', () => {
+      setupTest({
+        dataset: {
+          ...dataset,
+          tier: {
+            tier_type: DatasetTier.Performance,
+            tier_job: {
+              status: 'RUNNING',
+            },
+          },
+        } as DatasetDetails,
+      });
+
+      const tierStatus = spectator.query('.job-status-badge');
+      expect(tierStatus).toHaveText('Migration running');
     });
 
     it('opens delete dataset dialog when Delete button is clicked', async () => {
@@ -167,6 +202,7 @@ describe('DatasetDetailsCardComponent', () => {
         'Sync:': 'STANDARD',
         'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',
+        'Storage Tier:': 'Regular',
         'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });

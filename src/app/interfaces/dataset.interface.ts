@@ -18,6 +18,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
 import { YesNo } from 'app/enums/yes-no.enum';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
+import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 
 /** Base interface for dataset share summaries from middleware */
 export interface DatasetShareSummary {
@@ -214,6 +215,7 @@ export interface DatasetDetails {
   compression: ZfsProperty<string>;
   compressratio: ZfsProperty<string>;
   deduplication: ZfsProperty<string>;
+  tier?: SharingTierInfo | null;
   user_properties?: Record<string, ZfsProperty<string, string | number>>;
 }
 

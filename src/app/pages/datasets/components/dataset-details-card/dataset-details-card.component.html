@@ -75,6 +75,27 @@
         </div>
       </div>
     }
+    @if (dataset().tier) {
+      <div class="details-item tier-item">
+        <div class="label">{{ 'Storage Tier' | translate }}:</div>
+        <div class="value tier-value">
+          {{ tierLabel() }}
+          @if (tierJob()) {
+            <button
+              mat-stroked-button
+              class="job-status-badge"
+              [ngClass]="tierJobStatusClass()"
+              (click)="openMigrationStatus()"
+            >
+              {{ 'Migration' | translate }} {{ tierJobStatusLabel() }}
+            </button>
+          }
+        </div>
+        <a class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
+          {{ 'Change' | translate }}
+        </a>
+      </div>
+    }
     <div class="details-item">
       <div class="label">{{ 'Path' | translate }}:</div>
       <div

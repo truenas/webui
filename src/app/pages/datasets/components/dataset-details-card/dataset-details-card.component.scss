@@ -25,6 +25,29 @@
       white-space: nowrap;
     }
 
+    &.tier-item {
+      align-items: center;
+    }
+
+    .change-tier-link {
+      color: var(--link);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .tier-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .job-status-badge {
+      line-height: initial;
+      padding: 0 8px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
     .value.dataset-comments {
       flex: 1;
       margin: 0;
