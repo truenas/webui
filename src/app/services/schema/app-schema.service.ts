@@ -297,6 +297,9 @@ export class AppSchemaService {
       }
 
       const keys = Object.keys(listItem);
+      // Workaround: when schemaNode is null due to findAppSchemaNode DFS matching
+      // a nested variable name instead of the intended node, multi-key items
+      // indicate dict-type entries that should be serialized as form groups.
       if (keys.length > 1) {
         return this.serializeFormGroup(listItem, appSchema, schemaPathToNode);
       }
