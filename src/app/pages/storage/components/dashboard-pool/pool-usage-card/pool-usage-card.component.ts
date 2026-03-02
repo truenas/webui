@@ -1,6 +1,7 @@
 import { PercentPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, input, OnInit, signal, inject,
+} from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -11,11 +12,11 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
+import { GaugeChartComponent, GaugeSegment } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { usageCardElements } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.elements';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
@@ -46,16 +47,12 @@ const maxPct = 80;
 export class PoolUsageCardComponent implements OnInit {
   themeService = inject(ThemeService);
   private translate = inject(TranslateService);
-  private resources = inject(WidgetResourcesService);
+  private tierService = inject(SharingTierService);
 
   readonly poolState = input.required<Pool>();
   readonly rootDataset = input.required<Dataset>();
 
-  protected readonly realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
-
-  protected poolStats = computed(() => {
-    return this.realtimeUpdates()?.fields?.pools?.[this.rootDataset()?.name];
-  });
+  protected tierEnabled = signal(false);
 
   chartLowCapacityColor: string;
   chartFillColor: string;
@@ -67,6 +64,10 @@ export class PoolUsageCardComponent implements OnInit {
     this.chartBlankColor = this.themeService.currentTheme().bg1;
     this.chartFillColor = this.themeService.currentTheme().primary;
     this.chartLowCapacityColor = this.themeService.currentTheme().red;
+
+    this.tierService.getTierConfig().subscribe((config) => {
+      this.tierEnabled.set(config.enabled);
+    });
   }
 
   protected isLowCapacity = computed(() => {
@@ -78,12 +79,19 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected capacity = computed(() => {
-    return this.poolStats()?.total || this.rootDataset().available.parsed + this.rootDataset().used.parsed;
+    return this.used() + this.available();
+  });
+
+  protected used = computed(() => {
+    return this.poolState().used;
+  });
+
+  protected available = computed(() => {
+    return this.poolState().available;
   });
 
   protected usedPercentage = computed(() => {
-    return Number(this.poolStats()?.used) / this.capacity() * 100
-      || this.rootDataset().used.parsed / this.capacity() * 100;
+    return (this.used() / this.capacity()) * 100;
   });
 
   protected iconType = computed(() => {
@@ -98,5 +106,61 @@ export class PoolUsageCardComponent implements OnInit {
       return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct });
     }
     return this.translate.instant('Everything is fine');
+  });
+
+  protected hasSpecialVdev = computed(() => {
+    return this.poolState().topology?.special?.length > 0;
+  });
+
+  protected showTierBreakdown = computed(() => {
+    return this.tierEnabled() && this.hasSpecialVdev();
+  });
+
+  protected chartSegments = computed<GaugeSegment[]>(() => {
+    if (!this.showTierBreakdown()) {
+      return undefined;
+    }
+    const cap = this.capacity();
+    if (!cap) {
+      return undefined;
+    }
+    return [
+      { value: (this.performanceUsed() / cap) * 100, color: 'var(--green)' },
+      { value: (this.regularUsed() / cap) * 100, color: 'var(--primary)' },
+    ];
+  });
+
+  protected performanceUsed = computed(() => {
+    return this.poolState().special_class_used || 0;
+  });
+
+  protected performanceAvailable = computed(() => {
+    return this.poolState().special_class_available || 0;
+  });
+
+  protected performanceTotal = computed(() => {
+    return this.performanceUsed() + this.performanceAvailable();
+  });
+
+  protected performancePercent = computed(() => {
+    const total = this.performanceTotal();
+    return total > 0 ? (this.performanceUsed() / total) * 100 : 0;
+  });
+
+  protected regularUsed = computed(() => {
+    return this.used() - this.performanceUsed();
+  });
+
+  protected regularAvailable = computed(() => {
+    return this.available() - this.performanceAvailable();
+  });
+
+  protected regularTotal = computed(() => {
+    return this.regularUsed() + this.regularAvailable();
+  });
+
+  protected regularPercent = computed(() => {
+    const total = this.regularTotal();
+    return total > 0 ? (this.regularUsed() / total) * 100 : 0;
   });
 }

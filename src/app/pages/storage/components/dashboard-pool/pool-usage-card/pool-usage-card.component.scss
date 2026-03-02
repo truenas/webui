@@ -65,6 +65,72 @@
   }
 }
 
+.tier-breakdown {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.tier-row {
+  margin-bottom: 12px;
+}
+
+.tier-header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.tier-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tier-badge {
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 8px;
+
+  &.flash {
+    background-color: var(--green);
+    color: var(--fg1);
+  }
+
+  &.hdd {
+    background-color: var(--alt-bg2);
+    color: var(--fg2);
+  }
+}
+
+.tier-bar-container {
+  background-color: var(--alt-bg2);
+  border-radius: 3px;
+  height: 6px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.tier-bar {
+  border-radius: 3px;
+  height: 100%;
+  min-width: 1px;
+  transition: width 0.3s ease;
+
+  &.performance {
+    background-color: var(--green);
+  }
+
+  &.regular {
+    background-color: var(--primary);
+  }
+}
+
+.tier-stats {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .link {
   color: var(--primary);
   cursor: pointer;

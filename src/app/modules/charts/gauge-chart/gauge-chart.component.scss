@@ -5,14 +5,26 @@
   position: relative;
 }
 
+.label-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .label {
   font-family: var(--font-family-body);
   font-size: 30px;
   font-weight: bold;
-  left: 50%;
   letter-spacing: -1px;
   margin-left: 2px;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
+}
+
+.sublabel {
+  font-size: 13px;
+  font-weight: normal;
+  opacity: 0.7;
 }

@@ -21,6 +21,8 @@
           class="gauge"
           [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
           [colorBlank]="chartBlankColor"
+          [segments]="chartSegments()"
+          [sublabel]="showTierBreakdown() ? ('used' | translate) : ''"
           [width]="150"
           [height]="150"
           [label]="(usedPercentage() / 100 | percent: '1.0-1') || ''"
@@ -46,25 +48,64 @@
           </span>
         </div>
 
-        <ul class="list-caption">
-          <li class="item-caption">
-            <span class="used-caption">
-              <b>{{ 'Used' | translate }}:</b>
-              <span class="value-caption">
-                {{ ((poolStats()?.used || rootDataset().used.parsed) | ixFileSize) || ('Unknown' | translate) }}
+        @if (!showTierBreakdown()) {
+          <ul class="list-caption">
+            <li class="item-caption">
+              <span class="used-caption">
+                <b>{{ 'Used' | translate }}:</b>
+                <span class="value-caption">
+                  {{ used() | ixFileSize }}
+                </span>
               </span>
-            </span>
-          </li>
-          <li class="item-caption">
-            <span class="available-caption">
-              <b>{{ 'Available' | translate }}:</b>
-              <span class="value-caption">
-                {{ ((poolStats()?.available || rootDataset().available.parsed) | ixFileSize) || ('Unknown' | translate) }}
+            </li>
+            <li class="item-caption">
+              <span class="available-caption">
+                <b>{{ 'Available' | translate }}:</b>
+                <span class="value-caption">
+                  {{ available() | ixFileSize }}
+                </span>
               </span>
-            </span>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        }
       </div>
+
+      @if (showTierBreakdown()) {
+        <div class="tier-breakdown">
+          <div class="tier-row">
+            <div class="tier-header">
+              <span class="tier-name">{{ 'Performance' | translate }}</span>
+              <span class="tier-badge flash">{{ 'Flash' | translate }}</span>
+            </div>
+            <div class="tier-bar-container">
+              <div
+                class="tier-bar performance"
+                [style.width.%]="performancePercent()"
+              ></div>
+            </div>
+            <span class="tier-stats">
+              {{ performanceUsed() | ixFileSize }} {{ 'of' | translate }} {{ performanceTotal() | ixFileSize }}
+            </span>
+          </div>
+
+          <div class="tier-row">
+            <div class="tier-header">
+              <span class="tier-name">{{ 'Regular' | translate }}</span>
+              <span class="tier-badge hdd">{{ 'HDD' | translate }}</span>
+            </div>
+            <div class="tier-bar-container">
+              <div
+                class="tier-bar regular"
+                [style.width.%]="regularPercent()"
+              ></div>
+            </div>
+            <span class="tier-stats">
+              {{ regularUsed() | ixFileSize }} {{ 'of' | translate }} {{ regularTotal() | ixFileSize }}
+            </span>
+          </div>
+        </div>
+      }
+
       <a
         class="link"
         [ixTest]="[poolState().name, 'view-disk-reports']"
