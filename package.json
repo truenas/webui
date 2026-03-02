@@ -47,8 +47,6 @@
   "private": true,
   "resolutions": {
     "mermaid": "^11.10.1",
-    "@markuplint/create-rule-helper/glob": "^10.4.5",
-    "@markuplint/file-resolver/glob": "^10.4.5",
     "test-exclude": "^7.0.1"
   },
   "dependencies": {
@@ -160,8 +158,6 @@
     "lodash": "~4.17.23",
     "lodash-es": "~4.17.23",
     "marked": "^12.0.2",
-    "markuplint": "~2.9.0",
-    "markuplint-angular-parser": "~1.1.3",
     "messageformat-parser": "~4.1.3",
     "mime-types": "~2.1.35",
     "ng-gallery": "~11.0.0",
@@ -205,7 +201,6 @@
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@angular-eslint/template-parser": "~21.1.0",
-    "@markuplint/ml-core": "~4.13.1",
     "@mdi/js": "~7.4.47",
     "@typescript-eslint/types": "~8.41.0",
     "@typescript-eslint/utils": "~8.41.0",
