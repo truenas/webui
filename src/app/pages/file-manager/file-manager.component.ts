@@ -1,4 +1,4 @@
-import { HttpEventType } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -521,7 +521,7 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     this.uploadTotalFiles.set(files.length);
     this.uploadCurrentIndex.set(0);
 
-    this.uploadFilesSequentially(files, input, preserveFolderStructure, 0);
+    this.uploadFilesSequentially(files, input, preserveFolderStructure, 0, 0);
   }
 
   private uploadFilesSequentially(
@@ -529,9 +529,10 @@ export class FileManagerComponent implements OnInit, OnDestroy {
     input: HTMLInputElement,
     preserveFolderStructure: boolean,
     index: number,
+    successfulUploads: number,
   ): void {
     if (index >= files.length) {
-      this.completeUpload(input, files.length);
+      this.completeUpload(input, files.length, successfulUploads);
       return;
     }
 
@@ -557,37 +558,55 @@ export class FileManagerComponent implements OnInit, OnDestroy {
       params: [destinationPath],
     });
 
+    let isSuccess = false;
+
     upload$.subscribe({
       next: (httpEvent) => {
         if (httpEvent.type === HttpEventType.UploadProgress && httpEvent.total) {
           const progress = Math.round((httpEvent.loaded / httpEvent.total) * 100);
           this.uploadProgress.set(progress);
+        } else if (httpEvent instanceof HttpResponse) {
+          const body = httpEvent.body as { error?: string };
+          if (body?.error) {
+            console.error('Upload error in response body:', body.error);
+            this.snackbar.error(this.translate.instant('Upload failed: {name} - {error}', { name: file.name, error: body.error }));
+            isSuccess = false;
+          } else {
+            isSuccess = true;
+          }
         }
       },
       error: (error: unknown) => {
         console.error('Upload failed:', error);
         this.snackbar.error(this.translate.instant('Upload failed: {name}', { name: file.name }));
         // Continue with remaining files
-        this.uploadFilesSequentially(files, input, preserveFolderStructure, index + 1);
+        this.uploadFilesSequentially(files, input, preserveFolderStructure, index + 1, successfulUploads);
       },
       complete: () => {
         // Upload next file
-        this.uploadFilesSequentially(files, input, preserveFolderStructure, index + 1);
+        const newSuccessfulUploads = isSuccess ? successfulUploads + 1 : successfulUploads;
+        this.uploadFilesSequentially(files, input, preserveFolderStructure, index + 1, newSuccessfulUploads);
       },
     });
   }
 
-  private completeUpload(input: HTMLInputElement, totalFiles: number): void {
+  private completeUpload(input: HTMLInputElement, totalFiles: number, successfulUploads: number): void {
     this.isUploading.set(false);
     this.uploadProgress.set(0);
     this.uploadFileName.set('');
     this.uploadTotalFiles.set(0);
     this.uploadCurrentIndex.set(0);
 
-    if (totalFiles === 1) {
-      this.snackbar.success(this.translate.instant('File uploaded successfully'));
+    if (successfulUploads === 0) {
+      this.snackbar.error(this.translate.instant('Upload failed. No files were uploaded.'));
+    } else if (successfulUploads < totalFiles) {
+      this.snackbar.error(this.translate.instant('Upload finished with errors. {success} of {total} files uploaded successfully.', { success: successfulUploads, total: totalFiles }));
     } else {
-      this.snackbar.success(this.translate.instant('{count} files uploaded successfully', { count: totalFiles }));
+      if (totalFiles === 1) {
+        this.snackbar.success(this.translate.instant('File uploaded successfully'));
+      } else {
+        this.snackbar.success(this.translate.instant('{count} files uploaded successfully', { count: totalFiles }));
+      }
     }
 
     this.loadDirectory(this.currentPath());
