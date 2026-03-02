@@ -6,6 +6,7 @@ import {
   DestroyRef, ElementRef, HostBinding, HostListener, inject, ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   debounceTime, fromEvent,
   Observable, of, Subject, Subscription, take, timeout,
@@ -48,7 +49,7 @@ export class SlideInContainerComponent implements AfterViewInit {
     return this.isVisible ? 'true' : null;
   }
 
-  @HostBinding('attr.aria-label') protected ariaLabel = 'Slide-in form';
+  @HostBinding('attr.aria-label') protected ariaLabel = T('Slide-in form');
   @HostBinding('style.width') protected width = '480px';
   @HostBinding('style.max-width') protected maxWidth = '480px';
   protected isFocusTrapActive = false;
@@ -139,7 +140,7 @@ export class SlideInContainerComponent implements AfterViewInit {
       if (closeTarget) {
         // The target may be a custom component (e.g. tn-icon-button) wrapping a native button.
         // Try to focus the native button inside, or the element itself if it's directly focusable.
-        const focusable = closeTarget.querySelector<HTMLElement>('button, [tabindex]') || closeTarget;
+        const focusable = closeTarget.querySelector<HTMLElement>('button, [tabindex]:not([tabindex="-1"])') || closeTarget;
         focusable.focus();
       } else {
         this.focusService.focusFirstFocusableElement(container);

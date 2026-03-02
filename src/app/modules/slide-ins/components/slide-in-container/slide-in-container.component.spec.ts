@@ -543,8 +543,16 @@ describe('SlideInContainerComponent', () => {
       expect(spectator.element.getAttribute('role')).toBe('dialog');
     });
 
-    it('should have aria-modal="true" on host element', () => {
+    it('should have aria-modal="true" when slide-in is visible', () => {
+      spectator.component.slideIn();
+      spectator.detectChanges();
       expect(spectator.element.getAttribute('aria-modal')).toBe('true');
+    });
+
+    it('should remove aria-modal when slide-in is hidden', () => {
+      spectator.component.slideOut();
+      spectator.detectChanges();
+      expect(spectator.element.getAttribute('aria-modal')).toBeNull();
     });
   });
 });
