@@ -19,6 +19,7 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
     AppNotesCardComponent,
     AppMetadataCardComponent,
   ],
+  styleUrls: ['./app-details-panel.component.scss'],
 })
 export class AppDetailsPanelComponent {
   readonly app = input.required<App>();

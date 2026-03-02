@@ -33,11 +33,13 @@
           [tooltip]="tooltips.description | translate"
         ></ix-input>
 
-        <ix-checkbox
-          formControlName="enable_smb1"
-          [label]="'Enable SMB1 support' | translate"
-          [tooltip]="tooltips.enable_smb1 | translate"
-        ></ix-checkbox>
+        <ix-select
+          formControlName="minimum_protocol"
+          [label]="'Minimum Protocol' | translate"
+          [tooltip]="tooltips.minimum_protocol | translate"
+          [options]="minimumProtocolOptions$"
+          [required]="true"
+        ></ix-select>
 
         <ix-checkbox
           formControlName="ntlmv1_auth"

@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
@@ -37,6 +38,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 @Component({
   selector: 'ix-apps-settings',
@@ -68,6 +71,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 export class AppsSettingsComponent implements OnInit {
   private dockerStore = inject(DockerStore);
   private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
@@ -77,10 +81,12 @@ export class AppsSettingsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected isFormLoading = signal(false);
+  protected showNvidiaCheckbox = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   protected form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
+    nvidia: [false],
     enable_image_updates: [true],
     address_pools: new FormArray<FormGroup<{
       base: FormControl<string>;
@@ -98,6 +104,7 @@ export class AppsSettingsComponent implements OnInit {
 
   readonly tooltips = {
     preferred_trains: helptextApps.settingsForm.preferredTrains.tooltip,
+    install_nvidia_driver: helptextApps.settingsForm.installNvidiaDriver.tooltip,
     registry_mirrors: helptextApps.settingsForm.registryMirrors.generalTooltip,
   };
 
@@ -120,9 +127,13 @@ export class AppsSettingsComponent implements OnInit {
     combineLatest([
       this.api.call('catalog.config'),
       this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
+      this.api.call('system.advanced.nvidia_present'),
+      this.api.call('system.advanced.config'),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([catalogConfig, dockerConfig]) => {
+      .subscribe(([catalogConfig, dockerConfig, hasNvidiaCard, advancedConfig]) => {
+        this.showNvidiaCheckbox.set(hasNvidiaCard || advancedConfig.nvidia);
+
         dockerConfig.address_pools.forEach(() => {
           this.addAddressPool();
         });
@@ -136,6 +147,7 @@ export class AppsSettingsComponent implements OnInit {
 
         this.form.patchValue({
           preferred_trains: catalogConfig.preferred_trains,
+          nvidia: advancedConfig.nvidia,
           enable_image_updates: dockerConfig.enable_image_updates,
           address_pools: dockerConfig.address_pools,
           registry_mirrors: dockerConfig.registry_mirrors || [],
@@ -183,11 +195,17 @@ export class AppsSettingsComponent implements OnInit {
         address_pools: values.address_pools,
         registry_mirrors: values.registry_mirrors,
       }]),
+      ...(this.showNvidiaCheckbox()
+        ? [this.api.call('system.advanced.update', [{ nvidia: values.nvidia }])]
+        : []),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
+          if (this.showNvidiaCheckbox()) {
+            this.store$.dispatch(advancedConfigUpdated());
+          }
           this.snackbar.success(this.translate.instant('Settings saved'));
           this.slideInRef.close({ response: true });
         },
