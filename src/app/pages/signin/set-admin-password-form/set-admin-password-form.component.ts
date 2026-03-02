@@ -6,6 +6,7 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -25,6 +26,7 @@ const adminUsername = 'harboros_admin';
   styleUrls: ['./set-admin-password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnIconComponent,
     FormsModule,
     ReactiveFormsModule,
     MatButton,
