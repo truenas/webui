@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { SmbMinProtocol } from 'app/enums/smb-min-protocol.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { SmbConfig, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbShare, SmbSharePurpose } from 'app/interfaces/smb-share.interface';
@@ -18,6 +19,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -71,7 +73,7 @@ describe('ServiceSmbComponent', () => {
           bindip: [] as string[],
           cifs_SID: 'mockSid',
           ntlmv1_auth: false,
-          enable_smb1: false,
+          minimum_protocol: SmbMinProtocol.Smb2,
           admin_group: null,
           next_rid: 0,
           encryption: SmbEncryption.Negotiate,
@@ -148,7 +150,7 @@ describe('ServiceSmbComponent', () => {
       'NetBIOS Alias': [],
       Workgroup: 'WORKGROUP',
       Description: 'TrueNAS Server',
-      'Enable SMB1 support': false,
+      'Minimum Protocol': 'SMB2 – default',
       'NTLMv1 Auth': false,
     });
   });
@@ -165,7 +167,7 @@ describe('ServiceSmbComponent', () => {
       Description: 'TrueNAS Server',
       'Directory Mask': '',
       'Enable Apple SMB2/3 Protocol Extensions': false,
-      'Enable SMB1 support': false,
+      'Minimum Protocol': 'SMB2 – default',
       'File Mask': '',
       'Guest Account': 'nobody',
       'Local Master': true,
@@ -202,7 +204,7 @@ describe('ServiceSmbComponent', () => {
       bindip: [] as string[],
       cifs_SID: 'mockSid',
       ntlmv1_auth: false,
-      enable_smb1: false,
+      minimum_protocol: SmbMinProtocol.Smb2,
       admin_group: null,
       next_rid: 0,
       encryption: SmbEncryption.Negotiate,
@@ -237,7 +239,7 @@ describe('ServiceSmbComponent', () => {
       'NetBIOS Name': 'truenas-scale',
       'NetBIOS Alias': ['truenas-alias', 'truenas-alias2'],
       Description: 'TrueNAS SCALE Server',
-      'Enable SMB1 support': true,
+      'Minimum Protocol': 'SMB1 – legacy clients (not recommended)',
       'NTLMv1 Auth': true,
       Workgroup: 'WORKGROUP2',
     });
@@ -255,7 +257,7 @@ describe('ServiceSmbComponent', () => {
       netbiosname: 'truenas-scale',
       netbiosalias: ['truenas-alias', 'truenas-alias2'],
       description: 'TrueNAS SCALE Server',
-      enable_smb1: true,
+      minimum_protocol: SmbMinProtocol.Smb1,
       ntlmv1_auth: true,
       workgroup: 'WORKGROUP2',
 
@@ -314,7 +316,7 @@ describe('ServiceSmbComponent', () => {
       netbiosname: 'truenas',
       netbiosalias: [],
       description: 'TrueNAS Server',
-      enable_smb1: false,
+      minimum_protocol: SmbMinProtocol.Smb2,
       ntlmv1_auth: false,
       workgroup: 'WORKGROUP',
 
@@ -624,7 +626,7 @@ describe('ServiceSmbComponent', () => {
             netbiosname: 'truenas',
             workgroup: 'WORKGROUP',
             description: '',
-            enable_smb1: false,
+            minimum_protocol: SmbMinProtocol.Smb2,
             bindip: [],
             encryption: SmbEncryption.Negotiate,
             search_protocols: [],
@@ -645,7 +647,7 @@ describe('ServiceSmbComponent', () => {
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
     });
 
-    it('should disable Stateful Failover checkbox when SMB1 is enabled', async () => {
+    it('should disable Stateful Failover checkbox when minimum protocol is SMB1', async () => {
       store$.overrideSelector(selectIsHaLicensed, true);
       store$.refreshState();
 
@@ -658,7 +660,7 @@ describe('ServiceSmbComponent', () => {
             netbiosname: 'truenas',
             workgroup: 'WORKGROUP',
             description: '',
-            enable_smb1: true,
+            minimum_protocol: SmbMinProtocol.Smb1,
             bindip: [],
             encryption: SmbEncryption.Negotiate,
             search_protocols: [],
@@ -679,7 +681,7 @@ describe('ServiceSmbComponent', () => {
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
     });
 
-    it('should re-enable Stateful Failover checkbox when SMB1 is toggled off', async () => {
+    it('should re-enable Stateful Failover checkbox when minimum protocol is changed from SMB1', async () => {
       store$.overrideSelector(selectIsHaLicensed, true);
       store$.refreshState();
 
@@ -689,13 +691,13 @@ describe('ServiceSmbComponent', () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      // Initially enabled (no incompatible shares, SMB1 disabled)
+      // Initially enabled (no incompatible shares, minimum protocol is SMB2)
       const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(false);
 
-      // Enable SMB1
-      const smb1Checkbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="enable_smb1"]' }));
-      await smb1Checkbox.toggle();
+      // Set minimum protocol to SMB1
+      const minimumProtocolSelect = await loader.getHarness(IxSelectHarness.with({ selector: '[formControlName="minimum_protocol"]' }));
+      await minimumProtocolSelect.setValue('SMB1 – legacy clients (not recommended)');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -703,8 +705,8 @@ describe('ServiceSmbComponent', () => {
       // Should be disabled now
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
 
-      // Disable SMB1
-      await smb1Checkbox.toggle();
+      // Set minimum protocol back to SMB2
+      await minimumProtocolSelect.setValue('SMB2 – default');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
