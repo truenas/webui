@@ -46,12 +46,14 @@ export interface Pool {
    */
   is_upgraded?: boolean;
   size: number;
+  used: number;
   available: number;
-  special_class_available: number;
   algorithm: ZfsProperty<string, string>;
   dedup_table_quota: string | null;
   dedup_table_size: number;
   all_sed?: boolean;
+  special_class_used?: number;
+  special_class_available?: number;
 }
 
 export type PoolTopology = Record<VDevType, VDevItem[]>;
