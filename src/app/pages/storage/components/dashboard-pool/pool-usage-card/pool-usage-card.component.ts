@@ -161,6 +161,7 @@ export class PoolUsageCardComponent implements OnInit {
     return total > 0 ? (this.performanceReserved() / total) * 100 : 0;
   });
 
+
   protected regularUsed = computed(() => {
     return this.used() - this.performanceUsed();
   });
