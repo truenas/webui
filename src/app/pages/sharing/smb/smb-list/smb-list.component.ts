@@ -55,11 +55,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
-import {
-  performanceTierColumn,
-} from 'app/pages/sharing/components/performance-tier-cell/performance-tier-cell.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import {
+  storageTierColumn,
+} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
@@ -147,7 +147,7 @@ export class SmbListComponent implements OnInit {
       title: this.translate.instant('Audit Logging'),
       getValue: (row) => Boolean(row.audit?.enable),
     }),
-    performanceTierColumn({
+    storageTierColumn({
       title: this.translate.instant('Storage Tier'),
       hidden: true,
     }),
@@ -318,11 +318,12 @@ export class SmbListComponent implements OnInit {
   private openChangeTierDialog(row: SmbShare): void {
     if (!row.tier) return;
 
+    const datasetName = row.path.replace(/^\/mnt\//, '');
     this.matDialog.open(ChangeTierDialogComponent, {
       data: {
-        datasetName: row.path,
+        datasetName,
         currentTier: row.tier.tier_type,
-        shareName: row.name,
+        poolName: datasetName.split('/')[0],
       } as ChangeTierDialogData,
     }).afterClosed().pipe(
       filter(Boolean),

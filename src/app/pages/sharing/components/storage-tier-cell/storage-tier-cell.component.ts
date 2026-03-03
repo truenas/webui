@@ -16,9 +16,9 @@ interface HasTier {
 }
 
 @Component({
-  selector: 'ix-performance-tier-cell',
-  templateUrl: './performance-tier-cell.component.html',
-  styleUrls: ['./performance-tier-cell.component.scss'],
+  selector: 'ix-storage-tier-cell',
+  templateUrl: './storage-tier-cell.component.html',
+  styleUrls: ['./storage-tier-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
@@ -26,7 +26,7 @@ interface HasTier {
     NgClass,
   ],
 })
-export class PerformanceTierCellComponent<T extends HasTier> extends ColumnComponent<T> {
+export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent<T> {
   private translate = inject(TranslateService);
   private matDialog = inject(MatDialog);
 
@@ -104,8 +104,8 @@ export class PerformanceTierCellComponent<T extends HasTier> extends ColumnCompo
   }
 }
 
-export function performanceTierColumn<T extends HasTier>(
-  options: Partial<PerformanceTierCellComponent<T>>,
-): Column<T, PerformanceTierCellComponent<T>> {
-  return { type: PerformanceTierCellComponent, cssClass: 'tier-cell', ...options };
+export function storageTierColumn<T extends HasTier>(
+  options: Partial<StorageTierCellComponent<T>>,
+): Column<T, StorageTierCellComponent<T>> {
+  return { type: StorageTierCellComponent, cssClass: 'tier-cell', ...options };
 }

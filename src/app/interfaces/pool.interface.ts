@@ -46,6 +46,8 @@ export interface Pool {
    */
   is_upgraded?: boolean;
   size: number;
+  available: number;
+  special_class_available: number;
   algorithm: ZfsProperty<string, string>;
   dedup_table_quota: string | null;
   dedup_table_size: number;
