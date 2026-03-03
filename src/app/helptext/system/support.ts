@@ -49,11 +49,11 @@ export const helptextSystemSupport = {
 
   cc: {
     tooltip: T('Email addresses to receive copies of TrueNAS Support \
-  messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
-  Separate entries by pressing <code>Enter</code>.'),
+ messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
+ Separate entries by pressing <code>Enter</code>.'),
     err: T('Email addresses must be entered in the format \
-  <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing \
-  <code>Enter</code>.'),
+ <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing \
+ <code>Enter</code>.'),
   },
 
   phone: {

@@ -72,8 +72,8 @@ export const helptextZvol = {
     inheritTooltip: T('Use the encryption properties of the root dataset.'),
     encryptionLabel: T('Encryption'),
     encryptionTooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,\
-     it is not possible to disable this option.'),
+ unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,\
+ it is not possible to disable this option.'),
     encryptionTypeLabel: T('Encryption Type'),
     encryptionTypeTooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
@@ -81,22 +81,22 @@ export const helptextZvol = {
  Delete any previous key file backups and back up the new key file.'),
     algorithmLabel: T('Algorithm'),
     algorithmTooltip: T('Mathematical instruction sets that determine how plaintext is converted \
-     into ciphertext. See \
-     <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a> \
-     for more details.'),
+ into ciphertext. See \
+ <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a> \
+ for more details.'),
     passphraseLabel: T('Passphrase'),
     passphraseTooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br> \
-     WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
-     memorable passphrase or physically secure the passphrase.'),
+ WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
+ memorable passphrase or physically secure the passphrase.'),
     confirmPassphraseLabel: T('Confirm Passphrase'),
     pbkdf2itersLabel: 'pbkdf2iters',
     pbkdf2itersTooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
-     to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
-     <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
+ to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
+ <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
     generateKeyLabel: T('Generate Key'),
     generateKeyTooltip: T('Randomly generate an encryption key for securing this dataset. Disabling requires manually \
-     defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
-     dataset. Store the encryption key in a secure location.'),
+ defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
+ dataset. Store the encryption key in a secure location.'),
     keyLabel: T('Key'),
     keyTooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
   },

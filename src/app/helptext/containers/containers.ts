@@ -71,9 +71,9 @@ export const containersHelptext = {
   secureBootOffRequiredTooltip: T('Secure Boot is required to be off for the VM image you selected'),
 
   idMapHint: T('By default, accounts inside containers are mapped to a special private range of UIDs and GIDs to perform security isolation for the containers.\
-  This range starts at 2147000001.\
-  <br>\
-  You can use this dialog to control mapping manually.'),
+ This range starts at 2147000001.\
+ <br>\
+ You can use this dialog to control mapping manually.'),
 
   mapDirectlyTooltip: T('UID/GID from the host is directly mapped to the same id in a container. This means that GID 3000 will appear as GID 3000 in the container.'),
 

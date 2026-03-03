@@ -84,13 +84,13 @@ export const helptextSharingSmb = {
 
   recyclebinLabel: T('Export Recycle Bin'),
   recyclebinTooltip: T('Select to enable. Deleted files from the same \
-    dataset move to a <b>Recycle Bin</b> in that dataset and do not take any \
-    additional space. Recycle bin is for access over SMB protocol only.\
-    The files are renamed to a per-user subdirectory within \
-    <b><i>.recycle</i></b> directory at either (1) root of SMB share \
-    (if path is same dataset as SMB share) or (2) at root of current \
-    dataset if we have nested datasets. Because of (2) there is no \
-    automatic deletion based on file size.'),
+ dataset move to a <b>Recycle Bin</b> in that dataset and do not take any \
+ additional space. Recycle bin is for access over SMB protocol only.\
+ The files are renamed to a per-user subdirectory within \
+ <b><i>.recycle</i></b> directory at either (1) root of SMB share \
+ (if path is same dataset as SMB share) or (2) at root of current \
+ dataset if we have nested datasets. Because of (2) there is no \
+ automatic deletion based on file size.'),
 
   guestokLabel: T('Allow Guest Access'),
   guestokTooltip: T(

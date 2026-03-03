@@ -21,6 +21,6 @@ export const helptextGroups = {
  for their password when using <b>sudo</b>.'),
 
   smbTooltip: T('Makes the group available for permissions editors over SMB protocol (and the share ACL \
-    editor). It is not used for SMB authentication or determining the user session token or internal \
-    permissions checks.'),
+ editor). It is not used for SMB authentication or determining the user session token or internal \
+ permissions checks.'),
 };

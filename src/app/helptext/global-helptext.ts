@@ -6,7 +6,7 @@ export const helptextGlobal = {
 
   humanReadable: {
     suggestionTooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
-  If units are not specified, the value defaults to'),
+ If units are not specified, the value defaults to'),
 
     suggestionLabel: T('(Examples: 500 KiB, 500M, 2 TB)'),
   },

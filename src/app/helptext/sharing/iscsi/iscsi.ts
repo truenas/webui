@@ -99,13 +99,13 @@ export const helptextIscsi = {
  the system. Separate entries by pressing <code>Enter</code>.'),
 
     alertThreshold: T('Generate an alert when the \
-   pool has this percent space remaining. This is typically \
-   configured at the pool level when using zvols or at the extent level \
-   for both file and device based extents.'),
+ pool has this percent space remaining. This is typically \
+ configured at the pool level when using zvols or at the extent level \
+ for both file and device based extents.'),
 
     aluaTooltip: T('Do not enable ALUA on TrueNAS unless it is also supported \
-    by and enabled on the client computers. ALUA only works when enabled \
-    on both the client and server.'),
+ by and enabled on the client computers. ALUA only works when enabled \
+ on both the client and server.'),
 
     iserTooltip: T('Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling\
  the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved\
@@ -126,7 +126,7 @@ export const helptextIscsi = {
 
     typeLabel: T('Extent Type'),
     typeTooltip: T('<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.\
-  <i>File</i> provides virtual storage access to a single file.'),
+ <i>File</i> provides virtual storage access to a single file.'),
 
     deviceLabel: T('Device'),
     deviceTooltip: T(
@@ -290,14 +290,14 @@ export const helptextIscsi = {
 
   initiatorsLabel: T('Initiators'),
   initiatorsTooltip: T('Leave blank to allow all or enter a list of initiator hostnames. \
-   Separate entries by pressing <code>Enter</code>.'),
+ Separate entries by pressing <code>Enter</code>.'),
 
   authNetwork: {
     label: T('Authorized Networks'),
     tooltip: T('Network addresses allowed to use this initiator. Leave blank to allow all \
-     networks or list network addresses with a CIDR mask. Separate entries by pressing \
-     <code>Enter</code>.'),
+ networks or list network addresses with a CIDR mask. Separate entries by pressing \
+ <code>Enter</code>.'),
     error: T('Invalid network address list. Check for typos or missing CIDR netmasks and \
-     separate addresses by pressing <code>Enter</code>.'),
+ separate addresses by pressing <code>Enter</code>.'),
   },
 };

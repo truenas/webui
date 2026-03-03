@@ -129,9 +129,9 @@ matches your certificate usage scenario.'),
     basicConstraints: {
       config: {
         tooltip: T('Specify whether to use the certificate for a Certificate Authority \
-          and whether this extension is critical. Clients must recognize critical extensions \
-          to prevent rejection. Web certificates typically require you to disable \
-          CA and enable Critical Extension.'),
+ and whether this extension is critical. Clients must recognize critical extensions \
+ to prevent rejection. Web certificates typically require you to disable \
+ CA and enable Critical Extension.'),
       },
       ca: {
         label: T('CA'),
@@ -139,8 +139,8 @@ matches your certificate usage scenario.'),
       },
       enabled: {
         tooltip: T('Activate the Basic Constraints extension to identify whether \
-          the certificate\'s subject is a CA and the maximum depth of valid \
-          certification paths that include this certificate.'),
+ the certificate\'s subject is a CA and the maximum depth of valid \
+ certification paths that include this certificate.'),
       },
       pathLength: {
         tooltip: T('How many non-self-issued intermediate certificates that can follow \
@@ -184,12 +184,12 @@ certificate still approved.'),
     keyUsage: {
       config: {
         tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates \
-          typically need at least Digital Signature and possibly Key Encipherment \
-          or Key Agreement, while other applications may need other usages.'),
+ typically need at least Digital Signature and possibly Key Encipherment \
+ or Key Agreement, while other applications may need other usages.'),
       },
       enabled: {
         tooltip: T('Activate this certificate extension.\
-  The key usage extension defines the purpose \
+ The key usage extension defines the purpose \
  (e.g., encipherment, signature, certificate signing) of the key contained in \
  the certificate. The usage restriction might be employed when a key that \
  could be used for more than one operation is to be restricted. For \

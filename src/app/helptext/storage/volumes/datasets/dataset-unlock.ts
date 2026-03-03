@@ -8,7 +8,7 @@ export const helptextUnlock = {
 Child datasets that inherit encryption from this encryption root will be unlocked in either case.'),
   uploadKeyFileLabel: T('Upload Key file'),
   uploadKeyFileTooltip: T('Browse to the exported key file that can be used to unlock this \
-     dataset.'),
+ dataset.'),
   datasetKeyLabel: T('Dataset Key'),
   datasetPassphraseLabel: T('Dataset Passphrase'),
   datasetPassphraseTooltip: T('The user-defined string that can unlock this dataset.'),

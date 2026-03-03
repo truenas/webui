@@ -77,8 +77,8 @@ export const helptextSystemGeneral = {
     label: T('Language'),
     tooltip: T('Select a language from the drop-down menu.'),
     hint: T('Languages other than <i>English</i> are provided by \
-     the community and may be incomplete. \
-     <a href="https://github.com/truenas/webui/blob/master/docs/contributing_translations.md" target="_blank">Learn how to contribute.</a>'),
+ the community and may be incomplete. \
+ <a href="https://github.com/truenas/webui/blob/master/docs/contributing_translations.md" target="_blank">Learn how to contribute.</a>'),
   },
 
   kbdmap: {
@@ -106,7 +106,7 @@ When disabled, anonymous usage statistics consisting only of the software versio
 Information about system configuration and usage is not collected.\
 <br><br>\
 <a href="https://www.truenas.com/docs/scale/gettingstarted/useragreements/datacollectionstatement/" target="_blank">See details.</a>\
-    '),
+ '),
     stigModeTooltip: T('This option is disabled in STIG mode.'),
   },
 

@@ -18,11 +18,11 @@ permissions. Exporting this pool will transfer the system dataset to another ava
 available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, \
 the system dataset transfers back to the TrueNAS operating system device.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
-    mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
+ mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     cascade: {
       label: T('Delete saved configurations from TrueNAS?'),
       tooltip: T('Delete all TrueNAS configurations that depend on the exported pool. Impacted configurations\
-       may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.'),
+ may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.'),
     },
     enterName: T('Enter <strong>{pool}</strong> below to confirm'),
   },

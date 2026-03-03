@@ -121,8 +121,8 @@ Valid range is 1 byte to 16 MiB. You can enter values like "128K", "1M", "4096",
   encryption: {
     inheritTooltip: T('Use the encryption properties of the parent dataset.'),
     encryptionTooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is \
-     not possible to disable this option.'),
+ unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is \
+ not possible to disable this option.'),
     typeTooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
  invalidates any previously downloaded key file for this dataset.\
@@ -132,18 +132,18 @@ Valid range is 1 byte to 16 MiB. You can enter values like "128K", "1M", "4096",
       { label: T('Passphrase'), value: 'passphrase' },
     ],
     algorithmTooltip: T('Mathematical instruction sets that determine how plaintext is converted \
-     into ciphertext. See \
-     <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a> \
-     for more details.'),
+ into ciphertext. See \
+ <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a> \
+ for more details.'),
     passphraseTooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br> \
-     WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
-     memorable passphrase or physically secure the passphrase.'),
+ WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
+ memorable passphrase or physically secure the passphrase.'),
     pbkdf2itersTooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
-     to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
-     <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
+ to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \
+ <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
     generateKeyTooltip: T('Randomly generate an encryption key for securing this dataset. Disabling requires manually \
-     defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
-     dataset. Store the encryption key in a secure location.'),
+ defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
+ dataset. Store the encryption key in a secure location.'),
   },
   pathWarningTitle: T('Action Not Possible'),
   pathIsTooLongWarning: T('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.'),

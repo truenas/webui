@@ -58,9 +58,9 @@ export const helptextSystemEmail = {
     smtp: {
       tooltip: T(
         'Enable\
-   <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
-   target="_blank">SMTP AUTH</a> using PLAIN SASL.\
-   Requires a valid Username and Password.',
+ <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
+ target="_blank">SMTP AUTH</a> using PLAIN SASL.\
+ Requires a valid Username and Password.',
       ),
     },
     clientId: {

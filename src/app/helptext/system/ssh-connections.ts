@@ -14,7 +14,7 @@ export const helptextSshConnections = {
   usernameTooltip: T('Username on the remote system which will be used to login <b>via SSH</b>.'),
 
   sudoTooltip: T('Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.\
-    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
+ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
 
   privateKeyTooltip: T('Choose a saved SSH Keypair or select \
  <i>Generate New</i> to create a new keypair and use it for this \

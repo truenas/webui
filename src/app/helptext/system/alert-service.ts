@@ -49,11 +49,11 @@ export const helptextAlertService = {
 
   opsGenie: {
     apiKeyTooltip: T('Enter or paste the <a\
-   href="https://docs.opsgenie.com/v1.0/docs/api-integration"\
-   target="_blank">API key</a>. Find the API key by signing\
-   into the OpsGenie web interface and going to\
-   Integrations/Configured Integrations. Click the desired\
-   integration, Settings, and read the API Key field.'),
+ href="https://docs.opsgenie.com/v1.0/docs/api-integration"\
+ target="_blank">API key</a>. Find the API key by signing\
+ into the OpsGenie web interface and going to\
+ Integrations/Configured Integrations. Click the desired\
+ integration, Settings, and read the API Key field.'),
 
     apiUrlTooltip: T('Leave empty for default (<a href="https://docs.opsgenie.com/docs/api-overview" target="_blank">OpsGenie API</a>)'),
   },
@@ -111,19 +111,19 @@ export const helptextAlertService = {
 
   telegram: {
     botTokenTooltip: T('Telegram Bot API Token (<a href="https://core.telegram.org/bots#3-how-do-i-create-a-bot"\
-   target="_blank">How to create a Telegram Bot</a>)'),
+ target="_blank">How to create a Telegram Bot</a>)'),
     chatIdsTooltip: T('Enter a list of chat IDs separated by space, comma or semicolon. \
-   To find your chat ID send a message to the bot, group or channel and visit \
-   <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates" \
-   target="_blank">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.'),
+ To find your chat ID send a message to the bot, group or channel and visit \
+ <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates" \
+ target="_blank">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.'),
   },
 
   splunkOnCall: {
     apiKeyTooltip: T('Enter or paste the <a\
-   href="https://help.victorops.com/knowledge-base/api/"\
-   target="_blank">Splunk On-Call API key</a>.'),
+ href="https://help.victorops.com/knowledge-base/api/"\
+ target="_blank">Splunk On-Call API key</a>.'),
     routingKeyTooltip: T('Enter or paste the <a\
-   href="https://portal.victorops.com/public/api-docs.html#/Routing32Keys"\
-   target="_blank">Splunk On-Call routing key</a>.'),
+ href="https://portal.victorops.com/public/api-docs.html#/Routing32Keys"\
+ target="_blank">Splunk On-Call routing key</a>.'),
   },
 };

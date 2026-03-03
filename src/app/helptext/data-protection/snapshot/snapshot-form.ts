@@ -19,8 +19,8 @@ export const helptextSnapshotForm = {
 
   lifetimeLabel: T('Snapshot Lifetime'),
   lifetimeTooltip: T('Define a length of time to retain the snapshot on this system. After the \
-  time expires, the snapshot is removed. Snapshots which have been replicated \
-  to other systems are not affected.'),
+ time expires, the snapshot is removed. Snapshots which have been replicated \
+ to other systems are not affected.'),
 
   namingSchemaLabel: T('Naming Schema'),
   namingSchemaTooltip: T('Snapshot name format string. The default \

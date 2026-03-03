@@ -41,7 +41,7 @@ export const helptextInterfacesForm = {
   },
   vlan: {
     parentInterfaceTooltip: T('Select the VLAN Parent Interface.\
-  This interface must be connected to a switch port that has also been configured for the VLAN.'),
+ This interface must be connected to a switch port that has also been configured for the VLAN.'),
     tagTooltip: T('Enter the numeric tag configured in the switched network.'),
     priorityCodePointTooltip: T('Select the Class of Service. The available 802.1p\
  Class of Service ranges from <i>Best effort (default)</i> \
@@ -52,7 +52,7 @@ export const helptextInterfacesForm = {
  Warning: Link Aggregation creation fails if any of the selected\
  interfaces have been manually configured.'),
     interfacesFailoverTooltip: T('Select the interfaces to use in the aggregation.<br>\
-  Warning: Link Aggregation creation fails if any of the selected interfaces\
+ Warning: Link Aggregation creation fails if any of the selected interfaces\
  have been manually configured.<br>The order is important because the FAILOVER\
  lagg protocol will mark the first interface as the "primary" interface.'),
   },

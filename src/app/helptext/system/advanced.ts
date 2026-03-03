@@ -24,7 +24,7 @@ Note: If the administrative account Shell is not set to TrueNAS Console, you ent
   serialSpeedTooltip: T('Choose the speed in bps used by the serial port.'),
 
   debugKernelTooltip: T('Set to boot a debug kernel after the next system\
-  restart.'),
+ restart.'),
 
   maxParallelReplicationTasksTooltip: T('Maximum number of replication tasks being executed \
 simultaneously.'),
@@ -53,7 +53,7 @@ simultaneously.'),
   sysloglevel: {
     tooltip: T(
       'Select the minimum priority level to send to the remote syslog server.\
-  The system only sends logs matching this level or higher.',
+ The system only sends logs matching this level or higher.',
     ),
     options: [
       { label: T('Emergency'), value: SyslogLevel.Emergency },
