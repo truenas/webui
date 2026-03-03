@@ -54,6 +54,7 @@ export interface Pool {
   all_sed?: boolean;
   special_class_used?: number;
   special_class_available?: number;
+  special_class_reserved?: number;
 }
 
 export type PoolTopology = Record<VDevType, VDevItem[]>;
