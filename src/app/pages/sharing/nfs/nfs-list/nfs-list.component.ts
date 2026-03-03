@@ -42,10 +42,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
-import {
-  performanceTierColumn,
-} from 'app/pages/sharing/components/performance-tier-cell/performance-tier-cell.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import {
+  storageTierColumn,
+} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -143,7 +143,7 @@ export class NfsListComponent implements OnInit {
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),
     }),
-    performanceTierColumn({
+    storageTierColumn({
       title: this.translate.instant('Storage Tier'),
       hidden: true,
     }),
@@ -271,11 +271,12 @@ export class NfsListComponent implements OnInit {
   private openChangeTierDialog(row: NfsShare): void {
     if (!row.tier) return;
 
+    const datasetName = row.path.replace(/^\/mnt\//, '');
     this.matDialog.open(ChangeTierDialogComponent, {
       data: {
-        datasetName: row.path,
+        datasetName,
         currentTier: row.tier.tier_type,
-        shareName: row.path,
+        poolName: datasetName.split('/')[0],
       } as ChangeTierDialogData,
     }).afterClosed().pipe(
       filter(Boolean),

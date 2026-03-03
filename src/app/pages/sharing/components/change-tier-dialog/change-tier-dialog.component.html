@@ -6,9 +6,19 @@
   </div>
 
   <div class="tier-change">
-    <span class="tier-chip current">{{ currentTierLabel | translate }}</span>
+    <div class="tier-column">
+      <span class="tier-chip current">{{ currentTierLabel | translate }}</span>
+      @if (currentTierSpace(); as space) {
+        <span class="tier-space">{{ space }} {{ 'available' | translate }}</span>
+      }
+    </div>
     <span class="arrow">&rarr;</span>
-    <span class="tier-chip new">{{ newTierLabel | translate }}</span>
+    <div class="tier-column">
+      <span class="tier-chip new">{{ newTierLabel | translate }}</span>
+      @if (newTierSpace(); as space) {
+        <span class="tier-space">{{ space }} {{ 'available' | translate }}</span>
+      }
+    </div>
   </div>
 
   <form [formGroup]="form">

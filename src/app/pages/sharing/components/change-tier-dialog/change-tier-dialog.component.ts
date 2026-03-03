@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -18,7 +19,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export interface ChangeTierDialogData {
   datasetName: string;
   currentTier: DatasetTier;
-  shareName: string;
+  poolName: string;
 }
 
 @Component({
@@ -38,7 +39,7 @@ export interface ChangeTierDialogData {
     TestDirective,
   ],
 })
-export class ChangeTierDialogComponent {
+export class ChangeTierDialogComponent implements OnInit {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -50,6 +51,9 @@ export class ChangeTierDialogComponent {
   protected form = this.fb.group({
     moveExistingData: [true],
   });
+
+  protected regularAvailable = signal<string | null>(null);
+  protected performanceAvailable = signal<string | null>(null);
 
   get newTier(): DatasetTier {
     return this.data.currentTier === DatasetTier.Performance
@@ -63,6 +67,22 @@ export class ChangeTierDialogComponent {
 
   get newTierLabel(): string {
     return this.newTier === DatasetTier.Performance ? 'Performance' : 'Regular';
+  }
+
+  protected currentTierSpace(): string | null {
+    return this.data.currentTier === DatasetTier.Performance
+      ? this.performanceAvailable()
+      : this.regularAvailable();
+  }
+
+  protected newTierSpace(): string | null {
+    return this.newTier === DatasetTier.Performance
+      ? this.performanceAvailable()
+      : this.regularAvailable();
+  }
+
+  ngOnInit(): void {
+    this.loadPoolSpace();
   }
 
   protected onApply(): void {
@@ -83,5 +103,21 @@ export class ChangeTierDialogComponent {
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
     }
+  }
+
+  private loadPoolSpace(): void {
+    this.api.call('pool.query', [[[['name', '=', this.data.poolName]]]])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (pools) => {
+          if (!pools.length) return;
+          const pool = pools[0];
+
+          this.regularAvailable.set(buildNormalizedFileSize(pool.available, 'B', 2));
+          if (pool.special_class_available > 0) {
+            this.performanceAvailable.set(buildNormalizedFileSize(pool.special_class_available, 'B', 2));
+          }
+        },
+      });
   }
 }
