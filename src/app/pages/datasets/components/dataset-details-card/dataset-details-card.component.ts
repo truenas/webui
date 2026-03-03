@@ -170,7 +170,7 @@ export class DatasetDetailsCardComponent {
       data: {
         datasetName: this.dataset().name,
         currentTier: this.dataset().tier?.tier_type,
-        shareName: '',
+        poolName: this.dataset().name.split('/')[0],
       } as ChangeTierDialogData,
     })
       .afterClosed()
