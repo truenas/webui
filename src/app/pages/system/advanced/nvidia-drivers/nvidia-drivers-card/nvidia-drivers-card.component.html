@@ -16,8 +16,8 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.installNvidiaDrivers">
-        <span class="label">{{ 'Install NVIDIA Drivers' | translate }}:</span>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.enableNvidiaGpuSupport">
+        <span class="label">{{ 'Enable NVIDIA GPU Support' | translate }}:</span>
         <span *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="value">
           {{ nvidiaEnabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>

@@ -13,8 +13,8 @@ export const nvidiaDriversCardElements = {
       hierarchy: [T('Configure NVIDIA Drivers')],
       synonyms: [T('NVIDIA Driver Settings'), T('GPU Drivers')],
     },
-    installNvidiaDrivers: {
-      hierarchy: [T('Install NVIDIA Drivers')],
+    enableNvidiaGpuSupport: {
+      hierarchy: [T('Enable NVIDIA GPU Support')],
     },
   },
 } satisfies UiSearchableElement;

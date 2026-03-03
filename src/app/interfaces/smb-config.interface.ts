@@ -1,4 +1,5 @@
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { SmbMinProtocol } from 'app/enums/smb-min-protocol.enum';
 
 export const smbSearchSpotlight = 'SPOTLIGHT' as const;
 
@@ -9,7 +10,7 @@ export interface SmbConfig {
   cifs_SID: string;
   description: string;
   dirmask: string;
-  enable_smb1: boolean;
+  minimum_protocol: SmbMinProtocol;
   filemask: string;
   guest: string;
   debug: boolean;

@@ -17,32 +17,9 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0;
-
-  button:last-child {
-    margin-left: 16px;
-  }
+  gap: 12px;
 }
 
-button.secondary-action {
-  background: transparent !important;
-  border-color: transparent !important;
-
-  &:hover {
-    background: var(--hover) !important;
-    border-color: var(--fg2) !important;
-  }
-}
-
-ix-save-debug-button.secondary-action::ng-deep button {
-  background: transparent !important;
-  border-color: transparent !important;
-}
-
-ix-save-debug-button.secondary-action:hover::ng-deep button {
-  background: var(--hover) !important;
-  border-color: var(--fg2) !important;
-}
 
 .support-banner {
   background-color: var(--bg1);

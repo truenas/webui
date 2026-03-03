@@ -48,7 +48,7 @@ describe('NvidiaDriversCardComponent', () => {
 
   it('shows NVIDIA drivers status as disabled when nvidia config is false', async () => {
     const statusItem = await loader.getHarness(MatListItemHarness);
-    expect(await statusItem.getFullText()).toContain('Install NVIDIA Drivers:');
+    expect(await statusItem.getFullText()).toContain('Enable NVIDIA GPU Support:');
     expect(await statusItem.getFullText()).toContain('Disabled');
   });
 
