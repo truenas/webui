@@ -168,8 +168,8 @@ export const helptextSystemCertificates = {
       },
       enabled: {
         tooltip: T('Activate this certificate extension.\
-The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
-See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a>\
+ The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a>\
  for more details.'),
       },
       extensionCritical: {

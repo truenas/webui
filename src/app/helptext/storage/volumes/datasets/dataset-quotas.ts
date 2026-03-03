@@ -5,7 +5,7 @@ export const helptextQuotas = {
   users: {
     title: T('Show All Users'),
     tooltip: T('You can search both for local users as well as users from Active Directory.\
-Press ENTER to separate entries.'),
+ Press ENTER to separate entries.'),
     dataQuota: {
       label: T('User Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected users.\
