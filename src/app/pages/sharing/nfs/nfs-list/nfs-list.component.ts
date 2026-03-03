@@ -144,7 +144,7 @@ export class NfsListComponent implements OnInit {
       hidden: !this.isEnterprise(),
     }),
     performanceTierColumn({
-      title: this.translate.instant('Performance Tier'),
+      title: this.translate.instant('Storage Tier'),
       hidden: true,
     }),
     actionsWithMenuColumn({
@@ -161,7 +161,7 @@ export class NfsListComponent implements OnInit {
         },
         {
           iconName: tnIconMarker('swap-horizontal', 'mdi'),
-          tooltip: this.translate.instant('Change Performance Tier'),
+          tooltip: this.translate.instant('Change Storage Tier'),
           hidden: (row) => of(!this.tierEnabled() || !row.tier),
           onClick: (row) => this.openChangeTierDialog(row),
         },
@@ -257,7 +257,7 @@ export class NfsListComponent implements OnInit {
       next: (config) => {
         if (config.enabled) {
           this.tierEnabled.set(true);
-          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Performance Tier'));
+          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Storage Tier'));
           if (tierColumn) {
             tierColumn.hidden = false;
           }
