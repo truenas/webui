@@ -138,13 +138,27 @@ export class PoolUsageCardComponent implements OnInit {
     return this.poolState().special_class_available || 0;
   });
 
-  protected performanceTotal = computed(() => {
-    return this.performanceUsed() + this.performanceAvailable();
+  protected performanceReserved = computed(() => {
+    return this.poolState().special_class_reserved || 0;
   });
 
-  protected performancePercent = computed(() => {
+  protected performanceTotal = computed(() => {
+    return this.performanceUsed() + this.performanceAvailable() + this.performanceReserved();
+  });
+
+  protected performanceUsedPercent = computed(() => {
     const total = this.performanceTotal();
     return total > 0 ? (this.performanceUsed() / total) * 100 : 0;
+  });
+
+  protected performanceAvailablePercent = computed(() => {
+    const total = this.performanceTotal();
+    return total > 0 ? (this.performanceAvailable() / total) * 100 : 0;
+  });
+
+  protected performanceReservedPercent = computed(() => {
+    const total = this.performanceTotal();
+    return total > 0 ? (this.performanceReserved() / total) * 100 : 0;
   });
 
   protected regularUsed = computed(() => {
@@ -159,8 +173,13 @@ export class PoolUsageCardComponent implements OnInit {
     return this.regularUsed() + this.regularAvailable();
   });
 
-  protected regularPercent = computed(() => {
+  protected regularUsedPercent = computed(() => {
     const total = this.regularTotal();
     return total > 0 ? (this.regularUsed() / total) * 100 : 0;
+  });
+
+  protected regularAvailablePercent = computed(() => {
+    const total = this.regularTotal();
+    return total > 0 ? (this.regularAvailable() / total) * 100 : 0;
   });
 }
