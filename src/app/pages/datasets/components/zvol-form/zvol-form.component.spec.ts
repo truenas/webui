@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
+  DatasetCaseSensitivity, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -45,6 +45,7 @@ describe('ZvolFormComponent', () => {
     pool: 'test pool',
     encrypted: false,
     children: [{ name: 'test pool/existing-child' }] as Dataset[],
+    casesensitivity: { value: DatasetCaseSensitivity.Insensitive },
     deduplication: {
       parsed: 'off',
       rawvalue: 'off',
@@ -232,6 +233,15 @@ describe('ZvolFormComponent', () => {
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.form.controls.name.hasError('forbidden')).toBe(true);
+    });
+
+    it('does not allow creating zvol with existing name in different case on case-insensitive filesystem', async () => {
+      await form.fillForm({
+        Name: 'Existing-Child',
+        Size: '1 GiB',
+      });
+
       expect(spectator.component.form.controls.name.hasError('forbidden')).toBe(true);
     });
 

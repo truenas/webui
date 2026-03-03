@@ -314,16 +314,16 @@ export class ZvolFormComponent implements OnInit {
   }
 
   private addNameValidator(parent: Dataset): void {
-    const isCaseSensitive = parent.casesensitivity?.value === DatasetCaseSensitivity.Sensitive;
+    const isCaseInsensitive = parent.casesensitivity?.value !== DatasetCaseSensitivity.Sensitive;
     const namesInUse = (parent.children?.map((child) => {
       const childName = /[^/]*$/.exec(child.name)?.[0];
-      if (isCaseSensitive) {
+      if (isCaseInsensitive) {
         return childName?.toLowerCase();
       }
       return childName;
     }) || []).filter((name): name is string => name !== undefined);
 
-    this.form.controls.name.addValidators(forbiddenValues(namesInUse, isCaseSensitive));
+    this.form.controls.name.addValidators(forbiddenValues(namesInUse, isCaseInsensitive));
   }
 
   private copyParentProperties(parent: Dataset): void {

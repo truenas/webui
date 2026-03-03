@@ -154,10 +154,10 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private addNameValidators(parent: Dataset): void {
-    const isNameCaseSensitive = parent.casesensitivity.value === DatasetCaseSensitivity.Sensitive;
+    const isNameCaseInsensitive = parent.casesensitivity.value !== DatasetCaseSensitivity.Sensitive;
     const namesInUse = (parent.children?.map((child) => {
       const childName = /[^/]*$/.exec(child.name)?.[0];
-      if (isNameCaseSensitive) {
+      if (isNameCaseInsensitive) {
         return childName?.toLowerCase();
       }
 
@@ -166,7 +166,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     this.form.controls.name.addValidators([
       datasetNameTooLong(parent.name),
-      forbiddenValues(namesInUse, isNameCaseSensitive),
+      forbiddenValues(namesInUse, isNameCaseInsensitive),
     ]);
   }
 
