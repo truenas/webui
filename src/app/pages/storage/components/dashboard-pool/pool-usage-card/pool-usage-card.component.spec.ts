@@ -173,10 +173,10 @@ describe('PoolUsageCardComponent', () => {
       name: 'bingo',
       status: 'ONLINE',
       used: 3384541603,
-      available: 899688274,
-      total: 4284229877,
+      available: 2510301010,
       special_class_used: 536870912,
       special_class_available: 1610612736,
+      special_class_reserved: 268435456,
       topology: {
         data: [{
           disk: 'sda',
@@ -200,10 +200,15 @@ describe('PoolUsageCardComponent', () => {
     const tierRows = spectator.queryAll('.tier-row');
     expect(tierRows).toHaveLength(2);
 
-    const performanceStats = tierRows[0].querySelector('.tier-stats');
-    expect(performanceStats).toHaveText('512 MiB of 2 GiB');
+    const performanceStatItems = tierRows[0].querySelectorAll('.stat-item');
+    expect(performanceStatItems).toHaveLength(3);
+    expect(performanceStatItems[0]).toHaveText('512 MiB used');
+    expect(performanceStatItems[1]).toHaveText('1.5 GiB available');
+    expect(performanceStatItems[2]).toHaveText('256 MiB reserved');
 
-    const regularStats = tierRows[1].querySelector('.tier-stats');
-    expect(regularStats).toBeTruthy();
+    const regularStatItems = tierRows[1].querySelectorAll('.stat-item');
+    expect(regularStatItems).toHaveLength(2);
+    expect(regularStatItems[0]).toHaveText('2.65 GiB used');
+    expect(regularStatItems[1]).toHaveText('858.01 MiB available');
   });
 });
