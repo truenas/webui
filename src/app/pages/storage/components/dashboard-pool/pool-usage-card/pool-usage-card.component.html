@@ -75,33 +75,61 @@
           <div class="tier-row">
             <div class="tier-header">
               <span class="tier-name">{{ 'Performance' | translate }}</span>
-              <span class="tier-badge flash">{{ 'Flash' | translate }}</span>
             </div>
             <div class="tier-bar-container">
               <div
-                class="tier-bar performance"
-                [style.width.%]="performancePercent()"
+                class="tier-bar performance-used"
+                [style.width.%]="performanceUsedPercent()"
+              ></div>
+              <div
+                class="tier-bar performance-available"
+                [style.width.%]="performanceAvailablePercent()"
+              ></div>
+              <div
+                class="tier-bar performance-reserved"
+                [style.width.%]="performanceReservedPercent()"
               ></div>
             </div>
-            <span class="tier-stats">
-              {{ performanceUsed() | ixFileSize }} {{ 'of' | translate }} {{ performanceTotal() | ixFileSize }}
-            </span>
+            <div class="tier-stats-detail">
+              <span class="stat-item">
+                <span class="stat-dot used"></span>
+                {{ performanceUsed() | ixFileSize }} {{ 'used' | translate }}
+              </span>
+              <span class="stat-item">
+                <span class="stat-dot available"></span>
+                {{ performanceAvailable() | ixFileSize }} {{ 'available' | translate }}
+              </span>
+              <span class="stat-item">
+                <span class="stat-dot reserved"></span>
+                {{ performanceReserved() | ixFileSize }} {{ 'reserved' | translate }}
+              </span>
+            </div>
           </div>
 
           <div class="tier-row">
             <div class="tier-header">
               <span class="tier-name">{{ 'Regular' | translate }}</span>
-              <span class="tier-badge hdd">{{ 'HDD' | translate }}</span>
             </div>
             <div class="tier-bar-container">
               <div
-                class="tier-bar regular"
-                [style.width.%]="regularPercent()"
+                class="tier-bar regular-used"
+                [style.width.%]="regularUsedPercent()"
+              ></div>
+              <div
+                class="tier-bar regular-available"
+                [style.width.%]="regularAvailablePercent()"
               ></div>
             </div>
-            <span class="tier-stats">
-              {{ regularUsed() | ixFileSize }} {{ 'of' | translate }} {{ regularTotal() | ixFileSize }}
-            </span>
+            <div class="tier-stats-detail">
+              <span class="stat-item">
+                <span class="stat-dot regular-used"></span>
+                {{ regularUsed() | ixFileSize }} {{ 'used' | translate }}
+              </span>
+              <span class="stat-item">
+                <span class="stat-dot regular-available"></span>
+                {{ regularAvailable() | ixFileSize }} {{ 'available' | translate }}
+              </span>
+            </div>
           </div>
         </div>
       }
