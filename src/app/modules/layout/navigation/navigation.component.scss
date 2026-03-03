@@ -43,9 +43,12 @@
     align-items: center;
     display: inline-flex;
     justify-content: center;
-    margin-left: 6px;
     width: 24px;
     vertical-align: middle;
+
+    tn-icon {
+      margin-left: 0;
+    }
 
     &.critical tn-icon {
       color: var(--red) !important;

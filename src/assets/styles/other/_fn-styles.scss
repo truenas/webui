@@ -306,7 +306,7 @@ body * {
   line-height: 48px;
   margin-bottom: 2px;
   margin-left: 12px;
-  margin-right: 20px;
+  // margin-right: 20px;
   text-align: center;
   z-index: 1;
 }
@@ -378,6 +378,11 @@ body * {
     .navigation-hold,
     .sidebar-list-item>.mat-mdc-list-item-unscoped-content {
       overflow: visible !important;
+    }
+
+    .menu-text,
+    .menu-caret {
+      display: none;
     }
 
     .icon-menu {
