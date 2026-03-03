@@ -71,11 +71,6 @@
   cursor: default;
   left: 2px;
   right: auto;
-
-  tn-icon {
-    position: relative;
-    top: -2px;
-  }
 }
 
 .prefix-padding {
@@ -83,11 +78,7 @@
 }
 
 .input-container tn-icon {
-  height: 14px;
   line-height: 1;
-  max-height: 16px;
-  max-width: 16px;
-  width: 14px;
 }
 
 .input-container {
@@ -95,20 +86,24 @@
     @include variable(display, --toggle_pw_display_prop, 'inline');
     opacity: var(--disabled-opacity);
   }
-
-  .toggle_pw tn-icon {
-    height: 18px;
-    position: relative;
-    top: -2px;
-    width: 18px;
-  }
 }
 
-.input-container .mat-icon-button {
+.input-container [mat-icon-button] {
   height: 24px;
   line-height: 24px;
   opacity: 0.5;
   width: 24px;
+
+  tn-icon {
+    margin-top: -1px;
+  }
+
+  ::ng-deep *[role='img'] {
+    font-size: inherit;
+    height: 100%;
+    line-height: inherit;
+    width: 100%;
+  }
 }
 
 .password-field {

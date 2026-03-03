@@ -14,7 +14,7 @@
 >
   @if (prefixIcon()) {
     <span class="prefix-icon">
-      <tn-icon [name]="prefixIcon()"></tn-icon>
+      <tn-icon size="sm" [name]="prefixIcon()!"></tn-icon>
     </span>
   }
 
@@ -96,12 +96,14 @@
         <tn-icon
           name="eye"
           library="mdi"
+          size="md"
           [tnTooltip]="'Hide' | translate"
         ></tn-icon>
       } @else {
         <tn-icon
           name="eye-off"
           library="mdi"
+          size="md"
           [tnTooltip]="'Show' | translate">
         </tn-icon>
       }
