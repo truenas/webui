@@ -8,14 +8,13 @@
     <div class="header-actions">
       <button
         mat-button
-        class="secondary-action"
         ixTest="file-ticket"
         [ixUiSearch]="searchableElements.elements.fileTicket"
         (click)="feedbackDialog()"
       >
         {{ ticketText | translate }}
       </button>
-      <ix-save-debug-button class="secondary-action"></ix-save-debug-button>
+      <ix-save-debug-button></ix-save-debug-button>
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
