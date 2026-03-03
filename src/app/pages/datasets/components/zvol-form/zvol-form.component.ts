@@ -59,6 +59,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -323,7 +324,10 @@ export class ZvolFormComponent implements OnInit {
       return childName;
     }) || []).filter((name): name is string => name !== undefined);
 
-    this.form.controls.name.addValidators(forbiddenValues(namesInUse, isCaseInsensitive));
+    this.form.controls.name.addValidators([
+      datasetNameTooLong(parent.name),
+      forbiddenValues(namesInUse, isCaseInsensitive),
+    ]);
   }
 
   private copyParentProperties(parent: Dataset): void {
