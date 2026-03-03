@@ -125,7 +125,7 @@ export class NfsCardComponent implements OnInit {
       getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     performanceTierColumn({
-      title: this.translate.instant('Performance Tier'),
+      title: this.translate.instant('Storage Tier'),
       hidden: true,
     }),
     actionsWithMenuColumn({
@@ -138,7 +138,7 @@ export class NfsCardComponent implements OnInit {
         },
         {
           iconName: tnIconMarker('swap-horizontal', 'mdi'),
-          tooltip: this.translate.instant('Change Performance Tier'),
+          tooltip: this.translate.instant('Change Storage Tier'),
           hidden: (row) => of(!this.tierEnabled() || !row.tier),
           onClick: (row) => this.openChangeTierDialog(row),
         },
@@ -198,7 +198,7 @@ export class NfsCardComponent implements OnInit {
       next: (config) => {
         if (config.enabled) {
           this.tierEnabled.set(true);
-          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Performance Tier'));
+          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Storage Tier'));
           if (tierColumn) {
             tierColumn.hidden = false;
           }
