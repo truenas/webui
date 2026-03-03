@@ -5,9 +5,9 @@ export const helptextSystemGeneral = {
 
   uiCertificate: {
     label: T('GUI SSL Certificate'),
-    tooltip: T('The system uses a self-signed certificate \
- to enable encrypted web interface connections. To change \
- the default certificate, select a different certificate \
+    tooltip: T('The system uses a self-signed certificate\
+ to enable encrypted web interface connections. To change\
+ the default certificate, select a different certificate\
  that was created or imported in the <b>Certificates</b> menu.'),
   },
 
@@ -62,13 +62,13 @@ export const helptextSystemGeneral = {
   uiHttpsRedirect: {
     label: T('Web Interface HTTP -> HTTPS Redirect'),
     tooltip: T(
-      'Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A \
- <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating \
- this also sets the <a \
- href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" \
- target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age \
- to <i>31536000</i> seconds (one year). This means that after a \
- browser connects to the web interface for the first time, the browser \
+      'Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A\
+ <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating\
+ this also sets the <a\
+ href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security"\
+ target="_blank">HTTP Strict Transport Security (HSTS)</a> maximum age\
+ to <i>31536000</i> seconds (one year). This means that after a\
+ browser connects to the web interface for the first time, the browser\
  continues to use HTTPS and renews this setting every year.',
     ),
   },
@@ -76,8 +76,8 @@ export const helptextSystemGeneral = {
   language: {
     label: T('Language'),
     tooltip: T('Select a language from the drop-down menu.'),
-    hint: T('Languages other than <i>English</i> are provided by \
- the community and may be incomplete. \
+    hint: T('Languages other than <i>English</i> are provided by\
+ the community and may be incomplete.\
  <a href="https://github.com/truenas/webui/blob/master/docs/contributing_translations.md" target="_blank">Learn how to contribute.</a>'),
   },
 
@@ -99,11 +99,11 @@ export const helptextSystemGeneral = {
 
   usageCollection: {
     label: T('Usage collection & UI error reporting'),
-    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to TrueNAS engineering team. \
-No personally identifiable information is collected.\
+    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to TrueNAS engineering team.\
+ No personally identifiable information is collected.\
 <br><br>\
-When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. TrueNAS 24.04.0, 55 TB) are still collected. \
-Information about system configuration and usage is not collected.\
+When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. TrueNAS 24.04.0, 55 TB) are still collected.\
+ Information about system configuration and usage is not collected.\
 <br><br>\
 <a href="https://www.truenas.com/docs/scale/gettingstarted/useragreements/datacollectionstatement/" target="_blank">See details.</a>\
  '),
@@ -135,8 +135,8 @@ Information about system configuration and usage is not collected.\
   uploadConfigForm: {
     message: T(
       '<p>The system will restart to perform this operation!</p>\
- <p><font color="red">All passwords are reset when the \
- uploaded configuration database file was saved \
+ <p><font color="red">All passwords are reset when the\
+ uploaded configuration database file was saved\
  without the Password Secret Seed. </font></p>',
     ),
   },
@@ -144,7 +144,7 @@ Information about system configuration and usage is not collected.\
   resetConfigForm: {
     title: T('Reset Configuration'),
     button: T('Reset Config'),
-    message: T('Reset system configuration to default settings. The system \
+    message: T('Reset system configuration to default settings. The system\
  will restart to complete this operation. You will be required to reset your password.'),
   },
 

@@ -7,7 +7,7 @@ export const helptextSharingNfs = {
  Consider creating a dataset instead.',
   ),
 
-  pathTooltip: T('Full path to the pool, dataset or directory to share. \
+  pathTooltip: T('Full path to the pool, dataset or directory to share.\
  The path must reside within a pool. Mandatory.'),
   exposeTooltip: T('Allow accessing ZFS snapshots over the NFS protocol.'),
   addNetworkTooltip: T(

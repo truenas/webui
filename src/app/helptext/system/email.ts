@@ -2,12 +2,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemEmail = {
   fromemail: {
-    tooltip: T('The user account <i>Email</i> address to use for the \
- envelope <i>From</i> email address. The user account <i>Email</i> in \
+    tooltip: T('The user account <i>Email</i> address to use for the\
+ envelope <i>From</i> email address. The user account <i>Email</i> in\
  <b>Accounts > Users > Edit</b> must be configured first.'),
   },
   fromname: {
-    tooltip: T('The friendly name to show in front of the sending email \
+    tooltip: T('The friendly name to show in front of the sending email\
  address. Example: <i>Storage System 01</i>&ltit@example.com&gt'),
   },
   outgoingserver: {

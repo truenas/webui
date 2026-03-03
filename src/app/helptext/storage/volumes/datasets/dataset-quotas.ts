@@ -8,12 +8,12 @@ export const helptextQuotas = {
 Press ENTER to separate entries.'),
     dataQuota: {
       label: T('User Data Quota '),
-      tooltip: T('Amount of disk space that can be used by the selected users. \
+      tooltip: T('Amount of disk space that can be used by the selected users.\
  Entering <code>0</code> (zero) allows all disk space to be used.'),
     },
     objQuota: {
       label: T('User Object Quota'),
-      tooltip: T('Number of objects that can be owned by each of the selected users. \
+      tooltip: T('Number of objects that can be owned by each of the selected users.\
  Entering <code>0</code> (zero) allows unlimited objects.'),
     },
     filterDialog: {
@@ -42,12 +42,12 @@ Press ENTER to separate entries.'),
  Press ENTER to separate entries.'),
     dataQuota: {
       label: T('Group Data Quota '),
-      tooltip: T('Amount of disk space that can be used by the selected groups. \
+      tooltip: T('Amount of disk space that can be used by the selected groups.\
  Entering <code>0</code> (zero) allows all disk space.'),
     },
     objectQuota: {
       label: T('Group Object Quota'),
-      tooltip: T('Number of objects that can be owned by each of the selected groups. \
+      tooltip: T('Number of objects that can be owned by each of the selected groups.\
  Entering <code>0</code> (zero) allows unlimited objects.'),
     },
     filterDialog: {

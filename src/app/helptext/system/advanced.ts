@@ -26,8 +26,8 @@ Note: If the administrative account Shell is not set to TrueNAS Console, you ent
   debugKernelTooltip: T('Set to boot a debug kernel after the next system\
  restart.'),
 
-  maxParallelReplicationTasksTooltip: T('Maximum number of replication tasks being executed \
-simultaneously.'),
+  maxParallelReplicationTasksTooltip: T('Maximum number of replication tasks being executed\
+ simultaneously.'),
 
   motdTooltip: T('The message to show when a user logs in with SSH.'),
 
@@ -40,12 +40,12 @@ simultaneously.'),
   sedConfirmPasswordLabel: T('Confirm SED Password'),
 
   retentionTooltip: T('Number of days to retain local audit messages.'),
-  reservationTooltip: T('Size in GiB of refreservation to set on ZFS dataset \
- where the audit databases are stored. The refreservation specifies the \
- minimum amount of space guaranteed to the dataset, and counts against \
- the space available for other datasets in the zpool where the audit \
+  reservationTooltip: T('Size in GiB of refreservation to set on ZFS dataset\
+ where the audit databases are stored. The refreservation specifies the\
+ minimum amount of space guaranteed to the dataset, and counts against\
+ the space available for other datasets in the zpool where the audit\
  dataset is located.'),
-  quotaTooltip: T('Size in GiB of the maximum amount of space that may be \
+  quotaTooltip: T('Size in GiB of the maximum amount of space that may be\
  consumed by the dataset where the audit dabases are stored.'),
   quotaFillWarningTooltip: T('Percentage used of dataset quota at which to generate a warning alert.'),
   quotaFillCriticalTooltip: T('Percentage used of dataset quota at which to generate a critical alert.'),
@@ -100,16 +100,16 @@ simultaneously.'),
   },
 
   allowedIpAddresses: {
-    tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
+    tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an\
  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
     lockoutWarning: T('Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.'),
   },
 
   storageSettings: {
-    priorityResilverEnabled: T('Resilver tasks can run at any time, but by default they have low priority \
-- lower than regular ZFS I/O operations. \
-You can specify a time window during which resilvering is given higher priority \
-— useful for scheduling it during non-business hours.'),
+    priorityResilverEnabled: T('Resilver tasks can run at any time, but by default they have low priority\
+ - lower than regular ZFS I/O operations.\
+ You can specify a time window during which resilvering is given higher priority\
+ — useful for scheduling it during non-business hours.'),
     smbRebootWarning: T('Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.'),
   },
 };

@@ -36,21 +36,21 @@ export const helptextVmWizard = {
   },
 
   cpuset: {
-    tooltip: T('Specify the logical cores that VM is allowed to use. \
-Better cache locality can be achieved by setting CPU set base on CPU topology. \
-E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
+    tooltip: T('Specify the logical cores that VM is allowed to use.\
+ Better cache locality can be achieved by setting CPU set base on CPU topology.\
+ E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
   },
 
   nodeset: {
-    tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined. \
-Better memory locality can be achieved by setting node set based on assigned CPU set. \
-E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality'),
+    tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined.\
+ Better memory locality can be achieved by setting node set based on assigned CPU set.\
+ E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality'),
   },
 
   pin_vcpus: {
-    tooltip: T('When number of vcpus is equal to number of cpus in CPU set vcpus can be automatically pinned into CPU set. \
-Pinning is done by mapping each vcpu into single cpu number in following the order in CPU set. \
-This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.'),
+    tooltip: T('When number of vcpus is equal to number of cpus in CPU set vcpus can be automatically pinned into CPU set.\
+ Pinning is done by mapping each vcpu into single cpu number in following the order in CPU set.\
+ This will improve CPU cache locality and can reduce possible stutter in GPU passthrough VMs.'),
   },
 
   ensure_display_device: {
@@ -58,8 +58,8 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   },
 
   shutdown_timeout: {
-    tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \
- During system shutdown, the system initiates poweroff for the VM after the shutdown \
+    tooltip: T('The time in seconds the system waits for the VM to cleanly shut down.\
+ During system shutdown, the system initiates poweroff for the VM after the shutdown\
  timeout has expired.'),
   },
 
@@ -67,9 +67,9 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
     placeholder: T('CPU Model'),
   },
 
-  hyperv_enlightenments_tooltip: T('KVM implements Hyper-V Enlightenments \
- for Windows guests. These features make Windows think they\'re \
- running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features. \
+  hyperv_enlightenments_tooltip: T('KVM implements Hyper-V Enlightenments\
+ for Windows guests. These features make Windows think they\'re\
+ running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features.\
  In some cases enabling these Enlightenments might improve usability and performance on the guest.'),
 
   global_label: helptextGlobal.humanReadable.suggestionLabel,
@@ -87,7 +87,7 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
  file for the VM.'),
 
   volsize_tooltip: T('Allocate space for the new zvol.'),
-  volsize_tooltip_B: T('MiB. Units \
+  volsize_tooltip_B: T('MiB. Units\
  smaller than MiB are not allowed.'),
 
   datastore_tooltip: T('Select a dataset for the new zvol.'),

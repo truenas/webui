@@ -21,11 +21,11 @@ export const helptextAcl = {
 
   groupTooltip: T('Group to which this ACL entry applies.'),
 
-  applyTooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
-are submitted only when this box is set.'),
+  applyTooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i>\
+ are submitted only when this box is set.'),
 
-  applyGroupTooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
-are submitted only when this box is set.'),
+  applyGroupTooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i>\
+ are submitted only when this box is set.'),
 
   permissionsTooltip: T('Select permissions to apply to the chosen\
  <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
@@ -56,12 +56,12 @@ are submitted only when this box is set.'),
 
   stripAclDialog: {
     title: T('Strip ACLs'),
-    message: T('This action removes all ACLs from the current \
- dataset and any directories or files contained within this \
- dataset. Stripping the ACL resets dataset permissions. This \
+    message: T('This action removes all ACLs from the current\
+ dataset and any directories or files contained within this\
+ dataset. Stripping the ACL resets dataset permissions. This\
  can make data inaccessible until new permissions are created.'),
     traverseCheckbox: T('Remove the ACL and permissions from child datasets of the current dataset'),
-    warning: T('Removes the ACL and permissions recursively \
+    warning: T('Removes the ACL and permissions recursively\
  from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.'),
   },
 
@@ -70,10 +70,10 @@ are submitted only when this box is set.'),
 
   typeDialog: {
     selectPreset: T('Select a preset ACL'),
-    selectPresetTooltip: T('Choosing an entry loads a preset ACL that is \
+    selectPresetTooltip: T('Choosing an entry loads a preset ACL that is\
  configured to match general permissions situations.'),
     createCustom: T('Create a custom ACL'),
-    message: T('The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form \
+    message: T('The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form\
  and delete any unsaved changes.'),
   },
 

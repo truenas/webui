@@ -12,7 +12,7 @@ export const helptextSystemBootenv = {
   ),
 
   cloneNameTooltip: T(
-    'Name of the new cloned boot environment. Alphanumeric characters, dashes (-), underscores (_), \
+    'Name of the new cloned boot environment. Alphanumeric characters, dashes (-), underscores (_),\
  and periods (.) are allowed.',
   ),
   cloneSourceTooltip: T('Boot environment to be cloned.'),

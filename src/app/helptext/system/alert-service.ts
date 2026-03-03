@@ -20,7 +20,7 @@ export const helptextAlertService = {
     secretAccessKeyTooltip: T('Secret Access Key for the linked AWS account.'),
   },
 
-  emailTooltip: T('Enter an email address to override the admin account’s default email. \
+  emailTooltip: T('Enter an email address to override the admin account’s default email.\
  If left blank, the admin account’s email address will be used'),
 
   influxDb: {
@@ -40,10 +40,10 @@ export const helptextAlertService = {
  target="_blank">channel</a> to receive notifications.\
  This overrides the default channel in the incoming\
  webhook settings.'),
-    iconUrlTooltip: T('Icon file to use as the profile \
- picture for new messages. Example: \
- <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br> \
- Requires configuring Mattermost to <a \
+    iconUrlTooltip: T('Icon file to use as the profile\
+ picture for new messages. Example:\
+ <i>https://mattermost.org/wp-content/uploads/2016/04/icon.png</i>.<br>\
+ Requires configuring Mattermost to <a\
  href="https://docs.mattermost.com/administration/config-settings.html#enable-integrations-to-override-profile-picture-icons" target="_blank">override profile picture icons</a>.'),
   },
 
@@ -74,47 +74,47 @@ export const helptextAlertService = {
   },
 
   snmpTrap: {
-    hostTooltip: T('Hostname or IP address of the system to \
+    hostTooltip: T('Hostname or IP address of the system to\
  receive SNMP trap notifications.'),
-    portTooltip: T('UDP port number on the system receiving \
+    portTooltip: T('UDP port number on the system receiving\
  SNMP trap notifications. The default is <i>162</i>.'),
-    usernameTooltip: T('Username of the SNMP \
- <a href="https://pysnmp.readthedocs.io/en/latest/docs/pysnmp-hlapi-tutorial.html" \
+    usernameTooltip: T('Username of the SNMP\
+ <a href="https://pysnmp.readthedocs.io/en/latest/docs/pysnmp-hlapi-tutorial.html"\
  target="_blank">User-based Security Model (USM)</a> user.'),
-    authKeyTooltip: T('Initial secret authentication key. \
- When an authentication key is not set, no <i>Authentication Protocol</i> is \
- used. If an authentication key is set and an \
- <i>Authentication Protocol</i> is not specified, \
- <a href="https://en.wikipedia.org/wiki/MD5" \
- target="_blank">MD5</a> is used as the default.<br> \
+    authKeyTooltip: T('Initial secret authentication key.\
+ When an authentication key is not set, no <i>Authentication Protocol</i> is\
+ used. If an authentication key is set and an\
+ <i>Authentication Protocol</i> is not specified,\
+ <a href="https://en.wikipedia.org/wiki/MD5"\
+ target="_blank">MD5</a> is used as the default.<br>\
  Must be at least 8 and at most 32 octets long.'),
-    privateKeyTooltip: T('Initial secret encryption key. \
- If an encryption key is not set, no <i>Encryption Protocol</i> is used. \
- If an encryption key is set and an <i>Encryption Protocol</i> is \
- not specified, \
- <a href="https://en.wikipedia.org/wiki/Data_Encryption_Standard" \
- target="_blank">DES</a> is used as the default.<br> \
+    privateKeyTooltip: T('Initial secret encryption key.\
+ If an encryption key is not set, no <i>Encryption Protocol</i> is used.\
+ If an encryption key is set and an <i>Encryption Protocol</i> is\
+ not specified,\
+ <a href="https://en.wikipedia.org/wiki/Data_Encryption_Standard"\
+ target="_blank">DES</a> is used as the default.<br>\
  Must be at least 8 and at most 32 octets long.'),
-    authProtocolTooltip: T('<a href="https://en.wikipedia.org/wiki/Authentication_protocol" \
- target="_blank">Authentication protocol</a> used to authenticate \
+    authProtocolTooltip: T('<a href="https://en.wikipedia.org/wiki/Authentication_protocol"\
+ target="_blank">Authentication protocol</a> used to authenticate\
  messages sent on behalf of the specified <i>Username</i>.'),
-    encryptionProtocolTooltip: T('<a href="https://en.wikipedia.org/wiki/Cryptographic_protocol" \
- target="_blank">Encryption protocol</a> used to encrypt messages \
+    encryptionProtocolTooltip: T('<a href="https://en.wikipedia.org/wiki/Cryptographic_protocol"\
+ target="_blank">Encryption protocol</a> used to encrypt messages\
  sent on behalf of the specified <i>Username</i>.'),
-    communityTooltip: T('Network community string. \
- The community string acts like a user ID or password. A user with \
- the correct community string has access to network information. The \
- default is <i>public</i>. For more information, see \
- <a href="https://community.helpsystems.com/knowledge-base/intermapper/snmp/snmp-community-strings/" \
+    communityTooltip: T('Network community string.\
+ The community string acts like a user ID or password. A user with\
+ the correct community string has access to network information. The\
+ default is <i>public</i>. For more information, see\
+ <a href="https://community.helpsystems.com/knowledge-base/intermapper/snmp/snmp-community-strings/"\
  target="_blank">What is an SNMP Community String?</a>.'),
   },
 
   telegram: {
     botTokenTooltip: T('Telegram Bot API Token (<a href="https://core.telegram.org/bots#3-how-do-i-create-a-bot"\
  target="_blank">How to create a Telegram Bot</a>)'),
-    chatIdsTooltip: T('Enter a list of chat IDs separated by space, comma or semicolon. \
- To find your chat ID send a message to the bot, group or channel and visit \
- <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates" \
+    chatIdsTooltip: T('Enter a list of chat IDs separated by space, comma or semicolon.\
+ To find your chat ID send a message to the bot, group or channel and visit\
+ <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates"\
  target="_blank">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.'),
   },
 

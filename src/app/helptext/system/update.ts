@@ -37,7 +37,7 @@ export const helptextSystemUpdate = {
 
   haUpdate: {
     completeTitle: T('Complete the Upgrade'),
-    completeMessage: T('The standby controller has finished upgrading. To complete the update process, \
+    completeMessage: T('The standby controller has finished upgrading. To complete the update process,\
  failover to the standby controller.'),
     completeAction: T('Close'),
   },

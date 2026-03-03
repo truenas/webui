@@ -31,9 +31,9 @@ export const helptextTopbar = {
     connectButton: T('Connect'),
     saveButton: T('Save'),
     apiKey: T('API Key'),
-    apiTooltip: T('Enter or paste the API key provided from \
-<a href="https://portal.truenas.com/portal/login/" target="_blank">TrueNAS Account Services</a>. \
-Login or signup is required.'),
+    apiTooltip: T('Enter or paste the API key provided from\
+ <a href="https://portal.truenas.com/portal/login/" target="_blank">TrueNAS Account Services</a>.\
+ Login or signup is required.'),
     enabledLabel: T('Enable'),
     enabledTooltip: T('Immediately connect to TrueCommand.'),
   },
@@ -66,13 +66,13 @@ Login or signup is required.'),
 
   checkEmailInfoDialog: {
     title: T('Verify Email Address'),
-    message: T('A message with verification instructions has been sent to the new email \
-address. Please verify the email address before continuing.'),
+    message: T('A message with verification instructions has been sent to the new email\
+ address. Please verify the email address before continuing.'),
   },
   changePasswordDialog: {
-    newPasswordTooltip: T('Passwords should \
-be at least eight characters and contain a mix of lower and \
-upper case, numbers, and special characters.'),
+    newPasswordTooltip: T('Passwords should\
+ be at least eight characters and contain a mix of lower and\
+ upper case, numbers, and special characters.'),
     passwordUpdated: T('Password updated.'),
   },
 };
