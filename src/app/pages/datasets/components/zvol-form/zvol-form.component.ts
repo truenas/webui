@@ -16,6 +16,7 @@ import {
 } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
+  DatasetCaseSensitivity,
   DatasetRecordSize,
   DatasetSnapdev, datasetSnapdevLabels,
   datasetSyncLabels,
@@ -120,7 +121,6 @@ export class ZvolFormComponent implements OnInit {
   readonly helptext = helptextZvol;
   readonly OnOff = OnOff;
   inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
-  namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
 
   protected isLoading = signal(false);
@@ -138,7 +138,7 @@ export class ZvolFormComponent implements OnInit {
   private originalVolsize: number | null = null;
 
   form = this.formBuilder.group({
-    name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
+    name: ['', [Validators.required]],
     comments: [''],
     volsize: ['', [Validators.required, Validators.min(1)]],
     force_size: [false],
@@ -274,9 +274,7 @@ export class ZvolFormComponent implements OnInit {
             this.form.controls.encryption.disable();
           }
 
-          this.namesInUse = parentOrZvol.children?.map((child) => {
-            return /[^/]*$/.exec(child.name)[0];
-          }) || [];
+          this.addNameValidator(parentOrZvol);
 
           this.inheritEncryptionProperties(parentOrZvol);
 
@@ -313,6 +311,19 @@ export class ZvolFormComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  private addNameValidator(parent: Dataset): void {
+    const isCaseSensitive = parent.casesensitivity?.value === DatasetCaseSensitivity.Sensitive;
+    const namesInUse = (parent.children?.map((child) => {
+      const childName = /[^/]*$/.exec(child.name)?.[0];
+      if (isCaseSensitive) {
+        return childName?.toLowerCase();
+      }
+      return childName;
+    }) || []).filter((name): name is string => name !== undefined);
+
+    this.form.controls.name.addValidators(forbiddenValues(namesInUse, isCaseSensitive));
   }
 
   private copyParentProperties(parent: Dataset): void {
