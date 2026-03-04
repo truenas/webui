@@ -28,10 +28,25 @@ div.right-column div.left-column {
   height: inherit;
 }
 
-mat-card > mat-card-actions.interface-pending-actions,
+.pending-changes {
+  margin: 0.333333rem 0.33333rem 2rem;
+
+  tn-banner {
+    display: block;
+  }
+
+  tn-banner + tn-banner {
+    margin-top: 1rem;
+  }
+}
+
+.timeout-field-row {
+  margin-bottom: 8px;
+}
+
 div.disabled-notice {
   margin: 0;
-  padding: 0 16px 16px;
+  padding: 8px 0 0;
 }
 
 .pseudolink {

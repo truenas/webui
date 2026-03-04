@@ -50,6 +50,7 @@
               <ix-list-item
                 [formGroupName]="i"
                 [label]="'Static IP Addresses' | translate"
+                [canDelete]="!isProtectedAlias(i)"
                 (delete)="removeStaticIpAddress(i)"
               >
                 <div class="alias">
@@ -78,6 +79,13 @@
 
                   <ix-errors [control]="network"></ix-errors>
                 </div>
+                @if (isProtectedAlias(i)) {
+                  <p class="protected-alias-hint">
+                    {{ 'This IP address is bound to the web UI and cannot be removed. You can change the bound IP address in the' | translate }}
+                    <a (click)="navigateToGuiSettings()">{{ 'General Settings' | translate }}</a>
+                    {{ 'page.' | translate }}
+                  </p>
+                }
               </ix-list-item>
             }
           </ix-list>

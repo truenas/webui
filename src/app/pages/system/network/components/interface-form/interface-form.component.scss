@@ -8,3 +8,15 @@
     margin-top: 0;
   }
 }
+
+.protected-alias-hint {
+  margin: 0 0 8px;
+  color: var(--fg2);
+  font-size: 12px;
+
+  a {
+    cursor: pointer;
+    color: var(--primary);
+    text-decoration: underline;
+  }
+}

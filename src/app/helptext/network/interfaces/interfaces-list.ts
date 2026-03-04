@@ -9,12 +9,13 @@ export const helptextInterfaces = {
   pendingCheckinDialogText: T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
  Changes are automatically reverted after the testing delay if they are not permanently applied.'),
 
-  pendingCheckinText: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless SAVE CHANGES is chosen to make them permanent.'),
+  pendingCheckinText: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless saved.'),
 
   commitChangesTitle: T('Test Changes'),
   commitChangesWarning: T('Test network interface changes? Network connectivity can be interrupted.'),
 
   commitButton: T('Test Changes'),
+  commitAndOpenUiButton: T('Test and Open UI'),
   keepButton: T('Save Changes'),
   revertChangesButton: T('Revert Changes'),
   revertChangesTitle: T('Revert Network Interface Changes'),
@@ -34,6 +35,9 @@ export const helptextInterfaces = {
   checkinTitle: T('Save Changes'),
   checkinMessage: T('Save network interface changes?'),
   checkinCompleteMessage: T('Network interface changes have been made permanent.'),
+
+  ipAddressChangedHeading: T('System IP Address Will Change'),
+  ipAddressChangedMessage: T('The pending changes will modify the IP address used to access this system. After testing, use the new address to save your changes.'),
   checkinButton: T('Save'),
   goToNetwork: T('Go To Network Settings'),
 
@@ -49,4 +53,5 @@ export const helptextInterfaces = {
   goToHa: T('Go to HA settings'),
 
   deleteDialogText: T('This change can interrupt connectivity and must be tested before making permanent. '),
+
 };
