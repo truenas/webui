@@ -27,6 +27,20 @@
       [label]="'Move existing data' | translate"
       [tooltip]="'When checked, existing data will be migrated to the new storage tier. This may take some time depending on the amount of data.' | translate"
     ></ix-checkbox>
+
+    @if (form.value.moveExistingData) {
+      @if (estimatedRewriteSize(); as size) {
+        <div class="rewrite-size">
+          {{ 'Estimated rewrite size: up to {size}' | translate: { size } }}
+        </div>
+      }
+
+      @if (hasSnapshots()) {
+        <div class="snapshot-note">
+          {{ 'This dataset has snapshots and they are not rewritten automatically.' | translate }}
+        </div>
+      }
+    }
   </form>
 </div>
 
