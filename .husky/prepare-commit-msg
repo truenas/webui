@@ -8,14 +8,23 @@ esac
 COMMIT_MSG_FILE="$1"
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
 
+# Strip git comment lines before checking for existing ticket
+COMMIT_MSG_CLEAN=$(printf '%s\n' "$COMMIT_MSG" | grep -v '^#')
+
 # If the commit message already contains a JIRA ticket, nothing to do
-if echo "$COMMIT_MSG" | grep -qE '[A-Z]+-[0-9]+'; then
+if printf '%s\n' "$COMMIT_MSG_CLEAN" | grep -qE '[A-Z]+-[0-9]+'; then
   exit 0
 fi
 
 # Extract JIRA ticket (e.g., NAS-12345) from the current branch name
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-TICKET=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+
+# Allow commits in detached HEAD state (rebase, bisect, etc.)
+if [ "$BRANCH" = "HEAD" ]; then
+  exit 0
+fi
+
+TICKET=$(printf '%s\n' "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 
 if [ -z "$TICKET" ]; then
   echo "Error: No JIRA ticket found in branch name '$BRANCH'." >&2
@@ -24,4 +33,4 @@ if [ -z "$TICKET" ]; then
 fi
 
 # Prepend ticket to the commit message
-echo "$TICKET: $COMMIT_MSG" > "$COMMIT_MSG_FILE"
+printf '%s\n' "$TICKET: $COMMIT_MSG" > "$COMMIT_MSG_FILE"
