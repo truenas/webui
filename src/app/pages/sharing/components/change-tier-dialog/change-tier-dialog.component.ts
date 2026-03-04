@@ -8,6 +8,7 @@ import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -54,6 +55,8 @@ export class ChangeTierDialogComponent implements OnInit {
 
   protected regularAvailable = signal<string | null>(null);
   protected performanceAvailable = signal<string | null>(null);
+  protected estimatedRewriteSize = signal<string | null>(null);
+  protected hasSnapshots = signal(false);
 
   get newTier(): DatasetTier {
     return this.data.currentTier === DatasetTier.Performance
@@ -82,7 +85,7 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadPoolSpace();
+    this.loadDetails();
   }
 
   protected onApply(): void {
@@ -105,19 +108,26 @@ export class ChangeTierDialogComponent implements OnInit {
     }
   }
 
-  private loadPoolSpace(): void {
-    this.api.call('pool.query', [[[['name', '=', this.data.poolName]]]])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (pools) => {
-          if (!pools.length) return;
+  private loadDetails(): void {
+    forkJoin([
+      this.api.call('pool.query', [[[['name', '=', this.data.poolName]]]]),
+      this.api.call('pool.dataset.query', [[['id', '=', this.data.datasetName]]]),
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ([pools, datasets]) => {
+        if (pools.length) {
           const pool = pools[0];
-
           this.regularAvailable.set(buildNormalizedFileSize(pool.available, 'B', 2));
           if (pool.special_class_available > 0) {
             this.performanceAvailable.set(buildNormalizedFileSize(pool.special_class_available, 'B', 2));
           }
-        },
-      });
+        }
+
+        if (datasets.length) {
+          const dataset = datasets[0];
+          this.estimatedRewriteSize.set(buildNormalizedFileSize(dataset.usedbydataset.parsed, 'B', 2));
+          this.hasSnapshots.set(dataset.usedbysnapshots.parsed > 0);
+        }
+      },
+    });
   }
 }
