@@ -1,1 +1,27 @@
-yarn jira-prepare-commit-msg $1
+#!/bin/sh
+
+# Skip merge/squash commits
+case "${2:-}" in
+  merge|squash) exit 0 ;;
+esac
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# If the commit message already contains a JIRA ticket, nothing to do
+if echo "$COMMIT_MSG" | grep -qE '[A-Z]+-[0-9]+'; then
+  exit 0
+fi
+
+# Extract JIRA ticket (e.g., NAS-12345) from the current branch name
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+TICKET=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+
+if [ -z "$TICKET" ]; then
+  echo "Error: No JIRA ticket found in branch name '$BRANCH'." >&2
+  echo "Branch name must contain a ticket ID (e.g., NAS-12345)." >&2
+  exit 1
+fi
+
+# Prepend ticket to the commit message
+echo "$TICKET: $COMMIT_MSG" > "$COMMIT_MSG_FILE"

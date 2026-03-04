@@ -8083,23 +8083,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmiconfig@npm:^8.0.0":
-  version: 8.3.6
-  resolution: "cosmiconfig@npm:8.3.6"
-  dependencies:
-    import-fresh: "npm:^3.3.0"
-    js-yaml: "npm:^4.1.0"
-    parse-json: "npm:^5.2.0"
-    path-type: "npm:^4.0.0"
-  peerDependencies:
-    typescript: ">=4.9.5"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/91d082baca0f33b1c085bf010f9ded4af43cbedacba8821da0fb5667184d0a848addc52c31fadd080007f904a555319c238cf5f4c03e6d58ece2e4876b2e73d6
-  languageName: node
-  linkType: hard
-
 "cosmiconfig@npm:^9.0.0":
   version: 9.0.0
   resolution: "cosmiconfig@npm:9.0.0"
@@ -12738,17 +12721,6 @@ __metadata:
   bin:
     jest: ./bin/jest.js
   checksum: 10/61c9d100750e4354cd7305d1f3ba253ffde4deaf12cb4be4d42d54f2dd5986e383a39c4a8691dbdc3839c69094a52413ed36f1886540ac37b71914a990b810d0
-  languageName: node
-  linkType: hard
-
-"jira-prepare-commit-msg@npm:^1.6.1":
-  version: 1.7.2
-  resolution: "jira-prepare-commit-msg@npm:1.7.2"
-  dependencies:
-    cosmiconfig: "npm:^8.0.0"
-  bin:
-    jira-prepare-commit-msg: bin/index.js
-  checksum: 10/ef286353e58a08abc1364224e9f546cec7dd2462b07017053aa9b3b88f00ed6ff166176a642b486bd78118db7bb3d86d2fd47c583addc92089dae74c87e4ea79
   languageName: node
   linkType: hard
 
@@ -17391,7 +17363,6 @@ __metadata:
     jest-junit: "npm:~16.0.0"
     jest-preset-angular: "npm:~16.0.0"
     jest-when: "npm:~3.6.0"
-    jira-prepare-commit-msg: "npm:^1.6.1"
     js-yaml: "npm:~4.1.1"
     lint-staged: "npm:^15.2.10"
     lmdb: "npm:^3.3.0"
