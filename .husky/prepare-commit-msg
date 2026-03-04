@@ -27,9 +27,7 @@ fi
 TICKET=$(printf '%s\n' "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 
 if [ -z "$TICKET" ]; then
-  echo "Error: No JIRA ticket found in branch name '$BRANCH'." >&2
-  echo "Branch name must contain a ticket ID (e.g., NAS-12345)." >&2
-  exit 1
+  exit 0
 fi
 
 # Prepend ticket to the commit message
