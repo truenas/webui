@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo, ContractType } from 'app/interfaces/system-info.interface';
@@ -30,7 +29,6 @@ describe('WidgetSysInfoActiveComponent', () => {
   const systemInfo = {
     platform: 'TRUENAS-M40-HA',
     version: '25.10.0-MASTER-20250126-184805',
-    codename: Codename.Goldeye,
     license: {
       contract_type: ContractType.Gold,
       contract_end: {
@@ -117,7 +115,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
       'Edition: Enterprise',
-      'Version: 25.10.0-MASTER-20250126-184805 - Goldeye',
+      'Version: 25.10.0-MASTER-20250126-184805',
       'Support License: Gold Contract,  Expires on 2025-01-01',
       'System Serial: AA-00001',
       'Uptime: 23 hours 12 minutes as of 10:34',

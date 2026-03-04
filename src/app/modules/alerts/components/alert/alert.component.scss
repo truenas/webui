@@ -160,6 +160,8 @@
   margin-bottom: 6px;
   margin-top: 4px;
   padding: 0;
+  position: relative;
+  z-index: 1;
 
   .context-help-toggle {
     align-items: center;
@@ -172,13 +174,12 @@
     height: inherit;
     min-height: auto;
     opacity: 0.9;
+    overflow: hidden;
     padding: 0;
     width: 100%;
 
     tn-icon {
       height: 14px;
-      position: relative;
-      top: -2px;
       width: 14px;
     }
 
@@ -206,8 +207,6 @@
 
       tn-icon {
         height: 12px;
-        position: relative;
-        top: -4px;
         width: 12px;
       }
     }
@@ -235,6 +234,7 @@
     justify-content: center;
     line-height: 1;
     min-width: fit-content;
+    overflow: hidden;
     padding: 0 8px;
     transition: all 0.2s ease;
     white-space: nowrap;

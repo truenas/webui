@@ -2,7 +2,7 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 
-type CountableDisks = PoolTopology | VDevItem[];
+type CountableDisks = PoolTopology | VDevItem[] | null | undefined;
 
 /**
  * helper function to flatten a disk topology recursively.
@@ -10,6 +10,10 @@ type CountableDisks = PoolTopology | VDevItem[];
  * @returns a `VDevItem[]` with all children of all items concatenated.
  */
 export function flattenDiskTopology(topo: CountableDisks): VDevItem[] {
+  if (!topo) {
+    return [];
+  }
+
   const allDisks: VDevItem[] = Object.values(topo).flat();
 
   /**

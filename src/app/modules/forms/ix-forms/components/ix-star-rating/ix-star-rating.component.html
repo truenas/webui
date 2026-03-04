@@ -18,7 +18,7 @@
         (click)="onValueChanged(index + 1)"
         (blur)="onTouch()"
       >
-        <tn-icon [name]="value >= index + 1 ? tnIconMarker('star', 'mdi') : tnIconMarker('star-outline', 'mdi')"></tn-icon>
+        <tn-icon customSize="28px" [name]="value >= index + 1 ? tnIconMarker('star', 'mdi') : tnIconMarker('star-outline', 'mdi')"></tn-icon>
       </button>
     </div>
   }

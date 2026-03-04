@@ -747,6 +747,13 @@ describe('AppSchemaService', () => {
         .toEqual([{ a: 1 }, { a: 2 }, { a: 3 }]);
     });
 
+    it('serializes multi-key list items as dicts even when schema node is not resolved', () => {
+      expect(service.serializeFormValue(
+        [{ name: 'net1', containers: [{ name: 'app1' }] }],
+        null,
+      )).toEqual([{ name: 'net1', containers: ['app1'] }]);
+    });
+
     it('serializes crontab value correctly', () => {
       expect(
         service.serializeFormValue(

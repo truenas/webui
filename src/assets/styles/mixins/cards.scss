@@ -10,6 +10,11 @@
   width: 100%;
   word-break: break-word;
 
+  @media (max-width: $breakpoint-tablet) {
+    height: auto;
+    overflow: visible;
+  }
+
   .scroll-window {
     columns: calc(50vw / 2.7);
     gap: 8px;

@@ -21,7 +21,6 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
-import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -82,7 +81,7 @@ export class WidgetSysInfoActiveComponent {
     }),
   ), { requireSync: true });
 
-  version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
+  version = computed(() => this.systemInfo().version);
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
     this.realElapsedSeconds();

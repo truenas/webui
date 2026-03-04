@@ -1,5 +1,4 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
-import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
@@ -380,7 +379,6 @@ export interface ApiCallDirectory {
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
-  'auth.mechanism_choices': { params: void; response: AuthMechanism[] };
 
   // Boot
   'boot.detach': { params: [disk: string]; response: void };
@@ -644,7 +642,6 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
-  'docker.nvidia_present': { params: void; response: boolean };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -833,6 +830,7 @@ export interface ApiCallDirectory {
 
   // System
   'system.advanced.config': { params: void; response: AdvancedConfig };
+  'system.advanced.nvidia_present': { params: void; response: boolean };
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.advanced.sed_global_password_is_set': { params: void; response: boolean };
   'system.advanced.serial_port_choices': { params: void; response: Choices };

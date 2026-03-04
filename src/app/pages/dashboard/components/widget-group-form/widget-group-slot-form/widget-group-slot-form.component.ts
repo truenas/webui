@@ -78,7 +78,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
     const options = Array.from(uniqCategories).map((category) => {
       const widgetsCount = this.translate.instant(
-        '({n, plural, =1 {# widget} other {# widgets}})',
+        '({n, plural, =1 {# card} other {# cards}})',
         { n: layoutSupportedWidgets.filter((widget) => widget.category === category).length },
       );
       return {

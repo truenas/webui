@@ -63,6 +63,17 @@
         </p>
       }
       <p>
+        <span class="label">{{ 'ID Map Type' | translate }}:</span>
+        @if (container.idmap) {
+          {{ container.idmap.type | mapValue: containerIdmapTypeLabels | translate }}
+          @if (container.idmap.slice) {
+            ({{ 'Slice' | translate }}: {{ container.idmap.slice }})
+          }
+        } @else {
+          {{ 'Privileged' | translate }}
+        }
+      </p>
+      <p>
         <span class="label">{{ 'Capabilities Policy' | translate }}:</span>
         {{ container.capabilities_policy | mapValue: containerCapabilitiesPolicyLabels | translate }}
       </p>

@@ -19,6 +19,15 @@
       position: relative;
     }
 
+    .arguments-editor ix-code-editor {
+      margin: 0;
+      padding: 0;
+
+      ::ng-deep .input-container.disabled {
+        opacity: 1;
+      }
+    }
+
     pre {
       margin: 0;
       white-space: pre-line;

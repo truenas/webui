@@ -73,11 +73,21 @@ export const containerTimeLabels = new Map<ContainerTime, string>([
 export enum ContainerCapabilitiesPolicy {
   Default = 'DEFAULT',
   Allow = 'ALLOW',
-  Deny = 'DENY',
 }
 
 export const containerCapabilitiesPolicyLabels = new Map<ContainerCapabilitiesPolicy, string>([
-  [ContainerCapabilitiesPolicy.Default, T('Default (keep default behavior)')],
-  [ContainerCapabilitiesPolicy.Allow, T('Allow (keep all capabilities)')],
-  [ContainerCapabilitiesPolicy.Deny, T('Deny (drop all capabilities)')],
+  [ContainerCapabilitiesPolicy.Default, T('Default')],
+  [ContainerCapabilitiesPolicy.Allow, T('Allow All')],
+]);
+
+export enum ContainerIdmapType {
+  Default = 'DEFAULT',
+  Isolated = 'ISOLATED',
+  Privileged = 'PRIVILEGED',
+}
+
+export const containerIdmapTypeLabels = new Map<ContainerIdmapType, string>([
+  [ContainerIdmapType.Default, T('Default')],
+  [ContainerIdmapType.Isolated, T('Isolated')],
+  [ContainerIdmapType.Privileged, T('Privileged')],
 ]);

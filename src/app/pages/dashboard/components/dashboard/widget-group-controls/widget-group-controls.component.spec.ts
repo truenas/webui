@@ -23,7 +23,7 @@ describe('WidgetGroupControlsComponent', () => {
     it('renders a button to move widget up on mobile', () => {
       jest.spyOn(spectator.component.moveUp, 'emit').mockReturnValue();
 
-      const button = spectator.query('[aria-label="Move widget up"]')!;
+      const button = spectator.query('[aria-label="Move card up"]')!;
       expect(button).toExist();
       expect(button.querySelector('tn-icon')).toHaveAttribute('name', 'menu-up');
 
@@ -35,7 +35,7 @@ describe('WidgetGroupControlsComponent', () => {
     it('does not render a button to move up when this is the first widget', () => {
       spectator.setInput('index', 0);
 
-      const button = spectator.query('[aria-label="Move widget up"]');
+      const button = spectator.query('[aria-label="Move card up"]');
       expect(button).toBeDisabled();
     });
   });
@@ -44,7 +44,7 @@ describe('WidgetGroupControlsComponent', () => {
     it('renders a button to move widget down on mobile', () => {
       jest.spyOn(spectator.component.moveDown, 'emit').mockReturnValue();
 
-      const button = spectator.query('[aria-label="Move widget down"]')!;
+      const button = spectator.query('[aria-label="Move card down"]')!;
       expect(button).toExist();
       expect(button.querySelector('tn-icon')).toHaveAttribute('name', 'menu-down');
 
@@ -56,7 +56,7 @@ describe('WidgetGroupControlsComponent', () => {
     it('does not render a button to move down when this is the last widget', () => {
       spectator.setInput('index', 4);
 
-      const button = spectator.query('[aria-label="Move widget down"]');
+      const button = spectator.query('[aria-label="Move card down"]');
       expect(button).toBeDisabled();
     });
   });

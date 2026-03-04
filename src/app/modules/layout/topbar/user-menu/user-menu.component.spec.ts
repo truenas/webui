@@ -15,7 +15,9 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import {
   ChangePasswordDialog,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
+import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
@@ -27,6 +29,9 @@ describe('UserMenuComponent', () => {
     component: UserMenuComponent,
     providers: [
       mockProvider(MatDialog),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of({ response: true })),
+      }),
       mockApi(),
       mockProvider(AuthService, {
         logout: jest.fn(() => of()),
@@ -71,6 +76,13 @@ describe('UserMenuComponent', () => {
       await changePassword[0].click();
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangePasswordDialog);
+    });
+
+    it('has a Preferences menu item that opens the preferences form', async () => {
+      const preferences = await menu.getItems({ text: /Preferences$/ });
+      await preferences[0].click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(PreferencesFormComponent);
     });
 
     it('has an API Keys menu item that takes user to list of API Keys', async () => {

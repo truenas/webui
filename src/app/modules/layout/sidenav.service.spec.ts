@@ -1,5 +1,5 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import {
   createServiceFactory,
   mockProvider,
@@ -7,18 +7,19 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('SidenavService', () => {
   let spectator: SpectatorService<SidenavService>;
   const breakpointObserve$ = new BehaviorSubject({ matches: true });
+  const routerEvents$ = new Subject();
   const createService = createServiceFactory({
     service: SidenavService,
     providers: [
       mockProvider(Router, {
-        events: of(),
+        events: routerEvents$,
       }),
       mockProvider(BreakpointObserver, {
         observe: jest.fn(() => breakpointObserve$),
@@ -49,6 +50,16 @@ describe('SidenavService', () => {
 
       breakpointObserve$.next({ matches: false });
       expect(spectator.service.isMobile()).toBe(false);
+    });
+  });
+
+  describe('listenForRouteChanges', () => {
+    it('closes secondary menu on navigation', () => {
+      spectator.service.isOpenSecondaryMenu = true;
+
+      routerEvents$.next(new NavigationEnd(1, '/jobs', '/jobs'));
+
+      expect(spectator.service.isOpenSecondaryMenu).toBe(false);
     });
   });
 });

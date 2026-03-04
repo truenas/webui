@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { User } from 'app/interfaces/user.interface';
 
 export function isEmptyHomeDirectory(home: string): boolean {
@@ -28,4 +29,9 @@ export function hasSshAccess(user: User): boolean {
 
 export function hasTrueNasAccess(user: User): boolean {
   return Boolean(user.roles?.length > 0 || user.groups?.length > 0);
+}
+
+export function getDirectoryServiceTooltip(user: Pick<User, 'local'>, translate: TranslateService): string {
+  if (user.local) return '';
+  return translate.instant('This user is managed by a directory service and cannot be modified.');
 }

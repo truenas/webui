@@ -1,4 +1,5 @@
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 
 export interface TruenasConnectConfig extends TruenasConnectUpdate {
   id: number;
@@ -13,6 +14,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
   };
   status: TruenasConnectStatus;
   status_reason: string;
+  tier: TruenasConnectTier | null;
   certificate: number;
   interfaces_ips: string[];
   ips: string[];

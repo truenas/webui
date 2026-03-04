@@ -9,7 +9,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
-import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('GuiCardComponent', () => {
@@ -37,12 +36,6 @@ describe('GuiCardComponent', () => {
               ui_consolemsg: false,
             },
           },
-          {
-            selector: selectPreferences,
-            value: {
-              userTheme: 'ix-dark',
-            },
-          },
         ],
       }),
       mockProvider(SlideIn, {
@@ -61,7 +54,6 @@ describe('GuiCardComponent', () => {
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'Theme: Dark',
       'GUI SSL Certificate: truenas_default',
       'Web Interface IPv4 Address: 0.0.0.0',
       'Web Interface IPv6 Address: 0.0.0.0',

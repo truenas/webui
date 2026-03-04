@@ -100,7 +100,12 @@ export class SelectImageDialog implements OnInit {
       .pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          return of(error);
+          this.entityEmptyConf.set({
+            type: EmptyType.Errors,
+            large: true,
+            title: this.translate.instant('Failed to load images'),
+          });
+          return of([]);
         }),
         takeUntilDestroyed(this.destroyRef),
       )

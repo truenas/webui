@@ -137,10 +137,10 @@ describe('WebSocketDebug Selectors', () => {
 
     it('should return different tab when changed', () => {
       const mockTabState = {
-        webSocketDebug: { ...initialState, activeTab: 'mock' },
+        webSocketDebug: { ...initialState, activeTab: 'mock-configurations' },
       };
       const result = fromSelectors.selectActiveTab(mockTabState);
-      expect(result).toBe('mock');
+      expect(result).toBe('mock-configurations');
     });
   });
 

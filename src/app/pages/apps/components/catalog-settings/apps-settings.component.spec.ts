@@ -7,9 +7,11 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import {
   IxIpInputWithNetmaskComponent,
@@ -21,6 +23,33 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+
+function getNvidiaProviders(
+  advancedConfig: Partial<AdvancedConfig>,
+  nvidiaPresent: boolean,
+): unknown[] {
+  return [
+    mockApi([
+      mockCall('catalog.update'),
+      mockCall('catalog.trains', ['stable', 'community', 'test']),
+      mockCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
+      mockCall('docker.status'),
+      mockCall('docker.config', {
+        enable_image_updates: false,
+        address_pools: [],
+        pool: 'test-pool',
+      } as DockerConfig),
+      mockCall('system.advanced.nvidia_present', nvidiaPresent),
+      mockCall('system.advanced.config', { nvidia: false, ...advancedConfig } as AdvancedConfig),
+      mockCall('system.advanced.update'),
+      mockJob('docker.update', fakeSuccessfulJob()),
+    ]),
+    mockProvider(DialogService),
+    mockProvider(FormErrorHandlerService),
+    mockAuth(),
+    mockProvider(DockerStore, { initialize: jest.fn() }),
+  ];
+}
 
 describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
@@ -62,6 +91,9 @@ describe('AppsSettingsComponent', () => {
         } as CatalogConfig),
         mockCall('docker.status'),
         mockCall('docker.config', dockerConfig),
+        mockCall('system.advanced.nvidia_present', true),
+        mockCall('system.advanced.config', { nvidia: false } as AdvancedConfig),
+        mockCall('system.advanced.update'),
         mockJob('docker.update', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
@@ -153,6 +185,11 @@ describe('AppsSettingsComponent', () => {
     });
   });
 
+  it('shows nvidia checkbox when nvidia GPU is present', async () => {
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
+    expect(nvidiaCheckbox).toBeTruthy();
+  });
+
   it('updates docker settings when form is edited', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -197,5 +234,83 @@ describe('AppsSettingsComponent', () => {
         { url: 'http://insecure.example.com', insecure: true },
       ],
     }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: false }]);
+  });
+
+  it('submits nvidia as true when user enables the nvidia checkbox', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Enable NVIDIA GPU Support': true,
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
+  });
+});
+
+describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
+  let spectator: Spectator<AppsSettingsComponent>;
+  let loader: HarnessLoader;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn((): undefined => undefined),
+  };
+
+  const createComponent = createComponentFactory({
+    component: AppsSettingsComponent,
+    imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
+    providers: [
+      ...getNvidiaProviders({ nvidia: true }, false),
+
+      mockProvider(SlideInRef, slideInRef),
+    ],
+  });
+
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = jest.fn();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('shows nvidia checkbox when nvidia drivers are installed even if GPU is absent', async () => {
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
+    expect(nvidiaCheckbox).toBeTruthy();
+  });
+});
+
+describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
+  let spectator: Spectator<AppsSettingsComponent>;
+  let loader: HarnessLoader;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn((): undefined => undefined),
+  };
+
+  const createComponent = createComponentFactory({
+    component: AppsSettingsComponent,
+    imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
+    providers: [
+      ...getNvidiaProviders({ nvidia: false }, false),
+
+      mockProvider(SlideInRef, slideInRef),
+    ],
+  });
+
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = jest.fn();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('hides nvidia checkbox when no GPU is present and no drivers are installed', async () => {
+    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
+    expect(nvidiaCheckbox).toBeNull();
   });
 });

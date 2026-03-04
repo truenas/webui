@@ -25,7 +25,6 @@ import { AccessCardComponent } from 'app/pages/system/advanced/access/access-car
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AccessCardComponent', () => {
@@ -77,12 +76,6 @@ describe('AccessCardComponent', () => {
         },
         selectors: [
           {
-            selector: selectPreferences,
-            value: {
-              lifetime: 2147482,
-            },
-          },
-          {
             selector: selectGeneralConfig,
             value: {
               ds_auth: true,
@@ -116,18 +109,13 @@ describe('AccessCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows current Session Timeout', async () => {
-    const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await lifetime.getFullText()).toBe('Session Timeout: 24 days 20 hours 31 minutes 22 seconds');
-  });
-
   it('shows whether DS users are allowed access to WebUI', async () => {
-    const allowed = (await loader.getAllHarnesses(MatListItemHarness))[1];
+    const allowed = (await loader.getAllHarnesses(MatListItemHarness))[0];
     expect(await allowed.getFullText()).toBe('Allow Directory Service users to access WebUI: Yes');
   });
 
   it('shows current login banner', async () => {
-    const loginBanner = (await loader.getAllHarnesses(MatListItemHarness))[2];
+    const loginBanner = (await loader.getAllHarnesses(MatListItemHarness))[1];
     expect(await loginBanner.getFullText()).toBe('Login Banner: Hello World!');
   });
 

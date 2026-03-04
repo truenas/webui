@@ -181,6 +181,52 @@ describe('ApiService', () => {
       expect(update).toEqual(updatedJobUpdate);
     });
 
+    it('should complete via store even when WebSocket response arrives before job finishes in store', () => {
+      const fakeUuid = 'fakeUUID-race';
+      const mockJobId = 42;
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      jest.spyOn(require('uuid'), 'v4').mockReturnValue(fakeUuid);
+
+      // Start with no matching job in the store
+      responses$.next({ id: 'dummy', jsonrpc: '2.0', result: null });
+      mockStore$.overrideSelector(selectJobs, []);
+      mockStore$.refreshState();
+
+      const emissions: Job[] = [];
+      let completed = false;
+      spectator.service.job('boot.attach', ['something', {}]).subscribe({
+        next: (job) => emissions.push(job),
+        complete: () => { completed = true; },
+      });
+
+      // WebSocket success response arrives BEFORE the job appears in the store
+      responses$.next({ jsonrpc: '2.0', id: fakeUuid, result: mockJobId });
+
+      // Job appears in the store as running
+      const runningJob = {
+        id: mockJobId,
+        method: 'boot.attach',
+        message_ids: [fakeUuid],
+        state: JobState.Running,
+      } as Job;
+      mockStore$.overrideSelector(selectJobs, [runningJob]);
+      mockStore$.refreshState();
+
+      // Job completes in the store
+      const completedJob = {
+        id: mockJobId,
+        method: 'boot.attach',
+        message_ids: [fakeUuid],
+        state: JobState.Success,
+        time_finished: { $date: 123456789 },
+      } as Job;
+      mockStore$.overrideSelector(selectJobs, [completedJob]);
+      mockStore$.refreshState();
+
+      expect(emissions).toEqual([runningJob, completedJob]);
+      expect(completed).toBe(true);
+    });
+
     it('should throw on a failed job', async () => {
       jest.spyOn(console, 'warn').mockImplementation();
       const mockJobId4 = 1237;

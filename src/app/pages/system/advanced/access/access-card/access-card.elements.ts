@@ -18,10 +18,6 @@ export const accessCardElements = {
       hierarchy: [T('Terminate Other Sessions')],
       synonyms: [T('Terminate Other User Sessions')],
     },
-    sessionTimeout: {
-      hierarchy: [T('Session Timeout')],
-      synonyms: [T('Session Token Lifetime')],
-    },
     loginBanner: {
       hierarchy: [T('Login Banner')],
       synonyms: [T('MOTD')],

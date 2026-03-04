@@ -26,12 +26,6 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.sessionTimeout">
-        <span class="label">{{ 'Session Timeout' | translate }}:</span>
-        <span *ixWithLoadingState="sessionTimeout$ as sessionTimeout" class="value">
-          {{ asDuration(sessionTimeout) }}
-        </span>
-      </mat-list-item>
       @if (isEnterprise()) {
         <mat-list-item>
           <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>

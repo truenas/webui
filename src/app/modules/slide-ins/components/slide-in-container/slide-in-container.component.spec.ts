@@ -490,6 +490,24 @@ describe('SlideInContainerComponent', () => {
       spectator.element.removeChild(closeButton);
     }));
 
+    it('should focus native button inside custom close component', fakeAsync(() => {
+      // Simulate tn-icon-button wrapping a native button
+      const customElement = document.createElement('tn-icon-button');
+      customElement.id = 'ix-close-icon';
+      const innerButton = document.createElement('button');
+      customElement.appendChild(innerButton);
+      spectator.element.appendChild(customElement);
+
+      const focusSpy = jest.spyOn(innerButton, 'focus');
+
+      spectator.component.slideIn();
+      tick(300);
+
+      expect(focusSpy).toHaveBeenCalled();
+
+      spectator.element.removeChild(customElement);
+    }));
+
     it('should focus first focusable element if close button is not available', fakeAsync(() => {
       const focusService = spectator.inject(FocusService);
       const focusSpy = jest.spyOn(focusService, 'focusFirstFocusableElement');
@@ -499,5 +517,42 @@ describe('SlideInContainerComponent', () => {
 
       expect(focusSpy).toHaveBeenCalled();
     }));
+
+    it('should activate focus trap only after slide-in transition completes', fakeAsync(() => {
+      expect(spectator.component.isFocusTrapActive).toBe(false);
+
+      spectator.component.slideIn();
+      expect(spectator.component.isFocusTrapActive).toBe(false);
+
+      tick(300);
+      expect(spectator.component.isFocusTrapActive).toBe(true);
+    }));
+
+    it('should deactivate focus trap on slide-out', fakeAsync(() => {
+      spectator.component.slideIn();
+      tick(300);
+      expect(spectator.component.isFocusTrapActive).toBe(true);
+
+      spectator.component.slideOut();
+      expect(spectator.component.isFocusTrapActive).toBe(false);
+    }));
+  });
+
+  describe('accessibility attributes', () => {
+    it('should have role="dialog" on host element', () => {
+      expect(spectator.element.getAttribute('role')).toBe('dialog');
+    });
+
+    it('should have aria-modal="true" when slide-in is visible', () => {
+      spectator.component.slideIn();
+      spectator.detectChanges();
+      expect(spectator.element.getAttribute('aria-modal')).toBe('true');
+    });
+
+    it('should remove aria-modal when slide-in is hidden', () => {
+      spectator.component.slideOut();
+      spectator.detectChanges();
+      expect(spectator.element.getAttribute('aria-modal')).toBeNull();
+    });
   });
 });

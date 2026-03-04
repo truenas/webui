@@ -2,7 +2,7 @@
   <div class="page-alerts-container">
     @for (alert of sortedPageAlerts(); track alert.id) {
       <div [class]="'page-alert ' + getAlertClass(alert.level)">
-        <tn-icon class="alert-icon" [name]="getAlertIcon(alert.level)" [fullSize]="true"></tn-icon>
+        <tn-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></tn-icon>
         @if (hasDuplicates(alert)) {
           <span
             class="duplicate-count-badge"

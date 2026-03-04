@@ -12,21 +12,11 @@ export const localizationCardElements = {
       anchor: 'localization-settings',
       hierarchy: [T('Localization Settings')],
     },
-    language: {
-      hierarchy: [T('Language')],
-      synonyms: [T('Translate App')],
-    },
     consoleKeyboardMap: {
       hierarchy: [T('Console Keyboard Map')],
     },
     timezone: {
       hierarchy: [T('Timezone')],
-    },
-    dateFormat: {
-      hierarchy: [T('Date Format')],
-    },
-    timeFormat: {
-      hierarchy: [T('Time Format')],
     },
   },
 } satisfies UiSearchableElement;

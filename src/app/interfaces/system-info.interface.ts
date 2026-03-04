@@ -1,4 +1,3 @@
-import { Codename } from 'app/enums/codename.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
@@ -25,7 +24,6 @@ export interface SystemInfo {
   uptime_seconds: number;
   version: string;
   remote_info: SystemInfo | null;
-  codename: Codename;
 }
 
 export interface SystemLicense {

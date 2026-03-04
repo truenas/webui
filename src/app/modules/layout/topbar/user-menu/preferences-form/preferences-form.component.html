@@ -1,0 +1,54 @@
+<ix-modal-header
+  [title]="'Preferences' | translate"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-select
+          formControlName="theme"
+          [label]="'Theme' | translate"
+          [options]="themeOptions"
+          [required]="true"
+        ></ix-select>
+        <ix-input
+          formControlName="token_lifetime"
+          type="number"
+          [label]="'Session Timeout' | translate"
+          [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Localization' | translate">
+        <ix-combobox
+          formControlName="language"
+          [label]="'Language' | translate"
+          [provider]="languageProvider"
+          [required]="true"
+        ></ix-combobox>
+        <ix-select
+          formControlName="date_format"
+          [label]="'Date Format' | translate"
+          [options]="dateFormatOptions"
+        ></ix-select>
+        <ix-select
+          formControlName="time_format"
+          [label]="'Time Format' | translate"
+          [options]="timeFormatOptions"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

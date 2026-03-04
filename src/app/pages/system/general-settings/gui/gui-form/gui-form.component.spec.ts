@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -19,14 +18,11 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
-import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
-import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('GuiFormComponent', () => {
@@ -100,19 +96,8 @@ describe('GuiFormComponent', () => {
             selector: selectGeneralConfig,
             value: mockSystemGeneralConfig,
           },
-          {
-            selector: selectPreferences,
-            value: {
-              userTheme: 'ix-dark',
-            },
-          },
-          {
-            selector: selectTheme,
-            value: 'ix-dark',
-          },
         ],
       }),
-      ThemeService,
       mockWindow({
         location: {
           replace: jest.fn(),
@@ -145,7 +130,6 @@ describe('GuiFormComponent', () => {
           'GUI SSL Certificate': 'freenas_default',
           'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
           'Show Console Messages': false,
-          Theme: 'Dark',
           'Usage collection & UI error reporting': false,
           'Web Interface HTTP -> HTTPS Redirect': false,
           'Web Interface HTTP Port': '80',
@@ -215,18 +199,6 @@ describe('GuiFormComponent', () => {
         title: 'Restart Web Service',
       }));
       expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
-    });
-
-    it('dispatches themeChangedInGuiForm when theme is changed', async () => {
-      const store$ = spectator.inject(Store);
-      jest.spyOn(store$, 'dispatch');
-
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Theme: 'Dracula',
-      });
-
-      expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
     });
   });
 

@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,6 +31,7 @@ describe('HardwareDiskEncryptionComponent', () => {
         mockCall('disk.query', [{ passwd: '' } as Disk]),
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
+      mockProvider(NavigateAndHighlightService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(false),
@@ -97,8 +99,10 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('shows a link to manage global SED password', () => {
-      const manageGlobalSedPassword = spectator.query(byText('Manage Global SED Password'));
-      expect(manageGlobalSedPassword).toHaveAttribute('href', '/system/advanced');
+      const manageGlobalSedPassword = spectator.query(byText('Manage Global SED Password'))!;
+      spectator.click(manageGlobalSedPassword);
+      expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight)
+        .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card');
     });
   });
 });

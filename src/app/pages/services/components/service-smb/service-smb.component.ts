@@ -11,6 +11,7 @@ import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
+import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -85,6 +86,7 @@ export class ServiceSmbComponent implements OnInit {
   protected isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
+  protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
 
   protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
   protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
@@ -151,7 +153,7 @@ export class ServiceSmbComponent implements OnInit {
     ]],
     workgroup: ['', [Validators.required]],
     description: ['', []],
-    enable_smb1: [false, []],
+    minimum_protocol: [SmbMinProtocol.Smb2, [Validators.required]],
     ntlmv1_auth: [false, []],
     unixcharset: ['', []],
     debug: [false, []],
@@ -176,7 +178,7 @@ export class ServiceSmbComponent implements OnInit {
     netbiosalias: helptextServiceSmb.netbiosaliasTooltip,
     workgroup: helptextServiceSmb.workgroupTooltip,
     description: helptextServiceSmb.descriptionTooltip,
-    enable_smb1: helptextServiceSmb.enableSmb1Tooltip,
+    minimum_protocol: helptextServiceSmb.minimumProtocolTooltip,
     ntlmv1_auth: helptextServiceSmb.ntlmv1AuthTooltip,
     unixcharset: helptextServiceSmb.unixcharsetTooltip,
     debug: helptextServiceSmb.debugTooltip,
@@ -214,9 +216,9 @@ export class ServiceSmbComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading.set(true);
 
-    this.form.controls.enable_smb1.valueChanges
+    this.form.controls.minimum_protocol.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.isSmb1Enabled.set(value));
+      .subscribe((value) => this.isSmb1Enabled.set(value === SmbMinProtocol.Smb1));
 
     this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (shares) => {
@@ -235,7 +237,7 @@ export class ServiceSmbComponent implements OnInit {
           spotlight_search: searchProtocolEnabled,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
-        this.isSmb1Enabled.set(config.enable_smb1);
+        this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {

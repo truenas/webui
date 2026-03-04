@@ -47,7 +47,6 @@
 }
 
 .mat-button-toggle .tn-icon {
-  font-size: 24px;
   line-height: normal;
   margin-bottom: 4px;
 }
@@ -61,7 +60,8 @@ cdk-virtual-scroll-viewport {
   width: 100%;
 
   @media(max-width: $breakpoint-sm) {
-    height: 100vh;
+    height: 100vh; // Fallback for browsers without dvh support
+    height: 100dvh;
 
     &::ng-deep {
       .cdk-virtual-scroll-content-wrapper {

@@ -36,9 +36,14 @@ export class UserService {
   private readonly AUTOCOMPLETE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   private autocompleteCacheTimestamp = 0;
 
-  groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
+  groupQueryDsCache(
+    search = '',
+    hideBuiltIn = false,
+    offset = 0,
+    extraFilters: QueryFilter<Group>[] = [],
+  ): Observable<Group[]> {
     const trimmedSearch = search.trim();
-    const queryArgs: QueryFilter<Group>[] = [];
+    const queryArgs: QueryFilter<Group>[] = [...extraFilters];
 
     if (trimmedSearch) {
       queryArgs.push(['group', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);

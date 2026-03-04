@@ -1,5 +1,6 @@
 .edit-trigger {
   all: unset;
+  align-items: center;
   background-color: var(--alt-bg1);
   color: var(--primary-txt);
   column-gap: 2px;
@@ -35,9 +36,6 @@
   }
 
   .edit-trigger-icon {
-    height: 18px;
     margin-left: 2px;
-    margin-top: -1px;
-    width: 18px;
   }
 }

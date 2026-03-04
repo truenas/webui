@@ -7,7 +7,7 @@ import {
 } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { forkJoin, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -18,6 +18,7 @@ import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -47,6 +48,8 @@ export class GroupMembersComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
@@ -70,12 +73,34 @@ export class GroupMembersComponent implements OnInit {
         this.api.call('user.query', [[['local', '=', true]]]),
       ])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([groups, users]) => {
-      const group = groups[0];
-      this.group.set(group);
-      this.users.set(users);
-      this.selectedMembers = users.filter((user) => group.users.includes(user.id));
-      this.isLoading.set(false);
+    ).subscribe({
+      next: ([groups, users]) => {
+        const group = groups[0];
+
+        if (!group) {
+          this.isLoading.set(false);
+          this.snackbar.error(this.translate.instant('Group not found.'));
+          this.router.navigate(['/', 'credentials', 'groups']);
+          return;
+        }
+
+        if (!group.local) {
+          this.isLoading.set(false);
+          this.snackbar.error(this.translate.instant('Cannot manage members for directory service groups.'));
+          this.router.navigate(['/', 'credentials', 'groups']);
+          return;
+        }
+
+        this.group.set(group);
+        this.users.set(users);
+        this.selectedMembers = users.filter((user) => group.users.includes(user.id));
+        this.isLoading.set(false);
+      },
+      error: (error: unknown) => {
+        this.isLoading.set(false);
+        this.errorHandler.showErrorModal(error);
+        this.router.navigate(['/', 'credentials', 'groups']);
+      },
     });
   }
 

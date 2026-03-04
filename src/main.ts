@@ -1,3 +1,4 @@
+import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
   enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
@@ -97,6 +98,10 @@ bootstrapApplication(AppComponent, {
     }),
     provideNgxWebstorage(withLocalStorage()),
     provideNativeDateAdapter(),
+    {
+      provide: OVERLAY_DEFAULT_CONFIG,
+      useValue: { usePopover: false },
+    },
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
       useValue: {

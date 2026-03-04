@@ -112,6 +112,19 @@ $breakpoint-sm: 960px;
 $breakpoint-md: 1280px;
 $breakpoint-lg: 1920px;
 
+// 16px prevents iOS Safari auto-zoom on input focus
+@mixin prevent-ios-autozoom($selector: 'input', $important: false) {
+  @media (max-width: $breakpoint-sm) {
+    #{$selector} {
+      @if $important {
+        font-size: 16px !important;
+      } @else {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
 $media-xs: 'screen and (max-width: #{$breakpoint-xs - 1})';
 $media-sm: 'screen and (min-width: #{$breakpoint-xs}) and (max-width: #{$breakpoint-sm - 1})';
 $media-md: 'screen and (min-width: #{$breakpoint-sm}) and (max-width: #{$breakpoint-md - 1})';

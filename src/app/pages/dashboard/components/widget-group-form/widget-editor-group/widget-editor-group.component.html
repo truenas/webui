@@ -16,7 +16,7 @@
       >
         @if (hasErrors(slotIndex)) {
           <div class="error">
-            <ix-widget-error [message]="'Widget has errors' | translate"></ix-widget-error>
+            <ix-widget-error [message]="'Card has errors' | translate"></ix-widget-error>
           </div>
         } @else {
           <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />

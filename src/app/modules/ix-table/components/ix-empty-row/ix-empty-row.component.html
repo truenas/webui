@@ -9,7 +9,7 @@
       <mat-spinner [diameter]="40"></mat-spinner>
     } @else {
       <div class="icon-div">
-        <tn-icon [name]="getIcon()" [fullSize]="true"></tn-icon>
+        <tn-icon [customSize]="conf().large ? '100px' : '50px'" [name]="getIcon()"></tn-icon>
       </div>
       <div>
         <h3 class="empty-title">{{ conf().title | translate }}</h3>

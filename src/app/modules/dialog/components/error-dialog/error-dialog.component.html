@@ -41,12 +41,12 @@
                 @if (isCollapsibleDetail(detail.label)) {
                   @if (!isDetailExpanded(detail.label)) {
                     <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
-                      <tn-icon name="eye" library="mdi"></tn-icon>
+                      <tn-icon name="eye" library="mdi" customSize="18px"></tn-icon>
                       <span>{{ 'Show' | translate }}</span>
                     </a>
                   } @else {
                     <a class="trace-toggle" (click)="toggleDetailExpanded(detail.label)">
-                      <tn-icon name="eye-off" library="mdi"></tn-icon>
+                      <tn-icon name="eye-off" library="mdi" customSize="18px"></tn-icon>
                       <span>{{ 'Hide' | translate }}</span>
                     </a>
                     <pre>{{ detail.value }}</pre>

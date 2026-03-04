@@ -1,19 +1,20 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TncStatus, HarborosConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { HarborosConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
+import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
+import { TruenasConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
 
-describe('HarborosConnectStatusDisplayComponent', () => {
-  let spectator: Spectator<HarborosConnectStatusDisplayComponent>;
+describe('TruenasConnectStatusDisplayComponent', () => {
+  let spectator: Spectator<TruenasConnectStatusDisplayComponent>;
 
   const createComponent = createComponentFactory({
-    component: HarborosConnectStatusDisplayComponent,
+    component: TruenasConnectStatusDisplayComponent,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         status: TncStatus.Active,
-        rawStatus: HarborosConnectStatus.Configured,
+        rawStatus: TruenasConnectStatus.Configured,
       },
     });
   });
@@ -27,7 +28,7 @@ describe('HarborosConnectStatusDisplayComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.waiting-state-content')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your HarborOS Experience! Link your system with HarborOS Connect now for additional security, alerting, and other features.');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.');
   });
 
   it('should display failed state correctly', () => {
@@ -44,8 +45,8 @@ describe('HarborosConnectStatusDisplayComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.status-connected')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('HarborOS Connect - Status Healthy');
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is linked with HarborOS Connect. Click below to open the HarborOS Connect Management Interface');
+    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('TrueNAS Connect - Status Healthy');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is linked with TrueNAS Connect. Click below to open the TrueNAS Connect Management Interface');
   });
 
   it('should display connecting state correctly', () => {
@@ -54,16 +55,57 @@ describe('HarborosConnectStatusDisplayComponent', () => {
 
     expect(spectator.query('.connecting-state-content')).toBeTruthy();
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('Setting up HarborOS Connect');
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is setting up with HarborOS Connect, this may take a few moments.');
+    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('Setting up TrueNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is setting up with TrueNAS Connect, this may take a few moments.');
   });
 
   it('should display disabled state correctly', () => {
     spectator.setInput('status', TncStatus.Disabled);
-    spectator.setInput('rawStatus', HarborosConnectStatus.Disabled);
+    spectator.setInput('rawStatus', TruenasConnectStatus.Disabled);
     spectator.detectChanges();
 
     expect(spectator.query('.status-disabled')).toBeTruthy();
     expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('DISABLED');
+  });
+
+  it('should not show tier badge when tier is null', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', null);
+    spectator.detectChanges();
+
+    expect(spectator.query('.tier-badge')).not.toExist();
+  });
+
+  it('should show Foundation tier badge when tier is FOUNDATION', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', TruenasConnectTier.Foundation);
+    spectator.detectChanges();
+
+    const badge = spectator.query('.tier-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('tier-foundation');
+    expect(badge).toContainText('Tier: Foundation');
+  });
+
+  it('should show Plus tier badge when tier is PLUS', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', TruenasConnectTier.Plus);
+    spectator.detectChanges();
+
+    const badge = spectator.query('.tier-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('tier-plus');
+    expect(badge).toContainText('Tier: Plus');
+  });
+
+  it('should show Business tier badge when tier is BUSINESS', () => {
+    spectator.setInput('status', TncStatus.Active);
+    spectator.setInput('tier', TruenasConnectTier.Business);
+    spectator.detectChanges();
+
+    const badge = spectator.query('.tier-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('tier-business');
+    expect(badge).toContainText('Tier: Business');
   });
 });

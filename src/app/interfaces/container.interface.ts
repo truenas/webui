@@ -1,8 +1,9 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
   AllowedImageOs,
+  ContainerCapabilitiesPolicy,
   ContainerDeviceType,
-
+  ContainerIdmapType,
   ContainerNetworkType,
   ContainerNicDeviceType,
   ContainerRemote,
@@ -24,6 +25,11 @@ export interface ContainerStats {
   };
 }
 
+export interface ContainerIdmap {
+  type: ContainerIdmapType;
+  slice?: number | null;
+}
+
 export interface Container {
   id: number;
   uuid: string;
@@ -39,10 +45,8 @@ export interface Container {
   initenv: Record<string, unknown>;
   inituser: string | null;
   initgroup: string | null;
-  idmap: {
-    type: string;
-  };
-  capabilities_policy: string;
+  idmap: ContainerIdmap | null;
+  capabilities_policy: ContainerCapabilitiesPolicy;
   capabilities_state: Record<string, unknown>;
   status: {
     state: ContainerStatus;
@@ -59,6 +63,7 @@ export type CreateContainer = Partial<Omit<Container, 'id' | 'dataset' | 'status
     name: string;
     version: string;
   };
+  idmap?: ContainerIdmap | null;
 };
 
 export type UpdateContainer = Partial<Pick<Container,

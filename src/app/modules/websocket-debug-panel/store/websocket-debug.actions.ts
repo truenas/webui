@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { DebugTab } from 'app/modules/websocket-debug-panel/constants';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 
@@ -31,7 +32,7 @@ export const setPanelOpen = createAction(
 
 export const setActiveTab = createAction(
   `${actionPrefix} Set Active Tab`,
-  props<{ tab: string }>(),
+  props<{ tab: DebugTab }>(),
 );
 
 export const addMockConfig = createAction(

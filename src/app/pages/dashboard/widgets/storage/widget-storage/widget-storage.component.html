@@ -43,21 +43,21 @@
                   <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
                     <li>
                       <span [class]="['icon', poolInfo.status.level]">
-                        <tn-icon [name]="poolInfo.status.icon"></tn-icon>
+                        <tn-icon size="sm" [name]="poolInfo.status.icon"></tn-icon>
                       </span>
                       <span class="label"> {{ poolInfo.status.label }}: </span>
                       <span class="value"> {{ poolInfo.status.value }} </span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.usedSpace.level]">
-                        <tn-icon [name]="poolInfo.usedSpace.icon"></tn-icon>
+                        <tn-icon size="sm" [name]="poolInfo.usedSpace.icon"></tn-icon>
                       </span>
                       <span class="label">{{ poolInfo.usedSpace.label }}:</span>
                       <span class="value">{{ poolInfo.usedSpace.value }}</span>
                     </li>
                     <li>
                       <span [class]="['icon', poolInfo.disksWithError.level]">
-                        <tn-icon [name]="poolInfo.disksWithError.icon"></tn-icon>
+                        <tn-icon size="sm" [name]="poolInfo.disksWithError.icon"></tn-icon>
                       </span>
                       <span class="label"> {{ poolInfo.disksWithError.label }}: </span>
                       <span class="value"> {{ poolInfo.disksWithError.value }} </span>
@@ -66,6 +66,7 @@
                       <li>
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
+                            size="sm"
                             [name]="poolInfo.scan.icon"
                             [tnTooltip]="poolInfo.scan.value"
                           ></tn-icon>
@@ -86,6 +87,7 @@
                         <span class="label"> {{ poolInfo.scan.label }}: </span>
                         <span [class]="['icon', poolInfo.scan.level]">
                           <tn-icon
+                            size="sm"
                             [name]="poolInfo.scan.icon"
                             [tnTooltip]="poolInfo.scan.value"
                           ></tn-icon>

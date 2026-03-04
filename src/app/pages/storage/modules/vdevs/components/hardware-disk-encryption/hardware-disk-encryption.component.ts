@@ -4,11 +4,11 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
+import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -31,7 +31,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MatCardContent,
     HasRoleDirective,
     TestDirective,
-    RouterLink,
+    NavigateAndHighlightDirective,
     TranslateModule,
   ],
 })

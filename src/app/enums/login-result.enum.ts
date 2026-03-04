@@ -5,4 +5,5 @@ export enum LoginResult {
   NoAccess = 'no_access',
   NoToken = 'no_token',
   NoOtp = 'no_otp',
+  Denied = 'denied',
 }

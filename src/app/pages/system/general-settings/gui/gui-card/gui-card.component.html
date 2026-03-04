@@ -17,12 +17,6 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.theme">
-        <span class="label">{{ 'Theme' | translate }}:</span>
-        <span *ixWithLoadingState="preferences$ as preferences" class="value">
-          {{ themeLabel() }}
-        </span>
-      </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.sslCertificate">
         <span class="label">{{ helptext.uiCertificate.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">

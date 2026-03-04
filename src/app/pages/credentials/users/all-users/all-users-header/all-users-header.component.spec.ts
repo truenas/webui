@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { AllUsersHeaderComponent } from './all-users-header.component';
@@ -14,6 +15,7 @@ describe('AllUsersHeaderComponent', () => {
   const createComponent = createComponentFactory({
     component: AllUsersHeaderComponent,
     providers: [
+      mockAuth(),
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),

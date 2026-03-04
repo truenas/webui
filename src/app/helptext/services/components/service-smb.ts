@@ -10,10 +10,13 @@ export const helptextServiceSmb = {
  When this is unconfigured and Active Directory or LDAP are active, \
  TrueNAS will detect and set the correct workgroup from these services.'),
   descriptionTooltip: T('Optional. Enter a server description.'),
-  enableSmb1Tooltip: T('Use this option to allow legacy SMB clients to connect to the\
-  server. Note that SMB1 is being deprecated and it is advised\
-  to upgrade clients to operating system versions that support\
-  modern versions of the SMB protocol.'),
+  minimumProtocolTooltip: T('Minimum SMB protocol version permitted for client connections.\
+ <b>SMB1</b> enables legacy client support (not recommended).\
+ <b>SMB2</b> is the default.\
+ <b>SMB3</b> restricts access to modern clients only.\
+ Note: SMB2 and SMB3 are dialects of the same protocol family;\
+ setting SMB3 as the minimum may break access for networked\
+ embedded devices that only support SMB2.'),
   ntlmv1AuthTooltip: T('Off by default. When set,\
  <a href="https://www.samba.org/samba/docs/current/man-html/smbd.8.html" target="_blank">smbd(8)</a>\
  attempts to authenticate users with the insecure\
@@ -56,5 +59,5 @@ export const helptextServiceSmb = {
   bindipTooltip: T('Static IP addresses which SMB listens on for connections. \
  Leaving all unselected defaults to listening on all active interfaces.'),
   spotlightSearchTooltip: T('Enable to allow macOS clients to use Spotlight to quickly search for file contents on SMB shares.'),
-  statefulFailoverTooltip: T('Enterprise feature to ensure SMB state consistency across HA failover events. This feature is incompatible with Multi-Protocol and Legacy share purposes, and with SMB1 support.'),
+  statefulFailoverTooltip: T('Enterprise feature to ensure SMB state consistency across HA failover events. This feature is incompatible with Multi-Protocol and Legacy share purposes, and with minimum protocol set to SMB1.'),
 };

@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
@@ -113,9 +114,11 @@ describe('GroupDetailsRowComponent', () => {
       expect(await membersButton.isDisabled()).toBe(true);
     });
 
-    it('should not navigate to members form when clicking disabled Members button for immutable groups', () => {
+    it('should not navigate to members form when clicking disabled Members button for immutable groups', async () => {
       spectator.setInput('group', { ...dummyGroup, immutable: true });
-      spectator.component.openGroupMembersForm();
+
+      const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
+      await membersButton.click();
 
       expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
     });
@@ -143,12 +146,30 @@ describe('GroupDetailsRowComponent', () => {
       expect(editButton).toBeNull();
     });
 
-    it('does not show Edit button for Active Directory groups', async () => {
+    it('does not show Edit button for non-local groups', async () => {
       spectator.setInput('group', { ...dummyGroup, local: false });
 
       const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
       expect(editButton).toBeNull();
     });
+  });
+
+  it('should disable Delete button for non-local groups', async () => {
+    spectator.setInput('group', { ...dummyGroup, local: false });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    expect(await deleteButton.isDisabled()).toBe(true);
+  });
+
+  it('should show directory service tooltip for non-local groups', async () => {
+    spectator.setInput('group', { ...dummyGroup, local: false });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    expect(deleteButton).toBeTruthy();
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const deleteTooltip = tooltips.find((tooltip) => tooltip.message === 'This group is managed by a directory service and cannot be deleted.');
+    expect(deleteTooltip).toBeTruthy();
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {
@@ -166,5 +187,13 @@ describe('GroupDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
 
     expect(await deleteButton.isDisabled()).toBe(true);
+  });
+
+  it('should show privileges or members tooltip when group has roles or users', () => {
+    spectator.setInput('group', { ...dummyGroup, roles: ['admin'], users: [1] });
+
+    const tooltips = spectator.queryAll(MatTooltip);
+    const deleteTooltip = tooltips.find((tooltip) => tooltip.message === 'Groups with privileges or members cannot be deleted.');
+    expect(deleteTooltip).toBeTruthy();
   });
 });

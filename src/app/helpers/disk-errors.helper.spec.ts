@@ -132,6 +132,11 @@ describe('flattenDiskTopology', () => {
     expect(result).toContain(disk2);
   });
 
+  it('should return empty array when topology is null or undefined', () => {
+    expect(flattenDiskTopology(null)).toEqual([]);
+    expect(flattenDiskTopology(undefined)).toEqual([]);
+  });
+
   it('should handle deeply nested structures', () => {
     const disk1 = createDisk('disk1', createStats());
     const disk2 = createDisk('disk2', createStats());

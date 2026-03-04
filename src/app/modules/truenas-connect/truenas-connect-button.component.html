@@ -1,8 +1,13 @@
 <button
   ixTest="tnc-show-status"
   mat-icon-button
-  [matTooltip]="tooltips.tncStatus | translate"
+  [matTooltip]="tooltip()"
   (click)="showStatus()"
 >
-  <tn-icon size="lg" name="tn-truenas-connect-logo"></tn-icon>
+  <span class="icon-wrapper">
+    <tn-icon size="lg" name="tn-truenas-connect-logo"></tn-icon>
+    @if (showBadge()) {
+      <span [class]="'tier-badge ' + tierCssClass()">{{ tierLabel() }}</span>
+    }
+  </span>
 </button>

@@ -168,6 +168,40 @@ describe('SigninFormComponent', () => {
       expect(spectator.query('.error p')).toHaveText('Wrong username or password. Please try again.');
     });
 
+    it('handles Denied login failure', async () => {
+      const signinStore = spectator.inject(SigninStore);
+      jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
+        loginResult: LoginResult.Denied,
+        loginResponse: {
+          response_type: LoginExResponseType.Denied,
+        } as LoginExResponse,
+      }));
+
+      (signinStore.getLoginErrorMessage as jest.Mock).mockReturnValueOnce(
+        'Login denied. Please ensure proper roles have been granted to the user.',
+      );
+
+      await form.fillForm({
+        Username: 'test',
+        Password: 'test',
+      });
+      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
+      await loginButton.click();
+
+      // Wait for async operations to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
+      expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.Denied);
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith(
+        'Login denied. Please ensure proper roles have been granted to the user.',
+      );
+    });
+
     it('handles OTP required login result', async () => {
       jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of({
         loginResult: LoginResult.NoOtp,

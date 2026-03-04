@@ -73,8 +73,8 @@ export class LicenseService {
     this.store$.select(selectIsEnterprise),
     this.store$.select(selectLicenseFeatures),
   ]).pipe(map((
-    [isEnterprise, licenseFeatures]: [boolean, LicenseFeature[]],
-  ) => !isEnterprise || licenseFeatures.includes(LicenseFeature.Jails)));
+    [isEnterprise, licenseFeatures],
+  ) => !isEnterprise || licenseFeatures?.includes(LicenseFeature.Jails)));
 
   /**
    * Check if the system is configured with TrueNAS Connect.

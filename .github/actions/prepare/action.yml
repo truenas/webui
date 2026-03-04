@@ -7,7 +7,7 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version: '22.17.1'
+        node-version: '24.13.1'
     - name: Enable Corepack for Yarn 4
       shell: bash
       run: corepack enable

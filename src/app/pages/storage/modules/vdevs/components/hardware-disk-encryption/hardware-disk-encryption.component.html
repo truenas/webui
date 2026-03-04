@@ -34,8 +34,10 @@
 
         <a
           *ixHasRole="requiredRoles"
+          ixNavigateAndHighlight
           ixTest="manage-global-sed-password"
-          [routerLink]="['/system/advanced']"
+          [navigateHash]="'sed-card'"
+          [navigateRoute]="['/system', 'advanced']"
         >
           {{ 'Manage Global SED Password' | translate }}
         </a>

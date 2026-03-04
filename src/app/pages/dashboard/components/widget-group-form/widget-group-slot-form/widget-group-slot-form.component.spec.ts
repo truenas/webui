@@ -58,7 +58,7 @@ describe('WidgetGroupSlotComponent', () => {
       category: WidgetCategory.Network,
       type: WidgetType.Ipv4Address,
     });
-    const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Type' }));
+    const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Card Type' }));
     expect(await typeSelect.getValue()).toBe(widgetRegistry[WidgetType.Ipv4Address].name);
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
@@ -69,12 +69,12 @@ describe('WidgetGroupSlotComponent', () => {
   });
 
   it('emits updated value when value changed', async () => {
-    const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Category' }));
-    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (8 widgets)`);
+    const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Card Category' }));
+    await categorySelect.setValue(`${widgetCategoryLabels.get(WidgetCategory.Cpu)} (8 cards)`);
 
     spectator.detectChanges();
 
-    const widgetTypeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Type' }));
+    const widgetTypeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Card Type' }));
     expect(await widgetTypeSelect.getValue()).toBe('CPU Model');
 
     expect(spectator.component.slot()).toEqual({

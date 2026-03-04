@@ -59,7 +59,7 @@
         [ixTest]="[alert().key, 'toggle-help']"
         (click)="toggleContextHelp()"
       >
-        <tn-icon library="mdi" [name]="showContextHelp() ? 'chevron-up' : 'chevron-down'" [fullSize]="true"></tn-icon>
+        <tn-icon library="mdi" [name]="showContextHelp() ? 'chevron-up' : 'chevron-down'"></tn-icon>
         {{ showContextHelp() ? ('Hide Details' | translate) : ('Why am I seeing this?' | translate) }}
       </button>
       @if (showContextHelp()) {
@@ -73,7 +73,7 @@
               [href]="enhanced.documentationUrl"
             >
               {{ 'Learn More' | translate }}
-              <tn-icon name="open-in-new" library="mdi" [fullSize]="true"></tn-icon>
+              <tn-icon name="open-in-new" library="mdi"></tn-icon>
             </a>
           }
         </div>
@@ -90,7 +90,7 @@
           [ixTest]="[alert().key, 'action', action.label]"
           (click)="onSmartActionClick(action.handler)"
         >
-          <tn-icon [name]="action.icon" [fullSize]="true"></tn-icon>
+          <tn-icon [name]="action.icon"></tn-icon>
           {{ action.label | translate }}
         </button>
       }
@@ -135,6 +135,6 @@
     [matTooltip]="dismissTooltip() || dismissButtonText()"
     (click)="onDismiss()"
   >
-    <tn-icon [name]="closeIcon" [fullSize]="true"></tn-icon>
+    <tn-icon [name]="closeIcon"></tn-icon>
   </button>
 }

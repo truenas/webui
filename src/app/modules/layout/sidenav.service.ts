@@ -158,9 +158,12 @@ export class SidenavService {
 
   private listenForRouteChanges(): void {
     this.router.events.pipe(
-      filter((routeChange) => routeChange instanceof NavigationEnd && this.isMobile()),
+      filter((routeChange) => routeChange instanceof NavigationEnd),
     ).subscribe(() => {
-      this.sidenav?.close();
+      if (this.isMobile()) {
+        this.sidenav?.close();
+      }
+      this.closeSecondaryMenu();
     });
   }
 }

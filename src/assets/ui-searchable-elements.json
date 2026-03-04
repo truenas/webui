@@ -503,65 +503,6 @@
       "System",
       "General Settings",
       "Localization",
-      "Language"
-    ],
-    "synonyms": [
-      "Translate App"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "language",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Localization",
-      "Date Format"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "date-format",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Localization",
-      "Time Format"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "time-format",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Localization",
       "Timezone"
     ],
     "synonyms": [],
@@ -631,25 +572,6 @@
     ],
     "routerLink": null,
     "anchor": "gui-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "GUI",
-      "Theme"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "theme",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1523,7 +1445,7 @@
       "System",
       "Advanced Settings",
       "NVIDIA Drivers",
-      "Install NVIDIA Drivers"
+      "Enable NVIDIA GPU Support"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -1533,7 +1455,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "install-nvidia-drivers",
+    "anchor": "enable-nvidia-gpu-support",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2430,27 +2352,6 @@
     ],
     "routerLink": null,
     "anchor": "access-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Access",
-      "Session Timeout"
-    ],
-    "synonyms": [
-      "Session Token Lifetime"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "session-timeout",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4967,7 +4868,9 @@
       "Create User",
       "New User"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "ACCOUNT_WRITE"
+    ],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials/users"
@@ -5842,6 +5745,27 @@
     "visibleTokens": [],
     "routerLink": null,
     "anchor": "change-password",
+    "triggerAnchor": "user-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu",
+      "Preferences"
+    ],
+    "synonyms": [
+      "Session Timeout",
+      "Token Lifetime",
+      "Theme",
+      "Language",
+      "Date Format",
+      "Time Format"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "routerLink": null,
+    "anchor": "preferences",
     "triggerAnchor": "user-menu",
     "section": "ui"
   },

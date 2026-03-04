@@ -47,7 +47,7 @@ export const helptextCloudSync = {
   acknowledgeAbuseTooltip: T('If downloading a file returns the error "This file has been identified as malware or spam and cannot be downloaded" with the error code "cannotDownloadAbusiveFile" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.'),
 
   fastListLabel: T('Use --fast-list'),
-  fastListTooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\
+  fastListTooltip: T('<a href="https://rclone.org/docs/#fast-list" target="_blank">Use fewer transactions in exchange for more RAM.</a>\
  This can also speed up or slow down the transfer.'),
 
   pathLabel: T('Directory/Files'),

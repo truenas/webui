@@ -5,11 +5,11 @@
 # outside of a chroot environment.
 
 # Update VERSION below to switch nodejs versions
-VERSION=v22.17.1
+VERSION=v24.13.1
 
 # shasums can be downloaded from https://nodejs.org/dist/${VERSION}/SHASUMS256.txt
 # checksum changes without version change should be investigated.
-SHA256SUM="ff04bc7c3ed7699ceb708dbaaf3580d899ff8bf67f17114f979e83aa74fc5a49"
+SHA256SUM="30215f90ea3cd04dfbc06e762c021393fa173a1d392974298bbc871a8e461089"
 
 PLATFORM=linux-x64
 

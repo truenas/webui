@@ -5,7 +5,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
-import { NavigationEnd, Router, RouterLinkActive, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLinkActive, RouterLink, isActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
@@ -71,12 +71,12 @@ export class NavigationComponent {
   }
 
   protected isSlideOutActive(state: string): boolean {
-    return this.router.isActive(state, {
+    return isActive(state, this.router, {
       paths: 'subset',
       queryParams: 'ignored',
       fragment: 'ignored',
       matrixParams: 'ignored',
-    });
+    })();
   }
 
   protected isMenuExpanded(state: string): boolean {
