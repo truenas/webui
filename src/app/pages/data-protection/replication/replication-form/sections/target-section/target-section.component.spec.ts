@@ -164,6 +164,7 @@ describe('TargetSectionComponent', () => {
     });
 
     it('auto-generates encryption key when Key format is used', async () => {
+      spectator.component.form.controls.encryption_key_generate.setValue(true);
       await form.fillForm({
         'Encryption Type': 'Key',
       });
@@ -275,7 +276,7 @@ describe('TargetSectionComponent', () => {
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
           removable: false,
-          message: 'Source and Destination dataset must have matching encryption states.',
+          message: 'Destination dataset is not encrypted. Disable encryption or select an encrypted destination.',
         },
       });
     }));
@@ -295,7 +296,7 @@ describe('TargetSectionComponent', () => {
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
           removable: false,
-          message: 'Source and Destination dataset must have matching encryption states.',
+          message: 'Destination dataset is encrypted. Enable encryption or select an unencrypted destination.',
         },
       });
     }));
@@ -476,7 +477,7 @@ describe('TargetSectionComponent', () => {
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
           removable: false,
-          message: 'Source and Destination dataset must have matching encryption states.',
+          message: 'Destination dataset is not encrypted. Disable encryption or select an encrypted destination.',
         },
       });
     }));

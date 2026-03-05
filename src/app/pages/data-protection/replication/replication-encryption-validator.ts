@@ -42,12 +42,13 @@ export function getEncryptionErrors(
   }
 
   if (encryptionEnabled !== targetDataset.encrypted) {
+    const message = encryptionEnabled
+      ? translate.instant('Destination dataset is not encrypted. Disable encryption or select an encrypted destination.')
+      : translate.instant('Destination dataset is encrypted. Enable encryption or select an unencrypted destination.');
     return {
       [ixManualValidateError]: {
         removable: false,
-        message: translate.instant(
-          'Source and Destination dataset must have matching encryption states.',
-        ),
+        message,
       },
     };
   }

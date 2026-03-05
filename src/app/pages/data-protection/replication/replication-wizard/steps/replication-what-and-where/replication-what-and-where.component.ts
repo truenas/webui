@@ -760,7 +760,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         this.cdr.markForCheck();
         const datasetIds = sourceDatasets.map((ds) => ds.replace(`${mntPath}/`, ''));
         return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
-          map((datasets: Dataset[]) => datasets.some((ds) => ds.encrypted)),
+          map((datasets: Dataset[]) => datasets.length > 0 && datasets.every((ds) => ds.encrypted)),
           catchError(() => of(false)),
           finalize(() => {
             this.pendingEncryptionValidations--;
@@ -803,8 +803,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       return;
     }
 
-    // In wizard, properties are always preserved. If source is encrypted,
+    // In wizard, properties are always preserved. If all sources are encrypted,
     // encryption properties will be replicated — disable destination encryption.
+    // Mixed sources (some encrypted, some not) leave the checkbox enabled for the user to decide.
     if (this.lastSourceEncrypted) {
       this.form.controls.encryption.setValue(false);
       this.form.controls.encryption.disable();

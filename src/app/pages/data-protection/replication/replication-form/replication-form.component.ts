@@ -6,7 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
-import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +19,6 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -77,7 +76,6 @@ export class ReplicationFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
@@ -412,6 +410,7 @@ export class ReplicationFormComponent implements OnInit {
       this.generalSection().form.controls.transport.valueChanges,
     ).pipe(
       debounceTime(300),
+      distinctUntilChanged(),
       startWith(null),
       switchMap(() => {
         const sourceDatasets = this.sourceSection().form.controls.source_datasets.value;

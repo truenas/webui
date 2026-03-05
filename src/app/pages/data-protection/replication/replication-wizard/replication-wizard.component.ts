@@ -303,9 +303,7 @@ export class ReplicationWizardComponent {
       if (data.encryption_key_format === EncryptionKeyFormat.Passphrase) {
         payload.encryption_key = data.encryption_key_passphrase;
       } else {
-        payload.encryption_key = data.encryption_key_generate
-          ? this.replicationService.generateEncryptionHexKey(64)
-          : data.encryption_key_hex;
+        payload.encryption_key = this.replicationService.generateEncryptionHexKey(64);
       }
 
       payload.encryption_key_location = data.encryption_key_location_truenasdb

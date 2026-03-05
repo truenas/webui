@@ -366,7 +366,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       expect(capturedErrors).toEqual({
         [ixManualValidateError]: {
           removable: false,
-          message: 'Source and Destination dataset must have matching encryption states.',
+          message: 'Destination dataset is not encrypted. Disable encryption or select an encrypted destination.',
         },
       });
     }));

@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
@@ -92,7 +92,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly RetentionPolicy = RetentionPolicy;
 
   protected readonly helptext = helptextReplication;
-  validatingTarget = signal(false);
+  readonly validatingTarget = signal(false);
 
   protected readonlyWarning = '';
 
@@ -207,7 +207,9 @@ export class TargetSectionComponent implements OnInit, OnChanges {
         : values.encryption_key_location;
 
       if (this.isHex) {
-        payload.encryption_key = this.replicationService.generateEncryptionHexKey(64);
+        payload.encryption_key = values.encryption_key_generate
+          ? this.replicationService.generateEncryptionHexKey(64)
+          : values.encryption_key_hex;
       } else {
         payload.encryption_key = values.encryption_key_passphrase;
       }
@@ -261,18 +263,18 @@ export class TargetSectionComponent implements OnInit, OnChanges {
         }
         this.validatingTarget.set(true);
         this.cdr.markForCheck();
-        return this.api.call('pool.dataset.query', [
-          [['id', '=', targetDataset]],
+        return forkJoin([
+          this.api.call('pool.dataset.query', [
+            [['id', '=', targetDataset]],
+          ]),
+          this.api.call('pool.dataset.query', [
+            [['id', '^', targetDataset + '/']],
+            { select: ['id'], offset: 0, limit: 1 },
+          ]),
         ]).pipe(
-          switchMap((datasets) => {
-            if (!datasets.length) return of(null);
-            const dataset = datasets[0];
-            return this.api.call('pool.dataset.query', [
-              [['id', '^', targetDataset + '/']],
-              { select: ['id'], offset: 0, limit: 1 },
-            ]).pipe(
-              map((children) => ({ dataset, hasChildren: children.length > 0 })),
-            );
+          map(([datasets, children]) => {
+            if (!datasets.length) return null;
+            return { dataset: datasets[0], hasChildren: children.length > 0 };
           }),
           catchError(() => of(null)),
         );

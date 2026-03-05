@@ -197,7 +197,7 @@
       matStepperNext
       color="primary"
       ixTest="next"
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || validatingEncryption"
     >{{ 'Next' | translate }}</button>
     <button
       mat-button
