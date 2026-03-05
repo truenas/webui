@@ -2,8 +2,8 @@
  * ESLint rule: no-extra-whitespace-in-line-continuation
  *
  * Prevents accidental extra whitespace in string literals that use line continuation (\).
- * Also prevents multiline template literals (backticks) without expressions,
- * because newlines and indentation silently become part of the string value.
+ * Also prevents multiline template literals inside T() translation markers,
+ * because newlines and indentation silently become part of the translated string value.
  *
  * Bad:  'some text \
  *        more text'   → "some text        more text"
@@ -11,11 +11,11 @@
  * Good: 'some text\
  *  more text'         → "some text more text"
  *
- * Bad:  `line one
- *        line two`    → "line one\n        line two"
+ * Bad:  T(`line one
+ *          line two`) → T("line one\n        line two")
  *
- * Good: 'line one\n' +
- *       'line two'    → "line one\nline two"
+ * Good: T('line one\n'
+ *       + 'line two') → T("line one\nline two")
  */
 
 const rule = {
@@ -51,17 +51,26 @@ const rule = {
         const quote = raw[0];
         const content = raw.slice(1, -1);
 
-        // Check for leading whitespace (skip short fragments that may be intentional)
+        // Check for leading whitespace in translation strings.
+        // Only flag strings inside T() calls, as leading whitespace in other contexts
+        // (test expectations, variable assignments, object properties) is often intentional.
         if (/^ /.test(content) && content.length > 20) {
-          context.report({
-            node,
-            messageId: 'leadingWhitespace',
-            fix(fixer) {
-              const fixed = quote + content.replace(/^ +/, '') + quote;
-              return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
-            },
-          });
-          return;
+          const parent = node.parent;
+          const isTranslationCall = parent?.type === 'CallExpression'
+            && parent.callee?.type === 'Identifier'
+            && parent.callee.name === 'T';
+
+          if (isTranslationCall) {
+            context.report({
+              node,
+              messageId: 'leadingWhitespace',
+              fix(fixer) {
+                const fixed = quote + content.replace(/^ +/, '') + quote;
+                return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
+              },
+            });
+            return;
+          }
         }
 
         // Match line continuations with extra whitespace
@@ -101,6 +110,17 @@ const rule = {
 
         // Only flag if it contains actual newlines
         if (!/\n/.test(raw)) {
+          return;
+        }
+
+        // Only flag multiline template literals used in translation markers T()
+        // Other multiline template literals (HTML templates, test descriptions, mock data) are intentional.
+        const parent = node.parent;
+        const isTranslationCall = parent?.type === 'CallExpression'
+          && parent.callee?.type === 'Identifier'
+          && parent.callee.name === 'T';
+
+        if (!isTranslationCall) {
           return;
         }
 

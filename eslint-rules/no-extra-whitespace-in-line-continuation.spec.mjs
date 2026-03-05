@@ -3,7 +3,8 @@ if (typeof globalThis.structuredClone === 'undefined') {
 }
 
 import { RuleTester } from 'eslint';
-import rule from './no-extra-whitespace-in-line-continuation.mjs';
+import ruleModule from './no-extra-whitespace-in-line-continuation.mjs';
+const rule = ruleModule.default || ruleModule;
 
 const ruleTester = new RuleTester({
   languageOptions: { ecmaVersion: 2020 },
@@ -34,6 +35,24 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
     // Short fragment with leading space is valid (intentional)
     {
       code: "' seconds.'",
+    },
+    // Multiline template literal outside T() is valid (HTML templates, test descriptions, etc.)
+    {
+      code: '`some text\nmore text`',
+    },
+    // Multiline template literal in non-T() function call is valid
+    {
+      code: 'createHost(`<div>\n  <span>test</span>\n</div>`)',
+    },
+    // Leading whitespace outside T() is valid (test expectations, variable assignments, etc.)
+    {
+      code: "expect(el.textContent).toContain(' Yes  Help:  Encryption Root means that dataset has its own encryption settings')",
+    },
+    {
+      code: "({ key: ' Yes  Help:  Encryption Root means that dataset has its own encryption settings' })",
+    },
+    {
+      code: "const x = ' When the UPS Mode is set to slave'",
     },
   ],
   invalid: [
@@ -67,28 +86,22 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
       output: "'text\\\n more'",
       errors: [{ messageId: 'extraWhitespace' }],
     },
-    // Multiline template literal → converted to single-quoted string with \n
+    // Multiline template literal inside T() → converted to single-quoted string with \n
     {
-      code: '`some text\nmore text`',
-      output: "'some text\\nmore text'",
+      code: 'T(`some text\nmore text`)',
+      output: "T('some text\\nmore text')",
       errors: [{ messageId: 'noMultilineTemplateLiteral' }],
     },
-    // Multiline template literal with indentation → indentation stripped
+    // Multiline template literal inside T() with indentation → indentation stripped
     {
-      code: '`line one\n        line two\n        line three`',
-      output: "'line one\\nline two\\nline three'",
+      code: 'T(`line one\n        line two\n        line three`)',
+      output: "T('line one\\nline two\\nline three')",
       errors: [{ messageId: 'noMultilineTemplateLiteral' }],
     },
-    // Template literal with single quotes in content → escaped
+    // Template literal inside T() with single quotes in content → escaped
     {
-      code: "`it's a test\nline two`",
-      output: "'it\\'s a test\\nline two'",
-      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
-    },
-    // Template literal with backslashes in content → escaped
-    {
-      code: '`path\\to\\file\nline two`',
-      output: "'path\\\\to\\\\file\\nline two'",
+      code: "T(`it's a test\nline two`)",
+      output: "T('it\\'s a test\\nline two')",
       errors: [{ messageId: 'noMultilineTemplateLiteral' }],
     },
     // Multiple line continuations: first valid, second has trailing space before backslash
@@ -97,10 +110,10 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
       output: "'line one\\\n line two\\\n line three'",
       errors: [{ messageId: 'extraWhitespace' }],
     },
-    // Leading whitespace in string literal (long string)
+    // Leading whitespace in T() translation string
     {
-      code: "' When the UPS Mode is set to slave'",
-      output: "'When the UPS Mode is set to slave'",
+      code: "T(' When the UPS Mode is set to slave')",
+      output: "T('When the UPS Mode is set to slave')",
       errors: [{ messageId: 'leadingWhitespace' }],
     },
   ],
