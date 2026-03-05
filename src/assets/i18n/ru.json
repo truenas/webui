@@ -30,7 +30,7 @@
   "Move card up": "Сдвинуть карточку вверх",
   "One half card and two quarter cards below": "Одна половинка карточки и две четвертины карточек ниже",
   "One large card": "Одна большая карточка",
-  "Required – always encrypt transport (rejecting access if client does not support encryption – incompatible with minimum protocol set to SMB1)": "Требуется – всегда шифровать передачу (отказ в доступе, если клиент не поддерживает шифрование – несовместимо с минимальным протоколом, установленным на SMB1)",
+  "Required – always encrypt transport (rejecting access if client does not support encryption – incompatible with minimum protocol set to SMB1)": "Требуется — всегда шифровать передачу (отказ в доступе, если клиент не поддерживает шифрование — несовместимо с минимальным протоколом, установленным на SMB1)",
   "Restore default cards": "Восстановить карточки по умолчанию",
   "Restore default set of cards": "Восстановить набор карточек по умолчанию",
   "SMB1 – legacy clients (not recommended)": "SMB1 — устаревшие клиенты (не рекомендуется)",
