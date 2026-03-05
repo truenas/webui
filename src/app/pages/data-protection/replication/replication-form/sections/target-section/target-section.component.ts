@@ -404,13 +404,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     this.form.controls.readonly.setErrors(null);
 
     // For remote targets, show a non-blocking warning
-    if (!this.isLocalTarget()) {
-      this.readonlyWarning.set(this.translate.instant(
-        'REQUIRE policy requires the destination dataset to have the readonly property enabled. Ensure the remote destination dataset has readonly=on or the replication will fail.',
-      ));
-    } else {
-      this.readonlyWarning.set('');
-    }
+    this.readonlyWarning.set(this.isLocalTarget()
+      ? ''
+      : this.translate.instant(
+          'REQUIRE policy requires the destination dataset to have the readonly property enabled. Ensure the remote destination dataset has readonly=on or the replication will fail.',
+        ));
   }
 
   private setRetentionPolicyOptions(): void {
