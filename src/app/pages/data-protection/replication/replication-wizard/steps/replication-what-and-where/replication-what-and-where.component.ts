@@ -812,10 +812,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   private validateEncryption(): void {
-    const encryptionEnabled = this.form.controls.encryption.value;
-    this.form.controls.encryption.setErrors(
-      getEncryptionErrors(this.lastTargetDataset, encryptionEnabled, this.translate),
-    );
+    const encryptionControl = this.form.controls.encryption;
+    if (encryptionControl.disabled) {
+      encryptionControl.setErrors(null);
+    } else {
+      encryptionControl.setErrors(
+        getEncryptionErrors(this.lastTargetDataset, encryptionControl.value, this.translate),
+      );
+    }
     this.cdr.markForCheck();
   }
 }

@@ -344,9 +344,13 @@ describe('TargetSectionComponent', () => {
     }));
 
     it('sets error on allow_from_scratch when destination has children and it is disabled', fakeAsync(() => {
-      spectator.inject(MockApiService).mockCall('pool.dataset.query', [
-        { encrypted: false, readonly: { value: OnOff.On }, children: [{ id: 'tank/target/child' }] },
-      ] as Dataset[]);
+      spectator.inject(MockApiService).mockCall('pool.dataset.query', (params: unknown) => {
+        const filter = (params as unknown[][])[0];
+        if (Array.isArray(filter) && filter[0]?.[1] === '~') {
+          return [{ id: 'tank/target/child' }] as Dataset[];
+        }
+        return [{ id: 'tank/target', encrypted: false, readonly: { value: OnOff.On } }] as Dataset[];
+      });
       spectator.setInput('isLocalTarget', true);
 
       spectator.component.form.controls.target_dataset.setValue('tank/target');

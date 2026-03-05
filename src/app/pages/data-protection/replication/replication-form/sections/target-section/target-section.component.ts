@@ -135,7 +135,9 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     }
 
     // Re-validate with cached data after enable/disable cleared manual errors.
-    this.validateTargetDataset();
+    if ('sourcePreservesProperties' in changes || 'isLocalTarget' in changes) {
+      this.validateTargetDataset();
+    }
 
     if ('allowsCustomRetentionPolicy' in changes) {
       this.setRetentionPolicyOptions();
