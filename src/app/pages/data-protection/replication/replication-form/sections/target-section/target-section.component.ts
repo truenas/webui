@@ -94,7 +94,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextReplication;
   readonly validatingTarget = signal(false);
 
-  protected readonlyWarning = '';
+  readonlyWarning = '';
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
 
@@ -132,6 +132,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       this.form.controls.encryption.disable({ emitEvent: false });
     } else {
       this.form.controls.encryption.enable({ emitEvent: false });
+    }
+
+    if ('sourcePreservesProperties' in changes) {
+      this.updateEncryptionFields();
     }
 
     // Re-validate with cached data after enable/disable cleared manual errors.
@@ -186,18 +190,18 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     const encryptionInherit = this.form.controls.encryption_inherit.value;
 
     if (encryption && !encryptionInherit) {
-      this.form.controls.encryption_key_format.enable();
+      this.form.controls.encryption_key_format.enable({ emitEvent: false });
       if (this.isHex) {
-        this.form.controls.encryption_key_passphrase.disable();
-        this.form.controls.encryption_key_hex.enable();
+        this.form.controls.encryption_key_passphrase.disable({ emitEvent: false });
+        this.form.controls.encryption_key_hex.enable({ emitEvent: false });
       } else {
-        this.form.controls.encryption_key_passphrase.enable();
-        this.form.controls.encryption_key_hex.disable();
+        this.form.controls.encryption_key_passphrase.enable({ emitEvent: false });
+        this.form.controls.encryption_key_hex.disable({ emitEvent: false });
       }
     } else {
-      this.form.controls.encryption_key_format.disable();
-      this.form.controls.encryption_key_passphrase.disable();
-      this.form.controls.encryption_key_hex.disable();
+      this.form.controls.encryption_key_format.disable({ emitEvent: false });
+      this.form.controls.encryption_key_passphrase.disable({ emitEvent: false });
+      this.form.controls.encryption_key_hex.disable({ emitEvent: false });
     }
   }
 

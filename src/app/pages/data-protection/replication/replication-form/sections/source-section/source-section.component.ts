@@ -243,6 +243,7 @@ export class SourceSectionComponent implements OnChanges, OnInit {
         ...this.form.controls.name_regex.errors,
         [ixManualValidateError]: {
           message: this.translate.instant('Naming regex cannot be used with periodic snapshot tasks.'),
+          removable: false,
         },
       });
     } else {
