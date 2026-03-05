@@ -16,7 +16,7 @@
     [tooltip]="helptext.readonlyTooltip | translate"
   ></ix-select>
   @if (readonlyWarning) {
-    <span class="readonly-warning">{{ readonlyWarning }}</span>
+    <tn-banner type="warning" [heading]="readonlyWarning"></tn-banner>
   }
   <ix-checkbox
     formControlName="encryption"

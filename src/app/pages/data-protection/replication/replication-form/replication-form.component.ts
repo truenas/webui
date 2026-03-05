@@ -6,7 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
-import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
@@ -421,6 +421,7 @@ export class ReplicationFormComponent implements OnInit {
         }
         return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
           map((datasets) => datasets.some((dataset) => dataset.encrypted)),
+          catchError(() => of(false)),
         );
       }),
       takeUntilDestroyed(this.destroyRef),

@@ -4,8 +4,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
@@ -28,6 +29,9 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TargetEncryptionInfo, extractTargetEncryptionInfo, getEncryptionErrors,
+} from 'app/pages/data-protection/replication/replication-encryption-validator';
 import { ReplicationService } from 'app/services/replication.service';
 
 @Component({
@@ -43,6 +47,7 @@ import { ReplicationService } from 'app/services/replication.service';
     IxCheckboxComponent,
     IxInputComponent,
     TranslateModule,
+    TnBannerComponent,
   ],
 })
 export class TargetSectionComponent implements OnInit, OnChanges {
@@ -240,12 +245,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     }
   }
 
-  private lastTargetDataset: {
-    encrypted: boolean;
-    isOwnEncryptionRoot: boolean;
+  private lastTargetDataset: (TargetEncryptionInfo & {
     readonlyValue: OnOff;
     hasChildren: boolean;
-  } | null = null;
+  }) | null = null;
 
   private listenForTargetDatasetValidation(): void {
     this.form.controls.target_dataset.valueChanges.pipe(
@@ -261,23 +264,31 @@ export class TargetSectionComponent implements OnInit, OnChanges {
         this.cdr.markForCheck();
         return this.api.call('pool.dataset.query', [
           [['id', '=', targetDataset]],
-          { extra: { retrieve_children: true } },
         ]).pipe(
-          map((datasets) => (datasets.length ? datasets[0] : null)),
+          switchMap((datasets) => {
+            if (!datasets.length) return of(null);
+            const dataset = datasets[0];
+            return this.api.call('pool.dataset.query', [
+              [['id', '~', `^${targetDataset}/`]],
+              { select: ['id'], offset: 0, limit: 1 },
+            ]).pipe(
+              map((children) => ({ dataset, hasChildren: children.length > 0 })),
+            );
+          }),
           finalize(() => {
             this.validatingTarget = false;
             this.cdr.markForCheck();
           }),
+          catchError(() => of(null)),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((dataset: Dataset | null) => {
-      if (dataset) {
+    ).subscribe((result: { dataset: Dataset; hasChildren: boolean } | null) => {
+      if (result) {
         this.lastTargetDataset = {
-          encrypted: dataset.encrypted,
-          isOwnEncryptionRoot: dataset.encrypted && dataset.encryption_root === dataset.id,
-          readonlyValue: dataset.readonly.value,
-          hasChildren: dataset.children?.length > 0,
+          ...extractTargetEncryptionInfo(result.dataset),
+          readonlyValue: result.dataset.readonly.value,
+          hasChildren: result.hasChildren,
         };
       } else {
         this.lastTargetDataset = null;
@@ -315,33 +326,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
     if (this.form.controls.encryption.disabled) {
       this.form.controls.encryption.setErrors(null);
-    } else if (this.lastTargetDataset.isOwnEncryptionRoot) {
-      const encryptionEnabled = this.form.controls.encryption.value;
-      if (encryptionEnabled) {
-        // Destination was likely created by a previous replication with encryption.
-        this.form.controls.encryption.setErrors(null);
-      } else {
-        this.form.controls.encryption.setErrors({
-          [ixManualValidateError]: {
-            message: this.translate.instant(
-              'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
-            ),
-          },
-        });
-      }
     } else {
       const encryptionEnabled = this.form.controls.encryption.value;
-      if (encryptionEnabled !== this.lastTargetDataset.encrypted) {
-        this.form.controls.encryption.setErrors({
-          [ixManualValidateError]: {
-            message: this.translate.instant(
-              'Source and Destination dataset must have matching encryption states.',
-            ),
-          },
-        });
-      } else {
-        this.form.controls.encryption.setErrors(null);
-      }
+      this.form.controls.encryption.setErrors(
+        getEncryptionErrors(this.lastTargetDataset, encryptionEnabled, this.translate),
+      );
     }
 
     this.validateReadonlyPolicy();

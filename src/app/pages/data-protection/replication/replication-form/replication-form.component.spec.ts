@@ -4,6 +4,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnBannerComponent } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -150,6 +151,7 @@ describe('ReplicationFormComponent', () => {
     component: ReplicationFormComponent,
     imports: [
       ReactiveFormsModule,
+      TnBannerComponent,
     ],
     declarations: [
       MockComponents(

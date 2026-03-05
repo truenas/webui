@@ -46,6 +46,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TargetEncryptionInfo, extractTargetEncryptionInfo, getEncryptionErrors,
+} from 'app/pages/data-protection/replication/replication-encryption-validator';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -107,7 +110,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   isSnapshotsWarning = false;
   isSudoDialogShown = false;
   validatingEncryption = false;
-  private lastTargetDataset: { encrypted: boolean; isOwnEncryptionRoot: boolean } | null = null;
+  private lastTargetDataset: TargetEncryptionInfo | null = null;
   private lastSourceEncrypted: boolean | null = null;
 
   form = this.formBuilder.group({
@@ -739,14 +742,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((dataset) => {
-      if (dataset) {
-        this.lastTargetDataset = {
-          encrypted: dataset.encrypted,
-          isOwnEncryptionRoot: dataset.encrypted && dataset.encryption_root === dataset.id,
-        };
-      } else {
-        this.lastTargetDataset = null;
-      }
+      this.lastTargetDataset = dataset ? extractTargetEncryptionInfo(dataset) : null;
       this.validateEncryption();
     });
 
@@ -815,37 +811,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   private validateEncryption(): void {
     const encryptionEnabled = this.form.controls.encryption.value;
-
-    // Check target dataset validations
-    if (!this.lastTargetDataset) {
-      this.form.controls.encryption.setErrors(null);
-      this.cdr.markForCheck();
-      return;
-    }
-
-    if (this.lastTargetDataset.isOwnEncryptionRoot) {
-      if (encryptionEnabled) {
-        // Destination was likely created by a previous replication with encryption.
-        this.form.controls.encryption.setErrors(null);
-      } else {
-        this.form.controls.encryption.setErrors({
-          [ixManualValidateError]: {
-            message: this.translate.instant(
-              'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
-            ),
-          },
-        });
-      }
-    } else if (encryptionEnabled !== this.lastTargetDataset.encrypted) {
-      this.form.controls.encryption.setErrors({
-        [ixManualValidateError]: {
-          message: this.translate.instant('Source and Destination dataset must have matching encryption states.'),
-        },
-      });
-    } else {
-      this.form.controls.encryption.setErrors(null);
-    }
-
+    this.form.controls.encryption.setErrors(
+      getEncryptionErrors(this.lastTargetDataset, encryptionEnabled, this.translate),
+    );
     this.cdr.markForCheck();
   }
 }
