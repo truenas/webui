@@ -93,7 +93,9 @@ const rule = {
             node,
             messageId: 'extraWhitespace',
             fix(fixer) {
-              const fixed = raw.replace(/( *)\\\r?\n( *)/g, '\\\n ');
+              const fixed = raw.replace(/( *)\\\r?\n( *)/g, (match, trailing, leading) => {
+                return (trailing.length > 0 || leading.length > 1) ? '\\\n ' : match;
+              });
               return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
             },
           });
@@ -129,12 +131,15 @@ const rule = {
           node,
           messageId: 'noMultilineTemplateLiteral',
           fix(fixer) {
-            // Use the raw quasi value to preserve escape sequences (\t, \f, etc.) as-is.
-            // sourceCode.getText() + replace(/\\/g, '\\\\') would double-escape them.
+            // Use the raw quasi value: escape sequences (\t, \\, \n, etc.) are already
+            // in source form, which is identical between template literals and single-quoted
+            // strings, so backslashes do NOT need to be double-escaped here.
+            // Only template-specific escapes (\` and \$) need to be unescaped.
             const content = node.quasis[0].value.raw;
 
             const escaped = content
               .replace(/\\`/g, '`')
+              .replace(/\\\$/g, '$')
               .replace(/'/g, "\\'")
               .replace(/ *\r?\n */g, '\\n');
 
