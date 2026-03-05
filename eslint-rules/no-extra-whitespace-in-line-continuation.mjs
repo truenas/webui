@@ -39,13 +39,13 @@ const rule = {
         const raw = sourceCode.getText(node);
 
         // Match line continuations: optional spaces before \, then newline, then optional spaces
-        const lineContinuationRegex = /( +)\\\n( *)/g;
-        const excessiveIndentRegex = /\\\n( {2,})/g;
-
-        let match;
+        const lineContinuationRegex = /( +)\\\r?\n( *)/g;
+        const excessiveIndentRegex = /\\\r?\n( {2,})/g;
 
         // Case 1: Trailing space(s) before backslash
-        while ((match = lineContinuationRegex.exec(raw)) !== null) {
+        if (lineContinuationRegex.test(raw)) {
+          lineContinuationRegex.lastIndex = 0;
+          const match = lineContinuationRegex.exec(raw);
           const trailingSpaces = match[1];
           const leadingSpaces = match[2];
           const totalSpaces = trailingSpaces.length + leadingSpaces.length;
@@ -55,8 +55,7 @@ const rule = {
               node,
               messageId: 'extraWhitespace',
               fix(fixer) {
-                // Replace the whole node: remove trailing spaces before \, ensure single leading space after \n
-                const fixed = raw.replace(/( +)\\\n( *)/g, '\\\n ');
+                const fixed = raw.replace(/( +)\\\r?\n( *)/g, '\\\n ');
                 return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
               },
             });
@@ -65,16 +64,15 @@ const rule = {
         }
 
         // Case 2: No trailing space before \, but excessive indent on continuation line
-        while ((match = excessiveIndentRegex.exec(raw)) !== null) {
+        if (excessiveIndentRegex.test(raw)) {
           context.report({
             node,
             messageId: 'extraWhitespace',
             fix(fixer) {
-              const fixed = raw.replace(/\\\n( {2,})/g, '\\\n ');
+              const fixed = raw.replace(/\\\r?\n( {2,})/g, '\\\n ');
               return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
             },
           });
-          return;
         }
       },
     };
