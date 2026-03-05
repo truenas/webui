@@ -53,9 +53,7 @@ export const helptextDatasetForm = {
  a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
 
   deduplicationWarning: T('Once enabled, deduplication settings cannot be reverted. Use caution and be certain that you have adequate data backups before activating this feature.'),
-  deduplicationChecksumWarning: T(`The default "Checksum" value for datasets with deduplication used to be SHA256.
-       Our testing has shown that SHA512 performs better for such datasets.
-       We've changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".`),
+  deduplicationChecksumWarning: T('The default "Checksum" value for datasets with deduplication used to be SHA256.\nOur testing has shown that SHA512 performs better for such datasets.\nWe\'ve changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".'),
 
   deduplicationChecksumInlineWarning: T('For performance reasons SHA512 is recommended over SHA256 for datasets with deduplication enabled.'),
 

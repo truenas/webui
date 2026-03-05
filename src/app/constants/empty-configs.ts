@@ -8,9 +8,7 @@ export const storageEmptyConfig = {
   icon: tnIconMarker('dns', 'material'),
   large: true,
   title: T('No Pools'),
-  message: T(`Storage features in TrueNAS require at least one Pool to exist. <br>
- A Pool is a group of disks working together to store and protect your data. <br>
- Once you have a pool, this page will provide an overview of your pool’s health and status.`),
+  message: T('Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.'),
 } as EmptyConfig;
 
 export const datasetEmptyConfig = {
@@ -18,8 +16,7 @@ export const datasetEmptyConfig = {
   large: true,
   title: T('No Datasets'),
   icon: tnIconMarker('dataset-root', 'custom'),
-  message: T(`A dataset is a logical container within a pool used to organize your files and folders. <br>
- After you create a pool, this page will list all your datasets.`),
+  message: T('A dataset is a logical container within a pool used to organize your files and folders. <br>\nAfter you create a pool, this page will list all your datasets.'),
 } as EmptyConfig;
 
 export const dataProtectionEmptyConfig = {
@@ -27,8 +24,7 @@ export const dataProtectionEmptyConfig = {
   large: true,
   icon: tnIconMarker('security', 'material'),
   title: T('No Data Protection Tasks'),
-  message: T(`This page will help you protect your data by syncing it with other systems on the cloud. <br>
- But first, you need to create a storage pool to get started.`),
+  message: T('This page will help you protect your data by syncing it with other systems on the cloud. <br>\nBut first, you need to create a storage pool to get started.'),
 } as EmptyConfig;
 
 export const sharesEmptyConfig = {
@@ -36,8 +32,7 @@ export const sharesEmptyConfig = {
   large: true,
   icon: tnIconMarker('folder_shared', 'material'),
   title: T('No Shares'),
-  message: T(`Shares allow you to make your data accessible over the network. <br>
- You’ll need a pool and a dataset that you want to share.`),
+  message: T('Shares allow you to make your data accessible over the network. <br>\nYou’ll need a pool and a dataset that you want to share.'),
 } as EmptyConfig;
 
 export const cloudSyncTaskEmptyConfig = {
@@ -57,9 +52,8 @@ export const cloudBackupTaskEmptyConfig = {
 export const snapshotTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('file-multiple-outline', 'mdi'),
-  message: T(`<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>
-<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,
- ensuring minimal data loss in case of accidental deletion or corruption.</p>`),
+  message: T('<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>\n<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,\
+ ensuring minimal data loss in case of accidental deletion or corruption.</p>'),
   large: true,
 } as EmptyConfig;
 
@@ -81,32 +75,28 @@ export const smbCardEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('smb-share', 'custom'),
   large: true,
-  message: T(`<p>Well supported by all major operating systems, allows for easy authentication and authorization.</p>
-<p>Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.</p>`),
+  message: T('<p>Well supported by all major operating systems, allows for easy authentication and authorization.</p>\n<p>Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.</p>'),
 } as EmptyConfig;
 
 export const nfsCardEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('nfs-share', 'custom'),
   large: true,
-  message: T(`<p>Optimized for Linux and Unix systems, offering deeper integration in those environments. </p>
-<p>Choose NFS if you're working primarily with Linux servers or need efficient file access in Unix-based workflows.</p>`),
+  message: T('<p>Optimized for Linux and Unix systems, offering deeper integration in those environments. </p>\n<p>Choose NFS if you\'re working primarily with Linux servers or need efficient file access in Unix-based workflows.</p>'),
 } as EmptyConfig;
 
 export const iscsiCardEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('iscsi-share', 'custom'),
   large: true,
-  message: T(`<p>Raw block storage over the network, appearing as a local disk on the client.</p>
-<p>Ideal for virtual machines or applications that require direct disk-level access.</p>`),
+  message: T('<p>Raw block storage over the network, appearing as a local disk on the client.</p>\n<p>Ideal for virtual machines or applications that require direct disk-level access.</p>'),
 } as EmptyConfig;
 
 export const nvmeOfEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('nvme-share', 'custom'),
   large: true,
-  message: T(`<p>Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client.</p>
-<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>`),
+  message: T('<p>Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client.</p>\n<p>Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.</p>'),
 } as EmptyConfig;
 
 export const installedAppsEmptyConfig = {
@@ -114,8 +104,7 @@ export const installedAppsEmptyConfig = {
   title: T('No Applications Installed'),
   icon: tnIconMarker('apps', 'material'),
   large: true,
-  message: T(`Applications you install will automatically appear here.
- <br> Click below and browse available apps to get started.`),
+  message: T('Applications you install will automatically appear here.\n<br> Click below and browse available apps to get started.'),
 } as EmptyConfig;
 
 export const containersEmptyConfig = {

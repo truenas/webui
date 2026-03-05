@@ -1,9 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextPoolCreation = {
-  exportedDisksWarning: T(`The following disks have exported pools on them.
-  Using those disks will make existing pools on them unable to be imported.
-  You will lose any and all data in selected disks.`),
+  exportedDisksWarning: T('The following disks have exported pools on them.\nUsing those disks will make existing pools on them unable to be imported.\nYou will lose any and all data in selected disks.'),
 
   exportedSelectedDisksWarning: T('Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.'),
 

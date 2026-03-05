@@ -23,6 +23,14 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
     {
       code: "'text\\\nmore'",
     },
+    // Single-line template literal is valid (no newlines)
+    {
+      code: '`simple template`',
+    },
+    // Template literal with expressions is valid (even if multiline)
+    {
+      code: '`hello ${name}\nworld`',
+    },
   ],
   invalid: [
     // Trailing spaces before backslash
@@ -55,7 +63,25 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
       output: "'text\\\n more'",
       errors: [{ messageId: 'extraWhitespace' }],
     },
+    // Multiline template literal → converted to single-quoted string with \n
+    {
+      code: '`some text\nmore text`',
+      output: "'some text\\nmore text'",
+      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
+    },
+    // Multiline template literal with indentation → indentation stripped
+    {
+      code: '`line one\n        line two\n        line three`',
+      output: "'line one\\nline two\\nline three'",
+      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
+    },
+    // Template literal with single quotes in content → escaped
+    {
+      code: "`it's a test\nline two`",
+      output: "'it\\'s a test\\nline two'",
+      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
+    },
   ],
 });
 
-console.log('All tests passed (3 valid, 5 invalid).');
+console.log('All tests passed.');

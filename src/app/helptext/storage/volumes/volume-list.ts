@@ -17,7 +17,7 @@ export const helptextVolumes = {
  permissions. Exporting this pool will transfer the system dataset to another available pool. If the only\
  available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist,\
  the system dataset transfers back to the TrueNAS operating system device.'),
-    unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by\
+    unknownState: T('The pool <i>{pool}</i> is in the database but not connected to the machine. If it was exported by\
  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     cascade: {
       label: T('Delete saved configurations from TrueNAS?'),
