@@ -52,8 +52,7 @@ export const cloudBackupTaskEmptyConfig = {
 export const snapshotTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('file-multiple-outline', 'mdi'),
-  message: T('<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>\n<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,\
- ensuring minimal data loss in case of accidental deletion or corruption.</p>'),
+  message: T('<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>\n<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,\n ensuring minimal data loss in case of accidental deletion or corruption.</p>'),
   large: true,
 } as EmptyConfig;
 
