@@ -165,10 +165,6 @@ to determine snapshots creation order.'),
 
   encryptionInheritTooltip: helptextReplicationWizard.encryptionInheritTooltip,
 
-  encryptionKeyGenerateTooltip: helptextReplicationWizard.encryptionKeyGenerateTooltip,
-
-  encryptionKeyHexTooltip: helptextReplicationWizard.encryptionKeyHexTooltip,
-
   encryptionKeyPassphraseTooltip: helptextReplicationWizard.encryptionKeyPassphraseTooltip,
 
   encryptionKeyLocationTruenasdbTooltip: helptextReplicationWizard.encryptionKeyLocationTruenasdbTooltip,

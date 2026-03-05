@@ -22,8 +22,6 @@ export interface ReplicationWizardData {
   encryption: boolean;
   encryption_inherit: boolean;
   encryption_key_format: EncryptionKeyFormat;
-  encryption_key_generate: boolean;
-  encryption_key_hex: string;
   encryption_key_passphrase: string;
   encryption_key_location_truenasdb: string;
   encryption_key_location: string;

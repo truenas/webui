@@ -127,14 +127,13 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       this.form.controls.target_dataset.disable({ emitEvent: false });
     }
 
-    if (this.sourcePreservesProperties()) {
-      this.form.controls.encryption.setValue(false, { emitEvent: false });
-      this.form.controls.encryption.disable({ emitEvent: false });
-    } else {
-      this.form.controls.encryption.enable({ emitEvent: false });
-    }
-
     if ('sourcePreservesProperties' in changes) {
+      if (this.sourcePreservesProperties()) {
+        this.form.controls.encryption.setValue(false, { emitEvent: false });
+        this.form.controls.encryption.disable({ emitEvent: false });
+      } else {
+        this.form.controls.encryption.enable({ emitEvent: false });
+      }
       this.updateEncryptionFields();
     }
 
@@ -182,6 +181,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.updateEncryptionFields());
 
+    this.updateEncryptionFields();
     this.listenForTargetDatasetValidation();
   }
 

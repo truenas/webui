@@ -62,12 +62,6 @@ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to p
   encryptionInheritLabel: T('Inherit Encryption'),
   encryptionInheritTooltip: T('Target dataset encryption will be inherited from its parent dataset.'),
 
-  encryptionKeyGenerateLabel: T('Generate Encryption Key'),
-  encryptionKeyGenerateTooltip: T('If the <i>Key</i> type is chosen, an encryption key will be auto-generated.'),
-
-  encryptionKeyHexLabel: T('Encryption Key'),
-  encryptionKeyHexTooltip: T('Unset <i>Generate Encryption Key</i> to instead import a custom hex key.'),
-
   encryptionKeyPassphraseLabel: T('Passphrase'),
   encryptionKeyPassphraseTooltip: T('Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.'),
 
