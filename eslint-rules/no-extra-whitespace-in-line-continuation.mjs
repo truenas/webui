@@ -129,12 +129,12 @@ const rule = {
           node,
           messageId: 'noMultilineTemplateLiteral',
           fix(fixer) {
-            // Get the string content (strip backticks)
-            const content = raw.slice(1, -1);
+            // Use the raw quasi value to preserve escape sequences (\t, \f, etc.) as-is.
+            // sourceCode.getText() + replace(/\\/g, '\\\\') would double-escape them.
+            const content = node.quasis[0].value.raw;
 
-            // Escape backslashes and single quotes first, then convert newlines
             const escaped = content
-              .replace(/\\/g, '\\\\')
+              .replace(/\\`/g, '`')
               .replace(/'/g, "\\'")
               .replace(/ *\r?\n */g, '\\n');
 

@@ -51,7 +51,7 @@ export class DockerImageDeleteDialog {
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
-  protected readonly forceCheckboxTooltip = T('Use force only if other methods fail as it can leave images in a undefined state.\
+  protected readonly forceCheckboxTooltip = T('Use force only if other methods fail as it can leave images in an undefined state.\
  You cannot delete Docker Images (even with force) when the image is in use in a running Docker container.');
 
   form = this.fb.nonNullable.group({

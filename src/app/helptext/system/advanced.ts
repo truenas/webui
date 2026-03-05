@@ -46,7 +46,7 @@ Note: If the administrative account Shell is not set to TrueNAS Console, you ent
  the space available for other datasets in the zpool where the audit\
  dataset is located.'),
   quotaTooltip: T('Size in GiB of the maximum amount of space that may be\
- consumed by the dataset where the audit dabases are stored.'),
+ consumed by the dataset where the audit databases are stored.'),
   quotaFillWarningTooltip: T('Percentage used of dataset quota at which to generate a warning alert.'),
   quotaFillCriticalTooltip: T('Percentage used of dataset quota at which to generate a critical alert.'),
 

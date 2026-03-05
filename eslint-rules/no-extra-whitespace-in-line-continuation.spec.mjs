@@ -104,6 +104,12 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
       output: "T('it\\'s a test\\nline two')",
       errors: [{ messageId: 'noMultilineTemplateLiteral' }],
     },
+    // Template literal inside T() with escape sequences → preserved (not double-escaped)
+    {
+      code: 'T(`tab\\there\nnext line`)',
+      output: "T('tab\\there\\nnext line')",
+      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
+    },
     // Multiple line continuations: first valid, second has trailing space before backslash
     {
       code: "'line one\\\n line two \\\n line three'",

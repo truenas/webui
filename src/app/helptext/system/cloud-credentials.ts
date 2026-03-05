@@ -58,7 +58,7 @@ export const helptextSystemCloudcredentials = {
       tooltip: T(
         'Force using\
  <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html"\
- target="_blank">Signature Version 2</a> to sign API requests.  Set this only\
+ target="_blank">Signature Version 2</a> to sign API requests. Set this only\
  if your AWS provider does not support default version 4 signatures.',
       ),
     },
