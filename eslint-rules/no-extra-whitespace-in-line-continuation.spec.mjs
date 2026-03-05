@@ -31,6 +31,10 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
     {
       code: '`hello ${name}\nworld`',
     },
+    // Short fragment with leading space is valid (intentional)
+    {
+      code: "' seconds.'",
+    },
   ],
   invalid: [
     // Trailing spaces before backslash
@@ -80,6 +84,24 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
       code: "`it's a test\nline two`",
       output: "'it\\'s a test\\nline two'",
       errors: [{ messageId: 'noMultilineTemplateLiteral' }],
+    },
+    // Template literal with backslashes in content → escaped
+    {
+      code: '`path\\to\\file\nline two`',
+      output: "'path\\\\to\\\\file\\nline two'",
+      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
+    },
+    // Multiple line continuations: first valid, second has trailing space before backslash
+    {
+      code: "'line one\\\n line two \\\n line three'",
+      output: "'line one\\\n line two\\\n line three'",
+      errors: [{ messageId: 'extraWhitespace' }],
+    },
+    // Leading whitespace in string literal (long string)
+    {
+      code: "' When the UPS Mode is set to slave'",
+      output: "'When the UPS Mode is set to slave'",
+      errors: [{ messageId: 'leadingWhitespace' }],
     },
   ],
 });

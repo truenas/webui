@@ -29,6 +29,8 @@ const rule = {
       extraWhitespace:
         'Line continuation in string has extra whitespace. '
         + 'Move the space to the start of the next line (at most one space) and remove trailing spaces before the backslash.',
+      leadingWhitespace:
+        'String literal starts with whitespace. Remove the leading space.',
       noMultilineTemplateLiteral:
         'Multiline template literal without expressions embeds newlines and indentation into the string value. '
         + 'Use a regular string with explicit \\n instead.',
@@ -46,39 +48,43 @@ const rule = {
         }
 
         const raw = sourceCode.getText(node);
+        const quote = raw[0];
+        const content = raw.slice(1, -1);
 
-        // Match line continuations: optional spaces before \, then newline, then optional spaces
-        const lineContinuationRegex = /( +)\\\r?\n( *)/g;
-        const excessiveIndentRegex = /\\\r?\n( {2,})/g;
+        // Check for leading whitespace (skip short fragments that may be intentional)
+        if (/^ /.test(content) && content.length > 20) {
+          context.report({
+            node,
+            messageId: 'leadingWhitespace',
+            fix(fixer) {
+              const fixed = quote + content.replace(/^ +/, '') + quote;
+              return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
+            },
+          });
+          return;
+        }
 
-        // Case 1: Trailing space(s) before backslash
-        if (lineContinuationRegex.test(raw)) {
-          lineContinuationRegex.lastIndex = 0;
-          const match = lineContinuationRegex.exec(raw);
-          const trailingSpaces = match[1];
-          const leadingSpaces = match[2];
-          const totalSpaces = trailingSpaces.length + leadingSpaces.length;
+        // Match line continuations with extra whitespace
+        const lineContinuationRegex = /( *)\\\r?\n( *)/g;
 
-          if (totalSpaces > 1) {
-            context.report({
-              node,
-              messageId: 'extraWhitespace',
-              fix(fixer) {
-                const fixed = raw.replace(/( +)\\\r?\n( *)/g, '\\\n ');
-                return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
-              },
-            });
-            return;
+        let hasViolation = false;
+        let match;
+        while ((match = lineContinuationRegex.exec(raw)) !== null) {
+          const trailingSpaces = match[1].length;
+          const leadingSpaces = match[2].length;
+
+          if (trailingSpaces > 0 || leadingSpaces > 1) {
+            hasViolation = true;
+            break;
           }
         }
 
-        // Case 2: No trailing space before \, but excessive indent on continuation line
-        if (excessiveIndentRegex.test(raw)) {
+        if (hasViolation) {
           context.report({
             node,
             messageId: 'extraWhitespace',
             fix(fixer) {
-              const fixed = raw.replace(/\\\r?\n( {2,})/g, '\\\n ');
+              const fixed = raw.replace(/( *)\\\r?\n( *)/g, '\\\n ');
               return fixer.replaceTextRange([node.range[0], node.range[1]], fixed);
             },
           });
@@ -106,13 +112,11 @@ const rule = {
             // Get the string content (strip backticks)
             const content = raw.slice(1, -1);
 
-            // Replace actual newlines (and any surrounding indentation) with \n
-            // Trim trailing spaces before newline, replace newline + leading spaces with \n
-            const fixed = content
+            // Escape backslashes and single quotes first, then convert newlines
+            const escaped = content
+              .replace(/\\/g, '\\\\')
+              .replace(/'/g, "\\'")
               .replace(/ *\r?\n */g, '\\n');
-
-            // Escape single quotes in the content
-            const escaped = fixed.replace(/'/g, "\\'");
 
             return fixer.replaceTextRange([node.range[0], node.range[1]], `'${escaped}'`);
           },

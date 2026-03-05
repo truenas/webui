@@ -23,7 +23,7 @@ export const helptextServiceUps = {
  the format <i>192.168.0.1</i>.'),
 
   remoteportLabel: T('Remote Port'),
-  remoteportTooltip: T(' When the <b>UPS Mode</b> is set to\
+  remoteportTooltip: T('When the <b>UPS Mode</b> is set to\
  <i>slave</i>. Enter the open network port number of the UPS\
  <i>Master</i> system. The default port is <i>3493</i>.'),
 

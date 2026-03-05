@@ -46,7 +46,6 @@
   " bytes.": "バイト。",
   " Est. Usable Raw Capacity": "推定の使用可能な生容量",
   " seconds.": " 秒。",
-  " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "<b>UPSモード</b>が<i>スレーブ</i>に設定されている場合。UPS<i>マスター</i>システムの開いているネットワークポート番号を入力します。デフォルトのポートは<i>3493</i>です。",
   "...": "...",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "... TrueNAS システムの電源が入っていて、ネットワークに接続されていることを確認してください。",
   "(24 Hours)": "(24時間)",
@@ -6070,5 +6069,6 @@
   "Using 3rd party applications with TrueNAS extends its functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />\nTrueNAS does not guarantee application safety or reliability, and such applications may not be covered by support contracts. Issues with core NAS functionality may be closed without further investigation if the same data or filesystems are accessed by these applications.": "TrueNASでサードパーティのアプリケーションを使用すると、その機能が標準的なNASの使用範囲を超えて拡張されるため、データの損失やシステムの中断などのリスクが生じる可能性があります。<br /><br />\n TrueNAS はアプリケーションの安全性や信頼性を保証しておらず、そのようなアプリケーションはサポート契約の対象外である場合があります。これらのアプリケーションによって同じデータやファイルシステムにアクセスされている場合、NAS のコア機能に関するイシューは、さらに調査することなくクローズされることがあります。",
   "It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.": "セッションが{lifetime}秒以上アクティブでないようです。<br>\n セキュリティ上の理由から、{time}でログアウトします。\n ",
   "Shares allow you to make your data accessible over the network. <br>\nYou’ll need a pool and a dataset that you want to share.": "共有により、ネットワーク経由でデータにアクセスできるようになります。 <br>\n 共有するにはプールとデータセットが必要です。",
-  "Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.": "TrueNAS のストレージ機能には、少なくとも 1 つのプールが必要です。 <br>\n プールは、データを保存し保護するために連携して動作するディスクのグループです。 <br>\n プールを設定すると、このページでプールの健康状態やステータスを確認することができます。"
+  "Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.": "TrueNAS のストレージ機能には、少なくとも 1 つのプールが必要です。 <br>\n プールは、データを保存し保護するために連携して動作するディスクのグループです。 <br>\n プールを設定すると、このページでプールの健康状態やステータスを確認することができます。",
+  "When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "<b>UPSモード</b>が<i>スレーブ</i>に設定されている場合。UPS<i>マスター</i>システムの開いているネットワークポート番号を入力します。デフォルトのポートは<i>3493</i>です。"
 }

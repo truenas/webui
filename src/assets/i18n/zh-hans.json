@@ -616,7 +616,6 @@
   " bytes.": " 字节。",
   " Est. Usable Raw Capacity": "估计可用原始容量",
   " seconds.": " 秒。",
-  " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "当 <b>UPS 模式</b> 设置为 <i>附属</i> 时。输入 UPS <i>主</i> 系统的开放端口号。默认端口为 <i>3493</i>。",
   "...": "...",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "请确保 TrueNAS 系统已通电并连接到网络。",
   "(24 Hours)": "（24 小时）",
@@ -6070,5 +6069,6 @@
   "Using 3rd party applications with TrueNAS extends its functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />\nTrueNAS does not guarantee application safety or reliability, and such applications may not be covered by support contracts. Issues with core NAS functionality may be closed without further investigation if the same data or filesystems are accessed by these applications.": "使用第三方应用程序与 TrueNAS 一起使用会将其\n功能扩展到标准 NAS 使用之外，这可能会引入数据丢失或系统中断等风险。<br /><br />\n TrueNAS 不保证应用程序的安全性或可靠性，此类应用程序可能不\n在支持合同的覆盖范围内。如果这些应用程序访问相同的数据或文件系统，核心 NAS 功能问题可能会在不进行\n进一步调查的情况下被关闭。",
   "It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.": "\n你的会话似乎已超过 {lifetime} 秒处于非活动状态。<br>\n 出于安全原因，我们将在 {time} 后注销你的会话。\n",
   "Shares allow you to make your data accessible over the network. <br>\nYou’ll need a pool and a dataset that you want to share.": "共享将允许通过网络访问你的数据。<br>\n你需要一个池和一个想要共享的数据集。",
-  "Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.": "TrueNAS 的存储功能需要至少存在一个存储池（Pool）。<br>\n 存储池是由一组磁盘组成的，它们协同工作以存储和保护你的数据。<br>\n 一旦创建了存储池，本页面将提供该存储池的运行状况和状态概览。"
+  "Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.": "TrueNAS 的存储功能需要至少存在一个存储池（Pool）。<br>\n 存储池是由一组磁盘组成的，它们协同工作以存储和保护你的数据。<br>\n 一旦创建了存储池，本页面将提供该存储池的运行状况和状态概览。",
+  "When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "当 <b>UPS 模式</b> 设置为 <i>附属</i> 时。输入 UPS <i>主</i> 系统的开放端口号。默认端口为 <i>3493</i>。"
 }

@@ -863,7 +863,6 @@
   " bytes.": "байт.",
   " Est. Usable Raw Capacity": " Оцінювана доступна сира ємність",
   " seconds.": " секунд.",
-  " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "Коли <b>Режим ДБЖ</b> встановлений у <i>відомий</i>. Введіть номер відкритого мережного порту <і>провідної</i> ДБЖ. Стандартний порт - <i>3493</i>.",
   "...": "...",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "... Переконайтеся, що система TrueNAS увімкнена та підключена до мережі.",
   "(24 Hours)": "(24 години)",
@@ -6070,5 +6069,6 @@
   "Using 3rd party applications with TrueNAS extends its functionality beyond standard NAS use, which can introduce risks like data loss or system disruption. <br /><br />\nTrueNAS does not guarantee application safety or reliability, and such applications may not be covered by support contracts. Issues with core NAS functionality may be closed without further investigation if the same data or filesystems are accessed by these applications.": "Використання сторонніх додатків з TrueNAS розширює його\n функціональність за межі стандартного використання NAS, що може створити ризики, такі як втрата даних або порушення роботи системи. <br /><br />\n TrueNAS не гарантує безпеку або надійність додатків, і такі додатки можуть не\n покриватися контрактами підтримки. Проблеми з основною функціональністю NAS можуть бути закриті без\n подальшого розслідування, якщо ті самі дані або файлові системи доступні цим додаткам.",
   "It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.": "Схоже, ваша сесія була неактивною понад {lifetime} секунд.<br>\n З міркувань безпеки вас буде виведено о {time}.\n ",
   "Shares allow you to make your data accessible over the network. <br>\nYou’ll need a pool and a dataset that you want to share.": "",
-  "Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.": ""
+  "Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.": "",
+  "When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "Коли <b>Режим ДБЖ</b> встановлений у <i>відомий</i>. Введіть номер відкритого мережного порту <і>провідної</i> ДБЖ. Стандартний порт - <i>3493</i>."
 }
