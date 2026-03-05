@@ -152,7 +152,6 @@
     "jest-junit": "~16.0.0",
     "jest-preset-angular": "~16.0.0",
     "jest-when": "~3.6.0",
-    "jira-prepare-commit-msg": "^1.6.1",
     "js-yaml": "~4.1.1",
     "lint-staged": "^15.2.10",
     "lodash": "~4.17.23",
