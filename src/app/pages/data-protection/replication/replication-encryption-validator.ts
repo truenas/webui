@@ -1,10 +1,16 @@
 import { ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 
 export interface TargetEncryptionInfo {
   encrypted: boolean;
   isOwnEncryptionRoot: boolean;
+}
+
+export interface TargetDatasetInfo extends TargetEncryptionInfo {
+  readonlyValue: OnOff;
+  hasChildren: boolean;
 }
 
 /**

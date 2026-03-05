@@ -30,7 +30,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  TargetEncryptionInfo, extractTargetEncryptionInfo, getEncryptionErrors,
+  TargetDatasetInfo, extractTargetEncryptionInfo, getEncryptionErrors,
 } from 'app/pages/data-protection/replication/replication-encryption-validator';
 import { ReplicationService } from 'app/services/replication.service';
 
@@ -94,7 +94,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextReplication;
   validatingTarget = false;
 
-  readonlyWarning = '';
+  protected readonlyWarning = '';
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
 
@@ -245,10 +245,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     }
   }
 
-  private lastTargetDataset: (TargetEncryptionInfo & {
-    readonlyValue: OnOff;
-    hasChildren: boolean;
-  }) | null = null;
+  private lastTargetDataset: TargetDatasetInfo | null = null;
 
   private listenForTargetDatasetValidation(): void {
     this.form.controls.target_dataset.valueChanges.pipe(
@@ -268,18 +265,19 @@ export class TargetSectionComponent implements OnInit, OnChanges {
           switchMap((datasets) => {
             if (!datasets.length) return of(null);
             const dataset = datasets[0];
+            const escapedId = targetDataset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             return this.api.call('pool.dataset.query', [
-              [['id', '~', `^${targetDataset}/`]],
+              [['id', '~', `^${escapedId}/`]],
               { select: ['id'], offset: 0, limit: 1 },
             ]).pipe(
               map((children) => ({ dataset, hasChildren: children.length > 0 })),
             );
           }),
+          catchError(() => of(null)),
           finalize(() => {
             this.validatingTarget = false;
             this.cdr.markForCheck();
           }),
-          catchError(() => of(null)),
         );
       }),
       takeUntilDestroyed(this.destroyRef),

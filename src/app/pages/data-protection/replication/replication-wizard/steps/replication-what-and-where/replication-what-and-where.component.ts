@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
-  debounceTime, distinctUntilChanged, finalize, map, merge, Observable, of, switchMap,
+  catchError, debounceTime, distinctUntilChanged, finalize, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -734,6 +734,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         const datasetId = targetDataset.replace(`${mntPath}/`, '');
         return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
           map((datasets) => (datasets.length ? datasets[0] : null)),
+          catchError(() => of(null)),
           finalize(() => {
             this.validatingEncryption = false;
             this.cdr.markForCheck();
@@ -757,6 +758,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         const datasetIds = sourceDatasets.map((ds) => ds.replace(`${mntPath}/`, ''));
         return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
           map((datasets: Dataset[]) => datasets.some((ds) => ds.encrypted)),
+          catchError(() => of(false)),
           finalize(() => {
             this.validatingEncryption = false;
             this.cdr.markForCheck();
