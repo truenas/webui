@@ -2,6 +2,7 @@
   <ix-explorer
     formControlName="source_datasets"
     [label]="'Source' | translate"
+
     [rootNodes]="emptyRootNode"
     [required]="true"
     [multiple]="true"
@@ -23,7 +24,7 @@
     }
     <ix-checkbox
       formControlName="properties"
-      [label]="'Include Dataset Properties' | translate"
+      [label]="'Preserve Dataset Properties' | translate"
       [tooltip]="helptext.propertiesTooltip | translate"
     ></ix-checkbox>
   }

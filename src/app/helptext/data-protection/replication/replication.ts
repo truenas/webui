@@ -81,8 +81,9 @@ export const helptextReplication = {
  <i>pool1/dataset1</i> snapshots includes all child dataset snapshots \
  except <i>child1</i>.'),
 
-  propertiesTooltip: T('Include dataset properties with the replicated \
- snapshots.'),
+  propertiesTooltip: T('Preserve dataset properties with the replicated \
+ snapshots. When enabled and the source dataset is encrypted, the source \
+ encryption properties will be replicated to the destination.'),
 
   propertiesOverrideTooltip: T('Replace existing dataset properties with these new defined properties in the replicated files.'),
 
@@ -159,6 +160,8 @@ to determine snapshots creation order.'),
  <code>readonly</code> property during replication.'),
 
   encryptionTooltip: helptextReplicationWizard.encryptionTooltip,
+
+  encryptionKeyFormatTooltip: helptextReplicationWizard.encryptionKeyFormatTooltip,
 
   encryptionInheritTooltip: helptextReplicationWizard.encryptionInheritTooltip,
 

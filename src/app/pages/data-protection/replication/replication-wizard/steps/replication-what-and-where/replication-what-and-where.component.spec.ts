@@ -1,11 +1,13 @@
 import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -14,12 +16,14 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -70,6 +74,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
           },
         ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
+        mockCall('pool.dataset.query', []),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -102,7 +107,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         Encryption: true,
         Source: ['pool1/', 'pool2/'],
         Destination: 'pool3/',
-        'Encryption Key Format': 'HEX',
+        'Encryption Type': 'Key',
       },
     );
   });
@@ -142,7 +147,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
       encryption: true,
       encryption_inherit: false,
       encryption_key_format: EncryptionKeyFormat.Hex,
-      encryption_key_generate: true,
       encryption_key_location_truenasdb: true,
       name: 'pool1/,pool2/ - pool3/',
     });
@@ -203,12 +207,23 @@ describe('ReplicationWhatAndWhereComponent', () => {
       encryption: true,
       encryption_inherit: false,
       encryption_key_format: EncryptionKeyFormat.Hex,
-      encryption_key_generate: true,
       encryption_key_location_truenasdb: true,
       name: 'task1',
       sudo: false,
       transport: TransportMode.Ssh,
     });
+  });
+
+  it('clears the existing replication task selection when source datasets are manually changed', async () => {
+    await form.fillForm({
+      'Load Previous Replication Task': 'task1 (never ran)',
+    });
+    expect(spectator.component.form.controls.exist_replication.value).toBe(1);
+
+    spectator.component.form.controls.source_datasets.setValue([`${mntPath}/pool99`]);
+    spectator.detectChanges();
+
+    expect(spectator.component.form.controls.exist_replication.value).toBeNull();
   });
 
   it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
@@ -329,5 +344,66 @@ describe('ReplicationWhatAndWhereComponent', () => {
       expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
       expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
     });
+  });
+
+  describe('encryption validation', () => {
+    it('sets error on encryption when enabled on non-encrypted local destination', fakeAsync(() => {
+      const freshSpectator = createComponent();
+      const mockApiService = freshSpectator.inject(MockApiService);
+      mockApiService.mockCall('pool.dataset.query', [{ encrypted: false }] as Dataset[]);
+
+      freshSpectator.component.form.controls.source_datasets_from.setValue(DatasetSource.Local);
+      freshSpectator.component.form.controls.target_dataset_from.setValue(DatasetSource.Local);
+      freshSpectator.component.form.controls.encryption.setValue(true);
+
+      freshSpectator.component.form.controls.target_dataset.setValue('/mnt/tank/target');
+      tick(300);
+
+      // Capture error right after validation fires
+      const capturedErrors = freshSpectator.component.form.controls.encryption.errors;
+
+      // Errors are set correctly by validateEncryption
+      expect(capturedErrors).toEqual({
+        [ixManualValidateError]: {
+          message: 'Source and Destination dataset must have matching encryption states.',
+        },
+      });
+    }));
+
+    it('disables encryption when source is encrypted (wizard always preserves properties)', fakeAsync(() => {
+      const freshSpectator = createComponent();
+      const mockApiService = freshSpectator.inject(MockApiService);
+      mockApiService.mockCall('pool.dataset.query', [{ encrypted: true }] as Dataset[]);
+
+      freshSpectator.component.form.controls.source_datasets_from.setValue(DatasetSource.Local);
+      freshSpectator.component.form.controls.target_dataset_from.setValue(DatasetSource.Local);
+      freshSpectator.component.form.controls.encryption.setValue(true);
+
+      freshSpectator.component.form.controls.source_datasets.setValue(['/mnt/pool/encrypted']);
+      tick(300);
+
+      expect(freshSpectator.component.form.controls.encryption.disabled).toBe(true);
+      expect(freshSpectator.component.form.controls.encryption.value).toBe(false);
+    }));
+
+    it('sets error when destination is its own encryption root', fakeAsync(() => {
+      const freshSpectator = createComponent();
+      const mockApiService = freshSpectator.inject(MockApiService);
+      mockApiService.mockCall('pool.dataset.query', [{
+        id: 'tank/encrypted', encrypted: true, encryption_root: 'tank/encrypted',
+      }] as Dataset[]);
+
+      freshSpectator.component.form.controls.source_datasets_from.setValue(DatasetSource.Local);
+      freshSpectator.component.form.controls.target_dataset_from.setValue(DatasetSource.Local);
+
+      freshSpectator.component.form.controls.target_dataset.setValue('/mnt/tank/encrypted');
+      tick(300);
+
+      expect(freshSpectator.component.form.controls.encryption.errors).toEqual({
+        [ixManualValidateError]: {
+          message: 'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
+        },
+      });
+    }));
   });
 });

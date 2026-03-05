@@ -61,9 +61,12 @@ export class TransportSectionComponent implements OnChanges {
 
   protected readonly helptext = helptextReplication;
 
+  private formValuesApplied = false;
+
   ngOnChanges(): void {
     const replication = this.replication();
-    if (replication) {
+    if (replication && !this.formValuesApplied) {
+      this.formValuesApplied = true;
       this.setFormValues(replication);
     }
 

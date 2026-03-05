@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
-  debounceTime, map, merge, Observable, of, switchMap,
+  debounceTime, distinctUntilChanged, finalize, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -19,6 +19,7 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -39,6 +40,7 @@ import {
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { namingSchemaValidator } from 'app/modules/forms/ix-forms/validators/naming-schema-validation/naming-schema-validation';
 import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
+import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
@@ -104,6 +106,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   snapshotsText = '';
   isSnapshotsWarning = false;
   isSudoDialogShown = false;
+  validatingEncryption = false;
+  private lastTargetDataset: { encrypted: boolean; isOwnEncryptionRoot: boolean } | null = null;
+  private lastSourceEncrypted: boolean | null = null;
 
   form = this.formBuilder.group({
     exist_replication: new FormControl(null as number | null),
@@ -124,8 +129,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     encryption_inherit: [false],
     encryption_key_format: new FormControl(null as EncryptionKeyFormat | null, [Validators.required]),
     encryption_key_generate: [true],
-    encryption_key_hex: ['', [Validators.required]],
-    encryption_key_passphrase: ['', [Validators.required]],
+    encryption_key_hex: ['', [Validators.required, exactLength(64)]],
+    encryption_key_passphrase: ['', [Validators.required, Validators.minLength(8)]],
     encryption_key_location_truenasdb: [true],
     encryption_key_location: ['', [Validators.required]],
 
@@ -164,8 +169,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   ]);
 
   encryptionKeyFormatOptions$ = of([
-    { label: this.translate.instant('HEX'), value: EncryptionKeyFormat.Hex },
-    { label: this.translate.instant('PASSPHRASE'), value: EncryptionKeyFormat.Passphrase },
+    { label: this.translate.instant('Key'), value: EncryptionKeyFormat.Hex },
+    { label: this.translate.instant('Passphrase'), value: EncryptionKeyFormat.Passphrase },
   ]);
 
   get isRemoteSource(): boolean {
@@ -174,6 +179,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get isRemoteTarget(): boolean {
     return this.form.value.target_dataset_from === DatasetSource.Remote;
+  }
+
+  get isHexKeyFormat(): boolean {
+    return this.form.controls.encryption_key_format.value === EncryptionKeyFormat.Hex;
   }
 
   get schemaOrRegexLabel(): string {
@@ -199,6 +208,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.source_datasets_from.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
+      this.clearExistReplicationOnManualChange();
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
       this.form.controls.source_datasets.setValue([]);
       if (value === DatasetSource.Local) {
@@ -244,16 +254,17 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
 
     this.form.controls.target_dataset_from.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.clearExistReplicationOnManualChange();
       this.form.controls.target_dataset.setValue('');
       this.disableTransportAndSudo(this.form.value.source_datasets_from, value);
       if (value === DatasetSource.Local) {
         this.form.controls.ssh_credentials_target.disable();
         this.form.controls.target_dataset.enable();
-        this.form.controls.encryption.enable();
+        this.updateEncryptionAvailability();
       } else if (value === DatasetSource.Remote) {
         this.form.controls.ssh_credentials_target.enable();
         this.form.controls.target_dataset.enable();
-        this.form.controls.encryption.enable();
+        this.updateEncryptionAvailability();
       } else {
         this.disableTarget();
       }
@@ -279,14 +290,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
       if (this.form.controls.encryption_key_format.enabled) {
-        if (value === EncryptionKeyFormat.Hex) {
-          this.form.controls.encryption_key_generate.enable();
-          this.form.controls.encryption_key_passphrase.disable();
-        } else if (value === EncryptionKeyFormat.Passphrase) {
-          this.form.controls.encryption_key_passphrase.enable();
-          this.form.controls.encryption_key_generate.setValue(true);
-          this.form.controls.encryption_key_generate.disable();
-        }
+        this.applyEncryptionKeyFormat(value);
       }
     });
 
@@ -315,11 +319,13 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
 
     this.form.controls.source_datasets.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.clearExistReplicationOnManualChange();
       this.genTaskName(value || [], this.form.value.target_dataset || '');
       this.getSnapshots();
     });
 
     this.form.controls.target_dataset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.clearExistReplicationOnManualChange();
       this.genTaskName(this.form.value.source_datasets || [], value || '');
     });
 
@@ -342,6 +348,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           return;
         }
 
+        this.isSudoDialogShown = true;
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
@@ -349,15 +356,20 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
-          this.isSudoDialogShown = true;
         });
       });
+
+    this.listenForEncryptionValidation();
   }
+
+  private isLoadingReplicationTask = false;
 
   private loadReplicationTask(task: ReplicationTask): void {
     if (!task) {
       return;
     }
+
+    this.isLoadingReplicationTask = true;
 
     if (task.direction === Direction.Push) {
       this.form.patchValue({
@@ -383,6 +395,15 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       transport: task.transport,
       name: task.name,
     });
+
+    this.isLoadingReplicationTask = false;
+  }
+
+  private clearExistReplicationOnManualChange(): void {
+    if (this.isLoadingReplicationTask || !this.form.controls.exist_replication.value) {
+      return;
+    }
+    this.form.controls.exist_replication.setValue(null, { emitEvent: false });
   }
 
   private clearReplicationTask(): void {
@@ -596,6 +617,18 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private enableEncryption(): void {
     this.form.controls.encryption_key_format.enable();
     this.form.controls.encryption_key_location_truenasdb.enable();
+    this.applyEncryptionKeyFormat(this.form.controls.encryption_key_format.value);
+  }
+
+  private applyEncryptionKeyFormat(value: EncryptionKeyFormat): void {
+    this.form.controls.encryption_key_generate.setValue(true);
+    this.form.controls.encryption_key_generate.disable();
+    this.form.controls.encryption_key_hex.disable();
+    this.form.controls.encryption_key_passphrase.disable();
+
+    if (value === EncryptionKeyFormat.Passphrase) {
+      this.form.controls.encryption_key_passphrase.enable();
+    }
   }
 
   private disableTransportAndSudo(source: DatasetSource, target: DatasetSource): void {
@@ -682,5 +715,137 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.schema_or_regex.enable();
     this.form.controls.naming_schema.enable();
     this.form.controls.name_regex.enable();
+  }
+
+  private listenForEncryptionValidation(): void {
+    this.form.controls.target_dataset.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((targetDataset) => {
+        if (!targetDataset || this.isRemoteTarget) {
+          this.validatingEncryption = false;
+          return of(null);
+        }
+        this.validatingEncryption = true;
+        this.cdr.markForCheck();
+        const datasetId = targetDataset.replace(`${mntPath}/`, '');
+        return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
+          map((datasets) => (datasets.length ? datasets[0] : null)),
+          finalize(() => {
+            this.validatingEncryption = false;
+            this.cdr.markForCheck();
+          }),
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((dataset) => {
+      if (dataset) {
+        this.lastTargetDataset = {
+          encrypted: dataset.encrypted,
+          isOwnEncryptionRoot: dataset.encrypted && dataset.encryption_root === dataset.id,
+        };
+      } else {
+        this.lastTargetDataset = null;
+      }
+      this.validateEncryption();
+    });
+
+    this.form.controls.source_datasets.valueChanges.pipe(
+      debounceTime(300),
+      switchMap((sourceDatasets: string[]) => {
+        if (!sourceDatasets?.length || this.isRemoteSource) {
+          return of(null);
+        }
+        this.validatingEncryption = true;
+        this.cdr.markForCheck();
+        const datasetIds = sourceDatasets.map((ds) => ds.replace(`${mntPath}/`, ''));
+        return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
+          map((datasets: Dataset[]) => datasets.some((ds) => ds.encrypted)),
+          finalize(() => {
+            this.validatingEncryption = false;
+            this.cdr.markForCheck();
+          }),
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((anyEncrypted) => {
+      this.lastSourceEncrypted = anyEncrypted;
+      this.updateEncryptionAvailability();
+      this.validateEncryption();
+    });
+
+    this.form.controls.encryption.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.validateEncryption();
+    });
+
+    this.form.controls.target_dataset_from.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.lastTargetDataset = null;
+      this.form.controls.encryption.setErrors(null);
+    });
+
+    this.form.controls.source_datasets_from.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.lastSourceEncrypted = null;
+      this.updateEncryptionAvailability();
+      this.validateEncryption();
+    });
+  }
+
+  private updateEncryptionAvailability(): void {
+    const targetSelected = this.form.controls.target_dataset_from.value != null;
+    if (!targetSelected) {
+      return;
+    }
+
+    // In wizard, properties are always preserved. If source is encrypted,
+    // encryption properties will be replicated — disable destination encryption.
+    if (this.lastSourceEncrypted) {
+      this.form.controls.encryption.setValue(false);
+      this.form.controls.encryption.disable();
+      this.disableEncryption();
+    } else {
+      this.form.controls.encryption.enable();
+    }
+  }
+
+  private validateEncryption(): void {
+    const encryptionEnabled = this.form.controls.encryption.value;
+
+    // Check target dataset validations
+    if (!this.lastTargetDataset) {
+      this.form.controls.encryption.setErrors(null);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    if (this.lastTargetDataset.isOwnEncryptionRoot) {
+      if (encryptionEnabled) {
+        // Destination was likely created by a previous replication with encryption.
+        this.form.controls.encryption.setErrors(null);
+      } else {
+        this.form.controls.encryption.setErrors({
+          [ixManualValidateError]: {
+            message: this.translate.instant(
+              'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
+            ),
+          },
+        });
+      }
+    } else if (encryptionEnabled !== this.lastTargetDataset.encrypted) {
+      this.form.controls.encryption.setErrors({
+        [ixManualValidateError]: {
+          message: this.translate.instant('Source and Destination dataset must have matching encryption states.'),
+        },
+      });
+    } else {
+      this.form.controls.encryption.setErrors(null);
+    }
+
+    this.cdr.markForCheck();
   }
 }

@@ -21,14 +21,9 @@
   }
 }
 
-.eligible-snapshots {
-  font-size: 13px;
-  margin-bottom: 15px;
-  margin-left: 10px;
-
-  &.danger {
-    color: var(--red);
-  }
+tn-banner {
+  display: block;
+  margin: 0 10px 15px;
 }
 
 .retention-policy {

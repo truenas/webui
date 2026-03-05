@@ -28,6 +28,7 @@
           formControlName="source_datasets"
           [label]="helptext.sourceDatasetsLabel | translate"
           [tooltip]="helptext.sourceDatasetsTooltip | translate"
+
           [multiple]="true"
           [required]="true"
           [rootNodes]="sourceDatasetsRootNodes"
@@ -98,6 +99,7 @@
           formControlName="target_dataset"
           [label]="helptext.targetDatasetLabel | translate"
           [tooltip]="helptext.targetDatasetTooltip | translate"
+
           [required]="true"
           [rootNodes]="targetDatasetsRootNodes"
           [nodeProvider]="targetNodeProvider"
@@ -126,7 +128,7 @@
           [required]="true"
         ></ix-select>
       }
-      @if (form.controls.encryption_key_generate.enabled) {
+      @if (form.controls.encryption_key_format.enabled && isHexKeyFormat) {
         <ix-checkbox
           formControlName="encryption_key_generate"
           [label]="helptext.encryptionKeyGenerateLabel | translate"

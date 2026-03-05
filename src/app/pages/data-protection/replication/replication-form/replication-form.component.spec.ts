@@ -6,6 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
@@ -16,6 +17,7 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -105,12 +107,17 @@ describe('ReplicationFormComponent', () => {
     name_regex: new FormControl('test-.*'),
     schema_or_regex: new FormControl(SnapshotNamingOption.NameRegex),
     also_include_naming_schema: new FormControl('%Y%m%d%H%M'),
+    naming_schema: new FormControl([] as string[]),
+    periodic_snapshot_tasks: new FormControl([] as number[]),
+    properties: new FormControl(true),
+    replicate: new FormControl(false),
   });
   const targetForm = new FormGroup({
     target_dataset: new FormControl('/tank/target'),
   });
   const scheduleForm = new FormGroup({
     auto: new FormControl(true),
+    schedule: new FormControl(true),
   });
 
   MockInstance(GeneralSectionComponent, () => ({
@@ -165,6 +172,7 @@ describe('ReplicationFormComponent', () => {
         }),
         mockCall('replication.create', existingTask),
         mockCall('replication.update', existingTask),
+        mockCall('pool.dataset.query', []),
         mockCall('keychaincredential.query', [
           {
             id: 123,
@@ -231,6 +239,7 @@ describe('ReplicationFormComponent', () => {
         target_dataset: '/tank/target',
         transport: TransportMode.Ssh,
         auto: true,
+        schedule: true,
         sudo: false,
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
@@ -254,9 +263,10 @@ describe('ReplicationFormComponent', () => {
         ],
       );
 
-      expect(spectator.query('.eligible-snapshots')).toHaveText(
+      expect(spectator.component.eligibleSnapshotsMessage).toBe(
         '3 of 5 existing snapshots of dataset /tank/source would be replicated with this task.',
       );
+      expect(spectator.query('tn-banner')).toBeTruthy();
 
       generalForm.controls.direction.setValue(Direction.Pull);
       tick();
@@ -290,6 +300,7 @@ describe('ReplicationFormComponent', () => {
           target_dataset: '/tank/target',
           transport: TransportMode.Ssh,
           auto: true,
+          schedule: true,
           sudo: false,
         },
       ]);
@@ -337,6 +348,35 @@ describe('ReplicationFormComponent', () => {
       spectator.detectChanges();
       expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
+    }));
+  });
+
+  describe('source encryption validation', () => {
+    beforeEach(fakeAsync(() => {
+      spectator = createComponent();
+      tick();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    }));
+
+    it('shows info banner when source is encrypted and properties are preserved', fakeAsync(() => {
+      const mockApiService = spectator.inject(MockApiService);
+      mockApiService.mockCall('pool.dataset.query', [{ encrypted: true }] as Dataset[]);
+
+      generalForm.controls.direction.setValue(Direction.Push);
+      generalForm.controls.transport.setValue(TransportMode.Local);
+      sourceForm.controls.properties.setValue(true);
+      sourceForm.controls.source_datasets.setValue(['dozer/encrypted']);
+      tick(300);
+      spectator.detectChanges();
+
+      expect(spectator.component.sourceEncrypted).toBe(true);
+      expect(spectator.component.sourceEncryptedWithPreservedProperties).toBe(true);
+
+      sourceForm.controls.properties.setValue(false);
+      sourceForm.controls.replicate.setValue(false);
+      spectator.detectChanges();
+
+      expect(spectator.component.sourceEncryptedWithPreservedProperties).toBe(false);
     }));
   });
 

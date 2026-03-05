@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="isNew ? ('Add Replication Task' | translate) : ('Edit Replication Task' | translate)"
-  [loading]="isLoading()"
+  [loading]="isLoading() || targetSection().validatingTarget"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -20,12 +20,15 @@
           [replication]="existingReplication"
           [direction]="generalSection().form.value.direction"
           [nodeProvider]="sourceNodeProvider"
+
         ></ix-replication-source-section>
 
         <ix-replication-target-section
           [replication]="existingReplication"
           [nodeProvider]="targetNodeProvider"
           [allowsCustomRetentionPolicy]="!usesNameRegex"
+          [sourcePreservesProperties]="sourcePreservesProperties"
+          [isLocalTarget]="isLocalTarget"
         ></ix-replication-target-section>
 
         <ix-replication-schedule-section
@@ -34,12 +37,45 @@
       </div>
 
       @if (eligibleSnapshotsMessage) {
-        <div
-          class="eligible-snapshots"
-          [class.danger]="isEligibleSnapshotsMessageRed"
-          >
-          {{ eligibleSnapshotsMessage | translate }}
-        </div>
+        <tn-banner
+          [type]="isEligibleSnapshotsMessageRed ? 'warning' : 'info'"
+          [heading]="eligibleSnapshotsMessage | translate"
+        ></tn-banner>
+      }
+
+      @if (sourceEncryptedWithPreservedProperties) {
+        <tn-banner
+          type="info"
+          [heading]="'Source dataset is encrypted and properties are preserved. Source encryption will be replicated to the destination. Destination encryption options are disabled.' | translate"
+        ></tn-banner>
+      }
+
+      @if (pushMissingSnapshotConfig) {
+        <tn-banner
+          type="error"
+          [heading]="'Push replication requires at least a periodic snapshot task, naming schema, or name regex.' | translate"
+        ></tn-banner>
+      }
+
+      @if (pushAutoMissingScheduleOrTasks && !pushMissingSnapshotConfig) {
+        <tn-banner
+          type="error"
+          [heading]="'Scheduled push replication requires either a periodic snapshot task or a replication schedule.' | translate"
+        ></tn-banner>
+      }
+
+      @if (pullMissingNamingConfig) {
+        <tn-banner
+          type="error"
+          [heading]="'Pull replication requires a naming schema or name regex.' | translate"
+        ></tn-banner>
+      }
+
+      @if (pullAutoMissingSchedule) {
+        <tn-banner
+          type="error"
+          [heading]="'Pull replication that runs automatically must have a schedule.' | translate"
+        ></tn-banner>
       }
 
       <div class="form-actions">
