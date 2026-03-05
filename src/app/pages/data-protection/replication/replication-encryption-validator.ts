@@ -27,6 +27,7 @@ export function getEncryptionErrors(
     }
     return {
       [ixManualValidateError]: {
+        removable: false,
         message: translate.instant(
           'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
         ),
@@ -37,6 +38,7 @@ export function getEncryptionErrors(
   if (encryptionEnabled !== targetDataset.encrypted) {
     return {
       [ixManualValidateError]: {
+        removable: false,
         message: translate.instant(
           'Source and Destination dataset must have matching encryption states.',
         ),

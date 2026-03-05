@@ -274,6 +274,7 @@ describe('TargetSectionComponent', () => {
 
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Source and Destination dataset must have matching encryption states.',
         },
       });
@@ -293,6 +294,7 @@ describe('TargetSectionComponent', () => {
 
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Source and Destination dataset must have matching encryption states.',
         },
       });
@@ -310,6 +312,7 @@ describe('TargetSectionComponent', () => {
 
       expect(spectator.component.form.controls.readonly.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Destination dataset does not have the readonly property enabled. The REQUIRE read-only policy will cause replication to fail.',
         },
       });
@@ -352,6 +355,7 @@ describe('TargetSectionComponent', () => {
 
       expect(spectator.component.form.controls.allow_from_scratch.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Destination dataset already has data. "Replication from scratch" must be enabled to overwrite existing data.',
         },
       });
@@ -404,6 +408,7 @@ describe('TargetSectionComponent', () => {
 
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
         },
       });
@@ -466,6 +471,7 @@ describe('TargetSectionComponent', () => {
 
       expect(spectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Source and Destination dataset must have matching encryption states.',
         },
       });

@@ -339,6 +339,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     if (!allowFromScratch && this.lastTargetDataset.hasChildren) {
       this.form.controls.allow_from_scratch.setErrors({
         [ixManualValidateError]: {
+          removable: false,
           message: this.translate.instant('Destination dataset already has data. "Replication from scratch" must be enabled to overwrite existing data.'),
         },
       });
@@ -363,6 +364,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       if (this.lastTargetDataset.readonlyValue !== OnOff.On) {
         this.form.controls.readonly.setErrors({
           [ixManualValidateError]: {
+            removable: false,
             message: this.translate.instant('Destination dataset does not have the readonly property enabled. The REQUIRE read-only policy will cause replication to fail.'),
           },
         });

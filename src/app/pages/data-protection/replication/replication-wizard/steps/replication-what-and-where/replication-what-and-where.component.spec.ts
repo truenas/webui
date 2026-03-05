@@ -365,6 +365,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       // Errors are set correctly by validateEncryption
       expect(capturedErrors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Source and Destination dataset must have matching encryption states.',
         },
       });
@@ -401,6 +402,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
 
       expect(freshSpectator.component.form.controls.encryption.errors).toEqual({
         [ixManualValidateError]: {
+          removable: false,
           message: 'Destination dataset is its own encryption root. Replicating into an existing encryption root is not supported. Encrypt the parent dataset instead.',
         },
       });
