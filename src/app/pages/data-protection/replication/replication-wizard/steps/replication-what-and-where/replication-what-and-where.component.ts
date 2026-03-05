@@ -109,7 +109,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   snapshotsText = '';
   isSnapshotsWarning = false;
   isSudoDialogShown = false;
-  validatingEncryption = false;
+  private pendingEncryptionValidations = 0;
+  get validatingEncryption(): boolean {
+    return this.pendingEncryptionValidations > 0;
+  }
+
   private lastTargetDataset: TargetEncryptionInfo | null = null;
   private lastSourceEncrypted: boolean | null = null;
 
@@ -726,17 +730,16 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       distinctUntilChanged(),
       switchMap((targetDataset) => {
         if (!targetDataset || this.isRemoteTarget) {
-          this.validatingEncryption = false;
           return of(null);
         }
-        this.validatingEncryption = true;
+        this.pendingEncryptionValidations++;
         this.cdr.markForCheck();
         const datasetId = targetDataset.replace(`${mntPath}/`, '');
         return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
           map((datasets) => (datasets.length ? datasets[0] : null)),
           catchError(() => of(null)),
           finalize(() => {
-            this.validatingEncryption = false;
+            this.pendingEncryptionValidations--;
             this.cdr.markForCheck();
           }),
         );
@@ -753,14 +756,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         if (!sourceDatasets?.length || this.isRemoteSource) {
           return of(null);
         }
-        this.validatingEncryption = true;
+        this.pendingEncryptionValidations++;
         this.cdr.markForCheck();
         const datasetIds = sourceDatasets.map((ds) => ds.replace(`${mntPath}/`, ''));
         return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
           map((datasets: Dataset[]) => datasets.some((ds) => ds.encrypted)),
           catchError(() => of(false)),
           finalize(() => {
-            this.validatingEncryption = false;
+            this.pendingEncryptionValidations--;
             this.cdr.markForCheck();
           }),
         );
