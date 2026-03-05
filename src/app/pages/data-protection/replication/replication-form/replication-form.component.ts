@@ -216,7 +216,7 @@ export class ReplicationFormComponent implements OnInit {
 
   get isFormValid(): boolean {
     return this.sections.every((section) => section.form.valid)
-      && !this.targetSection().validatingTarget
+      && !this.targetSection().validatingTarget()
       && !this.pushMissingSnapshotConfig
       && !this.pushAutoMissingScheduleOrTasks
       && !this.pullMissingNamingConfig

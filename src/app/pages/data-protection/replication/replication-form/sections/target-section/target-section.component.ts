@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, finalize, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
@@ -92,7 +92,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly RetentionPolicy = RetentionPolicy;
 
   protected readonly helptext = helptextReplication;
-  validatingTarget = false;
+  validatingTarget = signal(false);
 
   protected readonlyWarning = '';
 
@@ -256,10 +256,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       distinctUntilChanged(),
       switchMap((targetDataset) => {
         if (!targetDataset) {
-          this.validatingTarget = false;
+          this.validatingTarget.set(false);
           return of(null);
         }
-        this.validatingTarget = true;
+        this.validatingTarget.set(true);
         this.cdr.markForCheck();
         return this.api.call('pool.dataset.query', [
           [['id', '=', targetDataset]],
@@ -267,23 +267,19 @@ export class TargetSectionComponent implements OnInit, OnChanges {
           switchMap((datasets) => {
             if (!datasets.length) return of(null);
             const dataset = datasets[0];
-            const escapedId = targetDataset.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             return this.api.call('pool.dataset.query', [
-              [['id', '~', `^${escapedId}/`]],
+              [['id', '^', targetDataset + '/']],
               { select: ['id'], offset: 0, limit: 1 },
             ]).pipe(
               map((children) => ({ dataset, hasChildren: children.length > 0 })),
             );
           }),
           catchError(() => of(null)),
-          finalize(() => {
-            this.validatingTarget = false;
-            this.cdr.markForCheck();
-          }),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((result: { dataset: Dataset; hasChildren: boolean } | null) => {
+      this.validatingTarget.set(false);
       if (result) {
         this.lastTargetDataset = {
           ...extractTargetEncryptionInfo(result.dataset),
@@ -319,6 +315,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     if (!this.lastTargetDataset || !this.isLocalTarget()) {
       this.form.controls.encryption.setErrors(null);
       this.form.controls.allow_from_scratch.setErrors(null);
+      // Still call validateReadonlyPolicy — for remote targets it sets the warning banner.
       this.validateReadonlyPolicy();
       this.cdr.markForCheck();
       return;

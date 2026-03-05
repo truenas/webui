@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -140,6 +141,7 @@ describe('ReplicationFormComponent', () => {
   }));
   MockInstance(TargetSectionComponent, () => ({
     form: targetForm as unknown as TargetSectionComponent['form'],
+    validatingTarget: signal(false),
     getPayload: jest.fn(() => targetForm.value),
   }));
   MockInstance(ScheduleSectionComponent, () => ({
