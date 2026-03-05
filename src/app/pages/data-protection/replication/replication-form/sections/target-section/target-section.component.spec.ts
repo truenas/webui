@@ -442,7 +442,7 @@ describe('TargetSectionComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.component.form.controls.readonly.errors).toBeNull();
-      expect(spectator.component.readonlyWarning).toContain('REQUIRE policy requires');
+      expect(spectator.component.readonlyWarning()).toContain('REQUIRE policy requires');
     });
 
     it('clears readonly warning when policy is not REQUIRE', () => {
@@ -450,11 +450,11 @@ describe('TargetSectionComponent', () => {
 
       spectator.component.form.controls.readonly.setValue(ReadOnlyMode.Require);
       spectator.detectChanges();
-      expect(spectator.component.readonlyWarning).toBeTruthy();
+      expect(spectator.component.readonlyWarning()).toBeTruthy();
 
       spectator.component.form.controls.readonly.setValue(ReadOnlyMode.Ignore);
       spectator.detectChanges();
-      expect(spectator.component.readonlyWarning).toBe('');
+      expect(spectator.component.readonlyWarning()).toBe('');
     });
 
     it('shows encryption error when editing a task with encryption on non-encrypted destination', fakeAsync(() => {

@@ -94,7 +94,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextReplication;
   readonly validatingTarget = signal(false);
 
-  readonlyWarning = '';
+  readonly readonlyWarning = signal('');
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
 
@@ -121,10 +121,12 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       }
     }
 
-    if (this.nodeProvider()) {
-      this.form.controls.target_dataset.enable({ emitEvent: false });
-    } else {
-      this.form.controls.target_dataset.disable({ emitEvent: false });
+    if ('nodeProvider' in changes) {
+      if (this.nodeProvider()) {
+        this.form.controls.target_dataset.enable({ emitEvent: false });
+      } else {
+        this.form.controls.target_dataset.disable({ emitEvent: false });
+      }
     }
 
     if ('sourcePreservesProperties' in changes) {
@@ -135,11 +137,16 @@ export class TargetSectionComponent implements OnInit, OnChanges {
         this.form.controls.encryption.enable({ emitEvent: false });
       }
       this.updateEncryptionFields();
+      this.validateTargetDataset();
     }
 
-    // Re-validate with cached data after enable/disable cleared manual errors.
-    if ('sourcePreservesProperties' in changes || 'isLocalTarget' in changes) {
-      this.validateTargetDataset();
+    if ('isLocalTarget' in changes) {
+      if (this.isLocalTarget() && this.form.controls.target_dataset.value) {
+        // Trigger re-fetch of target dataset info for local validation.
+        this.form.controls.target_dataset.updateValueAndValidity();
+      } else {
+        this.validateTargetDataset();
+      }
     }
 
     if ('allowsCustomRetentionPolicy' in changes) {
@@ -164,6 +171,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
         this.form.controls.lifetime_unit.disable();
       }
     });
+
+    if (this.form.controls.retention_policy.value === RetentionPolicy.Custom) {
+      this.form.controls.lifetime_value.enable();
+      this.form.controls.lifetime_unit.enable();
+    }
 
     this.form.controls.encryption_key_format.disable();
     this.form.controls.encryption_key_passphrase.disable();
@@ -280,7 +292,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((targetDataset) => {
-        if (!targetDataset) {
+        if (!targetDataset || !this.isLocalTarget()) {
           this.validatingTarget.set(false);
           return of(null);
         }
@@ -369,7 +381,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
     if (readonlyMode !== ReadOnlyMode.Require) {
       this.form.controls.readonly.setErrors(null);
-      this.readonlyWarning = '';
+      this.readonlyWarning.set('');
       return;
     }
 
@@ -385,7 +397,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       } else {
         this.form.controls.readonly.setErrors(null);
       }
-      this.readonlyWarning = '';
+      this.readonlyWarning.set('');
       return;
     }
 
@@ -393,11 +405,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
     // For remote targets, show a non-blocking warning
     if (!this.isLocalTarget()) {
-      this.readonlyWarning = this.translate.instant(
+      this.readonlyWarning.set(this.translate.instant(
         'REQUIRE policy requires the destination dataset to have the readonly property enabled. Ensure the remote destination dataset has readonly=on or the replication will fail.',
-      );
+      ));
     } else {
-      this.readonlyWarning = '';
+      this.readonlyWarning.set('');
     }
   }
 

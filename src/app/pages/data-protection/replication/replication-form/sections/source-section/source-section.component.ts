@@ -231,6 +231,8 @@ export class SourceSectionComponent implements OnChanges, OnInit {
     ).subscribe(() => {
       this.validateRegexConflict();
     });
+
+    this.validateRegexConflict();
   }
 
   private validateRegexConflict(): void {
@@ -247,7 +249,7 @@ export class SourceSectionComponent implements OnChanges, OnInit {
         },
       });
     } else {
-      const errors = this.form.controls.name_regex.errors;
+      const errors = { ...this.form.controls.name_regex.errors };
       if (errors?.[ixManualValidateError]) {
         delete errors[ixManualValidateError];
         this.form.controls.name_regex.setErrors(Object.keys(errors).length ? errors : null);

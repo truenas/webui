@@ -2,11 +2,10 @@
   <ix-explorer
     formControlName="target_dataset"
     [label]="'Destination' | translate"
-
     [required]="true"
     [rootNodes]="emptyRootNode"
     [tooltip]="helptext.targetDatasetTooltip | translate"
-    [nodeProvider]="nodeProvider()"
+    [nodeProvider]="nodeProvider()!"
   ></ix-explorer>
   <ix-select
     formControlName="readonly"
@@ -15,8 +14,8 @@
     [required]="true"
     [tooltip]="helptext.readonlyTooltip | translate"
   ></ix-select>
-  @if (readonlyWarning) {
-    <tn-banner type="warning" [heading]="readonlyWarning"></tn-banner>
+  @if (readonlyWarning()) {
+    <tn-banner type="warning" [heading]="readonlyWarning()"></tn-banner>
   }
   <ix-checkbox
     formControlName="encryption"
