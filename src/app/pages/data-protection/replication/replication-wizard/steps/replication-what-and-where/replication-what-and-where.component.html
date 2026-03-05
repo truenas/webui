@@ -128,21 +128,6 @@
           [required]="true"
         ></ix-select>
       }
-      @if (form.controls.encryption_key_format.enabled && isHexKeyFormat) {
-        <ix-checkbox
-          formControlName="encryption_key_generate"
-          [label]="helptext.encryptionKeyGenerateLabel | translate"
-          [tooltip]="helptext.encryptionKeyGenerateTooltip | translate"
-        ></ix-checkbox>
-      }
-      @if (form.controls.encryption_key_hex.enabled) {
-        <ix-input
-          formControlName="encryption_key_hex"
-          [label]="helptext.encryptionKeyHexLabel  | translate"
-          [tooltip]="helptext.encryptionKeyHexTooltip | translate"
-          [required]="true"
-        ></ix-input>
-      }
       @if (form.controls.encryption_key_passphrase.enabled) {
         <ix-input
           formControlName="encryption_key_passphrase"

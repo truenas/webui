@@ -6,7 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
@@ -410,7 +410,6 @@ export class ReplicationFormComponent implements OnInit {
       this.generalSection().form.controls.transport.valueChanges,
     ).pipe(
       debounceTime(300),
-      distinctUntilChanged(),
       startWith(null),
       switchMap(() => {
         const sourceDatasets = this.sourceSection().form.controls.source_datasets.value;

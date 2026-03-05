@@ -40,7 +40,6 @@ import {
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { namingSchemaValidator } from 'app/modules/forms/ix-forms/validators/naming-schema-validation/naming-schema-validation';
 import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
-import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
@@ -135,8 +134,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     encryption: [false],
     encryption_inherit: [false],
     encryption_key_format: new FormControl(null as EncryptionKeyFormat | null, [Validators.required]),
-    encryption_key_generate: [true],
-    encryption_key_hex: ['', [Validators.required, exactLength(64)]],
     encryption_key_passphrase: ['', [Validators.required, Validators.minLength(8)]],
     encryption_key_location_truenasdb: [true],
     encryption_key_location: ['', [Validators.required]],
@@ -186,10 +183,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get isRemoteTarget(): boolean {
     return this.form.value.target_dataset_from === DatasetSource.Remote;
-  }
-
-  get isHexKeyFormat(): boolean {
-    return this.form.controls.encryption_key_format.value === EncryptionKeyFormat.Hex;
   }
 
   get schemaOrRegexLabel(): string {
@@ -298,18 +291,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     ).subscribe((value) => {
       if (this.form.controls.encryption_key_format.enabled) {
         this.applyEncryptionKeyFormat(value);
-      }
-    });
-
-    this.form.controls.encryption_key_generate.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((value) => {
-      if (this.form.controls.encryption_key_generate.enabled) {
-        if (value) {
-          this.form.controls.encryption_key_hex.disable();
-        } else {
-          this.form.controls.encryption_key_hex.enable();
-        }
       }
     });
 
@@ -429,8 +410,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       target_dataset: null,
       encryption: false,
       encryption_key_format: null,
-      encryption_key_generate: true,
-      encryption_key_hex: '',
       encryption_key_passphrase: '',
       encryption_key_location_truenasdb: true,
       encryption_key_location: '',
@@ -614,8 +593,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   private disableEncryption(): void {
     this.form.controls.encryption_key_format.disable();
-    this.form.controls.encryption_key_generate.disable();
-    this.form.controls.encryption_key_hex.disable();
     this.form.controls.encryption_key_passphrase.disable();
     this.form.controls.encryption_key_location_truenasdb.disable();
     this.form.controls.encryption_key_location.disable();
@@ -628,9 +605,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   private applyEncryptionKeyFormat(value: EncryptionKeyFormat): void {
-    this.form.controls.encryption_key_generate.setValue(true);
-    this.form.controls.encryption_key_generate.disable();
-    this.form.controls.encryption_key_hex.disable();
     this.form.controls.encryption_key_passphrase.disable();
 
     if (value === EncryptionKeyFormat.Passphrase) {

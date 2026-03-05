@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, merge, Observable, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
@@ -207,6 +207,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
         : values.encryption_key_location;
 
       if (this.isHex) {
+        // encryption_key_generate and encryption_key_hex have no UI in the template.
+        // On edit, setFormValues() sets encryption_key_generate=false and loads the existing key
+        // into encryption_key_hex, preserving the original key. For new tasks, the default
+        // encryption_key_generate=true causes a fresh key to be generated.
         payload.encryption_key = values.encryption_key_generate
           ? this.replicationService.generateEncryptionHexKey(64)
           : values.encryption_key_hex;
@@ -294,19 +298,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       this.validateTargetDataset();
     });
 
-    this.form.controls.encryption.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.validateTargetDataset();
-    });
-
-    this.form.controls.readonly.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.validateTargetDataset();
-    });
-
-    this.form.controls.allow_from_scratch.valueChanges.pipe(
+    merge(
+      this.form.controls.encryption.valueChanges,
+      this.form.controls.readonly.valueChanges,
+      this.form.controls.allow_from_scratch.valueChanges,
+    ).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.validateTargetDataset();
