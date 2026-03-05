@@ -72,7 +72,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     encryption_key_format: [EncryptionKeyFormat.Hex, [Validators.required]],
     encryption_key_generate: [true],
     encryption_key_hex: ['', [exactLength(64)]],
-    encryption_key_passphrase: ['', [Validators.minLength(8)]],
+    encryption_key_passphrase: ['', [Validators.required, Validators.minLength(8)]],
     encryption_key_location_truenasdb: [true],
     encryption_key_location: [''],
     allow_from_scratch: [false],
@@ -163,12 +163,18 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.encryption_key_format.disable();
+    this.form.controls.encryption_key_passphrase.disable();
+    this.form.controls.encryption_key_hex.disable();
 
     this.form.controls.encryption.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.updateEncryptionFields());
 
     this.form.controls.encryption_inherit.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.updateEncryptionFields());
+
+    this.form.controls.encryption_key_format.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.updateEncryptionFields());
 
@@ -181,8 +187,17 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
     if (encryption && !encryptionInherit) {
       this.form.controls.encryption_key_format.enable();
+      if (this.isHex) {
+        this.form.controls.encryption_key_passphrase.disable();
+        this.form.controls.encryption_key_hex.enable();
+      } else {
+        this.form.controls.encryption_key_passphrase.enable();
+        this.form.controls.encryption_key_hex.disable();
+      }
     } else {
       this.form.controls.encryption_key_format.disable();
+      this.form.controls.encryption_key_passphrase.disable();
+      this.form.controls.encryption_key_hex.disable();
     }
   }
 

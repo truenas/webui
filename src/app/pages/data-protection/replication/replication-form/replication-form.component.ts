@@ -182,9 +182,10 @@ export class ReplicationFormComponent implements OnInit {
     if (!this.isPush) return false;
     const source = this.sourceSection().form.getRawValue();
     const hasTasks = source.periodic_snapshot_tasks?.length > 0;
-    const hasNaming = source.naming_schema?.length > 0
-      || source.also_include_naming_schema?.length > 0;
-    const hasRegex = Boolean(source.name_regex);
+    const hasNaming = this.usesNameRegex
+      ? false
+      : (source.also_include_naming_schema?.length > 0);
+    const hasRegex = this.usesNameRegex ? Boolean(source.name_regex) : false;
     return !hasTasks && !hasNaming && !hasRegex;
   }
 
@@ -200,8 +201,8 @@ export class ReplicationFormComponent implements OnInit {
   get pullMissingNamingConfig(): boolean {
     if (this.isPush) return false;
     const source = this.sourceSection().form.getRawValue();
-    const hasNaming = source.naming_schema?.length > 0;
-    const hasRegex = Boolean(source.name_regex);
+    const hasNaming = this.usesNameRegex ? false : (source.naming_schema?.length > 0);
+    const hasRegex = this.usesNameRegex ? Boolean(source.name_regex) : false;
     return !hasNaming && !hasRegex;
   }
 
@@ -418,7 +419,7 @@ export class ReplicationFormComponent implements OnInit {
           return of(false);
         }
         return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
-          map((datasets) => datasets.some((dataset) => dataset.encrypted)),
+          map((datasets) => datasets.length > 0 && datasets.every((dataset) => dataset.encrypted)),
           catchError(() => of(false)),
         );
       }),
