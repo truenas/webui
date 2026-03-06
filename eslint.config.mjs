@@ -1,18 +1,8 @@
 import baseConfig from '@truenas/common-typescript/eslint.config';
-import noExtraWhitespaceInLineContinuation from './eslint-rules/no-extra-whitespace-in-line-continuation.mjs';
-
-const customRulesPlugin = {
-  rules: {
-    'no-extra-whitespace-in-line-continuation': noExtraWhitespaceInLineContinuation,
-  },
-};
 
 // Project-specific overrides
 const projectOverrides = {
   files: ['**/*.ts'],
-  plugins: {
-    'truenas': customRulesPlugin,
-  },
   rules: {
     'no-restricted-imports': [
       'error',
@@ -26,7 +16,6 @@ const projectOverrides = {
         ],
       },
     ],
-    'truenas/no-extra-whitespace-in-line-continuation': 'error',
   },
 };
 
