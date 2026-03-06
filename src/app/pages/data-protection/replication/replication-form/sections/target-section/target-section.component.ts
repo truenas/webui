@@ -335,7 +335,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     ).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.validateTargetDataset();
+      // Skip validation while an API fetch is in-flight to avoid using stale data.
+      if (!this.validatingTarget()) {
+        this.validateTargetDataset();
+      }
     });
   }
 
@@ -402,12 +405,15 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
     this.form.controls.readonly.setErrors(null);
 
-    // For remote targets, show a non-blocking warning
-    this.readonlyWarning.set(this.isLocalTarget()
-      ? ''
-      : this.translate.instant(
-          'REQUIRE policy requires the destination dataset to have the readonly property enabled. Ensure the remote destination dataset has readonly=on or the replication will fail.',
-        ));
+    // For remote targets, show a non-blocking warning.
+    // For local targets without cached data (dataset not yet fetched), show nothing.
+    if (!this.isLocalTarget()) {
+      this.readonlyWarning.set(this.translate.instant(
+        'REQUIRE policy requires the destination dataset to have the readonly property enabled. Ensure the remote destination dataset has readonly=on or the replication will fail.',
+      ));
+    } else {
+      this.readonlyWarning.set('');
+    }
   }
 
   private setRetentionPolicyOptions(): void {

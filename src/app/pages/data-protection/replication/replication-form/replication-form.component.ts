@@ -443,7 +443,12 @@ export class ReplicationFormComponent implements OnInit {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
 
-        if (!selectedCredential || isRootUser || this.isSudoDialogShown) {
+        if (!selectedCredential || isRootUser) {
+          this.isSudoDialogShown = false;
+          return;
+        }
+
+        if (this.isSudoDialogShown) {
           return;
         }
 

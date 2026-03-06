@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
-  catchError, debounceTime, distinctUntilChanged, finalize, map, merge, Observable, of, switchMap,
+  catchError, debounceTime, finalize, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -332,7 +332,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         const isRootUser = selectedCredential?.attributes?.username === 'root';
         const isNonRemote = !(this.isRemoteSource || this.isRemoteTarget);
 
-        if (!selectedCredential || isRootUser || isNonRemote || this.isSudoDialogShown) {
+        if (!selectedCredential || isRootUser || isNonRemote) {
+          this.isSudoDialogShown = false;
+          return;
+        }
+
+        if (this.isSudoDialogShown) {
           return;
         }
 
@@ -701,7 +706,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private listenForEncryptionValidation(): void {
     this.form.controls.target_dataset.valueChanges.pipe(
       debounceTime(300),
-      distinctUntilChanged(),
       switchMap((targetDataset) => {
         if (!targetDataset || this.isRemoteTarget) {
           return of(null);
