@@ -23,14 +23,25 @@
   background: rgba(0, 0, 0, 0.32);
   bottom: 0;
   left: 0;
+  opacity: 0;
+  pointer-events: none;
   position: fixed;
   right: 0;
   top: 0;
+  transition: opacity 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  // Must be above CDK overlay container (z-index: 1000)
   z-index: 1001;
+
+  &.alert-backdrop-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .alert-panel-container {
   background-color: var(--bg2);
+  outline: none;
   bottom: 0;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
   max-width: 100%;
@@ -42,6 +53,7 @@
   transform: translateX(100%);
   transition: transform 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
   width: 600px;
+  // Must be above CDK overlay container (z-index: 1000)
   z-index: 1001;
 
   &.alert-panel-open {
