@@ -131,16 +131,13 @@ const rule = {
           node,
           messageId: 'noMultilineTemplateLiteral',
           fix(fixer) {
-            // Use the raw quasi value: escape sequences (\t, \\, \n, etc.) are already
-            // in source form, which is identical between template literals and single-quoted
-            // strings, so backslashes do NOT need to be double-escaped here.
-            // Only template-specific escapes (\` and \$) need to be unescaped.
-            const content = node.quasis[0].value.raw;
+            // Use the cooked quasi value (interpreted string) and re-escape for single-quoted output.
+            const content = node.quasis[0].value.cooked;
 
             const escaped = content
-              .replace(/\\`/g, '`')
-              .replace(/\\\$/g, '$')
+              .replace(/\\/g, '\\\\')
               .replace(/'/g, "\\'")
+              .replace(/\t/g, '\\t')
               .replace(/ *\r?\n */g, '\\n');
 
             return fixer.replaceTextRange([node.range[0], node.range[1]], `'${escaped}'`);
