@@ -54,6 +54,7 @@ const rule = {
         // Check for leading whitespace in translation strings.
         // Only flag strings inside T() calls, as leading whitespace in other contexts
         // (test expectations, variable assignments, object properties) is often intentional.
+        // Length threshold avoids false positives on short fragments like ' seconds.'.
         if (/^ /.test(content) && content.length > 20) {
           const parent = node.parent;
           const isTranslationCall = parent?.type === 'CallExpression'
@@ -133,12 +134,20 @@ const rule = {
           fix(fixer) {
             // Use the cooked quasi value (interpreted string) and re-escape for single-quoted output.
             const content = node.quasis[0].value.cooked;
+            if (content == null) {
+              return null;
+            }
 
             const escaped = content
               .replace(/\\/g, '\\\\')
               .replace(/'/g, "\\'")
+              .replace(/\0/g, '\\0')
               .replace(/\t/g, '\\t')
-              .replace(/ *\r?\n */g, '\\n');
+              .replace(/\r/g, '\\r')
+              .replace(/\x08/g, '\\b')
+              .replace(/\f/g, '\\f')
+              .replace(/\v/g, '\\v')
+              .replace(/ *\n */g, '\\n');
 
             return fixer.replaceTextRange([node.range[0], node.range[1]], `'${escaped}'`);
           },

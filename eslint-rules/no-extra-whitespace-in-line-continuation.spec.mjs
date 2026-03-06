@@ -54,6 +54,10 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
     {
       code: "const x = ' When the UPS Mode is set to slave'",
     },
+    // Double-quoted strings with valid line continuation
+    {
+      code: '"some text\\\n more text"',
+    },
   ],
   invalid: [
     // Trailing spaces before backslash
@@ -115,6 +119,18 @@ ruleTester.run('no-extra-whitespace-in-line-continuation', rule, {
       code: "'line one\\\n line two \\\n line three'",
       output: "'line one\\\n line two\\\n line three'",
       errors: [{ messageId: 'extraWhitespace' }],
+    },
+    // Double-quoted string with extra whitespace in line continuation
+    {
+      code: '"some text \\\n    more text"',
+      output: '"some text\\\n more text"',
+      errors: [{ messageId: 'extraWhitespace' }],
+    },
+    // Template literal inside T() with literal backslashes → properly escaped
+    {
+      code: 'T(`path\\\\to\\\\file\nline2`)',
+      output: "T('path\\\\to\\\\file\\nline2')",
+      errors: [{ messageId: 'noMultilineTemplateLiteral' }],
     },
     // Leading whitespace in T() translation string
     {
