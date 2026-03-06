@@ -64,7 +64,7 @@
   "Dismiss All Info Alerts": "모든 정보 경고 해제",
   "Dismiss All Warnings": "모든 위험 해제",
   "Enclosure Mock": "모의 인클로저",
-  "Enter a value in seconds for the UPS to wait before initiating shutdown. Shutdown will not occur if power is restored while the timer is counting down. This value only applies when <b>Shutdown mode</b> is set to <i>UPS goes on battery</i>.": "UPS가 종료하기 전에 기다릴 시간(초)입니다. 이 시간 안에 전원이 복원되면 종료하지 않습니다. 이 값은 <b>종료 모드</b>가 <b>UPS 전지로 작동</b>일 때만 적용됩니다.",
+  "Enter a value in seconds for the UPS to wait before initiating shutdown. Shutdown will not occur if power is restored while the timer is counting down. This value only applies when <b>Shutdown mode</b> is set to <i>UPS goes on battery</i>.": "UPS가 종료하기 전에 기다릴 시간(초)입니다. 이 시간 안에 전원이 복원되면 종료하지 않습니다. 이 값은 <b>종료 모드</b>가 <i>UPS 전지로 작동</i>일 때만 적용됩니다.",
   "Enter or paste the user's <b>public</b> SSH key(s) to allow key-based authentication (stored in <i>authorized_keys</i>). Multiple keys can be entered, one per line. <b>Do not paste private keys.</b>": "키 기반 인증에 사용할 사용자의 <b>공개</b> SSH 키를 입력하거나 붙여넣습니다(<i>authorized_keys</i>에 저장되어 있음). 한 줄에 하나씩 여러 키를 입력할 수 있습니다. <b>개인 키를 붙여넣지 마십시오.</b>",
   "Enterprise feature to ensure SMB state consistency across HA failover events. This feature is incompatible with Multi-Protocol and Legacy share purposes, and with minimum protocol set to SMB1.": "이 기능은 고가용성 장애 조치 이벤트 전반에 걸쳐 SMB 상태 일관성을 보장하는 기업용 기능입니다. 이 기능은 멀티 프로토콜 및 예전 공유를 위한 목적으로는 호환되지 않으며, 최소 프로토콜이 SMB1로 설정된 경우에도 사용할 수 없습니다.",
   "Failed to load images": "이미지 불러오기 실패",
