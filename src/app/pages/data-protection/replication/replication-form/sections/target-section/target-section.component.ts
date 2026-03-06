@@ -6,7 +6,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { forkJoin, merge, Observable, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
@@ -60,7 +60,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
   readonly replication = input<ReplicationTask>();
   readonly allowsCustomRetentionPolicy = input(false);
-  readonly sourcePreservesProperties = input(false);
+  readonly sourceEncryptedWithPreservedProperties = input(false);
   readonly isLocalTarget = input(false);
   readonly nodeProvider = input<TreeNodeProvider>();
 
@@ -129,8 +129,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       }
     }
 
-    if ('sourcePreservesProperties' in changes) {
-      if (this.sourcePreservesProperties()) {
+    if ('sourceEncryptedWithPreservedProperties' in changes) {
+      if (this.sourceEncryptedWithPreservedProperties()) {
         this.form.controls.encryption.setValue(false, { emitEvent: false });
         this.form.controls.encryption.disable({ emitEvent: false });
       } else {
@@ -290,7 +290,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     this.form.controls.target_dataset.valueChanges.pipe(
       startWith(this.form.controls.target_dataset.value),
       debounceTime(300),
-      distinctUntilChanged(),
       switchMap((targetDataset) => {
         if (!targetDataset || !this.isLocalTarget()) {
           this.validatingTarget.set(false);

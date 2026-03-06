@@ -212,17 +212,17 @@ describe('TargetSectionComponent', () => {
     });
   });
 
-  describe('source preserves properties', () => {
-    it('disables encryption when sourcePreservesProperties is true', async () => {
-      spectator.setInput('sourcePreservesProperties', true);
+  describe('source encrypted with preserved properties', () => {
+    it('disables encryption when sourceEncryptedWithPreservedProperties is true', async () => {
+      spectator.setInput('sourceEncryptedWithPreservedProperties', true);
 
       const encryption = await form.getControl('Encryption');
       expect(await encryption.isDisabled()).toBe(true);
     });
 
-    it('enables encryption when sourcePreservesProperties is false', async () => {
-      spectator.setInput('sourcePreservesProperties', true);
-      spectator.setInput('sourcePreservesProperties', false);
+    it('enables encryption when sourceEncryptedWithPreservedProperties is false', async () => {
+      spectator.setInput('sourceEncryptedWithPreservedProperties', true);
+      spectator.setInput('sourceEncryptedWithPreservedProperties', false);
 
       const encryption = await form.getControl('Encryption');
       expect(await encryption.isDisabled()).toBe(false);
@@ -383,14 +383,14 @@ describe('TargetSectionComponent', () => {
       expect(spectator.component.form.controls.encryption.errors).toBeNull();
     }));
 
-    it('does not set encryption error when encryption is disabled by sourcePreservesProperties', fakeAsync(() => {
+    it('does not set encryption error when encryption is disabled by sourceEncryptedWithPreservedProperties', fakeAsync(() => {
       spectator.inject(MockApiService).mockCall('pool.dataset.query', [
         {
           id: 'tank/target', encrypted: true, encryption_root: 'tank', readonly: { value: OnOff.On },
         },
       ] as Dataset[]);
       spectator.setInput('isLocalTarget', true);
-      spectator.setInput('sourcePreservesProperties', true);
+      spectator.setInput('sourceEncryptedWithPreservedProperties', true);
 
       spectator.component.form.controls.target_dataset.setValue('tank/target');
       tick(300);
