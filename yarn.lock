@@ -5139,7 +5139,7 @@ __metadata:
 
 "@truenas/common-typescript@github:truenas/tn-common-typescript#master":
   version: 1.0.0
-  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=9f3141a4854f3bf8b6c2171448ea891596388ebb"
+  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=fc0c205dd2b4e6984cd4bc63f401879b94a7655d"
   dependencies:
     "@eslint/compat": "npm:~1.4.1"
     "@eslint/js": "npm:~9.39.1"
@@ -5161,7 +5161,7 @@ __metadata:
     typescript-eslint: "npm:~8.46.3"
   peerDependencies:
     jest: "*"
-  checksum: 10/7a982aefe4f305cf6644a2070e2cf479a32e9d9ca6321072b02befc8363e5620835e6444fde49c177493afdf16cf377a089d6cf71e2f5cc4390bec3e6f8ebefb
+  checksum: 10/92fce61541034d18f3d2f8b3cce108057e6e2c613248aeffcfee1f790395334b6dc0ccd30a83b19baae70d1d5c9cf419d2e10f85d8bce2104c0b3f23112602f2
   languageName: node
   linkType: hard
 
