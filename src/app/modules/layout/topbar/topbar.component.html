@@ -79,6 +79,7 @@
           ixTest="alerts-indicator"
           [matBadge]="alertBadgeCount"
           [matBadgeHidden]="alertBadgeCount === 0"
+          [attr.aria-expanded]="isAlertPanelOpen$ | async"
           [matTooltip]="tooltips.alerts | translate"
           [ixUiSearch]="searchableElements.elements.alerts"
           (click)="onAlertIndicatorPressed()"
