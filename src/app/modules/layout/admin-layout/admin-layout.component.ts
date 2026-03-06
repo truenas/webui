@@ -241,7 +241,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       filter(([prev, curr]) => !prev && curr),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.alertPanel.nativeElement.focus();
+      setTimeout(() => this.alertPanel.nativeElement.focus());
     });
   }
 }
