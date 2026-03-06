@@ -160,7 +160,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         group: null,
         home: '/var/empty',
         home_mode: '700',
-        home_create: false,
+        home_create: true,
         sudo_commands: [],
         sudo_commands_nopasswd: [],
         uid: null,
@@ -189,7 +189,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         groups: [],
         home: '/var/empty',
         home_mode: '700',
-        home_create: false,
+        home_create: true,
         uid: 1234,
       });
     });
@@ -281,7 +281,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
       await createCheckbox.setValue(true);
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Create Home Directory Under' }));
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 

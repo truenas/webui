@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -114,10 +114,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   protected homeDirectoryViewValue(): string {
     const path = this.form.controls.home.value;
-    if (this.form.controls.home_create.value && path) {
-      return this.translate.instant('New directory under {path}', { path });
+    if (this.form.controls.home_create.value) {
+      if (path && path !== defaultHomePath && !isEmptyHomeDirectory(path)) {
+        return this.translate.instant('New directory under {path}', { path });
+      }
+      return defaultHomePath;
     }
-    // Form value is always normalized to defaultHomePath if empty, so we can return it directly
     return path;
   }
 
@@ -150,6 +152,34 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return homeValue !== defaultHomePath;
   }
 
+  protected hasRealHomePath(): boolean {
+    const home = this.form.controls.home.value;
+    return !!home && home !== defaultHomePath && !isEmptyHomeDirectory(home);
+  }
+
+  private homeEditableOpen = false;
+
+  protected onHomeEditableOpened(): void {
+    if (this.homeEditableOpen || this.editingUser()) return;
+    this.homeEditableOpen = true;
+    if (this.form.controls.home_create.value) {
+      this.form.controls.home.addValidators(Validators.required);
+      if (this.form.controls.home.value === defaultHomePath) {
+        this.form.controls.home.setValue('');
+      }
+      this.form.controls.home.updateValueAndValidity();
+    }
+  }
+
+  protected onHomeEditableClosed(): void {
+    this.homeEditableOpen = false;
+    this.form.controls.home.removeValidators(Validators.required);
+    if (!this.form.controls.home.value) {
+      this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
+    }
+    this.form.controls.home.updateValueAndValidity();
+  }
+
   protected groupsProvider: ChipsProvider = this.createGroupsProvider();
 
   readonly form = this.fb.group({
@@ -160,7 +190,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     email: [null as string, [emailValidator()]],
     home: [defaultHomePath],
     home_mode: ['700'],
-    home_create: [false],
+    home_create: [true],
     default_permissions: [true],
     uid: [null as number],
     shell: [null as string | null],
@@ -348,6 +378,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       sudo_commands: allSudoCommands ? [] : user.sudo_commands,
       sudo_commands_nopasswd_all: allSudoCommandsNoPasswd,
       sudo_commands_nopasswd: allSudoCommandsNoPasswd ? [] : user.sudo_commands_nopasswd,
+      home_create: false,
     });
 
     this.form.controls.uid.disable();
@@ -572,8 +603,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private detectHomeDirectoryChanges(): void {
     this.form.controls.home.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((home) => {
-      // Normalize empty home directory values to default path
-      if (!home || home.trim() === '') {
+      // Normalize empty home directory values to default path when not creating a new home
+      if ((!home || home.trim() === '') && !this.form.controls.home_create.value) {
         this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
       }
 
@@ -587,11 +618,24 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
     this.form.controls.home_create.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((checked) => {
       if (checked) {
+        if (this.homeEditableOpen) {
+          this.form.controls.home.addValidators(Validators.required);
+        }
+        if (this.form.controls.home.value === defaultHomePath) {
+          this.form.controls.home.setValue('', { emitEvent: false });
+        }
         this.form.patchValue({
           home_mode: '700',
           default_permissions: true,
         });
+        this.form.controls.home.updateValueAndValidity();
         this.cdr.detectChanges();
+      } else {
+        this.form.controls.home.removeValidators(Validators.required);
+        if (!this.form.controls.home.value) {
+          this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
+        }
+        this.form.controls.home.updateValueAndValidity();
       }
     });
   }
