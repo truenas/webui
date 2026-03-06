@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
+  ElementRef, OnInit, signal, ViewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
@@ -88,6 +89,8 @@ export class TopbarComponent implements OnInit {
   private apiService = inject<ApiService>(ApiService);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private destroyRef = inject(DestroyRef);
+
+  @ViewChild('alertIndicator', { read: ElementRef }) private alertIndicator: ElementRef<HTMLButtonElement>;
 
   updateIsDone: Subscription;
 
@@ -183,6 +186,10 @@ export class TopbarComponent implements OnInit {
 
   onAlertIndicatorPressed(): void {
     this.store$.dispatch(alertIndicatorPressed());
+  }
+
+  focusAlertIndicator(): void {
+    this.alertIndicator?.nativeElement?.focus();
   }
 
   onSidenavIndicatorPressed(): void {
