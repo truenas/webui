@@ -52,7 +52,7 @@ export const helptextSystemSupport = {
  messages about this issue. Use the format <i>name</i>@<i>domain.com</i>.\
  Separate entries by pressing <code>Enter</code>.'),
     err: T('Email addresses must be entered in the format\
- <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing\
+ <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing\
  <code>Enter</code>.'),
   },
 
