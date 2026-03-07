@@ -12,7 +12,7 @@ export const helptextGroups = {
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used\
  as the last character of the username.'),
 
-  privilegesTooltip: T('Attaches privileges to the group. Only needed if you need users in this group access \
+  privilegesTooltip: T('Attaches privileges to the group. Only needed if you need users in this group access\
  to TrueNAS API or WebUI.'),
 
   sudoTooltip: T('Allow group members to use <a\
@@ -20,7 +20,7 @@ export const helptextGroups = {
  target="_blank">sudo</a>. Group members are prompted\
  for their password when using <b>sudo</b>.'),
 
-  smbTooltip: T('Makes the group available for permissions editors over SMB protocol (and the share ACL \
-    editor). It is not used for SMB authentication or determining the user session token or internal \
-    permissions checks.'),
+  smbTooltip: T('Makes the group available for permissions editors over SMB protocol (and the share ACL\
+ editor). It is not used for SMB authentication or determining the user session token or internal\
+ permissions checks.'),
 };

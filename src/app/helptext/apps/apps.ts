@@ -66,9 +66,9 @@ export const helptextApps = {
     releaseName: {
       name: T('Name'),
       placeholder: T('Application Name'),
-      tooltip: T('Application name must have the following: \
- 1) Lowercase alphanumeric characters can be specified \
- 2) Name must start with an alphabetic character and can end with alphanumeric character \
+      tooltip: T('Application name must have the following:\
+ 1) Lowercase alphanumeric characters can be specified\
+ 2) Name must start with an alphabetic character and can end with alphanumeric character\
  3) Hyphen \'-\' is allowed but not as the first or last character e.g abc123, abc, abcd-1232'),
     },
   },
@@ -76,7 +76,7 @@ export const helptextApps = {
   appWizard: {
     nameGroup: {
       version: T('Version'),
-      nameValidationRules: T('Name must start and end with a lowercase alphanumeric character. \
+      nameValidationRules: T('Name must start and end with a lowercase alphanumeric character.\
  Hyphen is allowed in the middle e.g abc123, abc, abcd-1232'),
     },
   },
@@ -101,11 +101,11 @@ export const helptextApps = {
   },
   dockerHubRateLimit: {
     message: T('User limit to Docker Hub has almost been reached or has already been reached. The installation\
-     process may stall as images cannot be pulled. The current limit will be renewed in {seconds}. The application\
-      can still be staged for installation.'),
+ process may stall as images cannot be pulled. The current limit will be renewed in {seconds}. The application\
+ can still be staged for installation.'),
   },
 
   ports: T('Host ports are listed on the left and associated container ports are on the right.\
-  \
-  0.0.0.0 on the host side represents binding to any IP address on the host.'),
+\
+ 0.0.0.0 on the host side represents binding to any IP address on the host.'),
 };
