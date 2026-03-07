@@ -38,6 +38,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -83,6 +84,7 @@ export class SmbCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -175,7 +177,7 @@ export class SmbCardComponent implements OnInit {
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('sharing.smb.delete', [smb.id])),
+      switchMap(() => this.api.call('sharing.smb.delete', [smb.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {

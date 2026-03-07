@@ -28,6 +28,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -67,6 +68,7 @@ export class InitShutdownCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
+  private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
@@ -147,7 +149,7 @@ export class InitShutdownCardComponent implements OnInit {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('initshutdownscript.delete', [row.id])),
+        switchMap(() => this.api.call('initshutdownscript.delete', [row.id]).pipe(this.loader.withLoader())),
         filter(Boolean),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

@@ -21,6 +21,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -61,6 +62,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = vmwareSnapshotListElements;
@@ -140,7 +142,7 @@ export class VmwareSnapshotListComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('vmware.delete', [snapshot.id])),
+      switchMap(() => this.api.call('vmware.delete', [snapshot.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
