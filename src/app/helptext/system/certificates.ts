@@ -10,7 +10,7 @@ export const helptextSystemCertificates = {
 
     csrCreateType: {
       label: T('Type'),
-      tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default\
+      tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default.\
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
     },
 
@@ -100,7 +100,7 @@ export const helptextSystemCertificates = {
     san: {
       tooltip: T(
         'Multi-domain support. Enter additional domains to\
- secure. Separate domains by pressing <code>Enter</code>\
+ secure. Separate domains by pressing <code>Enter</code>.\
  For example, if the primary domain is <i>example.com</i>,\
  entering <i>www.example.com</i> secures both addresses.',
       ),

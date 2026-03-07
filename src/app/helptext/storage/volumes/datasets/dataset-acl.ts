@@ -9,7 +9,7 @@ export const helptextAcl = {
  <a href="https://man7.org/linux/man-pages/man1/nfs4_setfacl.1.html" target="_blank">nfs4_setfacl(1) NFSv4 ACL ENTRIES</a>.'),
 
   typeTooltip: T('How the <i>Permissions</i> are applied to\
- the chosen <i>Who</>. Choose <i>Allow</i> to grant the specified\
+ the chosen <i>Who</i>. Choose <i>Allow</i> to grant the specified\
  permissions and <i>Deny</i> to restrict the specified permissions.'),
 
   permissionTypeTooltip: T('Choose the type of permissions.\
