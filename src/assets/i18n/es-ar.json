@@ -1806,7 +1806,7 @@
   "Element": "Elemento",
   "Elements": "Elementos",
   "Email": "Correo",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "Las direcciones de correo electrónico se deben ingresar con el formato <i>local-name</i>@<i>domain.com<i> y con las entradas separadas por la tecla <code>Entrar</code>.",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "Las direcciones de correo electrónico se deben ingresar con el formato <i>local-name</i>@<i>domain.com</i> y con las entradas separadas por la tecla <code>Entrar</code>.",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "Direcciones de email para recibir copias de mensajes de Soporte TrueNAS sobre este problema. Usá el formato <i>nombre</i>@<i>dominio.com</i>. Separá las entradas presionando <code>Enter</code>.",
   "Email Options": "Opciones de correo",
   "Email settings updated.": "Configuración del correo actualizada.",

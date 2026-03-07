@@ -2259,7 +2259,7 @@
   "Element": "元素",
   "Elements": "元素",
   "Email": "电子邮件",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "电子邮件地址必须以<i>本地名称</i>@<i>domain.com<i>的格式输入，并按 <code>Enter</code> 分隔条目。",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "电子邮件地址必须以<i>本地名称</i>@<i>domain.com</i>的格式输入，并按 <code>Enter</code> 分隔条目。",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "用于接收有关此问题的 TrueNAS 支持消息副本的电子邮件地址。使用格式 <i>name</i>@<i>domain.com</i>。按 <code>Enter</code> 分隔条目。",
   "Email Options": "邮箱选项",
   "Email settings updated.": "邮箱设置已更新。",

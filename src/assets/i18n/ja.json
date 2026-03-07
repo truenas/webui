@@ -1814,7 +1814,7 @@
   "Element": "要素",
   "Elements": "要素",
   "Email": "Eメール",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "Eメールアドレスは、 <i>local-name</i>@<i>domain.com<i> の形式で、<code>エンター</code> キーで区切って入力してください。",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "Eメールアドレスは、 <i>local-name</i>@<i>domain.com</i> の形式で、<code>エンター</code> キーで区切って入力してください。",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "この問題に関する TrueNAS サポート メッセージのコピーを受け取るための電子メール アドレス。<i>name</i>@<i>domain.com</i> の形式で入力してください。 <code>Enter</code> キーを押してエントリを区切ります。",
   "Email Options": "Eメールオプション",
   "Email settings updated.": "Eメール設定を更新しました。",

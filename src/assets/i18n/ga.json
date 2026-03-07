@@ -2436,7 +2436,7 @@
   "Element": "Eilimint",
   "Elements": "Eilimintí",
   "Email": "Ríomhphost",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "Ní mór seoltaí ríomhphoist a chur isteach san fhormáid <i>local-name</i>@<i>domain.com<i>, agus na hiontrálacha deighilte le <code>Enter</code> a bhrú.",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "Ní mór seoltaí ríomhphoist a chur isteach san fhormáid <i>local-name</i>@<i>domain.com</i>, agus na hiontrálacha deighilte le <code>Enter</code> a bhrú.",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "Seoltaí ríompóst chun cóipeanna de theachtaireachtai Tacaireacht TrueNAS faoin saincheist seo a fháil. Úsáid an fhormáid <i>ainm</i>@<i>fearann.com</i>. Deighil iontálacha trí bhrú <code>Enter</code>.",
   "Email Options": "Roghanna Ríomhphoist",
   "Email settings updated.": "Nuashonraíodh socruithe ríomhphoist.",

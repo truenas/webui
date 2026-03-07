@@ -2441,7 +2441,7 @@
   "Element": "Елемент",
   "Elements": "Елементи",
   "Email": "Електронна пошта",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "Адреси електронної пошти потрібно вводити у форматі <i>local-name</i>@<i>domain.com<i>, розділяючи записи натисканням <code>Enter</code>.",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "Адреси електронної пошти потрібно вводити у форматі <i>local-name</i>@<i>domain.com</i>, розділяючи записи натисканням <code>Enter</code>.",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "Адреси електронної пошти для отримання копій повідомлень TrueNAS Support про цю проблему. Використовуйте формат <i>name</i>@<i>domain.com</i>. Розділяйте записи натисканням <code>Enter</code>.",
   "Email Options": "Параметри електронної пошти",
   "Email settings updated.": "Налаштування електронної пошти оновлено.",

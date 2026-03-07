@@ -1792,7 +1792,7 @@
   "Element": "Элемент",
   "Elements": "Элементы",
   "Email": "Электронная почта",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "Адрес электронной почты должен быть введён в формате <i>local-name</i>@<i>domain.com<i>. Разделяйте записи нажатием <code>Ввод</code>.",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "Адрес электронной почты должен быть введён в формате <i>local-name</i>@<i>domain.com</i>. Разделяйте записи нажатием <code>Ввод</code>.",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "Адреса электронной почты для получения копий сообщений службы поддержки TrueNAS об этой проблеме. Используйте формат <i>имя</i>@<i>домен.com</i>. Разделяйте записи нажатием <code>Enter</code>.",
   "Email Options": "Опции электронной почты",
   "Email settings updated.": "Настройки электронной почты обновлено",

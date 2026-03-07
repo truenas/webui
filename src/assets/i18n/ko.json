@@ -2026,7 +2026,7 @@
   "Element": "요소",
   "Elements": "요소",
   "Email": "이메일",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "이메일 주소는 반드시 <i>local-name</i>@<i>domain.com</i> 형식으로 작성해야 하며, <code>Enter</code>키를 눌러 항목을 구분합니다.",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "이메일 주소는 반드시 <i>local-name</i>@<i>domain.com</i> 형식으로 작성해야 하며, <code>Enter</code>키를 눌러 항목을 구분합니다.",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "이 문제에 대한 TrueNAS 지원 메시지의 사본을 받을 이메일 주소입니다. <i>name</i>@<i>domain.com</i> 형식을 사용합니다. <code>Enter</code>키를 눌러 항목을 구분합니다.",
   "Email Options": "이메일 선택사항",
   "Email settings updated.": "이메일 설정을 갱신했습니다.",

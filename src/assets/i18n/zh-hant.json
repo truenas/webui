@@ -2023,7 +2023,7 @@
   "Element": "元素",
   "Elements": "元素",
   "Email": "郵件",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "電子郵件地址必須以<i>本地名稱</i>@<i>domain.com<i>的格式輸入，並按 <code>Enter</code> 分隔條目。",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "電子郵件地址必須以<i>本地名稱</i>@<i>domain.com</i>的格式輸入，並按 <code>Enter</code> 分隔條目。",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "用於接收有關此問題的 TrueNAS 支援訊息副本的電子郵件地址。使用格式 <i>name</i>@<i>domain.com</i>。按 <code>Enter</code> 分隔條目。",
   "Email Options": "郵箱選項",
   "Email settings updated.": "郵箱設定已更新。",

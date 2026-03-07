@@ -2432,7 +2432,7 @@
   "Element": "Elemento",
   "Elements": "Elementos",
   "Email": "Correio eletrónico",
-  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing <code>Enter</code>.": "Os endereços de email devem ser inseridos no formato <i> name local </i>@<i> domain.com <i>, com entradas separadas pressionando <code> enter </code>.",
+  "Email addresses must be entered in the format <i>local-name</i>@<i>domain.com</i>, with entries separated by pressing <code>Enter</code>.": "Os endereços de email devem ser inseridos no formato <i> name local </i>@<i> domain.com <i>, com entradas separadas pressionando <code> enter </code>.",
   "Email addresses to receive copies of TrueNAS Support messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. Separate entries by pressing <code>Enter</code>.": "Endereços de email para receber cópias de Truenas Suporte a mensagens sobre esse problema. Use o formato <i> nome </i>@<i> domain.com </i>. Entradas separadas pressionando <code> enter </code>.",
   "Email Options": "Opções de correio eletrónico",
   "Email settings updated.": "Configurações de email atualizadas.",
