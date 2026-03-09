@@ -111,7 +111,7 @@ const encryptionFormFields: readonly string[] = [
   ],
 })
 export class ZvolFormComponent implements OnInit {
-  formatter = inject(IxFormatterService);
+  protected formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);

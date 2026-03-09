@@ -417,69 +417,144 @@ describe('ZvolFormComponent', () => {
       }]);
     });
 
-    it('sends inherit for special_small_block_size when changed from local to inherit', async () => {
-      // Simulate a zvol with special_small_block_size locally set to 128 KiB
-      // by re-capturing the payload tracker with a local value
-      const component = spectator.component as unknown as {
-        payloadTracker: { capture: (p: Record<string, unknown>) => void };
-        computeEditPayload: () => Record<string, unknown>;
-      };
-      const currentPayload = component.computeEditPayload();
-      component.payloadTracker.capture({ ...currentPayload, special_small_block_size: 131072 });
+    describe('when special_small_block_size is locally set', () => {
+      let localSpectator: Spectator<ZvolFormComponent>;
+      let localLoader: HarnessLoader;
 
-      // User changes to Inherit
-      spectator.component.form.controls.special_small_block_size.setValue(inherit);
+      const datasetWithLocalSmallBlock = {
+        ...dataset,
+        type: DatasetType.Volume,
+        special_small_block_size: {
+          value: '128K',
+          parsed: 131072,
+          rawvalue: '131072',
+          source: ZfsPropertySource.Local,
+        },
+      } as Dataset;
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.update');
-
-      expect(updateCall[1][1].special_small_block_size).toBe(inherit);
-    });
-
-    it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
-      // Set up a zvol with original size of 1 GiB (1073741824 bytes)
-      (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
-
-      // Change size to 1.002 GiB (1075890585 bytes) - just above 0.1% threshold
-      await form.fillForm({
-        Size: '1.002 GiB',
+      const createLocalComponent = createComponentFactory({
+        component: ZvolFormComponent,
+        imports: [ReactiveFormsModule],
+        providers: [
+          mockApi([
+            mockCall('pool.dataset.create'),
+            mockCall('pool.dataset.update'),
+            mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+            mockCall('pool.dataset.query', [datasetWithLocalSmallBlock]),
+            mockCall('pool.dataset.encryption_algorithm_choices', {}),
+            mockCall('pool.dataset.compression_choices', {}),
+          ]),
+          mockProvider(DialogService),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool/zvol1' })),
+          }),
+          mockAuth(),
+        ],
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.update');
-
-      expect(updateCall).toBeDefined();
-      // The size should be included in the payload and aligned to block size
-      expect(updateCall[1][1].volsize).toBeDefined();
-      // Should be aligned to 64K block size: 1075890585 + (65536 - 1075890585 % 65536) = 1075904512
-      expect(updateCall[1][1].volsize).toBe(1075904512);
-    });
-
-    it('does not send volsize when change is below 0.1% threshold', async () => {
-      // Set up a zvol with original size of 1 GiB (1073741824 bytes)
-      (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
-
-      // Change size to 1.0001 GiB (1073848893 bytes) - below 0.1% threshold
-      // This simulates formatter precision causing small rounding
-      await form.fillForm({
-        Size: '1.0001 GiB',
+      beforeEach(async () => {
+        localSpectator = createLocalComponent();
+        localLoader = TestbedHarnessEnvironment.loader(localSpectator.fixture);
+        await localSpectator.fixture.whenStable();
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      it('sends inherit for special_small_block_size when changed from local to inherit', async () => {
+        const localMainDetails = await localLoader.getHarness(DetailsTableHarness);
 
-      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.update');
+        // User changes to Inherit
+        await localMainDetails.setValues({
+          'Use Metadata (Special) VDEVs': 'Inherit (128 KiB)',
+        });
 
-      expect(updateCall).toBeDefined();
-      // Size didn't meaningfully change — don't send it
-      expect(updateCall[1][1].volsize).toBeUndefined();
+        const saveButton = await localLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        const updateCall = (localSpectator.inject(ApiService).call as jest.Mock).mock.calls
+          .find(([method]) => method === 'pool.dataset.update');
+
+        expect(updateCall[1][1].special_small_block_size).toBe(inherit);
+      });
+    });
+
+    describe('volsize threshold detection', () => {
+      let thresholdSpectator: Spectator<ZvolFormComponent>;
+      let thresholdLoader: HarnessLoader;
+      let thresholdForm: IxFormHarness;
+
+      const oneGibDataset = {
+        ...dataset,
+        type: DatasetType.Volume,
+        volsize: {
+          parsed: 1073741824,
+          rawvalue: '1073741824',
+          value: '1G',
+          source: ZfsPropertySource.Default,
+        },
+      } as Dataset;
+
+      const createThresholdComponent = createComponentFactory({
+        component: ZvolFormComponent,
+        imports: [ReactiveFormsModule],
+        providers: [
+          mockApi([
+            mockCall('pool.dataset.create'),
+            mockCall('pool.dataset.update'),
+            mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+            mockCall('pool.dataset.query', [oneGibDataset]),
+            mockCall('pool.dataset.encryption_algorithm_choices', {}),
+            mockCall('pool.dataset.compression_choices', {}),
+          ]),
+          mockProvider(DialogService),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool/zvol1' })),
+          }),
+          mockAuth(),
+        ],
+      });
+
+      beforeEach(async () => {
+        thresholdSpectator = createThresholdComponent();
+        thresholdLoader = TestbedHarnessEnvironment.loader(thresholdSpectator.fixture);
+        await thresholdSpectator.fixture.whenStable();
+        thresholdForm = await thresholdLoader.getHarness(IxFormHarness);
+      });
+
+      it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
+        // Change size to 1.002 GiB - above 0.1% threshold
+        await thresholdForm.fillForm({
+          Size: '1.002 GiB',
+        });
+
+        const saveButton = await thresholdLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        const updateCall = (thresholdSpectator.inject(ApiService).call as jest.Mock).mock.calls
+          .find(([method]) => method === 'pool.dataset.update');
+
+        expect(updateCall).toBeDefined();
+        expect(updateCall[1][1].volsize).toBeDefined();
+        // Should be aligned to 64K block size
+        expect(updateCall[1][1].volsize).toBe(1075904512);
+      });
+
+      it('does not send volsize when change is below 0.1% threshold', async () => {
+        // Change size to 1.0001 GiB - below 0.1% threshold
+        // Simulates formatter precision causing small rounding
+        await thresholdForm.fillForm({
+          Size: '1.0001 GiB',
+        });
+
+        const saveButton = await thresholdLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        const updateCall = (thresholdSpectator.inject(ApiService).call as jest.Mock).mock.calls
+          .find(([method]) => method === 'pool.dataset.update');
+
+        expect(updateCall).toBeDefined();
+        expect(updateCall[1][1].volsize).toBeUndefined();
+      });
     });
   });
 
