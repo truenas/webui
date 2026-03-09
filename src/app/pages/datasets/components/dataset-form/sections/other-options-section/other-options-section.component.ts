@@ -344,7 +344,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       special_small_block_size_custom: customValue,
     });
 
-    if (!this.payloadTracker.hasCaptured) {
+    if (!this.payloadTracker.hasCaptured && this.parent()) {
       this.payloadTracker.capture(this.computePayload());
     }
   }

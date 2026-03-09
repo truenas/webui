@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator, SpectatorFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -107,6 +107,29 @@ describe('ZvolFormComponent', () => {
       source: ZfsPropertySource.Default,
     },
   } as Dataset;
+
+  function createEditZvolComponent(mockDataset: Dataset): SpectatorFactory<ZvolFormComponent> {
+    return createComponentFactory({
+      component: ZvolFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockCall('pool.dataset.create'),
+          mockCall('pool.dataset.update'),
+          mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+          mockCall('pool.dataset.query', [mockDataset]),
+          mockCall('pool.dataset.encryption_algorithm_choices', {}),
+          mockCall('pool.dataset.compression_choices', {}),
+        ]),
+        mockProvider(DialogService),
+        mockProvider(SlideInRef, {
+          ...slideInRef,
+          getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool/zvol1' })),
+        }),
+        mockAuth(),
+      ],
+    });
+  }
 
   const createComponent = createComponentFactory({
     component: ZvolFormComponent,
@@ -432,26 +455,7 @@ describe('ZvolFormComponent', () => {
         },
       } as Dataset;
 
-      const createLocalComponent = createComponentFactory({
-        component: ZvolFormComponent,
-        imports: [ReactiveFormsModule],
-        providers: [
-          mockApi([
-            mockCall('pool.dataset.create'),
-            mockCall('pool.dataset.update'),
-            mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-            mockCall('pool.dataset.query', [datasetWithLocalSmallBlock]),
-            mockCall('pool.dataset.encryption_algorithm_choices', {}),
-            mockCall('pool.dataset.compression_choices', {}),
-          ]),
-          mockProvider(DialogService),
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool/zvol1' })),
-          }),
-          mockAuth(),
-        ],
-      });
+      const createLocalComponent = createEditZvolComponent(datasetWithLocalSmallBlock);
 
       beforeEach(async () => {
         localSpectator = createLocalComponent();
@@ -493,26 +497,7 @@ describe('ZvolFormComponent', () => {
         },
       } as Dataset;
 
-      const createThresholdComponent = createComponentFactory({
-        component: ZvolFormComponent,
-        imports: [ReactiveFormsModule],
-        providers: [
-          mockApi([
-            mockCall('pool.dataset.create'),
-            mockCall('pool.dataset.update'),
-            mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-            mockCall('pool.dataset.query', [oneGibDataset]),
-            mockCall('pool.dataset.encryption_algorithm_choices', {}),
-            mockCall('pool.dataset.compression_choices', {}),
-          ]),
-          mockProvider(DialogService),
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'test pool/zvol1' })),
-          }),
-          mockAuth(),
-        ],
-      });
+      const createThresholdComponent = createEditZvolComponent(oneGibDataset);
 
       beforeEach(async () => {
         thresholdSpectator = createThresholdComponent();

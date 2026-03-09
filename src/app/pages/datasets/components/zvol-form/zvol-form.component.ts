@@ -681,23 +681,20 @@ export class ZvolFormComponent implements OnInit {
     return data;
   }
 
-  /**
-   * Mutates and returns the given data object — callers must pass a
-   * fresh object (e.g. from getRawValue()) to avoid side-effects.
-   */
   private getPayload(data: ZvolFormData): ZvolFormData {
-    data.type = DatasetType.Volume;
+    const result = { ...data };
+    result.type = DatasetType.Volume;
 
     if (!this.isNew) {
-      delete data.name;
-      delete data.volblocksize;
-      delete data.type;
-      delete data.sparse;
+      delete result.name;
+      delete result.volblocksize;
+      delete result.type;
+      delete result.sparse;
     } else {
-      data.name = this.parentOrZvolId + '/' + (data.name || '');
+      result.name = this.parentOrZvolId + '/' + (result.name || '');
     }
 
-    return data;
+    return result;
   }
 
   private addSubmit(): void {
@@ -823,19 +820,12 @@ export class ZvolFormComponent implements OnInit {
         }
 
         // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
-        // computeEditPayload() is the single source of truth for ZFS property
-        // transformations. We clear all diff-managed keys from data, then merge
-        // back only the ones that actually changed.
-        if (this.payloadTracker.hasCaptured) {
-          const currentPayload = this.computeEditPayload();
-          const diffedPayload = this.payloadTracker.diff(currentPayload);
-
-          for (const key of this.payloadTracker.getManagedKeys(currentPayload)) {
-            delete (data as Record<string, unknown>)[key];
-          }
-
-          Object.assign(data, diffedPayload);
-        }
+        // applyDiff() clears all diff-managed keys from data, then merges back
+        // only the ones that actually changed.
+        this.payloadTracker.applyDiff(
+          data as Record<string, unknown>,
+          this.computeEditPayload(),
+        );
 
         let canSubmit = true;
         if (data.volsize !== undefined) {
