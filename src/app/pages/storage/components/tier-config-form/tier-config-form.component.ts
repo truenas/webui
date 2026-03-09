@@ -49,7 +49,7 @@ export class TierConfigFormComponent implements OnInit {
   isFormLoading = signal(false);
   showEnabledWarning = signal(false);
 
-  protected readonly enabledWarning = T('Enabling tiering changes share behavior. SMB shares and Webshares will no longer export sub-datasets.');
+  protected readonly enabledWarning = T('Enabling tiering changes share behavior. SMB shares and Webshares will no longer export child datasets.');
 
   formGroup = this.fb.nonNullable.group({
     enabled: [false],
