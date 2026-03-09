@@ -227,6 +227,24 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
     });
 
+    it('removes required validator when home_create is unchecked while editable is open', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+
+      // home_create is true by default, so required validator should be active
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(true);
+
+      // Uncheck home_create
+      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.setValue(false);
+
+      // Required validator should be removed and default path restored
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+    });
+
     it('checks zsh shell is selected when shell access is enabled', fakeAsync(async () => {
       shellAccess.set(true);
       spectator.detectChanges();
@@ -279,6 +297,17 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeInput = await loader.getHarness(DetailsItemHarness.with({ label: 'Home Directory' }));
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['options.home', '=', true]]]);
       expect(await homeInput.getValueText()).toBe('/home/test');
+    });
+
+    it('does not modify home validators when home editable is opened for an existing user', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+
+      // For editing users, onHomeEditableOpened early-returns — home value should be unchanged
+      expect(spectator.component.form.controls.home.value).toBe('/home/test');
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
     });
   });
 
@@ -528,13 +557,8 @@ describe('AdditionalDetailsSectionComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      // Trigger the setupEditUserForm logic
       spectator.detectChanges();
 
-      // Should hide the entire permissions section for /var/empty users
-      expect(spectator.component.shouldShowPermissions()).toBe(false);
-
-      // The permissions components should not be present in DOM
       const table = await loader.getHarness(DetailsTableHarness);
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
@@ -554,10 +578,6 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       spectator.detectChanges();
 
-      // Should show permissions section for regular home directories
-      expect(spectator.component.shouldShowPermissions()).toBe(true);
-
-      // The permissions components should be present in DOM
       const table = await loader.getHarness(DetailsTableHarness);
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
