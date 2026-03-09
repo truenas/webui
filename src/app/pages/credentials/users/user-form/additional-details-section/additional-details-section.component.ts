@@ -147,7 +147,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
-  shouldShowPermissions(): boolean {
+  protected shouldShowPermissions(): boolean {
     const homeValue = this.form.controls.home.value;
     return homeValue !== defaultHomePath;
   }

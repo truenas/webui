@@ -163,6 +163,25 @@ describe('EditableComponent', () => {
     }));
   });
 
+  describe('opened and closed outputs', () => {
+    it('emits opened when the editable is opened', async () => {
+      const openedSpy = jest.spyOn(spectator.component.opened, 'emit');
+
+      await editable.open();
+
+      expect(openedSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not emit opened when already open', async () => {
+      await editable.open();
+
+      const openedSpy = jest.spyOn(spectator.component.opened, 'emit');
+      spectator.component.open();
+
+      expect(openedSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('tryToClose', () => {
     it('closes the editable if there are no validation errors', async () => {
       await editable.open();
