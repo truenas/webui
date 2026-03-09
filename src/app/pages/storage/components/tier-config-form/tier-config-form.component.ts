@@ -5,6 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
@@ -12,6 +13,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -34,6 +36,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    WarningComponent,
   ],
 })
 export class TierConfigFormComponent implements OnInit {
@@ -44,6 +47,9 @@ export class TierConfigFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   isFormLoading = signal(false);
+  showEnabledWarning = signal(false);
+
+  protected readonly enabledWarning = T('Enabling tiering changes share behavior. SMB shares and WebDAV shares will no longer export sub-datasets.');
 
   formGroup = this.fb.nonNullable.group({
     enabled: [false],
@@ -51,9 +57,17 @@ export class TierConfigFormComponent implements OnInit {
     min_available_space: [0],
   });
 
+  private initialEnabled = false;
+
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
+    });
+
+    this.formGroup.controls.enabled.valueChanges.pipe(
+      takeUntilDestroyed(),
+    ).subscribe((enabled) => {
+      this.showEnabledWarning.set(enabled && !this.initialEnabled);
     });
   }
 
@@ -63,6 +77,7 @@ export class TierConfigFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (config: ZfsTierConfig) => {
+        this.initialEnabled = config.enabled;
         this.formGroup.patchValue(config);
         this.isFormLoading.set(false);
       },
