@@ -264,6 +264,27 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.value).toBe('/var/empty');
     });
 
+    it('preserves API validation error when home editable auto-opens', async () => {
+      const homeControl = spectator.component.form.controls.home;
+      homeControl.setValue('/var/empty/2');
+
+      // Simulate API validation error set by FormErrorHandlerService
+      homeControl.setErrors({
+        manualValidateError: true,
+        manualValidateErrorMsg: '"Home Directory" must begin with /mnt or set to /var/empty.',
+        ixManualValidateError: { message: '"Home Directory" must begin with /mnt or set to /var/empty.' },
+      });
+      homeControl.markAsTouched();
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      // API error should be preserved, not cleared by syncHomeValidators
+      expect(homeControl.errors?.manualValidateError).toBe(true);
+      expect(homeControl.value).toBe('/var/empty/2');
+    });
+
     it('checks zsh shell is selected when shell access is enabled', fakeAsync(async () => {
       shellAccess.set(true);
       spectator.detectChanges();
