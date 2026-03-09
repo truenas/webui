@@ -1,3 +1,4 @@
+// cspell:ignore volsize
 import { inherit } from 'app/enums/with-inherit.enum';
 import { FormPayloadTracker } from 'app/helpers/form-payload-tracker.class';
 
@@ -47,16 +48,27 @@ describe('FormPayloadTracker', () => {
     });
   });
 
-  describe('getManagedKeys', () => {
-    it('throws when called before capture', () => {
-      expect(() => tracker.getManagedKeys({ sync: 'STANDARD' }))
-        .toThrow('getManagedKeys() called before capture(). Check hasCaptured first.');
+  describe('applyDiff', () => {
+    it('is a no-op when no initial payload was captured', () => {
+      const data = { volsize: 1024, sync: 'STANDARD' } as Record<string, unknown>;
+      tracker.applyDiff(data, { sync: 'STANDARD' });
+      expect(data).toEqual({ volsize: 1024, sync: 'STANDARD' });
     });
 
-    it('returns union of initial and current keys', () => {
-      tracker.capture({ sync: 'STANDARD', compression: 'LZ4' });
-      expect(tracker.getManagedKeys({ sync: 'ALWAYS', comments: 'test' }))
-        .toEqual(new Set(['sync', 'compression', 'comments']));
+    it('removes unchanged managed keys and merges back changed ones', () => {
+      tracker.capture({ sync: 'STANDARD', compression: 'LZ4', snapdev: 'HIDDEN' });
+      const data = {
+        volsize: 1024, sync: 'ALWAYS', compression: 'LZ4', snapdev: 'HIDDEN',
+      } as Record<string, unknown>;
+      tracker.applyDiff(data, { sync: 'ALWAYS', compression: 'LZ4', snapdev: 'HIDDEN' });
+      expect(data).toEqual({ volsize: 1024, sync: 'ALWAYS' });
+    });
+
+    it('preserves non-managed keys in data', () => {
+      tracker.capture({ sync: 'STANDARD' });
+      const data = { volsize: 2048, encryption: true, sync: 'STANDARD' } as Record<string, unknown>;
+      tracker.applyDiff(data, { sync: 'STANDARD' });
+      expect(data).toEqual({ volsize: 2048, encryption: true });
     });
   });
 

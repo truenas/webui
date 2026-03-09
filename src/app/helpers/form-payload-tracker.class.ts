@@ -7,7 +7,10 @@
  *
  * Usage:
  * 1. After populating form with existing values, call `capture(computePayload())`.
- * 2. Before submit, call `diff(computePayload())` to get only changed properties.
+ * 2. Before submit, either:
+ *    - Call `diff(computePayload())` to get only changed properties (self-contained payloads).
+ *    - Call `applyDiff(data, computePayload())` to strip unchanged keys from a larger
+ *      payload that also contains non-diffed fields (e.g. volsize, encryption).
  *
  * Uses strict equality (===) — payload values should be primitives
  * (strings, numbers) or the inherit symbol.
@@ -42,22 +45,29 @@ export class FormPayloadTracker {
     return result;
   }
 
-  /**
-   * Returns the set of all keys managed by this tracker (union of
-   * initial and current keys). Useful when the caller needs to clear
-   * diff-managed keys from a separate data object before merging.
-   *
-   * @throws Error if called before capture(). Callers must check
-   * `hasCaptured` before calling this method.
-   */
-  getManagedKeys(currentPayload: Record<string, unknown>): Set<string> {
-    if (!this.initialPayload) {
-      throw new Error('getManagedKeys() called before capture(). Check hasCaptured first.');
-    }
+  private getManagedKeys(currentPayload: Record<string, unknown>): Set<string> {
     return new Set([
-      ...Object.keys(this.initialPayload),
+      ...Object.keys(this.initialPayload as Record<string, unknown>),
       ...Object.keys(currentPayload),
     ]);
+  }
+
+  /**
+   * Removes all diff-managed keys from `data`, then merges back only the
+   * properties that actually changed. This is the recommended way to
+   * integrate the diff into a larger payload object that contains
+   * non-diffed fields (e.g. volsize, encryption).
+   *
+   * No-op if capture() was never called (create mode).
+   */
+  applyDiff(data: Record<string, unknown>, currentPayload: Record<string, unknown>): void {
+    if (!this.initialPayload) return;
+
+    const diffedPayload = this.diff(currentPayload);
+    for (const key of this.getManagedKeys(currentPayload)) {
+      delete data[key];
+    }
+    Object.assign(data, diffedPayload);
   }
 
   get hasCaptured(): boolean {
