@@ -181,7 +181,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     } else {
       homeControl.removeValidators(Validators.required);
       if (!homeControl.value) {
-        homeControl.setValue(defaultHomePath, { emitEvent: false });
+        homeControl.setValue(defaultHomePath);
       }
     }
 
