@@ -118,7 +118,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       if (path && path !== defaultHomePath && !isEmptyHomeDirectory(path)) {
         return this.translate.instant('New directory under {path}', { path });
       }
-      return this.translate.instant('Not Set');
+      return '';
+    }
+    if (!this.editingUser() && (path === defaultHomePath || !path)) {
+      return '';
     }
     return path;
   }
