@@ -376,17 +376,46 @@ describe('ZvolFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
-        comments: '',
-        compression: 'LZ4',
-        deduplication: 'OFF',
-        force_size: false,
-        readonly: 'INHERIT',
-        snapdev: 'INHERIT',
-        sync: 'STANDARD',
         volsize: 2147483648,
+        force_size: false,
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('only includes changed ZFS properties in update payload', async () => {
+      await mainDetails.setValues({
+        Comments: 'new comment',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
+        comments: 'new comment',
+      }]);
+    });
+
+    it('sends inherit for special_small_block_size when changed from local to inherit', async () => {
+      // Simulate a zvol with special_small_block_size locally set to 128 KiB
+      // by re-capturing the payload tracker with a local value
+      const component = spectator.component as unknown as {
+        payloadTracker: { capture: (p: Record<string, unknown>) => void };
+        computeEditPayload: () => Record<string, unknown>;
+      };
+      const currentPayload = component.computeEditPayload();
+      component.payloadTracker.capture({ ...currentPayload, special_small_block_size: 131072 });
+
+      // User changes to Inherit
+      spectator.component.form.controls.special_small_block_size.setValue(inherit);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall[1][1].special_small_block_size).toBe(inherit);
     });
 
     it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
@@ -411,7 +440,7 @@ describe('ZvolFormComponent', () => {
       expect(updateCall[1][1].volsize).toBe(1075904512);
     });
 
-    it('preserves original size when change is below 0.1% threshold', async () => {
+    it('does not send volsize when change is below 0.1% threshold', async () => {
       // Set up a zvol with original size of 1 GiB (1073741824 bytes)
       (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
 
@@ -428,8 +457,8 @@ describe('ZvolFormComponent', () => {
         .find(([method]) => method === 'pool.dataset.update');
 
       expect(updateCall).toBeDefined();
-      // Should use original volsize to avoid precision loss
-      expect(updateCall[1][1].volsize).toBe(1073741824);
+      // Size didn't meaningfully change — don't send it
+      expect(updateCall[1][1].volsize).toBeUndefined();
     });
   });
 
