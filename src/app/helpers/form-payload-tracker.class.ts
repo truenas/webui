@@ -30,7 +30,7 @@ export class FormPayloadTracker {
    */
   diff(currentPayload: Record<string, unknown>): Record<string, unknown> {
     if (!this.initialPayload) {
-      return currentPayload;
+      return { ...currentPayload };
     }
 
     const result = { ...currentPayload };
@@ -47,12 +47,12 @@ export class FormPayloadTracker {
    * initial and current keys). Useful when the caller needs to clear
    * diff-managed keys from a separate data object before merging.
    *
-   * Returns an empty set when no initial payload was captured (create mode).
-   * Callers must check `hasCaptured` before using this in edit-mode logic.
+   * @throws Error if called before capture(). Callers must check
+   * `hasCaptured` before calling this method.
    */
   getManagedKeys(currentPayload: Record<string, unknown>): Set<string> {
     if (!this.initialPayload) {
-      return new Set();
+      throw new Error('getManagedKeys() called before capture(). Check hasCaptured first.');
     }
     return new Set([
       ...Object.keys(this.initialPayload),

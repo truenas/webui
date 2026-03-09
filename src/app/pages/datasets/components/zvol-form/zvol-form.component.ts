@@ -190,7 +190,7 @@ export class ZvolFormComponent implements OnInit {
     ],
   });
 
-  syncOptions: Option[] = mapToOptions(datasetSyncLabels, this.translate);
+  protected syncOptions: Option[] = mapToOptions(datasetSyncLabels, this.translate);
   protected compressionOptions: Option[] = [];
   protected compressionOptions$: Observable<Option[]> = of([]);
   protected deduplicationOptions: Option[] = mapToOptions(deduplicationSettingLabels, this.translate);
@@ -303,9 +303,7 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
-            if (!this.isNew && !this.payloadTracker.hasCaptured) {
-              this.payloadTracker.capture(this.computeEditPayload());
-            }
+            this.captureInitialPayloadIfNeeded();
           } else {
             let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
             parentDatasetId.pop();
@@ -326,9 +324,7 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
-                if (!this.isNew && !this.payloadTracker.hasCaptured) {
-                  this.payloadTracker.capture(this.computeEditPayload());
-                }
+                this.captureInitialPayloadIfNeeded();
 
                 this.cdr.markForCheck();
               },
@@ -635,6 +631,15 @@ export class ZvolFormComponent implements OnInit {
   }
 
   /**
+   * Captures the initial payload for diff tracking in edit mode.
+   * Safe to call from multiple async branches — only the first call takes effect.
+   */
+  private captureInitialPayloadIfNeeded(): void {
+    if (this.isNew || this.payloadTracker.hasCaptured) return;
+    this.payloadTracker.capture(this.computeEditPayload());
+  }
+
+  /**
    * Computes a payload containing only diffable ZFS properties for edit mode.
    * Excludes volsize/force_size (handled separately by readonly/alignment logic)
    * and encryption fields (disabled in edit mode).
@@ -676,6 +681,10 @@ export class ZvolFormComponent implements OnInit {
     return data;
   }
 
+  /**
+   * Mutates and returns the given data object — callers must pass a
+   * fresh object (e.g. from getRawValue()) to avoid side-effects.
+   */
   private getPayload(data: ZvolFormData): ZvolFormData {
     data.type = DatasetType.Volume;
 

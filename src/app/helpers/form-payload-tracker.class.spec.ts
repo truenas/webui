@@ -34,6 +34,11 @@ describe('FormPayloadTracker', () => {
       expect(tracker.diff({ readonly: inherit, sync: inherit })).toEqual({ sync: inherit });
     });
 
+    it('does not re-add properties that were removed from the current payload', () => {
+      tracker.capture({ sync: 'STANDARD', compression: 'LZ4', snapdev: 'HIDDEN' });
+      expect(tracker.diff({ sync: 'ALWAYS' })).toEqual({ sync: 'ALWAYS' });
+    });
+
     it('does not mutate the input payload', () => {
       tracker.capture({ sync: 'STANDARD', compression: 'LZ4' });
       const payload = { sync: 'STANDARD', compression: 'LZ4' };
@@ -43,8 +48,9 @@ describe('FormPayloadTracker', () => {
   });
 
   describe('getManagedKeys', () => {
-    it('returns empty set when no initial payload was captured', () => {
-      expect(tracker.getManagedKeys({ sync: 'STANDARD' })).toEqual(new Set());
+    it('throws when called before capture', () => {
+      expect(() => tracker.getManagedKeys({ sync: 'STANDARD' }))
+        .toThrow('getManagedKeys() called before capture(). Check hasCaptured first.');
     });
 
     it('returns union of initial and current keys', () => {
