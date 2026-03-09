@@ -147,6 +147,9 @@ export class FibreChannelService {
     return this.api.call('fc.fc_host.query', [[['id', '=', hostId]]]).pipe(
       switchMap((hosts) => {
         const host = hosts[0];
+        if (!host) {
+          throw new Error(`FC host with id ${hostId} not found`);
+        }
         return this.api.call('fc.fc_host.update', [host.id, { npiv: host.npiv + 1 }]).pipe(
           map(() => `${host.alias}/${host.npiv + 1}`),
         );
