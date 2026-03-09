@@ -227,6 +227,25 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
     });
 
+    it('keeps user-set path and removes required validator when home editable is closed with a real path', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+
+      // Set a real path so we can close
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt/tank/user');
+      spectator.detectChanges();
+
+      await homeEditable.tryToClose();
+
+      // Required validator should be removed
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
+      // User-set path should be preserved (not reset to defaultHomePath)
+      expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/user');
+    });
+
     it('removes required validator when home_create is unchecked while editable is open', async () => {
       const table = await loader.getHarness(DetailsTableHarness);
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);

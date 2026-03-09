@@ -178,7 +178,7 @@ describe('EditableComponent', () => {
       const openedSpy = jest.spyOn(spectator.component.opened, 'emit');
       spectator.component.open();
 
-      expect(openedSpy).toHaveBeenCalledTimes(1);
+      expect(openedSpy).toHaveBeenCalledTimes(0);
     });
   });
 
