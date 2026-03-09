@@ -294,6 +294,32 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(await perms.isDisabled()).toBe(false);
     });
 
+    it('switches explorer label to "Create Home Directory Under" after path is set', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const createCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Create Home Directory' }));
+      await createCheckbox.setValue(true);
+
+      // Before setting a path, label should be 'Home Directory'
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      expect(explorer).toBeTruthy();
+
+      // Set a real path
+      await explorer.setValue('/mnt/tank/user');
+      spectator.detectChanges();
+
+      // After setting a path, label should switch to 'Create Home Directory Under'
+      const explorerWithNewLabel = await loader.getHarnessOrNull(IxExplorerHarness.with({ label: 'Create Home Directory Under' }));
+      expect(explorerWithNewLabel).toBeTruthy();
+    });
+
     it('resets permissions when create home directory is checked', async () => {
       spectator = createComponent({
         props: { editingUser: mockUser },
