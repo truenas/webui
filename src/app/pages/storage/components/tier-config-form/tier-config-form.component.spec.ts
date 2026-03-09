@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
@@ -82,5 +83,24 @@ describe('TierConfigFormComponent', () => {
       min_available_space: 20,
     }]);
     expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+  });
+
+  it('shows warning when enabling tiering for the first time', async () => {
+    const disabledConfig = { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 } as ZfsTierConfig;
+    jest.spyOn(api, 'call').mockReturnValueOnce(of(disabledConfig));
+
+    spectator = createComponent();
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-warning')).not.toExist();
+
+    const form = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(IxFormHarness);
+    await form.fillForm({ Enabled: true });
+
+    expect(spectator.query('ix-warning')).toExist();
+  });
+
+  it('does not show warning when tiering is already enabled', () => {
+    expect(spectator.query('ix-warning')).not.toExist();
   });
 });
