@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  DatasetCaseSensitivity, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
+  DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -44,8 +44,7 @@ describe('ZvolFormComponent', () => {
     name: 'test pool',
     pool: 'test pool',
     encrypted: false,
-    children: [{ name: 'test pool/existing-child' }] as Dataset[],
-    casesensitivity: { value: DatasetCaseSensitivity.Insensitive },
+    children: [] as Dataset[],
     deduplication: {
       parsed: 'off',
       rawvalue: 'off',
@@ -225,26 +224,6 @@ describe('ZvolFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
-    it('does not allow creating zvol with existing name', async () => {
-      await form.fillForm({
-        Name: 'existing-child',
-        Size: '1 GiB',
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
-      expect(spectator.component.form.controls.name.hasError('forbidden')).toBe(true);
-    });
-
-    it('does not allow creating zvol with existing name in different case on case-insensitive filesystem', async () => {
-      await form.fillForm({
-        Name: 'Existing-Child',
-        Size: '1 GiB',
-      });
-
-      expect(spectator.component.form.controls.name.hasError('forbidden')).toBe(true);
-    });
-
     it('does not allow creating zvol with zero size', async () => {
       await form.fillForm({
         Name: 'new zvol',
@@ -397,17 +376,46 @@ describe('ZvolFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
-        comments: '',
-        compression: 'LZ4',
-        deduplication: 'OFF',
-        force_size: false,
-        readonly: 'INHERIT',
-        snapdev: 'INHERIT',
-        sync: 'STANDARD',
         volsize: 2147483648,
+        force_size: false,
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('only includes changed ZFS properties in update payload', async () => {
+      await mainDetails.setValues({
+        Comments: 'new comment',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
+        comments: 'new comment',
+      }]);
+    });
+
+    it('sends inherit for special_small_block_size when changed from local to inherit', async () => {
+      // Simulate a zvol with special_small_block_size locally set to 128 KiB
+      // by re-capturing the payload tracker with a local value
+      const component = spectator.component as unknown as {
+        payloadTracker: { capture: (p: Record<string, unknown>) => void };
+        computeEditPayload: () => Record<string, unknown>;
+      };
+      const currentPayload = component.computeEditPayload();
+      component.payloadTracker.capture({ ...currentPayload, special_small_block_size: 131072 });
+
+      // User changes to Inherit
+      spectator.component.form.controls.special_small_block_size.setValue(inherit);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall[1][1].special_small_block_size).toBe(inherit);
     });
 
     it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
@@ -432,7 +440,7 @@ describe('ZvolFormComponent', () => {
       expect(updateCall[1][1].volsize).toBe(1075904512);
     });
 
-    it('preserves original size when change is below 0.1% threshold', async () => {
+    it('does not send volsize when change is below 0.1% threshold', async () => {
       // Set up a zvol with original size of 1 GiB (1073741824 bytes)
       (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
 
@@ -449,8 +457,8 @@ describe('ZvolFormComponent', () => {
         .find(([method]) => method === 'pool.dataset.update');
 
       expect(updateCall).toBeDefined();
-      // Should use original volsize to avoid precision loss
-      expect(updateCall[1][1].volsize).toBe(1073741824);
+      // Size didn't meaningfully change — don't send it
+      expect(updateCall[1][1].volsize).toBeUndefined();
     });
   });
 

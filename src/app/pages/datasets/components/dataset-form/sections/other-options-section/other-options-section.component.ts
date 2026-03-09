@@ -32,6 +32,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { FormPayloadTracker } from 'app/helpers/form-payload-tracker.class';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -90,6 +91,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
+  private payloadTracker = new FormPayloadTracker();
 
   readonly form = this.formBuilder.group({
     comments: [''],
@@ -222,6 +224,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
+    const payload = this.computePayload();
+    return this.payloadTracker.diff(payload) as Partial<DatasetCreate> | Partial<DatasetUpdate>;
+  }
+
+  private computePayload(): Record<string, unknown> {
     const values = this.form.value;
 
     const payload = {
@@ -246,7 +253,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       payload.aclmode = AclMode.Inherit;
     }
 
-    return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
+    return payload;
   }
 
   private checkIfDedupIsSupported(): void {
@@ -332,6 +339,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       special_small_block_size: specialSmallBlockSizeValue,
       special_small_block_size_custom: customValue,
     });
+
+    if (!this.payloadTracker.hasCaptured) {
+      this.payloadTracker.capture(this.computePayload());
+    }
   }
 
   private updateAclMode(): void {

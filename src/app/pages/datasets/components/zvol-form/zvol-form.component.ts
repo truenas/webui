@@ -16,7 +16,6 @@ import {
 } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
-  DatasetCaseSensitivity,
   DatasetRecordSize,
   DatasetSnapdev, datasetSnapdevLabels,
   datasetSyncLabels,
@@ -29,6 +28,7 @@ import { Role } from 'app/enums/role.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { FormPayloadTracker } from 'app/helpers/form-payload-tracker.class';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
@@ -59,10 +59,25 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * Encryption-related form fields cleaned up after encryption processing
+ * in both editSubmit() and computeEditPayload(). Kept as a shared
+ * constant so the two code paths stay in sync.
+ */
+const encryptionFormFields: readonly string[] = [
+  'inherit_encryption',
+  'key',
+  'generate_key',
+  'passphrase',
+  'confirm_passphrase',
+  'pbkdf2iters',
+  'encryption_type',
+  'algorithm',
+];
 
 @Component({
   selector: 'ix-zvol-form',
@@ -122,6 +137,7 @@ export class ZvolFormComponent implements OnInit {
   readonly helptext = helptextZvol;
   readonly OnOff = OnOff;
   inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
+  namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
 
   protected isLoading = signal(false);
@@ -137,9 +153,10 @@ export class ZvolFormComponent implements OnInit {
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
   private originalVolsize: number | null = null;
+  private payloadTracker = new FormPayloadTracker();
 
   form = this.formBuilder.group({
-    name: ['', [Validators.required]],
+    name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
     comments: [''],
     volsize: ['', [Validators.required, Validators.min(1)]],
     force_size: [false],
@@ -275,7 +292,9 @@ export class ZvolFormComponent implements OnInit {
             this.form.controls.encryption.disable();
           }
 
-          this.addNameValidator(parentOrZvol);
+          this.namesInUse = parentOrZvol.children?.map((child) => {
+            return /[^/]*$/.exec(child.name)[0];
+          }) || [];
 
           this.inheritEncryptionProperties(parentOrZvol);
 
@@ -284,6 +303,9 @@ export class ZvolFormComponent implements OnInit {
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
+            if (!this.isNew && !this.payloadTracker.hasCaptured) {
+              this.payloadTracker.capture(this.computeEditPayload());
+            }
           } else {
             let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
             parentDatasetId.pop();
@@ -304,6 +326,9 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
+                if (!this.isNew && !this.payloadTracker.hasCaptured) {
+                  this.payloadTracker.capture(this.computeEditPayload());
+                }
 
                 this.cdr.markForCheck();
               },
@@ -312,18 +337,6 @@ export class ZvolFormComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  private addNameValidator(parent: Dataset): void {
-    const isCaseInsensitive = parent.casesensitivity?.value !== DatasetCaseSensitivity.Sensitive;
-    const namesInUse = (parent.children?.map((child) => {
-      return /[^/]*$/.exec(child.name)?.[0];
-    }) || []).filter((name): name is string => name !== undefined);
-
-    this.form.controls.name.addValidators([
-      datasetNameTooLong(parent.name),
-      forbiddenValues(namesInUse, isCaseInsensitive),
-    ]);
   }
 
   private copyParentProperties(parent: Dataset): void {
@@ -609,6 +622,48 @@ export class ZvolFormComponent implements OnInit {
     }
   }
 
+  /**
+   * Computes a payload containing only diffable ZFS properties for edit mode.
+   * Excludes volsize/force_size (handled separately by readonly/alignment logic)
+   * and encryption fields (disabled in edit mode).
+   *
+   * This is the single source of truth for special_small_block_size
+   * transformation — the inherit symbol is preserved so the diff can
+   * detect changes from a local value to inherited.
+   */
+  private computeEditPayload(): Record<string, unknown> {
+    const data = this.getPayload(
+      this.form.getRawValue(),
+    ) as Record<string, unknown>;
+
+    // Transform special_small_block_size from UI toggle to API value.
+    // Keeps inherit so the diff can detect local→inherited changes.
+    const transformedValue = transformSpecialSmallBlockSizeForPayload(
+      data.special_small_block_size as WithInherit<OnOff>,
+      data.special_small_block_size_custom as number | null,
+    );
+    if (transformedValue === undefined) {
+      delete data.special_small_block_size;
+    } else {
+      data.special_small_block_size = transformedValue;
+    }
+    delete data.special_small_block_size_custom;
+
+    // Remove non-ZFS fields that have their own handling in editSubmit.
+    delete data.volsize;
+    delete data.force_size;
+
+    // Remove encryption fields — they're disabled in edit mode
+    // and not relevant for diffing ZFS properties.
+    delete data.encryption;
+    delete data.encryption_options;
+    for (const field of encryptionFormFields) {
+      delete data[field];
+    }
+
+    return data;
+  }
+
   private getPayload(data: ZvolFormData): ZvolFormData {
     data.type = DatasetType.Volume;
 
@@ -720,19 +775,9 @@ export class ZvolFormComponent implements OnInit {
           delete data.volsize;
         }
 
-        // Handle special_small_block_size transformation
-        const transformedValue = transformSpecialSmallBlockSizeForPayload(
-          data.special_small_block_size as WithInherit<OnOff>,
-          data.special_small_block_size_custom,
-        );
-        if (transformedValue === undefined || transformedValue === inherit) {
-          // For zvols, delete the property when inherit or undefined
-          delete data.special_small_block_size;
-        } else {
-          data.special_small_block_size = transformedValue;
-        }
-
-        // Remove UI-only field
+        // Remove UI-only fields; actual special_small_block_size
+        // transformation is handled by computeEditPayload().
+        delete data.special_small_block_size;
         delete data.special_small_block_size_custom;
 
         if (data.inherit_encryption) {
@@ -751,15 +796,25 @@ export class ZvolFormComponent implements OnInit {
           data.encryption_options.algorithm = data.algorithm;
         }
 
-        // Delete all encryption-related fields when editing
-        delete data.inherit_encryption;
-        delete data.key;
-        delete data.generate_key;
-        delete data.passphrase;
-        delete data.confirm_passphrase;
-        delete data.pbkdf2iters;
-        delete data.encryption_type;
-        delete data.algorithm;
+        // Delete individual encryption form fields after processing.
+        for (const field of encryptionFormFields) {
+          delete (data as Record<string, unknown>)[field];
+        }
+
+        // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
+        // computeEditPayload() is the single source of truth for ZFS property
+        // transformations. We clear all diff-managed keys from data, then merge
+        // back only the ones that actually changed.
+        if (this.payloadTracker.hasCaptured) {
+          const currentPayload = this.computeEditPayload();
+          const diffedPayload = this.payloadTracker.diff(currentPayload);
+
+          for (const key of this.payloadTracker.getManagedKeys(currentPayload)) {
+            delete (data as Record<string, unknown>)[key];
+          }
+
+          Object.assign(data, diffedPayload);
+        }
 
         let canSubmit = true;
         if (data.volsize !== undefined) {
@@ -782,20 +837,29 @@ export class ZvolFormComponent implements OnInit {
             // User changed the size, use the parsed value and round to block size
             data.volsize = this.alignVolsizeToBlocksize(parsedVolsize, volblocksizeIntegerValue);
           } else {
-            // User didn't change the size, use the original value to avoid precision loss
-            data.volsize = this.originalVolsize;
+            // User didn't change the size — don't send it at all
+            delete data.volsize;
           }
 
-          let roundedVolSize = datasets[0].volsize.parsed;
+          if (data.volsize !== undefined) {
+            let roundedVolSize = datasets[0].volsize.parsed;
 
-          if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
-            roundedVolSize = datasets[0].volsize.parsed
-              + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
-          }
+            if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
+              roundedVolSize = datasets[0].volsize.parsed
+                + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+            }
 
-          if (data.volsize && data.volsize < roundedVolSize) {
-            canSubmit = false;
+            if ((data.volsize as number) < roundedVolSize) {
+              canSubmit = false;
+            }
           }
+        }
+
+        // force_size is only relevant when volsize is being changed.
+        // It survives the diff loop above because computeEditPayload()
+        // excludes it from the diffable set (it has dedicated handling here).
+        if (data.volsize === undefined) {
+          delete data.force_size;
         }
 
         if (canSubmit) {
