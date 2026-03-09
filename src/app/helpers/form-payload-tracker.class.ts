@@ -46,6 +46,9 @@ export class FormPayloadTracker {
    * Returns the set of all keys managed by this tracker (union of
    * initial and current keys). Useful when the caller needs to clear
    * diff-managed keys from a separate data object before merging.
+   *
+   * Returns an empty set when no initial payload was captured (create mode).
+   * Callers must check `hasCaptured` before using this in edit-mode logic.
    */
   getManagedKeys(currentPayload: Record<string, unknown>): Set<string> {
     if (!this.initialPayload) {
