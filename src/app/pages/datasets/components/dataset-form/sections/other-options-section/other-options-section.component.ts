@@ -92,6 +92,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
   private payloadTracker = new FormPayloadTracker();
+  private hasSetUpRecordsizeWarning = false;
+  private hasSetUpDedupWarning = false;
+  private hasSetUpAclTypeWarning = false;
+  private hasSetUpSyncChanges = false;
 
   readonly form = this.formBuilder.group({
     comments: [''],
@@ -469,6 +473,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpDedupWarning(): void {
+    if (this.hasSetUpDedupWarning) return;
+    this.hasSetUpDedupWarning = true;
+
     this.form.controls.deduplication.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dedup) => {
       if (!dedup || [DeduplicationSetting.Off, inherit].includes(dedup)) {
         this.cdr.markForCheck();
@@ -516,6 +523,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpAclTypeWarning(): void {
+    if (this.hasSetUpAclTypeWarning) return;
+    this.hasSetUpAclTypeWarning = true;
+
     this.form.controls.acltype.valueChanges
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -546,11 +556,14 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpRecordsizeWarning(): void {
+    if (this.hasSetUpRecordsizeWarning) return;
+
     const parent = this.parent();
     if (!parent) {
       return;
     }
 
+    this.hasSetUpRecordsizeWarning = true;
     const root = parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
@@ -577,6 +590,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private listenForSyncChanges(): void {
+    if (this.hasSetUpSyncChanges) return;
+    this.hasSetUpSyncChanges = true;
+
     this.form.controls.sync.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
         this.dialogService.confirm({
