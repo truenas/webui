@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -82,6 +82,16 @@ export class WidgetSysInfoActiveComponent {
   ), { requireSync: true });
 
   version = computed(() => this.systemInfo().version);
+  hasPreReleaseName = computed(() => /-(MASTER|RC\d*|BETA\d*|ALPHA\d*)/i.test(this.version() || ''));
+
+  shortVersion = computed(() => {
+    const ver = this.version();
+    if (!ver || this.hasPreReleaseName()) return ver;
+    const match = /^(\d+\.\d+)/.exec(ver);
+    return match ? match[1] : ver;
+  });
+
+  showFullVersion = signal(false);
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
     this.realElapsedSeconds();

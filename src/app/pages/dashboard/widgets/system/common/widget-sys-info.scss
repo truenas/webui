@@ -156,6 +156,14 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
+    .clickable-version {
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 

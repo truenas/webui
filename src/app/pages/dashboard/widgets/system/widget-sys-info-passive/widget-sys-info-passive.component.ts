@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -93,6 +93,16 @@ export class WidgetSysInfoPassiveComponent {
 
   isWaitingForEnabledHa = computed(() => !this.systemInfo() && !this.canFailover() && !this.isHaEnabled());
   version = computed(() => this.systemInfo().version);
+  hasPreReleaseName = computed(() => /-(MASTER|RC\d*|BETA\d*|ALPHA\d*)/i.test(this.version() || ''));
+
+  shortVersion = computed(() => {
+    const ver = this.version();
+    if (!ver || this.hasPreReleaseName()) return ver;
+    const match = /^(\d+\.\d+)/.exec(ver);
+    return match ? match[1] : ver;
+  });
+
+  showFullVersion = signal(false);
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
   datetime = computed(() => {
     this.realElapsedSeconds();

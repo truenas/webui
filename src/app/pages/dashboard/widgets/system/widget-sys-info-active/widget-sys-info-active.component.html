@@ -101,11 +101,21 @@
             <strong>{{ 'Version' | translate }}:</strong>
             @if (isLoaded()) {
               <div class="copy-version">
-                <div class="copy-version-text" [matTooltip]="version()">
-                  <span>
-                    {{ version() }}
-                    {{ rendered() }}
-                  </span>
+                <div
+                  class="copy-version-text clickable-version"
+                  [matTooltip]="version()"
+                  (click)="showFullVersion.set(!showFullVersion())"
+                >
+                  @if (showFullVersion()) {
+                    <span>
+                      {{ version() }}
+                      {{ rendered() }}
+                    </span>
+                  } @else {
+                    <span>
+                      {{ shortVersion() }}
+                    </span>
+                  }
                 </div>
                 <ix-copy-button [text]="version()"></ix-copy-button>
               </div>
