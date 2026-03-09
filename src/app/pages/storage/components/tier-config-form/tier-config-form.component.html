@@ -10,6 +10,10 @@
           formControlName="enabled"
           [label]="'Enabled' | translate"
         ></ix-checkbox>
+
+        @if (showEnabledWarning()) {
+          <ix-warning [message]="enabledWarning"></ix-warning>
+        }
         <ix-input
           formControlName="max_concurrent_jobs"
           type="number"
