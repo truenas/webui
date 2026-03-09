@@ -118,7 +118,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       if (path && path !== defaultHomePath && !isEmptyHomeDirectory(path)) {
         return this.translate.instant('New directory under {path}', { path });
       }
-      return defaultHomePath;
+      return this.translate.instant('Not Set');
     }
     return path;
   }
@@ -462,14 +462,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.group.disabledWhile(this.form.controls.group_create.value$);
     this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
     this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
-
-    this.form.controls.home.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((home) => {
-      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
-        this.form.controls.home_mode.disable();
-      } else {
-        this.form.controls.home_mode.enable();
-      }
-    });
 
     this.form.controls.group.valueChanges
       .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
