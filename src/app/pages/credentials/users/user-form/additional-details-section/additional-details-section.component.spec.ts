@@ -194,6 +194,39 @@ describe('AdditionalDetailsSectionComponent', () => {
       });
     });
 
+    it('clears default path and adds required validator when home editable is opened', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      // Before opening, home should be defaultHomePath
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+
+      await homeEditable.open();
+
+      // After opening with home_create=true, defaultHomePath should be cleared
+      expect(spectator.component.form.controls.home.value).toBe('');
+
+      // Required validator should be active
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(true);
+    });
+
+    it('restores default path and removes required validator when home editable is closed', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+
+      // Set a valid path so editable can close (it blocks close on validation errors)
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt/tank/user');
+      spectator.detectChanges();
+
+      await homeEditable.tryToClose();
+
+      expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/user');
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
+    });
+
     it('checks zsh shell is selected when shell access is enabled', fakeAsync(async () => {
       shellAccess.set(true);
       spectator.detectChanges();

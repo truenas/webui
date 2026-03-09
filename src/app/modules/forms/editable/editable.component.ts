@@ -72,6 +72,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   readonly autoFocus = input(true);
 
   readonly closed = output();
+  readonly opened = output();
 
   isOpen = signal(false);
 
@@ -151,6 +152,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   open(): void {
     this.focusService.captureCurrentFocus();
     this.isOpen.set(true);
+    this.opened.emit();
     this.addClickOutsideListener();
     this.addKeydownListener();
 
