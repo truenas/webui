@@ -162,22 +162,30 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected onHomeEditableOpened(): void {
     if (this.homeEditableOpen || this.editingUser()) return;
     this.homeEditableOpen = true;
-    if (this.form.controls.home_create.value) {
-      this.form.controls.home.addValidators(Validators.required);
-      if (this.form.controls.home.value === defaultHomePath) {
-        this.form.controls.home.setValue('');
-      }
-      this.form.controls.home.updateValueAndValidity();
-    }
+    this.syncHomeValidators(this.form.controls.home_create.value, true);
   }
 
   protected onHomeEditableClosed(): void {
     this.homeEditableOpen = false;
-    this.form.controls.home.removeValidators(Validators.required);
-    if (!this.form.controls.home.value) {
-      this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
+    this.syncHomeValidators(false, false);
+  }
+
+  private syncHomeValidators(isCreating: boolean, isOpen: boolean): void {
+    const homeControl = this.form.controls.home;
+
+    if (isCreating && isOpen) {
+      homeControl.addValidators(Validators.required);
+      if (homeControl.value === defaultHomePath) {
+        homeControl.setValue('');
+      }
+    } else {
+      homeControl.removeValidators(Validators.required);
+      if (!homeControl.value) {
+        homeControl.setValue(defaultHomePath, { emitEvent: false });
+      }
     }
-    this.form.controls.home.updateValueAndValidity();
+
+    homeControl.updateValueAndValidity();
   }
 
   protected groupsProvider: ChipsProvider = this.createGroupsProvider();
@@ -617,25 +625,13 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
 
     this.form.controls.home_create.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((checked) => {
+      this.syncHomeValidators(checked, this.homeEditableOpen);
       if (checked) {
-        if (this.homeEditableOpen) {
-          this.form.controls.home.addValidators(Validators.required);
-        }
-        if (this.form.controls.home.value === defaultHomePath) {
-          this.form.controls.home.setValue('', { emitEvent: false });
-        }
         this.form.patchValue({
           home_mode: '700',
           default_permissions: true,
         });
-        this.form.controls.home.updateValueAndValidity();
         this.cdr.detectChanges();
-      } else {
-        this.form.controls.home.removeValidators(Validators.required);
-        if (!this.form.controls.home.value) {
-          this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
-        }
-        this.form.controls.home.updateValueAndValidity();
       }
     });
   }
