@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
-  BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap,
+  BehaviorSubject, Observable, combineLatest, filter, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -220,8 +220,7 @@ export class ReportingExporterListComponent implements OnInit {
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open(this.translate.instant('Deleting exporter'))),
-      switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id])),
+      switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (deleted) => {
@@ -229,7 +228,6 @@ export class ReportingExporterListComponent implements OnInit {
           this.getExporters();
         }
       },
-      complete: () => this.loader.close(),
       error: (error: unknown) => this.errorCaught(error),
     });
   }
