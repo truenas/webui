@@ -9,8 +9,8 @@
  * 1. After populating form with existing values, call `capture(computePayload())`.
  * 2. Before submit, either:
  *    - Call `diff(computePayload())` to get only changed properties (self-contained payloads).
- *    - Call `applyDiff(data, computePayload())` to strip unchanged keys from a larger
- *      payload that also contains non-diffed fields (e.g. volume size, encryption).
+ *    - Call `applyDiff(data, computePayload())` to get a new object with unchanged keys
+ *      stripped from a larger payload that also contains non-diffed fields (e.g. volume size, encryption).
  *
  * Uses strict equality (===) — payload values should be primitives
  * (strings, numbers) or the inherit symbol.
@@ -59,21 +59,21 @@ export class FormPayloadTracker<T extends Record<string, unknown> = Record<strin
   }
 
   /**
-   * Removes all diff-managed keys from `data`, then merges back only the
-   * properties that actually changed. This is the recommended way to
-   * integrate the diff into a larger payload object that contains
-   * non-diffed fields (e.g. volume size, encryption).
+   * Returns a new object with all diff-managed keys removed from `data`,
+   * then merged back with only the properties that actually changed.
+   * Non-managed keys from `data` are preserved as-is.
    *
-   * No-op if capture() was never called (create mode).
+   * Returns a shallow copy of `data` if capture() was never called (create mode).
    */
-  applyDiff(data: Record<string, unknown>, currentPayload: T): void {
-    if (!this.initialPayload) return;
+  applyDiff(data: Record<string, unknown>, currentPayload: T): Record<string, unknown> {
+    if (!this.initialPayload) return { ...data };
 
+    const result = { ...data };
     const diffedPayload = this.diff(currentPayload);
     for (const key of this.getManagedKeys(currentPayload)) {
-      delete data[key];
+      delete result[key];
     }
-    Object.assign(data, diffedPayload);
+    return { ...result, ...diffedPayload };
   }
 
   get hasCaptured(): boolean {
