@@ -32,12 +32,12 @@ export const helptextSystemUpdate = {
   continueDialogAction: T('Continue with the upgrade'),
 
   clickForInformationLink: T('Click for information on\
-    <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">TrueNAS SCALE Migration, Nightly trains\
-    and other upgrade options.</a>'),
+ <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">TrueNAS SCALE Migration, Nightly trains\
+ and other upgrade options.</a>'),
 
   haUpdate: {
     completeTitle: T('Complete the Upgrade'),
-    completeMessage: T('The standby controller has finished upgrading. To complete the update process, \
+    completeMessage: T('The standby controller has finished upgrading. To complete the update process,\
  failover to the standby controller.'),
     completeAction: T('Close'),
   },

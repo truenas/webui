@@ -272,7 +272,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Test Cloud Sync',
-      message: 'Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.',
+      message: 'Start a dry run test of this cloud sync task? The system will connect to the cloud service provider and simulate transferring a file. No data will be sent or received.',
       hideCheckbox: true,
     });
 
