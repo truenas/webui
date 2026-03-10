@@ -49,10 +49,10 @@ describe('FormPayloadTracker', () => {
   });
 
   describe('applyDiff', () => {
-    it('is a no-op when no initial payload was captured', () => {
+    it('returns a copy when no initial payload was captured', () => {
       const data = { volsize: 1024, sync: 'STANDARD' } as Record<string, unknown>;
-      tracker.applyDiff(data, { sync: 'STANDARD' });
-      expect(data).toEqual({ volsize: 1024, sync: 'STANDARD' });
+      const result = tracker.applyDiff(data, { sync: 'STANDARD' });
+      expect(result).toEqual({ volsize: 1024, sync: 'STANDARD' });
     });
 
     it('removes unchanged managed keys and merges back changed ones', () => {
@@ -60,15 +60,22 @@ describe('FormPayloadTracker', () => {
       const data = {
         volsize: 1024, sync: 'ALWAYS', compression: 'LZ4', snapdev: 'HIDDEN',
       } as Record<string, unknown>;
-      tracker.applyDiff(data, { sync: 'ALWAYS', compression: 'LZ4', snapdev: 'HIDDEN' });
-      expect(data).toEqual({ volsize: 1024, sync: 'ALWAYS' });
+      const result = tracker.applyDiff(data, { sync: 'ALWAYS', compression: 'LZ4', snapdev: 'HIDDEN' });
+      expect(result).toEqual({ volsize: 1024, sync: 'ALWAYS' });
     });
 
     it('preserves non-managed keys in data', () => {
       tracker.capture({ sync: 'STANDARD' });
       const data = { volsize: 2048, encryption: true, sync: 'STANDARD' } as Record<string, unknown>;
-      tracker.applyDiff(data, { sync: 'STANDARD' });
-      expect(data).toEqual({ volsize: 2048, encryption: true });
+      const result = tracker.applyDiff(data, { sync: 'STANDARD' });
+      expect(result).toEqual({ volsize: 2048, encryption: true });
+    });
+
+    it('does not mutate the input data', () => {
+      tracker.capture({ sync: 'STANDARD', compression: 'LZ4' });
+      const data = { volsize: 1024, sync: 'ALWAYS', compression: 'LZ4' } as Record<string, unknown>;
+      tracker.applyDiff(data, { sync: 'ALWAYS', compression: 'LZ4' });
+      expect(data).toEqual({ volsize: 1024, sync: 'ALWAYS', compression: 'LZ4' });
     });
   });
 
