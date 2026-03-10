@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -29,6 +29,11 @@ describe('AdditionalDetailsSectionComponent', () => {
   let loader: HarnessLoader;
 
   const shellAccess = signal(false);
+  const shellAccess$ = new BehaviorSubject(false);
+  function setShellAccess(value: boolean): void {
+    shellAccess.set(value);
+    shellAccess$.next(value);
+  }
   const mockUser = {
     id: 69,
     uid: 1004,
@@ -69,13 +74,14 @@ describe('AdditionalDetailsSectionComponent', () => {
         userConfig: jest.fn(() => ({})),
         shellAccess: jest.fn(() => shellAccess()),
         role: jest.fn(),
-        state$: of({
+        state$: shellAccess$.pipe(map((sa) => ({
           setupDetails: {
             allowedAccess: {
-              shellAccess: shellAccess(),
+              shellAccess: sa,
             },
+            role: null as null,
           },
-        }),
+        }))),
       }),
       mockProvider(SnackbarService),
       mockApi([
@@ -109,6 +115,7 @@ describe('AdditionalDetailsSectionComponent', () => {
   beforeEach(() => {
     // Mock scrollIntoView since it's not available in test environment
     Element.prototype.scrollIntoView = jest.fn();
+    setShellAccess(false);
   });
 
   describe('sudo commands fields', () => {
@@ -117,7 +124,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         props: { editingUser: mockUser },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      shellAccess.set(true);
+      setShellAccess(true);
     });
 
     it('displays initial sudo command values correctly', async () => {
@@ -147,7 +154,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      shellAccess.set(false);
+      setShellAccess(false);
     });
 
     it('checks initial value when creating a new user', () => {
@@ -286,7 +293,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
 
     it('checks zsh shell is selected when shell access is enabled', fakeAsync(async () => {
-      shellAccess.set(true);
+      setShellAccess(true);
       spectator.detectChanges();
 
       tick();
@@ -306,11 +313,11 @@ describe('AdditionalDetailsSectionComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      shellAccess.set(false);
+      setShellAccess(false);
     });
 
     it('checks initial value when editing user', async () => {
-      shellAccess.set(true);
+      setShellAccess(true);
       const values = await (await loader.getHarness(DetailsTableHarness)).getValues();
 
       expect(values).toEqual({
