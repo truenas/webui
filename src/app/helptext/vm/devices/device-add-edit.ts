@@ -61,4 +61,6 @@ export const helptextDevice = {
   bind_tooltip: T('Select an IP address to bind to for display connections.'),
   password_tooltip: T('Enter a password for display authentication.'),
   web_tooltip: T('Set to enable connecting to the SPICE web interface.'),
+
+  datastore_tooltip: T('Select a pool or dataset for the new zvol.'),
 };

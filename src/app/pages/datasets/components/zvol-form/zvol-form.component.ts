@@ -16,6 +16,7 @@ import {
 } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
+  DatasetCaseSensitivity,
   DatasetRecordSize,
   DatasetSnapdev, datasetSnapdevLabels,
   datasetSyncLabels,
@@ -58,6 +59,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -120,7 +122,6 @@ export class ZvolFormComponent implements OnInit {
   readonly helptext = helptextZvol;
   readonly OnOff = OnOff;
   inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
-  namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
 
   protected isLoading = signal(false);
@@ -138,7 +139,7 @@ export class ZvolFormComponent implements OnInit {
   private originalVolsize: number | null = null;
 
   form = this.formBuilder.group({
-    name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
+    name: ['', [Validators.required]],
     comments: [''],
     volsize: ['', [Validators.required, Validators.min(1)]],
     force_size: [false],
@@ -274,9 +275,7 @@ export class ZvolFormComponent implements OnInit {
             this.form.controls.encryption.disable();
           }
 
-          this.namesInUse = parentOrZvol.children?.map((child) => {
-            return /[^/]*$/.exec(child.name)[0];
-          }) || [];
+          this.addNameValidator(parentOrZvol);
 
           this.inheritEncryptionProperties(parentOrZvol);
 
@@ -313,6 +312,18 @@ export class ZvolFormComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  private addNameValidator(parent: Dataset): void {
+    const isCaseInsensitive = parent.casesensitivity?.value !== DatasetCaseSensitivity.Sensitive;
+    const namesInUse = (parent.children?.map((child) => {
+      return /[^/]*$/.exec(child.name)?.[0];
+    }) || []).filter((name): name is string => name !== undefined);
+
+    this.form.controls.name.addValidators([
+      datasetNameTooLong(parent.name),
+      forbiddenValues(namesInUse, isCaseInsensitive),
+    ]);
   }
 
   private copyParentProperties(parent: Dataset): void {

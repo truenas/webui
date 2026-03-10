@@ -5,8 +5,8 @@ export const helptextGlobal = {
   sysUpdateMessagePt2: T('This system will restart when the update completes.'),
 
   humanReadable: {
-    suggestionTooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB). \
-  If units are not specified, the value defaults to'),
+    suggestionTooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).\
+ If units are not specified, the value defaults to'),
 
     suggestionLabel: T('(Examples: 500 KiB, 500M, 2 TB)'),
   },
@@ -21,7 +21,7 @@ export const helptextGlobal = {
       header: T('Minutes/Hours/Days'),
       tooltip: T('The time values when the task will run. Accepts standard\
  <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank">crontab(5)</a> values.\
- </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means \
+ </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means\
  "match all values".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/)\
  designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours,\
  and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.'),

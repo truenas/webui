@@ -4451,15 +4451,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@phenomnomnominal/tsquery@npm:^6.1.3":
-  version: 6.1.3
-  resolution: "@phenomnomnominal/tsquery@npm:6.1.3"
+"@phenomnomnominal/tsquery@npm:^6.1.4":
+  version: 6.1.4
+  resolution: "@phenomnomnominal/tsquery@npm:6.1.4"
   dependencies:
     "@types/esquery": "npm:^1.5.0"
     esquery: "npm:^1.5.0"
   peerDependencies:
     typescript: ^3 || ^4 || ^5
-  checksum: 10/998b08e19b312aaf2e110520bc40181398c9ab85d0652cba73581b4124868fd18dfdb7e499ca795c3b1f7d3a5a77ae5f7e71f988a4cb9d0f1c50fc3b75df1879
+  checksum: 10/682096c51cb9b97e3e8415dc6554bf1d8c52b9f143e5507be884e68ac3b23bd71b85d795e11bfd77bbafcc1f5c5bb02f7354eaadb553887705cbff7899cf04cc
   languageName: node
   linkType: hard
 
@@ -5139,7 +5139,7 @@ __metadata:
 
 "@truenas/common-typescript@github:truenas/tn-common-typescript#master":
   version: 1.0.0
-  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=9f3141a4854f3bf8b6c2171448ea891596388ebb"
+  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=fc0c205dd2b4e6984cd4bc63f401879b94a7655d"
   dependencies:
     "@eslint/compat": "npm:~1.4.1"
     "@eslint/js": "npm:~9.39.1"
@@ -5161,7 +5161,7 @@ __metadata:
     typescript-eslint: "npm:~8.46.3"
   peerDependencies:
     jest: "*"
-  checksum: 10/7a982aefe4f305cf6644a2070e2cf479a32e9d9ca6321072b02befc8363e5620835e6444fde49c177493afdf16cf377a089d6cf71e2f5cc4390bec3e6f8ebefb
+  checksum: 10/92fce61541034d18f3d2f8b3cce108057e6e2c613248aeffcfee1f790395334b6dc0ccd30a83b19baae70d1d5c9cf419d2e10f85d8bce2104c0b3f23112602f2
   languageName: node
   linkType: hard
 
@@ -5754,20 +5754,6 @@ __metadata:
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 10/72576cc1522090fe497337c2b99d9838e320659ac57fa5560fcbdcbafcf5d0216c6b3a0a8a4ee4fdb3b1f5e3420aa4f6223ab57b82fef3578bec3206425c6cf5
-  languageName: node
-  linkType: hard
-
-"@types/strip-bom@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@types/strip-bom@npm:3.0.0"
-  checksum: 10/1ff07e451707c38a5280d66261fe456de4408d9e4d10f8eaba024ff6ed454a43785a7fcfb4260afccf3c2e96393b63c9dd03f3175ab2c5adb70aca20a17af757
-  languageName: node
-  linkType: hard
-
-"@types/strip-json-comments@npm:0.0.30":
-  version: 0.0.30
-  resolution: "@types/strip-json-comments@npm:0.0.30"
-  checksum: 10/c1d6c941b79a091075640565aefd9c6234fb79412be4682146e3e64c723464e237abdc9b1211d0a0577156f3c1ffd0473937ef7872dab7efc62addfe8df4d7a5
   languageName: node
   linkType: hard
 
@@ -6469,25 +6455,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vendure/ngx-translate-extract@npm:~9.2.1":
-  version: 9.2.1
-  resolution: "@vendure/ngx-translate-extract@npm:9.2.1"
+"@vendure/ngx-translate-extract@npm:~10.1.3":
+  version: 10.1.3
+  resolution: "@vendure/ngx-translate-extract@npm:10.1.3"
   dependencies:
-    "@phenomnomnominal/tsquery": "npm:^6.1.3"
-    braces: "npm:^3.0.2"
-    colorette: "npm:^2.0.20"
+    "@phenomnomnominal/tsquery": "npm:^6.1.4"
+    braces: "npm:^3.0.3"
     flat: "npm:^6.0.1"
-    gettext-parser: "npm:^4.2.0"
-    glob: "npm:^10.3.0"
-    json5: "npm:^2.2.3"
-    tsconfig: "npm:^7.0.0"
-    yargs: "npm:^17.7.2"
+    gettext-parser: "npm:^9.0.0"
+    glob: "npm:^13.0.0"
+    yargs: "npm:^18.0.0"
   peerDependencies:
-    "@angular/compiler": ">=17.0.0"
-    typescript: ">=5.2.0"
+    "@angular/compiler": ">=20.0.0"
+    typescript: ">=5.8.0"
   bin:
-    ngx-translate-extract: bin/cli.js
-  checksum: 10/0a63d51ffd7c7927dc80e44231b97a065c17b851c9c39da3cc6ae12150898a5ede6bd915ccf75ed7ec16c7bcc971d14fc4645526af2d7cb39543c5b7fb52063a
+    ngx-translate-extract: cli.js
+  checksum: 10/59916d95ffa4584b84a48eccffea756eb8a98f605059fd3d8e1edf6c6bfe0a15da637851fd56f721f1cce37cbcb9a119ae367fb83604031c4b1ebca7918c245d
   languageName: node
   linkType: hard
 
@@ -7162,7 +7145,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"braces@npm:^3.0.2, braces@npm:^3.0.3":
+"braces@npm:^3.0.3":
   version: 3.0.3
   resolution: "braces@npm:3.0.3"
   dependencies:
@@ -7961,7 +7944,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-type@npm:^1.0.4, content-type@npm:^1.0.5":
+"content-type@npm:^1.0.5":
   version: 1.0.5
   resolution: "content-type@npm:1.0.5"
   checksum: 10/585847d98dc7fb8035c02ae2cb76c7a9bd7b25f84c447e5ed55c45c2175e83617c8813871b4ee22f368126af6b2b167df655829007b21aa10302873ea9c62662
@@ -8080,23 +8063,6 @@ __metadata:
     cosmiconfig: ">=9"
     typescript: ">=5"
   checksum: 10/e8b28b08759753c46a991e3d4db675480ea0081da9c098e426a89f4a12395e448c3090536d1ec1cb7adb5d7beb0ea266b7717053e3adbc283806a3b62339b68d
-  languageName: node
-  linkType: hard
-
-"cosmiconfig@npm:^8.0.0":
-  version: 8.3.6
-  resolution: "cosmiconfig@npm:8.3.6"
-  dependencies:
-    import-fresh: "npm:^3.3.0"
-    js-yaml: "npm:^4.1.0"
-    parse-json: "npm:^5.2.0"
-    path-type: "npm:^4.0.0"
-  peerDependencies:
-    typescript: ">=4.9.5"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/91d082baca0f33b1c085bf010f9ded4af43cbedacba8821da0fb5667184d0a848addc52c31fadd080007f904a555319c238cf5f4c03e6d58ece2e4876b2e73d6
   languageName: node
   linkType: hard
 
@@ -8995,7 +8961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.2.5, dompurify@npm:~3.2.5":
+"dompurify@npm:^3.2.5":
   version: 3.2.6
   resolution: "dompurify@npm:3.2.6"
   dependencies:
@@ -9004,6 +8970,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10/b91631ed0e4d17fae950ef53613cc009ed7e73adc43ac94a41dd52f35483f7538d13caebdafa7626e0da145fc8184e7ac7935f14f25b7e841b32fda777e40447
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:~3.3.1":
+  version: 3.3.1
+  resolution: "dompurify@npm:3.3.1"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10/f71cca489e628591165d16e8cf4fa4f0d3e2ee48db4d73e9d2c5bedc6f915c92f9e9f101f8c4ba790bec0cdffe7f4e1747f5e31c69dc53ce7ae20a81ff6b0022
   languageName: node
   linkType: hard
 
@@ -10896,15 +10874,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gettext-parser@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "gettext-parser@npm:4.2.0"
+"gettext-parser@npm:^9.0.0":
+  version: 9.0.1
+  resolution: "gettext-parser@npm:9.0.1"
   dependencies:
-    content-type: "npm:^1.0.4"
+    content-type: "npm:^1.0.5"
     encoding: "npm:^0.1.13"
-    readable-stream: "npm:^3.6.0"
-    safe-buffer: "npm:^5.2.1"
-  checksum: 10/44f97cc4216da7e23f344b947048bb46d7349e1127f01cd976e5250249588f966d1cbe3b59f5a228f0650259140c90cc41e1d858815f7913c77f887689611fa6
+  checksum: 10/ce9052d728d20877c83c29042d3b974986aaf1c0006244aed5e116960b3f9896a56d7fbe87bca4af7ecf6da2978db4d3f9f5f1411dfa6c806ba2f6c9f0603d99
   languageName: node
   linkType: hard
 
@@ -10946,7 +10922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.2.2, glob@npm:^10.3.0, glob@npm:^10.3.10, glob@npm:^10.4.1":
+"glob@npm:^10.2.2, glob@npm:^10.3.10, glob@npm:^10.4.1":
   version: 10.5.0
   resolution: "glob@npm:10.5.0"
   dependencies:
@@ -11434,9 +11410,9 @@ __metadata:
   linkType: hard
 
 "immutable@npm:^5.0.2":
-  version: 5.1.3
-  resolution: "immutable@npm:5.1.3"
-  checksum: 10/6d29b29036143e7ea1e7f7be581c71bca873ea77c175d33c6c839bf4017265a58c41ec269e3ffcd7b483797fc7fa9c928b4ed3d6edfeeb1b5711d84f60d04090
+  version: 5.1.5
+  resolution: "immutable@npm:5.1.5"
+  checksum: 10/7aec2740239772ec8e92e793c991bd809203a97694f4ff3a18e50e28f9a6b02393ad033d87b458037bdf8c0ea37d4446d640e825f6171df3405cf6cf300ce028
   languageName: node
   linkType: hard
 
@@ -12738,17 +12714,6 @@ __metadata:
   bin:
     jest: ./bin/jest.js
   checksum: 10/61c9d100750e4354cd7305d1f3ba253ffde4deaf12cb4be4d42d54f2dd5986e383a39c4a8691dbdc3839c69094a52413ed36f1886540ac37b71914a990b810d0
-  languageName: node
-  linkType: hard
-
-"jira-prepare-commit-msg@npm:^1.6.1":
-  version: 1.7.2
-  resolution: "jira-prepare-commit-msg@npm:1.7.2"
-  dependencies:
-    cosmiconfig: "npm:^8.0.0"
-  bin:
-    jira-prepare-commit-msg: bin/index.js
-  checksum: 10/ef286353e58a08abc1364224e9f546cec7dd2462b07017053aa9b3b88f00ed6ff166176a642b486bd78118db7bb3d86d2fd47c583addc92089dae74c87e4ea79
   languageName: node
   linkType: hard
 
@@ -15001,13 +14966,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-type@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "path-type@npm:4.0.0"
-  checksum: 10/5b1e2daa247062061325b8fdbfd1fb56dde0a448fb1455453276ea18c60685bdad23a445dc148cf87bc216be1573357509b7d4060494a6fd768c7efad833ee45
-  languageName: node
-  linkType: hard
-
 "pathe@npm:^2.0.1, pathe@npm:^2.0.3":
   version: 2.0.3
   resolution: "pathe@npm:2.0.3"
@@ -15510,7 +15468,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^3.4.0, readable-stream@npm:^3.6.0, readable-stream@npm:^3.6.2":
+"readable-stream@npm:^3.4.0, readable-stream@npm:^3.6.2":
   version: 3.6.2
   resolution: "readable-stream@npm:3.6.2"
   dependencies:
@@ -15997,7 +15955,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safe-buffer@npm:5.2.1, safe-buffer@npm:^5.2.1, safe-buffer@npm:~5.2.0":
+"safe-buffer@npm:5.2.1, safe-buffer@npm:~5.2.0":
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
   checksum: 10/32872cd0ff68a3ddade7a7617b8f4c2ae8764d8b7d884c651b74457967a9e0e886267d3ecc781220629c44a865167b61c375d2da6c720c840ecd73f45d5d9451
@@ -16850,13 +16808,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-json-comments@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "strip-json-comments@npm:2.0.1"
-  checksum: 10/1074ccb63270d32ca28edfb0a281c96b94dc679077828135141f27d52a5a398ef5e78bcf22809d23cadc2b81dfbe345eb5fd8699b385c8b1128907dec4a7d1e1
-  languageName: node
-  linkType: hard
-
 "style-mod@npm:^4.0.0, style-mod@npm:^4.1.0":
   version: 4.1.2
   resolution: "style-mod@npm:4.1.2"
@@ -17356,7 +17307,7 @@ __metadata:
     "@typescript-eslint/types": "npm:~8.41.0"
     "@typescript-eslint/utils": "npm:~8.41.0"
     "@uiw/codemirror-theme-material": "npm:~4.23.6"
-    "@vendure/ngx-translate-extract": "npm:~9.2.1"
+    "@vendure/ngx-translate-extract": "npm:~10.1.3"
     "@xterm/addon-fit": "npm:~0.10.0"
     "@xterm/xterm": "npm:~5.5.0"
     angular-eslint: "npm:~21.2.0"
@@ -17373,7 +17324,7 @@ __metadata:
     d3: "npm:~7.9.0"
     date-fns: "npm:~4.1.0"
     date-fns-tz: "npm:~3.2.0"
-    dompurify: "npm:~3.2.5"
+    dompurify: "npm:~3.3.1"
     dygraphs: "npm:~2.2.1"
     email-validator: "npm:~2.0.4"
     fontfaceobserver: "npm:^2.3.0"
@@ -17391,7 +17342,6 @@ __metadata:
     jest-junit: "npm:~16.0.0"
     jest-preset-angular: "npm:~16.0.0"
     jest-when: "npm:~3.6.0"
-    jira-prepare-commit-msg: "npm:^1.6.1"
     js-yaml: "npm:~4.1.1"
     lint-staged: "npm:^15.2.10"
     lmdb: "npm:^3.3.0"
@@ -17521,18 +17471,6 @@ __metadata:
     minimist: "npm:^1.2.6"
     strip-bom: "npm:^3.0.0"
   checksum: 10/5e55cc2fb6b800eb72011522e10edefccb45b1f9af055681a51354c9b597d1390c6fa9cc356b8c7529f195ac8a90a78190d563159f3a1eed10e01bbd4d01a8ab
-  languageName: node
-  linkType: hard
-
-"tsconfig@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "tsconfig@npm:7.0.0"
-  dependencies:
-    "@types/strip-bom": "npm:^3.0.0"
-    "@types/strip-json-comments": "npm:0.0.30"
-    strip-bom: "npm:^3.0.0"
-    strip-json-comments: "npm:^2.0.0"
-  checksum: 10/3b3a32a3203d120a05f40e9b24fed8b192f8f854a85070a8a1f308204cac4b8811df41382eb0a9fcceb2d1bf427a9516cbb2f5b01dcb2ad905277a112e67bd5a
   languageName: node
   linkType: hard
 

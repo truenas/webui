@@ -26,7 +26,7 @@ describe('CreateDatasetDialogComponent', () => {
       mockApi([
         mockCall('pool.dataset.query', [{
           name: 'parent_name',
-          casesensitivity: { value: DatasetCaseSensitivity.Sensitive },
+          casesensitivity: { value: DatasetCaseSensitivity.Insensitive },
           children: [
             { name: 'some_dataset' },
           ],
