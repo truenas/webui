@@ -251,6 +251,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     // Remove UI-only field
     delete payload.special_small_block_size_custom;
 
+    // Override aclmode based on acltype. This runs both during capture()
+    // and diff(), so the diff correctly detects changes in either direction.
+    // The backend also enforces aclmode based on acltype, so even if the diff
+    // omits aclmode when the override produces the same value, behavior is correct.
     if (values.acltype && [DatasetAclType.Posix, DatasetAclType.Off].includes(values.acltype)) {
       payload.aclmode = AclMode.Discard;
     } else if (values.acltype === DatasetAclType.Inherit) {
