@@ -782,12 +782,15 @@ export class ZvolFormComponent implements OnInit {
         const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
         const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
         const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
+        // volsize is not included in computeEditPayload(), so it won't be
+        // removed by applyDiff(). Delete it here when readonly prevents resizing.
         if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
           delete rawData.volsize;
         }
 
-        // Remove UI-only fields; actual special_small_block_size
-        // transformation is handled by computeEditPayload().
+        // Remove UI-only fields. The transformed special_small_block_size
+        // value is managed by computeEditPayload() and merged via applyDiff(),
+        // so the raw form fields must be deleted to avoid conflicts.
         delete rawData.special_small_block_size;
         delete rawData.special_small_block_size_custom;
 
