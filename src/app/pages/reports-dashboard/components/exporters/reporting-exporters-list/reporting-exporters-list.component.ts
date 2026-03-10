@@ -228,7 +228,10 @@ export class ReportingExporterListComponent implements OnInit {
           this.getExporters();
         }
       },
-      error: (error: unknown) => this.errorCaught(error),
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        this.getExporters();
+      },
     });
   }
 
