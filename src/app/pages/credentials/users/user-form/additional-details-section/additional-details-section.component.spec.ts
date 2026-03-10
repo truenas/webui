@@ -210,20 +210,20 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.hasError('required')).toBe(true);
     });
 
-    it('restores default path and removes required validator when home editable is closed', async () => {
+    it('restores default path and removes required validator when home editable is closed with empty path', async () => {
       const table = await loader.getHarness(DetailsTableHarness);
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
 
       await homeEditable.open();
 
-      // Set a valid path so editable can close (it blocks close on validation errors)
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
-      await explorer.setValue('/mnt/tank/user');
+      // Uncheck home_create to remove required validator, allowing close with empty path
+      spectator.component.form.controls.home_create.setValue(false);
       spectator.detectChanges();
 
       await homeEditable.tryToClose();
 
-      expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/user');
+      // Empty path should be restored to defaultHomePath
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
       expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
     });
 
