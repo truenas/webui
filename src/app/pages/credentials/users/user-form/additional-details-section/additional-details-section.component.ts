@@ -172,9 +172,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected onHomeEditableClosed(): void {
     if (this.editingUser()) return;
 
-    // Preserve API validation errors (same guard as onHomeEditableOpened)
-    if (this.form.controls.home.errors?.manualValidateError) return;
-
     this.syncHomeValidators(this.form.controls.home_create.value, false);
   }
 
