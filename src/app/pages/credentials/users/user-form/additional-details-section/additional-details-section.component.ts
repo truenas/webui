@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -104,12 +104,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
       if (isEmptyHomeDirectory(this.editingUser()?.home)) {
-        return this.translate.instant('None');
+        return 'None';
       }
       return this.editingUser()?.home || '';
     }
 
-    return this.translate.instant('Not Set');
+    return 'Not Set';
   });
 
   protected homeDirectoryViewValue(): string {
@@ -157,11 +157,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return !!home && home !== defaultHomePath && !isEmptyHomeDirectory(home);
   }
 
-  private homeEditableOpen = false;
+  private homeEditable = viewChild<EditableComponent>('homeEditable');
 
   protected onHomeEditableOpened(): void {
-    if (this.homeEditableOpen || this.editingUser()) return;
-    this.homeEditableOpen = true;
+    if (this.editingUser()) return;
 
     // Skip validator sync if opening due to API validation error to preserve the error message
     if (this.form.controls.home.errors?.manualValidateError) return;
@@ -170,15 +169,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   }
 
   protected onHomeEditableClosed(): void {
-    this.homeEditableOpen = false;
-    this.syncHomeValidators(false, false);
+    this.syncHomeValidators(this.form.controls.home_create.value, false);
   }
 
   private syncHomeValidators(isCreating: boolean, isOpen: boolean): void {
     const homeControl = this.form.controls.home;
 
     if (isCreating && isOpen) {
-      homeControl.addValidators(Validators.required);
+      if (!homeControl.hasValidator(Validators.required)) {
+        homeControl.addValidators(Validators.required);
+      }
       if (homeControl.value === defaultHomePath) {
         homeControl.setValue('');
       }
@@ -621,7 +621,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
 
     this.form.controls.home_create.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((checked) => {
-      this.syncHomeValidators(checked, this.homeEditableOpen);
+      this.syncHomeValidators(checked, this.homeEditable()?.isOpen() ?? false);
       if (checked) {
         this.form.patchValue({
           home_mode: '700',
