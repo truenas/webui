@@ -230,7 +230,6 @@ export class ReportingExporterListComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.getExporters();
       },
     });
   }
