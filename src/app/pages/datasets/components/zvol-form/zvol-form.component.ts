@@ -71,7 +71,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  * in both editSubmit() and computeEditPayload(). Kept as a shared
  * constant so the two code paths stay in sync.
  */
-const encryptionFormFields: readonly string[] = [
+const encryptionFormFields = [
   'inherit_encryption',
   'key',
   'generate_key',
@@ -80,7 +80,7 @@ const encryptionFormFields: readonly string[] = [
   'pbkdf2iters',
   'encryption_type',
   'algorithm',
-];
+] as const;
 
 @Component({
   selector: 'ix-zvol-form',
@@ -716,6 +716,9 @@ export class ZvolFormComponent implements OnInit {
     // Remove UI-only field
     delete data.special_small_block_size_custom;
 
+    // On create, inherited properties are omitted (the backend inherits
+    // by default). On edit, INHERIT is sent explicitly so the backend
+    // can switch a locally-set property back to inherited.
     if (data.sync === inherit) {
       delete data.sync;
     }
