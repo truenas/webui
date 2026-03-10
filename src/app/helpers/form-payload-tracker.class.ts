@@ -10,19 +10,19 @@
  * 2. Before submit, either:
  *    - Call `diff(computePayload())` to get only changed properties (self-contained payloads).
  *    - Call `applyDiff(data, computePayload())` to strip unchanged keys from a larger
- *      payload that also contains non-diffed fields (e.g. volsize, encryption).
+ *      payload that also contains non-diffed fields (e.g. volume size, encryption).
  *
  * Uses strict equality (===) — payload values should be primitives
  * (strings, numbers) or the inherit symbol.
  */
-export class FormPayloadTracker {
-  private initialPayload: Record<string, unknown> | null = null;
+export class FormPayloadTracker<T extends Record<string, unknown> = Record<string, unknown>> {
+  private initialPayload: T | null = null;
 
   /**
    * Capture the initial payload snapshot after form is populated with
    * existing values. Should be called once during edit-mode setup.
    */
-  capture(payload: Record<string, unknown>): void {
+  capture(payload: T): void {
     this.initialPayload = { ...payload };
   }
 
@@ -31,23 +31,29 @@ export class FormPayloadTracker {
    * initial payload. If no initial payload was captured (create mode),
    * returns the full payload unchanged.
    */
-  diff(currentPayload: Record<string, unknown>): Record<string, unknown> {
+  diff(currentPayload: T): Partial<T> {
     if (!this.initialPayload) {
       return { ...currentPayload };
     }
 
-    const result = { ...currentPayload };
+    const result: Record<string, unknown> = { ...currentPayload };
     for (const key of Object.keys(result)) {
-      if (key in this.initialPayload && result[key] === this.initialPayload[key]) {
+      if (key in this.initialPayload && result[key] === (this.initialPayload as Record<string, unknown>)[key]) {
         delete result[key];
       }
     }
-    return result;
+    return result as Partial<T>;
   }
 
-  private getManagedKeys(currentPayload: Record<string, unknown>): Set<string> {
+  /**
+   * Returns the union of keys from the initial and current payloads.
+   * Keys that appear only in currentPayload (not captured initially) are
+   * still managed: they are first deleted from `data` and then re-added
+   * via the diff result, which preserves new keys by definition.
+   */
+  private getManagedKeys(currentPayload: T): Set<string> {
     return new Set([
-      ...Object.keys(this.initialPayload as Record<string, unknown>),
+      ...Object.keys(this.initialPayload as T),
       ...Object.keys(currentPayload),
     ]);
   }
@@ -56,11 +62,11 @@ export class FormPayloadTracker {
    * Removes all diff-managed keys from `data`, then merges back only the
    * properties that actually changed. This is the recommended way to
    * integrate the diff into a larger payload object that contains
-   * non-diffed fields (e.g. volsize, encryption).
+   * non-diffed fields (e.g. volume size, encryption).
    *
    * No-op if capture() was never called (create mode).
    */
-  applyDiff(data: Record<string, unknown>, currentPayload: Record<string, unknown>): void {
+  applyDiff(data: Record<string, unknown>, currentPayload: T): void {
     if (!this.initialPayload) return;
 
     const diffedPayload = this.diff(currentPayload);
