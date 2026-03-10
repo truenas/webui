@@ -101,15 +101,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   });
 
   private groupNameCache = new Map<number, string>();
+
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
       if (isEmptyHomeDirectory(this.editingUser()?.home)) {
-        return 'None';
+        return this.translate.instant('None');
       }
       return this.editingUser()?.home || '';
     }
 
-    return 'Not Set';
+    return this.translate.instant('Not Set');
   });
 
   protected homeDirectoryViewValue(): string {
@@ -157,7 +158,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return !!home && home !== defaultHomePath && !isEmptyHomeDirectory(home);
   }
 
-  private homeEditable = viewChild<EditableComponent>('homeEditable');
+  protected homeEditable = viewChild<EditableComponent>('homeEditable');
 
   protected onHomeEditableOpened(): void {
     if (this.editingUser()) return;
@@ -170,9 +171,19 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   protected onHomeEditableClosed(): void {
     if (this.editingUser()) return;
+
+    // Preserve API validation errors (same guard as onHomeEditableOpened)
+    if (this.form.controls.home.errors?.manualValidateError) return;
+
     this.syncHomeValidators(this.form.controls.home_create.value, false);
   }
 
+  /**
+   * Called from three places:
+   * - onHomeEditableOpened: isOpen=true, isCreating from form
+   * - onHomeEditableClosed: isOpen=false, isCreating from form
+   * - home_create.valueChanges: isOpen from homeEditable signal
+   */
   private syncHomeValidators(isCreating: boolean, isOpen: boolean): void {
     const homeControl = this.form.controls.home;
 

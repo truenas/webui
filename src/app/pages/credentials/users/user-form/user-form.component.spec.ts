@@ -114,7 +114,7 @@ describe('UserFormComponent', () => {
   MockInstance(AdditionalDetailsSectionComponent, () => ({
     form: additionalDetailsForm as unknown as AdditionalDetailsSectionComponent['form'],
     homeEditable: signal(undefined),
-  } as unknown as Partial<AdditionalDetailsSectionComponent>));
+  } as Partial<AdditionalDetailsSectionComponent>));
 
   const createComponent = createComponentFactory({
     component: UserFormComponent,
