@@ -639,6 +639,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           home_mode: '700',
           default_permissions: true,
         });
+        this.form.controls.home_mode.enable();
         this.cdr.detectChanges();
       }
     });
