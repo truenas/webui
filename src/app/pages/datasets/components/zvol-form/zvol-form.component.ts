@@ -68,8 +68,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
  * Encryption-related form fields cleaned up after encryption processing
- * in both editSubmit() and computeEditPayload(). Kept as a shared
- * constant so the two code paths stay in sync.
+ * in editSubmit(). Kept as a named constant for clarity.
  */
 const encryptionFormFields = [
   'inherit_encryption',
@@ -640,42 +639,33 @@ export class ZvolFormComponent implements OnInit {
   }
 
   /**
-   * Computes a payload containing only diffable ZFS properties for edit mode.
+   * Extracts only the diffable ZFS properties from the form for edit mode.
+   * This is a pure computation helper — it reads form values directly
+   * without going through getPayload(), avoiding its side effects.
+   *
    * Excludes volsize/force_size (handled separately by readonly/alignment logic)
    * and encryption fields (disabled in edit mode).
-   *
-   * This is the single source of truth for special_small_block_size
-   * transformation — the inherit symbol is preserved so the diff can
-   * detect changes from a local value to inherited.
    */
   private computeEditPayload(): Record<string, unknown> {
-    const data = this.getPayload(
-      this.form.getRawValue(),
-    ) as Record<string, unknown>;
+    const formValues = this.form.getRawValue();
+
+    const data: Record<string, unknown> = {
+      comments: formValues.comments,
+      sync: formValues.sync,
+      compression: formValues.compression,
+      deduplication: formValues.deduplication,
+      readonly: formValues.readonly,
+      snapdev: formValues.snapdev,
+    };
 
     // Transform special_small_block_size from UI toggle to API value.
     // Keeps inherit so the diff can detect local→inherited changes.
     const transformedValue = transformSpecialSmallBlockSizeForPayload(
-      data.special_small_block_size as WithInherit<OnOff>,
-      data.special_small_block_size_custom as number | null,
+      formValues.special_small_block_size,
+      formValues.special_small_block_size_custom,
     );
-    if (transformedValue === undefined) {
-      delete data.special_small_block_size;
-    } else {
+    if (transformedValue !== undefined) {
       data.special_small_block_size = transformedValue;
-    }
-    delete data.special_small_block_size_custom;
-
-    // Remove non-ZFS fields that have their own handling in editSubmit.
-    delete data.volsize;
-    delete data.force_size;
-
-    // Remove encryption fields — they're disabled in edit mode
-    // and not relevant for diffing ZFS properties.
-    delete data.encryption;
-    delete data.encryption_options;
-    for (const field of encryptionFormFields) {
-      delete data[field];
     }
 
     return data;
@@ -785,7 +775,7 @@ export class ZvolFormComponent implements OnInit {
     this.isLoading.set(true);
     this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (datasets) => {
-        const data: ZvolFormData = this.getPayload(this.form.getRawValue());
+        const rawData: ZvolFormData = this.getPayload(this.form.getRawValue());
 
         const readonlyValue = this.form.controls.readonly.value;
         const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
@@ -793,42 +783,42 @@ export class ZvolFormComponent implements OnInit {
         const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
         const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
         if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
-          delete data.volsize;
+          delete rawData.volsize;
         }
 
         // Remove UI-only fields; actual special_small_block_size
         // transformation is handled by computeEditPayload().
-        delete data.special_small_block_size;
-        delete data.special_small_block_size_custom;
+        delete rawData.special_small_block_size;
+        delete rawData.special_small_block_size_custom;
 
-        if (data.inherit_encryption) {
-          delete data.encryption;
-        } else if (data.encryption) {
-          data.encryption_options = {};
-          if (data.encryption_type === 'key') {
-            data.encryption_options.generate_key = data.generate_key;
-            if (!data.generate_key) {
-              data.encryption_options.key = data.key;
+        if (rawData.inherit_encryption) {
+          delete rawData.encryption;
+        } else if (rawData.encryption) {
+          rawData.encryption_options = {};
+          if (rawData.encryption_type === 'key') {
+            rawData.encryption_options.generate_key = rawData.generate_key;
+            if (!rawData.generate_key) {
+              rawData.encryption_options.key = rawData.key;
             }
-          } else if (data.encryption_type === 'passphrase') {
-            data.encryption_options.passphrase = data.passphrase;
-            data.encryption_options.pbkdf2iters = Number(data.pbkdf2iters);
+          } else if (rawData.encryption_type === 'passphrase') {
+            rawData.encryption_options.passphrase = rawData.passphrase;
+            rawData.encryption_options.pbkdf2iters = Number(rawData.pbkdf2iters);
           }
-          data.encryption_options.algorithm = data.algorithm;
+          rawData.encryption_options.algorithm = rawData.algorithm;
         }
 
         // Delete individual encryption form fields after processing.
         for (const field of encryptionFormFields) {
-          delete (data as Record<string, unknown>)[field];
+          delete (rawData as Record<string, unknown>)[field];
         }
 
         // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
-        // applyDiff() clears all diff-managed keys from data, then merges back
-        // only the ones that actually changed.
-        this.payloadTracker.applyDiff(
-          data as Record<string, unknown>,
+        // applyDiff returns a new object with only changed diff-managed keys
+        // merged back into the non-managed fields.
+        const data = this.payloadTracker.applyDiff(
+          rawData as Record<string, unknown>,
           this.computeEditPayload(),
-        );
+        ) as ZvolFormData;
 
         let canSubmit = true;
         if (data.volsize !== undefined) {

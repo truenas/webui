@@ -344,6 +344,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       special_small_block_size_custom: customValue,
     });
 
+    // Capture once after form is populated with existing values.
+    // hasCaptured prevents re-capture if parent changes after initial load,
+    // which is intentional — we only diff against the original server state.
     if (!this.payloadTracker.hasCaptured && this.parent()) {
       this.payloadTracker.capture(this.computePayload());
     }
