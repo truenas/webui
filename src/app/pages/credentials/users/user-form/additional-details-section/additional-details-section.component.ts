@@ -169,6 +169,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   }
 
   protected onHomeEditableClosed(): void {
+    if (this.editingUser()) return;
     this.syncHomeValidators(this.form.controls.home_create.value, false);
   }
 
