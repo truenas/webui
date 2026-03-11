@@ -6,13 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, map } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
-import { DetailsItemHarness } from 'app/modules/details-table/details-item/details-item.harness';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -303,6 +303,15 @@ describe('AdditionalDetailsSectionComponent', () => {
         Shell: '/usr/bin/zsh',
       }));
     }));
+
+    it('pre-populates home with SMB share path for new users when a home share exists', () => {
+      const mockApiService = spectator.inject(MockApiService);
+      mockApiService.mockCall('sharing.smb.query', [{ path: '/mnt/tank/homes', enabled: true }] as never);
+
+      spectator = createComponent();
+
+      expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/homes');
+    });
   });
 
   describe('when editing a user', () => {
@@ -340,10 +349,10 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(Object.keys(values)).not.toContain('UID');
     });
 
-    it('loads home share path and puts it in home field', async () => {
-      const homeInput = await loader.getHarness(DetailsItemHarness.with({ label: 'Home Directory' }));
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['options.home', '=', true]]]);
-      expect(await homeInput.getValueText()).toBe('/home/test');
+    it('skips SMB home share query when editing a user to preserve existing home path', () => {
+      const smbCalls = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .filter(([method]: [string]) => method === 'sharing.smb.query');
+      expect(smbCalls).toHaveLength(0);
     });
 
     it('does not modify home validators when home editable is opened for an existing user', async () => {
@@ -353,6 +362,18 @@ describe('AdditionalDetailsSectionComponent', () => {
       await homeEditable.open();
 
       // For editing users, onHomeEditableOpened early-returns — home value should be unchanged
+      expect(spectator.component.form.controls.home.value).toBe('/home/test');
+      expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
+    });
+
+    it('does not modify home validators when home editable is closed for an existing user', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+      await homeEditable.tryToClose();
+
+      // For editing users, onHomeEditableClosed early-returns — home value should be unchanged
       expect(spectator.component.form.controls.home.value).toBe('/home/test');
       expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
     });

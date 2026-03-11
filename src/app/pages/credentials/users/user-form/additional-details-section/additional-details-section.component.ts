@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, viewChild } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, Signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -113,16 +113,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return this.translate.instant('Not Set');
   });
 
-  protected homeDirectoryViewValue(): string {
-    const path = this.form.controls.home.value;
-    if (this.form.controls.home_create.value) {
-      if (path && path !== defaultHomePath && !isEmptyHomeDirectory(path)) {
-        return this.translate.instant('New directory under {path}', { path });
-      }
-      return defaultHomePath;
-    }
-    return path || defaultHomePath;
-  }
+  protected homeDirectoryViewValue: Signal<string>;
 
   readonly groupOptions$ = this.api.call('group.query', [[
     ['local', '=', true],
@@ -148,15 +139,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
-  protected shouldShowPermissions(): boolean {
-    const homeValue = this.form.controls.home.value;
-    return homeValue !== defaultHomePath;
-  }
+  protected shouldShowPermissions: Signal<boolean>;
 
-  protected hasRealHomePath(): boolean {
-    const home = this.form.controls.home.value;
-    return !!home && home !== defaultHomePath && !isEmptyHomeDirectory(home);
-  }
+  protected hasRealHomePath: Signal<boolean>;
 
   protected homeEditable = viewChild<EditableComponent>('homeEditable');
 
@@ -225,6 +210,30 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
 
   constructor() {
+    const homeValue = toSignal(
+      this.form.controls.home.valueChanges.pipe(startWith(this.form.controls.home.value)),
+    );
+    const homeCreateValue = toSignal(
+      this.form.controls.home_create.valueChanges.pipe(startWith(this.form.controls.home_create.value)),
+    );
+    this.homeDirectoryViewValue = computed(() => {
+      const path = homeValue();
+      if (homeCreateValue()) {
+        if (path && path !== defaultHomePath && !isEmptyHomeDirectory(path)) {
+          return this.translate.instant('New directory under {path}', { path });
+        }
+        return defaultHomePath;
+      }
+      return path || defaultHomePath;
+    });
+
+    this.shouldShowPermissions = computed(() => homeValue() !== defaultHomePath);
+
+    this.hasRealHomePath = computed(() => {
+      const home = homeValue();
+      return !!home && home !== defaultHomePath && !isEmptyHomeDirectory(home);
+    });
+
     this.form.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -622,7 +631,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       }
 
       const normalizedHome = this.form.controls.home.value;
-      if (isEmptyHomeDirectory(normalizedHome) || this.editingUser()?.immutable) {
+      if (isEmptyHomeDirectory(normalizedHome) || normalizedHome === defaultHomePath || this.editingUser()?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
@@ -636,13 +645,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
           home_mode: '700',
           default_permissions: true,
         });
-        this.form.controls.home_mode.enable();
         this.cdr.detectChanges();
       }
     });
   }
 
   private setHomeSharePath(): void {
+    if (this.editingUser()) return;
+
     this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
       ['options.home', '=', true],
