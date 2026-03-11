@@ -178,9 +178,16 @@ export class FeedbackService {
     return of(message);
   }
 
-  showTicketSuccessMessage(ticketUrl: string): void {
+  showTicketSuccessMessage(ticketUrl: string, debugAttachError?: string | null): void {
+    let message = this.translate.instant('Thank you. Ticket was submitted successfully.');
+
+    if (debugAttachError) {
+      message += '<br><br>' + this.translate.instant('Debug information could not be attached to the ticket: {error}', { error: debugAttachError });
+    }
+
     this.dialogService.generalDialog({
-      message: this.translate.instant('Thank you. Ticket was submitted successfully.'),
+      message,
+      is_html: !!debugAttachError,
       icon: tnIconMarker('check', 'mdi'),
       title: this.translate.instant('Ticket Created'),
       cancelBtnMsg: this.translate.instant('Close'),
