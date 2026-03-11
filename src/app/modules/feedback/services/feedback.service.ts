@@ -394,10 +394,6 @@ export class FeedbackService {
     );
   }
 
-  /**
-   * html2canvas cannot parse modern CSS color() functions (e.g. color(srgb ...)).
-   * This strips them from inline styles on the cloned DOM to prevent rendering errors.
-   */
   private escapeHtml(text: string): string {
     return text
       .replace(/&/g, '&amp;')
