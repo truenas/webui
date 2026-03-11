@@ -416,11 +416,11 @@ export class ZvolFormComponent implements OnInit {
       || parent.sync.source === ZfsPropertySource.Default
     ) {
       this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value });
+      this.form.controls.sync.setValue(parent.sync.value);
     } else {
       this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: inherit });
       this.form.controls.sync.setValue(parent.sync.value);
     }
-    this.form.controls.sync.setValue(parent.sync.value);
   }
 
   private inheritFileSystemProperties(parent: Dataset): void {
@@ -480,12 +480,11 @@ export class ZvolFormComponent implements OnInit {
       || parent.deduplication.source === ZfsPropertySource.Default
     ) {
       this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: parentDataset[0].deduplication.value });
+      this.form.controls.deduplication.setValue(parent.deduplication.value);
     } else {
       this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: inherit });
       this.form.controls.deduplication.setValue(parent.deduplication.value);
     }
-
-    this.form.controls.deduplication.setValue(parent.deduplication.value);
   }
 
   private inheritSnapdev(parent: Dataset, parentDataset: Dataset[]): void {
@@ -645,6 +644,9 @@ export class ZvolFormComponent implements OnInit {
    *
    * Excludes volsize/force_size (handled separately by readonly/alignment logic)
    * and encryption fields (disabled in edit mode).
+   *
+   * Keep in sync with editSubmit() — any new ZFS property added here
+   * must also be handled in editSubmit(), and vice versa.
    */
   private computeEditPayload(): Record<string, unknown> {
     const formValues = this.form.getRawValue();
@@ -752,14 +754,12 @@ export class ZvolFormComponent implements OnInit {
       }
       data.encryption_options.algorithm = data.algorithm;
     }
-    // Keep inherit_encryption in the payload - don't delete it
-    delete data.key;
-    delete data.generate_key;
-    delete data.passphrase;
-    delete data.confirm_passphrase;
-    delete data.pbkdf2iters;
-    delete data.encryption_type;
-    delete data.algorithm;
+    // Delete individual encryption form fields after processing.
+    // Keep inherit_encryption in the payload for create — don't delete it.
+    for (const field of encryptionFormFields) {
+      if (field === 'inherit_encryption') continue;
+      delete (data as Record<string, unknown>)[field];
+    }
 
     this.api.call('pool.dataset.create', [data as DatasetCreate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
@@ -838,6 +838,7 @@ export class ZvolFormComponent implements OnInit {
           // Check if volsize was actually changed by comparing with original
           // Account for small rounding differences from formatter (< 0.1% difference)
           const hasVolumeChanged = this.originalVolsize === null
+            || this.originalVolsize === 0
             || Math.abs(parsedVolsize - this.originalVolsize) / this.originalVolsize > 0.001;
 
           if (hasVolumeChanged) {
