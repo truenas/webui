@@ -180,18 +180,21 @@ export class FeedbackService {
 
   showTicketSuccessMessage(ticketUrl: string, debugAttachError?: string | null): void {
     let message = this.translate.instant('Thank you. Ticket was submitted successfully.');
+    let isHtml = false;
 
     if (debugAttachError) {
+      const escapedError = this.escapeHtml(debugAttachError);
       const warningMessage = this.translate.instant(
         'Debug information could not be attached to the ticket: {error}',
-        { error: debugAttachError },
+        { error: escapedError },
       );
-      message += `<br><br><span class="debug-warning"><strong>⚠ ${warningMessage}</strong></span>`;
+      message += `<br><br><strong>⚠️ ${warningMessage}</strong>`;
+      isHtml = true;
     }
 
     this.dialogService.generalDialog({
       message,
-      is_html: !!debugAttachError,
+      is_html: isHtml,
       icon: tnIconMarker('check', 'mdi'),
       title: this.translate.instant('Ticket Created'),
       cancelBtnMsg: this.translate.instant('Close'),
@@ -395,6 +398,14 @@ export class FeedbackService {
    * html2canvas cannot parse modern CSS color() functions (e.g. color(srgb ...)).
    * This strips them from inline styles on the cloned DOM to prevent rendering errors.
    */
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   private sanitizeUnsupportedCssColors(element: HTMLElement): void {
     const colorFnRegex = /color\([^)]+\)/g;
 
