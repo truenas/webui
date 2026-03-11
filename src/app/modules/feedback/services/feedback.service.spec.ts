@@ -405,14 +405,14 @@ describe('FeedbackService', () => {
       });
     });
 
-    it('shows debug attach error in the dialog when present', () => {
+    it('shows debug attach error warning in the success dialog when present', () => {
       spectator.service.showTicketSuccessMessage(
         'https://jira-redirect.ixsystems.com/ticket',
         '[EFBIG] Uploaded file is too large',
       );
 
       expect(spectator.inject(DialogService).generalDialog).toHaveBeenCalledWith({
-        message: 'Thank you. Ticket was submitted successfully.<br><br>Debug information could not be attached to the ticket: [EFBIG] Uploaded file is too large',
+        message: expect.stringContaining('Debug information could not be attached to the ticket: [EFBIG] Uploaded file is too large'),
         is_html: true,
         title: 'Ticket Created',
         cancelBtnMsg: 'Close',

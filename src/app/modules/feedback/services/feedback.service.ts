@@ -182,7 +182,11 @@ export class FeedbackService {
     let message = this.translate.instant('Thank you. Ticket was submitted successfully.');
 
     if (debugAttachError) {
-      message += '<br><br>' + this.translate.instant('Debug information could not be attached to the ticket: {error}', { error: debugAttachError });
+      const warningMessage = this.translate.instant(
+        'Debug information could not be attached to the ticket: {error}',
+        { error: debugAttachError },
+      );
+      message += `<br><br><span class="debug-warning"><strong>⚠ ${warningMessage}</strong></span>`;
     }
 
     this.dialogService.generalDialog({
