@@ -12,6 +12,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Role } from 'app/enums/role.enum';
@@ -83,7 +84,7 @@ export class EncryptionOptionsDialog implements OnInit, OnDestroy {
     key: ['', [Validators.required, exactLength(64)]],
     passphrase: ['', Validators.minLength(8)],
     confirm_passphrase: [''],
-    pbkdf2iters: [350000, Validators.min(100000)],
+    pbkdf2iters: [minimumPbkdf2Iterations, Validators.min(minimumPbkdf2Iterations)],
     algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
   }, {

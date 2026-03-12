@@ -195,7 +195,7 @@ describe('ZvolFormComponent', () => {
       const encryptionDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
       await encryptionDetails.setValues({
         Algorithm: 'AES-128-CCM',
-        pbkdf2iters: 500000,
+        pbkdf2iters: 1400000,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -218,7 +218,7 @@ describe('ZvolFormComponent', () => {
         encryption_options: {
           algorithm: 'AES-128-CCM',
           passphrase: '12345678',
-          pbkdf2iters: 500000,
+          pbkdf2iters: 1400000,
         },
         type: DatasetType.Volume,
       }]);

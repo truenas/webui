@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -58,7 +59,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     key: ['', exactLength(64)],
     passphrase: ['', Validators.minLength(8)],
     confirm_passphrase: [''],
-    pbkdf2iters: [350000, Validators.min(100000)],
+    pbkdf2iters: [minimumPbkdf2Iterations, Validators.min(minimumPbkdf2Iterations)],
     algorithm: ['AES-256-GCM'],
   }, {
     validators: [
