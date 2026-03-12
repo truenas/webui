@@ -67,11 +67,11 @@ import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/p
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
- * Encryption-related form fields cleaned up after encryption processing
- * in editSubmit(). Kept as a named constant for clarity.
+ * Encryption-related form fields cleaned up after encryption processing.
+ * Does NOT include inherit_encryption — that field is kept in the create
+ * payload and deleted separately in editSubmit().
  */
 const encryptionFormFields = [
-  'inherit_encryption',
   'key',
   'generate_key',
   'passphrase',
@@ -154,6 +154,7 @@ export class ZvolFormComponent implements OnInit {
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
   private originalVolsize: number | null = null;
+  private existingZvol!: Dataset;
   private payloadTracker = new FormPayloadTracker();
 
   form = this.formBuilder.group({
@@ -315,6 +316,7 @@ export class ZvolFormComponent implements OnInit {
               next: (parentDataset) => {
                 this.form.controls.sparse.disable();
                 this.form.controls.volblocksize.disable();
+                this.existingZvol = parentOrZvol;
 
                 this.setReadonlyField(parentOrZvol, parentDataset[0]);
                 this.copyParentProperties(parentOrZvol);
@@ -755,9 +757,7 @@ export class ZvolFormComponent implements OnInit {
       data.encryption_options.algorithm = data.algorithm;
     }
     // Delete individual encryption form fields after processing.
-    // Keep inherit_encryption in the payload for create — don't delete it.
     for (const field of encryptionFormFields) {
-      if (field === 'inherit_encryption') continue;
       delete (data as Record<string, unknown>)[field];
     }
 
@@ -773,126 +773,118 @@ export class ZvolFormComponent implements OnInit {
 
   private editSubmit(): void {
     this.isLoading.set(true);
-    this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (datasets) => {
-        const rawData: ZvolFormData = this.getPayload(this.form.getRawValue());
+    const rawData: ZvolFormData = this.getPayload(this.form.getRawValue());
 
-        const readonlyValue = this.form.controls.readonly.value;
-        const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
-        const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
-        const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
-        const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
-        // volsize is not included in computeEditPayload(), so it won't be
-        // removed by applyDiff(). Delete it here when readonly prevents resizing.
-        if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
-          delete rawData.volsize;
+    const readonlyValue = this.form.controls.readonly.value;
+    const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
+    const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
+    const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
+    const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
+    // volsize is not included in computeEditPayload(), so it won't be
+    // removed by applyDiff(). Delete it here when readonly prevents resizing.
+    if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
+      delete rawData.volsize;
+    }
+
+    // Remove UI-only fields. The transformed special_small_block_size
+    // value is managed by computeEditPayload() and merged via applyDiff(),
+    // so the raw form fields must be deleted to avoid conflicts.
+    delete rawData.special_small_block_size;
+    delete rawData.special_small_block_size_custom;
+
+    if (rawData.inherit_encryption) {
+      delete rawData.encryption;
+    } else if (rawData.encryption) {
+      rawData.encryption_options = {};
+      if (rawData.encryption_type === 'key') {
+        rawData.encryption_options.generate_key = rawData.generate_key;
+        if (!rawData.generate_key) {
+          rawData.encryption_options.key = rawData.key;
+        }
+      } else if (rawData.encryption_type === 'passphrase') {
+        rawData.encryption_options.passphrase = rawData.passphrase;
+        rawData.encryption_options.pbkdf2iters = Number(rawData.pbkdf2iters);
+      }
+      rawData.encryption_options.algorithm = rawData.algorithm;
+    }
+
+    // Delete individual encryption form fields after processing.
+    delete rawData.inherit_encryption;
+    for (const field of encryptionFormFields) {
+      delete (rawData as Record<string, unknown>)[field];
+    }
+
+    // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
+    // applyDiff returns a new object with only changed diff-managed keys
+    // merged back into the non-managed fields.
+    const data = this.payloadTracker.applyDiff(
+      rawData as Record<string, unknown>,
+      this.computeEditPayload(),
+    ) as ZvolFormData;
+
+    let canSubmit = true;
+    if (data.volsize !== undefined) {
+      let volblocksizeIntegerValue: number | string = this.existingZvol.volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+      volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
+      if (volblocksizeIntegerValue === 512) {
+        volblocksizeIntegerValue = 512;
+      } else {
+        volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
+      }
+
+      const parsedVolsize = Number(data.volsize);
+
+      // Check if volsize was actually changed by comparing with original
+      // Account for small rounding differences from formatter (< 0.1% difference)
+      const hasVolumeChanged = this.originalVolsize === null
+        || this.originalVolsize === 0
+        || Math.abs(parsedVolsize - this.originalVolsize) / this.originalVolsize > 0.001;
+
+      if (hasVolumeChanged) {
+        // User changed the size, use the parsed value and round to block size
+        data.volsize = this.alignVolsizeToBlocksize(parsedVolsize, volblocksizeIntegerValue);
+      } else {
+        // User didn't change the size — don't send it at all
+        delete data.volsize;
+      }
+
+      if (data.volsize !== undefined) {
+        let roundedVolSize = this.existingZvol.volsize.parsed;
+
+        if (this.existingZvol.volsize.parsed % volblocksizeIntegerValue !== 0) {
+          roundedVolSize = this.existingZvol.volsize.parsed
+            + (volblocksizeIntegerValue - this.existingZvol.volsize.parsed % volblocksizeIntegerValue);
         }
 
-        // Remove UI-only fields. The transformed special_small_block_size
-        // value is managed by computeEditPayload() and merged via applyDiff(),
-        // so the raw form fields must be deleted to avoid conflicts.
-        delete rawData.special_small_block_size;
-        delete rawData.special_small_block_size_custom;
-
-        if (rawData.inherit_encryption) {
-          delete rawData.encryption;
-        } else if (rawData.encryption) {
-          rawData.encryption_options = {};
-          if (rawData.encryption_type === 'key') {
-            rawData.encryption_options.generate_key = rawData.generate_key;
-            if (!rawData.generate_key) {
-              rawData.encryption_options.key = rawData.key;
-            }
-          } else if (rawData.encryption_type === 'passphrase') {
-            rawData.encryption_options.passphrase = rawData.passphrase;
-            rawData.encryption_options.pbkdf2iters = Number(rawData.pbkdf2iters);
-          }
-          rawData.encryption_options.algorithm = rawData.algorithm;
+        if ((data.volsize as number) < roundedVolSize) {
+          canSubmit = false;
         }
+      }
+    }
 
-        // Delete individual encryption form fields after processing.
-        for (const field of encryptionFormFields) {
-          delete (rawData as Record<string, unknown>)[field];
-        }
+    // force_size is only relevant when volsize is being changed.
+    // It survives the diff loop above because computeEditPayload()
+    // excludes it from the diffable set (it has dedicated handling here).
+    if (data.volsize === undefined) {
+      delete data.force_size;
+    }
 
-        // Remove unchanged ZFS properties to avoid unnecessary zfs inherit calls.
-        // applyDiff returns a new object with only changed diff-managed keys
-        // merged back into the non-managed fields.
-        const data = this.payloadTracker.applyDiff(
-          rawData as Record<string, unknown>,
-          this.computeEditPayload(),
-        ) as ZvolFormData;
-
-        let canSubmit = true;
-        if (data.volsize !== undefined) {
-          let volblocksizeIntegerValue: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
-          volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
-          if (volblocksizeIntegerValue === 512) {
-            volblocksizeIntegerValue = 512;
-          } else {
-            volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
-          }
-
-          const parsedVolsize = Number(data.volsize);
-
-          // Check if volsize was actually changed by comparing with original
-          // Account for small rounding differences from formatter (< 0.1% difference)
-          const hasVolumeChanged = this.originalVolsize === null
-            || this.originalVolsize === 0
-            || Math.abs(parsedVolsize - this.originalVolsize) / this.originalVolsize > 0.001;
-
-          if (hasVolumeChanged) {
-            // User changed the size, use the parsed value and round to block size
-            data.volsize = this.alignVolsizeToBlocksize(parsedVolsize, volblocksizeIntegerValue);
-          } else {
-            // User didn't change the size — don't send it at all
-            delete data.volsize;
-          }
-
-          if (data.volsize !== undefined) {
-            let roundedVolSize = datasets[0].volsize.parsed;
-
-            if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
-              roundedVolSize = datasets[0].volsize.parsed
-                + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
-            }
-
-            if ((data.volsize as number) < roundedVolSize) {
-              canSubmit = false;
-            }
-          }
-        }
-
-        // force_size is only relevant when volsize is being changed.
-        // It survives the diff loop above because computeEditPayload()
-        // excludes it from the diffable set (it has dedicated handling here).
-        if (data.volsize === undefined) {
-          delete data.force_size;
-        }
-
-        if (canSubmit) {
-          this.api.call('pool.dataset.update', [this.parentOrZvolId, data as DatasetUpdate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: (dataset) => this.handleZvolCreateUpdate(dataset),
-            error: (error: unknown) => {
-              this.isLoading.set(false);
-              this.formErrorHandler.handleValidationErrors(error, this.form);
-              this.cdr.markForCheck();
-            },
-          });
-        } else {
+    if (canSubmit) {
+      this.api.call('pool.dataset.update', [this.parentOrZvolId, data as DatasetUpdate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (dataset) => this.handleZvolCreateUpdate(dataset),
+        error: (error: unknown) => {
           this.isLoading.set(false);
-          this.dialogService.error({
-            title: helptextZvol.zvolSaveError.title,
-            message: helptextZvol.zvolSaveError.msg,
-          });
-        }
-      },
-      error: (error: unknown): void => {
-        this.errorHandler.showErrorModal(error);
-        this.isLoading.set(false);
-        this.cdr.markForCheck();
-      },
-    });
+          this.formErrorHandler.handleValidationErrors(error, this.form);
+          this.cdr.markForCheck();
+        },
+      });
+    } else {
+      this.isLoading.set(false);
+      this.dialogService.error({
+        title: helptextZvol.zvolSaveError.title,
+        message: helptextZvol.zvolSaveError.msg,
+      });
+    }
   }
 
   protected onSubmit(): void {
