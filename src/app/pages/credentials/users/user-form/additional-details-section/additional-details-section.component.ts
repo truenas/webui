@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, Signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -101,6 +101,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   });
 
   private groupNameCache = new Map<number, string>();
+
   protected homeDirectoryEmptyValue = computed(() => {
     if (this.editingUser()) {
       if (isEmptyHomeDirectory(this.editingUser()?.home)) {
@@ -112,14 +113,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     return this.translate.instant('Not Set');
   });
 
-  protected homeDirectoryViewValue(): string {
-    const path = this.form.controls.home.value;
-    if (this.form.controls.home_create.value && path) {
-      return this.translate.instant('New directory under {path}', { path });
-    }
-    // Form value is always normalized to defaultHomePath if empty, so we can return it directly
-    return path;
-  }
+  protected homeDirectoryViewValue: Signal<string>;
 
   readonly groupOptions$ = this.api.call('group.query', [[
     ['local', '=', true],
@@ -145,9 +139,51 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
-  shouldShowPermissions(): boolean {
-    const homeValue = this.form.controls.home.value;
-    return homeValue !== defaultHomePath;
+  protected shouldShowPermissions: Signal<boolean>;
+
+  protected hasRealHomePath: Signal<boolean>;
+
+  protected homeEditable = viewChild<EditableComponent>('homeEditable');
+
+  protected onHomeEditableOpened(): void {
+    if (this.editingUser()) return;
+
+    // Skip validator sync if opening due to API validation error to preserve the error message
+    if (this.form.controls.home.errors?.manualValidateError) return;
+
+    this.syncHomeValidators(this.form.controls.home_create.value, true);
+  }
+
+  protected onHomeEditableClosed(): void {
+    if (this.editingUser()) return;
+
+    this.syncHomeValidators(this.form.controls.home_create.value, false);
+  }
+
+  /**
+   * Called from three places:
+   * - onHomeEditableOpened: isOpen=true, isCreating from form
+   * - onHomeEditableClosed: isOpen=false, isCreating from form
+   * - home_create.valueChanges: isOpen from homeEditable signal
+   */
+  private syncHomeValidators(isCreating: boolean, isOpen: boolean): void {
+    const homeControl = this.form.controls.home;
+
+    if (isCreating && isOpen) {
+      if (!homeControl.hasValidator(Validators.required)) {
+        homeControl.addValidators(Validators.required);
+      }
+      if (homeControl.value === defaultHomePath) {
+        homeControl.setValue('');
+      }
+    } else {
+      homeControl.removeValidators(Validators.required);
+      if (!homeControl.value) {
+        homeControl.setValue(defaultHomePath);
+      }
+    }
+
+    homeControl.updateValueAndValidity();
   }
 
   protected groupsProvider: ChipsProvider = this.createGroupsProvider();
@@ -160,7 +196,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     email: [null as string, [emailValidator()]],
     home: [defaultHomePath],
     home_mode: ['700'],
-    home_create: [false],
+    home_create: [true],
     default_permissions: [true],
     uid: [null as number],
     shell: [null as string | null],
@@ -174,6 +210,30 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
 
   constructor() {
+    const homeValue = toSignal(
+      this.form.controls.home.valueChanges.pipe(startWith(this.form.controls.home.value)),
+    );
+    const homeCreateValue = toSignal(
+      this.form.controls.home_create.valueChanges.pipe(startWith(this.form.controls.home_create.value)),
+    );
+    this.homeDirectoryViewValue = computed(() => {
+      const path = homeValue();
+      if (homeCreateValue()) {
+        if (path && path !== defaultHomePath && !isEmptyHomeDirectory(path)) {
+          return this.translate.instant('New directory under {path}', { path });
+        }
+        return defaultHomePath;
+      }
+      return path || defaultHomePath;
+    });
+
+    this.shouldShowPermissions = computed(() => homeValue() !== defaultHomePath);
+
+    this.hasRealHomePath = computed(() => {
+      const home = homeValue();
+      return !!home && home !== defaultHomePath && !isEmptyHomeDirectory(home);
+    });
+
     this.form.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -348,6 +408,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       sudo_commands: allSudoCommands ? [] : user.sudo_commands,
       sudo_commands_nopasswd_all: allSudoCommandsNoPasswd,
       sudo_commands_nopasswd: allSudoCommandsNoPasswd ? [] : user.sudo_commands_nopasswd,
+      home_create: false,
     });
 
     this.form.controls.uid.disable();
@@ -423,14 +484,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.form.controls.group.disabledWhile(this.form.controls.group_create.value$);
     this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
     this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
-
-    this.form.controls.home.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((home) => {
-      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
-        this.form.controls.home_mode.disable();
-      } else {
-        this.form.controls.home_mode.enable();
-      }
-    });
 
     this.form.controls.group.valueChanges
       .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
@@ -572,13 +625,13 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private detectHomeDirectoryChanges(): void {
     this.form.controls.home.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((home) => {
-      // Normalize empty home directory values to default path
-      if (!home || home.trim() === '') {
+      // Normalize empty home directory values to default path when not creating a new home
+      if ((!home || home.trim() === '') && !this.form.controls.home_create.value) {
         this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
       }
 
       const normalizedHome = this.form.controls.home.value;
-      if (isEmptyHomeDirectory(normalizedHome) || this.editingUser()?.immutable) {
+      if (isEmptyHomeDirectory(normalizedHome) || normalizedHome === defaultHomePath || this.editingUser()?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
@@ -586,6 +639,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
 
     this.form.controls.home_create.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((checked) => {
+      this.syncHomeValidators(checked, this.homeEditable()?.isOpen() ?? false);
       if (checked) {
         this.form.patchValue({
           home_mode: '700',
@@ -597,6 +651,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   }
 
   private setHomeSharePath(): void {
+    if (this.editingUser()) return;
+
     this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
       ['options.home', '=', true],
