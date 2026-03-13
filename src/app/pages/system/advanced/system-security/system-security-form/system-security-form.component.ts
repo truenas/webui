@@ -709,7 +709,7 @@ export class SystemSecurityFormComponent implements OnInit {
       this.delayHighlightElement(elementName);
 
       // re-trigger STIG requirement computation after the slidein closes
-      result$.subscribe(() => {
+      result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.setupStigRequirements();
       });
     }
@@ -719,7 +719,7 @@ export class SystemSecurityFormComponent implements OnInit {
     const result$ = this.slideIn.open(UserFormComponent, { data: user });
     this.delayHighlightElement('disablePasswordCheckbox');
 
-    result$.subscribe(() => {
+    result$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.setupStigRequirements();
     });
   }

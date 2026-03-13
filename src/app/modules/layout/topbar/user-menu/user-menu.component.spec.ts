@@ -18,6 +18,7 @@ import {
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
@@ -30,7 +31,7 @@ describe('UserMenuComponent', () => {
     providers: [
       mockProvider(MatDialog),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
       mockApi(),
       mockProvider(AuthService, {

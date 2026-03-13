@@ -22,10 +22,12 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * when the slide-in was closed successfully (truthy response).
    * Useful in switchMap chains.
    */
-  readonly success$: Observable<Truthy<R>> = this.source$.pipe(
-    filter((result): result is SlideInResponse<R> & { response: Truthy<R> } => !!result.response),
-    map((result) => result.response),
-  );
+  get success$(): Observable<Truthy<R>> {
+    return this.source$.pipe(
+      filter((result): result is SlideInResponse<R> & { response: Truthy<R> } => !!result.response),
+      map((result) => result.response),
+    );
+  }
 
   /**
    * Subscribes to successful slide-in closes and invokes the callback.
@@ -38,5 +40,16 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
     this.success$.pipe(
       takeUntilDestroyed(destroyRef),
     ).subscribe((response) => callback(response));
+  }
+
+  /**
+   * Subscribes to slide-in closes where the user cancelled (falsy response)
+   * and invokes the callback. Automatically unsubscribes when destroyed.
+   */
+  onCancel(callback: () => void, destroyRef: DestroyRef): void {
+    this.source$.pipe(
+      filter((result) => !result.response),
+      takeUntilDestroyed(destroyRef),
+    ).subscribe(() => callback());
   }
 }
