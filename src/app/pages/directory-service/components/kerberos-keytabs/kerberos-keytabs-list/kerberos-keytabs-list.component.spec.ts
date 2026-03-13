@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -11,6 +12,7 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -48,6 +50,7 @@ describe('KerberosKeytabsListComponent', () => {
           type: DirectoryServiceType.ActiveDirectory,
           status: DirectoryServiceStatus.Healthy,
         } as DirectoryServicesStatus),
+        mockCall('kerberos.keytab.delete'),
         mockJob('directoryservices.sync_keytab'),
       ]),
       mockProvider(DialogService, {
@@ -55,6 +58,9 @@ describe('KerberosKeytabsListComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
       mockAuth(),
     ],
@@ -82,6 +88,15 @@ describe('KerberosKeytabsListComponent', () => {
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosKeytabsFormComponent);
+  });
+
+  it('deletes a keytab with confirmation when Delete button is pressed', async () => {
+    const deleteIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'keytab1');
+    await deleteIcon.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
   it('calls directoryservices.sync_keytab when Sync is pressed', async () => {

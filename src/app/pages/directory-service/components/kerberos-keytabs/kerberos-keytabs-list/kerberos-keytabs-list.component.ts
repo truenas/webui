@@ -26,6 +26,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -65,6 +66,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   private api = inject(ApiService);
   protected dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private snackbar = inject(SnackbarService);
@@ -107,7 +109,7 @@ export class KerberosKeytabsListComponent implements OnInit {
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.api.call('kerberos.keytab.delete', [row.id])),
+              switchMap(() => this.api.call('kerberos.keytab.delete', [row.id]).pipe(this.loader.withLoader())),
               takeUntilDestroyed(this.destroyRef),
             ).subscribe({
               error: (error: unknown) => {

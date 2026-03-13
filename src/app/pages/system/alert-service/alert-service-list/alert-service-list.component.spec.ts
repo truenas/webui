@@ -15,6 +15,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -57,6 +58,9 @@ describe('AlertServiceListComponent', () => {
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
       provideMockStore({
         selectors: [
@@ -111,5 +115,6 @@ describe('AlertServiceListComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });

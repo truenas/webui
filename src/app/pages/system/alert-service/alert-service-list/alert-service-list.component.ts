@@ -28,6 +28,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -66,6 +67,7 @@ export class AlertServiceListComponent implements OnInit {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -171,7 +173,7 @@ export class AlertServiceListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('alertservice.delete', [alertService.id])),
+      switchMap(() => this.api.call('alertservice.delete', [alertService.id]).pipe(this.loader.withLoader())),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getAlertServices());

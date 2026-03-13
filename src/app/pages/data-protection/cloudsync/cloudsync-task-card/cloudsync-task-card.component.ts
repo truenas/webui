@@ -40,6 +40,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -81,6 +82,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   private taskService = inject(TaskService);
@@ -225,7 +227,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id])),
+      switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
