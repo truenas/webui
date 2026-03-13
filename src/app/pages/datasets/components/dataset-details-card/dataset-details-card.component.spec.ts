@@ -16,6 +16,7 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -78,7 +79,7 @@ describe('DatasetDetailsCardComponent', () => {
       }),
       mockProvider(MatSnackBar),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({

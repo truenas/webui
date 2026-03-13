@@ -14,6 +14,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { StaticRouteDeleteDialog } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
 import { StaticRoutesCardComponent } from 'app/pages/system/network/components/static-routes-card/static-routes-card.component';
@@ -50,7 +51,7 @@ describe('StaticRoutesCardComponent', () => {
         confirm: () => of(true),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(MatDialog, {

@@ -22,6 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ScrubFormComponent,
@@ -107,7 +108,7 @@ describe('StorageHealthCardComponent', () => {
         navigate: jest.fn(),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

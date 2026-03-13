@@ -22,6 +22,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
@@ -130,7 +131,7 @@ describe('VmListComponent', () => {
         hasVirtualizationSupport$: of(true),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
     ],
   });

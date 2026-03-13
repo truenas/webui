@@ -12,6 +12,7 @@ import { NetworkConfiguration } from 'app/interfaces/network-configuration.inter
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/system/network/components/network-configuration-card/network-configuration-card.component';
@@ -53,7 +54,7 @@ describe('NetworkConfigurationCardComponent', () => {
         } as NetworkSummary),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
     ],
   });

@@ -21,6 +21,7 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -80,7 +81,7 @@ describe('WebShareCardComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of(true)),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
       mockProvider(DialogService),
       mockProvider(SnackbarService),

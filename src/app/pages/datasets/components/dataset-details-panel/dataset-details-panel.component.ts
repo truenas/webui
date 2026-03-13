@@ -87,24 +87,18 @@ export class DatasetDetailsPanelComponent {
   onAddDataset(): void {
     this.slideIn.open(DatasetFormComponent, {
       wide: true, data: { isNew: true, datasetId: this.dataset().id },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ response }) => {
+    }).onSuccess((response) => {
       this.switchToNewDateset(response.id);
-    });
+    }, this.destroyRef);
   }
 
   onAddZvol(): void {
     this.slideIn.open(ZvolFormComponent, {
       data: { isNew: true, parentOrZvolId: this.dataset().id },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ response }) => {
+    }).onSuccess((response) => {
       this.snackbar.success(this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(response) }));
       this.switchToNewDateset(response.id);
-    });
+    }, this.destroyRef);
   }
 
   private switchToNewDateset(id: string): void {

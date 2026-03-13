@@ -21,6 +21,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
@@ -54,7 +55,7 @@ export class SlideIn {
   open<D, R>(
     component: ComponentInSlideIn<D, R>,
     options: { data?: D; wide?: boolean } = {},
-  ): Observable<SlideInResponse<R>> {
+  ): SlideInResult<R> {
     const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
         const slideInId = uuidv4();
@@ -94,7 +95,7 @@ export class SlideIn {
 
     open$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
-    return open$.pipe(take(1));
+    return new SlideInResult<R>(open$.pipe(take(1)));
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { wide?: boolean }): void {

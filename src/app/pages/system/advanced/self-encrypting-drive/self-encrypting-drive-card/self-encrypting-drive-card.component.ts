@@ -10,7 +10,6 @@ import { isEqual } from 'lodash-es';
 import { Subject, combineLatest } from 'rxjs';
 import {
   distinctUntilChanged,
-  filter,
   map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -86,8 +85,7 @@ export class SelfEncryptingDriveCardComponent {
       switchMap(() => this.slideIn.open(
         SelfEncryptingDriveFormComponent,
         { data: { sedPassword: '' } },
-      )),
-      filter((response) => !!response.response),
+      ).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

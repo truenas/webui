@@ -12,6 +12,7 @@ import {
   NvmeOfHost, NvmeOfPort, NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
@@ -40,7 +41,7 @@ describe('NvmeOfComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => {
-          return of({ response: { id: 1 } });
+          return new SlideInResult(of({ response: { id: 1 } }));
         }),
       }),
       mockAuth(),

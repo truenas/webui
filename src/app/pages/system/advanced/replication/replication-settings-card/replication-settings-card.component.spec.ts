@@ -8,6 +8,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
@@ -32,7 +33,7 @@ describe('ReplicationSettingsCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
       mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
     ],

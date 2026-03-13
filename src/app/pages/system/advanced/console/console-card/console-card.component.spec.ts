@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -21,7 +22,7 @@ describe('ConsoleCardComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),

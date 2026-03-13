@@ -8,6 +8,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -37,7 +38,7 @@ describe('AddSubsystemNamespacesComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: newNamespace, error: null as string | null })),
+        open: jest.fn(() => new SlideInResult(of({ response: newNamespace, error: null as string | null }))),
       }),
     ],
   });

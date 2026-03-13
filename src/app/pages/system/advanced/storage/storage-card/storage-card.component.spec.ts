@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import {
   StorageSettingsData,
@@ -38,7 +39,7 @@ describe('StorageCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
     ],
   });

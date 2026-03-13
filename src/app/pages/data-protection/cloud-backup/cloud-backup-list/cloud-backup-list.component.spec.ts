@@ -17,6 +17,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -79,9 +80,9 @@ describe('CloudBackupListComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
+        open: jest.fn(() => new SlideInResult(of({
           response: true,
-        })),
+        }))),
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),

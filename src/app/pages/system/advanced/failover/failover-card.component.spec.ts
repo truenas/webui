@@ -8,6 +8,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { FailoverCardComponent } from 'app/pages/system/advanced/failover/failover-card.component';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -31,7 +32,7 @@ describe('FailoverCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
       mockAuth(),
     ],

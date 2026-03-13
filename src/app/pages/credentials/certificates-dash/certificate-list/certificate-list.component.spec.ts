@@ -19,6 +19,7 @@ import {
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
@@ -73,7 +74,7 @@ describe('CertificateListComponent', () => {
         })),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(SlideInRef),
       mockProvider(MatDialog, {
@@ -162,7 +163,7 @@ describe('CertificateListComponent', () => {
     const certificatesUpdatedSpy = jest.fn();
     spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(new SlideInResult(of({ response: true, error: false })));
 
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
     await addButton.click();
@@ -174,7 +175,7 @@ describe('CertificateListComponent', () => {
     const certificatesUpdatedSpy = jest.fn();
     spectator.output('certificatesUpdated').subscribe(certificatesUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(new SlideInResult(of({ response: true, error: false })));
 
     const menuButton = await table.getHarnessInRow(MatButtonHarness, certificates[0].name);
     await menuButton.click();

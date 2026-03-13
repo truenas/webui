@@ -11,6 +11,7 @@ import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -71,7 +72,7 @@ describe('ManagePortsDialog', () => {
         reloadPorts: jest.fn(),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: {} })),
+        open: jest.fn(() => new SlideInResult(of({ response: {} }))),
       }),
       mockAuth(),
     ],

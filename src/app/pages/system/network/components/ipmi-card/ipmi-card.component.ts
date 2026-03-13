@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, of } from 'rxjs';
+import { of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
@@ -94,11 +94,7 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onEdit(ipmi: Ipmi): void {
-    this.slideIn.open(IpmiFormComponent, { data: ipmi.id })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => this.loadIpmiEntries());
+    this.slideIn.open(IpmiFormComponent, { data: ipmi.id }).onSuccess(() => this.loadIpmiEntries(), this.destroyRef);
   }
 
   private onOpen(ipmi: Ipmi): void {

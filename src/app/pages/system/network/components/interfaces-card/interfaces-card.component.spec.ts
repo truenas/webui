@@ -16,6 +16,7 @@ import {
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
@@ -94,7 +95,7 @@ describe('InterfacesCardComponent', () => {
         getIsHaEnabled: jest.fn(() => failoverConfig$.pipe(map((config) => !config.disabled))),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

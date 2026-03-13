@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
@@ -7,7 +7,6 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
-import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -201,23 +200,13 @@ export class UsageCardComponent {
   createSmbShare(): void {
     this.slideIn.open(SmbFormComponent, {
       data: { defaultSmbShare: { path: this.dataset().mountpoint } as SmbShare },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.datasetStore.datasetUpdated();
-    });
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   createNfsShare(): void {
     this.slideIn.open(NfsFormComponent, {
       data: { defaultNfsShare: { path: this.dataset().mountpoint } as NfsShare },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.datasetStore.datasetUpdated();
-    });
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   createWebshare(): void {
@@ -230,11 +219,6 @@ export class UsageCardComponent {
         name: datasetName,
         path: this.dataset().mountpoint,
       },
-    }).pipe(
-      filter((response) => !!response?.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.datasetStore.datasetUpdated();
-    });
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 }

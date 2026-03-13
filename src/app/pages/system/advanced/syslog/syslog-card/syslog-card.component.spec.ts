@@ -11,6 +11,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -50,7 +51,7 @@ describe('SyslogCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
     ],
   });

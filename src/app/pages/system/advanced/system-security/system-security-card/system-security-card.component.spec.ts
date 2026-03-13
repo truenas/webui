@@ -10,6 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -43,7 +44,7 @@ describe('SystemSecurityCardComponent', () => {
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => new SlideInResult(of({ response: true }))),
       }),
     ],
   });

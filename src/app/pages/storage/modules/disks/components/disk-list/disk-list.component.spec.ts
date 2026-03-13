@@ -22,6 +22,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DiskBulkEditComponent,
@@ -120,7 +121,7 @@ describe('DiskListComponent', () => {
       mockAuth(),
       mockProvider(Router),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -267,7 +268,7 @@ describe('DiskListComponent', () => {
     const mockUpd: DiskFormResponse = [fakeDisk];
     const mockSlideInRef$ = of({ response: mockUpd, error: null });
 
-    jest.spyOn(slideIn, 'open').mockReturnValue(mockSlideInRef$);
+    jest.spyOn(slideIn, 'open').mockReturnValue(new SlideInResult(mockSlideInRef$));
 
     await table.expandRow(0);
 
@@ -312,7 +313,7 @@ describe('DiskListComponent - without SED license', () => {
       mockAuth(),
       mockProvider(Router),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(MatDialog),
       mockProvider(LicenseService, {

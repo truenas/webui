@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ExplorerCreateZvolComponent } from './explorer-create-zvol.component';
 
@@ -40,7 +41,7 @@ describe('ExplorerCreateZvolComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: { id: 'test-pool/test-zvol' } })),
+        open: jest.fn(() => new SlideInResult(of({ response: { id: 'test-pool/test-zvol' } }))),
       }),
       {
         provide: NgControl,

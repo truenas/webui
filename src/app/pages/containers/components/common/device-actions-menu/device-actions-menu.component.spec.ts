@@ -13,6 +13,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -41,7 +42,7 @@ describe('DeviceActionsMenuComponent', () => {
         withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: false })),
+        open: jest.fn(() => new SlideInResult(of({ response: false }))),
       }),
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),

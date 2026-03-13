@@ -8,6 +8,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { UsageCardComponent } from 'app/pages/datasets/components/usage-card/usage-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -40,7 +41,7 @@ describe('UsageCardComponent', () => {
         } as TruenasConnectConfig),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => new SlideInResult(of())),
       }),
       mockProvider(LicenseService, {
         hasTruenasConnect$: of(true),

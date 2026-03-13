@@ -139,10 +139,7 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   protected addAlertService(): void {
-    this.slideIn.open(AlertServiceComponent).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getAlertServices());
+    this.slideIn.open(AlertServiceComponent).onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {
@@ -157,10 +154,7 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   private editAlertService(row: AlertService): void {
-    this.slideIn.open(AlertServiceComponent, { data: row }).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getAlertServices());
+    this.slideIn.open(AlertServiceComponent, { data: row }).onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   private confirmDeleteAlertService(alertService: AlertService): void {

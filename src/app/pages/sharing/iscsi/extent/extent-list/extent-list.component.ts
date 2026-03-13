@@ -121,10 +121,8 @@ export class ExtentListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (extent) => {
-            this.slideIn.open(ExtentFormComponent, { wide: true, data: extent }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
+            this.slideIn.open(ExtentFormComponent, { wide: true, data: extent })
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -158,10 +156,8 @@ export class ExtentListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(ExtentFormComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+    this.slideIn.open(ExtentFormComponent, { wide: true })
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   private showDeleteDialog(extent: IscsiExtent): void {
