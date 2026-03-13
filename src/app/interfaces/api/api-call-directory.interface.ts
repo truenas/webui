@@ -999,8 +999,8 @@ export interface ApiCallDirectory {
 
   // ZFS Tier
   'zfs.tier.config': { params: void; response: ZfsTierConfig };
-  'zfs.tier.rewrite_job_status': { params: [tierJobId: number]; response: ZfsTierRewriteJobEntry };
-  'zfs.tier.rewrite_job_abort': { params: [tierJobId: number]; response: void };
+  'zfs.tier.rewrite_job_status': { params: [tierJobId: string]; response: ZfsTierRewriteJobEntry };
+  'zfs.tier.rewrite_job_abort': { params: [tierJobId: string]; response: void };
   'pool.dataset.set_tier': { params: [datasetName: string, tier: DatasetTier]; response: void };
 }
 

@@ -12,6 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -36,6 +37,7 @@ export interface DataMigrationStatusDialogData {
     MatProgressBar,
     TranslateModule,
     NgClass,
+    FormatDateTimePipe,
     FileSizePipe,
   ],
 })
@@ -51,6 +53,8 @@ export class DataMigrationStatusDialogComponent implements OnInit {
 
   protected job: ZfsTierRewriteJobEntry;
   protected progressPercent = 0;
+  protected startTime: Date | null = null;
+  protected estimatedCompletion: Date | null = null;
 
   get isRunning(): boolean {
     return this.job?.status === TierRewriteJobStatus.Running
@@ -150,8 +154,28 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   private updateProgress(): void {
-    if (this.job?.stats?.total_bytes > 0) {
-      this.progressPercent = Math.round((this.job.stats.count_bytes / this.job.stats.total_bytes) * 100);
+    if (this.job?.stats) {
+      this.startTime = new Date(this.job.stats.start_time * 1000);
+
+      if (this.job.stats.total_bytes > 0) {
+        this.progressPercent = Math.round(
+          (this.job.stats.count_bytes / this.job.stats.total_bytes) * 100,
+        );
+
+        this.estimatedCompletion = this.calculateEstimatedCompletion();
+      }
     }
+  }
+
+  private calculateEstimatedCompletion(): Date | null {
+    if (!this.startTime || !this.job?.stats || this.job.stats.count_bytes <= 0) {
+      return null;
+    }
+
+    const now = this.job.stats.update_time * 1000;
+    const elapsed = now - this.startTime.getTime();
+    const fractionDone = this.job.stats.count_bytes / this.job.stats.total_bytes;
+    const estimatedTotal = elapsed / fractionDone;
+    return new Date(this.startTime.getTime() + estimatedTotal);
   }
 }
