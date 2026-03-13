@@ -22,6 +22,15 @@
   }
 }
 
+.time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--fg2);
+}
+
 mat-progress-bar {
   margin-bottom: 16px;
 }
