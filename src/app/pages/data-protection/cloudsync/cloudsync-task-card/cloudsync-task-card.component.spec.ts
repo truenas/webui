@@ -140,6 +140,7 @@ describe('CloudSyncTaskCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -294,14 +295,12 @@ describe('CloudSyncTaskCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Sync Task <b>"custom-cloudsync"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Sync Task «custom-cloudsync» deleted.',
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {

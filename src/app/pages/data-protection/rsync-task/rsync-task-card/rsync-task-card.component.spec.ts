@@ -99,6 +99,7 @@ describe('RsyncTaskCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -176,14 +177,11 @@ describe('RsyncTaskCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Rsync Task <b>"asd - asdad"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {

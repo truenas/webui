@@ -51,6 +51,7 @@ describe('DockerRegistriesListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -86,14 +87,11 @@ describe('DockerRegistriesListComponent', () => {
     const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'Docker Hub');
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      message: 'Are you sure you want to delete the <b>Docker Hub (https://index.docker.io/v1/)</b> registry?',
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Docker Registry',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      message: 'Are you sure you want to delete the <b>Docker Hub (https://index.docker.io/v1/)</b> registry?',
+      call: expect.any(Function),
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.delete', [1]);
   });
 
   it('opens form when "Add Registry" button is pressed', async () => {

@@ -52,6 +52,7 @@ describe('KerberosKeytabsListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),

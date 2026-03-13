@@ -77,6 +77,7 @@ describe('CloudBackupListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
@@ -203,14 +204,12 @@ describe('CloudBackupListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Backup Task <b>"UA"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Backup Task «UA» deleted.',
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {

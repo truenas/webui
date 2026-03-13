@@ -16,7 +16,6 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -53,7 +52,7 @@ describe('AlertServiceListComponent', () => {
         mockCall('alertservice.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -105,11 +104,10 @@ describe('AlertServiceListComponent', () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 4);
     await deleteIcon.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Alert Service <b>"SNMP Trap"</b>?',
+      call: expect.any(Function),
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.delete', [1]);
   });
 });

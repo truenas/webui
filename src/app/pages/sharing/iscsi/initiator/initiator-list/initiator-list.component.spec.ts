@@ -19,7 +19,6 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -50,7 +49,7 @@ describe('InitiatorListComponent', () => {
         mockCall('iscsi.initiator.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(),
@@ -97,8 +96,10 @@ describe('InitiatorListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.initiator.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: 'Are you sure you want to delete this item?',
+      call: expect.any(Function),
+    });
   });
 
   it('should show table rows', async () => {

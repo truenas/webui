@@ -4,15 +4,13 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TunableCardComponent } from './tunable-card.component';
@@ -48,10 +46,9 @@ describe('TunableCardComponent', () => {
     providers: [
       mockApi([
         mockCall('tunable.query', items),
-        mockJob('tunable.delete', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
@@ -107,6 +104,11 @@ describe('TunableCardComponent', () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 4);
     await deleteIcon.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Tunable (ZFS)',
+      message: 'Are you sure you want to delete "zfs_arc_max"?',
+      job: expect.any(Function),
+      successMessage: 'Variable deleted.',
+    });
   });
 });

@@ -122,6 +122,7 @@ describe('CloudSyncListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -205,22 +206,17 @@ describe('CloudSyncListComponent', () => {
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
-
     await table.expandRow(0);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       message: 'Delete Cloud Sync Task <b>"custom-cloudlist"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Sync Task «custom-cloudlist» deleted.',
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» deleted.');
   });
 
   it('shows dialog when Restore button is pressed', async () => {

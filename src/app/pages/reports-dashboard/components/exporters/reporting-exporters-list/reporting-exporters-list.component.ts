@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
-  BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap,
+  BehaviorSubject, Observable, combineLatest, filter, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -213,25 +213,13 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private doDelete(exporter: ReportingExporter): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Delete Reporting Exporter'),
       message: this.translate.instant('Are you sure you want to delete <b>{name}</b> Reporting Exporter?', { name: exporter.name }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
+      call: () => this.api.call('reporting.exporters.delete', [exporter.id]),
     }).pipe(
-      filter(Boolean),
-      tap(() => this.loader.open(this.translate.instant('Deleting exporter'))),
-      switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (deleted) => {
-        if (deleted) {
-          this.getExporters();
-        }
-      },
-      complete: () => this.loader.close(),
-      error: (error: unknown) => this.errorCaught(error),
-    });
+    ).subscribe(() => this.getExporters());
   }
 
   private errorCaught(error: unknown): void {

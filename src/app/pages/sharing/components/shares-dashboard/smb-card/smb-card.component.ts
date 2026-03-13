@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  map, filter, switchMap, BehaviorSubject, of,
+  map, filter, BehaviorSubject, of,
 } from 'rxjs';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -169,21 +169,13 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected doDelete(smb: SmbShare): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
+      call: () => this.api.call('sharing.smb.delete', [smb.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('sharing.smb.delete', [smb.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.dataProvider.load();
     });
   }
 

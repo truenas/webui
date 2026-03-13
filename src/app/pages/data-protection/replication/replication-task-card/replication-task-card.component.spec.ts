@@ -92,6 +92,7 @@ describe('ReplicationTaskCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -191,14 +192,11 @@ describe('ReplicationTaskCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Replication Task <b>"APPS/test2 - APPS/test3"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('updates Replication Task Enabled status once mat-toggle is updated', async () => {

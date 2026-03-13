@@ -316,27 +316,12 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   protected doDelete(row: CloudSyncTaskUi): void {
-    this.dialogService.confirm({
-      message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
-        name: row.description,
-      }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('cloudsync.delete', [row.id])),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(
-          this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: row.description }),
-        );
-        this.getCloudSyncTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    this.dialogService.confirmDelete({
+      message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', { name: row.description }),
+      call: () => this.api.call('cloudsync.delete', [row.id]),
+      successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: row.description }),
+    }).pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.getCloudSyncTasks());
   }
 
   protected onListFiltered(query: string): void {

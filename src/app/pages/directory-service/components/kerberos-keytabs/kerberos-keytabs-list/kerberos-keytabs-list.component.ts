@@ -102,21 +102,12 @@ export class KerberosKeytabsListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
-            this.dialogService.confirm({
-              title: this.translate.instant('Delete'),
+            this.dialogService.confirmDelete({
               message: this.translate.instant('Are you sure you want to delete this item?'),
+              call: () => this.api.call('kerberos.keytab.delete', [row.id]),
             }).pipe(
-              filter(Boolean),
-              switchMap(() => this.api.call('kerberos.keytab.delete', [row.id])),
               takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              error: (error: unknown) => {
-                this.errorHandler.showErrorModal(error);
-              },
-              complete: () => {
-                this.getKerberosKeytabs();
-              },
-            });
+            ).subscribe(() => this.getKerberosKeytabs());
           },
         },
       ],

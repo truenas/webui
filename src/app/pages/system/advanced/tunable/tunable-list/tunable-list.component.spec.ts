@@ -17,7 +17,6 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
 
@@ -112,10 +111,7 @@ describe('TunableListComponent', () => {
         open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => of({
-          afterClosed: of(null),
-        })),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockApi([
         mockCall('core.get_jobs'),
@@ -180,15 +176,12 @@ describe('TunableListComponent', () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteIcon.click();
 
-    const dialogService = spectator.inject(DialogService);
-    expect(dialogService.confirm).toHaveBeenCalledWith({
-      buttonText: 'Delete',
-      message: 'Are you sure you want to delete "kernel.hostname"?',
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Tunable (SYSCTL)',
-      buttonColor: 'warn',
+      message: 'Are you sure you want to delete "kernel.hostname"?',
+      job: expect.any(Function),
+      jobProgressTitle: 'Deleting...',
+      successMessage: 'Tunable "kernel.hostname" deleted',
     });
-
-    expect(dialogService.jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [12]);
   });
 });

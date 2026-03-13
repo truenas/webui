@@ -77,7 +77,7 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -148,7 +148,10 @@ describe('SmbCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: 'Are you sure you want to delete SMB Share <b>"smb123"</b>?',
+      call: expect.any(Function),
+    });
   });
 
   it('updates SMB Enabled status once mat-toggle is updated', async () => {

@@ -82,6 +82,7 @@ describe('CloudBackupCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(SnackbarService),
@@ -221,14 +222,12 @@ describe('CloudBackupCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Backup Task <b>"test one"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Backup Task «test one» deleted.',
     });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {

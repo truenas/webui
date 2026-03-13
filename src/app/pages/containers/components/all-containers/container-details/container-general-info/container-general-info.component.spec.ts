@@ -4,7 +4,7 @@ import { KeyValuePipe } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,7 +14,6 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-general-info/container-general-info.component';
@@ -59,6 +58,7 @@ describe('ContainerGeneralInfoComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(Router),
     ],
@@ -96,8 +96,10 @@ describe('ContainerGeneralInfoComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('container.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: 'Delete Demo?',
+      call: expect.any(Function),
+    });
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
@@ -112,12 +114,11 @@ describe('ContainerGeneralInfoComponent', () => {
 
   it('does not delete container when confirmation is cancelled', async () => {
     const dialogService = spectator.inject(DialogService);
-    (dialogService.confirm as jest.Mock).mockReturnValue(of(false));
+    (dialogService.confirmDelete as jest.Mock).mockReturnValue(EMPTY);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.delete', [1]);
     expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
   });
 

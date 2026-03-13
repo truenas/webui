@@ -57,6 +57,7 @@ describe('ReportingExportersListComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -96,7 +97,11 @@ describe('ReportingExportersListComponent', () => {
     const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Reporting Exporter',
+      message: 'Are you sure you want to delete <b>test</b> Reporting Exporter?',
+      call: expect.any(Function),
+    });
   });
 
   it('updates a reporting exporter when Enabled checkbox is toggled', async () => {

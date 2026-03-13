@@ -13,7 +13,6 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
@@ -58,7 +57,7 @@ describe('InitShutdownListComponent', () => {
         open: jest.fn(() => of([])),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn(() => of(undefined)),
       }),
       mockAuth(),
     ],
@@ -92,6 +91,10 @@ describe('InitShutdownListComponent', () => {
     const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete this script?',
+      call: expect.any(Function),
+    });
   });
 });
