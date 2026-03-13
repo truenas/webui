@@ -3,14 +3,16 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, IconLibraryType } from '@truenas/ui-components';
+import { TnIconComponent } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
-import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
   DataMigrationStatusDialogComponent,
 } from 'app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component';
+import {
+  getTierJobIcon, getTierJobStatusClass, getTierJobStatusLabel,
+} from 'app/pages/sharing/components/tier-status.utils';
 
 interface HasTier {
   tier?: SharingTierInfo | null;
@@ -52,72 +54,12 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
   });
 
   protected jobStatusLabel = computed(() => {
-    const job = this.tierJob();
-    if (!job) return '';
-    switch (job.status) {
-      case TierRewriteJobStatus.Complete:
-        return this.translate.instant('Complete');
-      case TierRewriteJobStatus.Running:
-        return this.translate.instant('Running');
-      case TierRewriteJobStatus.Queued:
-        return this.translate.instant('Queued');
-      case TierRewriteJobStatus.Error:
-        return this.translate.instant('Error');
-      case TierRewriteJobStatus.Cancelled:
-        return this.translate.instant('Cancelled');
-      case TierRewriteJobStatus.Stopped:
-        return this.translate.instant('Stopped');
-      default:
-        return '';
-    }
+    return this.translate.instant(getTierJobStatusLabel(this.tierJob()));
   });
 
-  protected jobIcon = computed<{
-    name: string; library: IconLibraryType; color: string; spinning: boolean;
-  } | null>(() => {
-    const job = this.tierJob();
-    if (!job) return null;
-    switch (job.status) {
-      case TierRewriteJobStatus.Complete:
-        return {
-          name: 'check-circle', library: 'mdi', color: 'green', spinning: false,
-        };
-      case TierRewriteJobStatus.Running:
-        return {
-          name: 'sync', library: 'mdi', color: 'orange', spinning: true,
-        };
-      case TierRewriteJobStatus.Error:
-        return {
-          name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
-        };
-      case TierRewriteJobStatus.Stopped:
-        return {
-          name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,
-        };
-      default:
-        return null;
-    }
-  });
+  protected jobIcon = computed(() => getTierJobIcon(this.tierJob()));
 
-  protected jobStatusClass = computed(() => {
-    const job = this.tierJob();
-    if (!job) return '';
-    switch (job.status) {
-      case TierRewriteJobStatus.Complete:
-        return 'fn-theme-green';
-      case TierRewriteJobStatus.Running:
-        return 'fn-theme-orange';
-      case TierRewriteJobStatus.Queued:
-        return 'fn-theme-primary';
-      case TierRewriteJobStatus.Error:
-        return 'fn-theme-red';
-      case TierRewriteJobStatus.Cancelled:
-      case TierRewriteJobStatus.Stopped:
-        return 'fn-theme-grey';
-      default:
-        return '';
-    }
-  });
+  protected jobStatusClass = computed(() => getTierJobStatusClass(this.tierJob()));
 
   protected openMigrationDialog(event: MouseEvent): void {
     event.stopPropagation();

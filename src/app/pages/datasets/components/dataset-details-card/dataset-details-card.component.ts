@@ -9,13 +9,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
-import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -33,6 +33,9 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ChangeTierDialogComponent, ChangeTierDialogData } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
 import { DataMigrationStatusDialogComponent } from 'app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component';
+import {
+  getTierJobIcon, getTierJobStatusClass, getTierJobStatusLabel,
+} from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -55,6 +58,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CopyButtonComponent,
     MatCardActions,
     TooltipComponent,
+    TnIconComponent,
   ],
 })
 export class DatasetDetailsCardComponent {
@@ -107,32 +111,12 @@ export class DatasetDetailsCardComponent {
   protected readonly tierJob = computed(() => this.dataset().tier?.tier_job ?? null);
 
   protected readonly tierJobStatusLabel = computed(() => {
-    const job = this.tierJob();
-    if (!job) return '';
-    switch (job.status) {
-      case TierRewriteJobStatus.Complete: return this.translate.instant('complete');
-      case TierRewriteJobStatus.Running: return this.translate.instant('running');
-      case TierRewriteJobStatus.Queued: return this.translate.instant('queued');
-      case TierRewriteJobStatus.Error: return this.translate.instant('error');
-      case TierRewriteJobStatus.Cancelled: return this.translate.instant('cancelled');
-      case TierRewriteJobStatus.Stopped: return this.translate.instant('stopped');
-      default: return '';
-    }
+    return this.translate.instant(getTierJobStatusLabel(this.tierJob()));
   });
 
-  protected readonly tierJobStatusClass = computed(() => {
-    const job = this.tierJob();
-    if (!job) return '';
-    switch (job.status) {
-      case TierRewriteJobStatus.Complete: return 'fn-theme-green';
-      case TierRewriteJobStatus.Running: return 'fn-theme-orange';
-      case TierRewriteJobStatus.Queued: return 'fn-theme-primary';
-      case TierRewriteJobStatus.Error: return 'fn-theme-red';
-      case TierRewriteJobStatus.Cancelled:
-      case TierRewriteJobStatus.Stopped: return 'fn-theme-grey';
-      default: return '';
-    }
-  });
+  protected readonly tierJobStatusClass = computed(() => getTierJobStatusClass(this.tierJob()));
+
+  protected readonly tierJobIcon = computed(() => getTierJobIcon(this.tierJob()));
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
