@@ -32,6 +32,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { FormPayloadTracker } from 'app/helpers/form-payload-tracker.class';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -90,6 +91,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
+  private payloadTracker = new FormPayloadTracker();
+  private hasSetUpRecordsizeWarning = false;
+  private hasSetUpDedupWarning = false;
+  private hasSetUpAclTypeWarning = false;
+  private hasSetUpSyncChanges = false;
 
   readonly form = this.formBuilder.group({
     comments: [''],
@@ -222,6 +228,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
+    const payload = this.computePayload();
+    return this.payloadTracker.diff(payload) as Partial<DatasetCreate> | Partial<DatasetUpdate>;
+  }
+
+  private computePayload(): Record<string, unknown> {
     const values = this.form.value;
 
     const payload = {
@@ -240,13 +251,17 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     // Remove UI-only field
     delete payload.special_small_block_size_custom;
 
+    // Override aclmode based on acltype. This runs both during capture()
+    // and diff(), so the diff correctly detects changes in either direction.
+    // The backend also enforces aclmode based on acltype, so even if the diff
+    // omits aclmode when the override produces the same value, behavior is correct.
     if (values.acltype && [DatasetAclType.Posix, DatasetAclType.Off].includes(values.acltype)) {
       payload.aclmode = AclMode.Discard;
     } else if (values.acltype === DatasetAclType.Inherit) {
       payload.aclmode = AclMode.Inherit;
     }
 
-    return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
+    return payload;
   }
 
   private checkIfDedupIsSupported(): void {
@@ -332,6 +347,13 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       special_small_block_size: specialSmallBlockSizeValue,
       special_small_block_size_custom: customValue,
     });
+
+    // Capture once after form is populated with existing values.
+    // hasCaptured prevents re-capture if parent changes after initial load,
+    // which is intentional — we only diff against the original server state.
+    if (!this.payloadTracker.hasCaptured && this.parent()) {
+      this.payloadTracker.capture(this.computePayload());
+    }
   }
 
   private updateAclMode(): void {
@@ -458,6 +480,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpDedupWarning(): void {
+    if (this.hasSetUpDedupWarning) return;
+    this.hasSetUpDedupWarning = true;
+
     this.form.controls.deduplication.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dedup) => {
       if (!dedup || [DeduplicationSetting.Off, inherit].includes(dedup)) {
         this.cdr.markForCheck();
@@ -505,6 +530,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpAclTypeWarning(): void {
+    if (this.hasSetUpAclTypeWarning) return;
+    this.hasSetUpAclTypeWarning = true;
+
     this.form.controls.acltype.valueChanges
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -535,11 +563,14 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpRecordsizeWarning(): void {
+    if (this.hasSetUpRecordsizeWarning) return;
+
     const parent = this.parent();
     if (!parent) {
       return;
     }
 
+    this.hasSetUpRecordsizeWarning = true;
     const root = parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
@@ -566,6 +597,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private listenForSyncChanges(): void {
+    if (this.hasSetUpSyncChanges) return;
+    this.hasSetUpSyncChanges = true;
+
     this.form.controls.sync.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
         this.dialogService.confirm({
