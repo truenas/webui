@@ -20,6 +20,15 @@
     <span class="tier-label">{{ targetTier }}</span>
   </div>
 
+  <div class="time-info">
+    @if (startTime) {
+      <span>{{ 'Started' | translate }}: {{ startTime | formatDateTime }}</span>
+    }
+    @if (estimatedCompletion && isRunning) {
+      <span>{{ 'Est. completion' | translate }}: {{ estimatedCompletion | formatDateTime }}</span>
+    }
+  </div>
+
   @if (job?.stats) {
     <mat-progress-bar
       mode="determinate"
