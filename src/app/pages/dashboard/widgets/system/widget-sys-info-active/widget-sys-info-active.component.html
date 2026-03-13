@@ -88,6 +88,9 @@
               <span>
                 @if (isEnterprise()) {
                   {{ 'Enterprise' | translate }}
+                  @if (isLts()) {
+                    <span class="lts-badge">{{ 'LTS' | translate }}</span>
+                  }
                 } @else {
                   {{ 'Community' | translate }}
                 }

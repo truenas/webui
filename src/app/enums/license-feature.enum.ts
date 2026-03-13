@@ -4,4 +4,5 @@ export enum LicenseFeature {
   Dedup = 'DEDUP',
   Vm = 'VM',
   Sed = 'SED',
+  Lts = 'LTS',
 }

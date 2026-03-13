@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
@@ -46,6 +47,11 @@ export const selectCopyrightHtml = createSelector(
 export const selectLicenseFeatures = createSelector(
   selectSystemInfoState,
   (state) => state?.systemInfo?.license?.features,
+);
+
+export const selectIsLts = createSelector(
+  selectLicenseFeatures,
+  (features) => features?.includes(LicenseFeature.Lts) ?? false,
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
