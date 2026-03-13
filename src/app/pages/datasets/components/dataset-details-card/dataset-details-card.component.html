@@ -81,14 +81,26 @@
         <div class="value tier-value">
           {{ tierLabel() }}
           @if (tierJob()) {
-            <button
-              mat-stroked-button
-              class="job-status-badge"
-              [ngClass]="tierJobStatusClass()"
-              (click)="openMigrationStatus()"
-            >
-              {{ 'Migration' | translate }} {{ tierJobStatusLabel() }}
-            </button>
+            @if (tierJobIcon(); as icon) {
+              <tn-icon
+                class="job-status-icon"
+                size="sm"
+                [class.spinning]="icon.spinning"
+                [name]="icon.name"
+                [library]="icon.library"
+                [color]="icon.color"
+                [matTooltip]="'Migration: ' + tierJobStatusLabel()"
+                (click)="openMigrationStatus()"
+              />
+            } @else {
+              <span
+                class="job-status-text"
+                [ngClass]="tierJobStatusClass()"
+                (click)="openMigrationStatus()"
+              >
+                {{ 'Migration:' | translate }} {{ tierJobStatusLabel() }}
+              </span>
+            }
           }
         </div>
         <a class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
