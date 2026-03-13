@@ -1,8 +1,9 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, IconLibraryType } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
@@ -22,7 +23,8 @@ interface HasTier {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    MatButton,
+    TnIconComponent,
+    MatTooltip,
     NgClass,
   ],
 })
@@ -67,6 +69,33 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
         return this.translate.instant('Stopped');
       default:
         return '';
+    }
+  });
+
+  protected jobIcon = computed<{
+    name: string; library: IconLibraryType; color: string; spinning: boolean;
+  } | null>(() => {
+    const job = this.tierJob();
+    if (!job) return null;
+    switch (job.status) {
+      case TierRewriteJobStatus.Complete:
+        return {
+          name: 'check-circle', library: 'mdi', color: 'green', spinning: false,
+        };
+      case TierRewriteJobStatus.Running:
+        return {
+          name: 'sync', library: 'mdi', color: 'orange', spinning: true,
+        };
+      case TierRewriteJobStatus.Error:
+        return {
+          name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
+        };
+      case TierRewriteJobStatus.Stopped:
+        return {
+          name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,
+        };
+      default:
+        return null;
     }
   });
 
