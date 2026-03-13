@@ -1,23 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextStaticRoutes } from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -25,40 +16,28 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './static-route-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    IxFormComponent,
     TranslateModule,
   ],
 })
-export class StaticRouteFormComponent implements OnInit {
+export class StaticRouteFormComponent {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
-  private snackbar = inject(SnackbarService);
-  private errorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   slideInRef = inject<SlideInRef<StaticRoute | undefined, boolean>>(SlideInRef);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
-  get isNew(): boolean {
-    return !this.editingRoute;
-  }
+  protected editingRoute = this.slideInRef.getData();
 
-  get title(): string {
-    return this.isNew ? this.translate.instant('Add Static Route') : this.translate.instant('Edit Static Route');
+  protected get title(): string {
+    return this.editingRoute
+      ? this.translate.instant('Edit Static Route')
+      : this.translate.instant('Add Static Route');
   }
-
-  protected isFormLoading = signal(false);
-  protected editingRoute: StaticRoute | undefined;
 
   form = this.fb.group({
     destination: ['', [Validators.required]],
@@ -66,52 +45,17 @@ export class StaticRouteFormComponent implements OnInit {
     description: [''],
   });
 
-  readonly tooltips = {
+  protected readonly tooltips = {
     destination: helptextStaticRoutes.destinationTooltip,
     gateway: helptextStaticRoutes.gatewayTooltip,
   };
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingRoute = this.slideInRef.getData();
-  }
-
-  ngOnInit(): void {
-    if (this.editingRoute) {
-      this.form.patchValue(this.editingRoute);
-    }
-  }
-
-  onSubmit(): void {
-    this.isFormLoading.set(true);
-    const values = this.form.value as UpdateStaticRoute;
-
-    let request$: Observable<unknown>;
-    if (this.editingRoute) {
-      request$ = this.api.call('staticroute.update', [
-        this.editingRoute.id,
-        values,
-      ]);
-    } else {
-      request$ = this.api.call('staticroute.create', [values]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Static route added'));
-        } else {
-          this.snackbar.success(this.translate.instant('Static route updated'));
-        }
-        this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+  protected handleSubmit = (event: FormSubmitEvent<UpdateStaticRoute>): SubmitResult => ({
+    request$: this.editingRoute
+      ? this.api.call('staticroute.update', [this.editingRoute.id, event.changedValues as UpdateStaticRoute])
+      : this.api.call('staticroute.create', [event.allValues]),
+    successMessage: this.editingRoute
+      ? this.translate.instant('Static route updated')
+      : this.translate.instant('Static route added'),
+  });
 }

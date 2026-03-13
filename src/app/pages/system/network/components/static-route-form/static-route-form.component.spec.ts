@@ -10,6 +10,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
 
@@ -42,9 +43,10 @@ describe('StaticRouteFormComponent', () => {
         mockCall('staticroute.update'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(),
+        openSlideIns: jest.fn(() => 1),
       }),
       mockProvider(FormErrorHandlerService),
+      mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -98,7 +100,7 @@ describe('StaticRouteFormComponent', () => {
       });
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends only changed values on update when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Destination: '15.24.12.13/16',
@@ -116,6 +118,21 @@ describe('StaticRouteFormComponent', () => {
           gateway: '15.24.12.1',
           description: 'Updated route',
         },
+      ]);
+    });
+
+    it('sends only the field that changed when a single field is edited', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Description: 'Only description changed',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('staticroute.update', [
+        13,
+        { description: 'Only description changed' },
       ]);
     });
   });
