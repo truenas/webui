@@ -1,12 +1,24 @@
 <span class="tier-label">{{ tierLabel() }}</span>
 
 @if (tierJob(); as job) {
-  <button
-    mat-stroked-button
-    class="job-status-badge"
-    [ngClass]="jobStatusClass()"
-    (click)="openMigrationDialog($event)"
-  >
-    {{ jobStatusLabel() }}
-  </button>
+  @if (jobIcon(); as icon) {
+    <tn-icon
+      class="job-status-icon"
+      size="sm"
+      [class.spinning]="icon.spinning"
+      [name]="icon.name"
+      [library]="icon.library"
+      [color]="icon.color"
+      [matTooltip]="'Migration: ' + jobStatusLabel()"
+      (click)="openMigrationDialog($event)"
+    />
+  } @else {
+    <span
+      class="job-status-text"
+      [ngClass]="jobStatusClass()"
+      (click)="openMigrationDialog($event)"
+    >
+      {{ 'Migration:' | translate }} {{ jobStatusLabel() }}
+    </span>
+  }
 }

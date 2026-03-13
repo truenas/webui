@@ -6,12 +6,38 @@
   overflow: visible;
 }
 
-.job-status-badge {
-  line-height: initial;
-  padding: 0 8px;
+.job-status-icon {
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &.spinning {
+    animation: spin 2s infinite linear;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.job-status-text {
+  cursor: pointer;
   font-size: 12px;
   white-space: nowrap;
   flex-shrink: 0;
+
+  &.fn-theme-primary {
+    color: var(--primary);
+  }
+
+  &.fn-theme-grey {
+    color: var(--fg2);
+  }
 }
 
 .tier-label {
