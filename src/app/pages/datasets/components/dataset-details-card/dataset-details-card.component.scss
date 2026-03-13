@@ -41,11 +41,36 @@
       gap: 8px;
     }
 
-    .job-status-badge {
-      line-height: initial;
-      padding: 0 8px;
+    .job-status-icon {
+      cursor: pointer;
+
+      &.spinning {
+        animation: spin 2s infinite linear;
+      }
+    }
+
+    .job-status-text {
+      cursor: pointer;
       font-size: 12px;
       white-space: nowrap;
+
+      &.fn-theme-primary {
+        color: var(--primary);
+      }
+
+      &.fn-theme-grey {
+        color: var(--fg2);
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(359deg);
+      }
     }
 
     .value.dataset-comments {
