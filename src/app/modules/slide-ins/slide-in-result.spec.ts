@@ -109,16 +109,16 @@ describe('SlideInResult', () => {
       expect(emitted).toEqual(['']);
     });
 
-    it('does not emit for null response', () => {
+    it('emits for null response (null is not a cancellation)', () => {
       const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
       const emitted: unknown[] = [];
 
       result$.success$.subscribe((val) => emitted.push(val));
 
-      expect(emitted).toEqual([]);
+      expect(emitted).toEqual([null]);
     });
 
-    it('does not emit for undefined response', () => {
+    it('does not emit for undefined response (cancellation)', () => {
       const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string | undefined>));
       const emitted: unknown[] = [];
 
@@ -146,8 +146,8 @@ describe('SlideInResult', () => {
       expect(callback).toHaveBeenCalledWith('saved');
     });
 
-    it('does not call callback on null response', () => {
-      const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
+    it('does not call callback on undefined response (cancellation)', () => {
+      const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
       const callback = jest.fn();
 
       result$.onSuccess(mockDestroyRef(), callback);
@@ -174,8 +174,8 @@ describe('SlideInResult', () => {
   });
 
   describe('onCancel', () => {
-    it('calls callback when response is null', () => {
-      const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
+    it('calls callback when response is undefined', () => {
+      const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
       const callback = jest.fn();
 
       result$.onCancel(mockDestroyRef(), callback);
@@ -183,7 +183,7 @@ describe('SlideInResult', () => {
       expect(callback).toHaveBeenCalledTimes(1);
     });
 
-    it('does not call callback when response is non-null', () => {
+    it('does not call callback when response is defined', () => {
       const result$ = new SlideInResult(of({ response: 'data' } as SlideInResponse<string>));
       const callback = jest.fn();
 
@@ -192,20 +192,29 @@ describe('SlideInResult', () => {
       expect(callback).not.toHaveBeenCalled();
     });
 
+    it('does not call callback when response is null (null is not a cancellation)', () => {
+      const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
+      const callback = jest.fn();
+
+      result$.onCancel(mockDestroyRef(), callback);
+
+      expect(callback).not.toHaveBeenCalled();
+    });
+
     it('unsubscribes when DestroyRef is destroyed', () => {
-      const source$ = new Subject<SlideInResponse<string | null>>();
+      const source$ = new Subject<SlideInResponse<string>>();
       const result$ = new SlideInResult(source$);
       const destroyRef = mockDestroyRef();
       const callback = jest.fn();
 
       result$.onCancel(destroyRef, callback);
 
-      source$.next({ response: null });
+      source$.next({ response: undefined });
       expect(callback).toHaveBeenCalledTimes(1);
 
       (destroyRef as DestroyRef & { destroy: () => void }).destroy();
 
-      source$.next({ response: null });
+      source$.next({ response: undefined });
       expect(callback).toHaveBeenCalledTimes(1);
     });
   });
@@ -264,7 +273,7 @@ describe('SlideInResult', () => {
     });
 
     it('calls callback on cancel close', () => {
-      const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
+      const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
       const callback = jest.fn();
 
       result$.onClose(mockDestroyRef(), callback);

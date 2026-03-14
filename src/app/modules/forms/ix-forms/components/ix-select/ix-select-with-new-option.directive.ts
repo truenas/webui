@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
-  Observable, distinctUntilChanged, filter, switchMap, take, tap,
+  EMPTY, Observable, distinctUntilChanged, filter, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -58,20 +58,19 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
           wide: this.formComponentIsWide,
           data: this.getFormInputData(),
         });
-        // Reset selection when the user cancels.
-        // On success, success$ emits; on cancel, success$ completes empty
-        // so the outer switchMap simply waits for the next valueChange.
-        result$.onCancel(this.destroyRef, () => {
-          this.ixSelect().controlDirective.control?.setValue(null);
-        });
-        return result$.success$.pipe(
-          tap((response) => {
+        return result$.pipe(
+          switchMap((response) => {
+            if (response.response === undefined) {
+              this.ixSelect().controlDirective.control?.setValue(null);
+              return EMPTY;
+            }
             this.ixSelect().controlDirective.control?.setValue(
-              this.getValueFromSlideInResponse(response),
+              this.getValueFromSlideInResponse(response.response as R),
+            );
+            return this.fetchOptions().pipe(
+              tap((options) => this.options.next(this.prependAddNew(options))),
             );
           }),
-          switchMap(() => this.fetchOptions()),
-          tap((options) => this.options.next(this.prependAddNew(options))),
         );
       }),
       takeUntilDestroyed(this.destroyRef),

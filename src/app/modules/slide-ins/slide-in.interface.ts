@@ -26,9 +26,9 @@ export type ComponentInSlideIn<D, R> = Type<{
  * - `response` holds the value returned by the form on success.
  * - `undefined` signals that the user cancelled (closed without saving).
  *
- * Nullish values (`null`, `undefined`) are treated as cancellations by
- * {@link SlideInResult} convenience methods (onSuccess, onCancel, success$).
- * Forms must not return `null` or `undefined` as a legitimate success value.
+ * {@link SlideInResult} convenience methods (onSuccess, onCancel, success$)
+ * use a strict `=== undefined` check, so forms may safely return any value
+ * (including `null`, `false`, `0`, `''`) as a legitimate success response.
  */
 export interface SlideInResponse<T = unknown> {
   response: T | undefined;

@@ -6,10 +6,10 @@ import {
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 /**
- * Non-nullable variant of T.
- * Used to narrow the response type after filtering out null/undefined cancellations.
+ * Excludes `undefined` from T.
+ * Used to narrow the response type after filtering out cancellations (undefined).
  */
-type NonNullish<T> = Exclude<T, null | undefined>;
+type Defined<T> = Exclude<T, undefined>;
 
 /**
  * Extends Observable<SlideInResponse<R>> with convenience methods
@@ -64,15 +64,15 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
 
   /**
    * Observable that emits only the unwrapped response value
-   * when the slide-in was closed successfully (non-null response).
+   * when the slide-in was closed successfully (response !== undefined).
    * Useful in switchMap chains where .onSuccess() cannot be used.
    *
    * Unlike .onSuccess(), this does NOT auto-unsubscribe — callers must
    * add their own takeUntilDestroyed() or other teardown.
    */
-  get success$(): Observable<NonNullish<R>> {
+  get success$(): Observable<Defined<R>> {
     return this.shared$.pipe(
-      filter((result): result is SlideInResponse<R> & { response: NonNullish<R> } => result.response != null),
+      filter((result): result is SlideInResponse<R> & { response: Defined<R> } => result.response !== undefined),
       map((result) => result.response),
     );
   }
@@ -82,23 +82,24 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * Automatically unsubscribes when the caller's DestroyRef is destroyed.
    *
    * Replaces the common pattern:
-   *   .pipe(filter(r => r.response != null), takeUntilDestroyed(destroyRef)).subscribe(...)
+   *   .pipe(filter(r => r.response !== undefined), takeUntilDestroyed(destroyRef)).subscribe(...)
    *
-   * Note: uses nullish check (!=), so falsy values like false, 0, '' are treated as success.
+   * Only `undefined` is treated as cancellation — falsy values like `null`, `false`, `0`, `''`
+   * are treated as success.
    */
-  onSuccess(destroyRef: DestroyRef, callback: (response: NonNullish<R>) => void): Subscription {
+  onSuccess(destroyRef: DestroyRef, callback: (response: Defined<R>) => void): Subscription {
     return this.success$.pipe(
       takeUntilDestroyed(destroyRef),
     ).subscribe((response) => callback(response));
   }
 
   /**
-   * Subscribes to slide-in closes where the user cancelled (null/undefined response)
+   * Subscribes to slide-in closes where the user cancelled (response === undefined)
    * and invokes the callback. Automatically unsubscribes when destroyed.
    */
   onCancel(destroyRef: DestroyRef, callback: () => void): Subscription {
     return this.shared$.pipe(
-      filter((result) => result.response == null),
+      filter((result) => result.response === undefined),
       takeUntilDestroyed(destroyRef),
     ).subscribe(() => callback());
   }
