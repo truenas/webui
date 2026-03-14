@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  Subject, filter, shareReplay, startWith, switchMap, tap,
+  Subject, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -69,8 +69,7 @@ export class GlobalTwoFactorAuthCardComponent {
       switchMap(() => this.slideIn.open(
         GlobalTwoFactorAuthFormComponent,
         { data: twoFactorAuthConfig },
-      )),
-      filter((response) => !!response.response),
+      ).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

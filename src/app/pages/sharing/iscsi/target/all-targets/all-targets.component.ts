@@ -102,14 +102,10 @@ export class AllTargetsComponent implements OnInit {
   }
 
   editTarget(target: IscsiTarget): void {
-    const slideInRef$ = this.slideIn.open(
+    this.slideIn.open(
       TargetFormComponent,
       { data: target, wide: true },
-    );
-    slideInRef$.pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ response }) => {
+    ).onSuccess(this.destroyRef, (response) => {
       this.dataProvider.load();
       this.dataProvider.expandedRow = response;
     });

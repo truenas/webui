@@ -72,7 +72,6 @@ export class NamespaceFormComponent {
 
           this.slideInRef.close({
             response: newNamespace,
-            error: null,
           });
         },
         error: (error: unknown) => {

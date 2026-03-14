@@ -21,9 +21,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
@@ -32,6 +34,7 @@ export class SlideIn {
   private cdkOverlay = inject(Overlay);
   private injector = inject(Injector);
   private unsavedChangesService = inject(UnsavedChangesService);
+  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -45,7 +48,7 @@ export class SlideIn {
     for (const instance of instances) {
       instance.slideInRef.requireConfirmationWhen(undefined);
       instance.cdkOverlayRef.dispose();
-      instance.slideInRef.close({ response: false, error: undefined });
+      instance.slideInRef.close({ response: undefined });
     }
 
     this.slideInInstances.set([]);
@@ -54,7 +57,7 @@ export class SlideIn {
   open<D, R>(
     component: ComponentInSlideIn<D, R>,
     options: { data?: D; wide?: boolean } = {},
-  ): Observable<SlideInResponse<R>> {
+  ): SlideInResult<R> {
     const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
         const slideInId = uuidv4();
@@ -94,7 +97,7 @@ export class SlideIn {
 
     open$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
-    return open$.pipe(take(1));
+    return new SlideInResult<R>(open$.pipe(take(1)));
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { wide?: boolean }): void {
@@ -163,7 +166,7 @@ export class SlideIn {
     ).subscribe(() => {
       // Only close if slideInRef exists (fully initialized)
       if (instance.slideInRef) {
-        instance.slideInRef.close({ response: false as R, error: undefined });
+        instance.slideInRef.close({ response: undefined });
       }
     });
   }
@@ -277,7 +280,7 @@ export class SlideIn {
             }
           },
           error: (error: unknown) => {
-            console.error('Error closing slide-in:', error);
+            this.errorHandler.handleError(error);
             // Force close on error
             if (!slideInInstance.close$.closed) {
               slideInInstance.close$.next(response);

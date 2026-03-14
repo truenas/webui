@@ -73,10 +73,8 @@ export class UserMenuComponent {
   }
 
   openPreferencesForm(): void {
-    this.slideIn.open(PreferencesFormComponent).pipe(
-      filter((response) => !response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.store$.dispatch(guiFormClosedWithoutSaving()));
+    this.slideIn.open(PreferencesFormComponent)
+      .onCancel(this.destroyRef, () => this.store$.dispatch(guiFormClosedWithoutSaving()));
   }
 
   onTwoFactorAuth(): void {

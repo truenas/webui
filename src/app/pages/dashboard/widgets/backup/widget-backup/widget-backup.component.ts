@@ -9,7 +9,6 @@ import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { differenceInDays } from 'date-fns';
-import { filter } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
@@ -161,27 +160,17 @@ export class WidgetBackupComponent implements OnInit {
     this.slideIn.open(
       CloudSyncWizardComponent,
       { wide: true },
-    ).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getBackups();
-      },
-    });
+    ).onSuccess(this.destroyRef, () => this.getBackups());
   }
 
   addReplicationTask(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getBackups());
+    this.slideIn.open(ReplicationWizardComponent, { wide: true })
+      .onSuccess(this.destroyRef, () => this.getBackups());
   }
 
   addRsyncTask(): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.getBackups());
+      .onSuccess(this.destroyRef, () => this.getBackups());
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {

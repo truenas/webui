@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 
@@ -34,7 +34,7 @@ describe('EmailCardComponent with SMTP', () => {
         mockCall('mail.config', fakeEmailConfig),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });
@@ -76,7 +76,7 @@ describe('EmailCardComponent with Gmail OAuth', () => {
         }),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => ({ slideInClosed$: of() })),
+        open: jest.fn(() => ({ slideInClosed$: SlideInResult.empty() })),
       }),
     ],
   });
@@ -110,7 +110,7 @@ describe('EmailCardComponent with Outlook OAuth', () => {
         }),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });

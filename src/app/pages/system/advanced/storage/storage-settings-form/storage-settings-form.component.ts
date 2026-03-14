@@ -151,7 +151,7 @@ export class StorageSettingsFormComponent implements OnInit {
     if (requests.length === 0) {
       // No changes made
       this.slideInRef.close({
-        response: false,
+        response: undefined,
       });
       return;
     }

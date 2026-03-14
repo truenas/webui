@@ -188,10 +188,8 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   openForm(apiKey?: ApiKey): void {
-    this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
+    this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } })
+      .onSuccess(this.destroyRef, () => this.dataProvider.load());
   }
 
   doDelete(apiKey: ApiKey): void {

@@ -229,17 +229,13 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotTasks());
+    this.slideIn.open(SnapshotTaskFormComponent, { wide: true })
+      .onSuccess(this.destroyRef, () => this.getSnapshotTasks());
   }
 
   protected doEdit(row: PeriodicSnapshotTaskUi): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotTasks());
+    this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row })
+      .onSuccess(this.destroyRef, () => this.getSnapshotTasks());
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {

@@ -70,10 +70,7 @@ export class AllCloudBackupsComponent implements OnInit {
 
   protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => this.dataProvider.load());
+      .onSuccess(this.destroyRef, () => this.dataProvider.load());
   }
 
   private loadCloudBackups(id?: string): void {

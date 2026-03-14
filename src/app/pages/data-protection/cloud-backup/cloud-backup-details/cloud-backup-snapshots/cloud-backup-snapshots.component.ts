@@ -123,14 +123,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         snapshot: row,
         backup: this.backup(),
       },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getCloudBackupSnapshots();
-      },
-    });
+    }).onSuccess(this.destroyRef, () => this.getCloudBackupSnapshots());
   }
 
   doDelete(row: CloudBackupSnapshot): void {

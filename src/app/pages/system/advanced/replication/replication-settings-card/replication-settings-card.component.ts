@@ -7,7 +7,6 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
-  filter,
   map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -71,8 +70,7 @@ export class ReplicationSettingsCardComponent {
       switchMap(() => this.slideIn.open(
         ReplicationSettingsFormComponent,
         { data: this.replicationConfig },
-      )),
-      filter((response) => !!response.response),
+      ).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

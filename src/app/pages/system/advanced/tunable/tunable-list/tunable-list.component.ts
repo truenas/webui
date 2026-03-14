@@ -131,20 +131,11 @@ export class TunableListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(TunableFormComponent).pipe(
-      filter((response) => !!response.response),
-      tap(() => this.getTunables()),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    this.slideIn.open(TunableFormComponent).onSuccess(this.destroyRef, () => this.getTunables());
   }
 
   protected doEdit(tunable: Tunable): void {
-    this.slideIn.open(TunableFormComponent, { data: tunable }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getTunables();
-    });
+    this.slideIn.open(TunableFormComponent, { data: tunable }).onSuccess(this.destroyRef, () => this.getTunables());
   }
 
   protected doDelete(tunable: Tunable): void {

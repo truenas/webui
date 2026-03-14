@@ -131,15 +131,13 @@ export class ManageHostsDialog implements OnInit {
   onAdd(): void {
     // Close the dialog immediately to prevent it from appearing behind the slide-in form.
     this.dialogRef.close();
-    // Note: takeUntilDestroyed(this.destroyRef) is intentionally NOT used here.
+    // Note: takeUntilDestroyed is intentionally NOT used here.
     // The dialog closes immediately (destroying this component), but we need the subscription
     // to remain active to handle the slide-in response. The slide-in observable completes
     // naturally when the form is submitted or cancelled, so there's no memory leak.
     this.slideIn
       .open(HostFormComponent)
-      .pipe(
-        filter((response) => Boolean(response.response)),
-      )
+      .success$
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Added'));
         this.nvmeOfStore.reloadHosts();
@@ -149,14 +147,12 @@ export class ManageHostsDialog implements OnInit {
   onEdit(host: NvmeOfHostAndUsage): void {
     // Close the dialog immediately to prevent it from appearing behind the slide-in form.
     this.dialogRef.close();
-    // Note: takeUntilDestroyed(this.destroyRef) is intentionally NOT used here.
+    // Note: takeUntilDestroyed is intentionally NOT used here.
     // The dialog closes immediately (destroying this component), but we need the subscription
     // to remain active to handle the slide-in response. The slide-in observable completes
     // naturally when the form is submitted or cancelled, so there's no memory leak.
     this.slideIn.open(HostFormComponent, { data: host })
-      .pipe(
-        filter((response) => Boolean(response.response)),
-      )
+      .success$
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Host Updated'));
         this.nvmeOfStore.reloadHosts();

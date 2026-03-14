@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
@@ -76,7 +74,6 @@ export class ContainerFilesystemDevicesComponent {
 
   private openDiskForm(disk?: ContainerFilesystemDevice): void {
     this.slideIn.open(ContainerFilesystemDeviceFormComponent, { data: { disk, container: this.container() } })
-      .pipe(filter((result) => !!result.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.devicesStore.reload());
+      .onSuccess(this.destroyRef, () => this.devicesStore.reload());
   }
 }

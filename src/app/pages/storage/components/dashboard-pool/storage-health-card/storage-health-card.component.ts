@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
@@ -88,6 +88,7 @@ export class StorageHealthCardComponent {
   private store = inject(PoolsDashboardStore);
   private slideIn = inject(SlideIn);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly pool = input.required<Pool>();
 
@@ -177,13 +178,7 @@ export class StorageHealthCardComponent {
         poolId: this.pool().id,
         existingScrubTask: this.scrub(),
       },
-    })
-      .pipe(
-        filter((result) => result?.response),
-      )
-      .subscribe(() => {
-        this.store.loadDashboard();
-      });
+    }).onSuccess(this.destroyRef, () => this.store.loadDashboard());
   }
 
   protected getErrorText(): string {

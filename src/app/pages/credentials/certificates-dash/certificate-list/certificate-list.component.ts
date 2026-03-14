@@ -149,24 +149,15 @@ export class CertificateListComponent {
   }
 
   protected doImport(): void {
-    this.slideIn.open(ImportCertificateComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.certificatesUpdated.emit();
-    });
+    this.slideIn.open(ImportCertificateComponent)
+      .onSuccess(this.destroyRef, () => this.certificatesUpdated.emit());
   }
 
   protected doEdit(certificate: Certificate): void {
     this.slideIn.open(CertificateEditComponent, {
       wide: true,
       data: certificate,
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.certificatesUpdated.emit();
-    });
+    }).onSuccess(this.destroyRef, () => this.certificatesUpdated.emit());
   }
 
   protected doDelete(certificate: Certificate): void {

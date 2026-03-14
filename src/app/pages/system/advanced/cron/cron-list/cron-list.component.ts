@@ -157,19 +157,11 @@ export class CronListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(CronFormComponent)
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.getCronJobs();
-      });
+    this.slideIn.open(CronFormComponent).onSuccess(this.destroyRef, () => this.getCronJobs());
   }
 
   protected doEdit(row: CronjobRow): void {
-    this.slideIn.open(CronFormComponent, { data: row })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.getCronJobs();
-      });
+    this.slideIn.open(CronFormComponent, { data: row }).onSuccess(this.destroyRef, () => this.getCronJobs());
   }
 
   protected runNow(row: CronjobRow): void {

@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter, finalize, switchMap,
+  finalize, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -77,8 +77,7 @@ export class FailoverCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(FailoverFormComponent, { data: this.config() })),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(FailoverFormComponent, { data: this.config() }).success$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.loadConfig());
   }

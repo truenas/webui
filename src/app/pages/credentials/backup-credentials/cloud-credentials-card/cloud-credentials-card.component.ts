@@ -146,24 +146,18 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(CloudCredentialsFormComponent)
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.getCredentials();
-      });
+      .onSuccess(this.destroyRef, () => this.getCredentials());
   }
 
   protected doEdit(credential: CloudSyncCredential): void {
-    const close$ = this.slideIn.open(
+    this.slideIn.open(
       CloudCredentialsFormComponent,
       {
         data: {
           existingCredential: credential,
         } as CloudCredentialFormInput,
       },
-    );
-    close$.pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.getCredentials();
-    });
+    ).onSuccess(this.destroyRef, () => this.getCredentials());
   }
 
   protected doDelete(credential: CloudSyncCredential): void {

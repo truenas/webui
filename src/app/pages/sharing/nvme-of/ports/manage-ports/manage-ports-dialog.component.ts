@@ -131,11 +131,7 @@ export class ManagePortsDialog implements OnInit {
   onAdd(): void {
     this.slideIn
       .open(PortFormComponent)
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
+      .onSuccess(this.destroyRef, () => {
         this.snackbar.success(this.translate.instant('Port Added'));
         this.nvmeOfStore.reloadPorts();
       });
@@ -143,11 +139,7 @@ export class ManagePortsDialog implements OnInit {
 
   onEdit(port: NvmeOfPort): void {
     this.slideIn.open(PortFormComponent, { data: port })
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
+      .onSuccess(this.destroyRef, () => {
         this.snackbar.success(this.translate.instant('Port Updated'));
         this.nvmeOfStore.reloadPorts();
       });

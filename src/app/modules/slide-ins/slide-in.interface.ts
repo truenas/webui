@@ -20,7 +20,16 @@ export type ComponentInSlideIn<D, R> = Type<{
   slideInRef: SlideInRef<D, R>;
 }>;
 
+/**
+ * Response emitted when a slide-in closes.
+ *
+ * - `response` holds the value returned by the form on success.
+ * - `undefined` signals that the user cancelled (closed without saving).
+ *
+ * Nullish values (`null`, `undefined`) are treated as cancellations by
+ * {@link SlideInResult} convenience methods (onSuccess, onCancel, success$).
+ * Forms must not return `null` or `undefined` as a legitimate success value.
+ */
 export interface SlideInResponse<T = unknown> {
-  response: T;
-  error?: unknown;
+  response: T | undefined;
 }

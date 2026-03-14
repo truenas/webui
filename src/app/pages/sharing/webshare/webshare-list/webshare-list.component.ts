@@ -215,7 +215,7 @@ export class WebShareListComponent implements OnInit {
   }
 
   doEdit(row: WebShareTableRow): void {
-    const slideInRef$ = this.slideIn.open(WebShareSharesFormComponent, {
+    this.slideIn.open(WebShareSharesFormComponent, {
       data: {
         id: row.id,
         isNew: false,
@@ -223,13 +223,7 @@ export class WebShareListComponent implements OnInit {
         path: row.path,
         isHomeBase: row.isHomeBase,
       },
-    });
-
-    slideInRef$
-      .pipe(filter((result) => result?.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.loadWebShareConfig();
-      });
+    }).onSuccess(this.destroyRef, () => this.loadWebShareConfig());
   }
 
   doDelete(row: WebShareTableRow): void {

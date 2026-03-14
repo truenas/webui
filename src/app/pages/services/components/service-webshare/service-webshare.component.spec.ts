@@ -73,7 +73,7 @@ describe('ServiceWebshareComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
   });
 
   it('submits updated config and closes slide-in on successful save', async () => {
@@ -84,7 +84,7 @@ describe('ServiceWebshareComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
   });
 
   it('handles error when loading config fails', () => {

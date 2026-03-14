@@ -14,6 +14,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
@@ -45,9 +46,7 @@ describe('ContainerGeneralInfoComponent', () => {
       IxFormatterService,
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
-          response: true,
-        })),
+        open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(ContainersStore, {
         selectedContainer: jest.fn(),

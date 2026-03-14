@@ -10,7 +10,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  firstValueFrom, lastValueFrom, Observable, switchMap,
+  firstValueFrom, lastValueFrom, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -22,7 +22,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -130,11 +130,8 @@ export class NetworkComponent implements OnInit {
     this.openInterfaceForEditFromRoute();
   }
 
-  protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
-    slideInRef$.pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
+  protected handleSlideInClosed(result$: SlideInResult<boolean>): void {
+    result$.onSuccess(this.destroyRef, () => {
       this.interfacesStore.loadInterfaces();
       this.loadCheckinStatusAfterChange();
     });

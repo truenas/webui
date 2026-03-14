@@ -158,12 +158,8 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   openForm(privilege?: Privilege): void {
-    this.slideIn.open(PrivilegeFormComponent, { data: privilege }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getPrivileges();
-    });
+    this.slideIn.open(PrivilegeFormComponent, { data: privilege })
+      .onSuccess(this.destroyRef, () => this.getPrivileges());
   }
 
   doDelete(privilege: Privilege): void {

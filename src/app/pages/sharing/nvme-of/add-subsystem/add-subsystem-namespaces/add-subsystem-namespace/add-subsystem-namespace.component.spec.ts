@@ -46,7 +46,6 @@ describe('AddSubsystemNamespaceComponent', () => {
 
     expect(slideInRef.close).toHaveBeenCalledWith({
       response: newNamespace,
-      error: null,
     });
   });
 });

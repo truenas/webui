@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -7,7 +6,6 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { sortBy } from 'lodash-es';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
@@ -59,13 +57,7 @@ export class AddPortMenuComponent {
   protected openPortForm(): void {
     this.slideIn
       .open(PortFormComponent)
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((response) => {
-        this.selectPort(response.response);
-      });
+      .onSuccess(this.destroyRef, (port) => this.selectPort(port));
   }
 
   protected selectPort(port: NvmeOfPort): void {

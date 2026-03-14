@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
-import { filter } from 'rxjs';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -46,12 +44,8 @@ export class AddSubsystemNamespacesComponent {
 
   protected onAddNamespace(): void {
     this.slideIn.open(AddSubsystemNamespaceComponent)
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((response) => {
-        const newNamespaces = [...this.namespaces, response.response];
+      .onSuccess(this.destroyRef, (response) => {
+        const newNamespaces = [...this.namespaces, response];
         this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));
 
         this.cdr.markForCheck();

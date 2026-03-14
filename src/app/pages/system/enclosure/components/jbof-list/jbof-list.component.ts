@@ -123,10 +123,7 @@ export class JbofListComponent implements OnInit {
   }
 
   protected openForm(jbof?: Jbof): void {
-    this.slideIn.open(JbofFormComponent, { data: jbof }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getJbofs());
+    this.slideIn.open(JbofFormComponent, { data: jbof }).onSuccess(this.destroyRef, () => this.getJbofs());
   }
 
   protected doDelete(jbof: Jbof): void {

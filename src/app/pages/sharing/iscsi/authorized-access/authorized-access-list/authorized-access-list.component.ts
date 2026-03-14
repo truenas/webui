@@ -108,10 +108,7 @@ export class AuthorizedAccessListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(AuthorizedAccessFormComponent, { data: row })
-              .pipe(
-                filter((response) => !!response.response),
-                takeUntilDestroyed(this.destroyRef),
-              ).subscribe(() => this.refresh());
+              .onSuccess(this.destroyRef, () => this.refresh());
           },
         },
         {
@@ -161,10 +158,8 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(AuthorizedAccessFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+    this.slideIn.open(AuthorizedAccessFormComponent)
+      .onSuccess(this.destroyRef, () => this.refresh());
   }
 
   onListFiltered(query: string): void {

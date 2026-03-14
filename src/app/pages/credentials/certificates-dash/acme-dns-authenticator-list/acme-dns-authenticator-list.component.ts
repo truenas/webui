@@ -118,21 +118,13 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(AcmednsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getAuthenticators();
-    });
+    this.slideIn.open(AcmednsFormComponent)
+      .onSuccess(this.destroyRef, () => this.getAuthenticators());
   }
 
   doEdit(authenticator: DnsAuthenticator): void {
-    this.slideIn.open(AcmednsFormComponent, { data: authenticator }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getAuthenticators();
-    });
+    this.slideIn.open(AcmednsFormComponent, { data: authenticator })
+      .onSuccess(this.destroyRef, () => this.getAuthenticators());
   }
 
   doDelete(authenticator: DnsAuthenticator): void {

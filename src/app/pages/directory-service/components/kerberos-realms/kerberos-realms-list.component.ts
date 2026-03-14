@@ -102,10 +102,8 @@ export class KerberosRealmsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(KerberosRealmsFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosRealms());
+            this.slideIn.open(KerberosRealmsFormComponent, { data: row })
+              .onSuccess(this.destroyRef, () => this.getKerberosRealms());
           },
         },
         {
@@ -173,10 +171,8 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosRealmsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getKerberosRealms());
+    this.slideIn.open(KerberosRealmsFormComponent)
+      .onSuccess(this.destroyRef, () => this.getKerberosRealms());
   }
 
   onListFiltered(query: string): void {

@@ -66,10 +66,8 @@ export class DiskInfoCardComponent {
   });
 
   onEdit(): void {
-    this.slideIn.open(DiskFormComponent, { data: this.disk() }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.vDevsStore.reloadList());
+    this.slideIn.open(DiskFormComponent, { data: this.disk() })
+      .onSuccess(this.destroyRef, () => this.vDevsStore.reloadList());
   }
 
   onReplace(): void {

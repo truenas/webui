@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, startWith } from 'rxjs/operators';
+import { startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -87,11 +87,7 @@ export class IscsiComponent {
 
   protected openWizard(): void {
     this.slideIn.open(IscsiWizardComponent)
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(({ response }) => {
+      .onSuccess(this.destroyRef, (response) => {
         this.iscsiService.refreshData(response);
       });
   }

@@ -311,7 +311,7 @@ export class ContainerFormComponent implements OnInit {
       },
       error: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: false, error: true });
+        this.slideInRef.close({ response: undefined });
       },
     });
   }
@@ -380,7 +380,7 @@ export class ContainerFormComponent implements OnInit {
           this.form.markAsPristine();
           this.snackbar.success(this.translate.instant('Container updated'));
 
-          this.slideInRef.close({ response: true, error: false });
+          this.slideInRef.close({ response: true });
 
           if (this.containersStore && updatedInstance) {
             this.containersStore.containerUpdated(updatedInstance);
@@ -397,7 +397,7 @@ export class ContainerFormComponent implements OnInit {
           this.isLoading.set(false);
           this.form.markAsPristine();
           this.snackbar.success(this.translate.instant('Container created'));
-          this.slideInRef.close({ response: true, error: false });
+          this.slideInRef.close({ response: true });
           this.containersStore?.reload();
           if (container?.id) {
             this.router.navigate(['/containers', 'view', container.id]);

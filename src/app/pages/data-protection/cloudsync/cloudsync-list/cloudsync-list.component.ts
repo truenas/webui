@@ -295,23 +295,11 @@ export class CloudSyncListComponent implements OnInit {
 
   protected openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getCloudSyncTasks();
-        },
-      });
+      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true })
+        .onSuccess(this.destroyRef, () => this.getCloudSyncTasks());
     } else {
-      this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getCloudSyncTasks();
-        },
-      });
+      this.slideIn.open(CloudSyncWizardComponent, { wide: true })
+        .onSuccess(this.destroyRef, () => this.getCloudSyncTasks());
     }
   }
 

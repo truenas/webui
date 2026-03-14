@@ -53,7 +53,7 @@ describe('ModalHeader2Component', () => {
     it('shows a working close button when only 1 component is in the queue', async () => {
       const closeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close' }));
       await closeButton.click();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
       expect(await closeButton.getName()).toBe('close');
     });
   });
@@ -78,7 +78,7 @@ describe('ModalHeader2Component', () => {
       spectator.detectChanges();
       const backButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-left' }));
       await backButton.click();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
       expect(await backButton.getName()).toBe('chevron-left');
     });
   });

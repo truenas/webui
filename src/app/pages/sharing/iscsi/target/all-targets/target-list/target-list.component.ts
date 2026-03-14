@@ -6,7 +6,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
@@ -148,11 +147,7 @@ export class TargetListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(TargetFormComponent, { wide: true })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(({ response }) => {
+      .onSuccess(this.destroyRef, (response) => {
         this.dataProvider().expandedRow = response;
         this.dataProvider().load();
       });

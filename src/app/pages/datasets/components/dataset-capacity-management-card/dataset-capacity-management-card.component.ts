@@ -156,11 +156,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   editDataset(): void {
-    this.slideIn.open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.datasetStore.datasetUpdated();
-    });
+    this.slideIn.open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() })
+      .onSuccess(this.destroyRef, () => this.datasetStore.datasetUpdated());
   }
 }

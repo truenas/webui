@@ -64,14 +64,7 @@ export class SubsystemNamespacesCardComponent {
   protected onAddNamespace(): void {
     this.slideIn.open(NamespaceFormComponent, {
       data: { subsystemId: this.subsystem().id },
-    })
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.nvmeOfStore.initialize();
-      });
+    }).onSuccess(this.destroyRef, () => this.nvmeOfStore.initialize());
   }
 
   protected onDeleteNamespace(namespace: NvmeOfNamespace): void {

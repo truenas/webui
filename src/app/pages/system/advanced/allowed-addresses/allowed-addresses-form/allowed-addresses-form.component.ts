@@ -119,7 +119,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   onSubmit(): void {
     if (!this.form.dirty) {
-      this.slideInRef.close({ response: false });
+      this.slideInRef.close({ response: undefined });
       return;
     }
 

@@ -137,17 +137,13 @@ export class DockerRegistriesListComponent implements OnInit {
   protected onAdd(): void {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
-    })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.dataProvider.load());
+    }).onSuccess(this.destroyRef, () => this.dataProvider.load());
   }
 
   private onEdit(row: DockerRegistry): void {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { registry: row, isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
-    })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.dataProvider.load());
+    }).onSuccess(this.destroyRef, () => this.dataProvider.load());
   }
 
   private onDelete(row: DockerRegistry): void {

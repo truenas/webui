@@ -81,7 +81,7 @@ export class CloudBackupFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);
-  slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup | false>>(SlideInRef);
+  slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   get isNew(): boolean {
