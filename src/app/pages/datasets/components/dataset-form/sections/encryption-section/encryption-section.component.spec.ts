@@ -175,7 +175,7 @@ describe('EncryptionSectionComponent', () => {
         'Encryption Type': 'Passphrase',
         'Confirm Passphrase': '',
         Passphrase: '',
-        pbkdf2iters: '350000',
+        pbkdf2iters: '1300000',
         Algorithm: 'AES-256-GCM',
       });
     });

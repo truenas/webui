@@ -137,7 +137,7 @@ export const helptextDatasetForm = {
  WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a\
  memorable passphrase or physically secure the passphrase.'),
     pbkdf2itersTooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability\
- to brute-force attacks. Entering a number larger than <i>100000</i> is required. See\
+ to brute-force attacks. Entering a number of at least <i>1300000</i> is required. See\
  <a href="https://en.wikipedia.org/wiki/PBKDF2" target="_blank">PBKDF2</a> for more details.'),
     generateKeyTooltip: T('Randomly generate an encryption key for securing this dataset. Disabling requires manually\
  defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this\
