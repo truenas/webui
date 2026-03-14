@@ -125,7 +125,7 @@ export class WebShareService {
         }
 
         return this.slideIn.open(WebShareSharesFormComponent, { data }).pipe(
-          map((result) => result.response != null),
+          map((result) => result.response !== undefined),
         );
       }),
     );

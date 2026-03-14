@@ -181,8 +181,8 @@ export class SlideIn {
         (instance) => ({
           ...instance,
           slideInRef: instance.slideInId === slideInInstance.slideInId
-            ? instance.slideInRef
-            : slideInInstance.slideInRef,
+            ? slideInInstance.slideInRef
+            : instance.slideInRef,
         }),
       );
     } else {
