@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
@@ -42,7 +43,7 @@ describe('AddHostMenuComponent', () => {
         hosts: allHosts,
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: newHost })),
+        open: jest.fn(() => new SlideInResult(of({ response: newHost }))),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
