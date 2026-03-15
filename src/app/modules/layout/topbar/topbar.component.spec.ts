@@ -15,7 +15,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { selectImportantUnreadAlertsCount, selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
@@ -135,6 +135,10 @@ function createTopbarComponent(options: ComponentOptions = {}): {
           {
             selector: selectImportantUnreadAlertsCount,
             value: 0,
+          },
+          {
+            selector: selectIsAlertPanelOpen,
+            value: false,
           },
         ],
       }),

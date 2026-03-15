@@ -6,8 +6,8 @@ export const helptextPermissions = {
  appear in the drop-down menu.'),
 
   applyUser: {
-    tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i> \
-are submitted only when this box is set.'),
+    tooltip: T('Confirm changes to <i>User</i>. To prevent errors, changes to the <i>User</i>\
+ are submitted only when this box is set.'),
   },
 
   groupLabel: T('Select the group to control the dataset. Groups\
@@ -15,8 +15,8 @@ are submitted only when this box is set.'),
  appear in the drop-down menu.'),
 
   applyGroup: {
-    tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i> \
-are submitted only when this box is set.'),
+    tooltip: T('Confirm changes to <i>Group</i>. To prevent errors, changes to the <i>Group</i>\
+ are submitted only when this box is set.'),
   },
 
   modeTooltip: T('Set the read, write, and execute permissions for the dataset.'),

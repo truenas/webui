@@ -1,5 +1,7 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, OnDestroy, OnInit, QueryList,
+  ViewChildren, inject,
+  ElementRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -8,7 +10,7 @@ import {
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, map, Subject } from 'rxjs';
+import { filter, map, Subject, pairwise, startWith } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { hashMessage } from 'app/helpers/hash-message';
@@ -61,6 +63,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
+  @ViewChild('alertPanel', { static: true }) private alertPanel: ElementRef<HTMLElement>;
+  @ViewChild(TopbarComponent) private topbar: TopbarComponent;
 
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
@@ -122,6 +126,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.listenForSidenavChanges();
     this.setupGlobalHighlightHandler();
+    this.setupAlertPanelFocus();
   }
 
   /**
@@ -216,5 +221,17 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
+    this.topbar?.focusAlertIndicator();
+  }
+
+  private setupAlertPanelFocus(): void {
+    this.isAlertPanelOpen$.pipe(
+      startWith(false),
+      pairwise(),
+      filter(([prev, curr]) => !prev && curr),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      setTimeout(() => this.alertPanel.nativeElement.focus());
+    });
   }
 }

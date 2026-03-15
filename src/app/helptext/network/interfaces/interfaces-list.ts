@@ -21,8 +21,8 @@ export const helptextInterfaces = {
   revertChangesWarning: T('Revert interface changes? All changes that are being tested will be lost.'),
   changesRolledBack: T('Interface changes reverted.'),
   networkReconnectionIssue: T('Network Reconnection Issue'),
-  networkReconnectionIssueText: T('We encountered an issue while applying the new network changes. \
- Unfortunately, we were unable to reconnect to the system after the changes were implemented. \
+  networkReconnectionIssueText: T('We encountered an issue while applying the new network changes.\
+ Unfortunately, we were unable to reconnect to the system after the changes were implemented.\
  As a result, we have restored the previous network configuration to ensure continued connectivity.'),
 
   servicesRestarted: {

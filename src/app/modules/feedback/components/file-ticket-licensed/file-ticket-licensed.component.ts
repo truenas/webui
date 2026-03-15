@@ -135,13 +135,13 @@ export class FileTicketLicensedComponent {
       finalize(() => this.isLoadingChange.emit(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (createdTicket) => this.onSuccess(createdTicket.url),
+      next: (createdTicket) => this.onSuccess(createdTicket.url, createdTicket.debug_attach_error),
       error: (error: unknown) => this.formErrorHandler.handleValidationErrors(error, this.form),
     });
   }
 
-  private onSuccess(ticketUrl: string): void {
-    this.feedbackService.showTicketSuccessMessage(ticketUrl);
+  private onSuccess(ticketUrl: string, debugAttachError?: string | null): void {
+    this.feedbackService.showTicketSuccessMessage(ticketUrl, debugAttachError);
     this.dialogRef().close();
   }
 

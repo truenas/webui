@@ -17,23 +17,23 @@ export const helptextSharingSmb = {
 
   enabledLabel: T('Enabled'),
   auditLogTooltip: T(
-    'Controls whether audit messages will be generated for the share. \
-<br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
+    'Controls whether audit messages will be generated for the share.\
+ <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
   ),
   watchListTooltip: T(
     'List of groups for which to generate audit messages. At least one group must be specified in either Watch List or Ignore List when audit logging is enabled.',
   ),
   ignoreListTooltip: T(
-    'List of groups to ignore when auditing. At least one group must be specified in either Watch List or Ignore List when audit logging is enabled. If conflict arises between Watch List and Ignore List \
+    'List of groups to ignore when auditing. At least one group must be specified in either Watch List or Ignore List when audit logging is enabled. If conflict arises between Watch List and Ignore List\
  (based on user group membership), then Watch List will take precedence and ops will be audited.',
   ),
 
   homeLabel: T('Use as Home Share'),
   homeTooltip: T(
-    'Legacy feature. <br><br>Allows the share to host user home \
- directories. Each user is given a personal home directory when \
- connecting to the share which is not accessible by other users. This \
- allows for a personal, dynamic share. Only one share can be used \
+    'Legacy feature. <br><br>Allows the share to host user home\
+ directories. Each user is given a personal home directory when\
+ connecting to the share which is not accessible by other users. This\
+ allows for a personal, dynamic share. Only one share can be used\
  as the home share.',
   ),
 
@@ -83,26 +83,26 @@ export const helptextSharingSmb = {
   ),
 
   recyclebinLabel: T('Export Recycle Bin'),
-  recyclebinTooltip: T('Select to enable. Deleted files from the same \
-    dataset move to a <b>Recycle Bin</b> in that dataset and do not take any \
-    additional space. Recycle bin is for access over SMB protocol only.\
-    The files are renamed to a per-user subdirectory within \
-    <b><i>.recycle</i></b> directory at either (1) root of SMB share \
-    (if path is same dataset as SMB share) or (2) at root of current \
-    dataset if we have nested datasets. Because of (2) there is no \
-    automatic deletion based on file size.'),
+  recyclebinTooltip: T('Select to enable. Deleted files from the same\
+ dataset move to a <b>Recycle Bin</b> in that dataset and do not take any\
+ additional space. Recycle bin is for access over SMB protocol only.\
+ The files are renamed to a per-user subdirectory within\
+ <b><i>.recycle</i></b> directory at either (1) root of SMB share\
+ (if path is same dataset as SMB share) or (2) at root of current\
+ dataset if we have nested datasets. Because of (2) there is no\
+ automatic deletion based on file size.'),
 
   guestokLabel: T('Allow Guest Access'),
   guestokTooltip: T(
-    'Legacy feature. <br><br>Privileges are the same as the guest account. \
- Guest access is disabled by default in Windows 10 version 1709 and \
- Windows Server version 1903. Additional client-side configuration is \
- required to provide guest access to these clients.<br><br> \
- <i>MacOS clients:</i> Attempting to connect as a user that does not \
- exist in TrueNAS <i>does not</i> automatically connect as the guest \
- account. The <b>Connect As:</b> <i>Guest</i> option must be \
- specifically chosen in MacOS to log in as the guest account. See the \
- <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a> \
+    'Legacy feature. <br><br>Privileges are the same as the guest account.\
+ Guest access is disabled by default in Windows 10 version 1709 and\
+ Windows Server version 1903. Additional client-side configuration is\
+ required to provide guest access to these clients.<br><br>\
+ <i>MacOS clients:</i> Attempting to connect as a user that does not\
+ exist in TrueNAS <i>does not</i> automatically connect as the guest\
+ account. The <b>Connect As:</b> <i>Guest</i> option must be\
+ specifically chosen in MacOS to log in as the guest account. See the\
+ <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a>\
  for more details.',
   ),
 
@@ -114,29 +114,29 @@ export const helptextSharingSmb = {
   ),
 
   hostsallowLabel: T('Hosts Allow'),
-  hostsAllowTooltip: T('A list of IP addresses or subnets that are allowed to access the SMB share. \
-Separate entries by pressing <code>Enter</code>. The EXCEPT keyword may be used to limit a wildcard list. \
-<br><br><b>Note:</b> Hostname lookups are disabled on the SMB server for performance reasons. \
-<br><br><b>Examples:</b><br> \
-• Single IPs: <code>192.168.0.200</code>, <code>150.203.</code><br> \
-• CIDR notation: <code>150.203.15.0/255.255.255.0</code><br> \
-• EXCEPT syntax: <code>150.203. EXCEPT 150.203.6.66</code> \
-<br><br><b>Behavior:</b><br> \
-• If neither <i>Hosts Allow</i> nor <i>Hosts Deny</i> contains an entry, SMB share access is allowed for any host.<br> \
-• If there is a <i>Hosts Allow</i> list but no <i>Hosts Deny</i> list, only allow hosts on the <i>Hosts Allow</i> list.<br> \
-• If there is both a <i>Hosts Allow</i> and <i>Hosts Deny</i> list, allow all hosts on the <i>Hosts Allow</i> list.<br> \
-• Hosts not on either list are allowed.'),
+  hostsAllowTooltip: T('A list of IP addresses or subnets that are allowed to access the SMB share.\
+ Separate entries by pressing <code>Enter</code>. The EXCEPT keyword may be used to limit a wildcard list.\
+ <br><br><b>Note:</b> Hostname lookups are disabled on the SMB server for performance reasons.\
+ <br><br><b>Examples:</b><br>\
+ • Single IPs: <code>192.168.0.200</code>, <code>150.203.</code><br>\
+ • CIDR notation: <code>150.203.15.0/255.255.255.0</code><br>\
+ • EXCEPT syntax: <code>150.203. EXCEPT 150.203.6.66</code>\
+ <br><br><b>Behavior:</b><br>\
+ • If neither <i>Hosts Allow</i> nor <i>Hosts Deny</i> contains an entry, SMB share access is allowed for any host.<br>\
+ • If there is a <i>Hosts Allow</i> list but no <i>Hosts Deny</i> list, only allow hosts on the <i>Hosts Allow</i> list.<br>\
+ • If there is both a <i>Hosts Allow</i> and <i>Hosts Deny</i> list, allow all hosts on the <i>Hosts Allow</i> list.<br>\
+ • Hosts not on either list are allowed.'),
   hostsdenyLabel: T('Hosts Deny'),
   hostsdenyTooltip: T(
-    'A list of IP addresses or subnets that are not allowed to access the SMB share. \
-Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or the netmask \
-<code>0.0.0.0/0</code> may be used to deny all by default. \
-<br><br><b>Examples:</b><br> \
-• Partial IPs: <code>150.203.4.</code><br> \
-• Deny all: <code>ALL</code> or <code>0.0.0.0/0</code> \
-<br><br><b>Behavior:</b><br> \
-• If there is a <i>Hosts Deny</i> list but no <i>Hosts Allow</i> list, allow all hosts not on the <i>Hosts Deny</i> list.<br> \
-• If there is both a <i>Hosts Allow</i> and <i>Hosts Deny</i> list, the <i>Hosts Allow</i> list takes precedence.',
+    'A list of IP addresses or subnets that are not allowed to access the SMB share.\
+ Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or the netmask\
+ <code>0.0.0.0/0</code> may be used to deny all by default.\
+ <br><br><b>Examples:</b><br>\
+ • Partial IPs: <code>150.203.4.</code><br>\
+ • Deny all: <code>ALL</code> or <code>0.0.0.0/0</code>\
+ <br><br><b>Behavior:</b><br>\
+ • If there is a <i>Hosts Deny</i> list but no <i>Hosts Allow</i> list, allow all hosts not on the <i>Hosts Deny</i> list.<br>\
+ • If there is both a <i>Hosts Allow</i> and <i>Hosts Deny</i> list, the <i>Hosts Allow</i> list takes precedence.',
   ),
 
   shadowcopyLabel: T('Enable Shadow Copies'),
@@ -148,7 +148,7 @@ Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or
 
   aaplNameManglingLabel: T('Use Apple-style Character Encoding'),
   aaplNameManglingTooltip: T(
-    'By default, Samba uses a hashing algorithm for NTFS illegal \
+    'By default, Samba uses a hashing algorithm for NTFS illegal\
  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.',
   ),
 
@@ -156,34 +156,34 @@ Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or
 
   streamsLabel: T('Enable Alternate Data Streams'),
   streamsTooltip: T(
-    'Allows multiple \
- <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>. \
+    'Allows multiple\
+ <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>.\
  Disabling this option causes macOS to write streams to files on the filesystem.',
   ),
 
   durablehandleLabel: T('Enable SMB2/3 Durable Handles'),
   durablehandleTooltip: T(
-    'Allow using open file handles that can withstand short disconnections. \
- Support for POSIX byte-range locks in Samba is also disabled. This option is not recommended when \
+    'Allow using open file handles that can withstand short disconnections.\
+ Support for POSIX byte-range locks in Samba is also disabled. This option is not recommended when\
  configuring multi-protocol or local access to files.',
   ),
 
   fsrvpLabel: T('Enable FSRVP'),
   fsrvpTooltip: T(
-    'Enable support for the File Server Remote VSS Protocol \
- (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSRVP</a>). \
- This protocol allows RPC clients to manage snapshots for a specific SMB share. \
- The share path must be a dataset mountpoint. Snapshots have the prefix \
- <code>fss-</code> followed by a snapshot creation timestamp. A snapshot must have \
+    'Enable support for the File Server Remote VSS Protocol\
+ (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSRVP</a>).\
+ This protocol allows RPC clients to manage snapshots for a specific SMB share.\
+ The share path must be a dataset mountpoint. Snapshots have the prefix\
+ <code>fss-</code> followed by a snapshot creation timestamp. A snapshot must have\
  this prefix for an RPC user to delete it.',
   ),
 
   pathSuffixLabel: T('Path Suffix'),
   pathSuffixTooltip: T(
-    'Appends a suffix to the share connection path. \
- This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
- Suffixes can contain a macro. See the \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> manual page for \
+    'Appends a suffix to the share connection path.\
+ This is used to provide unique shares on a per-user, per-computer, or per-IP address basis.\
+ Suffixes can contain a macro. See the\
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> manual page for\
  a list of supported macros. The connectpath **must** be preset before a client connects.',
   ),
 
@@ -214,7 +214,7 @@ Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or
   stripACLDialog: {
     title: T('Warning'),
     message: T(
-      'An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share. \
+      'An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share.\
  ACLs should be stripped from the dataset prior to creating an SMB share.',
     ),
     button: T('Continue'),
@@ -223,18 +223,18 @@ Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or
   manglingDialog: {
     title: T('Warning'),
     message: T(
-      'The <i>Use Apple-style character encoding</i> value has changed. \
- This parameter affects how file names are read from and written to storage. Changes to \
- this parameter after data is written can prevent accessing or deleting files containing \
+      'The <i>Use Apple-style character encoding</i> value has changed.\
+ This parameter affects how file names are read from and written to storage. Changes to\
+ this parameter after data is written can prevent accessing or deleting files containing\
  mangled characters.',
     ),
     action: T('I Understand'),
   },
 
   gracePeriodLabel: T('Grace Period'),
-  gracePeriodTooltip: T('Time in seconds after creation in which write access is allowed. \
-After the grace period is up, the share will become read-only. \
-Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
+  gracePeriodTooltip: T('Time in seconds after creation in which write access is allowed.\
+ After the grace period is up, the share will become read-only.\
+ Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
 
   restartMessage: T(
     'Changes to the SMB share configuration may not fully apply to existing SMB client sessions until the SMB service restarts.',

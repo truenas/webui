@@ -122,19 +122,14 @@ export class CreateDatasetDialog implements OnInit {
   }
 
   private addNameValidators(): void {
-    const isNameCaseSensitive = this.parent.casesensitivity.value === DatasetCaseSensitivity.Sensitive;
+    const isNameCaseInsensitive = this.parent.casesensitivity.value !== DatasetCaseSensitivity.Sensitive;
     const namesInUse = (this.parent.children?.map((child) => {
-      const childName = /[^/]*$/.exec(child.name)?.[0];
-      if (isNameCaseSensitive) {
-        return childName?.toLowerCase();
-      }
-
-      return childName;
+      return /[^/]*$/.exec(child.name)?.[0];
     }) || []).filter((name): name is string => name !== undefined);
 
     this.form.controls.name.addValidators([
       datasetNameTooLong(this.parent.name),
-      forbiddenValues(namesInUse, isNameCaseSensitive),
+      forbiddenValues(namesInUse, isNameCaseInsensitive),
     ]);
   }
 }

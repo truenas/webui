@@ -33,7 +33,7 @@ export const helptextDisks = {
     { label: T('Level 254 - Maximum performance, maximum power usage'), value: DiskPowerLevel.Level254 },
   ],
 
-  passwordTooltip: T('Set or change the password of this SED. \
+  passwordTooltip: T('Set or change the password of this SED.\
  This password is used instead of the global SED password.'),
 
   bulkEdit: {

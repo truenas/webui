@@ -2,12 +2,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextNvmeOf = {
   baseNqnTooltip: T('NQN to be used as the prefix on the creation of a subsystem, if a subnqn is not supplied. Modifying this value will not change the subnqn of any existing subsystems.'),
-  rdmaTooltip: T('Once enabled one or more ports may be configured with RDMA selected as the transport. \
-Requires an Enterprise license, RDMA-capable system and network equipment.'),
+  rdmaTooltip: T('Once enabled one or more ports may be configured with RDMA selected as the transport.\
+ Requires an Enterprise license, RDMA-capable system and network equipment.'),
   rdmaDisabledTooltip: T('Not enabled, because this system does not support RDMA.'),
   anaDisabledTooltip: T('Not enabled, because this feature requires an HA license.'),
-  implementationTooltip: T('Experimental. This option is geared towards experimentation with client compatibility. \
-Try this if having issues with certain clients, such as hypervisors that may require specific capabilities.'),
+  implementationTooltip: T('Experimental. This option is geared towards experimentation with client compatibility.\
+ Try this if having issues with certain clients, such as hypervisors that may require specific capabilities.'),
   implementationDisabledTooltip: T('This field cannot be changed while the NVMe service is running. Please stop the service first.'),
 
   hostNqnTooltip: T('NVMe Qualified Name (NQN) uniquely identifies the host. Format: nqn.YYYY-MM.reverse-domain-name[:optional-id]. Example: nqn.2014-08.com.example:host1'),

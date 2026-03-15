@@ -9,17 +9,17 @@ export const helptextServiceSsh = {
 
   passwordLoginGroupsTooltip: T('Groups that can log in using password'),
 
-  passwordauthTooltip: T('Enabling allows using a password to authenticate \
- the SSH login. <i>Warning:</i> when directory services are enabled, allowing password \
- authentication can grant access to all users imported by the directory service.<br> \
- Disabling changes authentication to require keys for all users. This requires \
- <a href="http://the.earth.li/&percnt;7Esgtatham/putty/0.55/htmldoc/Chapter8.html" target="_blank">additional setup</a> \
+  passwordauthTooltip: T('Enabling allows using a password to authenticate\
+ the SSH login. <i>Warning:</i> when directory services are enabled, allowing password\
+ authentication can grant access to all users imported by the directory service.<br>\
+ Disabling changes authentication to require keys for all users. This requires\
+ <a href="http://the.earth.li/&percnt;7Esgtatham/putty/0.55/htmldoc/Chapter8.html" target="_blank">additional setup</a>\
  on both the SSH client and server.'),
 
-  kerberosauthTooltip: T('Ensure valid entries exist in \
- <b>Directory Services > Kerberos Realms</b> and \
- <b>Directory Services > Kerberos Keytabs</b> and the system \
- can communicate with the Kerberos Domain Controller before \
+  kerberosauthTooltip: T('Ensure valid entries exist in\
+ <b>Directory Services > Kerberos Realms</b> and\
+ <b>Directory Services > Kerberos Keytabs</b> and the system\
+ can communicate with the Kerberos Domain Controller before\
  enabling this option.'),
 
   tcpfwdTooltip: T('Set to allow users to bypass firewall restrictions\
@@ -68,14 +68,14 @@ export const helptextServiceSsh = {
  options are case-sensitive. Misspellings can prevent\
  the SSH service from starting.'),
 
-  weakCiphersTooltip: T('Allow more ciphers for \
- <a href="https://man7.org/linux/man-pages/man8/sshd.8.html" target="_blank">sshd(8)</a> \
- in addition to the defaults in \
- <a href="https://man7.org/linux/man-pages/man5/sshd_config.5.html" target="_blank">sshd_config(5)</a>. \
- <code>None</code> allows unencrypted SSH connections and \
- <code>AES128-CBC</code> allows the 128-bit \
- <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf" target="_blank">Advanced Encryption Standard</a>.<br><br> \
- WARNING: these ciphers are considered security vulnerabilities and \
+  weakCiphersTooltip: T('Allow more ciphers for\
+ <a href="https://man7.org/linux/man-pages/man8/sshd.8.html" target="_blank">sshd(8)</a>\
+ in addition to the defaults in\
+ <a href="https://man7.org/linux/man-pages/man5/sshd_config.5.html" target="_blank">sshd_config(5)</a>.\
+ <code>None</code> allows unencrypted SSH connections and\
+ <code>AES128-CBC</code> allows the 128-bit\
+ <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf" target="_blank">Advanced Encryption Standard</a>.<br><br>\
+ WARNING: these ciphers are considered security vulnerabilities and\
  should only be allowed in a secure network environment.'),
   weakCiphersOptions: [
     { label: T('None'), value: SshWeakCipher.None },

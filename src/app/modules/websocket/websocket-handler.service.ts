@@ -269,9 +269,7 @@ export class WebSocketHandlerService {
       console.error('Max concurrent calls', JSON.stringify(callsWithoutErrorsReported));
       this.showingConcurrentCallsError = true;
       this.dialogService.error({
-        message: this.translate.instant(`Max concurrent calls limit reached.
-        There are more than 20 calls queued.
-        See queued calls in the browser's console logs`),
+        message: this.translate.instant('Max concurrent calls limit reached.\nThere are more than 20 calls queued.\nSee queued calls in the browser\'s console logs'),
         title: this.translate.instant('Max Concurrent Calls'),
       }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {

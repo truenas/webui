@@ -39,6 +39,7 @@ export interface NewTicketResponse {
   ticket: number;
   url: string;
   has_debug: boolean;
+  debug_attach_error: string | null;
 }
 
 export type OauthJiraMessage = MessageEvent<{

@@ -10,13 +10,13 @@ export const helptextSystemCertificates = {
 
     csrCreateType: {
       label: T('Type'),
-      tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
+      tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default.\
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
     },
 
     profiles: {
-      tooltip: T('Predefined certificate extensions. Choose a profile that best \
-matches your certificate usage scenario.'),
+      tooltip: T('Predefined certificate extensions. Choose a profile that best\
+ matches your certificate usage scenario.'),
     },
 
     keyType: {
@@ -99,9 +99,9 @@ matches your certificate usage scenario.'),
 
     san: {
       tooltip: T(
-        'Multi-domain support. Enter additional domains to \
- secure. Separate domains by pressing <code>Enter</code> \
- For example, if the primary domain is <i>example.com</i>, \
+        'Multi-domain support. Enter additional domains to\
+ secure. Separate domains by pressing <code>Enter</code>.\
+ For example, if the primary domain is <i>example.com</i>,\
  entering <i>www.example.com</i> secures both addresses.',
       ),
     },
@@ -128,87 +128,87 @@ matches your certificate usage scenario.'),
 
     basicConstraints: {
       config: {
-        tooltip: T('Specify whether to use the certificate for a Certificate Authority \
-          and whether this extension is critical. Clients must recognize critical extensions \
-          to prevent rejection. Web certificates typically require you to disable \
-          CA and enable Critical Extension.'),
+        tooltip: T('Specify whether to use the certificate for a Certificate Authority\
+ and whether this extension is critical. Clients must recognize critical extensions\
+ to prevent rejection. Web certificates typically require you to disable\
+ CA and enable Critical Extension.'),
       },
       ca: {
         label: T('CA'),
         tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
       },
       enabled: {
-        tooltip: T('Activate the Basic Constraints extension to identify whether \
-          the certificate\'s subject is a CA and the maximum depth of valid \
-          certification paths that include this certificate.'),
+        tooltip: T('Activate the Basic Constraints extension to identify whether\
+ the certificate\'s subject is a CA and the maximum depth of valid\
+ certification paths that include this certificate.'),
       },
       pathLength: {
-        tooltip: T('How many non-self-issued intermediate certificates that can follow \
-this certificate in a valid certification path. Entering <i>0</i> allows a single \
-additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
+        tooltip: T('How many non-self-issued intermediate certificates that can follow\
+ this certificate in a valid certification path. Entering <i>0</i> allows a single\
+ additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
       },
       extensionCritical: {
         label: T('Critical Extension'),
-        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
-be recognized by the certificate-using system or this certificate will be rejected. Extensions \
-identified as <i>not</i> critical can be ignored by the certificate-using system and the \
-certificate still approved.'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must\
+ be recognized by the certificate-using system or this certificate will be rejected. Extensions\
+ identified as <i>not</i> critical can be ignored by the certificate-using system and the\
+ certificate still approved.'),
       },
     },
 
     extendedKeyUsage: {
       usages: {
-        tooltip: T('Identify the purpose for this public key. Typically used for end \
-entity certificates. Multiple usages can be selected. Do not mark this extension \
-critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> \
-Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions \
-requires that the purpose of the certificate is consistent with both extensions. See \
-<a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
-for more details.'),
+        tooltip: T('Identify the purpose for this public key. Typically used for end\
+ entity certificates. Multiple usages can be selected. Do not mark this extension\
+ critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br>\
+ Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions\
+ requires that the purpose of the certificate is consistent with both extensions. See\
+ <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a>\
+ for more details.'),
       },
       enabled: {
         tooltip: T('Activate this certificate extension.\
-The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
-See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
-for more details.'),
+ The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a>\
+ for more details.'),
       },
       extensionCritical: {
         label: T('Critical Extension'),
-        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
-be recognized by the certificate-using system or this certificate will be rejected. Extensions \
-identified as <i>not</i> critical can be ignored by the certificate-using system and the \
-certificate still approved.'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must\
+ be recognized by the certificate-using system or this certificate will be rejected. Extensions\
+ identified as <i>not</i> critical can be ignored by the certificate-using system and the\
+ certificate still approved.'),
       },
     },
 
     keyUsage: {
       config: {
-        tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates \
-          typically need at least Digital Signature and possibly Key Encipherment \
-          or Key Agreement, while other applications may need other usages.'),
+        tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates\
+ typically need at least Digital Signature and possibly Key Encipherment\
+ or Key Agreement, while other applications may need other usages.'),
       },
       enabled: {
         tooltip: T('Activate this certificate extension.\
-  The key usage extension defines the purpose \
- (e.g., encipherment, signature, certificate signing) of the key contained in \
- the certificate. The usage restriction might be employed when a key that \
- could be used for more than one operation is to be restricted. For \
- example, when an RSA key should be used only to verify signatures on \
- objects other than public key certificates and CRLs, the <i>Digital Signature</i> \
- bits would be asserted. Likewise, when an RSA key should be used only for key \
- management, the <i>Key Encipherment</i> bit would be asserted. <br> \
- See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.3</a> \
+ The key usage extension defines the purpose\
+ (e.g., encipherment, signature, certificate signing) of the key contained in\
+ the certificate. The usage restriction might be employed when a key that\
+ could be used for more than one operation is to be restricted. For\
+ example, when an RSA key should be used only to verify signatures on\
+ objects other than public key certificates and CRLs, the <i>Digital Signature</i>\
+ bits would be asserted. Likewise, when an RSA key should be used only for key\
+ management, the <i>Key Encipherment</i> bit would be asserted. <br>\
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.3</a>\
  for more information.'),
       },
       digitalSignature: {
         label: T('Digital Signature'),
-        tooltip: T('This certificate\'s public key is used with digital signature methods \
-that are separate from certificate or CRL signing.'),
+        tooltip: T('This certificate\'s public key is used with digital signature methods\
+ that are separate from certificate or CRL signing.'),
       },
       contentCommitment: {
         label: T('Content Commitment'),
-        tooltip: T('This certificate\'s public key verifies digital signatures used for a \
-non-repudiation service.'),
+        tooltip: T('This certificate\'s public key verifies digital signatures used for a\
+ non-repudiation service.'),
       },
       keyEncipherment: {
         label: T('Key Encipherment'),
@@ -224,33 +224,33 @@ non-repudiation service.'),
       },
       keyCertSign: {
         label: T('Key Cert Sign'),
-        tooltip: T('This certificate\'s public key is used to verify signatures on \
-other public key certificates. Activating this also requires enabling the \
-<b>CA</b> basic constraint.'),
+        tooltip: T('This certificate\'s public key is used to verify signatures on\
+ other public key certificates. Activating this also requires enabling the\
+ <b>CA</b> basic constraint.'),
       },
       crlSign: {
         label: T('CRL Sign'),
-        tooltip: T('This certificate\'s public key is used to verify signatures \
-on a certificate revocation list (CRL).'),
+        tooltip: T('This certificate\'s public key is used to verify signatures\
+ on a certificate revocation list (CRL).'),
       },
       encipherOnly: {
         label: T('Encipher Only'),
-        tooltip: T('The certificate\'s public key is used to encipher user \
-data only during key agreement operations. Requires that \
-<b>Key Agreement</b> is also set.'),
+        tooltip: T('The certificate\'s public key is used to encipher user\
+ data only during key agreement operations. Requires that\
+ <b>Key Agreement</b> is also set.'),
       },
       decipherOnly: {
         label: T('Decipher Only'),
-        tooltip: T('This certificate\'s public key is used to decipher \
-user data only during key agreement operations. Requires that \
-<b>Key Agreement</b> is also set.'),
+        tooltip: T('This certificate\'s public key is used to decipher\
+ user data only during key agreement operations. Requires that\
+ <b>Key Agreement</b> is also set.'),
       },
       extensionCritical: {
         label: T('Critical Extension'),
-        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
-be recognized by the certificate-using system or this certificate will be rejected. Extensions \
-identified as <i>not</i> critical can be ignored by the certificate-using system and the \
-certificate still approved.'),
+        tooltip: T('Identify this extension as critical for the certificate. Critical extensions must\
+ be recognized by the certificate-using system or this certificate will be rejected. Extensions\
+ identified as <i>not</i> critical can be ignored by the certificate-using system and the\
+ certificate still approved.'),
       },
     },
   },

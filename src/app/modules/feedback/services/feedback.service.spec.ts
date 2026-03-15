@@ -31,6 +31,7 @@ describe('FeedbackService', () => {
     ticket: 1,
     url: 'https://jira-redirect.ixsystems.com/ticket',
     has_debug: false,
+    debug_attach_error: null as string | null,
   };
 
   const newReview = {
@@ -396,6 +397,23 @@ describe('FeedbackService', () => {
 
       expect(spectator.inject(DialogService).generalDialog).toHaveBeenCalledWith({
         message: 'Thank you. Ticket was submitted successfully.',
+        is_html: false,
+        title: 'Ticket Created',
+        cancelBtnMsg: 'Close',
+        confirmBtnMsg: 'Open ticket',
+        icon: 'mdi-check',
+      });
+    });
+
+    it('shows debug attach error warning in the success dialog when present', () => {
+      spectator.service.showTicketSuccessMessage(
+        'https://jira-redirect.ixsystems.com/ticket',
+        '[EFBIG] Uploaded file is too large',
+      );
+
+      expect(spectator.inject(DialogService).generalDialog).toHaveBeenCalledWith({
+        message: expect.stringContaining('Debug information could not be attached to the ticket: [EFBIG] Uploaded file is too large'),
+        is_html: true,
         title: 'Ticket Created',
         cancelBtnMsg: 'Close',
         confirmBtnMsg: 'Open ticket',

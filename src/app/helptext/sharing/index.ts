@@ -6,5 +6,5 @@ export * from './smb/smb';
 
 export const shared = {
   deleteShareMessage: T('The sharing configuration will be removed.\
-    Data in the share dataset will not be affected.'),
+ Data in the share dataset will not be affected.'),
 };

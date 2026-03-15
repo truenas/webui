@@ -1,1 +1,34 @@
-yarn jira-prepare-commit-msg $1
+#!/bin/sh
+
+# Skip merge/squash commits
+case "${2:-}" in
+  merge|squash) exit 0 ;;
+esac
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Strip git comment lines before checking for existing ticket
+COMMIT_MSG_CLEAN=$(printf '%s\n' "$COMMIT_MSG" | grep -v '^#')
+
+# If the commit message already contains a JIRA ticket, nothing to do
+if printf '%s\n' "$COMMIT_MSG_CLEAN" | grep -qE '[A-Z]+-[0-9]+'; then
+  exit 0
+fi
+
+# Extract JIRA ticket (e.g., NAS-12345) from the current branch name
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+# Allow commits in detached HEAD state (rebase, bisect, etc.)
+if [ "$BRANCH" = "HEAD" ]; then
+  exit 0
+fi
+
+TICKET=$(printf '%s\n' "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+
+if [ -z "$TICKET" ]; then
+  exit 0
+fi
+
+# Prepend ticket to the commit message
+printf '%s\n' "$TICKET: $COMMIT_MSG" > "$COMMIT_MSG_FILE"

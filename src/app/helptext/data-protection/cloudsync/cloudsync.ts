@@ -10,8 +10,8 @@ export const helptextCloudSync = {
   descriptionLabel: T('Description'),
 
   directionLabel: T('Direction'),
-  directionTooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i> \
- receives data from cloud storage. Changing the direction resets the \
+  directionTooltip: T('<i>PUSH</i> sends data to cloud storage. <i>PULL</i>\
+ receives data from cloud storage. Changing the direction resets the\
  <i>Transfer Mode</i> to COPY.'),
 
   credentialLabel: T('Credential'),
@@ -85,44 +85,44 @@ export const helptextCloudSync = {
   postScriptTooltip: T('Script to execute after running sync.'),
 
   remoteEncryptionLabel: T('Remote Encryption'),
-  remoteEncryptionTooltip: T('Use \
- <a href="https://rclone.org/crypt/" target="_blank">rclone crypt</a> \
- to manage data encryption during <i>PUSH</i> or <i>PULL</i> transfers:<br><br> \
- <i>PUSH:</i> Encrypt files before transfer and store the encrypted \
- files on the remote system. Files are encrypted using the \
- <b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br> \
- <i>PULL:</i> Decrypt files that are being stored on the remote system \
- before the transfer. Transferring the encrypted files requires entering \
- the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was \
- used to encrypt the files.<br><br> \
- Additional details about the encryption algorithm and key derivation \
- are available in the \
+  remoteEncryptionTooltip: T('Use\
+ <a href="https://rclone.org/crypt/" target="_blank">rclone crypt</a>\
+ to manage data encryption during <i>PUSH</i> or <i>PULL</i> transfers:<br><br>\
+ <i>PUSH:</i> Encrypt files before transfer and store the encrypted\
+ files on the remote system. Files are encrypted using the\
+ <b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br>\
+ <i>PULL:</i> Decrypt files that are being stored on the remote system\
+ before the transfer. Transferring the encrypted files requires entering\
+ the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was\
+ used to encrypt the files.<br><br>\
+ Additional details about the encryption algorithm and key derivation\
+ are available in the\
  <a href="https://rclone.org/crypt/#file-formats" target="_blank">rclone crypt File formats documentation</a>.'),
 
   filenameEncryptionLabel: T('Filename Encryption (not recommended)'),
-  filenameEncryptionTooltip: T('<i>This option is experimental in rclone and we recommend you do not use it. \
- It may not work correctly with long filenames.</i><br><br> \
- Encrypt (<i>PUSH</i>) or decrypt \
- (<i>PULL</i>) file names with the rclone \
- <a href="https://rclone.org/crypt/#file-name-encryption-modes" target="_blank">"Standard" file name encryption mode</a>. \
- The original directory structure is preserved. A filename with the same \
- name always has the same encrypted filename.<br><br> \
- <i>PULL</i> tasks that have <b>Filename Encryption</b> enabled and an \
- incorrect <b>Encryption Password</b> or <b>Encryption Salt</b> will not \
- transfer any files but still report that the task was successful. To \
- verify that files were transferred successfully, click the finished \
+  filenameEncryptionTooltip: T('<i>This option is experimental in rclone and we recommend you do not use it.\
+ It may not work correctly with long filenames.</i><br><br>\
+ Encrypt (<i>PUSH</i>) or decrypt\
+ (<i>PULL</i>) file names with the rclone\
+ <a href="https://rclone.org/crypt/#file-name-encryption-modes" target="_blank">"Standard" file name encryption mode</a>.\
+ The original directory structure is preserved. A filename with the same\
+ name always has the same encrypted filename.<br><br>\
+ <i>PULL</i> tasks that have <b>Filename Encryption</b> enabled and an\
+ incorrect <b>Encryption Password</b> or <b>Encryption Salt</b> will not\
+ transfer any files but still report that the task was successful. To\
+ verify that files were transferred successfully, click the finished\
  task status to see a list of transferred files.'),
 
   encryptionPasswordLabel: T('Encryption Password'),
-  encryptionPasswordTooltip: T('Password to encrypt and decrypt remote \
- data. <b>Warning:</b> Always securely back up this password! Losing the \
+  encryptionPasswordTooltip: T('Password to encrypt and decrypt remote\
+ data. <b>Warning:</b> Always securely back up this password! Losing the\
  encryption password will result in data loss.'),
 
   encryptionSaltLabel: T('Encryption Salt'),
-  encryptionSaltTooltip: T('Enter a long string of random characters for \
- use as <a href="https://searchsecurity.techtarget.com/definition/salt" \
- target="_blank">salt</a> for the encryption password. <b>Warning:</b> \
- Always securely back up the encryption salt value! Losing the salt \
+  encryptionSaltTooltip: T('Enter a long string of random characters for\
+ use as <a href="https://searchsecurity.techtarget.com/definition/salt"\
+ target="_blank">salt</a> for the encryption password. <b>Warning:</b>\
+ Always securely back up the encryption salt value! Losing the salt\
  value will result in data loss.'),
 
   scheduleLabel: T('Schedule'),
@@ -140,8 +140,8 @@ export const helptextCloudSync = {
 
   bwlimitLabel: T('Bandwidth Limit'),
   bwlimitTooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
- Separate entries by pressing <code>Enter</code>. Example: \
- <samp>08:00,512</samp> <samp>12:00,10MB</samp> <samp>13:00,512</samp> \
+ Separate entries by pressing <code>Enter</code>. Example:\
+ <samp>08:00,512</samp> <samp>12:00,10MB</samp> <samp>13:00,512</samp>\
  <samp>18:00,30MB</samp> <samp>23:00,off</samp>.\
  Units can be specified with a suffix of <samp>b</samp> (default),\
  <samp>k</samp>, <samp>M</samp>, or <samp>G</samp>.\
@@ -149,14 +149,14 @@ export const helptextCloudSync = {
  target="_blank">rclone --bwlimit</a>.'),
 
   excludeLabel: T('Exclude'),
-  excludeTooltip: T('List of files and directories to exclude from sync.<br> \
- Separate entries by pressing <code>Enter</code>. See \
- <a href="https://rclone.org/filtering/" target="_blank">rclone filtering</a> \
+  excludeTooltip: T('List of files and directories to exclude from sync.<br>\
+ Separate entries by pressing <code>Enter</code>. See\
+ <a href="https://rclone.org/filtering/" target="_blank">rclone filtering</a>\
  for more details about the <code>--exclude</code> option.'),
 
   dryRunTitle: T('Test Cloud Sync'),
-  dryRunDialog: T('Start a dry run test of this cloud sync task? The \
- system will connect to the cloud service provider and simulate \
+  dryRunDialog: T('Start a dry run test of this cloud sync task? The\
+ system will connect to the cloud service provider and simulate\
  transferring a file. No data will be sent or received.'),
 
   dryRunButton: T('Dry Run'),

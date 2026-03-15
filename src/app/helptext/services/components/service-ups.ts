@@ -23,9 +23,9 @@ export const helptextServiceUps = {
  the format <i>192.168.0.1</i>.'),
 
   remoteportLabel: T('Remote Port'),
-  remoteportTooltip: T(' When the <b>UPS Mode</b> is set to \
-<i>slave</i>. Enter the open network port number of the UPS \
-<i>Master</i> system. The default port is <i>3493</i>.'),
+  remoteportTooltip: T('When the <b>UPS Mode</b> is set to\
+ <i>slave</i>. Enter the open network port number of the UPS\
+ <i>Master</i> system. The default port is <i>3493</i>.'),
 
   driverLabel: T('Driver'),
   driverTooltip: T('See the <a\
@@ -34,9 +34,9 @@ export const helptextServiceUps = {
  list</a> for a list of supported UPS devices.'),
 
   portLabel: T('Port or Hostname'),
-  portTooltip: T('Serial or USB port connected to the UPS. To \
- automatically detect and manage the USB port settings, select \
- <i>auto</i>.<br><br> When an SNMP driver is selected, enter the IP \
+  portTooltip: T('Serial or USB port connected to the UPS. To\
+ automatically detect and manage the USB port settings, select\
+ <i>auto</i>.<br><br> When an SNMP driver is selected, enter the IP\
  address or hostname of the SNMP UPS device.'),
 
   optionsLabel: T('Auxiliary Parameters (ups.conf)'),

@@ -48,9 +48,9 @@ export const helptextCloudBackup = {
   absolutePathsTooltip: T('Determines whether restic backup will contain absolute or relative paths'),
 
   exclude: T('Exclude'),
-  excludeTooltip: T('List of files and directories to exclude from backup.<br> \
- Separate entries by pressing <code>Enter</code>. See \
- <a href="https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files" target="_blank">restic exclude patterns</a> \
+  excludeTooltip: T('List of files and directories to exclude from backup.<br>\
+ Separate entries by pressing <code>Enter</code>. See\
+ <a href="https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files" target="_blank">restic exclude patterns</a>\
  for more details about the <code>--exclude</code> option.'),
 
   keepLast: T('Keep Last'),

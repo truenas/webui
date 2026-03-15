@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
+  ElementRef, OnInit, signal, ViewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
@@ -23,7 +24,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { AlertSlice, selectImportantUnreadAlertsCount, selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -96,7 +97,10 @@ export class TopbarComponent implements OnInit {
   private iconRegistry = inject(TnIconRegistryService);
   private navService = inject(NavigationService);
 
+  @ViewChild('alertIndicator', { read: ElementRef }) private alertIndicator: ElementRef<HTMLButtonElement>;
+
   updateIsDone: Subscription;
+
   updateDialog: MatDialogRef<UpdateDialog>;
   private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
@@ -116,6 +120,7 @@ export class TopbarComponent implements OnInit {
     return config?.tnc_base_url && config?.account_service_base_url && config?.leca_service_base_url;
   });
 
+  readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
@@ -216,6 +221,10 @@ export class TopbarComponent implements OnInit {
 
   onAlertIndicatorPressed(): void {
     this.store$.dispatch(alertIndicatorPressed());
+  }
+
+  focusAlertIndicator(): void {
+    this.alertIndicator?.nativeElement?.focus();
   }
 
   onSidenavIndicatorPressed(): void {

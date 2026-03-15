@@ -13,10 +13,10 @@ export const helptextServiceFtp = {
     + '(i.e. sending/receiving a file, or receiving a directory listing).'),
   timeoutTooltip: T('Maximum number of seconds that proftpd will allow clients to stay connected without receiving\n'
     + 'any data on either the control or data connection.'),
-  onlyanonymousTooltip: T('Allow anonymous FTP logins with access to the \
+  onlyanonymousTooltip: T('Allow anonymous FTP logins with access to the\
  directory specified in <b>Path</b>.'),
   anonpathTooltip: T('Set the root directory for anonymous FTP connections.'),
-  onlylocalTooltip: T('Allow any local user to log in. By default, only \
+  onlylocalTooltip: T('Allow any local user to log in. By default, only\
  members of the <i>ftp</i> group are allowed to log in.'),
   bannerTooltip: T('Specify the message displayed to local login users after\
  authentication. Not displayed to anonymous login users.'),
@@ -43,11 +43,11 @@ export const helptextServiceFtp = {
   userbwTooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ')
     + helptextGlobal.humanReadable.suggestionTooltip
     + ' KiB.',
-  tlsTooltip: T('Allow encrypted connections. Requires a certificate \
+  tlsTooltip: T('Allow encrypted connections. Requires a certificate\
  created or imported with the <b>System > Certificates</b> menu.'),
-  tlsPolicyTooltip: T('Define whether the control channel, \
- data channel, both channels, or neither channel of an FTP \
- session must occur over SSL/TLS. The policies are described \
+  tlsPolicyTooltip: T('Define whether the control channel,\
+ data channel, both channels, or neither channel of an FTP\
+ session must occur over SSL/TLS. The policies are described\
  <a href="http://www.proftpd.org/docs/directives/configuration_full.html#TLSREQUIRED"\
  target="_blank">here</a>'),
 
