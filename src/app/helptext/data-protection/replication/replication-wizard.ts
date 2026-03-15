@@ -56,22 +56,16 @@ export const helptextReplicationWizard = {
  the selected dataset snapshots.'),
 
   encryptionLabel: T('Encryption'),
-  encryptionTooltip: T('Set to use encryption when replicating data. Additional encryption options will appear. Replicating from an encrypted dataset requires enabling this option or inheriting encryption.'),
+  encryptionTooltip: T('Set to use encryption when replicating data. Additional encryption options will appear. Disabled when source dataset is encrypted and properties are preserved, as source encryption will be replicated to the destination.'),
 
   encryptionInheritLabel: T('Inherit Encryption'),
   encryptionInheritTooltip: T('Target dataset encryption will be inherited from its parent dataset.'),
 
-  encryptionKeyGenerateLabel: T('Generate Encryption Key'),
-  encryptionKeyGenerateTooltip: T('If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.'),
-
-  encryptionKeyHexLabel: T('Encryption Key'),
-  encryptionKeyHexTooltip: T('Unset <i>Generate Encryption Key</i> to instead import a custom Hex key.'),
-
   encryptionKeyPassphraseLabel: T('Passphrase'),
   encryptionKeyPassphraseTooltip: T('Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.'),
 
-  encryptionKeyFormatLabel: T('Encryption Key Format'),
-  encryptionKeyFormatTooltip: T('Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> (alphanumeric) style encryption key.'),
+  encryptionKeyFormatLabel: T('Encryption Type'),
+  encryptionKeyFormatTooltip: T('Choose between a <i>Key</i> (base 16 numeral) or <i>Passphrase</i> (alphanumeric) style encryption key.'),
 
   encryptionKeyLocationTruenasdbLabel: T('Store Encryption key in Sending TrueNAS database'),
   encryptionKeyLocationTruenasdbTooltip: T('Set to store the encryption key in the TrueNAS database.'),

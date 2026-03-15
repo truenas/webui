@@ -74,7 +74,7 @@ describe('SourceSectionComponent', () => {
     expect(await form.getValues()).toEqual({
       Source: '',
       Recursive: false,
-      'Include Dataset Properties': true,
+      'Preserve Dataset Properties': true,
       'Full Filesystem Replication': false,
       'Properties Override': [],
       'Properties Exclude': [],
@@ -142,6 +142,7 @@ describe('SourceSectionComponent', () => {
 
     expect(spectator.component.getPayload()).toEqual({
       also_include_naming_schema: [],
+      naming_schema: [],
       source_datasets: ['tank/files'],
       replicate: true,
       periodic_snapshot_tasks: [1],
@@ -202,7 +203,7 @@ describe('SourceSectionComponent', () => {
 
     it('shows property fields when Include Dataset Properties is ticked', async () => {
       await form.fillForm({
-        'Include Dataset Properties': true,
+        'Preserve Dataset Properties': true,
         'Properties Override': ['property1=value', 'property2=value'],
         'Properties Exclude': ['excluded'],
       });
@@ -226,7 +227,7 @@ describe('SourceSectionComponent', () => {
 
       const controls = await form.getLabels();
       expect(controls).not.toContain('Recursive');
-      expect(controls).not.toContain('Include Dataset Properties');
+      expect(controls).not.toContain('Preserve Dataset Properties');
 
       expect(spectator.component.getPayload()).toMatchObject({
         replicate: true,
@@ -283,8 +284,8 @@ describe('SourceSectionComponent', () => {
       expect(payload).toMatchObject({
         name_regex: 'test-.*',
         also_include_naming_schema: [],
+        naming_schema: [],
       });
-      expect(Object.keys(payload)).not.toContain('naming_schema');
     });
   });
 

@@ -95,6 +95,28 @@ describe('IxErrorsComponent', () => {
     expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
   });
 
+  it('hides close icon when manual error has removable set to false', () => {
+    control.setErrors({
+      ixManualValidateError: { message: 'Non-removable error', removable: false },
+    });
+    control.markAsTouched();
+    spectator.detectComponentChanges();
+
+    expect(spectator.query('.manual-error')).toExist();
+    expect(spectator.query('.close-icon')).not.toExist();
+  });
+
+  it('shows close icon when manual error has removable not set', () => {
+    control.setErrors({
+      ixManualValidateError: { message: 'Removable error' },
+    });
+    control.markAsTouched();
+    spectator.detectComponentChanges();
+
+    expect(spectator.query('.manual-error')).toExist();
+    expect(spectator.query('.close-icon')).toExist();
+  });
+
   it('does not mark control as touched when displaying initial errors', () => {
     const invalidControl = new FormControl(5, [Validators.min(10)]);
 

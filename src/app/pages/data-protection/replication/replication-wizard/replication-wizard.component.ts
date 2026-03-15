@@ -299,20 +299,20 @@ export class ReplicationWizardComponent {
       sudo: data.sudo,
     } as ReplicationCreate;
     if (payload.encryption) {
-      payload.encryption_key_format = data.encryption_key_format;
-      if (data.encryption_key_format === EncryptionKeyFormat.Passphrase) {
-        payload.encryption_key = data.encryption_key_passphrase;
-      } else {
-        payload.encryption_key = data.encryption_key_generate
-          ? this.replicationService.generateEncryptionHexKey(64)
-          : data.encryption_key_hex;
-      }
-
-      payload.encryption_key_location = data.encryption_key_location_truenasdb
-        ? truenasDbKeyLocation
-        : data.encryption_key_location;
-
       payload.encryption_inherit = data.encryption_inherit;
+
+      if (!data.encryption_inherit) {
+        payload.encryption_key_format = data.encryption_key_format;
+        if (data.encryption_key_format === EncryptionKeyFormat.Passphrase) {
+          payload.encryption_key = data.encryption_key_passphrase;
+        } else {
+          payload.encryption_key = this.replicationService.generateEncryptionHexKey(64);
+        }
+
+        payload.encryption_key_location = data.encryption_key_location_truenasdb
+          ? truenasDbKeyLocation
+          : data.encryption_key_location;
+      }
     }
 
     if (data.schedule_method === ScheduleMethod.Cron) {
