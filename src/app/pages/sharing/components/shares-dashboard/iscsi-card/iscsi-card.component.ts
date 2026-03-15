@@ -11,7 +11,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  filter, Observable, startWith, tap,
+  filter, startWith, tap,
 } from 'rxjs';
 import { iscsiCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -34,7 +34,6 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
@@ -174,20 +173,13 @@ export class IscsiCardComponent implements OnInit {
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
-    let slideInRef$: Observable<SlideInResponse<boolean | IscsiTarget>>;
-
     if (openWizard) {
-      slideInRef$ = this.slideIn.open(IscsiWizardComponent, { data: row, wide: true });
+      this.slideIn.open(IscsiWizardComponent, { data: row, wide: true })
+        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
     } else {
-      slideInRef$ = this.slideIn.open(TargetFormComponent, { data: row, wide: true });
+      this.slideIn.open(TargetFormComponent, { data: row, wide: true })
+        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
     }
-
-    slideInRef$.pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.dataProvider.load();
-    });
   }
 
   doDelete(iscsi: IscsiTarget): void {

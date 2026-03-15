@@ -130,13 +130,11 @@ export class NvmeOfComponent implements OnInit {
   }
 
   protected addSubsystem(): void {
-    this.slideIn.open(AddSubsystemComponent).pipe(
-      filter(({ response }) => !!response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ response }) => {
-      this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
-      this.nvmeOfStore.initialize();
-    });
+    this.slideIn.open(AddSubsystemComponent)
+      .onSuccess((response) => {
+        this.selectedSubsystemName = (response as NvmeOfSubsystem).name;
+        this.nvmeOfStore.initialize();
+      }, this.destroyRef);
   }
 
   protected onSubsystemSelected(subsystem: NvmeOfSubsystemDetails): void {

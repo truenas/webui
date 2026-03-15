@@ -190,7 +190,7 @@ export class SlideInContainerComponent implements AfterViewInit {
             return;
           }
 
-          this.slideInRef.close({ response: false, error: undefined });
+          this.slideInRef.close({ response: undefined });
         }
       });
   }

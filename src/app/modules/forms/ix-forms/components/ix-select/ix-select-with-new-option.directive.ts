@@ -5,17 +5,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
-  Observable, distinctUntilChanged, filter, map, switchMap, take, tap,
+  Observable, distinctUntilChanged, filter, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ComponentInSlideIn, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { ComponentInSlideIn } from 'app/modules/slide-ins/slide-in.interface';
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
 @Directive()
-export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
+export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, AfterViewInit {
   formComponentIsWide = false;
 
   readonly ixSelect = viewChild.required(IxSelectComponent);
@@ -28,25 +28,15 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fetchOptions().pipe(
-      map((options) => {
-        return [
-          { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
-          ...options,
-        ];
-      }),
       take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (options) => {
-        this.options.next(options);
-      },
+    ).subscribe((options) => {
+      this.options.next(this.prependAddNew(options));
     });
   }
 
-  abstract getValueFromSlideInResponse(
-    result: SlideInResponse,
-  ): IxSelectValue;
-  abstract getFormComponentType(): ComponentInSlideIn<unknown, unknown>;
+  abstract getValueFromSlideInResponse(result: R): IxSelectValue;
+  abstract getFormComponentType(): ComponentInSlideIn<unknown, R>;
   abstract fetchOptions(): Observable<Option[]>;
   getFormInputData(): Record<string, unknown> | undefined {
     return undefined;
@@ -64,26 +54,30 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),
       switchMap(() => {
-        return this.slideIn.open(
-          this.getFormComponentType(),
-          {
-            wide: this.formComponentIsWide,
-            data: this.getFormInputData(),
-          },
+        const result$ = this.slideIn.open(this.getFormComponentType(), {
+          wide: this.formComponentIsWide,
+          data: this.getFormInputData(),
+        });
+        result$.onCancel(() => this.ixSelect().controlDirective.control?.setValue(null), this.destroyRef);
+        return result$.success$.pipe(
+          switchMap((response) => {
+            this.ixSelect().controlDirective.control?.setValue(
+              this.getValueFromSlideInResponse(response),
+            );
+            return this.fetchOptions().pipe(
+              tap((options) => this.options.next(this.prependAddNew(options))),
+            );
+          }),
         );
       }),
-      filter((response: SlideInResponse) => !response.error),
-      tap(
-        (response) => this.ixSelect().controlDirective.control?.setValue(
-          this.getValueFromSlideInResponse(response),
-        ),
-      ),
-      switchMap(() => this.fetchOptions()),
-      tap((options) => this.options.next([
-        { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
-        ...options,
-      ])),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
+  }
+
+  private prependAddNew(options: Option[]): Option[] {
+    return [
+      { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
+      ...options,
+    ];
   }
 }

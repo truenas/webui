@@ -10,6 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfHost, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
@@ -66,7 +67,7 @@ describe('ManageHostsDialog', () => {
         reloadHosts: jest.fn(),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: {} })),
+        open: jest.fn(() => SlideInResult.success({})),
       }),
       mockProvider(MatDialogRef, {
         close: jest.fn(),

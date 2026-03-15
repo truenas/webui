@@ -87,8 +87,7 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideIn.open(AppsSettingsComponent).pipe(
-      filter((response) => !!response.response),
+    this.ixSlideIn.open(AppsSettingsComponent).success$.pipe(
       switchMap(() => forkJoin([
         this.dockerStore.reloadDockerConfig(),
         this.appsStore.loadCatalog(),

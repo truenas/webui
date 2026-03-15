@@ -18,6 +18,7 @@ import {
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateAcmeAddComponent } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
@@ -66,7 +67,7 @@ describe('CertificateSigningRequestsListComponent', () => {
         })),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef),
       mockProvider(MatDialog, {
@@ -150,7 +151,7 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(SlideInResult.success(true));
 
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
@@ -162,7 +163,7 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(SlideInResult.success(true));
 
     const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
     await menuButton.click();
@@ -188,7 +189,7 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(of({ response: true, error: false }));
+    jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(SlideInResult.success(true));
 
     const menuButton = await table.getHarnessInRow(MatButtonHarness, csrs[0].name);
     await menuButton.click();

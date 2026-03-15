@@ -18,6 +18,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   DeleteGroupDialog,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
@@ -54,7 +55,7 @@ describe('GroupDetailsRowComponent', () => {
     providers: [
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi([
         mockCall('user.query'),

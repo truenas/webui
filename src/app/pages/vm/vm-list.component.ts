@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
-import { filter, take, tap } from 'rxjs';
+import { take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -255,14 +255,10 @@ export class VmListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(VmWizardComponent)
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => {
-        this.vmService.checkMemory();
-        this.refresh();
-      });
+    this.slideIn.open(VmWizardComponent).onSuccess(() => {
+      this.vmService.checkMemory();
+      this.refresh();
+    }, this.destroyRef);
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number | string {

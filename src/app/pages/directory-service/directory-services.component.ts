@@ -349,10 +349,7 @@ export class DirectoryServicesComponent implements OnInit {
   protected openDirectoryServicesForm(): void {
     this.slideIn.open(DirectoryServicesFormComponent, {
       data: this.directoryServicesConfig(),
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refreshCards());
+    }).onSuccess(() => this.refreshCards(), this.destroyRef);
   }
 
   refreshTables(): void {

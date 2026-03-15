@@ -162,12 +162,7 @@ export class DeviceListComponent implements OnInit {
         virtualMachineId: this.vmId,
         vmName: this.vmName,
       },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.loadDevices();
-    });
+    }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
   onEdit(device: VmDevice): void {
@@ -177,12 +172,7 @@ export class DeviceListComponent implements OnInit {
         virtualMachineId: this.vmId,
         vmName: this.vmName,
       },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.loadDevices();
-    });
+    }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
   onDelete(device: VmDevice): void {

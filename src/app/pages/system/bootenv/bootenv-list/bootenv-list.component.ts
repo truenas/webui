@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
-  filter, map, Observable, of, switchMap,
+  filter, map, of, switchMap,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -36,7 +36,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -219,11 +219,8 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
-    slideInRef$.pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+  protected handleSlideInClosed(result$: SlideInResult<boolean>): void {
+    result$.onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected openBootenvStats(): void {
@@ -231,10 +228,10 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected doClone(bootenv: BootEnvironment): void {
-    const slideInRef$ = this.slideIn.open(BootEnvironmentFormComponent, {
+    const result$ = this.slideIn.open(BootEnvironmentFormComponent, {
       data: bootenv.id,
     });
-    this.handleSlideInClosed(slideInRef$);
+    this.handleSlideInClosed(result$);
   }
 
   protected doScrub(): void {

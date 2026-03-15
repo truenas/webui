@@ -20,14 +20,14 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
+  EMPTY,
   fromEvent,
   of,
   Subject,
 } from 'rxjs';
 import {
   catchError,
-  debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil,
-  tap,
+  debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -36,7 +36,6 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -286,14 +285,16 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   }
 
   resetInput(): void {
-    this.filterChanged$.next('');
     if (this.inputElementRef()?.nativeElement) {
       this.inputElementRef().nativeElement.value = '';
     }
     this.selectedOption.set(null);
     this.value = null;
     this.textContent = '';
+    this.filterValue = null;
     this.onChange(null);
+    // Emit after clearing filterValue so the debounced subscriber sees a real change.
+    this.filterChanged$.next('');
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -345,60 +346,55 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     return typeof field === 'string' && ['username', 'uid', 'id'].includes(field);
   }
 
-  getValueFromSlideInResponse(result: SlideInResponse<User>): string | number {
+  getValueFromSlideInResponse(result: User): string | number {
     const provider = this.comboboxProviderHandler();
     const valueField: keyof Pick<User, 'username' | 'uid' | 'id'> = this.hasValueField(provider)
       ? provider.valueField
       : 'username';
-    return result.response[valueField];
+    return result[valueField];
   }
 
   private listenForAddNew(): void {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
-      switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
+      switchMap(() => {
+        const result$ = this.slideIn.open(UserFormComponent, { wide: true });
+        result$.onCancel(() => {
+          this.autocompleteTrigger()?.closePanel();
+          this.resetInput();
+        }, this.destroyRef);
+        return result$.success$.pipe(
+          tap((newUser) => {
+            const newUserOption: Option = {
+              label: newUser.username,
+              value: this.getValueFromSlideInResponse(newUser),
+            };
+
+            this.selectedOption.set(newUserOption);
+            this.value = newUserOption.value;
+            if (this.inputElementRef()?.nativeElement) {
+              this.inputElementRef().nativeElement.value = newUserOption.label;
+            }
+            this.onChange(newUserOption.value);
+
+            // Add the newly created user to the options list immediately
+            // This avoids race conditions with the debounced filterChanged$ observable
+            const existingOptions = this.options().slice(1); // Remove "Add New" from index 0
+            if (!existingOptions.some((opt) => opt.value === newUserOption.value)) {
+              this.options.set([this.addNewUserOption, newUserOption, ...existingOptions]);
+            }
+
+            this.cdr.markForCheck();
+            this.autocompleteTrigger()?.closePanel();
+          }),
+        );
+      }),
       catchError((error: unknown) => {
-        // Handle slide-in errors gracefully
         this.errorHandler.handleError(error);
-        // Clear selection and reset form control value to allow "Add New" to be clicked again
         this.resetInput();
         this.autocompleteTrigger()?.closePanel();
-        return of(null);
-      }),
-      filter((response) => response !== null),
-      tap((response: SlideInResponse<User>) => {
-        if (!response.error && response.response) {
-          // User created successfully - select the newly created user
-          const newUser = response.response;
-          const newUserOption: Option = {
-            label: newUser.username,
-            value: this.getValueFromSlideInResponse(response),
-          };
-
-          this.selectedOption.set(newUserOption);
-          this.value = newUserOption.value;
-          if (this.inputElementRef()?.nativeElement) {
-            this.inputElementRef().nativeElement.value = newUserOption.label;
-          }
-          this.onChange(newUserOption.value);
-
-          // Add the newly created user to the options list immediately
-          // This avoids race conditions with the debounced filterChanged$ observable
-          const existingOptions = this.options().slice(1); // Remove "Add New" from index 0
-          // Check if user already exists to prevent duplicates
-          if (!existingOptions.some((opt) => opt.value === newUserOption.value)) {
-            this.options.set([this.addNewUserOption, newUserOption, ...existingOptions]);
-          }
-
-          this.cdr.markForCheck();
-        } else {
-          // User cancelled - clear selection and reset form control value to allow "Add New" to be clicked again
-          this.resetInput();
-        }
-
-        // Close panel immediately - the selection is already set
-        this.autocompleteTrigger()?.closePanel();
+        return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

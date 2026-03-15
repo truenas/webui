@@ -166,7 +166,7 @@ export class CustomAppFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.slideInRef.close({ response: false, error });
+        this.slideInRef.close({ response: undefined });
       },
       complete: () => {
         this.isLoading.set(false);

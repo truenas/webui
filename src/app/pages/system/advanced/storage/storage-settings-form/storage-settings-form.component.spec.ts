@@ -157,7 +157,7 @@ describe('StorageSettingsFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: false,
+      response: undefined,
     });
     expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
     expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());

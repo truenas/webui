@@ -201,14 +201,7 @@ export class CloudBackupCardComponent implements OnInit {
 
   protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getCloudBackups();
-        },
-      });
+      .onSuccess(() => this.getCloudBackups(), this.destroyRef);
   }
 
   protected doDelete(row: CloudBackup): void {

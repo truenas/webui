@@ -40,7 +40,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   ],
 })
 export class CloudSyncWizardComponent {
-  slideInRef = inject<SlideInRef<undefined, CloudSyncTask | false>>(SlideInRef);
+  slideInRef = inject<SlideInRef<undefined, CloudSyncTask>>(SlideInRef);
   private api = inject(ApiService);
   private snackbarService = inject(SnackbarService);
   private cdr = inject(ChangeDetectorRef);

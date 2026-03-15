@@ -3,13 +3,14 @@ import { ComponentRef, Injector, ValueProvider } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { MockSlideInComponent } from 'app/modules/slide-ins/test-utils/mock-slide-in.component';
 import { MockSlideIn2Component } from 'app/modules/slide-ins/test-utils/mock-slide-in2.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('SlideIn Service', () => {
   let spectator: SpectatorService<SlideIn>;
@@ -117,6 +118,40 @@ describe('SlideIn Service', () => {
     expect(responseReceived).toBe(true);
   });
 
+  it('should use errorHandler and force close when canCloseSlideIn throws', () => {
+    const unsavedChangesService = spectator.inject(UnsavedChangesService);
+    const errorHandler = spectator.inject(ErrorHandlerService);
+    const injectorCreateSpy = jest.spyOn(Injector, 'create');
+    let responseReceived = false;
+
+    spectator.service.open(MockSlideInComponent).subscribe({
+      next: () => {
+        responseReceived = true;
+      },
+    });
+
+    const injectorArgs = injectorCreateSpy.mock.calls[0][0];
+    const slideInRef = (
+      (injectorArgs.providers.find(
+        (provider: ValueProvider) => provider.provide === SlideInRef,
+      )
+      ) as ValueProvider
+    ).useValue as SlideInRef<unknown, unknown>;
+
+    // Set up a confirmation requirement so canCloseSlideIn enters the dialog path
+    slideInRef.requireConfirmationWhen(() => of(true));
+
+    // Make showConfirmDialog throw to trigger the error path
+    const testError = new Error('Dialog failed');
+    jest.spyOn(unsavedChangesService, 'showConfirmDialog').mockReturnValue(throwError(() => testError));
+
+    // Close with undefined (cancel path) to trigger canCloseSlideIn
+    slideInRef.close({ response: undefined });
+
+    expect(errorHandler.handleError).toHaveBeenCalledWith(testError);
+    expect(responseReceived).toBe(true);
+  });
+
   it('should swap slide-in when swap method is called and respond to the same observable', () => {
     const injectorCreateSpy = jest.spyOn(Injector, 'create');
     let responseReceived = false;
@@ -220,7 +255,7 @@ describe('SlideIn Service', () => {
     ).useValue as SlideInRef<unknown, unknown>;
 
     // Close child slide-in
-    childSlideInRef.close({ response: false });
+    childSlideInRef.close({ response: undefined });
     whenHidden$.next(); // Child slides out
 
     // After child is closed, parent container should be restored with correct classes

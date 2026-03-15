@@ -249,22 +249,11 @@ export class ReplicationListComponent implements OnInit {
 
   protected openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(
-        ReplicationFormComponent,
-        { data: row, wide: true },
-      ).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getReplicationTasks();
-        },
-      });
+      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
+        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent, { wide: true })
+        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     }
   }
 

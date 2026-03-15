@@ -82,7 +82,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 })
 export class AddSubsystemComponent {
   private formBuilder = inject(FormBuilder);
-  slideInRef = inject<SlideInRef<void, false | NvmeOfSubsystem>>(SlideInRef);
+  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);

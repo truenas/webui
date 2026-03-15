@@ -200,7 +200,7 @@ export class VmEditFormComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.snackbar.success(this.translate.instant('VM updated successfully.'));
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading = false;

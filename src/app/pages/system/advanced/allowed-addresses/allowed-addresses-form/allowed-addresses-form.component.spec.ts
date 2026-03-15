@@ -16,6 +16,7 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -43,7 +44,7 @@ describe('AllowedAddressesComponent', () => {
         } as SystemGeneralConfig),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -99,7 +100,7 @@ describe('AllowedAddressesComponent', () => {
     await saveButton.click();
 
     expect(api.call).not.toHaveBeenCalledWith('system.general.update');
-    expect(componentRef.close).toHaveBeenCalledWith({ response: false });
+    expect(componentRef.close).toHaveBeenCalledWith({ response: undefined });
   });
 
   describe('warnings', () => {

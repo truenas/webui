@@ -23,6 +23,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
@@ -1136,7 +1137,7 @@ describe('SystemSecurityFormComponent', () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
 
-      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
+      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
 
       // Trigger setupStigRequirements - should show root/admin password requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1160,7 +1161,7 @@ describe('SystemSecurityFormComponent', () => {
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
-      const slideInOpenSpy = jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
+      const slideInOpenSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
 
       // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1193,7 +1194,7 @@ describe('SystemSecurityFormComponent', () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
 
-      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
+      const openSpy = jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
 
       // Trigger setupStigRequirements - should show SSH 2FA requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1222,7 +1223,7 @@ describe('SystemSecurityFormComponent', () => {
     it('marks form as pristine before navigating to avoid unsaved changes dialog', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
       const slideIn = navigationSpectator.inject(SlideIn);
-      jest.spyOn(slideIn, 'open').mockReturnValue(of(undefined));
+      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.empty());
       jest.spyOn(navigationSpectator.inject(Router), 'navigate').mockResolvedValue(true);
 
       // Trigger setupStigRequirements
@@ -1257,9 +1258,8 @@ describe('SystemSecurityFormComponent', () => {
       });
       const slideIn = reevaluationSpectator.inject(SlideIn);
 
-      // Create an observable to simulate the slidein closing
-      const slideInRef$ = of(undefined);
-      jest.spyOn(slideIn, 'open').mockReturnValue(slideInRef$);
+      // Simulate the slidein closing with a successful save
+      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
 
       // Enable STIG mode to trigger requirement check
       reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1337,9 +1337,8 @@ describe('SystemSecurityFormComponent', () => {
       });
       const slideIn = reevaluationSpectator.inject(SlideIn);
 
-      // Create an observable to simulate the slidein closing
-      const slideInRef$ = of(undefined);
-      jest.spyOn(slideIn, 'open').mockReturnValue(slideInRef$);
+      // Simulate the slidein closing with a successful save
+      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
 
       // Enable STIG mode to trigger requirement check
       reevaluationSpectator.component.form.patchValue({ enable_gpos_stig: true });

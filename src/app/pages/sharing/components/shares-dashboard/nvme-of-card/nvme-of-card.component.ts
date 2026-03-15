@@ -171,10 +171,8 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   openForm(): void {
-    this.slideIn.open(AddSubsystemComponent).pipe(
-      filter(({ response }) => !!response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.nvmeOfStore.initialize());
+    this.slideIn.open(AddSubsystemComponent)
+      .onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }
 
   doDelete(row: NvmeOfSubsystemDetails): void {

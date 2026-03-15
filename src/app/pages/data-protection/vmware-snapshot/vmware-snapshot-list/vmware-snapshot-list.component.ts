@@ -118,17 +118,13 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(VmwareSnapshotFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent)
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doEdit(snapshot: VmwareSnapshot): void {
-    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot })
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doDelete(snapshot: VmwareSnapshot): void {

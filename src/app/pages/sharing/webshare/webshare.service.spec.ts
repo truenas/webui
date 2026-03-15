@@ -5,6 +5,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -44,7 +45,7 @@ describe('WebShareService', () => {
         hasTruenasConnect$: of(true),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),
@@ -124,7 +125,7 @@ describe('WebShareService', () => {
 
     it('should return false when form is cancelled', () => {
       const slideIn = spectator.inject(SlideIn);
-      jest.spyOn(slideIn, 'open').mockReturnValue(of({ response: false, error: null }));
+      jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.cancel());
 
       const formData = { isNew: true, name: '', path: '' };
 
@@ -382,7 +383,7 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
         hasTruenasConnect$: of(false),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TruenasConnectService, {
         openStatusModal: jest.fn(),

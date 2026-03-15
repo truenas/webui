@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
-  filter, forkJoin, map, Observable, Subject, take,
+  filter, forkJoin, map, Subject, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -38,7 +38,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -301,25 +300,16 @@ export class DiskListComponent implements OnInit {
 
   protected edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
-    let slideInRef$: Observable<SlideInResponse<DiskFormResponse>>;
+    const result$ = preparedDisks.length > 1
+      ? this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks })
+      : this.slideIn.open(DiskFormComponent, { data: preparedDisks[0] });
 
-    if (preparedDisks.length > 1) {
-      slideInRef$ = this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks });
-    } else {
-      slideInRef$ = this.slideIn.open(DiskFormComponent, { data: preparedDisks[0] });
-    }
-
-    slideInRef$.pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((response) => {
-      const resp = response.response;
-
+    result$.onSuccess((response) => {
       // this gets the updated disk data from the disk edit form (both single and bulk)
       // and emits it over `diskUpdates$`.
-      resp.forEach((upd) => this.diskUpdates$.next(upd));
+      response.forEach((upd) => this.diskUpdates$.next(upd));
       this.dataProvider.load();
-    });
+    }, this.destroyRef);
   }
 
   protected wipe(disk: Disk): void {

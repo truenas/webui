@@ -16,6 +16,7 @@ import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserAccessCardComponent } from 'app/pages/credentials/users/all-users/user-details/user-access-card/user-access-card.component';
@@ -80,7 +81,7 @@ function createTestComponent(
         mockCall('user.unset_2fa_secret'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({})),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DownloadService, {
         downloadBlob: jest.fn(),
@@ -348,7 +349,7 @@ describe('UserAccessCardComponent', () => {
           mockCall('user.unset_2fa_secret'),
         ]),
         mockProvider(SlideIn, {
-          open: jest.fn(() => of({})),
+          open: jest.fn(() => SlideInResult.empty()),
         }),
         mockProvider(DownloadService, {
           downloadBlob: jest.fn(),

@@ -15,4 +15,14 @@ export class SlideInRef<D, R> {
   swap?: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean }) => void;
   getData: () => D;
   requireConfirmationWhen: (confirm: () => Observable<boolean>) => void;
+
+  /**
+   * Closes the slide-in with a successful response value.
+   */
+  succeed: (value: R) => void;
+
+  /**
+   * Closes the slide-in without a response (user cancelled).
+   */
+  cancel: () => void;
 }

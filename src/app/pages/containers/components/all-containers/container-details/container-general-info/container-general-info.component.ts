@@ -65,15 +65,7 @@ export class ContainerGeneralInfoComponent {
   editContainer(): void {
     this.slideIn
       .open(ContainerFormComponent, { data: this.container() })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (result) => {
-          // Reload the container data if the form was saved successfully
-          if (result?.response) {
-            this.containersStore.reload();
-          }
-        },
-      });
+      .onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
   deleteContainer(): void {

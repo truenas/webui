@@ -208,10 +208,8 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   protected openForm(row?: PeriodicSnapshotTaskUi): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true })
+      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
   protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
