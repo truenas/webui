@@ -1,7 +1,7 @@
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  filter, map, NEVER, Observable, of, shareReplay, Subscription,
+  filter, map, NEVER, Observable, of, shareReplay, Subscription, take,
 } from 'rxjs';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
@@ -26,10 +26,11 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
   private shared$: Observable<SlideInResponse<R>>;
 
   constructor(source$: Observable<SlideInResponse<R>>) {
+    // take(1) ensures the source completes after a single emission, preventing
+    // memory leaks if a caller constructs a SlideInResult from a non-completing source.
     // refCount: false so late subscribers (e.g. onCancel after onSuccess) still
     // receive the replayed value even if earlier subscribers have already unsubscribed.
-    // Safe because the source completes after a single emission.
-    const shared$ = source$.pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    const shared$ = source$.pipe(take(1), shareReplay({ bufferSize: 1, refCount: false }));
     super((subscriber) => shared$.subscribe(subscriber));
     this.shared$ = shared$;
   }

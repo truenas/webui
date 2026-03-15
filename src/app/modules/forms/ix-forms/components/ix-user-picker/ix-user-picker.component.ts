@@ -359,15 +359,13 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => {
-        return this.slideIn.open(UserFormComponent, { wide: true }).pipe(
-          tap((response) => {
-            if (response.response === undefined) {
-              this.autocompleteTrigger()?.closePanel();
-              this.resetInput();
-              return;
-            }
-
-            const newUser = response.response;
+        const result$ = this.slideIn.open(UserFormComponent, { wide: true });
+        result$.onCancel(() => {
+          this.autocompleteTrigger()?.closePanel();
+          this.resetInput();
+        }, this.destroyRef);
+        return result$.success$.pipe(
+          tap((newUser) => {
             const newUserOption: Option = {
               label: newUser.username,
               value: this.getValueFromSlideInResponse(newUser),
