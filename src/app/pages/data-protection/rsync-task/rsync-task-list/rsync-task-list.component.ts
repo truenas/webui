@@ -247,12 +247,12 @@ export class RsyncTaskListComponent implements OnInit {
 
   protected add(): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected edit(row: RsyncTask): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected delete(row: RsyncTask): void {

@@ -119,12 +119,12 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(VmwareSnapshotFormComponent)
-      .onSuccess(this.destroyRef, () => this.getSnapshotsData());
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doEdit(snapshot: VmwareSnapshot): void {
     this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot })
-      .onSuccess(this.destroyRef, () => this.getSnapshotsData());
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doDelete(snapshot: VmwareSnapshot): void {

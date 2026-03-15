@@ -122,7 +122,7 @@ export class ExtentListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (extent) => {
             this.slideIn.open(ExtentFormComponent, { wide: true, data: extent })
-              .onSuccess(this.destroyRef, () => this.refresh());
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -157,7 +157,7 @@ export class ExtentListComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(ExtentFormComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   private showDeleteDialog(extent: IscsiExtent): void {

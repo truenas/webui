@@ -110,20 +110,20 @@ export class DashboardComponent implements OnInit {
   protected onAddGroup(): void {
     this.slideIn
       .open(WidgetGroupFormComponent, { wide: true })
-      .onSuccess(this.destroyRef, (newGroup) => {
+      .onSuccess((newGroup) => {
         this.renderedGroups.update((groups) => [...groups, newGroup]);
-      });
+      }, this.destroyRef);
   }
 
   protected onEditGroup(i: number): void {
     const editedGroup = this.renderedGroups()[i];
     this.slideIn
       .open(WidgetGroupFormComponent, { wide: true, data: editedGroup })
-      .onSuccess(this.destroyRef, (updatedGroup) => {
+      .onSuccess((updatedGroup) => {
         this.renderedGroups.update((groups) => {
           return groups.map((group, index) => (index === i ? updatedGroup : group));
         });
-      });
+      }, this.destroyRef);
   }
 
   protected onMoveGroup(index: number, direction: 1 | -1): void {

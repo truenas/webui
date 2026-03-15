@@ -108,7 +108,7 @@ export class AuthorizedAccessListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(AuthorizedAccessFormComponent, { data: row })
-              .onSuccess(this.destroyRef, () => this.refresh());
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -159,7 +159,7 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(AuthorizedAccessFormComponent)
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

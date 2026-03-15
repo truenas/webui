@@ -32,8 +32,8 @@ export class AllUsersHeaderComponent {
   userCreated = output<User>();
 
   protected doAdd(): void {
-    this.slideIn.open(UserFormComponent, { wide: false }).onSuccess(this.destroyRef, (response) => {
+    this.slideIn.open(UserFormComponent, { wide: false }).onSuccess((response) => {
       this.userCreated.emit(response);
-    });
+    }, this.destroyRef);
   }
 }

@@ -304,12 +304,12 @@ export class DiskListComponent implements OnInit {
       ? this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks })
       : this.slideIn.open(DiskFormComponent, { data: preparedDisks[0] });
 
-    result$.onSuccess(this.destroyRef, (response) => {
+    result$.onSuccess((response) => {
       // this gets the updated disk data from the disk edit form (both single and bulk)
       // and emits it over `diskUpdates$`.
       response.forEach((upd) => this.diskUpdates$.next(upd));
       this.dataProvider.load();
-    });
+    }, this.destroyRef);
   }
 
   protected wipe(disk: Disk): void {

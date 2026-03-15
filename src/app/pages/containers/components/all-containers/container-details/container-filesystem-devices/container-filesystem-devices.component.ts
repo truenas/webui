@@ -74,6 +74,6 @@ export class ContainerFilesystemDevicesComponent {
 
   private openDiskForm(disk?: ContainerFilesystemDevice): void {
     this.slideIn.open(ContainerFilesystemDeviceFormComponent, { data: { disk, container: this.container() } })
-      .onSuccess(this.destroyRef, () => this.devicesStore.reload());
+      .onSuccess(() => this.devicesStore.reload(), this.destroyRef);
   }
 }

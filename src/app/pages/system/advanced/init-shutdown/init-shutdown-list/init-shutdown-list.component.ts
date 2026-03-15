@@ -129,12 +129,12 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   protected addScript(): void {
-    this.slideIn.open(InitShutdownFormComponent).onSuccess(this.destroyRef, () => this.dataProvider.load());
+    this.slideIn.open(InitShutdownFormComponent).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private editScript(script: InitShutdownScript): void {
     this.slideIn.open(InitShutdownFormComponent, { data: script })
-      .onSuccess(this.destroyRef, () => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private deleteScript(script: InitShutdownScript): void {

@@ -153,7 +153,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
 
   onSettingsClicked(): void {
     this.slideIn.open(NetworkConfigurationComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.loadNetworkConfigAndSummary());
+      .onSuccess(() => this.loadNetworkConfigAndSummary(), this.destroyRef);
   }
 
   private loadNetworkConfigAndSummary(): void {

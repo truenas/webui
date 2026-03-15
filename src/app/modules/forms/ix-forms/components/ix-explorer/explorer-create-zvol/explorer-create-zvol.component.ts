@@ -63,12 +63,12 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
         isNew: true,
         parentOrZvolId: this.parent(),
       },
-    }).onSuccess(this.destroyRef, (zvol) => {
+    }).onSuccess((zvol) => {
       const node = this.explorer.lastSelectedNode();
       if (node) {
         this.explorer.refreshNode(node);
       }
       this.ngControl.control.setValue(`/dev/zvol/${zvol.id}`);
-    });
+    }, this.destroyRef);
   }
 }

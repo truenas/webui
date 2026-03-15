@@ -85,6 +85,6 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   protected onImportPool(): void {
-    this.slideIn.open(ImportPoolComponent).onSuccess(this.destroyRef, () => this.store.loadDashboard());
+    this.slideIn.open(ImportPoolComponent).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }
 }

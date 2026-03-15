@@ -150,14 +150,14 @@ export class CertificateListComponent {
 
   protected doImport(): void {
     this.slideIn.open(ImportCertificateComponent)
-      .onSuccess(this.destroyRef, () => this.certificatesUpdated.emit());
+      .onSuccess(() => this.certificatesUpdated.emit(), this.destroyRef);
   }
 
   protected doEdit(certificate: Certificate): void {
     this.slideIn.open(CertificateEditComponent, {
       wide: true,
       data: certificate,
-    }).onSuccess(this.destroyRef, () => this.certificatesUpdated.emit());
+    }).onSuccess(() => this.certificatesUpdated.emit(), this.destroyRef);
   }
 
   protected doDelete(certificate: Certificate): void {

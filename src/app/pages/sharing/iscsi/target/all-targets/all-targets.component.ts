@@ -105,9 +105,9 @@ export class AllTargetsComponent implements OnInit {
     this.slideIn.open(
       TargetFormComponent,
       { data: target, wide: true },
-    ).onSuccess(this.destroyRef, (response) => {
+    ).onSuccess((response) => {
       this.dataProvider.load();
       this.dataProvider.expandedRow = response;
-    });
+    }, this.destroyRef);
   }
 }

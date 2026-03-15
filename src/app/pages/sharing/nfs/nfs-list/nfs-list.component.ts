@@ -139,7 +139,7 @@ export class NfsListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
             this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } })
-              .onSuccess(this.destroyRef, () => this.refresh());
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -197,7 +197,7 @@ export class NfsListComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(NfsFormComponent)
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

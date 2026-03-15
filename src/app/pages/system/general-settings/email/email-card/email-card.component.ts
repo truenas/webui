@@ -64,6 +64,6 @@ export class EmailCardComponent implements OnInit {
 
   protected openEmailSettings(): void {
     this.slideIn.open(EmailFormComponent, { data: this.emailConfigState().value })
-      .onSuccess(this.destroyRef, () => this.loadEmailConfig());
+      .onSuccess(() => this.loadEmailConfig(), this.destroyRef);
   }
 }

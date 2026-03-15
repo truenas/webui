@@ -151,14 +151,14 @@ export class CertificateSigningRequestsListComponent {
 
   doAdd(): void {
     this.slideIn.open(CsrAddComponent)
-      .onSuccess(this.destroyRef, () => this.csrsUpdated.emit());
+      .onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 
   doEdit(certificate: Certificate): void {
     this.slideIn.open(CertificateEditComponent, {
       wide: true,
       data: certificate,
-    }).onSuccess(this.destroyRef, () => this.csrsUpdated.emit());
+    }).onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 
   doDelete(certificate: Certificate): void {
@@ -224,6 +224,6 @@ export class CertificateSigningRequestsListComponent {
 
   private doCreateAcmeCert(csr: Certificate): void {
     this.slideIn.open(CertificateAcmeAddComponent, { data: csr })
-      .onSuccess(this.destroyRef, () => this.csrsUpdated.emit());
+      .onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 }

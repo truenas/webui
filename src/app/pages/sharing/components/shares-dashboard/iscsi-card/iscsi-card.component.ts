@@ -175,10 +175,10 @@ export class IscsiCardComponent implements OnInit {
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
     if (openWizard) {
       this.slideIn.open(IscsiWizardComponent, { data: row, wide: true })
-        .onSuccess(this.destroyRef, () => this.dataProvider.load());
+        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
     } else {
       this.slideIn.open(TargetFormComponent, { data: row, wide: true })
-        .onSuccess(this.destroyRef, () => this.dataProvider.load());
+        .onSuccess(() => this.dataProvider.load(), this.destroyRef);
     }
   }
 

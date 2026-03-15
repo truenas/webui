@@ -65,7 +65,7 @@ export class ContainerGeneralInfoComponent {
   editContainer(): void {
     this.slideIn
       .open(ContainerFormComponent, { data: this.container() })
-      .onSuccess(this.destroyRef, () => this.containersStore.reload());
+      .onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
   deleteContainer(): void {

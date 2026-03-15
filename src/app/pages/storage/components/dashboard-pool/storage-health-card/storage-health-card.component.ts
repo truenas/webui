@@ -178,7 +178,7 @@ export class StorageHealthCardComponent {
         poolId: this.pool().id,
         existingScrubTask: this.scrub(),
       },
-    }).onSuccess(this.destroyRef, () => this.store.loadDashboard());
+    }).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }
 
   protected getErrorText(): string {

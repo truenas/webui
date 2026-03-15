@@ -296,10 +296,10 @@ export class CloudSyncListComponent implements OnInit {
   protected openForm(row?: CloudSyncTaskUi): void {
     if (row) {
       this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true })
-        .onSuccess(this.destroyRef, () => this.getCloudSyncTasks());
+        .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
     } else {
       this.slideIn.open(CloudSyncWizardComponent, { wide: true })
-        .onSuccess(this.destroyRef, () => this.getCloudSyncTasks());
+        .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
     }
   }
 

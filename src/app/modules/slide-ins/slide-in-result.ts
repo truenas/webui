@@ -87,7 +87,7 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * Only `undefined` is treated as cancellation — falsy values like `null`, `false`, `0`, `''`
    * are treated as success.
    */
-  onSuccess(destroyRef: DestroyRef, callback: (response: Defined<R>) => void): Subscription {
+  onSuccess(callback: (response: Defined<R>) => void, destroyRef: DestroyRef): Subscription {
     return this.success$.pipe(
       takeUntilDestroyed(destroyRef),
     ).subscribe((response) => callback(response));
@@ -97,7 +97,7 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * Subscribes to slide-in closes where the user cancelled (response === undefined)
    * and invokes the callback. Automatically unsubscribes when destroyed.
    */
-  onCancel(destroyRef: DestroyRef, callback: () => void): Subscription {
+  onCancel(callback: () => void, destroyRef: DestroyRef): Subscription {
     return this.shared$.pipe(
       filter((result) => result.response === undefined),
       takeUntilDestroyed(destroyRef),
@@ -108,7 +108,7 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * Subscribes to any slide-in close (success or cancel) and invokes the callback.
    * Automatically unsubscribes when the caller's DestroyRef is destroyed.
    */
-  onClose(destroyRef: DestroyRef, callback: () => void): Subscription {
+  onClose(callback: () => void, destroyRef: DestroyRef): Subscription {
     return this.shared$.pipe(
       takeUntilDestroyed(destroyRef),
     ).subscribe(() => callback());

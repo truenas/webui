@@ -293,6 +293,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.textContent = '';
     this.filterValue = null;
     this.onChange(null);
+    // Emit after clearing filterValue so the debounced subscriber sees a real change.
     this.filterChanged$.next('');
   }
 

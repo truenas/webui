@@ -55,8 +55,8 @@ export class SystemSecurityCardComponent {
   protected readonly rulesetLabels = passwordComplexityRulesetLabels;
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    this.slideIn.open(SystemSecurityFormComponent, { data: config }).onSuccess(this.destroyRef, () => {
+    this.slideIn.open(SystemSecurityFormComponent, { data: config }).onSuccess(() => {
       this.reloadConfig$.next();
-    });
+    }, this.destroyRef);
   }
 }

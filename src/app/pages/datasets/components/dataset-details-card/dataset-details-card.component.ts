@@ -126,17 +126,17 @@ export class DatasetDetailsCardComponent {
   editDataset(): void {
     this.slideIn.open(DatasetFormComponent, {
       wide: true, data: { datasetId: this.dataset().id, isNew: false },
-    }).onSuccess(this.destroyRef, () => this.datasetStore.datasetUpdated());
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   editZvol(): void {
     this.slideIn.open(ZvolFormComponent, {
       data: { isNew: false, parentOrZvolId: this.dataset().id },
-    }).onSuccess(this.destroyRef, (response) => {
+    }).onSuccess((response) => {
       this.snackbar.success(
         this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),
       );
       this.datasetStore.datasetUpdated();
-    });
+    }, this.destroyRef);
   }
 }

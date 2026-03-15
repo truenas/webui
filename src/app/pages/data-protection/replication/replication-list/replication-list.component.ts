@@ -250,10 +250,10 @@ export class ReplicationListComponent implements OnInit {
   protected openForm(row?: ReplicationTask): void {
     if (row) {
       this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
-        .onSuccess(this.destroyRef, () => this.getReplicationTasks());
+        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     } else {
       this.slideIn.open(ReplicationWizardComponent, { wide: true })
-        .onSuccess(this.destroyRef, () => this.getReplicationTasks());
+        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     }
   }
 

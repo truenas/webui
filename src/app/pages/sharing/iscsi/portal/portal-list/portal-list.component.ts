@@ -113,7 +113,7 @@ export class PortalListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(PortalFormComponent, { data: row })
-              .onSuccess(this.destroyRef, () => this.refresh());
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -166,7 +166,7 @@ export class PortalListComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(PortalFormComponent)
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

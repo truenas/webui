@@ -132,7 +132,7 @@ describe('SlideInResult', () => {
     it('returns a Subscription', () => {
       const result$ = new SlideInResult(of({ response: 'saved' } as SlideInResponse<string>));
 
-      const subscription = result$.onSuccess(mockDestroyRef(), jest.fn());
+      const subscription = result$.onSuccess(jest.fn(), mockDestroyRef());
 
       expect(subscription).toBeInstanceOf(Subscription);
     });
@@ -141,7 +141,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: 'saved' } as SlideInResponse<string>));
       const callback = jest.fn();
 
-      result$.onSuccess(mockDestroyRef(), callback);
+      result$.onSuccess(callback, mockDestroyRef());
 
       expect(callback).toHaveBeenCalledWith('saved');
     });
@@ -150,7 +150,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
       const callback = jest.fn();
 
-      result$.onSuccess(mockDestroyRef(), callback);
+      result$.onSuccess(callback, mockDestroyRef());
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -161,7 +161,7 @@ describe('SlideInResult', () => {
       const destroyRef = mockDestroyRef();
       const callback = jest.fn();
 
-      result$.onSuccess(destroyRef, callback);
+      result$.onSuccess(callback, destroyRef);
 
       source$.next({ response: 'first' });
       expect(callback).toHaveBeenCalledTimes(1);
@@ -178,7 +178,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
       const callback = jest.fn();
 
-      result$.onCancel(mockDestroyRef(), callback);
+      result$.onCancel(callback, mockDestroyRef());
 
       expect(callback).toHaveBeenCalledTimes(1);
     });
@@ -187,7 +187,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: 'data' } as SlideInResponse<string>));
       const callback = jest.fn();
 
-      result$.onCancel(mockDestroyRef(), callback);
+      result$.onCancel(callback, mockDestroyRef());
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -196,7 +196,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
       const callback = jest.fn();
 
-      result$.onCancel(mockDestroyRef(), callback);
+      result$.onCancel(callback, mockDestroyRef());
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -207,7 +207,7 @@ describe('SlideInResult', () => {
       const destroyRef = mockDestroyRef();
       const callback = jest.fn();
 
-      result$.onCancel(destroyRef, callback);
+      result$.onCancel(callback, destroyRef);
 
       source$.next({ response: undefined });
       expect(callback).toHaveBeenCalledTimes(1);
@@ -226,8 +226,8 @@ describe('SlideInResult', () => {
       const cancelCb = jest.fn();
       const destroyRef = mockDestroyRef();
 
-      result$.onSuccess(destroyRef, successCb);
-      result$.onCancel(destroyRef, cancelCb);
+      result$.onSuccess(successCb, destroyRef);
+      result$.onCancel(cancelCb, destroyRef);
 
       expect(successCb).toHaveBeenCalledWith('saved');
       expect(cancelCb).not.toHaveBeenCalled();
@@ -239,8 +239,8 @@ describe('SlideInResult', () => {
       const cancelCb = jest.fn();
       const destroyRef = mockDestroyRef();
 
-      result$.onSuccess(destroyRef, successCb);
-      result$.onCancel(destroyRef, cancelCb);
+      result$.onSuccess(successCb, destroyRef);
+      result$.onCancel(cancelCb, destroyRef);
 
       expect(successCb).not.toHaveBeenCalled();
       expect(cancelCb).toHaveBeenCalledTimes(1);
@@ -252,11 +252,11 @@ describe('SlideInResult', () => {
       const destroyRef2 = mockDestroyRef();
 
       const successCb = jest.fn();
-      result$.onSuccess(destroyRef1, successCb);
+      result$.onSuccess(successCb, destroyRef1);
       (destroyRef1 as DestroyRef & { destroy: () => void }).destroy();
 
       const cancelCb = jest.fn();
-      result$.onCancel(destroyRef2, cancelCb);
+      result$.onCancel(cancelCb, destroyRef2);
 
       expect(cancelCb).toHaveBeenCalledTimes(1);
     });
@@ -267,7 +267,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: 'data' } as SlideInResponse<string>));
       const callback = jest.fn();
 
-      result$.onClose(mockDestroyRef(), callback);
+      result$.onClose(callback, mockDestroyRef());
 
       expect(callback).toHaveBeenCalledTimes(1);
     });
@@ -276,7 +276,7 @@ describe('SlideInResult', () => {
       const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
       const callback = jest.fn();
 
-      result$.onClose(mockDestroyRef(), callback);
+      result$.onClose(callback, mockDestroyRef());
 
       expect(callback).toHaveBeenCalledTimes(1);
     });
@@ -287,7 +287,7 @@ describe('SlideInResult', () => {
       const destroyRef = mockDestroyRef();
       const callback = jest.fn();
 
-      result$.onClose(destroyRef, callback);
+      result$.onClose(callback, destroyRef);
 
       source$.next({ response: 'first' });
       expect(callback).toHaveBeenCalledTimes(1);

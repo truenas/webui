@@ -92,7 +92,7 @@ export class KerberosKeytabsListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(KerberosKeytabsFormComponent, { data: row })
-              .onSuccess(this.destroyRef, () => this.getKerberosKeytabs());
+              .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
           },
         },
         {
@@ -165,7 +165,7 @@ export class KerberosKeytabsListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(KerberosKeytabsFormComponent)
-      .onSuccess(this.destroyRef, () => this.getKerberosKeytabs());
+      .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

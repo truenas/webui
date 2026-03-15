@@ -130,7 +130,7 @@ export class NfsCardComponent implements OnInit {
 
   protected openForm(row?: NfsShare): void {
     this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
-      .onSuccess(this.destroyRef, () => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected doDelete(nfs: NfsShare): void {

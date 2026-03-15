@@ -158,7 +158,7 @@ export class ReportingExporterListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(ReportingExportersFormComponent)
-      .onSuccess(this.destroyRef, () => this.getExporters());
+      .onSuccess(() => this.getExporters(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {
@@ -201,7 +201,7 @@ export class ReportingExporterListComponent implements OnInit {
 
   private doEdit(exporter: ReportingExporter): void {
     this.slideIn.open(ReportingExportersFormComponent, { data: exporter })
-      .onSuccess(this.destroyRef, () => this.getExporters());
+      .onSuccess(() => this.getExporters(), this.destroyRef);
   }
 
   private doDelete(exporter: ReportingExporter): void {

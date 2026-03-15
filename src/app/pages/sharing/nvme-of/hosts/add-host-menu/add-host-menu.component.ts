@@ -58,7 +58,7 @@ export class AddHostMenuComponent {
   protected openHostForm(): void {
     this.slideIn
       .open(HostFormComponent)
-      .onSuccess(this.destroyRef, (host) => this.selectHost(host));
+      .onSuccess((host) => this.selectHost(host), this.destroyRef);
   }
 
   protected selectHost(host: NvmeOfHost): void {

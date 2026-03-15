@@ -94,7 +94,7 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onEdit(ipmi: Ipmi): void {
-    this.slideIn.open(IpmiFormComponent, { data: ipmi.id }).onSuccess(this.destroyRef, () => this.loadIpmiEntries());
+    this.slideIn.open(IpmiFormComponent, { data: ipmi.id }).onSuccess(() => this.loadIpmiEntries(), this.destroyRef);
   }
 
   private onOpen(ipmi: Ipmi): void {

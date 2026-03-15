@@ -58,6 +58,6 @@ export class CustomAppButtonComponent {
 
   openCustomAppYamlCreation(): void {
     this.slideIn.open(CustomAppFormComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.router.navigate(['/apps']));
+      .onSuccess(() => this.router.navigate(['/apps']), this.destroyRef);
   }
 }

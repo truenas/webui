@@ -146,7 +146,7 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(CloudCredentialsFormComponent)
-      .onSuccess(this.destroyRef, () => this.getCredentials());
+      .onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: CloudSyncCredential): void {
@@ -157,7 +157,7 @@ export class CloudCredentialsCardComponent implements OnInit {
           existingCredential: credential,
         } as CloudCredentialFormInput,
       },
-    ).onSuccess(this.destroyRef, () => this.getCredentials());
+    ).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doDelete(credential: CloudSyncCredential): void {

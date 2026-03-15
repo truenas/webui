@@ -143,7 +143,7 @@ export class SmbListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
             this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } })
-              .onSuccess(this.destroyRef, () => this.dataProvider.load());
+              .onSuccess(() => this.dataProvider.load(), this.destroyRef);
           },
         },
         {
@@ -163,7 +163,7 @@ export class SmbListComponent implements OnInit {
                 .subscribe((shareAcl) => {
                   this.loader.close();
                   this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
-                    .onSuccess(this.destroyRef, () => this.dataProvider.load());
+                    .onSuccess(() => this.dataProvider.load(), this.destroyRef);
                 });
             }
           },
@@ -241,7 +241,7 @@ export class SmbListComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(SmbFormComponent)
-      .onSuccess(this.destroyRef, () => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

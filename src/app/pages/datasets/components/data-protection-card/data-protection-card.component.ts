@@ -74,8 +74,8 @@ export class DataProtectionCardComponent {
 
   addSnapshot(): void {
     this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id })
-      .onSuccess(this.destroyRef, () => {
+      .onSuccess(() => {
         this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
-      });
+      }, this.destroyRef);
   }
 }

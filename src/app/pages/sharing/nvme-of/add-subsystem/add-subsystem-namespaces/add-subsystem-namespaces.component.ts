@@ -44,12 +44,12 @@ export class AddSubsystemNamespacesComponent {
 
   protected onAddNamespace(): void {
     this.slideIn.open(AddSubsystemNamespaceComponent)
-      .onSuccess(this.destroyRef, (response) => {
+      .onSuccess((response) => {
         const newNamespaces = [...this.namespaces, response];
         this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));
 
         this.cdr.markForCheck();
-      });
+      }, this.destroyRef);
   }
 
   protected onDeleteNamespace(indexToRemove: number): void {

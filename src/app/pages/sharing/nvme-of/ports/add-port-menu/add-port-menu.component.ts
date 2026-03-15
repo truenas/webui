@@ -57,7 +57,7 @@ export class AddPortMenuComponent {
   protected openPortForm(): void {
     this.slideIn
       .open(PortFormComponent)
-      .onSuccess(this.destroyRef, (port) => this.selectPort(port));
+      .onSuccess((port) => this.selectPort(port), this.destroyRef);
   }
 
   protected selectPort(port: NvmeOfPort): void {

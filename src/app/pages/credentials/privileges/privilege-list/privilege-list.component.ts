@@ -159,7 +159,7 @@ export class PrivilegeListComponent implements OnInit {
 
   openForm(privilege?: Privilege): void {
     this.slideIn.open(PrivilegeFormComponent, { data: privilege })
-      .onSuccess(this.destroyRef, () => this.getPrivileges());
+      .onSuccess(() => this.getPrivileges(), this.destroyRef);
   }
 
   doDelete(privilege: Privilege): void {

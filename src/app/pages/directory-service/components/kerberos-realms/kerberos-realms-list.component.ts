@@ -103,7 +103,7 @@ export class KerberosRealmsListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(KerberosRealmsFormComponent, { data: row })
-              .onSuccess(this.destroyRef, () => this.getKerberosRealms());
+              .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
           },
         },
         {
@@ -172,7 +172,7 @@ export class KerberosRealmsListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(KerberosRealmsFormComponent)
-      .onSuccess(this.destroyRef, () => this.getKerberosRealms());
+      .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

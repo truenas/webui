@@ -119,12 +119,12 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(AcmednsFormComponent)
-      .onSuccess(this.destroyRef, () => this.getAuthenticators());
+      .onSuccess(() => this.getAuthenticators(), this.destroyRef);
   }
 
   doEdit(authenticator: DnsAuthenticator): void {
     this.slideIn.open(AcmednsFormComponent, { data: authenticator })
-      .onSuccess(this.destroyRef, () => this.getAuthenticators());
+      .onSuccess(() => this.getAuthenticators(), this.destroyRef);
   }
 
   doDelete(authenticator: DnsAuthenticator): void {

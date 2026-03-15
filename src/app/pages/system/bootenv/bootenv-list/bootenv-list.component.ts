@@ -220,7 +220,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected handleSlideInClosed(result$: SlideInResult<boolean>): void {
-    result$.onSuccess(this.destroyRef, () => this.refresh());
+    result$.onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected openBootenvStats(): void {

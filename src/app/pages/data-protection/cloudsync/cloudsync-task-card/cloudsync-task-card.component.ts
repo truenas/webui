@@ -240,12 +240,12 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   protected onAdd(): void {
     this.slideIn.open(CloudSyncWizardComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.getCloudSyncTasks());
+      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
   }
 
   protected onEdit(row?: CloudSyncTaskUi): void {
     this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row })
-      .onSuccess(this.destroyRef, () => this.getCloudSyncTasks());
+      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
   }
 
   protected runNow(row: CloudSyncTaskUi): void {

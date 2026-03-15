@@ -162,7 +162,7 @@ export class DeviceListComponent implements OnInit {
         virtualMachineId: this.vmId,
         vmName: this.vmName,
       },
-    }).onSuccess(this.destroyRef, () => this.loadDevices());
+    }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
   onEdit(device: VmDevice): void {
@@ -172,7 +172,7 @@ export class DeviceListComponent implements OnInit {
         virtualMachineId: this.vmId,
         vmName: this.vmName,
       },
-    }).onSuccess(this.destroyRef, () => this.loadDevices());
+    }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
   onDelete(device: VmDevice): void {

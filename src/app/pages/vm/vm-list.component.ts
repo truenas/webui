@@ -255,10 +255,10 @@ export class VmListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(VmWizardComponent).onSuccess(this.destroyRef, () => {
+    this.slideIn.open(VmWizardComponent).onSuccess(() => {
       this.vmService.checkMemory();
       this.refresh();
-    });
+    }, this.destroyRef);
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number | string {

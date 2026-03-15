@@ -106,7 +106,7 @@ export class DeviceActionsMenuComponent {
           container,
           disk: device as ContainerFilesystemDevice,
         },
-      }).onSuccess(this.destroyRef, () => this.devicesStore.reload());
+      }).onSuccess(() => this.devicesStore.reload(), this.destroyRef);
       return;
     }
 

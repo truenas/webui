@@ -161,7 +161,7 @@ export class SmbCardComponent implements OnInit {
 
   protected openForm(row?: SmbShare): void {
     this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } })
-      .onSuccess(this.destroyRef, () => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected doDelete(smb: SmbShare): void {
@@ -194,7 +194,7 @@ export class SmbCardComponent implements OnInit {
         .subscribe({
           next: (shareAcl: SmbSharesec) => {
             this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
-              .onSuccess(this.destroyRef, () => this.dataProvider.load());
+              .onSuccess(() => this.dataProvider.load(), this.destroyRef);
           },
           error: (error: unknown) => {
             this.errorHandler.showErrorModal(error);

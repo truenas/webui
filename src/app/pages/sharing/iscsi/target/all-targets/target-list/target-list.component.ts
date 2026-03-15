@@ -147,10 +147,10 @@ export class TargetListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(TargetFormComponent, { wide: true })
-      .onSuccess(this.destroyRef, (response) => {
+      .onSuccess((response) => {
         this.dataProvider().expandedRow = response;
         this.dataProvider().load();
-      });
+      }, this.destroyRef);
   }
 
   onListFiltered(query: string): void {

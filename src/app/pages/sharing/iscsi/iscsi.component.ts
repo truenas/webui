@@ -87,9 +87,9 @@ export class IscsiComponent {
 
   protected openWizard(): void {
     this.slideIn.open(IscsiWizardComponent)
-      .onSuccess(this.destroyRef, (response) => {
+      .onSuccess((response) => {
         this.iscsiService.refreshData(response);
-      });
+      }, this.destroyRef);
   }
 
   protected openGlobalTargetConfiguration(): void {

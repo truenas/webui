@@ -706,14 +706,14 @@ export class SystemSecurityFormComponent implements OnInit {
     if (config) {
       const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
       this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config })
-        .onClose(this.destroyRef, () => this.setupStigRequirements());
+        .onClose(() => this.setupStigRequirements(), this.destroyRef);
       this.delayHighlightElement(elementName);
     }
   }
 
   private openUserEditForm(user: User): void {
     this.slideIn.open(UserFormComponent, { data: user })
-      .onClose(this.destroyRef, () => this.setupStigRequirements());
+      .onClose(() => this.setupStigRequirements(), this.destroyRef);
     this.delayHighlightElement('disablePasswordCheckbox');
   }
 }

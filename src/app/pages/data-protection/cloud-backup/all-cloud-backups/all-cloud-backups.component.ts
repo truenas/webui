@@ -70,7 +70,7 @@ export class AllCloudBackupsComponent implements OnInit {
 
   protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .onSuccess(this.destroyRef, () => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private loadCloudBackups(id?: string): void {

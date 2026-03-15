@@ -140,10 +140,10 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(NtpServersFormComponent).onSuccess(this.destroyRef, () => this.loadItems());
+    this.slideIn.open(NtpServersFormComponent).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 
   doEdit(server: NtpServer): void {
-    this.slideIn.open(NtpServersFormComponent, { data: server }).onSuccess(this.destroyRef, () => this.loadItems());
+    this.slideIn.open(NtpServersFormComponent, { data: server }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 }

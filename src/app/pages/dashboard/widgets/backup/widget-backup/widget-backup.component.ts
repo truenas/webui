@@ -160,17 +160,17 @@ export class WidgetBackupComponent implements OnInit {
     this.slideIn.open(
       CloudSyncWizardComponent,
       { wide: true },
-    ).onSuccess(this.destroyRef, () => this.getBackups());
+    ).onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
   addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.getBackups());
+      .onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
   addRsyncTask(): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .onSuccess(this.destroyRef, () => this.getBackups());
+      .onSuccess(() => this.getBackups(), this.destroyRef);
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {

@@ -153,7 +153,7 @@ export class DockerImagesListComponent implements OnInit {
 
   doAdd(): void {
     this.slideIn.open(PullImageFormComponent)
-      .onSuccess(this.destroyRef, () => this.refresh());
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   doDelete(images: ContainerImageUi[]): void {

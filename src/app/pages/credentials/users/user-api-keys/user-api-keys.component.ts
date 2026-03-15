@@ -189,7 +189,7 @@ export class UserApiKeysComponent implements OnInit {
 
   openForm(apiKey?: ApiKey): void {
     this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } })
-      .onSuccess(this.destroyRef, () => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   doDelete(apiKey: ApiKey): void {

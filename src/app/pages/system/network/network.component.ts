@@ -131,10 +131,10 @@ export class NetworkComponent implements OnInit {
   }
 
   protected handleSlideInClosed(result$: SlideInResult<boolean>): void {
-    result$.onSuccess(this.destroyRef, () => {
+    result$.onSuccess(() => {
       this.interfacesStore.loadInterfaces();
       this.loadCheckinStatusAfterChange();
-    });
+    }, this.destroyRef);
   }
 
   private async loadCheckinStatus(): Promise<void> {

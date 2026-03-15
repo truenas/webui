@@ -200,13 +200,13 @@ export class UsageCardComponent {
   createSmbShare(): void {
     this.slideIn.open(SmbFormComponent, {
       data: { defaultSmbShare: { path: this.dataset().mountpoint } as SmbShare },
-    }).onSuccess(this.destroyRef, () => this.datasetStore.datasetUpdated());
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   createNfsShare(): void {
     this.slideIn.open(NfsFormComponent, {
       data: { defaultNfsShare: { path: this.dataset().mountpoint } as NfsShare },
-    }).onSuccess(this.destroyRef, () => this.datasetStore.datasetUpdated());
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 
   createWebshare(): void {
@@ -219,6 +219,6 @@ export class UsageCardComponent {
         name: datasetName,
         path: this.dataset().mountpoint,
       },
-    }).onSuccess(this.destroyRef, () => this.datasetStore.datasetUpdated());
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 }

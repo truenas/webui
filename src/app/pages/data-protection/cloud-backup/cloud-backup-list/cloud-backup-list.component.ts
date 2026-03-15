@@ -190,7 +190,7 @@ export class CloudBackupListComponent {
 
   openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .onSuccess(this.destroyRef, () => this.dataProvider().load());
+      .onSuccess(() => this.dataProvider().load(), this.destroyRef);
   }
 
   doDelete(row: CloudBackup): void {

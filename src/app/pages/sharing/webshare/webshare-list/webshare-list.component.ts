@@ -223,7 +223,7 @@ export class WebShareListComponent implements OnInit {
         path: row.path,
         isHomeBase: row.isHomeBase,
       },
-    }).onSuccess(this.destroyRef, () => this.loadWebShareConfig());
+    }).onSuccess(() => this.loadWebShareConfig(), this.destroyRef);
   }
 
   doDelete(row: WebShareTableRow): void {
