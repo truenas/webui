@@ -25,6 +25,16 @@ type Defined<T> = Exclude<T, undefined>;
 export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
   private shared$: Observable<SlideInResponse<R>>;
 
+  /**
+   * Observable that emits only the unwrapped response value
+   * when the slide-in was closed successfully (response !== undefined).
+   * Useful in switchMap chains where .onSuccess() cannot be used.
+   *
+   * Unlike .onSuccess(), this does NOT auto-unsubscribe — callers must
+   * add their own takeUntilDestroyed() or other teardown.
+   */
+  readonly success$: Observable<Defined<R>>;
+
   constructor(source$: Observable<SlideInResponse<R>>) {
     // take(1) ensures the source completes after a single emission, preventing
     // memory leaks if a caller constructs a SlideInResult from a non-completing source.
@@ -33,6 +43,10 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
     const shared$ = source$.pipe(take(1), shareReplay({ bufferSize: 1, refCount: false }));
     super((subscriber) => shared$.subscribe(subscriber));
     this.shared$ = shared$;
+    this.success$ = this.shared$.pipe(
+      filter((result): result is SlideInResponse<R> & { response: Defined<R> } => result.response !== undefined),
+      map((result) => result.response),
+    );
   }
 
   /**
@@ -61,21 +75,6 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    */
   static success<T>(value: T): SlideInResult<T> {
     return new SlideInResult<T>(of({ response: value }));
-  }
-
-  /**
-   * Observable that emits only the unwrapped response value
-   * when the slide-in was closed successfully (response !== undefined).
-   * Useful in switchMap chains where .onSuccess() cannot be used.
-   *
-   * Unlike .onSuccess(), this does NOT auto-unsubscribe — callers must
-   * add their own takeUntilDestroyed() or other teardown.
-   */
-  get success$(): Observable<Defined<R>> {
-    return this.shared$.pipe(
-      filter((result): result is SlideInResponse<R> & { response: Defined<R> } => result.response !== undefined),
-      map((result) => result.response),
-    );
   }
 
   /**

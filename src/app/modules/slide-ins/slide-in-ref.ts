@@ -19,14 +19,10 @@ export class SlideInRef<D, R> {
   /**
    * Closes the slide-in with a successful response value.
    */
-  succeed(value: R): void {
-    this.close({ response: value });
-  }
+  succeed: (value: R) => void;
 
   /**
    * Closes the slide-in without a response (user cancelled).
    */
-  cancel(): void {
-    this.close({ response: undefined });
-  }
+  cancel: () => void;
 }

@@ -265,7 +265,7 @@ export class SlideIn {
   }
 
   private createSlideInRef<D, R>(slideInInstance: SlideInInstance<D, R>): SlideInRef<D, R> {
-    return {
+    const ref: SlideInRef<D, R> = {
       close: (response: SlideInResponse<R>): void => {
         (!response?.response ? this.canCloseSlideIn(slideInInstance.needConfirmation) : of(true)).pipe(
           filter(Boolean),
@@ -308,7 +308,14 @@ export class SlideIn {
       requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
         slideInInstance.needConfirmation = needConfirmation;
       },
+      succeed: (value: R): void => {
+        ref.close({ response: value });
+      },
+      cancel: (): void => {
+        ref.close({ response: undefined });
+      },
     } as SlideInRef<D, R>;
+    return ref;
   }
 
   private canCloseSlideIn(needConfirmation: () => Observable<boolean>): Observable<boolean> {
