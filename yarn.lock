@@ -662,22 +662,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:~21.2.0":
-  version: 21.2.0
-  resolution: "@angular/compiler@npm:21.2.0"
+"@angular/compiler@npm:~21.2.4":
+  version: 21.2.4
+  resolution: "@angular/compiler@npm:21.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/7935fcb9ee35b86dea8535553d3b1239e99f40f013d77687045b7b35573932e6d356645419867dd49dc8e1a241be82ffcb1e165fb98ba86f22623b542352952b
+  checksum: 10/f1071dbfa38d6183fd9fdccff10a6d0e77a08afcb471d631effe3ae4e242ceadd4960dd58c8f596647bf4a39e4b88fc4616bee5d80af393f214363b4455ab288
   languageName: node
   linkType: hard
 
-"@angular/core@npm:~21.2.0":
-  version: 21.2.0
-  resolution: "@angular/core@npm:21.2.0"
+"@angular/core@npm:~21.2.4":
+  version: 21.2.4
+  resolution: "@angular/core@npm:21.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/compiler": 21.2.0
+    "@angular/compiler": 21.2.4
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -685,7 +685,7 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/4d48ab9164a090ad723202beda5a0c4421ddf27daaad496320c6f2e83d6a77288e1fdbd568a88329158e73bfcc5095e473e5d938db0a098141dcc73239018c5b
+  checksum: 10/bd075cbcbdb0866bc8806ec7bc42c9954d3266452c2426abfc56c058e8346836a5163d68bda25f5e19f0af7a45d02dcfe6bed85bbd9b93a00909be14ed135172
   languageName: node
   linkType: hard
 
@@ -10614,9 +10614,9 @@ __metadata:
   linkType: hard
 
 "flatted@npm:^3.2.9, flatted@npm:^3.3.3":
-  version: 3.3.3
-  resolution: "flatted@npm:3.3.3"
-  checksum: 10/8c96c02fbeadcf4e8ffd0fa24983241e27698b0781295622591fc13585e2f226609d95e422bcf2ef044146ffacb6b68b1f20871454eddf75ab3caa6ee5f4a1fe
+  version: 3.4.1
+  resolution: "flatted@npm:3.4.1"
+  checksum: 10/39a308e2ef82d2d8c80ebc74b67d4ff3f668be168137b649440b6735eb9c115d1e0c13ab0d9958b3d2ea9c85087ab7e14c14aa6f625a22b2916d89bbd91bc4a0
   languageName: node
   linkType: hard
 
@@ -17243,9 +17243,9 @@ __metadata:
     "@angular/cdk": "npm:~21.2.0"
     "@angular/cli": "npm:~21.2.0"
     "@angular/common": "npm:~21.2.0"
-    "@angular/compiler": "npm:~21.2.0"
+    "@angular/compiler": "npm:~21.2.4"
     "@angular/compiler-cli": "npm:~21.2.0"
-    "@angular/core": "npm:~21.2.0"
+    "@angular/core": "npm:~21.2.4"
     "@angular/forms": "npm:~21.2.0"
     "@angular/material": "npm:~21.2.0"
     "@angular/platform-browser": "npm:~21.2.0"
@@ -17709,9 +17709,9 @@ __metadata:
   linkType: hard
 
 "undici@npm:^6.19.5":
-  version: 6.24.0
-  resolution: "undici@npm:6.24.0"
-  checksum: 10/fdb636cd583c9f12736b32ef088a2d9da9398fc0b80805b519137b3d8e5fcaa6e4c25630414df678aa9912e7f9c1c49911645592da07abda2e1094398175e9da
+  version: 6.24.1
+  resolution: "undici@npm:6.24.1"
+  checksum: 10/4f84e6045520eef9ba8eabb96360b50c759f59905c1703b12187c2dbcc6d1584c5d7ecddeb45b0ed6cac84ca2d132b21bfd8a38f77fa30378b1ac5d2ae390fd9
   languageName: node
   linkType: hard
 
