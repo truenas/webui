@@ -44,6 +44,7 @@
   "Controls how user/group IDs are mapped between the container and the host": "",
   "Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.": "",
   "Create Home Directory Under": "",
+  "Debug information could not be attached to the ticket: {error}": "",
   "Default cards restored": "",
   "Default rules for capabilities: Default (allow most capabilities but drop dangerous ones) or Allow All (keep all capabilities)": "",
   "Delete Anyway": "",

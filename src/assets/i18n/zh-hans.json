@@ -136,6 +136,7 @@
   "CRITICAL WARNING": "",
   "Dataset is shared via WebShare": "",
   "Dataset is shared via WebShare as {shares}": "",
+  "Debug information could not be attached to the ticket: {error}": "",
   "Default cards restored": "",
   "Default pool to use when creating containers if pool is not explicitly specified.": "",
   "Default rules for capabilities: Default (allow most capabilities but drop dangerous ones) or Allow All (keep all capabilities)": "",

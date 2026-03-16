@@ -1,5 +1,7 @@
 {
   "0": "0",
+  "Debug information could not be attached to the ticket: {error}": "",
+  "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. Enter a valid IP address in the format <i>192.168.0.1</i>.": "",
   " as of {dateTime}": " a fecha de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidad bruta utilizable estimada",
@@ -2751,7 +2753,6 @@
   "Invisible": "Invisible",
   "IP": "IP",
   "IP Address": "Dirección IP",
-  "IP address of the remote system with <i>SAI Mode</i> set as <i>Master</i>. Enter a valid IP address in the format <i>192.168.0.1</i>.": "Dirección IP del sistema remoto con <i>SAI Mode</i> configurado como <i>Master</i>. Introduce una IP válida con el formato <i>192.168.0.1</i>.",
   "IP address on which the connection <b>Active Side</b> listens. Defaults to <i>0.0.0.0</i>.": "Dirección IP en la que escucha el <b>Active Side</b>. Valor predeterminado: <i>0.0.0.0</i>.",
   "IP Address/Subnet": "Dirección IP/Subred",
   "IP Addresses": "Direcciones IP",

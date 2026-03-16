@@ -91,6 +91,7 @@
   "Create Home Directory Under": "",
   "Create UDEV": "",
   "Create ZFS": "",
+  "Debug information could not be attached to the ticket: {error}": "",
   "Default cards restored": "",
   "Default rules for capabilities: Default (allow most capabilities but drop dangerous ones) or Allow All (keep all capabilities)": "",
   "Delete Anyway": "",
