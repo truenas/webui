@@ -58,6 +58,8 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
           wide: this.formComponentIsWide,
           data: this.getFormInputData(),
         });
+        // onCancel is fire-and-forget: it subscribes independently from the returned success$ stream
+        // because switchMap only needs the success path. SlideInResult's take(1) ensures cleanup.
         result$.onCancel(() => this.ixSelect().controlDirective.control?.setValue(null), this.destroyRef);
         return result$.success$.pipe(
           switchMap((response) => {

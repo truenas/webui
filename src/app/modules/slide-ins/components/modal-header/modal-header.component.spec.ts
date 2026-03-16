@@ -23,6 +23,7 @@ describe('ModalHeader2Component', () => {
       mockAuth(),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        cancel: jest.fn(),
         getData: jest.fn((): undefined => undefined),
         swap: jest.fn(),
       }),
@@ -53,7 +54,7 @@ describe('ModalHeader2Component', () => {
     it('shows a working close button when only 1 component is in the queue', async () => {
       const closeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close' }));
       await closeButton.click();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
+      expect(spectator.inject(SlideInRef).cancel).toHaveBeenCalled();
       expect(await closeButton.getName()).toBe('close');
     });
   });
@@ -78,7 +79,7 @@ describe('ModalHeader2Component', () => {
       spectator.detectChanges();
       const backButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-left' }));
       await backButton.click();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
+      expect(spectator.inject(SlideInRef).cancel).toHaveBeenCalled();
       expect(await backButton.getName()).toBe('chevron-left');
     });
   });

@@ -79,7 +79,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
 
   readonly provider = input.required<UserPickerProvider>();
   readonly translate = inject(TranslateService);
-  readonly slideIn = inject(SlideIn);
+  private readonly slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
 
   private comboboxProviderHandler = computed(() => {
