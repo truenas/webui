@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, EMPTY,
-  Observable, distinctUntilChanged, filter, merge, switchMap, take, tap,
+  Observable, distinctUntilChanged, filter, merge, pairwise, startWith, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -51,15 +51,16 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
     this.ixSelect().refreshOptions();
     this.ixSelect().controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
-      filter(Boolean),
-      filter((newValue: number | string) => newValue === addNewIxSelectValue),
-      switchMap(() => {
+      startWith(this.ixSelect().controlDirective?.control?.value as IxSelectValue),
+      pairwise(),
+      filter(([, current]) => !!current && current === addNewIxSelectValue),
+      switchMap(([previous]) => {
         const result$ = this.slideIn.open(this.getFormComponentType(), {
           wide: this.formComponentIsWide,
           data: this.getFormInputData(),
         });
         const cancel$ = result$.cancel$.pipe(
-          tap(() => this.ixSelect().controlDirective.control?.setValue(null)),
+          tap(() => this.ixSelect().controlDirective.control?.setValue(previous ?? null)),
           switchMap(() => EMPTY as Observable<Option[]>),
         );
         const success$ = result$.success$.pipe(
