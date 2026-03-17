@@ -8,7 +8,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { Role } from 'app/enums/role.enum';
@@ -239,17 +240,16 @@ export class EmailFormComponent implements OnInit {
   private loadEmailConfig(): void {
     this.isLoading.set(true);
     this.api.call('mail.config').pipe(
-      this.errorHandler.withErrorHandler(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (config) => {
-        this.isLoading.set(false);
-        this.initEmailForm(config);
-      },
-      error: () => {
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
         this.isLoading.set(false);
         this.slideInRef.close({ response: false });
-      },
+        return EMPTY;
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.isLoading.set(false);
+      this.initEmailForm(config);
     });
   }
 

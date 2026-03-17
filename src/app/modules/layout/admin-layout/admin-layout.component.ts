@@ -33,6 +33,7 @@ import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tru
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { FocusService } from 'app/services/focus.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -74,6 +75,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private sessionTimeoutService = inject(SessionTimeoutService);
   private router = inject(Router);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private focusService = inject(FocusService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
@@ -233,9 +235,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event.key !== 'Tab') return;
 
     const container = this.alertPanel.nativeElement as HTMLElement;
-    const focusable = container.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    );
+    const focusable = this.focusService.getFocusableElements(container);
     if (!focusable.length) return;
 
     const first = focusable[0];
