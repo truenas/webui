@@ -97,7 +97,7 @@ export class SlideIn {
 
     open$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
-    return new SlideInResult<R>(open$.pipe(take(1)));
+    return new SlideInResult<R>(open$);
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { wide?: boolean }): void {
