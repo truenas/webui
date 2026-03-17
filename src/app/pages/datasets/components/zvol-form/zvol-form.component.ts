@@ -10,6 +10,7 @@ import {
   finalize, forkJoin, map, Observable, of, tap,
 } from 'rxjs';
 import {
+  minimumPbkdf2Iterations,
   specialVdevDefaultThreshold,
   specialVdevMaxThreshold,
   specialVdevMinThreshold,
@@ -159,7 +160,7 @@ export class ZvolFormComponent implements OnInit {
     key: ['', [Validators.required, exactLength(64)]],
     passphrase: ['', [Validators.required, Validators.minLength(8)]],
     confirm_passphrase: ['', [Validators.required]],
-    pbkdf2iters: [350000, [Validators.required, Validators.min(100000)]],
+    pbkdf2iters: [minimumPbkdf2Iterations, [Validators.required, Validators.min(minimumPbkdf2Iterations)]],
     algorithm: ['AES-256-GCM', Validators.required],
   }, {
     validators: [

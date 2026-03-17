@@ -109,7 +109,7 @@ describe('FileTicketComponent', () => {
       title: 'Cannot shutdown',
     });
     expect(dialogRef.close).toHaveBeenCalled();
-    expect(feedbackService.showTicketSuccessMessage).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
+    expect(feedbackService.showTicketSuccessMessage).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket', undefined);
   });
 
   it('disables file input during ticket submission', async () => {
@@ -126,7 +126,9 @@ describe('FileTicketComponent', () => {
 
     expect(await fileInput.isDisabled()).toBe(true);
 
-    ticketSubmission$.next({ ticket: 24, url: 'https://jira-redirect.ixsystems.com/ticket', has_debug: false });
+    ticketSubmission$.next({
+      ticket: 24, url: 'https://jira-redirect.ixsystems.com/ticket', has_debug: false, debug_attach_error: null,
+    });
     ticketSubmission$.complete();
 
     expect(await fileInput.isDisabled()).toBe(false);

@@ -95,13 +95,23 @@
     }
   </mat-sidenav-content>
 
-  <!-- Alert bar -->
-  <mat-sidenav
-    class="alert-sidenav"
-    position="end"
-    [opened]="isAlertPanelOpen$ | async"
-    (closed)="onAlertsPanelClosed()"
-  >
-    <ix-alerts-panel></ix-alerts-panel>
-  </mat-sidenav>
 </mat-sidenav-container>
+
+<!-- Alert bar - rendered outside mat-sidenav-container so it layers above CDK overlays (slide-ins) -->
+<div
+  class="alert-panel-backdrop"
+  aria-hidden="true"
+  [class.alert-backdrop-visible]="isAlertPanelOpen$ | async"
+  (click)="onAlertsPanelClosed()"
+></div>
+<div
+  #alertPanel
+  class="alert-panel-container"
+  tabindex="-1"
+  role="complementary"
+  [attr.aria-label]="'Alerts' | translate"
+  [class.alert-panel-open]="isAlertPanelOpen$ | async"
+  (keydown.escape)="onAlertsPanelClosed()"
+>
+  <ix-alerts-panel></ix-alerts-panel>
+</div>

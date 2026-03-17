@@ -825,6 +825,7 @@
   "De-duplication tables are stored on this special VDEV type. These VDEVs must be sized to X GiB for each X TiB of general storage.": "",
   "Debug": "",
   "DEBUG": "",
+  "Debug information could not be attached to the ticket: {error}": "",
   "Debugs may contain log files with personal information such as usernames or other identifying information about your system.": "",
   "Dec": "",
   "Decipher Only": "",

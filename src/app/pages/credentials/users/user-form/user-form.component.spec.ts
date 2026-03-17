@@ -1,6 +1,7 @@
 // cspell:ignore newuser validuser
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
@@ -112,7 +113,8 @@ describe('UserFormComponent', () => {
 
   MockInstance(AdditionalDetailsSectionComponent, () => ({
     form: additionalDetailsForm as unknown as AdditionalDetailsSectionComponent['form'],
-  }));
+    homeEditable: signal(undefined),
+  } as Partial<AdditionalDetailsSectionComponent>));
 
   const createComponent = createComponentFactory({
     component: UserFormComponent,
