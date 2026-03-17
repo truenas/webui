@@ -438,7 +438,7 @@ describe('OtherOptionsSectionComponent', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
           title: 'Warning',
-          message: 'TrueNAS recommends that the sync setting always  be left to the default of "Standard" or increased to "Always". The "Disabled" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.',
+          message: 'TrueNAS recommends that the sync setting always be left to the default of "Standard" or increased to "Always". The "Disabled" setting should not be used in production and only where data roll back by few seconds in case of crash or power loss is not a concern.',
         }),
       );
     });
