@@ -2,24 +2,22 @@
   <h3>{{ 'Alerts' | translate }}</h3>
 
   <div class="controls">
-    <tn-icon-button
-      name="cog"
-      library="mdi"
+    <button
+      class="settings-menu-trigger"
+      type="button"
       ixTest="settings-menu"
-      [tooltip]="'Settings' | translate"
+      [attr.aria-label]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
-    ></tn-icon-button>
+    >
+      <tn-icon name="cog" library="mdi"></tn-icon>
+    </button>
     <mat-menu #alertSettingsMenu="matMenu">
-      <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
+      <button mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}
-      </a>
-      <a
-        mat-menu-item
-        ixTest="email-settings"
-        (click)="openEmailForm()"
-      >
+      </button>
+      <button mat-menu-item ixTest="email-settings" (click)="openEmailForm()">
         {{ 'Email' | translate }}
-      </a>
+      </button>
     </mat-menu>
     <tn-icon-button
       name="close"

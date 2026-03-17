@@ -163,6 +163,23 @@ describe('EmailFormComponent', () => {
         .toHaveBeenCalledWith('message', expect.any(Function), false);
     });
 
+    it('enables Save button after switching from SMTP to Gmail and completing OAuth', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'GMail OAuth',
+      });
+
+      // Before OAuth login, Save should be disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Log in to Gmail
+      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      await logInButton.click();
+
+      // After OAuth login, Save should be enabled
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
     it('saves Gmail Oauth config when user authorizes via Gmail and saves the form', async () => {
       await form.fillForm({
         'From Email': 'newfrom@ixsystems.com',
@@ -451,6 +468,51 @@ describe('EmailFormComponent', () => {
         'Send Mail Method': 'GMail OAuth',
       });
       expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
+    });
+
+    it('has Save button enabled when Gmail config is loaded', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('opened from alerts panel without data', () => {
+    const fakeGmailConfig = {
+      ...fakeEmailConfig,
+      oauth: {
+        client_id: 'client_id',
+        client_secret: 'secret',
+        refresh_token: 'token',
+        provider: 'gmail',
+      },
+    } as MailConfig;
+
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => undefined }),
+        ],
+      });
+      spectator.inject(MockApiService).mockCall('mail.config', fakeGmailConfig);
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('fetches email config from API and shows Gmail config with Save enabled', async () => {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.config');
+
+      const values = await form.getValues();
+      expect(values).toEqual({
+        'From Email': 'from@ixsystems.com',
+        'From Name': 'John Smith',
+        'Send Mail Method': 'GMail OAuth',
+      });
+      expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
     });
   });
 

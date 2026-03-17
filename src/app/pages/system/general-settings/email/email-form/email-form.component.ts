@@ -34,7 +34,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
@@ -70,7 +69,6 @@ export class EmailFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private validatorService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
-  private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject(Store<AppState>);
   slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
@@ -153,6 +151,14 @@ export class EmailFormComponent implements OnInit {
       return of(this.form.dirty);
     });
     this.emailConfig = this.slideInRef.getData();
+
+    this.sendMethodControl.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      for (const control of Object.values(this.form.controls)) {
+        control.updateValueAndValidity();
+      }
+    });
   }
 
   get hasSmtpAuthentication(): boolean {
@@ -178,6 +184,8 @@ export class EmailFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.emailConfig) {
       this.initEmailForm(this.emailConfig);
+    } else {
+      this.loadEmailConfig();
     }
   }
 
@@ -222,6 +230,16 @@ export class EmailFormComponent implements OnInit {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
+  }
+
+  private loadEmailConfig(): void {
+    this.isLoading.set(true);
+    this.api.call('mail.config').pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.isLoading.set(false);
+      this.initEmailForm(config);
+    });
   }
 
   private initEmailForm(emailConfig: MailConfig): void {
