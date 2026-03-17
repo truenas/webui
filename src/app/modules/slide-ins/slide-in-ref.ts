@@ -4,6 +4,10 @@ import {
 import { ComponentInSlideIn, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 export class SlideInRef<D, R> {
+  /**
+   * @internal Used by SlideIn service and SlideInContainerComponent.
+   * Form components should prefer {@link succeed} and {@link cancel} instead.
+   */
   close: (response: SlideInResponse<R>) => void;
   /**
    * This method will destroy the caller slide-in component and replace it with the

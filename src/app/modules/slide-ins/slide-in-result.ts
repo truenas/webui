@@ -6,10 +6,10 @@ import {
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 /**
- * Excludes `undefined` from T.
+ * Excludes `undefined` from T while preserving other falsy types (`null`, `false`, `0`, `''`).
  * Used to narrow the response type after filtering out cancellations (undefined).
  */
-type Defined<T> = Exclude<T, undefined>;
+type NonUndefined<T> = Exclude<T, undefined>;
 
 /**
  * Extends Observable<SlideInResponse<R>> with convenience methods
@@ -33,7 +33,16 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * Unlike .onSuccess(), this does NOT auto-unsubscribe — callers must
    * add their own takeUntilDestroyed() or other teardown.
    */
-  readonly success$: Observable<Defined<R>>;
+  readonly success$: Observable<NonUndefined<R>>;
+
+  /**
+   * Observable that emits `void` when the slide-in was cancelled (response === undefined).
+   * Useful in switchMap/merge chains where .onCancel() cannot be used.
+   *
+   * Unlike .onCancel(), this does NOT auto-unsubscribe — callers must
+   * add their own takeUntilDestroyed() or other teardown.
+   */
+  readonly cancel$: Observable<void>;
 
   constructor(source$: Observable<SlideInResponse<R>>) {
     // take(1) ensures the source completes after a single emission, preventing
@@ -44,8 +53,12 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
     super((subscriber) => shared$.subscribe(subscriber));
     this.shared$ = shared$;
     this.success$ = this.shared$.pipe(
-      filter((result): result is SlideInResponse<R> & { response: Defined<R> } => result.response !== undefined),
+      filter((result): result is SlideInResponse<R> & { response: NonUndefined<R> } => result.response !== undefined),
       map((result) => result.response),
+    );
+    this.cancel$ = this.shared$.pipe(
+      filter((result) => result.response === undefined),
+      map((): void => {}),
     );
   }
 
@@ -87,7 +100,7 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * Only `undefined` is treated as cancellation — falsy values like `null`, `false`, `0`, `''`
    * are treated as success.
    */
-  onSuccess(callback: (response: Defined<R>) => void, destroyRef: DestroyRef): Subscription {
+  onSuccess(callback: (response: NonUndefined<R>) => void, destroyRef: DestroyRef): Subscription {
     return this.success$.pipe(
       takeUntilDestroyed(destroyRef),
     ).subscribe((response) => callback(response));

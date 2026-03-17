@@ -128,6 +128,41 @@ describe('SlideInResult', () => {
     });
   });
 
+  describe('cancel$', () => {
+    it('emits void when response is undefined (cancellation)', () => {
+      const result$ = new SlideInResult(of({ response: undefined } as SlideInResponse<string>));
+      let emitCount = 0;
+
+      result$.cancel$.subscribe(() => {
+        emitCount++;
+      });
+
+      expect(emitCount).toBe(1);
+    });
+
+    it('does not emit when response is defined', () => {
+      const result$ = new SlideInResult(of({ response: 'data' } as SlideInResponse<string>));
+      let emitCount = 0;
+
+      result$.cancel$.subscribe(() => {
+        emitCount++;
+      });
+
+      expect(emitCount).toBe(0);
+    });
+
+    it('does not emit for null response (null is not a cancellation)', () => {
+      const result$ = new SlideInResult(of({ response: null } as SlideInResponse<string | null>));
+      let emitCount = 0;
+
+      result$.cancel$.subscribe(() => {
+        emitCount++;
+      });
+
+      expect(emitCount).toBe(0);
+    });
+  });
+
   describe('onSuccess', () => {
     it('returns a Subscription', () => {
       const result$ = new SlideInResult(of({ response: 'saved' } as SlideInResponse<string>));

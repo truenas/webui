@@ -4,8 +4,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject,
-  Observable, distinctUntilChanged, filter, switchMap, take, tap,
+  BehaviorSubject, EMPTY,
+  Observable, distinctUntilChanged, filter, merge, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -58,11 +58,12 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
           wide: this.formComponentIsWide,
           data: this.getFormInputData(),
         });
-        // onCancel is fire-and-forget: it subscribes independently from the returned success$ stream
-        // because switchMap only needs the success path. SlideInResult's take(1) ensures cleanup.
-        result$.onCancel(() => this.ixSelect().controlDirective.control?.setValue(null), this.destroyRef);
-        return result$.success$.pipe(
-          switchMap((response) => {
+        const cancel$ = result$.cancel$.pipe(
+          tap(() => this.ixSelect().controlDirective.control?.setValue(null)),
+          switchMap(() => EMPTY as Observable<Option[]>),
+        );
+        const success$ = result$.success$.pipe(
+          switchMap((response: R) => {
             this.ixSelect().controlDirective.control?.setValue(
               this.getValueFromSlideInResponse(response),
             );
@@ -71,6 +72,7 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
             );
           }),
         );
+        return merge(cancel$, success$);
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
