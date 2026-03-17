@@ -157,6 +157,12 @@ export class EmailFormComponent implements OnInit {
     ).subscribe(() => {
       this.form.controls.port.updateValueAndValidity();
     });
+
+    this.form.controls.smtp.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.form.controls.port.updateValueAndValidity();
+    });
   }
 
   get hasSmtpAuthentication(): boolean {
