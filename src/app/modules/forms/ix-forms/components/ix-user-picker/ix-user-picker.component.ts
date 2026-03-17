@@ -22,8 +22,6 @@ import { TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY,
   fromEvent,
-  merge,
-  Observable,
   of,
   Subject,
 } from 'rxjs';
@@ -362,14 +360,11 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => {
         const result$ = this.slideIn.open(UserFormComponent, { wide: true });
-        const cancel$: Observable<User> = result$.cancel$.pipe(
-          tap(() => {
-            this.autocompleteTrigger()?.closePanel();
-            this.resetInput();
-          }),
-          switchMap(() => EMPTY),
-        );
-        const success$: Observable<User> = result$.success$.pipe(
+        result$.onCancel(() => {
+          this.autocompleteTrigger()?.closePanel();
+          this.resetInput();
+        }, this.destroyRef);
+        return result$.success$.pipe(
           tap((newUser) => {
             const newUserOption: Option = {
               label: newUser.username,
@@ -394,7 +389,6 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
             this.autocompleteTrigger()?.closePanel();
           }),
         );
-        return merge(cancel$, success$);
       }),
       catchError((error: unknown) => {
         this.errorHandler.handleError(error);

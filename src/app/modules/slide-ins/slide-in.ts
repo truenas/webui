@@ -92,6 +92,9 @@ export class SlideIn {
 
         return close$;
       }),
+      // share() is needed so the keep-alive subscription below and the
+      // SlideInResult returned to the caller share the same execution.
+      // Without it, each subscriber would trigger a separate animateOutTopComponent + overlay creation.
       share(),
     );
 
