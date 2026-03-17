@@ -2,16 +2,13 @@
   <h3>{{ 'Alerts' | translate }}</h3>
 
   <div class="controls">
-    <!-- Plain button used because tn-icon-button doesn't propagate matMenuTriggerFor correctly -->
-    <button
-      class="settings-menu-trigger"
-      type="button"
+    <tn-icon-button
+      name="cog"
+      library="mdi"
       ixTest="settings-menu"
-      [attr.aria-label]="'Settings' | translate"
+      [tooltip]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
-    >
-      <tn-icon name="cog" library="mdi"></tn-icon>
-    </button>
+    ></tn-icon-button>
     <mat-menu #alertSettingsMenu="matMenu">
       <button mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}

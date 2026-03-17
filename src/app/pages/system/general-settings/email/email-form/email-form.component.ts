@@ -243,7 +243,6 @@ export class EmailFormComponent implements OnInit {
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         this.isLoading.set(false);
-        this.slideInRef.close({ response: false });
         return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),

@@ -23,27 +23,6 @@
   align-items: center;
 }
 
-.settings-menu-trigger {
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: var(--fg2);
-  cursor: pointer;
-  display: inline-flex;
-  justify-content: center;
-  padding: 8px;
-
-  &:hover {
-    background-color: var(--hover-bg);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-  }
-}
-
 .alert-list {
   margin-top: 0;
 }
