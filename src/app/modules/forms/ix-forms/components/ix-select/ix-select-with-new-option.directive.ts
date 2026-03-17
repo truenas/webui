@@ -4,8 +4,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, EMPTY,
-  Observable, distinctUntilChanged, filter, merge, pairwise, startWith, switchMap, take, tap,
+  BehaviorSubject, EMPTY, Observable,
+  distinctUntilChanged, filter, merge, pairwise, startWith, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -59,14 +59,14 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
           wide: this.formComponentIsWide,
           data: this.getFormInputData(),
         });
-        const cancel$ = result$.cancel$.pipe(
+        const cancel$: Observable<Option[]> = result$.cancel$.pipe(
           tap(() => this.ixSelect().controlDirective.control?.setValue(previous ?? null)),
-          switchMap(() => EMPTY as Observable<Option[]>),
+          switchMap(() => EMPTY),
         );
-        const success$ = result$.success$.pipe(
-          switchMap((response: R) => {
+        const success$: Observable<Option[]> = result$.success$.pipe(
+          switchMap((response) => {
             this.ixSelect().controlDirective.control?.setValue(
-              this.getValueFromSlideInResponse(response),
+              this.getValueFromSlideInResponse(response as R),
             );
             return this.fetchOptions().pipe(
               tap((options) => this.options.next(this.prependAddNew(options))),
