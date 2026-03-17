@@ -1,7 +1,5 @@
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import {
-  datasetNameSortComparer, doesDatasetOrChildrenHaveShares, doesDatasetHaveShares,
-} from 'app/pages/datasets/utils/dataset.utils';
+import { datasetNameSortComparer, doesDatasetOrChildrenHaveShares, doesDatasetHaveShares } from 'app/pages/datasets/utils/dataset.utils';
 
 describe('datasetNameSortComparer', () => {
   it('sorts dataset paths in natural order maintaining parent-child relations', () => {
