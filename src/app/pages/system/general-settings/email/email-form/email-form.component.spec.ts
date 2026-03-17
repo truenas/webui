@@ -21,7 +21,6 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailFormComponent } from './email-form.component';
 
@@ -84,7 +83,6 @@ describe('EmailFormComponent', () => {
         }),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SystemGeneralService),
       mockAuth(),
       mockWindow({
         open: jest.fn(),
@@ -489,12 +487,12 @@ describe('EmailFormComponent', () => {
 
     beforeEach(async () => {
       spectator = createComponent({
+        detectChanges: false,
         providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => undefined }),
+          mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
         ],
       });
       spectator.inject(MockApiService).mockCall('mail.config', fakeGmailConfig);
-      spectator.component.ngOnInit();
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);

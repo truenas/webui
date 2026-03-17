@@ -155,9 +155,7 @@ export class EmailFormComponent implements OnInit {
     this.sendMethodControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      for (const control of Object.values(this.form.controls)) {
-        control.updateValueAndValidity();
-      }
+      this.form.controls.port.updateValueAndValidity();
     });
   }
 
