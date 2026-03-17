@@ -14,3 +14,5 @@ export const maxDatasetNesting = 50;
 export const specialVdevDefaultThreshold = 16 * 1024 * 1024; // 16 MiB
 export const specialVdevMinThreshold = 1; // Minimum: 1 byte
 export const specialVdevMaxThreshold = specialVdevDefaultThreshold; // 16 MiB
+
+export const minimumPbkdf2Iterations = 1300000;
