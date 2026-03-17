@@ -516,6 +516,23 @@ describe('EmailFormComponent', () => {
     });
   });
 
+  describe('opened from alerts panel with API error', () => {
+    it('closes slide-in when mail.config request fails', () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
+          mockApi([
+            mockCall('mail.config', () => {
+              throw new Error('Connection error');
+            }),
+          ]),
+        ],
+      });
+
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
+    });
+  });
+
   describe('Outlook OAuth', () => {
     const fakeOutlookEmailConfig = {
       ...fakeEmailConfig,
