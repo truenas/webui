@@ -235,10 +235,17 @@ export class EmailFormComponent implements OnInit {
   private loadEmailConfig(): void {
     this.isLoading.set(true);
     this.api.call('mail.config').pipe(
+      this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
-      this.isLoading.set(false);
-      this.initEmailForm(config);
+    ).subscribe({
+      next: (config) => {
+        this.isLoading.set(false);
+        this.initEmailForm(config);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.slideInRef.close({ response: false });
+      },
     });
   }
 
