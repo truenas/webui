@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -517,15 +517,21 @@ describe('EmailFormComponent', () => {
   describe('opened from alerts panel with API error', () => {
     it('closes slide-in when mail.config request fails', () => {
       spectator = createComponent({
+        detectChanges: false,
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
-          mockApi([
-            mockCall('mail.config', () => {
-              throw new Error('Connection error');
-            }),
-          ]),
         ],
       });
+
+      const apiService = spectator.inject(MockApiService);
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'mail.config') {
+          return throwError(() => new Error('Connection error'));
+        }
+        return of(undefined);
+      });
+
+      spectator.detectChanges();
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false });
     });
