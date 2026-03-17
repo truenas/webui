@@ -54,6 +54,6 @@ export class ModalHeaderComponent {
   });
 
   close(): void {
-    this.slideInRef.cancel();
+    this.slideInRef.close({ response: undefined });
   }
 }

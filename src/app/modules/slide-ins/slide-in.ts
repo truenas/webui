@@ -308,12 +308,6 @@ export class SlideIn {
       requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
         slideInInstance.needConfirmation = needConfirmation;
       },
-      succeed: (value: R): void => {
-        ref.close({ response: value });
-      },
-      cancel: (): void => {
-        ref.close({ response: undefined });
-      },
     } as SlideInRef<D, R>;
     return ref;
   }

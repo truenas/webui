@@ -4,10 +4,6 @@ import {
 import { ComponentInSlideIn, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 export class SlideInRef<D, R> {
-  /**
-   * @internal Used by SlideIn service and SlideInContainerComponent.
-   * Form components should prefer {@link succeed} and {@link cancel} instead.
-   */
   close: (response: SlideInResponse<R>) => void;
   /**
    * This method will destroy the caller slide-in component and replace it with the
@@ -19,14 +15,4 @@ export class SlideInRef<D, R> {
   swap?: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean }) => void;
   getData: () => D;
   requireConfirmationWhen: (confirm: () => Observable<boolean>) => void;
-
-  /**
-   * Closes the slide-in with a successful response value.
-   */
-  succeed: (value: R) => void;
-
-  /**
-   * Closes the slide-in without a response (user cancelled).
-   */
-  cancel: () => void;
 }

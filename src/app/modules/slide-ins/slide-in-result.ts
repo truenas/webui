@@ -111,8 +111,7 @@ export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
    * and invokes the callback. Automatically unsubscribes when destroyed.
    */
   onCancel(callback: () => void, destroyRef: DestroyRef): Subscription {
-    return this.shared$.pipe(
-      filter((result) => result.response === undefined),
+    return this.cancel$.pipe(
       takeUntilDestroyed(destroyRef),
     ).subscribe(() => callback());
   }
