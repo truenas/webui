@@ -28,6 +28,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -136,6 +137,9 @@ describe('CloudSyncListComponent', () => {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
       }),
       mockProvider(SnackbarService),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -219,6 +223,7 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» deleted.');
   });

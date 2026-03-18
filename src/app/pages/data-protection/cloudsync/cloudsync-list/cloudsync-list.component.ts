@@ -44,6 +44,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -93,6 +94,7 @@ export class CloudSyncListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
@@ -324,7 +326,7 @@ export class CloudSyncListComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('cloudsync.delete', [row.id])),
+      switchMap(() => this.api.call('cloudsync.delete', [row.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {

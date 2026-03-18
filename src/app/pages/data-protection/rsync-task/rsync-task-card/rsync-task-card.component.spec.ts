@@ -19,6 +19,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
@@ -112,6 +113,9 @@ describe('RsyncTaskCardComponent', () => {
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
       }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
     ],
   });
 
@@ -184,6 +188,7 @@ describe('RsyncTaskCardComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {

@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
-  filter, map, of, shareReplay, switchMap, tap,
+  filter, map, of, shareReplay, switchMap,
   withLatestFrom,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -202,16 +202,13 @@ export class UserApiKeysComponent implements OnInit {
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.api.call('api_key.delete', [apiKey.id])),
+      switchMap(() => this.api.call('api_key.delete', [apiKey.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => this.dataProvider.load(),
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        this.loader.close();
       },
-      complete: () => this.loader.close(),
     });
   }
 

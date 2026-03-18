@@ -15,6 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -92,6 +93,9 @@ describe('UserApiKeysComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
     ],
   });
 
@@ -150,5 +154,6 @@ describe('UserApiKeysComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });

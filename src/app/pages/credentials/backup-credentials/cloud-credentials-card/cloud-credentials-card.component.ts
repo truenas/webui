@@ -26,6 +26,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -63,6 +64,7 @@ export class CloudCredentialsCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private dialog = inject(DialogService);
+  private loader = inject(LoaderService);
   private cloudCredentialService = inject(CloudCredentialService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
@@ -178,7 +180,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
+        switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id]).pipe(this.loader.withLoader())),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )

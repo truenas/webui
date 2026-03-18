@@ -11,6 +11,7 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -67,6 +68,9 @@ describe('InitShutdownCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
       mockAuth(),
     ],
   });
@@ -117,5 +121,6 @@ describe('InitShutdownCardComponent', () => {
     await deleteIcon.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });
