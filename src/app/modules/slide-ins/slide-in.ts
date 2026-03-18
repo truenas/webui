@@ -92,9 +92,10 @@ export class SlideIn {
 
         return close$;
       }),
-      // share() is needed so the keep-alive subscription below and the
-      // SlideInResult returned to the caller share the same execution.
-      // Without it, each subscriber would trigger a separate animateOutTopComponent + overlay creation.
+      //
+      // Note: SlideInResult wraps this with shareReplay(1), creating two multicast layers:
+      //   share() here  — ensures one overlay creation across all subscribers
+      //   shareReplay(1) in SlideInResult — replays the close value for late onSuccess/onCancel subscribers
       share(),
     );
 

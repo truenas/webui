@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable,
+  BehaviorSubject, merge, Observable,
   distinctUntilChanged, filter, pairwise, startWith, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -59,18 +59,22 @@ export abstract class IxSelectWithNewOption<R = unknown> implements OnInit, Afte
           wide: this.formComponentIsWide,
           data: this.getFormInputData(),
         });
-        result$.onCancel(() => {
-          this.ixSelect().controlDirective.control?.setValue(previous ?? null);
-        }, this.destroyRef);
-        return result$.success$.pipe(
-          switchMap((response) => {
-            this.ixSelect().controlDirective.control?.setValue(
-              this.getValueFromSlideInResponse(response),
-            );
-            return this.fetchOptions().pipe(
-              tap((options) => this.options.next(this.prependAddNew(options))),
-            );
-          }),
+        return merge(
+          result$.success$.pipe(
+            switchMap((response) => {
+              this.ixSelect().controlDirective.control?.setValue(
+                this.getValueFromSlideInResponse(response),
+              );
+              return this.fetchOptions().pipe(
+                tap((options) => this.options.next(this.prependAddNew(options))),
+              );
+            }),
+          ),
+          result$.cancel$.pipe(
+            tap(() => {
+              this.ixSelect().controlDirective.control?.setValue(previous ?? null);
+            }),
+          ),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
