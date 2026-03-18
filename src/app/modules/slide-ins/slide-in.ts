@@ -92,13 +92,16 @@ export class SlideIn {
 
         return close$;
       }),
-      //
-      // Note: SlideInResult wraps this with shareReplay(1), creating two multicast layers:
-      //   share() here  — ensures one overlay creation across all subscribers
-      //   shareReplay(1) in SlideInResult — replays the close value for late onSuccess/onCancel subscribers
+      // share() ensures a single overlay is created regardless of how many
+      // subscribers attach (the eager "driver" subscription below + SlideInResult consumers).
+      // SlideInResult adds a second multicast layer (shareReplay) to replay the
+      // close value for late onSuccess/onCancel subscribers.
       share(),
     );
 
+    // Driver subscription: keeps the overlay lifecycle alive independently of
+    // consumer subscriptions. Without this, unsubscribing from SlideInResult
+    // would tear down the overlay prematurely.
     open$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     return new SlideInResult<R>(open$);
