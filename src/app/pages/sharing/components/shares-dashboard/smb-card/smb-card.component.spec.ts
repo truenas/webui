@@ -20,6 +20,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -89,6 +90,9 @@ describe('SmbCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
       provideMockStore({
         initialState: {
           alerts: {
@@ -150,6 +154,8 @@ describe('SmbCardComponent', () => {
     await menu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [3]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
   it('updates SMB Enabled status once mat-toggle is updated', async () => {

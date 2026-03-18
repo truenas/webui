@@ -15,6 +15,7 @@ import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -104,6 +105,9 @@ describe('ReplicationTaskCardComponent', () => {
       }),
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
     ],
   });
@@ -200,6 +204,7 @@ describe('ReplicationTaskCardComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
   it('updates Replication Task Enabled status once mat-toggle is updated', async () => {

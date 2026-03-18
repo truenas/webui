@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -66,6 +67,9 @@ describe('NtpServerCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
     ],
   });
 
@@ -109,5 +113,6 @@ describe('NtpServerCardComponent', () => {
     await deleteIcon.click();
 
     expect(api.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });

@@ -204,7 +204,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   private deleteTask(taskId: number, fixateRemovalDate: boolean): Observable<boolean> {
-    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]);
+    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]).pipe(this.loader.withLoader());
   }
 
   protected openForm(row?: PeriodicSnapshotTaskUi): void {
