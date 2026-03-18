@@ -22,6 +22,7 @@ import { TnIconComponent } from '@truenas/ui-components';
 import {
   EMPTY,
   fromEvent,
+  merge,
   of,
   Subject,
 } from 'rxjs';
@@ -360,34 +361,38 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => {
         const result$ = this.slideIn.open(UserFormComponent, { wide: true });
-        result$.onCancel(() => {
-          this.autocompleteTrigger()?.closePanel();
-          this.resetInput();
-        }, this.destroyRef);
-        return result$.success$.pipe(
-          tap((newUser) => {
-            const newUserOption: Option = {
-              label: newUser.username,
-              value: this.getValueFromSlideInResponse(newUser),
-            };
+        return merge(
+          result$.success$.pipe(
+            tap((newUser) => {
+              const newUserOption: Option = {
+                label: newUser.username,
+                value: this.getValueFromSlideInResponse(newUser),
+              };
 
-            this.selectedOption.set(newUserOption);
-            this.value = newUserOption.value;
-            if (this.inputElementRef()?.nativeElement) {
-              this.inputElementRef().nativeElement.value = newUserOption.label;
-            }
-            this.onChange(newUserOption.value);
+              this.selectedOption.set(newUserOption);
+              this.value = newUserOption.value;
+              if (this.inputElementRef()?.nativeElement) {
+                this.inputElementRef().nativeElement.value = newUserOption.label;
+              }
+              this.onChange(newUserOption.value);
 
-            // Add the newly created user to the options list immediately
-            // This avoids race conditions with the debounced filterChanged$ observable
-            const existingOptions = this.options().slice(1); // Remove "Add New" from index 0
-            if (!existingOptions.some((opt) => opt.value === newUserOption.value)) {
-              this.options.set([this.addNewUserOption, newUserOption, ...existingOptions]);
-            }
+              // Add the newly created user to the options list immediately
+              // This avoids race conditions with the debounced filterChanged$ observable
+              const existingOptions = this.options().slice(1); // Remove "Add New" from index 0
+              if (!existingOptions.some((opt) => opt.value === newUserOption.value)) {
+                this.options.set([this.addNewUserOption, newUserOption, ...existingOptions]);
+              }
 
-            this.cdr.markForCheck();
-            this.autocompleteTrigger()?.closePanel();
-          }),
+              this.cdr.markForCheck();
+              this.autocompleteTrigger()?.closePanel();
+            }),
+          ),
+          result$.cancel$.pipe(
+            tap(() => {
+              this.autocompleteTrigger()?.closePanel();
+              this.resetInput();
+            }),
+          ),
         );
       }),
       catchError((error: unknown) => {
