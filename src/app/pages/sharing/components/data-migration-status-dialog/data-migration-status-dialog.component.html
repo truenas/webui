@@ -24,7 +24,9 @@
     @if (startTime) {
       <span>{{ 'Started' | translate }}: {{ startTime | formatDateTime }}</span>
     }
-    @if (estimatedCompletion && isRunning) {
+    @if (finishedTime) {
+      <span>{{ 'Finished' | translate }}: {{ finishedTime | formatDateTime }}</span>
+    } @else if (estimatedCompletion && isRunning) {
       <span>{{ 'Est. completion' | translate }}: {{ estimatedCompletion | formatDateTime }}</span>
     }
   </div>
