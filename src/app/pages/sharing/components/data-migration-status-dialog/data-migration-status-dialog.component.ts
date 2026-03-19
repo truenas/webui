@@ -54,6 +54,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   protected job: ZfsTierRewriteJobEntry;
   protected progressPercent = 0;
   protected startTime: Date | null = null;
+  protected finishedTime: Date | null = null;
   protected estimatedCompletion: Date | null = null;
 
   get isRunning(): boolean {
@@ -139,7 +140,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   private loadJobDetails(): void {
-    this.api.call('zfs.tier.rewrite_job_status', [this.data.tierJob.tier_job_id]).pipe(
+    this.api.call('zfs.tier.rewrite_job_status', [{ tier_job_id: this.data.tierJob.tier_job_id }]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (job) => {
@@ -156,6 +157,10 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private updateProgress(): void {
     if (this.job?.stats) {
       this.startTime = new Date(this.job.stats.start_time * 1000);
+
+      if (this.job.status === TierRewriteJobStatus.Complete) {
+        this.finishedTime = new Date(this.job.stats.update_time * 1000);
+      }
 
       if (this.job.stats.total_bytes > 0) {
         this.progressPercent = Math.round(
