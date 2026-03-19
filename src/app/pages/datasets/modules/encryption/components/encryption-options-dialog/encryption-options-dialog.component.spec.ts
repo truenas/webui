@@ -201,6 +201,36 @@ describe('EncryptionOptionsDialogComponent', () => {
     expect(dialogRef.close).toHaveBeenCalled();
   });
 
+  it('allows saving when switching from passphrase to key with mismatched passphrase fields', async () => {
+    await setupTest();
+
+    await form.fillForm(
+      {
+        'Encryption Type': 'Passphrase',
+        Passphrase: '12345678',
+      },
+    );
+
+    const key = 'k'.repeat(64);
+    await form.fillForm(
+      {
+        'Encryption Type': 'Key',
+        Key: key,
+        Confirm: true,
+      },
+    );
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(false);
+
+    await saveButton.click();
+
+    expect(api.job).toHaveBeenCalledWith(
+      'pool.dataset.change_key',
+      ['pool/parent/child', { key, generate_key: false }],
+    );
+  });
+
   it('only allows key encryption when dataset has a key-encrypted child', async () => {
     await setupTest({
       ...defaultDialogData,
