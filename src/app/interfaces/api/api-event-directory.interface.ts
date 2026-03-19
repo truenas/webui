@@ -23,6 +23,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
@@ -56,4 +57,5 @@ export interface ApiEventDirectory {
   'pool.snapshot.query': { response: ZfsSnapshot };
   'pool.snapshottask.query': { response: PeriodicSnapshotTask };
   'directoryservices.status': { response: DirectoryServicesStatus };
+  'zfs.tier.rewrite_job_status': { response: ZfsTierRewriteJobEntry };
 }
