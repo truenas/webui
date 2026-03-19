@@ -90,6 +90,10 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
         return {
           name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
         };
+      case TierRewriteJobStatus.Cancelled:
+        return {
+          name: 'cancel', library: 'mdi', color: 'grey', spinning: false,
+        };
       case TierRewriteJobStatus.Stopped:
         return {
           name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,

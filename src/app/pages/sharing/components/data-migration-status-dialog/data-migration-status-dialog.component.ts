@@ -127,7 +127,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     ).subscribe((confirmed) => {
       if (!confirmed) return;
 
-      this.api.call('zfs.tier.rewrite_job_abort', [this.job.tier_job_id]).pipe(
+      this.api.call('zfs.tier.rewrite_job_abort', [{ tier_job_id: this.job.tier_job_id }]).pipe(
         takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
