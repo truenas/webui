@@ -113,7 +113,8 @@ export class DataMigrationStatusDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.job = this.data.tierJob;
-    this.loadJobDetails();
+    this.updateProgress();
+    this.subscribeToJobUpdates();
   }
 
   protected onAbort(): void {
@@ -139,17 +140,17 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     });
   }
 
-  private loadJobDetails(): void {
-    this.api.call('zfs.tier.rewrite_job_status', [{ tier_job_id: this.data.tierJob.tier_job_id }]).pipe(
+  private subscribeToJobUpdates(): void {
+    const datasetName = this.data.tierJob.dataset_name;
+    const subscriptionKey = `zfs.tier.rewrite_job_status:${JSON.stringify({ dataset_name: datasetName })}` as const;
+
+    this.api.subscribe(subscriptionKey).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (job) => {
-        this.job = job;
+      next: (event) => {
+        this.job = event.fields;
         this.updateProgress();
         this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
       },
     });
   }
