@@ -40,7 +40,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
+import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -83,6 +85,7 @@ export class NfsListComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
+  private poolStoreService = inject(poolStore);
 
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
@@ -94,6 +97,7 @@ export class NfsListComponent implements OnInit {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
+  private activePoolPaths: string[] = [];
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -126,6 +130,8 @@ export class NfsListComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
+      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths),
+      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
     }),
     yesNoColumn({
       title: this.translate.instant('Expose Snapshots'),
@@ -183,9 +189,15 @@ export class NfsListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
     this.setDefaultSort();
-    this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
+    });
+
+    this.poolStoreService.call.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((pools) => {
+      this.activePoolPaths = pools.map((pool) => pool.path);
+      this.refresh();
     });
   }
 

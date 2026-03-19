@@ -2,12 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -60,6 +63,7 @@ describe('NfsListComponent', () => {
         mockCall('sharing.nfs.query', shares as NfsShare[]),
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),
+        mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
@@ -127,5 +131,22 @@ describe('NfsListComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('should disable toggle when share is on an exported pool', async () => {
+    const exportedShares = [{
+      ...shares[0],
+      path: '/mnt/exported/data',
+    }] as NfsShare[];
+
+    const mockApiService = spectator.inject(MockApiService);
+    mockApiService.mockCall('sharing.nfs.query', exportedShares);
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    table = await loader.getHarness(IxTableHarness);
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
+    expect(await toggle.isDisabled()).toBe(true);
   });
 });

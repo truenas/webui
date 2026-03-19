@@ -8,10 +8,12 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { Pool } from 'app/interfaces/pool.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -75,6 +77,7 @@ describe('SmbListComponent', () => {
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+        mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),
@@ -191,5 +194,22 @@ describe('SmbListComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('should disable toggle when share is on an exported pool', async () => {
+    const exportedShares = [{
+      ...shares[0],
+      path: '/mnt/exported/data',
+    }] as SmbShare[];
+
+    const mockApiService = spectator.inject(MockApiService);
+    mockApiService.mockCall('sharing.smb.query', exportedShares);
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    table = await loader.getHarness(IxTableHarness);
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+    expect(await toggle.isDisabled()).toBe(true);
   });
 });

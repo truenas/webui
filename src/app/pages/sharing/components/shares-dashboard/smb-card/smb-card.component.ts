@@ -46,8 +46,10 @@ import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/share
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -89,6 +91,7 @@ export class SmbCardComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
+  private poolStoreService = inject(poolStore);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
@@ -98,6 +101,7 @@ export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   dataProvider: AsyncDataProvider<SmbShare>;
+  private activePoolPaths: string[] = [];
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -117,6 +121,8 @@ export class SmbCardComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
+      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths),
+      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
@@ -133,12 +139,15 @@ export class SmbCardComponent implements OnInit {
         {
           iconName: tnIconMarker('share-variant', 'mdi'),
           tooltip: this.translate.instant('Edit Share ACL'),
+          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths)),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
           onClick: (row) => this.doShareAclEdit(row),
         },
         {
           iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          disabled: (row) => of(isRootShare(row.path)),
+          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths)),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
         {
@@ -158,7 +167,13 @@ export class SmbCardComponent implements OnInit {
     const smbShares$ = this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
-    this.dataProvider.load();
+
+    this.poolStoreService.call.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((pools) => {
+      this.activePoolPaths = pools.map((pool) => pool.path);
+      this.dataProvider.load();
+    });
   }
 
   protected openForm(row?: SmbShare): void {
@@ -190,27 +205,23 @@ export class SmbCardComponent implements OnInit {
   }
 
   private doShareAclEdit(row: SmbShare): void {
-    if (row.locked) {
-      this.showLockedPathDialog(row.path);
-    } else {
-      // A home share has a name (homes) set; row.name works for other shares
-      const searchName = (row.options as LegacySmbShareOptions)?.home ? 'homes' : row.name;
-      this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (shareAcl: SmbSharesec) => {
-            this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => {
-              this.dataProvider.load();
-            });
-          },
-          error: (error: unknown) => {
-            this.errorHandler.showErrorModal(error);
-          },
-        });
-    }
+    // A home share has a name (homes) set; row.name works for other shares
+    const searchName = (row.options as LegacySmbShareOptions)?.home ? 'homes' : row.name;
+    this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (shareAcl: SmbSharesec) => {
+          this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
+            filter((response) => !!response.response),
+            takeUntilDestroyed(this.destroyRef),
+          ).subscribe(() => {
+            this.dataProvider.load();
+          });
+        },
+        error: (error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+        },
+      });
   }
 
   private doFilesystemAclEdit(row: SmbShare): void {

@@ -28,16 +28,18 @@
     </button>
     <mat-menu #actionMenu="matMenu">
       @for (action of visibleActions(); track action) {
-        <button
-          *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
-          mat-menu-item
-          [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
-          [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
-          (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
-        >
-          <tn-icon class="menu-icon" [name]="action.iconName"></tn-icon>
-          <span>{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</span>
-        </button>
+        <div matTooltipPosition="left" [matTooltip]="(action.disabled ? (action.disabled(row()) | async) : false) ? getDisabledTooltip(action) : ''">
+          <button
+            *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
+            mat-menu-item
+            [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
+            [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+            (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
+          >
+            <tn-icon class="menu-icon" [name]="action.iconName"></tn-icon>
+            <span>{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</span>
+          </button>
+        </div>
       }
     </mat-menu>
   }
