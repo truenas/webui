@@ -28,6 +28,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
@@ -114,6 +115,10 @@ describe('SmbListComponent', () => {
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
       ]),
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+        subscribeTierJobUpdates: () => of(),
+      }),
     ],
   });
 
