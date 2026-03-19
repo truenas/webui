@@ -4,7 +4,7 @@
   "Enable to use thin provisioning where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "Actívao para usar o aprovisionamento fino, onde o espazo en disco para este volume se asigna <b>‘baixo demanda’</b> a medida que se reciben novas escrituras. Ten coidado ao activar esta función, xa que as escrituras poden fallar cando o pool teña pouco espazo.",
   "If False, TrueNAS does not validate certificates from the remote LDAP server. It is better to use valid certificates or import them into the TrueNAS server's trusted certificate store.": "Se é Falso, TrueNAS non valida os certificados do servidor LDAP remoto. É mellor usar certificados válidos ou importalos ao almacén de certificados de confianza do servidor TrueNAS.",
   "If you can't use QR code, use this text code instead": "Se non podes usar o código QR, usa este código de texto no seu lugar.",
-  "Share your thoughts on our product's features, usability, or any suggestions for improvement.": "Comparte a túa opinión sobre as características do noso produto, a súa usabilidade ou calquera suxestión de mellora."
+  "Share your thoughts on our product's features, usability, or any suggestions for improvement.": "Comparte a túa opinión sobre as características do noso produto, a súa usabilidade ou calquera suxestión de mellora.",
   " as of {dateTime}": " a data de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidade bruta utilizable estimada",
