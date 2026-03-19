@@ -252,6 +252,9 @@ export class SmbListComponent implements OnInit {
     });
 
     this.loadTierConfig();
+    this.tierService.subscribeTierJobUpdates().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   private setDefaultSort(): void {

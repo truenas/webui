@@ -21,6 +21,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -91,6 +92,10 @@ describe('NfsListComponent', () => {
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
       ]),
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+        subscribeTierJobUpdates: () => of(),
+      }),
     ],
   });
 

@@ -208,6 +208,9 @@ export class SmbCardComponent implements OnInit {
     });
 
     this.loadTierConfig();
+    this.tierService.subscribeTierJobUpdates().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   protected openForm(row?: SmbShare): void {

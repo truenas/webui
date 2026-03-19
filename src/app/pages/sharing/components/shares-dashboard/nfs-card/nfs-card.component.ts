@@ -173,6 +173,9 @@ export class NfsCardComponent implements OnInit {
     });
 
     this.loadTierConfig();
+    this.tierService.subscribeTierJobUpdates().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   protected openForm(row?: NfsShare): void {

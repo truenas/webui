@@ -29,6 +29,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -122,6 +123,10 @@ describe('SmbCardComponent', () => {
         mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
         mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
       ]),
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+        subscribeTierJobUpdates: () => of(),
+      }),
     ],
   });
 

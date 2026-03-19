@@ -57,5 +57,6 @@ export interface ApiEventDirectory {
   'pool.snapshot.query': { response: ZfsSnapshot };
   'pool.snapshottask.query': { response: PeriodicSnapshotTask };
   'directoryservices.status': { response: DirectoryServicesStatus };
+  'zfs.tier.rewrite_job_query': { response: ZfsTierRewriteJobEntry };
   'zfs.tier.rewrite_job_status': { response: ZfsTierRewriteJobEntry };
 }
