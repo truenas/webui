@@ -89,23 +89,17 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   protected onApply(): void {
-    if (this.form.value.moveExistingData) {
-      this.api.job('zfs.tier.rewrite_job_create', [{ dataset_name: this.data.datasetName }]).pipe(
-        this.loader.withLoader(),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (error: unknown) => this.errorHandler.showErrorModal(error),
-      });
-    } else {
-      this.api.call('pool.dataset.set_tier', [this.data.datasetName, this.newTier]).pipe(
-        this.loader.withLoader(),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (error: unknown) => this.errorHandler.showErrorModal(error),
-      });
-    }
+    this.api.call('zfs.tier.dataset_set_tier', [{
+      dataset_name: this.data.datasetName,
+      tier_type: this.newTier,
+      move_existing_data: this.form.value.moveExistingData,
+    }]).pipe(
+      this.loader.withLoader(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => this.dialogRef.close(true),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
+    });
   }
 
   private loadDetails(): void {
