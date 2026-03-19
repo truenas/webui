@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { storageEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,6 +21,8 @@ import { TierConfigFormComponent } from 'app/pages/storage/components/tier-confi
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-pools-dashboard',
@@ -50,8 +53,10 @@ export class PoolsDashboardComponent implements OnInit {
   private store = inject(PoolsDashboardStore);
   protected translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private store$ = inject<Store<AppState>>(Store);
 
   protected readonly requiredRoles = [Role.PoolWrite];
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly searchableElements = storageElements;
 
   rootDatasets: Record<string, Dataset> = {};
