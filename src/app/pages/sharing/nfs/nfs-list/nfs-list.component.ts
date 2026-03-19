@@ -213,6 +213,9 @@ export class NfsListComponent implements OnInit {
     });
 
     this.loadTierConfig();
+    this.tierService.subscribeTierJobUpdates().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.refresh());
   }
 
   private setDefaultSort(): void {

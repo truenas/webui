@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
-import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
+import { map, Observable, shareReplay } from 'rxjs';
+import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({
@@ -18,5 +18,11 @@ export class SharingTierService {
       );
     }
     return this.tierConfig$;
+  }
+
+  subscribeTierJobUpdates(): Observable<ZfsTierRewriteJobEntry> {
+    return this.api.subscribe('zfs.tier.rewrite_job_query').pipe(
+      map((event) => event.fields),
+    );
   }
 }
