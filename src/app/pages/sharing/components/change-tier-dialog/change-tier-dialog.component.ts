@@ -104,15 +104,15 @@ export class ChangeTierDialogComponent implements OnInit {
 
   private loadDetails(): void {
     forkJoin([
-      this.api.call('zpool.query', [{ properties: ['available', 'used', 'usable', 'class_special_available'] }]),
+      this.api.call('zpool.query', [{ properties: ['class_normal_available', 'class_special_available'] }]),
       this.api.call('pool.dataset.query', [[['id', '=', this.data.datasetName]]]),
     ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([zpools, datasets]) => {
         const zpool = zpools.find((pool) => pool.name === this.data.poolName);
         if (zpool) {
-          const available = zpool.properties.available?.value ?? 0;
+          const regularAvailable = zpool.properties.class_normal_available?.value ?? 0;
           const specialAvailable = zpool.properties.class_special_available?.value ?? 0;
-          this.regularAvailable.set(buildNormalizedFileSize(available, 'B', 2));
+          this.regularAvailable.set(buildNormalizedFileSize(regularAvailable, 'B', 2));
           if (specialAvailable > 0) {
             this.performanceAvailable.set(buildNormalizedFileSize(specialAvailable, 'B', 2));
           }

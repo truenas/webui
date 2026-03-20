@@ -78,16 +78,16 @@ export class PoolUsageCardComponent implements OnInit {
     return getPoolDisks(this.poolState());
   });
 
-  protected capacity = computed(() => {
-    return this.used() + this.available();
-  });
-
   protected used = computed(() => {
-    return this.poolState().used;
+    return this.regularUsed() + this.performanceUsed();
   });
 
   protected available = computed(() => {
-    return this.poolState().available;
+    return this.regularAvailable() + this.performanceAvailable();
+  });
+
+  protected capacity = computed(() => {
+    return this.used() + this.available() + this.performanceReserved();
   });
 
   protected usedPercentage = computed(() => {
@@ -162,11 +162,11 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected regularUsed = computed(() => {
-    return this.used() - this.performanceUsed();
+    return this.poolState().used;
   });
 
   protected regularAvailable = computed(() => {
-    return this.available() - this.performanceAvailable();
+    return this.poolState().available;
   });
 
   protected regularTotal = computed(() => {
