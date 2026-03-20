@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
-  filter, switchMap, tap,
+  filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -167,7 +167,6 @@ export class GuiFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading.set(false);
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
       },
@@ -179,7 +178,7 @@ export class GuiFormComponent implements OnInit {
   }
 
   private getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
-    const uiCertificateChanged = current.ui_certificate?.id !== next.ui_certificate;
+    const uiCertificateChanged = current.ui_certificate !== next.ui_certificate;
     const httpPortChanged = current.ui_port !== next.ui_port;
     const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
     const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
@@ -211,10 +210,14 @@ export class GuiFormComponent implements OnInit {
         title: this.translate.instant(helptext.restartTitle),
         message: this.translate.instant(helptext.restartMessage),
       }).pipe(
-        tap(() => this.slideInRef.close({ response: true })),
-        filter(Boolean),
         takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => {
+      ).subscribe((confirmed) => {
+        this.slideInRef.close({ response: true });
+
+        if (!confirmed) {
+          return;
+        }
+
         const hostname = this.window.location.hostname;
         const protocol = this.window.location.protocol;
         let port = this.window.location.port;
@@ -252,11 +255,12 @@ export class GuiFormComponent implements OnInit {
   private loadCurrentValues(): void {
     this.store$.pipe(
       waitForGeneralConfig,
+      take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
       this.configData = config;
       this.formGroup.patchValue({
-        ui_certificate: config.ui_certificate?.id?.toString(),
+        ui_certificate: config.ui_certificate.toString(),
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,
         ui_port: config.ui_port,
