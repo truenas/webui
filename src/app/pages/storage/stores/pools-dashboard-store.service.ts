@@ -10,6 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
@@ -86,15 +87,31 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     );
   });
 
-  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[]]> {
+  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], Zpool[]]> {
     return combineLatest([
       this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]),
       this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
+      this.api.call('zpool.query', [{ properties: ['available', 'used', 'usable', 'class_special_usable', 'class_special_used', 'class_special_available'] }]),
     ]).pipe(
-      tap(([pools, rootDatasets]) => {
+      tap(([pools, rootDatasets, zpools]) => {
+        const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
+        const poolsWithTierData = pools.map((pool) => {
+          const zpool = zpoolsByName[pool.name];
+          if (!zpool) return pool;
+          return {
+            ...pool,
+            used: zpool.properties.used?.value ?? pool.used,
+            available: zpool.properties.available?.value ?? pool.available,
+            special_class_used: zpool.properties.class_special_used?.value ?? 0,
+            special_class_available: zpool.properties.class_special_available?.value ?? 0,
+            special_class_reserved: (zpool.properties.class_special_usable?.value ?? 0)
+              - (zpool.properties.class_special_available?.value ?? 0)
+              - (zpool.properties.class_special_used?.value ?? 0),
+          };
+        });
         this.patchState({
           arePoolsLoading: false,
-          pools: sortBy(pools, (pool) => pool.name),
+          pools: sortBy(poolsWithTierData, (pool) => pool.name),
           rootDatasets: keyBy(rootDatasets, (dataset) => dataset.id),
         });
       }),
