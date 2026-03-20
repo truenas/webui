@@ -117,17 +117,17 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     this.subscribeToJobUpdates();
   }
 
-  protected onAbort(): void {
+  protected onCancel(): void {
     this.dialogService.confirm({
-      message: this.translate.instant('Are you sure you want to abort this data migration? Data already transferred will remain at its destination.'),
-      buttonText: this.translate.instant('Abort'),
+      message: this.translate.instant('Are you sure you want to cancel this data migration? Data already transferred will remain at its destination.'),
+      buttonText: this.translate.instant('Cancel'),
       buttonColor: 'warn',
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((confirmed) => {
       if (!confirmed) return;
 
-      this.api.call('zfs.tier.rewrite_job_abort', [{ tier_job_id: this.job.tier_job_id }]).pipe(
+      this.api.call('zfs.tier.rewrite_job_cancel', [{ tier_job_id: this.job.tier_job_id }]).pipe(
         takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
