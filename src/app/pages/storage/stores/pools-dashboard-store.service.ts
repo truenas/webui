@@ -91,7 +91,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     return combineLatest([
       this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]),
       this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
-      this.api.call('zpool.query', [{ properties: ['available', 'used', 'usable', 'class_special_usable', 'class_special_used', 'class_special_available'] }]),
+      this.api.call('zpool.query', [{ properties: ['class_normal_usable', 'class_normal_used', 'class_normal_available', 'class_special_usable', 'class_special_used', 'class_special_available'] }]),
     ]).pipe(
       tap(([pools, rootDatasets, zpools]) => {
         const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
@@ -100,8 +100,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           if (!zpool) return pool;
           return {
             ...pool,
-            used: zpool.properties.used?.value ?? pool.used,
-            available: zpool.properties.available?.value ?? pool.available,
+            used: zpool.properties.class_normal_used?.value ?? pool.used,
+            available: zpool.properties.class_normal_available?.value ?? pool.available,
             special_class_used: zpool.properties.class_special_used?.value ?? 0,
             special_class_available: zpool.properties.class_special_available?.value ?? 0,
             special_class_reserved: (zpool.properties.class_special_usable?.value ?? 0)
