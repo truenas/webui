@@ -297,6 +297,7 @@ import {
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
 import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import {
   SimilarIssue,
   SimilarIssuesParams,
@@ -1002,6 +1003,9 @@ export interface ApiCallDirectory {
   'pool.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
   'pool.snapshot.release': { params: [string]; response: void };
   'pool.snapshot.rollback': { params: ZfsRollbackParams; response: void };
+
+  // ZPool
+  'zpool.query': { params: [{ properties?: string[] }?]; response: Zpool[] };
 
   // ZFS Tier
   'zfs.tier.config': { params: void; response: ZfsTierConfig };
