@@ -1,3 +1,4 @@
+import { Overlay, OverlayContainer } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -15,6 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
+import { AlertPanelOverlayContainer } from 'app/modules/alerts/components/alerts-panel/alert-panel-overlay-container.service';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import {
   alertPanelClosed,
@@ -43,6 +45,11 @@ type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
   templateUrl: './alerts-panel.component.html',
   styleUrls: ['./alerts-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    AlertPanelOverlayContainer,
+    { provide: OverlayContainer, useExisting: AlertPanelOverlayContainer },
+    Overlay,
+  ],
   imports: [
     TnIconButtonComponent,
     TnIconComponent,

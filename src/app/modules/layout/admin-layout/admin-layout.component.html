@@ -112,6 +112,7 @@
   [attr.aria-label]="'Alerts' | translate"
   [class.alert-panel-open]="isAlertPanelOpen$ | async"
   (keydown.escape)="onAlertsPanelClosed()"
+  (keydown)="onAlertPanelKeydown($event)"
 >
   <ix-alerts-panel></ix-alerts-panel>
 </div>
