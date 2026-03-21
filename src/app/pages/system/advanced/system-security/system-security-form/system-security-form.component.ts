@@ -19,6 +19,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, finalize, map, of, tap, forkJoin, zip,
 } from 'rxjs';
+import { adminUsername } from 'app/constants/admin-username.constant';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -236,7 +237,7 @@ export class SystemSecurityFormComponent implements OnInit {
     const userConfig$ = this.api.call('user.query', [[['local', '=', true]]]).pipe(
       map((userConfig): Partial<StigEnablementRequirements> => {
         const rootUser: User | undefined = userConfig.find((user) => user.username === 'root');
-        const truenasAdminUser: User | undefined = userConfig.find((user) => user.username === 'truenas_admin');
+        const truenasAdminUser: User | undefined = userConfig.find((user) => user.username === adminUsername);
         return {
           // if either account is missing, then its password is technically disabled and the requirement is met
           rootPasswordDisabled: [rootUser ? rootUser.password_disabled : true, rootUser],
@@ -264,7 +265,7 @@ export class SystemSecurityFormComponent implements OnInit {
         session: sessionsList.find((session) => session.current),
       })),
       map((me): Partial<StigEnablementRequirements> => ({
-        currentUserIsNotRoot: me.user.pw_name !== 'root' && me.user.pw_name !== 'truenas_admin',
+        currentUserIsNotRoot: me.user.pw_name !== 'root' && me.user.pw_name !== adminUsername,
         currentUserIs2fa: me.user.two_factor_config.secret_configured,
         currentSessionIs2fa: me.session.credentials === CredentialType.TwoFactor,
       })),
