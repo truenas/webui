@@ -1,6 +1,6 @@
 {
   "0": "0",
-  "Debug information could not be attached to the ticket: {error}": "",
+  "Debug information could not be attached to the ticket: {error}": "Не удалось прикрепить к заявке отладочную информацию: {error}",
   " as of {dateTime}": " в {dateTime}",
   " bytes.": " байт(ов).",
   " Est. Usable Raw Capacity": " Оценка полезного сырого объёма",
