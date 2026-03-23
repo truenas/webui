@@ -69,7 +69,7 @@ export class SnapshotRollbackDialog implements OnInit {
   wasDatasetRolledBack = false;
   form = this.fb.group({
     recursive: ['' as RollbackRecursiveType],
-    force: [null as boolean, [Validators.requiredTrue]],
+    force: [null as (boolean | null), [Validators.requiredTrue]],
   });
 
   publicSnapshot: ZfsSnapshot;
