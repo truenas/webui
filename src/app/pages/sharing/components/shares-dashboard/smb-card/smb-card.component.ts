@@ -46,7 +46,7 @@ import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/share
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
+import { getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
@@ -147,7 +147,9 @@ export class SmbCardComponent implements OnInit {
           iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths)),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(
+            getFilesystemAclUnavailableReason(row, this.activePoolPaths),
+          ),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
         {

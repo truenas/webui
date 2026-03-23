@@ -1,5 +1,8 @@
 import {
-  getUnavailableReason, isShareOnExportedPool, isShareUnavailable,
+  getFilesystemAclUnavailableReason,
+  getUnavailableReason,
+  isShareOnExportedPool,
+  isShareUnavailable,
 } from 'app/pages/sharing/utils/share-exported-pool.utils';
 
 describe('isShareOnExportedPool', () => {
@@ -61,5 +64,27 @@ describe('getUnavailableReason', () => {
 
   it('should return empty string for available shares', () => {
     expect(getUnavailableReason({ locked: false, path: '/mnt/pool/data' }, ['/mnt/pool'])).toBe('');
+  });
+});
+
+describe('getFilesystemAclUnavailableReason', () => {
+  it('should return root share message for root shares', () => {
+    expect(getFilesystemAclUnavailableReason({ locked: false, path: '/mnt/pool' }, ['/mnt/pool']))
+      .toBe('This action is not available for root shares');
+  });
+
+  it('should return locked message for locked shares', () => {
+    expect(getFilesystemAclUnavailableReason({ locked: true, path: '/mnt/pool/data' }, ['/mnt/pool']))
+      .toBe('Dataset is locked');
+  });
+
+  it('should return exported pool message for exported pool shares', () => {
+    expect(getFilesystemAclUnavailableReason({ locked: false, path: '/mnt/exported/data' }, ['/mnt/pool']))
+      .toBe('Share is on an exported pool');
+  });
+
+  it('should return empty string for available non-root shares', () => {
+    expect(getFilesystemAclUnavailableReason({ locked: false, path: '/mnt/pool/data' }, ['/mnt/pool']))
+      .toBe('');
   });
 });

@@ -8,7 +8,6 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -54,6 +53,47 @@ const slideInRef: SlideInRef<SmbShare | undefined, unknown> = {
   getData: jest.fn((): undefined => undefined),
 };
 
+const commonImports = [
+  BasicSearchComponent,
+  IxTableColumnsSelectorComponent,
+  FakeProgressBarComponent,
+];
+
+const commonDeclarations = [
+  MockComponents(
+    ServiceStateButtonComponent,
+  ),
+];
+
+const commonProviders = [
+  mockProvider(EmptyService),
+  mockAuth(),
+  mockProvider(SlideInRef, slideInRef),
+  mockProvider(DialogService, {
+    confirm: jest.fn(() => of(true)),
+  }),
+  mockProvider(SlideIn, {
+    open: jest.fn(() => SlideInResult.empty()),
+  }),
+  provideMockStore({
+    selectors: [
+      {
+        selector: selectServices,
+        value: [{
+          id: 4,
+          service: ServiceName.Cifs,
+          state: ServiceStatus.Stopped,
+          enable: false,
+        } as Service],
+      },
+      {
+        selector: selectPreferences,
+        value: {},
+      },
+    ],
+  }),
+];
+
 describe('SmbListComponent', () => {
   let spectator: Spectator<SmbListComponent>;
   let loader: HarnessLoader;
@@ -61,18 +101,10 @@ describe('SmbListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbListComponent,
-    imports: [
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      FakeProgressBarComponent,
-    ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-      ),
-    ],
+    imports: commonImports,
+    declarations: commonDeclarations,
     providers: [
-      mockProvider(EmptyService),
+      ...commonProviders,
       mockApi([
         mockCall('sharing.smb.query', shares as SmbShare[]),
         mockCall('sharing.smb.delete'),
@@ -80,31 +112,6 @@ describe('SmbListComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
-      mockAuth(),
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectServices,
-            value: [{
-              id: 4,
-              service: ServiceName.Cifs,
-              state: ServiceStatus.Stopped,
-              enable: false,
-            } as Service],
-          },
-          {
-            selector: selectPreferences,
-            value: {},
-          },
-        ],
-      }),
     ],
   });
 
@@ -197,20 +204,57 @@ describe('SmbListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should disable toggle when share is on an exported pool', async () => {
-    const exportedShares = [{
-      ...shares[0],
-      path: '/mnt/exported/data',
-    }] as SmbShare[];
+  describe('with exported pool shares', () => {
+    const createExportedComponent = createComponentFactory({
+      component: SmbListComponent,
+      imports: commonImports,
+      declarations: commonDeclarations,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.smb.query', [{
+            ...shares[0],
+            path: '/mnt/exported/data',
+          }] as SmbShare[]),
+          mockCall('sharing.smb.delete'),
+          mockCall('sharing.smb.update'),
+          mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+      ],
+    });
 
-    const mockApiService = spectator.inject(MockApiService);
-    mockApiService.mockCall('sharing.smb.query', exportedShares);
+    it('should disable toggle when share is on an exported pool', async () => {
+      spectator = createExportedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+      expect(await toggle.isDisabled()).toBe(true);
+    });
 
-    table = await loader.getHarness(IxTableHarness);
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
-    expect(await toggle.isDisabled()).toBe(true);
+    it('should disable Edit Share ACL for exported pool shares', async () => {
+      spectator = createExportedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+
+      const items = await menu.getItems({ text: /Edit Share ACL/ });
+      expect(items).toHaveLength(1);
+      expect(await items[0].isDisabled()).toBe(true);
+    });
+
+    it('should disable Edit Filesystem ACL for exported pool shares', async () => {
+      spectator = createExportedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+
+      const items = await menu.getItems({ text: /Edit Filesystem ACL/ });
+      expect(items).toHaveLength(1);
+      expect(await items[0].isDisabled()).toBe(true);
+    });
   });
 });

@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 
 export function isShareOnExportedPool(path: string, activePoolPaths: string[]): boolean {
   if (!path.startsWith('/mnt/')) return false;
@@ -13,4 +14,11 @@ export function getUnavailableReason(row: { locked: boolean; path: string }, act
   if (row.locked) return T('Dataset is locked');
   if (isShareOnExportedPool(row.path, activePoolPaths)) return T('Share is on an exported pool');
   return '';
+}
+
+export function getFilesystemAclUnavailableReason(row: {
+  locked: boolean; path: string;
+}, activePoolPaths: string[]): string {
+  if (isRootShare(row.path)) return T('This action is not available for root shares');
+  return getUnavailableReason(row, activePoolPaths);
 }
