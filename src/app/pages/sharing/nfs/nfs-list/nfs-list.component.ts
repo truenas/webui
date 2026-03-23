@@ -196,9 +196,14 @@ export class NfsListComponent implements OnInit {
 
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((pools) => {
-      this.activePoolPaths.set(pools.map((pool) => pool.path));
-      this.refresh();
+    ).subscribe({
+      next: (pools) => {
+        this.activePoolPaths.set(pools.map((pool) => pool.path));
+        this.refresh();
+      },
+      error: () => {
+        this.refresh();
+      },
     });
   }
 

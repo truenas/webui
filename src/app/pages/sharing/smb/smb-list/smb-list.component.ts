@@ -235,9 +235,14 @@ export class SmbListComponent implements OnInit {
 
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((pools) => {
-      this.activePoolPaths.set(pools.map((pool) => pool.path));
-      this.dataProvider.load();
+    ).subscribe({
+      next: (pools) => {
+        this.activePoolPaths.set(pools.map((pool) => pool.path));
+        this.dataProvider.load();
+      },
+      error: () => {
+        this.dataProvider.load();
+      },
     });
   }
 
