@@ -1,13 +1,14 @@
 <div class="actions">
   @if (visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {
-      <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
+      @let isSingleActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+      <div [matTooltip]="isSingleActionDisabled ? getDisabledTooltip(action) : (action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '')">
         <button
           *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
           mat-icon-button
           [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
           [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
-          [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+          [disabled]="isSingleActionDisabled"
           (click)="$event.stopPropagation(); action.onClick(row())"
         >
           <tn-icon [name]="action.iconName"></tn-icon>
