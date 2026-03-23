@@ -99,6 +99,7 @@ export class NfsListComponent implements OnInit {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
+  /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
   columns = createTable<NfsShare>([
     textColumn({

@@ -39,10 +39,6 @@ describe('isShareOnExportedPool', () => {
     expect(isShareOnExportedPool(undefined, ['/mnt/pool'])).toBe(false);
   });
 
-  it('should handle null entries in active pool paths', () => {
-    expect(isShareOnExportedPool('/mnt/pool/data', [null, '/mnt/pool'])).toBe(false);
-  });
-
   it('should check against multiple active pools', () => {
     const activePools = ['/mnt/pool1', '/mnt/pool2'];
     expect(isShareOnExportedPool('/mnt/pool1/data', activePools)).toBe(false);

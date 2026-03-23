@@ -116,6 +116,7 @@ export class SmbListComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmbShare>;
 
   smbShares: SmbShare[] = [];
+  /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
   columns = createTable<SmbShare>([
     textColumn({

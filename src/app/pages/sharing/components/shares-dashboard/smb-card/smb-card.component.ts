@@ -101,6 +101,7 @@ export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   dataProvider: AsyncDataProvider<SmbShare>;
+  /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
   columns = createTable<SmbShare>([

@@ -8,7 +8,7 @@ export function isShareOnExportedPool(path: string | null | undefined, activePoo
   if (!path?.startsWith('/mnt/')) {
     return false;
   }
-  return !activePoolPaths.some((poolPath) => poolPath && (path === poolPath || path.startsWith(poolPath + '/')));
+  return !activePoolPaths.some((poolPath) => path === poolPath || path.startsWith(poolPath + '/'));
 }
 
 export function isShareUnavailable(
