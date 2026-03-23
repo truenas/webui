@@ -13,6 +13,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -55,7 +56,7 @@ describe('InitShutdownListComponent', () => {
         mockCall('initshutdownscript.delete'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of([])),
+        open: jest.fn(() => SlideInResult.success([])),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

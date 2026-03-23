@@ -226,7 +226,7 @@ export class WebShareCardComponent implements OnInit {
   }
 
   protected doEdit(row: WebShareTableRow): void {
-    const slideInRef$ = this.slideIn.open(WebShareSharesFormComponent, {
+    this.slideIn.open(WebShareSharesFormComponent, {
       data: {
         id: row.id,
         isNew: false,
@@ -234,13 +234,7 @@ export class WebShareCardComponent implements OnInit {
         path: row.path,
         isHomeBase: row.isHomeBase,
       },
-    });
-
-    slideInRef$
-      .pipe(filter((result) => !!result?.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.refreshConfig$.next();
-      });
+    }).onSuccess(() => this.refreshConfig$.next(), this.destroyRef);
   }
 
   protected doDelete(row: WebShareTableRow): void {

@@ -7,6 +7,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvidiaDriversCardComponent,
 } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.component';
@@ -36,7 +37,7 @@ describe('NvidiaDriversCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });

@@ -14,6 +14,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerRegistriesListComponent } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.component';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
@@ -53,7 +54,7 @@ describe('DockerRegistriesListComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [

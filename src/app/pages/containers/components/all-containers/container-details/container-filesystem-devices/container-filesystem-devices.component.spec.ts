@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -60,9 +60,7 @@ describe('ContainerFilesystemDevicesComponent', () => {
         loadDevices: jest.fn(),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
-          response: true,
-        })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });

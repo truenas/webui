@@ -4,7 +4,6 @@ import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -64,16 +63,12 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
         isNew: true,
         parentOrZvolId: this.parent(),
       },
-    }).pipe(
-      filter((response) => Boolean(response.response)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((response) => {
-      const zvol = response.response;
+    }).onSuccess((zvol) => {
       const node = this.explorer.lastSelectedNode();
       if (node) {
         this.explorer.refreshNode(node);
       }
       this.ngControl.control.setValue(`/dev/zvol/${zvol.id}`);
-    });
+    }, this.destroyRef);
   }
 }

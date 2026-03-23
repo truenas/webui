@@ -142,16 +142,10 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(NtpServersFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadItems());
+    this.slideIn.open(NtpServersFormComponent).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 
   doEdit(server: NtpServer): void {
-    this.slideIn.open(NtpServersFormComponent, { data: server }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadItems());
+    this.slideIn.open(NtpServersFormComponent, { data: server }).onSuccess(() => this.loadItems(), this.destroyRef);
   }
 }

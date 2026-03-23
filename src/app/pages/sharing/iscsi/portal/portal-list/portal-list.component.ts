@@ -112,10 +112,8 @@ export class PortalListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(PortalFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
+            this.slideIn.open(PortalFormComponent, { data: row })
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -167,10 +165,8 @@ export class PortalListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(PortalFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+    this.slideIn.open(PortalFormComponent)
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

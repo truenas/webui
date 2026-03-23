@@ -612,7 +612,7 @@ export class DeviceFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.handleFormError(error);

@@ -11,6 +11,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
@@ -42,7 +43,7 @@ describe('KerberosRealmsListComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(LoaderService, {
         withLoader: jest.fn(() => (source$: unknown) => source$),

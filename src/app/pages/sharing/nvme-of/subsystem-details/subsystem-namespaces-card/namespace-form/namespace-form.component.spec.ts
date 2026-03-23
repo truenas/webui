@@ -77,7 +77,6 @@ describe('NamespaceFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: newNamespaceData,
-        error: null,
       });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -110,7 +109,6 @@ describe('NamespaceFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: updatedNamespaceData,
-        error: null,
       });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

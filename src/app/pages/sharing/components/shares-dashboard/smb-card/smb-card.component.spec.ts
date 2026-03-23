@@ -24,6 +24,7 @@ import {
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -119,6 +120,39 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(SlideInRef, slideInRef),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
+      provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
+        selectors: [
+          {
+            selector: selectServices,
+            value: [{
+              id: 4,
+              service: ServiceName.Cifs,
+              state: ServiceStatus.Stopped,
+              enable: false,
+            } as Service],
+          },
+        ],
+      }),
     ],
   });
 

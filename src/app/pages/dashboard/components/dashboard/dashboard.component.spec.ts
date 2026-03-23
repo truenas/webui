@@ -17,7 +17,7 @@ import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicat
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
@@ -66,7 +66,7 @@ describe('DashboardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ error: false, response: groupA })),
+        open: jest.fn(() => SlideInResult.success(groupA)),
       }),
       mockProvider(SnackbarService),
       provideMockStore(),
@@ -137,7 +137,7 @@ describe('DashboardComponent', () => {
       const updatedGroup = { ...groupA, layout: WidgetGroupLayout.Halves };
 
       jest.spyOn(spectator.inject(SlideIn), 'open')
-        .mockReturnValue(of({ response: updatedGroup } as SlideInResponse));
+        .mockReturnValue(SlideInResult.success(updatedGroup));
 
       const editIcon = await loader.getHarness(TnIconHarness.with({ name: 'pencil' }));
       await editIcon.click();

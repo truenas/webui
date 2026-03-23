@@ -33,6 +33,7 @@ import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tru
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { FocusService } from 'app/services/focus.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -74,6 +75,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private sessionTimeoutService = inject(SessionTimeoutService);
   private router = inject(Router);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private focusService = inject(FocusService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
@@ -229,19 +231,40 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sidenavService.closeSecondaryMenu();
   }
 
+  onAlertPanelKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+
+    const container = this.alertPanel.nativeElement as HTMLElement;
+    const focusable = this.focusService.getFocusableElements(container);
+    if (!focusable.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
-    this.topbar?.focusAlertIndicator();
   }
 
   private setupAlertPanelFocus(): void {
     this.isAlertPanelOpen$.pipe(
       startWith(false),
       pairwise(),
-      filter(([prev, curr]) => !prev && curr),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      setTimeout(() => this.alertPanel.nativeElement.focus());
+    ).subscribe(([prev, curr]) => {
+      if (!prev && curr) {
+        setTimeout(() => this.alertPanel.nativeElement.focus());
+      } else if (prev && !curr) {
+        this.topbar?.focusAlertIndicator();
+      }
     });
   }
 }

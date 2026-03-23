@@ -14,6 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KerberosKeytabsFormComponent,
@@ -33,7 +34,7 @@ describe('KerberosKeytabsListComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi([
         mockCall('kerberos.keytab.query', [
@@ -120,7 +121,7 @@ describe('KerberosKeytabsListComponent - LDAP mode', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi([
         mockCall('kerberos.keytab.query', []),

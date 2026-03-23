@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
+  Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -126,13 +126,11 @@ export class SyslogCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(SyslogFormComponent, { data: this.syslogConfig })),
-      filter((response) => !!response.response),
+      // Using .success$ instead of .onSuccess() because we need it inside a switchMap chain.
+      switchMap(() => this.slideIn.open(SyslogFormComponent, { data: this.syslogConfig }).success$),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.reloadConfig$.next();
-      },
+    ).subscribe(() => {
+      this.reloadConfig$.next();
     });
   }
 }

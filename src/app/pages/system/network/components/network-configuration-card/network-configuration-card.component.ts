@@ -8,7 +8,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
-import { combineLatest, filter } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
@@ -152,10 +152,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   onSettingsClicked(): void {
-    this.slideIn.open(NetworkConfigurationComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadNetworkConfigAndSummary());
+    this.slideIn.open(NetworkConfigurationComponent, { wide: true })
+      .onSuccess(() => this.loadNetworkConfigAndSummary(), this.destroyRef);
   }
 
   private loadNetworkConfigAndSummary(): void {

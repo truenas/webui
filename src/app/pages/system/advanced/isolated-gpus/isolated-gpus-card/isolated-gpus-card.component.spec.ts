@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Device } from 'app/interfaces/device.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   IsolatedGpusCardComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
@@ -32,7 +33,7 @@ describe('IsolatedGpusCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });

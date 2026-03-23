@@ -241,23 +241,13 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   protected onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getCloudSyncTasks();
-      },
-    });
+    this.slideIn.open(CloudSyncWizardComponent, { wide: true })
+      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
   }
 
   protected onEdit(row?: CloudSyncTaskUi): void {
-    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getCloudSyncTasks();
-    });
+    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row })
+      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
   }
 
   protected runNow(row: CloudSyncTaskUi): void {

@@ -208,16 +208,13 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   protected addReplicationTask(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getReplicationTasks());
+    this.slideIn.open(ReplicationWizardComponent, { wide: true })
+      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
   }
 
   private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.getReplicationTasks());
+      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
   }
 
   protected runNow(row: ReplicationTask): void {

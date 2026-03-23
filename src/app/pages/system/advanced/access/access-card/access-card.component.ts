@@ -143,8 +143,7 @@ export class AccessCardComponent implements OnInit {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AccessFormComponent)),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(AccessFormComponent).success$),
       tap(() => {
         this.updateSessions();
       }),

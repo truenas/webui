@@ -156,8 +156,7 @@ export class TunableCardComponent implements OnInit {
 
   private openForm(row?: Tunable): void {
     from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideIn.open(TunableFormComponent, { data: row })),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(TunableFormComponent, { data: row }).success$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadItems();

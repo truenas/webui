@@ -19,6 +19,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -69,7 +70,7 @@ describe('WebShareListComponent', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -258,7 +259,7 @@ describe('WebShareListComponent', () => {
   });
 
   it('should reload data after successful form submission', () => {
-    jest.spyOn(slideIn, 'open').mockReturnValue(of({ response: true, error: null }));
+    jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
     jest.spyOn(spectator.component.dataProvider, 'load');
 
     spectator.component.doAdd();
@@ -334,7 +335,7 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -419,7 +420,7 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         mockCall('user.query', []),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

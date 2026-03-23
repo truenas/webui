@@ -17,6 +17,7 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { ReplaceDiskDialog } from 'app/pages/storage/modules/vdevs/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
@@ -50,7 +51,7 @@ describe('DiskInfoCardComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },

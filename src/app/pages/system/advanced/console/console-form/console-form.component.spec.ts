@@ -6,7 +6,6 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -17,6 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
@@ -40,7 +40,7 @@ describe('ConsoleFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),

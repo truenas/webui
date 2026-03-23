@@ -705,22 +705,15 @@ export class SystemSecurityFormComponent implements OnInit {
     const config = this.twoFactorConfig();
     if (config) {
       const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
-      const slideinRef$ = this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config });
+      this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config })
+        .onClose(() => this.setupStigRequirements(), this.destroyRef);
       this.delayHighlightElement(elementName);
-
-      // re-trigger STIG requirement computation after the slidein closes
-      slideinRef$.subscribe((_) => {
-        this.setupStigRequirements();
-      });
     }
   }
 
   private openUserEditForm(user: User): void {
-    const slideinRef$ = this.slideIn.open(UserFormComponent, { data: user });
+    this.slideIn.open(UserFormComponent, { data: user })
+      .onClose(() => this.setupStigRequirements(), this.destroyRef);
     this.delayHighlightElement('disablePasswordCheckbox');
-
-    slideinRef$.subscribe((_) => {
-      this.setupStigRequirements();
-    });
   }
 }

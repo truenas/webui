@@ -31,7 +31,7 @@ export class SmbUsersWarningComponent implements OnInit {
   }
 
   protected closeForm(routerLink: string[]): void {
-    this.slideInRef.close({ response: false });
+    this.slideInRef.close({ response: undefined });
     this.router.navigate(routerLink);
   }
 

@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
@@ -111,31 +110,20 @@ export class DashboardComponent implements OnInit {
   protected onAddGroup(): void {
     this.slideIn
       .open(WidgetGroupFormComponent, { wide: true })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((response) => {
-        const newGroup = response.response;
-        if (!newGroup) {
-          return;
-        }
-
+      .onSuccess((newGroup) => {
         this.renderedGroups.update((groups) => [...groups, newGroup]);
-      });
+      }, this.destroyRef);
   }
 
   protected onEditGroup(i: number): void {
     const editedGroup = this.renderedGroups()[i];
     this.slideIn
       .open(WidgetGroupFormComponent, { wide: true, data: editedGroup })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((response: SlideInResponse<WidgetGroup>) => {
-        if (!response.response) {
-          return;
-        }
-
+      .onSuccess((updatedGroup) => {
         this.renderedGroups.update((groups) => {
-          return groups.map((group, index) => (index === i ? response.response : group));
+          return groups.map((group, index) => (index === i ? updatedGroup : group));
         });
-      });
+      }, this.destroyRef);
   }
 
   protected onMoveGroup(index: number, direction: 1 | -1): void {

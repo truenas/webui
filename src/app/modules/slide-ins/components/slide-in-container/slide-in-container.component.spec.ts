@@ -408,7 +408,7 @@ describe('SlideInContainerComponent', () => {
       document.dispatchEvent(escapeEvent);
       tick();
 
-      expect(mockSlideInRef.close).toHaveBeenCalledWith({ response: false, error: undefined });
+      expect(mockSlideInRef.close).toHaveBeenCalledWith({ response: undefined });
     }));
 
     it('should not close slide-in when other keys are pressed', fakeAsync(() => {

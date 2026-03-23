@@ -144,10 +144,8 @@ export class NfsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
-            this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
+            this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } })
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -210,14 +208,8 @@ export class NfsListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(NfsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.refresh();
-      },
-    });
+    this.slideIn.open(NfsFormComponent)
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

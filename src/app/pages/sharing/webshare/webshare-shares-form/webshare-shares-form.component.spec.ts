@@ -146,7 +146,6 @@ describe('WebShareSharesFormComponent', () => {
 
       expect(slideInRef.close).toHaveBeenCalledWith({
         response: true,
-        error: null,
       });
     });
 
@@ -373,7 +372,7 @@ describe('WebShareSharesFormComponent', () => {
         message: 'Could not retrieve existing WebShare configurations. Please check your connection and try again.',
         stackTrace: 'Failed to load shares',
       });
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: false, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
     });
 
     it('should prevent submission when form is invalid', () => {

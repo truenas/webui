@@ -123,21 +123,12 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(StaticRouteFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getStaticRoutes();
-    });
+    this.slideIn.open(StaticRouteFormComponent).onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doEdit(route: StaticRoute): void {
-    this.slideIn.open(StaticRouteFormComponent, { data: route }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getStaticRoutes();
-    });
+    this.slideIn.open(StaticRouteFormComponent, { data: route })
+      .onSuccess(() => this.getStaticRoutes(), this.destroyRef);
   }
 
   doDelete(route: StaticRoute): void {

@@ -83,7 +83,7 @@ export class ReplicationFormComponent implements OnInit {
   private replicationService = inject(ReplicationService);
   private keychainCredentials = inject(KeychainCredentialService);
   private authService = inject(AuthService);
-  slideInRef = inject<SlideInRef<ReplicationTask | undefined, ReplicationTask | false>>(SlideInRef);
+  slideInRef = inject<SlideInRef<ReplicationTask | undefined, ReplicationTask>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly generalSection = viewChild.required(GeneralSectionComponent);

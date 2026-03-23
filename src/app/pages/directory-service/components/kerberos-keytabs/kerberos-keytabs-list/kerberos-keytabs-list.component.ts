@@ -93,10 +93,8 @@ export class KerberosKeytabsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(KerberosKeytabsFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosKeytabs());
+            this.slideIn.open(KerberosKeytabsFormComponent, { data: row })
+              .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
           },
         },
         {
@@ -168,10 +166,8 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosKeytabsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getKerberosKeytabs());
+    this.slideIn.open(KerberosKeytabsFormComponent)
+      .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {
