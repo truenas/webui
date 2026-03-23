@@ -181,7 +181,7 @@ describe('SnapshotTaskCardComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {
