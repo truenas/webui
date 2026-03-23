@@ -87,7 +87,7 @@ export class NfsCardComponent implements OnInit {
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
-  private activePoolPaths = signal<string[]>([]);
+  private activePoolPaths = signal<string[] | null>(null);
   protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
@@ -133,6 +133,8 @@ export class NfsCardComponent implements OnInit {
     const nfsShares$ = this.api.call('sharing.nfs.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.setDefaultSort();
+
+    this.dataProvider.load();
 
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),

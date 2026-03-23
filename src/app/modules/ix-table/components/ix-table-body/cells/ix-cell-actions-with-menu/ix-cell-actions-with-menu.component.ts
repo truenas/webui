@@ -42,8 +42,12 @@ export class IxCellActionsWithMenuComponent<T> extends ColumnComponent<T> {
   readonly visibleActions = signal<IconActionConfig<T>[]>([]);
 
   getDisabledTooltip(action: IconActionConfig<T>): string {
-    if (!action.disabledTooltip) return '';
-    if (typeof action.disabledTooltip === 'function') return action.disabledTooltip(this.row());
+    if (!action.disabledTooltip) {
+      return '';
+    }
+    if (typeof action.disabledTooltip === 'function') {
+      return action.disabledTooltip(this.row());
+    }
     return action.disabledTooltip;
   }
 

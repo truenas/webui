@@ -166,4 +166,33 @@ describe('NfsListComponent', () => {
       expect(await toggle.isDisabled()).toBe(true);
     });
   });
+
+  describe('with locked shares', () => {
+    const createLockedComponent = createComponentFactory({
+      component: NfsListComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.nfs.query', [{
+            ...shares[0],
+            locked: true,
+            path: '/mnt/pool/data',
+          }] as NfsShare[]),
+          mockCall('sharing.nfs.delete'),
+          mockCall('sharing.nfs.update'),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+      ],
+    });
+
+    it('should disable toggle when share is locked', async () => {
+      spectator = createLockedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+
+      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
+      expect(await toggle.isDisabled()).toBe(true);
+    });
+  });
 });

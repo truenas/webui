@@ -88,9 +88,6 @@ describe('NfsCardComponent', () => {
     mockProvider(DialogService, {
       confirm: jest.fn(() => of(true)),
     }),
-    mockProvider(SlideIn, {
-      open: jest.fn(() => of()),
-    }),
     mockProvider(SlideInRef, slideInRef),
     mockProvider(MatDialog, {
       open: jest.fn(() => ({
@@ -203,11 +200,51 @@ describe('NfsCardComponent', () => {
           mockCall('sharing.nfs.update'),
           mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
+        mockProvider(SlideIn, {
+          open: jest.fn(() => SlideInResult.empty()),
+        }),
       ],
     });
 
     it('should disable toggle when share is on an exported pool', async () => {
       spectator = createExportedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+
+      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+      expect(await toggle.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('with locked shares', () => {
+    const createLockedComponent = createComponentFactory({
+      component: NfsCardComponent,
+      imports: [IxTablePagerShowMoreComponent],
+      declarations: [
+        MockComponents(
+          ServiceStateButtonComponent,
+          ServiceExtraActionsComponent,
+        ),
+      ],
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.nfs.query', [{
+            ...nfsShares[0],
+            locked: true,
+          }] as NfsShare[]),
+          mockCall('sharing.nfs.delete'),
+          mockCall('sharing.nfs.update'),
+          mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
+        ]),
+        mockProvider(SlideIn, {
+          open: jest.fn(() => SlideInResult.empty()),
+        }),
+      ],
+    });
+
+    it('should disable toggle when share is locked', async () => {
+      spectator = createLockedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
 

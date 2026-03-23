@@ -99,7 +99,7 @@ export class NfsListComponent implements OnInit {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
-  private activePoolPaths = signal<string[]>([]);
+  private activePoolPaths = signal<string[] | null>(null);
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -192,6 +192,8 @@ export class NfsListComponent implements OnInit {
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
+
+    this.refresh();
 
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),

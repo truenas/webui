@@ -101,7 +101,7 @@ export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   dataProvider: AsyncDataProvider<SmbShare>;
-  private activePoolPaths = signal<string[]>([]);
+  private activePoolPaths = signal<string[] | null>(null);
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -169,6 +169,8 @@ export class SmbCardComponent implements OnInit {
     const smbShares$ = this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
+
+    this.dataProvider.load();
 
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),

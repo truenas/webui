@@ -116,7 +116,7 @@ export class SmbListComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmbShare>;
 
   smbShares: SmbShare[] = [];
-  private activePoolPaths = signal<string[]>([]);
+  private activePoolPaths = signal<string[] | null>(null);
   columns = createTable<SmbShare>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -231,6 +231,8 @@ export class SmbListComponent implements OnInit {
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
+
+    this.dataProvider.load();
 
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),

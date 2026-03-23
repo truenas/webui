@@ -257,4 +257,59 @@ describe('SmbListComponent', () => {
       expect(await items[0].isDisabled()).toBe(true);
     });
   });
+
+  describe('with locked shares', () => {
+    const createLockedComponent = createComponentFactory({
+      component: SmbListComponent,
+      imports: commonImports,
+      declarations: commonDeclarations,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.smb.query', [{
+            ...shares[0],
+            locked: true,
+            path: '/mnt/pool/data',
+          }] as SmbShare[]),
+          mockCall('sharing.smb.delete'),
+          mockCall('sharing.smb.update'),
+          mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+      ],
+    });
+
+    it('should disable toggle when share is locked', async () => {
+      spectator = createLockedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+
+      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+      expect(await toggle.isDisabled()).toBe(true);
+    });
+
+    it('should disable Edit Share ACL for locked shares', async () => {
+      spectator = createLockedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+
+      const items = await menu.getItems({ text: /Edit Share ACL/ });
+      expect(items).toHaveLength(1);
+      expect(await items[0].isDisabled()).toBe(true);
+    });
+
+    it('should disable Edit Filesystem ACL for locked shares', async () => {
+      spectator = createLockedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+
+      const items = await menu.getItems({ text: /Edit Filesystem ACL/ });
+      expect(items).toHaveLength(1);
+      expect(await items[0].isDisabled()).toBe(true);
+    });
+  });
 });

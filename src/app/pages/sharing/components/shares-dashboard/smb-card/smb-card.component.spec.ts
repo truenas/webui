@@ -87,9 +87,6 @@ describe('SmbCardComponent', () => {
     mockProvider(DialogService, {
       confirm: jest.fn(() => of(true)),
     }),
-    mockProvider(SlideIn, {
-      open: jest.fn(() => of()),
-    }),
     mockProvider(SlideInRef, slideInRef),
     mockProvider(MatDialog, {
       open: jest.fn(() => ({
@@ -261,6 +258,64 @@ describe('SmbCardComponent', () => {
     });
 
     it('should disable Edit Filesystem ACL for exported pool shares', async () => {
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+
+      const items = await menu.getItems({ text: /Edit Filesystem ACL/ });
+      expect(items).toHaveLength(1);
+      expect(await items[0].isDisabled()).toBe(true);
+    });
+  });
+
+  describe('with locked shares', () => {
+    const createLockedComponent = createComponentFactory({
+      component: SmbCardComponent,
+      imports: [IxTablePagerShowMoreComponent],
+      declarations: [
+        MockComponents(
+          ServiceStateButtonComponent,
+          ServiceExtraActionsComponent,
+        ),
+      ],
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.smb.query', [{
+            ...smbShares[0],
+            locked: true,
+          }] as SmbShare[]),
+          mockCall('sharing.smb.delete'),
+          mockCall('sharing.smb.update'),
+          mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
+        ]),
+        mockProvider(SlideIn, {
+          open: jest.fn(() => SlideInResult.empty()),
+        }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createLockedComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+    });
+
+    it('should disable toggle when share is locked', async () => {
+      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+      expect(await toggle.isDisabled()).toBe(true);
+    });
+
+    it('should disable Edit Share ACL for locked shares', async () => {
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+
+      const items = await menu.getItems({ text: /Edit Share ACL/ });
+      expect(items).toHaveLength(1);
+      expect(await items[0].isDisabled()).toBe(true);
+    });
+
+    it('should disable Edit Filesystem ACL for locked shares', async () => {
       const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
       await menu.open();
 

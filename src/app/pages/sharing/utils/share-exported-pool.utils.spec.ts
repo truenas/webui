@@ -6,6 +6,10 @@ import {
 } from 'app/pages/sharing/utils/share-exported-pool.utils';
 
 describe('isShareOnExportedPool', () => {
+  it('should return false when activePoolPaths is null (not yet loaded)', () => {
+    expect(isShareOnExportedPool('/mnt/exported/data', null)).toBe(false);
+  });
+
   it('should return false for paths not under /mnt/', () => {
     expect(isShareOnExportedPool('/etc/config', ['/mnt/pool'])).toBe(false);
   });
@@ -59,6 +63,14 @@ describe('isShareUnavailable', () => {
   it('should return false when share is available', () => {
     expect(isShareUnavailable({ locked: false, path: '/mnt/pool/data' }, ['/mnt/pool'])).toBe(false);
   });
+
+  it('should return false when activePoolPaths is null (not yet loaded)', () => {
+    expect(isShareUnavailable({ locked: false, path: '/mnt/exported/data' }, null)).toBe(false);
+  });
+
+  it('should return true when share is locked even if activePoolPaths is null', () => {
+    expect(isShareUnavailable({ locked: true, path: '/mnt/pool/data' }, null)).toBe(true);
+  });
 });
 
 describe('getUnavailableReason', () => {
@@ -73,6 +85,10 @@ describe('getUnavailableReason', () => {
 
   it('should return empty string for available shares', () => {
     expect(getUnavailableReason({ locked: false, path: '/mnt/pool/data' }, ['/mnt/pool'])).toBe('');
+  });
+
+  it('should return empty string when activePoolPaths is null', () => {
+    expect(getUnavailableReason({ locked: false, path: '/mnt/exported/data' }, null)).toBe('');
   });
 });
 
