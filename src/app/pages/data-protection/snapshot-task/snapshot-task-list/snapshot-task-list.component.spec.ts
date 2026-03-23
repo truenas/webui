@@ -194,7 +194,7 @@ describe('SnapshotTaskListComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
   });
 
   it('reloads the data provider when an event is received from pool.snapshottask.query', () => {

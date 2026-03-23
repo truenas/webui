@@ -275,7 +275,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   private deleteTask(taskId: number, fixateRemovalDate: boolean): Observable<boolean> {
-    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]).pipe(
+    return this.api.call('pool.snapshottask.delete', [taskId, { fixate_removal_date: fixateRemovalDate }]).pipe(
       this.loader.withLoader(),
     );
   }
