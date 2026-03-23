@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -97,7 +99,7 @@ export class NfsListComponent implements OnInit {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
-  private activePoolPaths: string[] = [];
+  private activePoolPaths = signal<string[]>([]);
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -130,8 +132,8 @@ export class NfsListComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
-      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths),
-      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Expose Snapshots'),
@@ -194,7 +196,7 @@ export class NfsListComponent implements OnInit {
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {
-      this.activePoolPaths = pools.map((pool) => pool.path);
+      this.activePoolPaths.set(pools.map((pool) => pool.path));
       this.refresh();
     });
   }

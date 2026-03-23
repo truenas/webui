@@ -2,8 +2,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 
 export function isShareOnExportedPool(path: string, activePoolPaths: string[]): boolean {
-  if (!path.startsWith('/mnt/')) return false;
-  return !activePoolPaths.some((poolPath) => path === poolPath || path.startsWith(poolPath + '/'));
+  if (!path?.startsWith('/mnt/')) return false;
+  return !activePoolPaths.some((poolPath) => poolPath && (path === poolPath || path.startsWith(poolPath + '/')));
 }
 
 export function isShareUnavailable(row: { locked: boolean; path: string }, activePoolPaths: string[]): boolean {

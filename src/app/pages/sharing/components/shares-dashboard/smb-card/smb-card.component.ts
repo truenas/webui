@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -101,7 +101,7 @@ export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   dataProvider: AsyncDataProvider<SmbShare>;
-  private activePoolPaths: string[] = [];
+  private activePoolPaths = signal<string[]>([]);
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -121,8 +121,8 @@ export class SmbCardComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
-      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths),
-      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
@@ -139,16 +139,16 @@ export class SmbCardComponent implements OnInit {
         {
           iconName: tnIconMarker('share-variant', 'mdi'),
           tooltip: this.translate.instant('Edit Share ACL'),
-          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths)),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
           onClick: (row) => this.doShareAclEdit(row),
         },
         {
           iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths)),
+          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
           disabledTooltip: (row: SmbShare) => this.translate.instant(
-            getFilesystemAclUnavailableReason(row, this.activePoolPaths),
+            getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
           ),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
@@ -173,7 +173,7 @@ export class SmbCardComponent implements OnInit {
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {
-      this.activePoolPaths = pools.map((pool) => pool.path);
+      this.activePoolPaths.set(pools.map((pool) => pool.path));
       this.dataProvider.load();
     });
   }

@@ -2,7 +2,8 @@
   @if (visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {
       @let isSingleActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
-      <div [matTooltip]="isSingleActionDisabled ? getDisabledTooltip(action) : (action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '')">
+      @let singleActionTooltip = action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '';
+      <div [matTooltip]="isSingleActionDisabled ? getDisabledTooltip(action) : singleActionTooltip">
         <button
           *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
           mat-icon-button

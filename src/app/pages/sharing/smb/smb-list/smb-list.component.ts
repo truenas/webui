@@ -116,7 +116,7 @@ export class SmbListComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmbShare>;
 
   smbShares: SmbShare[] = [];
-  private activePoolPaths: string[] = [];
+  private activePoolPaths = signal<string[]>([]);
   columns = createTable<SmbShare>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -135,8 +135,8 @@ export class SmbListComponent implements OnInit {
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
       onRowToggle: (row) => this.onChangeEnabledState(row),
-      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths),
-      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
@@ -155,8 +155,8 @@ export class SmbListComponent implements OnInit {
         {
           iconName: tnIconMarker('share-variant', 'mdi'),
           tooltip: this.translate.instant('Edit Share ACL'),
-          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths)),
-          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
           onClick: (row) => {
             // A home share has a name (homes) set; row.name works for other shares
             const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
@@ -175,9 +175,9 @@ export class SmbListComponent implements OnInit {
         {
           iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths)),
+          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
           disabledTooltip: (row: SmbShare) => this.translate.instant(
-            getFilesystemAclUnavailableReason(row, this.activePoolPaths),
+            getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
           ),
           onClick: (row) => {
             this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
@@ -235,7 +235,7 @@ export class SmbListComponent implements OnInit {
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {
-      this.activePoolPaths = pools.map((pool) => pool.path);
+      this.activePoolPaths.set(pools.map((pool) => pool.path));
       this.dataProvider.load();
     });
   }

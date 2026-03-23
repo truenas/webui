@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -87,7 +87,7 @@ export class NfsCardComponent implements OnInit {
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
-  private activePoolPaths: string[] = [];
+  private activePoolPaths = signal<string[]>([]);
   protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
@@ -105,8 +105,8 @@ export class NfsCardComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
-      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths),
-      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
+      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     actionsWithMenuColumn({
       cssClass: 'tight-actions',
@@ -137,7 +137,7 @@ export class NfsCardComponent implements OnInit {
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {
-      this.activePoolPaths = pools.map((pool) => pool.path);
+      this.activePoolPaths.set(pools.map((pool) => pool.path));
       this.dataProvider.load();
     });
   }
