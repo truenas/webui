@@ -217,23 +217,11 @@ export class SmbCardComponent implements OnInit {
   }
 
   private doFilesystemAclEdit(row: SmbShare): void {
-    if (row.locked) {
-      this.showLockedPathDialog(row.path);
-    } else {
-      const returnUrl = this.router.url;
-      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-        queryParams: {
-          path: row.path,
-          returnUrl,
-        },
-      });
-    }
-  }
-
-  private showLockedPathDialog(path: string): void {
-    this.dialogService.error({
-      title: this.translate.instant('Error'),
-      message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+      queryParams: {
+        path: row.path,
+        returnUrl: this.router.url,
+      },
     });
   }
 

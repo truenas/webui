@@ -178,16 +178,12 @@ export class SmbListComponent implements OnInit {
           disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths)),
           disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths)),
           onClick: (row) => {
-            if (row.locked) {
-              this.lockedPathDialog(row.path);
-            } else {
-              this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-                queryParams: {
-                  path: row.path,
-                  returnUrl: this.router.url,
-                },
-              });
-            }
+            this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+              queryParams: {
+                path: row.path,
+                returnUrl: this.router.url,
+              },
+            });
           },
         },
         {
@@ -268,13 +264,6 @@ export class SmbListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
-  }
-
-  private lockedPathDialog(path: string): void {
-    this.dialog.error({
-      title: this.translate.instant('Error'),
-      message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
-    });
   }
 
   private onChangeEnabledState(row: SmbShare): void {

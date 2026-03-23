@@ -120,38 +120,8 @@ describe('NfsCardComponent', () => {
         mockCall('sharing.nfs.update'),
         mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
       ]),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of(true),
-        })),
-      }),
-      mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$: unknown) => source$),
-      }),
-      provideMockStore({
-        initialState: {
-          alerts: {
-            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
-          },
-        },
-        selectors: [
-          {
-            selector: selectServices,
-            value: [{
-              id: 4,
-              service: ServiceName.Nfs,
-              state: ServiceStatus.Stopped,
-              enable: false,
-            } as Service],
-          },
-        ],
       }),
     ],
   });

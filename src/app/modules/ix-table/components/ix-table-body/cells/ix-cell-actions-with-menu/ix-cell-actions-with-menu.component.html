@@ -28,12 +28,13 @@
     </button>
     <mat-menu #actionMenu="matMenu">
       @for (action of visibleActions(); track action) {
-        <div matTooltipPosition="left" [matTooltip]="(action.disabled ? (action.disabled(row()) | async) : false) ? getDisabledTooltip(action) : ''">
+        @let isActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+        <div matTooltipPosition="left" [matTooltip]="isActionDisabled ? getDisabledTooltip(action) : ''">
           <button
             *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
             mat-menu-item
             [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
-            [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+            [disabled]="isActionDisabled"
             (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
           >
             <tn-icon class="menu-icon" [name]="action.iconName"></tn-icon>
