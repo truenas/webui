@@ -193,8 +193,6 @@ export class NfsListComponent implements OnInit {
       this.onListFiltered(this.searchQuery());
     });
 
-    this.refresh();
-
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {

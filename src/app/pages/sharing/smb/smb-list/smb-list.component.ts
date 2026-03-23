@@ -232,8 +232,6 @@ export class SmbListComponent implements OnInit {
       this.onListFiltered(this.searchQuery());
     });
 
-    this.dataProvider.load();
-
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {

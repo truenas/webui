@@ -224,19 +224,18 @@ describe('SmbListComponent', () => {
       ],
     });
 
-    it('should disable toggle when share is on an exported pool', async () => {
+    beforeEach(async () => {
       spectator = createExportedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
+    });
 
+    it('should disable toggle when share is on an exported pool', async () => {
       const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
       expect(await toggle.isDisabled()).toBe(true);
     });
 
     it('should disable Edit Share ACL for exported pool shares', async () => {
-      spectator = createExportedComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
       const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
       await menu.open();
 
@@ -246,9 +245,6 @@ describe('SmbListComponent', () => {
     });
 
     it('should disable Edit Filesystem ACL for exported pool shares', async () => {
-      spectator = createExportedComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
       const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
       await menu.open();
 
@@ -279,19 +275,18 @@ describe('SmbListComponent', () => {
       ],
     });
 
-    it('should disable toggle when share is locked', async () => {
+    beforeEach(async () => {
       spectator = createLockedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
+    });
 
+    it('should disable toggle when share is locked', async () => {
       const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
       expect(await toggle.isDisabled()).toBe(true);
     });
 
     it('should disable Edit Share ACL for locked shares', async () => {
-      spectator = createLockedComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
       const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
       await menu.open();
 
@@ -301,9 +296,6 @@ describe('SmbListComponent', () => {
     });
 
     it('should disable Edit Filesystem ACL for locked shares', async () => {
-      spectator = createLockedComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
       const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
       await menu.open();
 

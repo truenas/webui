@@ -62,7 +62,32 @@ describe('NfsCardComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
-  const storeProviders = [
+  const commonImports = [IxTablePagerShowMoreComponent];
+
+  const commonDeclarations = [
+    MockComponents(
+      ServiceStateButtonComponent,
+      ServiceExtraActionsComponent,
+    ),
+  ];
+
+  const commonProviders = [
+    mockAuth(),
+    mockProvider(DialogService, {
+      confirm: jest.fn(() => of(true)),
+    }),
+    mockProvider(SlideInRef, slideInRef),
+    mockProvider(MatDialog, {
+      open: jest.fn(() => ({
+        afterClosed: () => of(true),
+      })),
+    }),
+    mockProvider(LoaderService, {
+      withLoader: jest.fn(() => (source$: unknown) => source$),
+    }),
+    mockProvider(SlideIn, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
     provideMockStore({
       initialState: {
         alerts: {
@@ -83,32 +108,10 @@ describe('NfsCardComponent', () => {
     }),
   ];
 
-  const commonProviders = [
-    mockAuth(),
-    mockProvider(DialogService, {
-      confirm: jest.fn(() => of(true)),
-    }),
-    mockProvider(SlideInRef, slideInRef),
-    mockProvider(MatDialog, {
-      open: jest.fn(() => ({
-        afterClosed: () => of(true),
-      })),
-    }),
-    mockProvider(LoaderService, {
-      withLoader: jest.fn(() => (source$: unknown) => source$),
-    }),
-    ...storeProviders,
-  ];
-
   const createComponent = createComponentFactory({
     component: NfsCardComponent,
-    imports: [IxTablePagerShowMoreComponent],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
+    imports: commonImports,
+    declarations: commonDeclarations,
     providers: [
       ...commonProviders,
       mockApi([
@@ -117,9 +120,6 @@ describe('NfsCardComponent', () => {
         mockCall('sharing.nfs.update'),
         mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
     ],
   });
 
@@ -182,13 +182,8 @@ describe('NfsCardComponent', () => {
   describe('with exported pool shares', () => {
     const createExportedComponent = createComponentFactory({
       component: NfsCardComponent,
-      imports: [IxTablePagerShowMoreComponent],
-      declarations: [
-        MockComponents(
-          ServiceStateButtonComponent,
-          ServiceExtraActionsComponent,
-        ),
-      ],
+      imports: commonImports,
+      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -200,17 +195,16 @@ describe('NfsCardComponent', () => {
           mockCall('sharing.nfs.update'),
           mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
-        mockProvider(SlideIn, {
-          open: jest.fn(() => SlideInResult.empty()),
-        }),
       ],
     });
 
-    it('should disable toggle when share is on an exported pool', async () => {
+    beforeEach(async () => {
       spectator = createExportedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
+    });
 
+    it('should disable toggle when share is on an exported pool', async () => {
       const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
       expect(await toggle.isDisabled()).toBe(true);
     });
@@ -219,13 +213,8 @@ describe('NfsCardComponent', () => {
   describe('with locked shares', () => {
     const createLockedComponent = createComponentFactory({
       component: NfsCardComponent,
-      imports: [IxTablePagerShowMoreComponent],
-      declarations: [
-        MockComponents(
-          ServiceStateButtonComponent,
-          ServiceExtraActionsComponent,
-        ),
-      ],
+      imports: commonImports,
+      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -237,17 +226,16 @@ describe('NfsCardComponent', () => {
           mockCall('sharing.nfs.update'),
           mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
         ]),
-        mockProvider(SlideIn, {
-          open: jest.fn(() => SlideInResult.empty()),
-        }),
       ],
     });
 
-    it('should disable toggle when share is locked', async () => {
+    beforeEach(async () => {
       spectator = createLockedComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
+    });
 
+    it('should disable toggle when share is locked', async () => {
       const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
       expect(await toggle.isDisabled()).toBe(true);
     });

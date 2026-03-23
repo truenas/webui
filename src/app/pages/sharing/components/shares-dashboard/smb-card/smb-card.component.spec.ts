@@ -61,7 +61,32 @@ describe('SmbCardComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
-  const storeProviders = [
+  const commonImports = [IxTablePagerShowMoreComponent];
+
+  const commonDeclarations = [
+    MockComponents(
+      ServiceStateButtonComponent,
+      ServiceExtraActionsComponent,
+    ),
+  ];
+
+  const commonProviders = [
+    mockAuth(),
+    mockProvider(DialogService, {
+      confirm: jest.fn(() => of(true)),
+    }),
+    mockProvider(SlideInRef, slideInRef),
+    mockProvider(MatDialog, {
+      open: jest.fn(() => ({
+        afterClosed: () => of(true),
+      })),
+    }),
+    mockProvider(LoaderService, {
+      withLoader: jest.fn(() => (source$: unknown) => source$),
+    }),
+    mockProvider(SlideIn, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
     provideMockStore({
       initialState: {
         alerts: {
@@ -82,32 +107,10 @@ describe('SmbCardComponent', () => {
     }),
   ];
 
-  const commonProviders = [
-    mockAuth(),
-    mockProvider(DialogService, {
-      confirm: jest.fn(() => of(true)),
-    }),
-    mockProvider(SlideInRef, slideInRef),
-    mockProvider(MatDialog, {
-      open: jest.fn(() => ({
-        afterClosed: () => of(true),
-      })),
-    }),
-    mockProvider(LoaderService, {
-      withLoader: jest.fn(() => (source$: unknown) => source$),
-    }),
-    ...storeProviders,
-  ];
-
   const createComponent = createComponentFactory({
     component: SmbCardComponent,
-    imports: [IxTablePagerShowMoreComponent],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
+    imports: commonImports,
+    declarations: commonDeclarations,
     providers: [
       ...commonProviders,
       mockApi([
@@ -117,9 +120,6 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
     ],
   });
 
@@ -215,13 +215,8 @@ describe('SmbCardComponent', () => {
   describe('with exported pool shares', () => {
     const createExportedComponent = createComponentFactory({
       component: SmbCardComponent,
-      imports: [IxTablePagerShowMoreComponent],
-      declarations: [
-        MockComponents(
-          ServiceStateButtonComponent,
-          ServiceExtraActionsComponent,
-        ),
-      ],
+      imports: commonImports,
+      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -270,13 +265,8 @@ describe('SmbCardComponent', () => {
   describe('with locked shares', () => {
     const createLockedComponent = createComponentFactory({
       component: SmbCardComponent,
-      imports: [IxTablePagerShowMoreComponent],
-      declarations: [
-        MockComponents(
-          ServiceStateButtonComponent,
-          ServiceExtraActionsComponent,
-        ),
-      ],
+      imports: commonImports,
+      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -289,9 +279,6 @@ describe('SmbCardComponent', () => {
           mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
           mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
         ]),
-        mockProvider(SlideIn, {
-          open: jest.fn(() => SlideInResult.empty()),
-        }),
       ],
     });
 

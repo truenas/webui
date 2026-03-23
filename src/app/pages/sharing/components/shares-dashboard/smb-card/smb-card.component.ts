@@ -170,8 +170,6 @@ export class SmbCardComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
 
-    this.dataProvider.load();
-
     this.poolStoreService.call.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((pools) => {
