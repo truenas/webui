@@ -147,11 +147,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   protected homeEditable = viewChild<EditableComponent>('homeEditable');
 
   private readonly homeNotMntRootValidator = (control: FormControl<string>): ValidationErrors | null => {
-    const value = control.value?.replace(/\/+$/, '');
+    const value = control.value?.trim().replace(/\/+$/, '');
     if (value === mntPath) {
       return {
         homeAtMntRoot: {
-          message: this.translate.instant('"Home Directory" cannot be at root of "{mntPath}"', { mntPath }),
+          message: this.translate.instant('Home directory cannot be set to {mntPath}', { mntPath }),
         },
       };
     }
@@ -186,15 +186,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       if (!homeControl.hasValidator(Validators.required)) {
         homeControl.addValidators(Validators.required);
       }
-      if (!homeControl.hasValidator(this.homeNotMntRootValidator)) {
-        homeControl.addValidators(this.homeNotMntRootValidator);
-      }
       if (homeControl.value === defaultHomePath) {
         homeControl.setValue('');
       }
     } else {
       homeControl.removeValidators(Validators.required);
-      homeControl.removeValidators(this.homeNotMntRootValidator);
       if (!homeControl.value) {
         homeControl.setValue(defaultHomePath);
       }
@@ -211,7 +207,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     group_create: [true],
     groups: [[] as number[]],
     email: [null as string, [emailValidator()]],
-    home: [defaultHomePath],
+    home: [defaultHomePath, [this.homeNotMntRootValidator]],
     home_mode: ['700'],
     home_create: [true],
     default_permissions: [true],
