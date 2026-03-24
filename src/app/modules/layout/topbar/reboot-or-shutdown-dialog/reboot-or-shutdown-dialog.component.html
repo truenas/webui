@@ -37,7 +37,7 @@
     type="button"
     color="primary"
     ixTest="submit"
-    [disabled]="isEnterprise() ? form.invalid : !form.controls.confirm.value"
+    [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
     (click)="onSubmit()"
   >
     {{ buttonText }}
