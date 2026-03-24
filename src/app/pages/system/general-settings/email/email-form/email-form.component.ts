@@ -8,7 +8,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { Role } from 'app/enums/role.enum';
@@ -34,7 +35,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
@@ -70,7 +70,6 @@ export class EmailFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private validatorService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
-  private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject(Store<AppState>);
   slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
@@ -153,6 +152,18 @@ export class EmailFormComponent implements OnInit {
       return of(this.form.dirty);
     });
     this.emailConfig = this.slideInRef.getData();
+
+    this.sendMethodControl.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.form.controls.port.updateValueAndValidity();
+    });
+
+    this.form.controls.smtp.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.form.controls.port.updateValueAndValidity();
+    });
   }
 
   get hasSmtpAuthentication(): boolean {
@@ -178,6 +189,8 @@ export class EmailFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.emailConfig) {
       this.initEmailForm(this.emailConfig);
+    } else {
+      this.loadEmailConfig();
     }
   }
 
@@ -222,6 +235,21 @@ export class EmailFormComponent implements OnInit {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
+  }
+
+  private loadEmailConfig(): void {
+    this.isLoading.set(true);
+    this.api.call('mail.config').pipe(
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        this.isLoading.set(false);
+        return EMPTY;
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.isLoading.set(false);
+      this.initEmailForm(config);
+    });
   }
 
   private initEmailForm(emailConfig: MailConfig): void {

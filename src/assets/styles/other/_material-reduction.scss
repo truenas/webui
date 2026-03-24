@@ -925,6 +925,12 @@ mat-tab-nav-panel {
   top: 48px !important;
 }
 
+// Overlay container for mat-menus inside the alert panel.
+// Must be above alert panel (z-index: 1001) so menus render on top.
+.alert-panel-overlay-container {
+  z-index: 1002;
+}
+
 // When debug panel is open, adjust the backdrop
 body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   .custom-slide-in-backdrop,

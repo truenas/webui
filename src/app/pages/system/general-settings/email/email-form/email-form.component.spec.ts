@@ -4,7 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { when } from 'jest-when';
+import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,7 +22,6 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailFormComponent } from './email-form.component';
 
@@ -84,7 +84,6 @@ describe('EmailFormComponent', () => {
         }),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SystemGeneralService),
       mockAuth(),
       mockWindow({
         open: jest.fn(),
@@ -161,6 +160,23 @@ describe('EmailFormComponent', () => {
 
       expect(spectator.inject<Window>(WINDOW).removeEventListener)
         .toHaveBeenCalledWith('message', expect.any(Function), false);
+    });
+
+    it('enables Save button after switching from SMTP to Gmail and completing OAuth', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'GMail OAuth',
+      });
+
+      // Before OAuth login, Save should be disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Log in to Gmail
+      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      await logInButton.click();
+
+      // After OAuth login, Save should be enabled
+      expect(await saveButton.isDisabled()).toBe(false);
     });
 
     it('saves Gmail Oauth config when user authorizes via Gmail and saves the form', async () => {
@@ -451,6 +467,127 @@ describe('EmailFormComponent', () => {
         'Send Mail Method': 'GMail OAuth',
       });
       expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
+    });
+
+    it('has Save button enabled when Gmail config is loaded', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('opened from alerts panel without data', () => {
+    describe('with Gmail config', () => {
+      const fakeGmailConfig = {
+        ...fakeEmailConfig,
+        oauth: {
+          client_id: 'client_id',
+          client_secret: 'secret',
+          refresh_token: 'token',
+          provider: 'gmail',
+        },
+      } as MailConfig;
+
+      beforeEach(async () => {
+        spectator = createComponent({
+          detectChanges: false,
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
+          ],
+        });
+        spectator.inject(MockApiService).mockCall('mail.config', fakeGmailConfig);
+        spectator.detectChanges();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+      });
+
+      it('fetches email config from API and shows Gmail config with Save enabled', async () => {
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.config');
+
+        const values = await form.getValues();
+        expect(values).toEqual({
+          'From Email': 'from@ixsystems.com',
+          'From Name': 'John Smith',
+          'Send Mail Method': 'GMail OAuth',
+        });
+        expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        expect(await saveButton.isDisabled()).toBe(false);
+      });
+    });
+
+    describe('with SMTP config', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          detectChanges: false,
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
+          ],
+        });
+        spectator.inject(MockApiService).mockCall('mail.config', fakeEmailConfig);
+        spectator.detectChanges();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        api = spectator.inject(ApiService);
+      });
+
+      it('fetches email config from API and shows SMTP config', async () => {
+        expect(api.call).toHaveBeenCalledWith('mail.config');
+
+        const values = await form.getValues();
+        expect(values).toEqual({
+          'Send Mail Method': 'SMTP',
+          'From Email': 'from@ixsystems.com',
+          'From Name': 'John Smith',
+          'Outgoing Mail Server': 'smtp.gmail.com',
+          'Mail Server Port': '587',
+          Security: 'TLS (STARTTLS)',
+          'SMTP Authentication': true,
+          Password: '12345678',
+          Username: 'authuser@ixsystems.com',
+        });
+      });
+
+      it('saves SMTP config when form is filled and Save is pressed', async () => {
+        await form.fillForm({
+          'From Email': 'newfrom@ixsystems.com',
+          'From Name': 'Jeremy',
+        });
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenCalledWith('mail.update', [{
+          fromemail: 'newfrom@ixsystems.com',
+          fromname: 'Jeremy',
+          oauth: null,
+          outgoingserver: 'smtp.gmail.com',
+          port: 587,
+          security: MailSecurity.Tls,
+          smtp: true,
+          user: 'authuser@ixsystems.com',
+          pass: '12345678',
+        }]);
+      });
+    });
+  });
+
+  describe('opened from alerts panel with API error', () => {
+    it('shows error modal and keeps form open when mail.config request fails', () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: (): undefined => undefined }),
+        ],
+      });
+
+      when(spectator.inject(MockApiService).call)
+        .calledWith('mail.config')
+        .mockReturnValue(throwError(() => new Error('Connection error')));
+
+      spectator.detectChanges();
+
+      expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
     });
   });
 
