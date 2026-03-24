@@ -271,6 +271,19 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(spectator.component.form.controls.home.value).toBe('/var/empty');
     });
 
+    it('shows validation error when /mnt is selected as home directory', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.home.hasError('homeAtMntRoot')).toBe(true);
+    });
+
     it('preserves API validation error when home editable auto-opens', async () => {
       const homeControl = spectator.component.form.controls.home;
       homeControl.setValue('/var/empty/2');
