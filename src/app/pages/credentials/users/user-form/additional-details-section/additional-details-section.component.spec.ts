@@ -281,7 +281,9 @@ describe('AdditionalDetailsSectionComponent', () => {
       await explorer.setValue('/mnt');
       spectator.detectChanges();
 
-      expect(spectator.component.form.controls.home.hasError('homeAtMntRoot')).toBe(true);
+      expect(spectator.component.form.controls.home.getError('homeAtMntRoot')).toEqual({
+        message: 'Home directory cannot be set to /mnt',
+      });
     });
 
     it('preserves API validation error when home editable auto-opens', async () => {
@@ -377,6 +379,21 @@ describe('AdditionalDetailsSectionComponent', () => {
       // For editing users, onHomeEditableOpened early-returns — home value should be unchanged
       expect(spectator.component.form.controls.home.value).toBe('/home/test');
       expect(spectator.component.form.controls.home.hasError('required')).toBe(false);
+    });
+
+    it('shows validation error when /mnt is set as home directory for an existing user', async () => {
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      await homeEditable.open();
+
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.home.getError('homeAtMntRoot')).toEqual({
+        message: 'Home directory cannot be set to /mnt',
+      });
     });
 
     it('does not modify home validators when home editable is closed for an existing user', async () => {
