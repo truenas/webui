@@ -149,7 +149,7 @@ describe('DialogService', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(ignoreTranslation('Deleted.'));
     });
 
-    it('does not use loader or error handler for job-based deletions', () => {
+    it('does not use loader for job-based deletions but still handles errors', () => {
       mockConfirm(true);
       jest.spyOn(spectator.service, 'jobDialog').mockReturnValue({
         afterClosed: () => of({ id: 1 } as Job),
@@ -164,7 +164,24 @@ describe('DialogService', () => {
       }).subscribe();
 
       expect(loader.withLoader).not.toHaveBeenCalled();
-      expect(errorHandler.withErrorHandler).not.toHaveBeenCalled();
+      expect(errorHandler.withErrorHandler).toHaveBeenCalled();
+    });
+
+    it('uses default jobProgressTitle when not provided', () => {
+      mockConfirm(true);
+      jest.spyOn(spectator.service, 'jobDialog').mockReturnValue({
+        afterClosed: () => of({ id: 1 } as Job),
+      } as ReturnType<DialogService['jobDialog']>);
+
+      spectator.service.confirmDelete({
+        message: ignoreTranslation('Delete?'),
+        job: () => of({ id: 1 } as Job),
+      }).subscribe();
+
+      expect(spectator.service.jobDialog).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ title: 'Deleting...' }),
+      );
     });
 
     it('emits void on successful deletion for subscriber to refresh', () => {

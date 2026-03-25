@@ -35,12 +35,11 @@ export class DialogService {
   private snackbar = inject(SnackbarService);
   private injector = inject(Injector);
 
-  // Lazy to break circular: DialogService → ErrorHandlerService → DialogService
+  // Lazy to break circular dependency: DialogService → ErrorHandlerService → DialogService.
+  // ErrorHandlerService uses the same pattern (see error-handler.service.ts:29-34).
   private _errorHandler: ErrorHandlerService | undefined;
   private get errorHandler(): ErrorHandlerService {
-    if (!this._errorHandler) {
-      this._errorHandler = this.injector.get(ErrorHandlerService);
-    }
+    this._errorHandler ??= this.injector.get(ErrorHandlerService);
     return this._errorHandler;
   }
 
@@ -86,7 +85,7 @@ export class DialogService {
           this.snackbar.success(options.successMessage);
         }
       }),
-      map((): void => {}),
+      map(() => undefined as void),
     );
   }
 
@@ -186,8 +185,10 @@ export class DialogService {
   private executeDelete(options: ConfirmDeleteOptions): Observable<unknown> {
     if ('job' in options) {
       return this.jobDialog(options.job(), {
-        title: options.jobProgressTitle,
-      }).afterClosed();
+        title: options.jobProgressTitle ?? this.translate.instant('Deleting...'),
+      }).afterClosed().pipe(
+        this.errorHandler.withErrorHandler(),
+      );
     }
     return options.call().pipe(
       this.loader.withLoader(),

@@ -25,21 +25,20 @@ export interface DialogWithSecondaryCheckboxResult {
   secondaryCheckbox: boolean;
 }
 
-export interface ConfirmDeleteCallOptions {
+interface ConfirmDeleteBaseOptions {
   title?: TranslatedString;
   message: TranslatedString;
   buttonText?: TranslatedString;
-  call: () => Observable<unknown>;
   successMessage?: TranslatedString;
 }
 
-export interface ConfirmDeleteJobOptions {
-  title?: TranslatedString;
-  message: TranslatedString;
-  buttonText?: TranslatedString;
+export interface ConfirmDeleteCallOptions extends ConfirmDeleteBaseOptions {
+  call: () => Observable<unknown>;
+}
+
+export interface ConfirmDeleteJobOptions extends ConfirmDeleteBaseOptions {
   job: () => Observable<Job>;
   jobProgressTitle?: TranslatedString;
-  successMessage?: TranslatedString;
 }
 
 export type ConfirmDeleteOptions = ConfirmDeleteCallOptions | ConfirmDeleteJobOptions;
