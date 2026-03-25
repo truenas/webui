@@ -20,13 +20,13 @@
 }
 
 <ix-form-actions mat-dialog-actions>
-  <mat-checkbox
+  <ix-checkbox
     class="confirm"
     color="primary"
     [formControl]="form.controls.confirm"
-  >
-    {{ 'Confirm' | translate }}
-  </mat-checkbox>
+    [label]="'Confirm' | translate"
+    [required]="true"
+  ></ix-checkbox>
 
   <button mat-button type="button" matDialogClose ixTest="cancel">
     {{ 'Cancel' | translate }}
