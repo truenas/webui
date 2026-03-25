@@ -82,8 +82,8 @@ describe('DeviceActionsMenuComponent', () => {
       await menu.clickItem({ text: 'Delete' });
 
       expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
-        title: expect.any(String),
-        message: expect.any(String),
+        title: 'Delete Item',
+        message: 'Are you sure you want to delete USB 1234:5678?',
         call: expect.any(Function),
         successMessage: 'Device was deleted',
       });

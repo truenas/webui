@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -177,13 +177,25 @@ describe('WebShareListComponent', () => {
     });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
-      title: expect.any(String),
-      message: expect.any(String),
+      title: 'Delete WebShare',
+      message: 'Are you sure you want to delete the WebShare "{name}"?<br><br>Users will no longer be able to access {path} through WebShare.',
       call: expect.any(Function),
       successMessage: 'WebShare deleted',
     });
 
     expect(api.call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
+  });
+
+  it('should not delete share when confirmation is cancelled', () => {
+    (spectator.inject(DialogService).confirmDelete as jest.Mock).mockReturnValue(EMPTY);
+
+    spectator.component.doDelete({
+      id: 1,
+      name: 'documents',
+      path: '/mnt/tank/documents',
+    });
+
+    expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
   it('should filter shares based on search query', () => {

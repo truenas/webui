@@ -1,10 +1,10 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { ConfirmDeleteCallOptions, ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DialogService', () => {
@@ -29,7 +29,7 @@ describe('DialogService', () => {
 
   describe('confirmDelete', () => {
     function mockConfirm(result: boolean): void {
-      jest.spyOn(spectator.service, 'confirm').mockReturnValue(of(result));
+      jest.spyOn(spectator.service, 'confirm').mockReturnValue(of(result) as never);
     }
 
     it('shows confirmation dialog and executes api call on confirm', () => {
@@ -37,13 +37,13 @@ describe('DialogService', () => {
       mockConfirm(true);
 
       spectator.service.confirmDelete({
-        message: 'Delete this item?',
+        message: ignoreTranslation('Delete this item?'),
         call: callFn,
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+      }).subscribe();
 
       expect(spectator.service.confirm).toHaveBeenCalledWith({
         title: 'Delete',
-        message: 'Delete this item?',
+        message: ignoreTranslation('Delete this item?'),
         buttonText: 'Delete',
         buttonColor: 'warn',
       });
@@ -55,9 +55,9 @@ describe('DialogService', () => {
       mockConfirm(false);
 
       spectator.service.confirmDelete({
-        message: 'Delete this item?',
+        message: ignoreTranslation('Delete this item?'),
         call: callFn,
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+      }).subscribe();
 
       expect(callFn).not.toHaveBeenCalled();
     });
@@ -67,12 +67,12 @@ describe('DialogService', () => {
       const snackbar = spectator.inject(SnackbarService);
 
       spectator.service.confirmDelete({
-        message: 'Delete this item?',
+        message: ignoreTranslation('Delete this item?'),
         call: () => of(true),
-        successMessage: 'Item deleted.',
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+        successMessage: ignoreTranslation('Item deleted.'),
+      }).subscribe();
 
-      expect(snackbar.success).toHaveBeenCalledWith('Item deleted.');
+      expect(snackbar.success).toHaveBeenCalledWith(ignoreTranslation('Item deleted.'));
     });
 
     it('does not show snackbar when no success message is provided', () => {
@@ -80,9 +80,9 @@ describe('DialogService', () => {
       const snackbar = spectator.inject(SnackbarService);
 
       spectator.service.confirmDelete({
-        message: 'Delete this item?',
+        message: ignoreTranslation('Delete this item?'),
         call: () => of(true),
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+      }).subscribe();
 
       expect(snackbar.success).not.toHaveBeenCalled();
     });
@@ -91,16 +91,16 @@ describe('DialogService', () => {
       mockConfirm(false);
 
       spectator.service.confirmDelete({
-        title: 'Remove Interface',
-        message: 'Delete this interface?',
-        buttonText: 'Remove',
+        title: ignoreTranslation('Remove Interface'),
+        message: ignoreTranslation('Delete this interface?'),
+        buttonText: ignoreTranslation('Remove'),
         call: () => of(true),
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+      }).subscribe();
 
       expect(spectator.service.confirm).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: 'Remove Interface',
-          buttonText: 'Remove',
+          title: ignoreTranslation('Remove Interface'),
+          buttonText: ignoreTranslation('Remove'),
         }),
       );
     });
@@ -110,9 +110,9 @@ describe('DialogService', () => {
       const loader = spectator.inject(LoaderService);
 
       spectator.service.confirmDelete({
-        message: 'Delete?',
+        message: ignoreTranslation('Delete?'),
         call: () => of(true),
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+      }).subscribe();
 
       expect(loader.withLoader).toHaveBeenCalled();
     });
@@ -122,9 +122,9 @@ describe('DialogService', () => {
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       spectator.service.confirmDelete({
-        message: 'Delete?',
+        message: ignoreTranslation('Delete?'),
         call: () => throwError(() => new Error('API failure')),
-      } as unknown as ConfirmDeleteCallOptions).subscribe();
+      }).subscribe();
 
       expect(errorHandler.withErrorHandler).toHaveBeenCalled();
     });
@@ -137,16 +137,16 @@ describe('DialogService', () => {
       } as ReturnType<DialogService['jobDialog']>);
 
       spectator.service.confirmDelete({
-        message: 'Delete tunable?',
+        message: ignoreTranslation('Delete tunable?'),
         job: () => job$,
-        jobProgressTitle: 'Deleting...',
-        successMessage: 'Deleted.',
-      } as unknown as ConfirmDeleteJobOptions).subscribe();
+        jobProgressTitle: ignoreTranslation('Deleting...'),
+        successMessage: ignoreTranslation('Deleted.'),
+      }).subscribe();
 
       expect(spectator.service.jobDialog).toHaveBeenCalledWith(job$, {
-        title: 'Deleting...',
+        title: ignoreTranslation('Deleting...'),
       });
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Deleted.');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(ignoreTranslation('Deleted.'));
     });
 
     it('does not use loader for job-based deletions', () => {
@@ -158,9 +158,9 @@ describe('DialogService', () => {
       jest.clearAllMocks();
 
       spectator.service.confirmDelete({
-        message: 'Delete?',
+        message: ignoreTranslation('Delete?'),
         job: () => of({ id: 1 } as Job),
-      } as unknown as ConfirmDeleteJobOptions).subscribe();
+      }).subscribe();
 
       expect(loader.withLoader).not.toHaveBeenCalled();
     });
@@ -170,9 +170,9 @@ describe('DialogService', () => {
       const nextFn = jest.fn();
 
       spectator.service.confirmDelete({
-        message: 'Delete?',
+        message: ignoreTranslation('Delete?'),
         call: () => of(true),
-      } as unknown as ConfirmDeleteCallOptions).subscribe(nextFn);
+      }).subscribe(nextFn);
 
       expect(nextFn).toHaveBeenCalledWith(undefined);
     });

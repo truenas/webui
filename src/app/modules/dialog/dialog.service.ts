@@ -35,6 +35,7 @@ export class DialogService {
   private snackbar = inject(SnackbarService);
   private injector = inject(Injector);
 
+  // Lazy to break circular dependency with ErrorHandlerService
   private _errorHandler: ErrorHandlerService;
   private get errorHandler(): ErrorHandlerService {
     if (!this._errorHandler) {
@@ -67,6 +68,9 @@ export class DialogService {
    * }).pipe(takeUntilDestroyed(this.destroyRef))
    *   .subscribe(() => this.refresh());
    * ```
+   *
+   * Emits once (`void`) on successful deletion.
+   * Completes without emitting if the user cancels the confirmation dialog.
    */
   confirmDelete(options: ConfirmDeleteOptions): Observable<void> {
     return this.confirm({

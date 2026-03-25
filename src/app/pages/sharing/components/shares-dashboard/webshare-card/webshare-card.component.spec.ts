@@ -5,7 +5,7 @@ import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -182,12 +182,22 @@ describe('WebShareCardComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
-      title: expect.any(String),
-      message: expect.any(String),
+      title: 'Delete WebShare',
+      message: 'Are you sure you want to delete the WebShare "documents"?<br><br>Users will no longer be able to access /mnt/tank/documents through WebShare.',
       call: expect.any(Function),
       successMessage: 'WebShare deleted',
     });
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
+  });
+
+  it('does not delete when confirmation is cancelled', () => {
+    (spectator.inject(DialogService).confirmDelete as jest.Mock).mockReturnValue(EMPTY);
+
+    const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
+    deleteButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
   it('does not show info message when TrueNAS Connect is configured', () => {

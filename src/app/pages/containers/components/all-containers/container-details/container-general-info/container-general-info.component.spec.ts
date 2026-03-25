@@ -9,6 +9,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -120,6 +121,7 @@ describe('ContainerGeneralInfoComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.delete', expect.anything());
     expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
   });
 
