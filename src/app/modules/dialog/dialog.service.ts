@@ -73,7 +73,7 @@ export class DialogService {
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
-    dialogRef.componentInstance.icon = 'info';
+    dialogRef.componentInstance.icon = 'information';
     dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
@@ -84,7 +84,7 @@ export class DialogService {
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
-    dialogRef.componentInstance.icon = 'warning';
+    dialogRef.componentInstance.icon = 'alert';
     dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
