@@ -104,17 +104,6 @@ export class UpdateComponent implements OnInit {
 
   protected newVersion = computed(() => this.statusDetails()?.new_version);
 
-  protected doesNotMatchProfile = computed(() => {
-    return !this.statusDetails()?.current_version?.matches_profile;
-  });
-
-  protected currentVersionProfile = computed(() => {
-    const profileId = this.statusDetails()?.current_version?.profile || '';
-    const profile = this.profileChoices()?.[profileId];
-
-    return profile?.name || profileId;
-  });
-
   protected readonly isUpdateAvailable = computed(() => {
     return this.status()?.code === UpdateCode.Normal && Boolean(this.newVersion());
   });
