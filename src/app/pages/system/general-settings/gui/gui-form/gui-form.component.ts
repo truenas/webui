@@ -72,7 +72,7 @@ export class GuiFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected isFormLoading = signal(true);
-  configData: SystemGeneralConfig;
+  configData!: SystemGeneralConfig;
   protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
