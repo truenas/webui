@@ -16,6 +16,7 @@ import {
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
@@ -94,11 +95,11 @@ describe('InterfacesCardComponent', () => {
         getIsHaEnabled: jest.fn(() => failoverConfig$.pipe(map((config) => !config.disabled))),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockAuth(),
     ],
@@ -157,6 +158,8 @@ describe('InterfacesCardComponent', () => {
       message: expect.any(String),
       call: expect.any(Function),
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('interface.delete', ['vlan1']);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });

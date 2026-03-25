@@ -9,6 +9,7 @@ import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -17,6 +18,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -77,12 +79,10 @@ describe('CloudBackupListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
-          response: true,
-        })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
@@ -210,6 +210,8 @@ describe('CloudBackupListComponent', () => {
       call: expect.any(Function),
       successMessage: 'Cloud Backup Task «UA» deleted.',
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {

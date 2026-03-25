@@ -20,6 +20,7 @@
 
 .controls {
   display: flex;
+  align-items: center;
 }
 
 .alert-list {
@@ -36,7 +37,10 @@
 
   .controls {
     display: flex;
-    opacity: 0.55;
+
+    > * {
+      opacity: 0.55;
+    }
   }
 }
 

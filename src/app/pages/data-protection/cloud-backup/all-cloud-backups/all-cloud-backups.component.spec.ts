@@ -13,6 +13,7 @@ import { DetailsHeightDirective } from 'app/directives/details-height/details-he
 import { JobState } from 'app/enums/job-state.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -20,6 +21,7 @@ import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllCloudBackupsComponent } from 'app/pages/data-protection/cloud-backup/all-cloud-backups/all-cloud-backups.component';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
@@ -80,11 +82,10 @@ describe('AllCloudBackupsComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
-          response: true,
-        })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [
@@ -196,11 +197,11 @@ describe('AllCloudBackupsComponent', () => {
       await menu.open();
       await menu.clickItem({ text: 'Delete' });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
         title: 'Confirmation',
         message: 'Delete Cloud Backup Task <b>"UA"</b>?',
-        buttonColor: 'warn',
-        buttonText: 'Delete',
+        call: expect.any(Function),
+        successMessage: 'Cloud Backup Task «UA» deleted.',
       });
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);

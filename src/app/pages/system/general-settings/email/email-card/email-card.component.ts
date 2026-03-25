@@ -5,7 +5,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
@@ -64,9 +63,7 @@ export class EmailCardComponent implements OnInit {
   }
 
   protected openEmailSettings(): void {
-    this.slideIn.open(EmailFormComponent, { data: this.emailConfigState().value }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadEmailConfig());
+    this.slideIn.open(EmailFormComponent, { data: this.emailConfigState().value })
+      .onSuccess(() => this.loadEmailConfig(), this.destroyRef);
   }
 }

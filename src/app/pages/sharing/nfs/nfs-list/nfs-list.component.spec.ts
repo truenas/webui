@@ -4,9 +4,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -18,6 +18,7 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
@@ -63,10 +64,10 @@ describe('NfsListComponent', () => {
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [
@@ -116,6 +117,11 @@ describe('NfsListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+      call: expect.any(Function),
+    });
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.delete', [1]);
   });
 

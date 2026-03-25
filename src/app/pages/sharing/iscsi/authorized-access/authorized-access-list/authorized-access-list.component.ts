@@ -6,9 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -104,10 +102,7 @@ export class AuthorizedAccessListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             this.slideIn.open(AuthorizedAccessFormComponent, { data: row })
-              .pipe(
-                filter((response) => !!response.response),
-                takeUntilDestroyed(this.destroyRef),
-              ).subscribe(() => this.refresh());
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -148,10 +143,8 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(AuthorizedAccessFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+    this.slideIn.open(AuthorizedAccessFormComponent)
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

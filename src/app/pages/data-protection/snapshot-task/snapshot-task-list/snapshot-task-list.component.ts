@@ -229,17 +229,13 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotTasks());
+    this.slideIn.open(SnapshotTaskFormComponent, { wide: true })
+      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
   protected doEdit(row: PeriodicSnapshotTaskUi): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotTasks());
+    this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row })
+      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
@@ -279,6 +275,8 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   private deleteTask(taskId: number, fixateRemovalDate: boolean): Observable<boolean> {
-    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]);
+    return this.api.call('pool.snapshottask.delete', [taskId, { fixate_removal_date: fixateRemovalDate }]).pipe(
+      this.loader.withLoader(),
+    );
   }
 }

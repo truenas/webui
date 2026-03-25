@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -74,8 +74,7 @@ export class IsolatedGpusCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(IsolatedGpusFormComponent)),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(IsolatedGpusFormComponent).success$),
       tap(() => this.loadIsolatedGpus()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

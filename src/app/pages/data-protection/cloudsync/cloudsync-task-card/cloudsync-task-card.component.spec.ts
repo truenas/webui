@@ -19,6 +19,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,6 +30,7 @@ import {
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -140,13 +142,13 @@ describe('CloudSyncTaskCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -301,6 +303,8 @@ describe('CloudSyncTaskCardComponent', () => {
       call: expect.any(Function),
       successMessage: 'Cloud Sync Task «custom-cloudsync» deleted.',
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {

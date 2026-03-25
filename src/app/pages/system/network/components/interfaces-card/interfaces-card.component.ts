@@ -210,14 +210,10 @@ export class InterfacesCardComponent implements OnInit {
       data: {
         interfaces: this.interfaces,
       },
-    })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => {
-        this.interfacesUpdated.emit();
-        this.interfacesStore$.loadInterfaces();
-      });
+    }).onSuccess(() => {
+      this.interfacesUpdated.emit();
+      this.interfacesStore$.loadInterfaces();
+    }, this.destroyRef);
   }
 
   protected onEdit(row: NetworkInterface): void {
@@ -225,13 +221,10 @@ export class InterfacesCardComponent implements OnInit {
       data: {
         interface: row,
       },
-    }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
+    }).onSuccess(() => {
       this.interfacesUpdated.emit();
       this.interfacesStore$.loadInterfaces();
-    });
+    }, this.destroyRef);
   }
 
   protected onDelete(row: NetworkInterface): void {

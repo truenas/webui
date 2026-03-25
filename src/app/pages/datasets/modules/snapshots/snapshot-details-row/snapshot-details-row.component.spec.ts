@@ -38,7 +38,7 @@ describe('SnapshotDetailsRowComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockApi([
         mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
@@ -110,5 +110,7 @@ describe('SnapshotDetailsRowComponent', () => {
       call: expect.any(Function),
       successMessage: 'Snapshot deleted.',
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
   });
 });

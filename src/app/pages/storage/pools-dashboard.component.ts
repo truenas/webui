@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
 import { storageEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -86,9 +85,6 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   protected onImportPool(): void {
-    this.slideIn.open(ImportPoolComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.store.loadDashboard());
+    this.slideIn.open(ImportPoolComponent).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }
 }

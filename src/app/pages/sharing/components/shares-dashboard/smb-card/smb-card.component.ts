@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  map, filter, BehaviorSubject, of,
+  map, BehaviorSubject, of,
 } from 'rxjs';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,6 +38,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -83,6 +84,7 @@ export class SmbCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -160,12 +162,8 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected openForm(row?: SmbShare): void {
-    this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.dataProvider.load();
-    });
+    this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } })
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected doDelete(smb: SmbShare): void {
@@ -189,12 +187,8 @@ export class SmbCardComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (shareAcl: SmbSharesec) => {
-            this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => {
-              this.dataProvider.load();
-            });
+            this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
+              .onSuccess(() => this.dataProvider.load(), this.destroyRef);
           },
           error: (error: unknown) => {
             this.errorHandler.showErrorModal(error);

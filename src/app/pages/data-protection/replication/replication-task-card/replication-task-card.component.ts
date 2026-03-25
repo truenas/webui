@@ -40,6 +40,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -86,6 +87,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private matDialog = inject(MatDialog);
   private download = inject(DownloadService);
@@ -196,16 +198,13 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   protected addReplicationTask(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getReplicationTasks());
+    this.slideIn.open(ReplicationWizardComponent, { wide: true })
+      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
   }
 
   private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.getReplicationTasks());
+      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
   }
 
   protected runNow(row: ReplicationTask): void {

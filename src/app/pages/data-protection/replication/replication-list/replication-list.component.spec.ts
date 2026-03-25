@@ -35,6 +35,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
@@ -154,11 +155,11 @@ describe('ReplicationListComponent', () => {
         mockCall('replication.delete'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -241,6 +242,8 @@ describe('ReplicationListComponent', () => {
       message: 'Delete Replication Task <b>"pewl - pewl"</b>?',
       call: expect.any(Function),
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {

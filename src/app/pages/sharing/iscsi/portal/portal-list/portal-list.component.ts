@@ -6,9 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -108,10 +106,8 @@ export class PortalListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(PortalFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
+            this.slideIn.open(PortalFormComponent, { data: row })
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
@@ -154,10 +150,8 @@ export class PortalListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(PortalFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+    this.slideIn.open(PortalFormComponent)
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

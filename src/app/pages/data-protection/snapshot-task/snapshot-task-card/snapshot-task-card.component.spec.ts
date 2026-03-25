@@ -23,8 +23,10 @@ import {
   IxCellScheduleComponent,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -115,7 +117,7 @@ describe('SnapshotTaskCardComponent', () => {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(MatDialog, {
@@ -126,6 +128,9 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(LocaleService),
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
     ],
   });
@@ -181,7 +186,8 @@ describe('SnapshotTaskCardComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {

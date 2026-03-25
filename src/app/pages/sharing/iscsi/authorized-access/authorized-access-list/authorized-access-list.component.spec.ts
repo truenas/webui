@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
@@ -19,6 +18,8 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -59,10 +60,10 @@ describe('AuthorizedAccessListComponent', () => {
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(),
@@ -115,6 +116,8 @@ describe('AuthorizedAccessListComponent', () => {
       message: 'Are you sure you want to delete this item?',
       call: expect.any(Function),
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.auth.delete', [1]);
   });
 
   it('should show table rows', async () => {

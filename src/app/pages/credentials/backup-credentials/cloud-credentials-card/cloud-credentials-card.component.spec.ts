@@ -10,12 +10,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
@@ -69,10 +71,10 @@ describe('CloudCredentialsCardComponent', () => {
         mockCall('cloudsync.credentials.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: () => of(true),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -117,6 +119,12 @@ describe('CloudCredentialsCardComponent', () => {
   it('opens delete dialog when "Delete" button is pressed', async () => {
     const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Cloud Credential',
+      message: 'Are you sure you want to delete the <b>GDrive</b>?',
+      call: expect.any(Function),
+    });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
   });

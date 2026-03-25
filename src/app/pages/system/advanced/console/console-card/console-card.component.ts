@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
+  Subject, distinctUntilChanged, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -100,8 +100,7 @@ export class ConsoleCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(ConsoleFormComponent, { data: this.consoleConfig })),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(ConsoleFormComponent, { data: this.consoleConfig }).success$),
       tap(() => this.reloadConfig$.next()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

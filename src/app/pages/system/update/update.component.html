@@ -14,7 +14,11 @@
       <div class="versions">
         <h4 class="current-version">
           <div class="label">
-            {{ 'Current version' | translate }}:
+            @if (standbySystemVersion()) {
+              {{ 'Current version (Active)' | translate }}:
+            } @else {
+              {{ 'Current version' | translate }}:
+            }
           </div>
           <div class="value">
             <div class="current-version-number">
@@ -24,17 +28,12 @@
                 <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
               }
             </div>
-            @if (doesNotMatchProfile() && currentVersionProfile()) {
-              <div class="profile-mismatch">
-                {{ '(from {profile} profile)' | translate: { profile: currentVersionProfile() } }}
-              </div>
-              }
           </div>
         </h4>
 
         @if (standbySystemVersion(); as standbySystemVersion) {
           <h4>
-            {{ 'Current version (standby node)' | translate }}:
+            {{ 'Current version (Standby)' | translate }}:
             <span>{{ standbySystemVersion }}</span>
           </h4>
         }

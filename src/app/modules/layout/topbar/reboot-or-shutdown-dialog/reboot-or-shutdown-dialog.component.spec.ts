@@ -5,7 +5,6 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
@@ -79,8 +78,8 @@ describe('RebootOrShutdownDialogComponent', () => {
       const select = await loader.getHarness(IxSelectHarness);
       await select.setValue('System Update');
 
-      const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-      await confirmCheckbox.setValue(true);
+      const confirmCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: /Confirm/ }));
+      await confirmCheckbox.check();
 
       const shutdownButton = await loader.getHarness(MatButtonHarness.with({ text: 'Shut Down' }));
       await shutdownButton.click();
@@ -95,8 +94,8 @@ describe('RebootOrShutdownDialogComponent', () => {
       const customReasonInput = await loader.getHarness(IxInputHarness.with({ label: 'Custom Reason' }));
       await customReasonInput.setValue('House on fire');
 
-      const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
-      await confirmCheckbox.setValue(true);
+      const confirmCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: /Confirm/ }));
+      await confirmCheckbox.check();
 
       const shutdownButton = await loader.getHarness(MatButtonHarness.with({ text: 'Shut Down' }));
       await shutdownButton.click();

@@ -8,11 +8,13 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownCardComponent,
@@ -58,10 +60,10 @@ describe('InitShutdownCardComponent', () => {
         mockCall('initshutdownscript.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn((): undefined => undefined) }),
       mockProvider(FirstTimeWarningService, {
@@ -115,6 +117,13 @@ describe('InitShutdownCardComponent', () => {
   it('deletes a script with confirmation when Delete button is pressed', async () => {
     const deleteIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'Prepare system');
     await deleteIcon.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Script',
+      message: 'Delete Init/Shutdown Script undefined?',
+      call: expect.any(Function),
+      successMessage: 'Script deleted.',
+    });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
   });

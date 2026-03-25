@@ -14,6 +14,8 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-general-info/container-general-info.component';
@@ -44,9 +46,7 @@ describe('ContainerGeneralInfoComponent', () => {
       IxFormatterService,
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
-          response: true,
-        })),
+        open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(ContainersStore, {
         selectedContainer: jest.fn(),
@@ -58,7 +58,7 @@ describe('ContainerGeneralInfoComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(Router),
     ],
@@ -101,6 +101,7 @@ describe('ContainerGeneralInfoComponent', () => {
       call: expect.any(Function),
     });
 
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.delete', [1]);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
 

@@ -6,7 +6,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Subject, filter, shareReplay, startWith, switchMap, tap,
+  Subject, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -61,8 +61,7 @@ export class AuditCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AuditFormComponent)),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(AuditFormComponent).success$),
       tap(() => {
         this.reloadConfig$.next();
       }),

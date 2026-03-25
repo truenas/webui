@@ -8,7 +8,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { switchMap, forkJoin, finalize } from 'rxjs';
 import {
-  filter, tap,
+  tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -98,9 +98,8 @@ export class StorageCardComponent implements OnInit {
             systemDatasetPool: this.systemDatasetPool(),
             priorityResilver: this.resilverConfig(),
           },
-        });
+        }).success$;
       }),
-      filter((response) => !!response.response),
       tap(() => this.loadConfig()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

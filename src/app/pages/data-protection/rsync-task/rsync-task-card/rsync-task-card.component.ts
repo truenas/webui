@@ -39,6 +39,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -78,6 +79,7 @@ export class RsyncTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private taskService = inject(TaskService);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -185,10 +187,7 @@ export class RsyncTaskCardComponent implements OnInit {
 
   openForm(row?: RsyncTaskUi): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.getRsyncTasks();
-      });
+      .onSuccess(() => this.getRsyncTasks(), this.destroyRef);
   }
 
   runNow(row: RsyncTaskUi): void {

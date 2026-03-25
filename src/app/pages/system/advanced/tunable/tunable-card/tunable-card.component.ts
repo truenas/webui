@@ -8,7 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import { filter, from, switchMap } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -141,8 +141,7 @@ export class TunableCardComponent implements OnInit {
 
   private openForm(row?: Tunable): void {
     from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideIn.open(TunableFormComponent, { data: row })),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(TunableFormComponent, { data: row }).success$),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadItems();

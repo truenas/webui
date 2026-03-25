@@ -16,9 +16,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, of, take, tap,
-} from 'rxjs';
+import { of, tap } from 'rxjs';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -142,11 +140,8 @@ export class SmbListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
-            this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } }).pipe(
-              take(1),
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.dataProvider.load());
+            this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } })
+              .onSuccess(() => this.dataProvider.load(), this.destroyRef);
           },
         },
         {
@@ -165,13 +160,8 @@ export class SmbListComponent implements OnInit {
                 .pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe((shareAcl) => {
                   this.loader.close();
-                  this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
-                    take(1),
-                    filter((response) => !!response.response),
-                    takeUntilDestroyed(this.destroyRef),
-                  ).subscribe(() => {
-                    this.dataProvider.load();
-                  });
+                  this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
+                    .onSuccess(() => this.dataProvider.load(), this.destroyRef);
                 });
             }
           },
@@ -198,25 +188,12 @@ export class SmbListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
-            this.dialog.confirm({
+            this.dialog.confirmDelete({
               title: this.translate.instant('Unshare {name}', { name: row.name }),
               message: this.translate.instant(shared.deleteShareMessage),
               buttonText: this.translate.instant('Unshare'),
-              buttonColor: 'warn',
-            }).pipe(
-              filter(Boolean),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              next: () => {
-                this.api.call('sharing.smb.delete', [row.id]).pipe(
-                  this.loader.withLoader(),
-                  this.errorHandler.withErrorHandler(),
-                  takeUntilDestroyed(this.destroyRef),
-                ).subscribe(() => {
-                  this.dataProvider.load();
-                });
-              },
-            });
+              call: () => this.api.call('sharing.smb.delete', [row.id]),
+            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.dataProvider.load());
           },
         },
       ],
@@ -248,15 +225,8 @@ export class SmbListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(SmbFormComponent).pipe(
-      take(1),
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-    });
+    this.slideIn.open(SmbFormComponent)
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

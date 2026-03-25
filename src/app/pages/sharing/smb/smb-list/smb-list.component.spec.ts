@@ -7,11 +7,11 @@ import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -24,6 +24,7 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -79,10 +80,10 @@ describe('SmbListComponent', () => {
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         selectors: [
@@ -167,6 +168,12 @@ describe('SmbListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+      buttonText: expect.any(String),
+      call: expect.any(Function),
+    });
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
   });
 

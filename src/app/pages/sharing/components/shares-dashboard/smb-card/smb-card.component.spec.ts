@@ -22,6 +22,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -77,10 +78,10 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
       ]),
       mockProvider(DialogService, {
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(MatDialog, {
@@ -152,6 +153,8 @@ describe('SmbCardComponent', () => {
       message: 'Are you sure you want to delete SMB Share <b>"smb123"</b>?',
       call: expect.any(Function),
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [3]);
   });
 
   it('updates SMB Enabled status once mat-toggle is updated', async () => {

@@ -11,6 +11,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -18,6 +19,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
@@ -77,7 +79,7 @@ describe('UserApiKeysComponent', () => {
         timezone: 'America/Los_Angeles',
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -89,7 +91,7 @@ describe('UserApiKeysComponent', () => {
         mockCall('api_key.delete'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
     ],
@@ -142,11 +144,10 @@ describe('UserApiKeysComponent', () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete API Key',
-      buttonText: 'Delete',
-      buttonColor: 'warn',
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
+      call: expect.any(Function),
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);

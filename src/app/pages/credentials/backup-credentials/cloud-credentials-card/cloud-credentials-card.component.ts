@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
-  switchMap, filter, tap, Observable,
+  tap, Observable,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -146,40 +146,30 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   protected doAdd(): void {
     this.slideIn.open(CloudCredentialsFormComponent)
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.getCredentials();
-      });
+      .onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doEdit(credential: CloudSyncCredential): void {
-    const close$ = this.slideIn.open(
+    this.slideIn.open(
       CloudCredentialsFormComponent,
       {
         data: {
           existingCredential: credential,
         } as CloudCredentialFormInput,
       },
-    );
-    close$.pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.getCredentials();
-    });
+    ).onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   protected doDelete(credential: CloudSyncCredential): void {
     this.dialog
-      .confirm({
+      .confirmDelete({
         title: this.translate.instant('Delete Cloud Credential'),
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: credential.name,
         }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
+        call: () => this.api.call('cloudsync.credentials.delete', [credential.id]),
       })
       .pipe(
-        filter(Boolean),
-        switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
-        this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {

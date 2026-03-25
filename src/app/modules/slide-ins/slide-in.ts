@@ -21,9 +21,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
@@ -32,6 +34,7 @@ export class SlideIn {
   private cdkOverlay = inject(Overlay);
   private injector = inject(Injector);
   private unsavedChangesService = inject(UnsavedChangesService);
+  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -45,7 +48,7 @@ export class SlideIn {
     for (const instance of instances) {
       instance.slideInRef.requireConfirmationWhen(undefined);
       instance.cdkOverlayRef.dispose();
-      instance.slideInRef.close({ response: false, error: undefined });
+      instance.slideInRef.close({ response: undefined });
     }
 
     this.slideInInstances.set([]);
@@ -54,7 +57,7 @@ export class SlideIn {
   open<D, R>(
     component: ComponentInSlideIn<D, R>,
     options: { data?: D; wide?: boolean } = {},
-  ): Observable<SlideInResponse<R>> {
+  ): SlideInResult<R> {
     const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
         const slideInId = uuidv4();
@@ -89,12 +92,19 @@ export class SlideIn {
 
         return close$;
       }),
+      // share() ensures a single overlay is created regardless of how many
+      // subscribers attach (the eager "driver" subscription below + SlideInResult consumers).
+      // SlideInResult adds a second multicast layer (shareReplay) to replay the
+      // close value for late onSuccess/onCancel subscribers.
       share(),
     );
 
+    // Driver subscription: keeps the overlay lifecycle alive independently of
+    // consumer subscriptions. Without this, unsubscribing from SlideInResult
+    // would tear down the overlay prematurely.
     open$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
-    return open$.pipe(take(1));
+    return new SlideInResult<R>(open$);
   }
 
   private swap<D, R>(component: ComponentInSlideIn<D, R>, options: { wide?: boolean }): void {
@@ -163,7 +173,7 @@ export class SlideIn {
     ).subscribe(() => {
       // Only close if slideInRef exists (fully initialized)
       if (instance.slideInRef) {
-        instance.slideInRef.close({ response: false as R, error: undefined });
+        instance.slideInRef.close({ response: undefined });
       }
     });
   }
@@ -178,8 +188,8 @@ export class SlideIn {
         (instance) => ({
           ...instance,
           slideInRef: instance.slideInId === slideInInstance.slideInId
-            ? instance.slideInRef
-            : slideInInstance.slideInRef,
+            ? slideInInstance.slideInRef
+            : instance.slideInRef,
         }),
       );
     } else {
@@ -262,7 +272,7 @@ export class SlideIn {
   }
 
   private createSlideInRef<D, R>(slideInInstance: SlideInInstance<D, R>): SlideInRef<D, R> {
-    return {
+    const ref: SlideInRef<D, R> = {
       close: (response: SlideInResponse<R>): void => {
         (!response?.response ? this.canCloseSlideIn(slideInInstance.needConfirmation) : of(true)).pipe(
           filter(Boolean),
@@ -277,7 +287,7 @@ export class SlideIn {
             }
           },
           error: (error: unknown) => {
-            console.error('Error closing slide-in:', error);
+            this.errorHandler.handleError(error);
             // Force close on error
             if (!slideInInstance.close$.closed) {
               slideInInstance.close$.next(response);
@@ -306,6 +316,7 @@ export class SlideIn {
         slideInInstance.needConfirmation = needConfirmation;
       },
     } as SlideInRef<D, R>;
+    return ref;
   }
 
   private canCloseSlideIn(needConfirmation: () => Observable<boolean>): Observable<boolean> {

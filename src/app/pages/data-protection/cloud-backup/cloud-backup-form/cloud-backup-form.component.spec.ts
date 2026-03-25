@@ -17,6 +17,7 @@ import {
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CloudBackupFormComponent,
@@ -107,7 +108,7 @@ describe('CloudBackupFormComponent', () => {
         ]),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),

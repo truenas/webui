@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
-  BehaviorSubject, Observable, combineLatest, filter, of, switchMap,
+  BehaviorSubject, Observable, combineLatest, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -157,12 +157,8 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(ReportingExportersFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => this.getExporters(),
-    });
+    this.slideIn.open(ReportingExportersFormComponent)
+      .onSuccess(() => this.getExporters(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {
@@ -204,12 +200,8 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private doEdit(exporter: ReportingExporter): void {
-    this.slideIn.open(ReportingExportersFormComponent, { data: exporter }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => this.getExporters(),
-    });
+    this.slideIn.open(ReportingExportersFormComponent, { data: exporter })
+      .onSuccess(() => this.getExporters(), this.destroyRef);
   }
 
   private doDelete(exporter: ReportingExporter): void {

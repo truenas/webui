@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -133,17 +133,13 @@ export class DockerRegistriesListComponent implements OnInit {
   protected onAdd(): void {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
-    })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.dataProvider.load());
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private onEdit(row: DockerRegistry): void {
     this.slideIn.open(DockerRegistryFormComponent, {
       data: { registry: row, isLoggedInToDockerHub: this.isLoggedIntoDockerHub() },
-    })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.dataProvider.load());
+    }).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private onDelete(row: DockerRegistry): void {

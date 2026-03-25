@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -116,17 +116,13 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(VmwareSnapshotFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent)
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doEdit(snapshot: VmwareSnapshot): void {
-    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot })
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doDelete(snapshot: VmwareSnapshot): void {

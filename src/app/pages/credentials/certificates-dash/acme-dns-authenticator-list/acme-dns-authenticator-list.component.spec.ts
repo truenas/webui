@@ -4,10 +4,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -16,6 +16,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
@@ -50,10 +51,10 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
         mockCall('acme.dns.authenticator.delete', true),
       ]),
       mockProvider(DialogService, {
-        confirm: () => of(true),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
@@ -90,6 +91,12 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   it('opens delete dialog when "Delete" button is pressed', async () => {
     const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete DNS Authenticator',
+      message: 'Are you sure you want to delete the <b>dns-authenticator-0</b> DNS Authenticator?',
+      call: expect.any(Function),
+    });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
   });

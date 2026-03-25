@@ -176,7 +176,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
       filter((isValidLengthAndDepth) => {
         if (!isValidLengthAndDepth) {
-          this.slideInRef.close(undefined);
+          this.slideInRef.close({ response: undefined });
         }
         return isValidLengthAndDepth;
       }),

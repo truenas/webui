@@ -44,6 +44,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -93,6 +94,7 @@ export class CloudSyncListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
   private matDialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
@@ -295,23 +297,11 @@ export class CloudSyncListComponent implements OnInit {
 
   protected openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getCloudSyncTasks();
-        },
-      });
+      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true })
+        .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
     } else {
-      this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getCloudSyncTasks();
-        },
-      });
+      this.slideIn.open(CloudSyncWizardComponent, { wide: true })
+        .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
     }
   }
 
@@ -320,8 +310,9 @@ export class CloudSyncListComponent implements OnInit {
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', { name: row.description }),
       call: () => this.api.call('cloudsync.delete', [row.id]),
       successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: row.description }),
-    }).pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.getCloudSyncTasks());
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.getCloudSyncTasks());
   }
 
   protected onListFiltered(query: string): void {

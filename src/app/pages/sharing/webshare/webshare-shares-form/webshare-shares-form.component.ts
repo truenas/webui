@@ -237,7 +237,7 @@ export class WebShareSharesFormComponent implements OnInit {
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.WebShare }));
           }
 
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
@@ -269,7 +269,7 @@ export class WebShareSharesFormComponent implements OnInit {
             message: this.translate.instant('Could not retrieve existing WebShare configurations. Please check your connection and try again.'),
             stackTrace: error instanceof Error ? error.message : String(error),
           });
-          this.slideInRef.close({ response: false, error: null });
+          this.slideInRef.close({ response: undefined });
         },
       });
   }

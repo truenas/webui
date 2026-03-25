@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -34,13 +32,8 @@ export class AllUsersHeaderComponent {
   userCreated = output<User>();
 
   protected doAdd(): void {
-    this.slideIn.open(UserFormComponent, { wide: false }).pipe(
-      filter(({ response }) => !!response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: ({ response }) => {
-        this.userCreated.emit(response);
-      },
-    });
+    this.slideIn.open(UserFormComponent, { wide: false }).onSuccess((response) => {
+      this.userCreated.emit(response);
+    }, this.destroyRef);
   }
 }

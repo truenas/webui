@@ -295,7 +295,7 @@ describe('ContainerFormComponent', () => {
       expect(jobDialogCall[1]).toEqual({ title: 'Creating Container' });
 
       expect(snackbar.success).toHaveBeenCalledWith('Container created');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
     });
@@ -371,7 +371,7 @@ describe('ContainerFormComponent', () => {
       ]);
 
       expect(snackbar.success).toHaveBeenCalledWith('Container updated');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
       expect(containersStore.containerUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container' }),
       );

@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
@@ -19,6 +18,7 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -49,7 +49,7 @@ describe('InitiatorListComponent', () => {
         mockCall('iscsi.initiator.delete'),
       ]),
       mockProvider(DialogService, {
-        confirmDelete: jest.fn(() => of(undefined)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(),
@@ -100,6 +100,8 @@ describe('InitiatorListComponent', () => {
       message: 'Are you sure you want to delete this item?',
       call: expect.any(Function),
     });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.initiator.delete', [1]);
   });
 
   it('should show table rows', async () => {

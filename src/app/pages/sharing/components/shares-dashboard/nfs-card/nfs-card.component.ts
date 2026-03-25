@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import { BehaviorSubject, filter } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -31,6 +31,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -74,6 +75,7 @@ export class NfsCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private store$ = inject<Store<ServicesState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
@@ -129,12 +131,8 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected openForm(row?: NfsShare): void {
-    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.dataProvider.load();
-    });
+    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected doDelete(nfs: NfsShare): void {

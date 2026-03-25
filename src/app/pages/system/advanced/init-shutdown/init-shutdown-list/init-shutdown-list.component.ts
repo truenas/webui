@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
@@ -124,15 +123,12 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   protected addScript(): void {
-    this.slideIn.open(InitShutdownFormComponent)
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.dataProvider.load());
+    this.slideIn.open(InitShutdownFormComponent).onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private editScript(script: InitShutdownScript): void {
     this.slideIn.open(InitShutdownFormComponent, { data: script })
-      .pipe(filter((response) => !!response.response), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.dataProvider.load());
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   private deleteScript(script: InitShutdownScript): void {

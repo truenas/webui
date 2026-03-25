@@ -7,9 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import {
-  filter, map, tap,
-} from 'rxjs';
+import { map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -100,10 +98,8 @@ export class KerberosRealmsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(KerberosRealmsFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosRealms());
+            this.slideIn.open(KerberosRealmsFormComponent, { data: row })
+              .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
           },
         },
         {
@@ -163,10 +159,8 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosRealmsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getKerberosRealms());
+    this.slideIn.open(KerberosRealmsFormComponent)
+      .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {
