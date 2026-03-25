@@ -31,6 +31,8 @@
   tn-icon {
     position: relative;
     top: 2px;
+    min-width: 15px;
+    min-height: 15px;
 
     &.error-color {
       color: var(--red);
