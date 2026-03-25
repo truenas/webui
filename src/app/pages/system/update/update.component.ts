@@ -80,17 +80,7 @@ export class UpdateComponent implements OnInit {
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
-  protected readonly manualUpdateUrl = computed(() => {
-    const versionRegex = new RegExp(/(\d+\.\d+)/);
-    const sysver = this.systemVersion();
-    const version = versionRegex.exec(sysver);
-
-    if (sysver.includes('MASTER') || !version) {
-      return 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/update/';
-    }
-
-    return `https://www.truenas.com/docs/scale/${version[0]}/scaletutorials/systemsettings/update/`;
-  });
+  protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/systemsettings/update/update/#manually-updating';
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
