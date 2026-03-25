@@ -111,6 +111,7 @@ describe('TunableCardComponent', () => {
       title: 'Delete Tunable (ZFS)',
       message: 'Are you sure you want to delete "zfs_arc_max"?',
       job: expect.any(Function),
+      jobProgressTitle: 'Deleting...',
       successMessage: 'Variable deleted.',
     });
 

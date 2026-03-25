@@ -129,6 +129,7 @@ export class TunableCardComponent implements OnInit {
         name: row.var,
       }),
       job: () => this.api.job('tunable.delete', [row.id]),
+      jobProgressTitle: this.translate.instant('Deleting...'),
       successMessage: this.translate.instant('Variable deleted.'),
     }).pipe(
       takeUntilDestroyed(this.destroyRef),

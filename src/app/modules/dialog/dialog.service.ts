@@ -87,7 +87,7 @@ export class DialogService {
         }
       }),
       this.errorHandler.withErrorHandler(),
-      map(() => undefined as void),
+      map((): void => {}),
     );
   }
 
