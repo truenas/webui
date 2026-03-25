@@ -86,10 +86,10 @@ export class UpdateComponent implements OnInit {
     const version = versionRegex.exec(sysver);
 
     if (sysver.includes('MASTER') || !version) {
-      return 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/';
+      return 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/update/';
     }
 
-    return `https://www.truenas.com/docs/scale/${version[0]}/scaletutorials/systemsettings/updatescale/`;
+    return `https://www.truenas.com/docs/scale/${version[0]}/scaletutorials/systemsettings/update/`;
   });
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
