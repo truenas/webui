@@ -51,7 +51,7 @@ export class RebootOrShutdownDialog {
   private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({
-    confirm: [false, Validators.requiredTrue],
+    confirm: [null as boolean | null, Validators.requiredTrue],
     reason: ['', Validators.required],
     customReason: ['', Validators.required],
   });

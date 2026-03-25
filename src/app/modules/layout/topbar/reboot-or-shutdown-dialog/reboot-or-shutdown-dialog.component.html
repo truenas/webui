@@ -24,6 +24,7 @@
     class="confirm"
     [formControl]="form.controls.confirm"
     [label]="'Confirm' | translate"
+    [required]="true"
   ></ix-checkbox>
 
   <button mat-button type="button" matDialogClose ixTest="cancel">
@@ -32,10 +33,10 @@
 
   <button
     mat-button
-    type="submit"
+    type="button"
     color="primary"
     ixTest="submit"
-    [disabled]="isEnterprise() ? form.invalid : !form.controls.confirm.value"
+    [disabled]="!form.controls.confirm.value || (isEnterprise() && form.invalid)"
     (click)="onSubmit()"
   >
     {{ buttonText }}
