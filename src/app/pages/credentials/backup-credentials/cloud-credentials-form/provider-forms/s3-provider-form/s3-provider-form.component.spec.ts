@@ -24,8 +24,9 @@ describe('S3ProviderFormComponent', () => {
     details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
-  it('defaults sign_accept_encoding to true', () => {
-    expect(spectator.component.form.value.sign_accept_encoding).toBe(true);
+  it('defaults sign_accept_encoding to true', async () => {
+    const values = await form.getValues();
+    expect(values['Sign Accept-Encoding']).toBe(true);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
