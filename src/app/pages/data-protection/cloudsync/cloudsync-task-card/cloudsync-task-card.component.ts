@@ -334,7 +334,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
       });
   }
 
-
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
     this.api
       .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled } as CloudSyncTaskUpdate])

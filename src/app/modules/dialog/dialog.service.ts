@@ -36,7 +36,7 @@ export class DialogService {
   private injector = inject(Injector);
 
   // Lazy to break circular dependency with ErrorHandlerService
-  private _errorHandler: ErrorHandlerService;
+  private _errorHandler: ErrorHandlerService | undefined;
   private get errorHandler(): ErrorHandlerService {
     if (!this._errorHandler) {
       this._errorHandler = this.injector.get(ErrorHandlerService);

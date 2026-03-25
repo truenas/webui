@@ -172,7 +172,6 @@ export class WebShareCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('WebShare')],
   });
 
-
   ngOnInit(): void {
     const webshares$ = this.webShares$.pipe(
       map((shares) => this.webShareService.transformToTableRows(shares)),

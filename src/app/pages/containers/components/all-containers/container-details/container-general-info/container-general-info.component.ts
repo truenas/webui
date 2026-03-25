@@ -21,7 +21,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
-
 @Component({
   selector: 'ix-container-general-info',
   templateUrl: './container-general-info.component.html',

@@ -101,7 +101,6 @@ export class CloudSyncListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
-
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
