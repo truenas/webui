@@ -76,6 +76,7 @@ export class GuiFormComponent implements OnInit {
   protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
+    // Stored as string because ix-select works with string values; converted to number on submit via parseInt.
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
     ui_v6address: [[] as string[]],
@@ -177,31 +178,37 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  private getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
-    const uiCertificateChanged = current.ui_certificate !== next.ui_certificate;
-    const httpPortChanged = current.ui_port !== next.ui_port;
-    const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
-    const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
-    const v4AddressesChanged = !(current.ui_address.length === next.ui_address?.length
-      && current.ui_address.every((val, index) => val === next.ui_address?.[index]));
-    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address?.length
-      && current.ui_v6address.every((val, index) => val === next.ui_v6address?.[index]));
+  private getServiceRestartChanges(
+    current: SystemGeneralConfig,
+    next: SystemGeneralConfigUpdate,
+  ): { isRequired: boolean; httpPortChanged: boolean; httpsPortChanged: boolean } {
+    const uiCertificateChanged = next.ui_certificate !== undefined
+      && current.ui_certificate !== next.ui_certificate;
+    const httpPortChanged = next.ui_port !== undefined
+      && current.ui_port !== next.ui_port;
+    const httpsPortChanged = next.ui_httpsport !== undefined
+      && current.ui_httpsport !== next.ui_httpsport;
+    const redirectChanged = next.ui_httpsredirect !== undefined
+      && current.ui_httpsredirect !== next.ui_httpsredirect;
+    const nextV4 = next.ui_address;
+    const v4AddressesChanged = nextV4 !== undefined
+      && !(current.ui_address.length === nextV4.length
+        && current.ui_address.every((val, index) => val === nextV4[index]));
+    const nextV6 = next.ui_v6address;
+    const v6AddressesChanged = nextV6 !== undefined
+      && !(current.ui_v6address.length === nextV6.length
+        && current.ui_v6address.every((val, index) => val === nextV6[index]));
 
-    return [
-      uiCertificateChanged,
-      httpPortChanged,
-      httpsPortChanged,
-      redirectChanged,
-      v4AddressesChanged,
-      v6AddressesChanged,
-    ].includes(true);
+    const isRequired = uiCertificateChanged || httpPortChanged || httpsPortChanged
+      || redirectChanged || v4AddressesChanged || v6AddressesChanged;
+
+    return { isRequired, httpPortChanged, httpsPortChanged };
   }
 
   protected handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
     const current: SystemGeneralConfig = { ...this.configData };
-    const httpPortChanged = current.ui_port !== changed.ui_port;
-    const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
-    const isServiceRestartRequired = this.getIsServiceRestartRequired(current, changed);
+    const { isRequired: isServiceRestartRequired, httpPortChanged, httpsPortChanged }
+      = this.getServiceRestartChanges(current, changed);
 
     this.store$.dispatch(generalConfigUpdated());
 
