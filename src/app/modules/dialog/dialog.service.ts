@@ -35,7 +35,7 @@ export class DialogService {
   private snackbar = inject(SnackbarService);
   private injector = inject(Injector);
 
-  // Lazy to break circular dependency with ErrorHandlerService
+  // Lazy to break circular: DialogService → ErrorHandlerService → DialogService
   private _errorHandler: ErrorHandlerService | undefined;
   private get errorHandler(): ErrorHandlerService {
     if (!this._errorHandler) {
@@ -86,7 +86,6 @@ export class DialogService {
           this.snackbar.success(options.successMessage);
         }
       }),
-      this.errorHandler.withErrorHandler(),
       map((): void => {}),
     );
   }
@@ -190,7 +189,10 @@ export class DialogService {
         title: options.jobProgressTitle,
       }).afterClosed();
     }
-    return options.call().pipe(this.loader.withLoader());
+    return options.call().pipe(
+      this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
+    );
   }
 
   /**
