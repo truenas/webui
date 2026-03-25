@@ -24,6 +24,10 @@ describe('S3ProviderFormComponent', () => {
     details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
+  it('defaults sign_accept_encoding to true', () => {
+    expect(spectator.component.form.value.sign_accept_encoding).toBe(true);
+  });
+
   it('show existing provider attributes when they are set as form values', async () => {
     spectator.component.getFormSetter$().next({
       access_key_id: '12345678',
