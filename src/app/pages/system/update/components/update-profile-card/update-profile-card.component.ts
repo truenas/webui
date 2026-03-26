@@ -45,6 +45,11 @@ export class UpdateProfileCard implements OnChanges {
 
   protected updateProfileControl = new FormControl('');
 
+  protected canChangeProfile = computed(() => {
+    return this.availableProfiles().length > 1
+      || (this.availableProfiles().length === 1 && this.availableProfiles()[0].id !== this.currentProfileId());
+  });
+
   protected availableProfiles = computed(() => {
     const choices = this.profileChoices();
     return Object.entries(choices)
@@ -97,6 +102,14 @@ export class UpdateProfileCard implements OnChanges {
   ngOnChanges(changes: IxSimpleChanges<UpdateProfileCard>): void {
     if ('currentProfileId' in changes) {
       this.updateProfileControl.patchValue(this.currentProfileId());
+    }
+
+    if ('currentProfileId' in changes || 'profileChoices' in changes) {
+      if (this.canChangeProfile()) {
+        this.updateProfileControl.enable();
+      } else {
+        this.updateProfileControl.disable();
+      }
     }
   }
 

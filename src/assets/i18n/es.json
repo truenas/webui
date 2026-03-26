@@ -1,6 +1,6 @@
 {
   "0": "0",
-  "Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability to brute-force attacks. Entering a number of at least <i>1300000</i> is required. See <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> for more details.": "",
+  "Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability to brute-force attacks. Entering a number of at least <i>1300000</i> is required. See <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> for more details.": "Número de iteraciones de la función de derivación de claves basada en contraseña 2 (PBKDF2) que se deben usar para reducir la vulnerabilidad frente a ataques de fuerza bruta. Es necesario introducir un número de, al menos, <i>1300000</i>. Consulta <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> para obtener más detalles.",
   " as of {dateTime}": " a fecha de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidad bruta utilizable estimada",

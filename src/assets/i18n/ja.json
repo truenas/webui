@@ -1,6 +1,6 @@
 {
   "0": "0",
-  "Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability to brute-force attacks. Entering a number of at least <i>1300000</i> is required. See <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> for more details.": "",
+  "Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability to brute-force attacks. Entering a number of at least <i>1300000</i> is required. See <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> for more details.": "ブルートフォース攻撃に対する脆弱性を軽減するために使用する、パスワードベースの鍵導出関数2（PBKDF2）の反復回数。入力する数値は、少なくとも <i>1300000</i> 以上である必要があります。詳細については、 <a href=\"https://en.wikipedia.org/wiki/PBKDF2\" target=\"_blank\">PBKDF2</a> を参照してください。",
   " as of {dateTime}": " {dateTime} 現在",
   " bytes.": "バイト。",
   " Est. Usable Raw Capacity": "推定の使用可能な生容量",
@@ -2307,7 +2307,7 @@
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "接続先のFTPホスト。例： <i>ftp.example.com</i>",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "FTPポート番号。デフォルトのポート <i>21</i> を使用する場合は空白のままにします。",
   "FTP Service": "FTPサービス",
-  "Full Admin": "フル管理",
+  "Full Admin": "フル管理者",
   "Full Control": "フルコントロール",
   "Full Filesystem Replication": "完全なファイルシステムのレプリケーション",
   "Full Name": "フルネーム",

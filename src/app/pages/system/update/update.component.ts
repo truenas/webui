@@ -86,10 +86,10 @@ export class UpdateComponent implements OnInit {
     const version = versionRegex.exec(sysver);
 
     if (sysver.includes('MASTER') || !version) {
-      return 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/';
+      return 'https://www.truenas.com/docs/scale/systemsettings/update/update/#manually-updating';
     }
 
-    return `https://www.truenas.com/docs/scale/${version[0]}/scaletutorials/systemsettings/updatescale/`;
+    return `https://www.truenas.com/docs/scale/${version[0]}/systemsettings/update/update/#manually-updating`;
   });
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
@@ -103,17 +103,6 @@ export class UpdateComponent implements OnInit {
   protected statusDetails = computed(() => this.status()?.status);
 
   protected newVersion = computed(() => this.statusDetails()?.new_version);
-
-  protected doesNotMatchProfile = computed(() => {
-    return !this.statusDetails()?.current_version?.matches_profile;
-  });
-
-  protected currentVersionProfile = computed(() => {
-    const profileId = this.statusDetails()?.current_version?.profile || '';
-    const profile = this.profileChoices()?.[profileId];
-
-    return profile?.name || profileId;
-  });
 
   protected readonly isUpdateAvailable = computed(() => {
     return this.status()?.code === UpdateCode.Normal && Boolean(this.newVersion());

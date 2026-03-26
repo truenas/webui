@@ -134,26 +134,9 @@ describe('UpdateComponent', () => {
       expect(versionElement.parentElement).toHaveText('22.12.3');
     });
 
-    it('adds a note if profile of the currently installed version differs from profile in config', () => {
-      const mockedApi = spectator.inject(MockApiService);
-      mockedApi.mockCall('update.status', {
-        code: UpdateCode.Normal,
-        error: null,
-        status: {
-          current_version: {
-            matches_profile: false,
-            profile: 'CONSERVATIVE',
-          },
-          new_version: null,
-        },
-      } as UpdateStatus);
-
-      spectator.component.ngOnInit();
-      spectator.detectChanges();
-
-      const profileMismatchNote = spectator.query('.profile-mismatch');
-      expect(profileMismatchNote).toBeTruthy();
-      expect(profileMismatchNote).toHaveText('(from Conservative profile)');
+    it('shows "Current version" label without Active suffix when no standby node is present', () => {
+      const label = spectator.query('.current-version .label');
+      expect(label).toHaveText('Current version:');
     });
 
     it('renders ix-update-profile-card', () => {
@@ -350,7 +333,7 @@ describe('UpdateComponent', () => {
       expect(paragraph?.textContent).toContain('See the manual image installation guide');
 
       const link = spectator.query('.manual-update a');
-      expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/22.12/scaletutorials/systemsettings/updatescale/');
+      expect(link.getAttribute('href')).toBe('https://www.truenas.com/docs/scale/22.12/systemsettings/update/update/#manually-updating');
     });
 
     it('offers to save configuration and redirects user when Install manual update is pressed', async () => {
