@@ -642,7 +642,6 @@ describe('InterfaceFormComponent', () => {
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('interface.available_fec_modes', ['auto', 'rs', 'baser', 'off']);
 
-      spectator.component.ngOnInit();
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -724,7 +723,6 @@ describe('InterfaceFormComponent', () => {
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('interface.available_fec_modes', []);
 
-      spectator.component.ngOnInit();
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
