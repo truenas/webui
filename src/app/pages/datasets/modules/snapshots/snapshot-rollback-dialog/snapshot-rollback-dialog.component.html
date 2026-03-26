@@ -6,6 +6,7 @@
 } @else {
   @if (!wasDatasetRolledBack) {
     <form
+      class="ix-form-container"
       [formGroup]="form"
       (submit)="onSubmit()"
     >
