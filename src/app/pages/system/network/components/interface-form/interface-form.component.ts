@@ -250,7 +250,6 @@ export class InterfaceFormComponent implements OnInit {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
     this.checkFailoverDisabled();
-    this.loadEnterpriseStatus();
 
     if (this.existingInterface) {
       this.setInterfaceForEdit(this.existingInterface);
@@ -409,8 +408,14 @@ export class InterfaceFormComponent implements OnInit {
   private loadFailoverStatus(): void {
     this.store$.select(selectIsEnterprise).pipe(
       switchMap((isEnterprise) => {
+        this.isEnterprise = isEnterprise;
+
         if (!isEnterprise) {
           return EMPTY;
+        }
+
+        if (this.existingInterface) {
+          this.loadAvailableFecModes(this.existingInterface.id);
         }
 
         return forkJoin([
@@ -435,17 +440,6 @@ export class InterfaceFormComponent implements OnInit {
         }
       }
       this.cdr.markForCheck();
-    });
-  }
-
-  private loadEnterpriseStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((isEnterprise) => {
-      this.isEnterprise = isEnterprise;
-      if (isEnterprise && this.existingInterface) {
-        this.loadAvailableFecModes(this.existingInterface.id);
-      }
     });
   }
 
