@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,6 +15,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatSlideToggle,
+    MatTooltip,
     RequiresRolesDirective,
     TranslateModule,
     AsyncPipe,
@@ -24,9 +26,19 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   requiredRoles: Role[] = [];
   onRowToggle: (row: T, checked: boolean, toggle: MatSlideToggle) => void;
   dynamicRequiredRoles?: (row: T) => Observable<Role[]>;
+  isDisabled?: (row: T) => boolean;
+  getDisabledTooltip?: (row: T) => string;
 
   get checked(): boolean {
     return this.value as boolean;
+  }
+
+  get disabled(): boolean {
+    return this.isDisabled ? this.isDisabled(this.row()) : false;
+  }
+
+  get tooltip(): string {
+    return this.disabled && this.getDisabledTooltip ? this.getDisabledTooltip(this.row()) : '';
   }
 
   onSlideToggleChanged(event: MatSlideToggleChange): void {
