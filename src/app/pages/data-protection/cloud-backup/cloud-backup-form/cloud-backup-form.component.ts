@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
 import {
-  debounceTime, distinctUntilChanged, map, of,
+  debounceTime, distinctUntilChanged, filter, map, of,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -289,12 +289,11 @@ export class CloudBackupFormComponent implements OnInit {
 
   private listenForCredentialsChanges(): void {
     this.form.controls.credentials.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        filter((credentialId) => credentialId?.toString() !== addNewIxSelectValue),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((credentialId) => {
-        if (credentialId?.toString() === addNewIxSelectValue) {
-          return;
-        }
-
         if (credentialId !== (this.editingTask?.credentials?.id || null)) {
           this.form.controls.bucket.patchValue('');
         }
