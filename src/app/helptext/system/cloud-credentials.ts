@@ -62,6 +62,13 @@ export const helptextSystemCloudcredentials = {
  if your AWS provider does not support default version 4 signatures.',
       ),
     },
+    signAcceptEncoding: {
+      tooltip: T(
+        'Include Accept-Encoding header as part of the signature.\
+ Uncheck this if your S3 server is behind a proxy that modifies HTTP headers and\
+ you are experiencing <i>SignatureDoesNotMatch</i> errors.',
+      ),
+    },
   },
   b2: {
     account: {
