@@ -16,6 +16,9 @@ export function matchOthersFgValidator(
 
     const errFields: string[] = [];
     const subjectControl = fg.get(controlName) as UntypedFormControl;
+    if (subjectControl.disabled) {
+      return null;
+    }
     for (const name of comparateControlNames) {
       const otherControl = fg.get(name) as UntypedFormControl;
       if (!otherControl) {
@@ -59,6 +62,9 @@ export function doesNotEqualFgValidator(
 
     const errFields: string[] = [];
     const subjectControl = fg.get(controlName) as UntypedFormControl;
+    if (subjectControl.disabled) {
+      return null;
+    }
     for (const name of comparateControlNames) {
       const otherControl = fg.get(name) as UntypedFormControl;
       if (!otherControl) {
