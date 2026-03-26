@@ -536,6 +536,7 @@ export interface ApiCallDirectory {
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
 
   // Interface
+  'interface.available_fec_modes': { params: [id: string]; response: string[] };
   'interface.bridge_members_choices': { params: [id?: string]; response: Choices };
   'interface.cancel_rollback': { params: void; response: void };
   'interface.checkin': { params: void; response: void };

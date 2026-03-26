@@ -9,6 +9,7 @@ import {
 
 export interface BaseNetworkInterface {
   aliases: NetworkInterfaceAlias[];
+  available_fec_modes: string[];
   description: string;
   failover_aliases: NetworkInterfaceAlias[];
   failover_critical: boolean;
@@ -16,6 +17,7 @@ export interface BaseNetworkInterface {
   failover_vhid: number;
   failover_virtual_aliases: NetworkInterfaceAlias[];
   fake: boolean;
+  fec_mode: string | null;
   id: string;
   ipv4_dhcp: boolean;
   ipv6_auto: boolean;
@@ -72,6 +74,7 @@ export interface NetworkInterfaceState {
   capabilities: string[]; // May be a enum: "LRO", "RXCSUM", "RXCSUM_IPV6"
   cloned: boolean;
   description: string;
+  fec_mode: string | null;
   flags: NetworkInterfaceFlag[];
   permanent_link_address: string;
   link_address: string;
@@ -120,6 +123,7 @@ export interface NetworkInterfaceCreate {
   failover_aliases: NetworkInterfaceAlias[];
   failover_virtual_aliases: NetworkInterfaceAlias[];
   bridge_members: string[];
+  fec_mode?: string | null;
   lag_protocol?: LinkAggregationProtocol;
   xmit_hash_policy?: XmitHashPolicy;
   lacpdu_rate?: LacpduRate;
