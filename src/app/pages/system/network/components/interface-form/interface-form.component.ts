@@ -13,7 +13,7 @@ import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -520,7 +520,7 @@ export class InterfaceFormComponent implements OnInit {
       };
     }
 
-    if (this.isEnterprise && this.showFecMode()) {
+    if (this.isEnterprise && this.showFecMode() && formValues.fec_mode) {
       params.fec_mode = formValues.fec_mode;
     }
 
