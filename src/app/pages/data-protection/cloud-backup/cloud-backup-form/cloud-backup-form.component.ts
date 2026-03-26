@@ -28,6 +28,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -290,6 +291,10 @@ export class CloudBackupFormComponent implements OnInit {
     this.form.controls.credentials.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((credentialId) => {
+        if (credentialId?.toString() === addNewIxSelectValue) {
+          return;
+        }
+
         if (credentialId !== (this.editingTask?.credentials?.id || null)) {
           this.form.controls.bucket.patchValue('');
         }
