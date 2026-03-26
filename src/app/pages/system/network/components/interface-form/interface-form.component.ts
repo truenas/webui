@@ -11,9 +11,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import {
-  BehaviorSubject, EMPTY, forkJoin, of,
+  BehaviorSubject, EMPTY, forkJoin, of, Observable,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -126,6 +126,9 @@ export class InterfaceFormComponent implements OnInit {
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
 
   protected isLoading = signal(false);
+  protected isEnterprise = false;
+  protected fecModeOptions$: Observable<{ label: string; value: string }[]> = of([]);
+  protected showFecMode = signal(false);
   isHaLicensed = false;
   ipLabelSuffix: TranslatedString = '';
   failoverLabelSuffix: TranslatedString = '';
@@ -161,6 +164,7 @@ export class InterfaceFormComponent implements OnInit {
     failover_group: new FormControl(null as number | null),
 
     mtu: [this.defaultMtu, rangeValidator(68, 9216)],
+    fec_mode: new FormControl(null as string | null),
 
     // Aliases
     aliases: this.formBuilder.array<NetworkInterfaceFormAlias>([]),
@@ -246,6 +250,7 @@ export class InterfaceFormComponent implements OnInit {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
     this.checkFailoverDisabled();
+    this.loadEnterpriseStatus();
 
     if (this.existingInterface) {
       this.setInterfaceForEdit(this.existingInterface);
@@ -265,6 +270,7 @@ export class InterfaceFormComponent implements OnInit {
     this.form.patchValue({
       ...nic,
       mtu: nic.mtu || this.defaultMtu,
+      fec_mode: nic.fec_mode ?? null,
       aliases: interfaceAliasesToFormAliases(nic),
     });
 
@@ -432,6 +438,29 @@ export class InterfaceFormComponent implements OnInit {
     });
   }
 
+  private loadEnterpriseStatus(): void {
+    this.store$.select(selectIsEnterprise).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isEnterprise) => {
+      this.isEnterprise = isEnterprise;
+      if (isEnterprise && this.existingInterface) {
+        this.loadAvailableFecModes(this.existingInterface.id);
+      }
+    });
+  }
+
+  private loadAvailableFecModes(interfaceId: string): void {
+    this.api.call('interface.available_fec_modes', [interfaceId]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((modes) => {
+      if (modes.length > 0) {
+        this.fecModeOptions$ = of(modes.map((mode) => ({ label: mode, value: mode })));
+        this.showFecMode.set(true);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   private disableVlanParentInterface(): void {
     if (!this.isVlan) {
       return;
@@ -489,6 +518,10 @@ export class InterfaceFormComponent implements OnInit {
         failover_critical: formValues.failover_critical,
         failover_group: formValues.failover_group,
       };
+    }
+
+    if (this.isEnterprise && this.showFecMode()) {
+      params.fec_mode = formValues.fec_mode;
     }
 
     return params;
