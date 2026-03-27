@@ -42,6 +42,7 @@ export class S3ProviderFormComponent extends BaseProviderFormComponent implement
     region: [''],
     skip_region: [false],
     signatures_v2: [false],
+    sign_accept_encoding: [true],
   });
 
   ngAfterViewInit(): void {
