@@ -123,6 +123,7 @@ describe('InterfaceFormComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4'],
         } as NetworkSummary),
         mockCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' }),
+        mockCall('interface.available_fec_modes', []),
         mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
         mockCall('failover.config', {
@@ -615,6 +616,122 @@ describe('InterfaceFormComponent', () => {
           data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
         },
       );
+    });
+  });
+
+  describe('fec mode on enterprise', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              interface: {
+                ...existingInterface,
+                fec_mode: 'auto',
+              } as NetworkInterface,
+            }),
+          }),
+        ],
+      });
+
+      const store$ = spectator.inject(Store);
+      store$.dispatch(productTypeLoaded({ productType: ProductType.Enterprise }));
+
+      const websocketMock = spectator.inject(MockApiService);
+      websocketMock.mockCall('interface.available_fec_modes', ['auto', 'rs', 'baser', 'off']);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('loads available FEC modes for the interface', () => {
+      expect(api.call).toHaveBeenCalledWith('interface.available_fec_modes', ['enp0s6']);
+    });
+
+    it('shows FEC Mode dropdown when interface supports FEC on enterprise', async () => {
+      const fecModeSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'FEC Mode' }));
+      expect(fecModeSelect).toBeTruthy();
+    });
+
+    it('sends fec_mode when saving on enterprise with FEC support', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open');
+
+      await form.fillForm({
+        'FEC Mode': 'rs',
+      });
+
+      spectator.detectChanges();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('interface.update', [
+        'enp0s6',
+        expect.objectContaining({
+          fec_mode: 'rs',
+        }),
+      ]);
+    });
+  });
+
+  describe('fec mode hidden on non-enterprise', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              interface: existingInterface,
+            }),
+          }),
+        ],
+      });
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show FEC Mode dropdown on non-enterprise systems', async () => {
+      const fecModeSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'FEC Mode' }));
+      expect(fecModeSelect).toBeNull();
+    });
+  });
+
+  describe('fec mode hidden when interface does not support FEC', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              interface: existingInterface,
+            }),
+          }),
+        ],
+      });
+
+      const store$ = spectator.inject(Store);
+      store$.dispatch(productTypeLoaded({ productType: ProductType.Enterprise }));
+
+      const websocketMock = spectator.inject(MockApiService);
+      websocketMock.mockCall('interface.available_fec_modes', []);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show FEC Mode when available_fec_modes returns empty array', async () => {
+      const fecModeSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'FEC Mode' }));
+      expect(fecModeSelect).toBeNull();
     });
   });
 });
