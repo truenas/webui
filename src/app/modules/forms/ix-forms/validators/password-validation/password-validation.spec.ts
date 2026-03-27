@@ -52,6 +52,14 @@ describe('PasswordValidation', () => {
       thisControl.setValue('invoke error');
       expect(thisControl.hasError('matchOther')).toBeTruthy();
     });
+
+    it('should return null when subject control is disabled', () => {
+      thisControl.setValue('mismatch');
+      otherControl.setValue('different');
+      thisControl.disable();
+      form.updateValueAndValidity();
+      expect(form.errors).toBeNull();
+    });
   });
 
   describe('doesNotEqualValidator', () => {
@@ -101,6 +109,14 @@ describe('PasswordValidation', () => {
       otherControl.setValue('non-null');
       expect(thisControl.hasError('matchesOther')).toBeFalsy();
       expect(form.valid).toBeTruthy();
+    });
+
+    it('should return null when subject control is disabled', () => {
+      thisControl.setValue('same');
+      otherControl.setValue('same');
+      thisControl.disable();
+      form.updateValueAndValidity();
+      expect(form.errors).toBeNull();
     });
   });
 });

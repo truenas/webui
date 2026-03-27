@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
 import {
   MatDialogRef, MatDialogContent, MatDialogActions, MatDialogTitle,
   MAT_DIALOG_DATA,
@@ -14,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -36,7 +36,7 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
     TranslateModule,
     TestDirective,
     ReactiveFormsModule,
-    MatCheckbox,
+    IxCheckboxComponent,
     IxSelectComponent,
     IxInputComponent,
     FormActionsComponent,
@@ -51,7 +51,7 @@ export class RebootOrShutdownDialog {
   private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({
-    confirm: [false, Validators.requiredTrue],
+    confirm: [null as boolean | null, Validators.requiredTrue],
     reason: ['', Validators.required],
     customReason: ['', Validators.required],
   });

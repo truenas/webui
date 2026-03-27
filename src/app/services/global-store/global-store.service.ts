@@ -1,6 +1,6 @@
 import { inject, Injectable, Type } from '@angular/core';
 import {
-  BehaviorSubject, Observable, of, switchMap, tap,
+  BehaviorSubject, Observable, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
@@ -33,13 +33,26 @@ export function globalStore<
     private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2> | undefined>(undefined);
     private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[] | undefined>(undefined);
 
+    private callInFlight$: Observable<ApiCallResponse<M1>> | null = null;
+    private subscribeInFlight$: Observable<ApiEventTyped<M2>> | null = null;
+    private callAndSubscribeInFlight$: Observable<ApiCallAndSubscribeResponse<M3>[]> | null = null;
+
     get call(): Observable<ApiCallResponse<M1>> {
       return this.callResult$.pipe(
         switchMap((callResult) => {
           if (callResult === undefined) {
-            return this.api
-              .call(method as M1, params as ApiCallParams<M1>)
-              .pipe(tap((result) => this.callResult$.next(result)));
+            if (!this.callInFlight$) {
+              this.callInFlight$ = this.api
+                .call(method as M1, params as ApiCallParams<M1>)
+                .pipe(
+                  tap((result) => {
+                    this.callResult$.next(result);
+                    this.callInFlight$ = null;
+                  }),
+                  shareReplay({ bufferSize: 1, refCount: false }),
+                );
+            }
+            return this.callInFlight$;
           }
           return of(callResult);
         }),
@@ -50,9 +63,18 @@ export function globalStore<
       return this.subscribeResult$.pipe(
         switchMap((subscribeResult) => {
           if (subscribeResult === undefined) {
-            return this.api
-              .subscribe(method as M2)
-              .pipe(tap((result) => this.subscribeResult$.next(result)));
+            if (!this.subscribeInFlight$) {
+              this.subscribeInFlight$ = this.api
+                .subscribe(method as M2)
+                .pipe(
+                  tap((result) => {
+                    this.subscribeResult$.next(result);
+                    this.subscribeInFlight$ = null;
+                  }),
+                  shareReplay({ bufferSize: 1, refCount: false }),
+                );
+            }
+            return this.subscribeInFlight$;
           }
           return of(subscribeResult);
         }),
@@ -63,9 +85,18 @@ export function globalStore<
       return this.callAndSubscribeResult$.pipe(
         switchMap((callAndSubscribeResult) => {
           if (callAndSubscribeResult === undefined) {
-            return this.api
-              .callAndSubscribe(method as M3, params as ApiCallParams<M3>)
-              .pipe(tap((result) => this.callAndSubscribeResult$.next(result)));
+            if (!this.callAndSubscribeInFlight$) {
+              this.callAndSubscribeInFlight$ = this.api
+                .callAndSubscribe(method as M3, params as ApiCallParams<M3>)
+                .pipe(
+                  tap((result) => {
+                    this.callAndSubscribeResult$.next(result);
+                    this.callAndSubscribeInFlight$ = null;
+                  }),
+                  shareReplay({ bufferSize: 1, refCount: false }),
+                );
+            }
+            return this.callAndSubscribeInFlight$;
           }
           return of(callAndSubscribeResult);
         }),
@@ -74,8 +105,11 @@ export function globalStore<
 
     invalidate(): void {
       this.callResult$.next(undefined);
+      this.callInFlight$ = null;
       this.subscribeResult$.next(undefined);
+      this.subscribeInFlight$ = null;
       this.callAndSubscribeResult$.next(undefined);
+      this.callAndSubscribeInFlight$ = null;
     }
   }
   return GlobalStore;
