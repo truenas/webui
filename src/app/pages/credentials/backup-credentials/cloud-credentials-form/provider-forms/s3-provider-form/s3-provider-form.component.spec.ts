@@ -24,6 +24,11 @@ describe('S3ProviderFormComponent', () => {
     details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
+  it('defaults sign_accept_encoding to true', async () => {
+    const values = await form.getValues();
+    expect(values['Sign Accept-Encoding']).toBe(true);
+  });
+
   it('show existing provider attributes when they are set as form values', async () => {
     spectator.component.getFormSetter$().next({
       access_key_id: '12345678',
@@ -33,6 +38,7 @@ describe('S3ProviderFormComponent', () => {
       secret_access_key: 'key',
       signatures_v2: true,
       skip_region: false,
+      sign_accept_encoding: false,
     });
 
     const formValues = await form.getValues();
@@ -41,6 +47,7 @@ describe('S3ProviderFormComponent', () => {
       'Secret Access Key': 'key',
       'Use Signature Version 2': true,
       'Disable Endpoint Region': false,
+      'Sign Accept-Encoding': false,
     });
 
     const detailValues = await details.getValues();
@@ -57,6 +64,7 @@ describe('S3ProviderFormComponent', () => {
       'Secret Access Key': 'secret',
       'Use Signature Version 2': false,
       'Disable Endpoint Region': true,
+      'Sign Accept-Encoding': false,
     });
 
     await details.setValues({
@@ -76,6 +84,7 @@ describe('S3ProviderFormComponent', () => {
 
       signatures_v2: false,
       skip_region: true,
+      sign_accept_encoding: false,
     });
   });
 });

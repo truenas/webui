@@ -15,6 +15,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { StorageService } from 'app/services/storage.service';
 
 const temperatureAgg = {
@@ -68,6 +69,9 @@ describe('PoolsDashboardStore', () => {
         subscribe: jest.fn(() => websocketSubscription$),
       }),
       mockProvider(DialogService),
+      mockProvider(poolStore, {
+        invalidate: jest.fn(),
+      }),
     ],
   });
 
