@@ -11,6 +11,12 @@
       (submit)="onSubmit()"
     >
       <ix-fieldset [title]="helptext.guiTitle | translate">
+        <ix-checkbox
+          formControlName="syncThemeWithOS"
+          [label]="'Sync Theme With OS' | translate"
+          [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
+        ></ix-checkbox>
+        
         <ix-select
           formControlName="theme"
           [label]="'Theme' | translate"

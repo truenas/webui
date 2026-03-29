@@ -81,6 +81,7 @@ export class GuiFormComponent implements OnInit {
 
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
+    syncThemeWithOS: [false],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
     ui_v6address: [[] as string[]],
@@ -149,6 +150,7 @@ export class GuiFormComponent implements OnInit {
       ui_certificate: parseInt(values.ui_certificate),
     };
     delete params.theme;
+    delete params.syncThemeWithOS;
 
     if (this.isStigMode()) {
       delete params.usage_collection;
@@ -175,7 +177,7 @@ export class GuiFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+        this.store$.dispatch(guiFormSubmitted({ theme: values.theme, syncThemeWithOS: values.syncThemeWithOS }));
         this.store$.dispatch(generalConfigUpdated());
         this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading.set(false);
@@ -269,6 +271,7 @@ export class GuiFormComponent implements OnInit {
       this.configData = config;
       this.formGroup.patchValue({
         theme: preferences.userTheme,
+        syncThemeWithOS: preferences.syncThemeWithOS,
         ui_certificate: config.ui_certificate?.id?.toString(),
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,

@@ -74,8 +74,9 @@ export const preferencesReducer = createReducer(
   on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
     showSnapshotExtraColumns: !state.preferences?.showSnapshotExtraColumns,
   })),
-  on(guiFormSubmitted, (state, { theme }) => ({
-    ...updatePreferences(state, { userTheme: theme }),
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  on(guiFormSubmitted, (state, { theme, syncThemeWithOS }) => ({
+    ...updatePreferences(state, { userTheme: theme, syncThemeWithOS }),
     previewTheme: null as string | null,
   })),
   on(themeChangedInGuiForm, (state, { theme }) => ({ ...state, previewTheme: theme })),
