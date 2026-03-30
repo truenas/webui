@@ -153,11 +153,38 @@ describe('SessionTimeoutService', () => {
     });
   });
 
-  it('closes warning dialog and resets timer when user is active during warning period', fakeAsync(() => {
+  it('resets inactivity timer when user activity is detected', fakeAsync(() => {
     const window = spectator.inject<Window>(WINDOW);
     const matDialog = spectator.inject(MatDialog);
 
-    // Use a Subject that doesn't emit until we tell it to
+    spectator.service.start();
+    tick(0);
+
+    const addEventListenerMock = window.addEventListener as jest.Mock;
+    const mouseoverCall = addEventListenerMock.mock.calls.find(
+      (call) => call[0] === 'mouseover',
+    );
+    const activityHandler = mouseoverCall[1] as () => void;
+
+    // Wait 200 seconds (out of 300), then simulate activity
+    tick(200 * 1000);
+    activityHandler();
+    // Wait for debounce
+    tick(1000);
+
+    // Wait another 200 seconds — should NOT have timed out (timer was reset)
+    tick(200 * 1000);
+    expect(matDialog.open).not.toHaveBeenCalled();
+
+    // Wait the remaining 100 seconds — now it should show the warning
+    tick(100 * 1000);
+    expect(matDialog.open).toHaveBeenCalledWith(SessionExpiringDialog, expect.any(Object));
+  }));
+
+  it('does not reset timer on mouse activity while warning dialog is open', fakeAsync(() => {
+    const window = spectator.inject<Window>(WINDOW);
+    const matDialog = spectator.inject(MatDialog);
+
     const dialogAfterClosed$ = new Subject<boolean>();
     const dialogCloseSpy = jest.fn();
     jest.spyOn(matDialog, 'open').mockReturnValue({
@@ -168,23 +195,24 @@ describe('SessionTimeoutService', () => {
     spectator.service.start();
     tick(0);
 
-    // Get the resume handler that was registered
     const addEventListenerMock = window.addEventListener as jest.Mock;
     const mouseoverCall = addEventListenerMock.mock.calls.find(
       (call) => call[0] === 'mouseover',
     );
-    expect(mouseoverCall).toBeDefined();
-    const resumeHandler = mouseoverCall[1] as () => void;
+    const activityHandler = mouseoverCall[1] as () => void;
 
     // Wait for the timeout to fire and show the warning dialog
     tick(300 * 1000);
     expect(matDialog.open).toHaveBeenCalled();
 
-    // Simulate user activity while dialog is open
-    resumeHandler();
+    // Simulate mouse activity while dialog is open
+    activityHandler();
     tick(0);
 
-    // Dialog should be closed with true (extend session)
-    expect(dialogCloseSpy).toHaveBeenCalledWith(true);
+    // Dialog should NOT be closed — user must click "Extend session"
+    expect(dialogCloseSpy).not.toHaveBeenCalled();
+
+    // Clean up to prevent expireSession from firing
+    spectator.service.stop();
   }));
 });
