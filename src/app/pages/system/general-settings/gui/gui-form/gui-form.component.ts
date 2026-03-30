@@ -77,6 +77,7 @@ export class GuiFormComponent implements OnInit {
   private window = inject<Window>(WINDOW);
 
   protected isFormLoading = signal(true);
+  private hasSaved = false;
   configData: SystemGeneralConfig;
   protected isStigMode = signal(false);
 
@@ -182,6 +183,7 @@ export class GuiFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.hasSaved = true;
         this.store$.dispatch(guiFormSubmitted({
           theme: values.theme,
           lightTheme: values.lightTheme,
@@ -319,6 +321,9 @@ export class GuiFormComponent implements OnInit {
     ).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
+      if (this.hasSaved) {
+        return;
+      }
       const effectiveTheme = syncThemeWithOS.value
         ? this.getOsTheme(lightTheme.value, darkTheme.value)
         : theme.value;
