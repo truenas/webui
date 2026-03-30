@@ -46,6 +46,7 @@ export class SessionTimeoutService {
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
   private warningDialogRef: MatDialogRef<SessionExpiringDialog> | null = null;
+  private afterClosedSubscription: Subscription | null = null;
 
   private readonly defaultLifetime = 300;
   private readonly debounceMs = 1000;
@@ -64,6 +65,8 @@ export class SessionTimeoutService {
     this.pause();
     // Warning dialog may be open when preferences change triggers a reset
     if (this.warningDialogRef) {
+      clearTimeout(this.terminateCancelTimeout);
+      this.afterClosedSubscription?.unsubscribe();
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
@@ -76,11 +79,9 @@ export class SessionTimeoutService {
       }, showWarningDialogFor);
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
-      const dialogRef = this.warningDialogRef;
-      dialogRef.afterClosed()
+      this.afterClosedSubscription = this.warningDialogRef.afterClosed()
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((shouldExtend) => {
-          if (this.warningDialogRef !== dialogRef) return;
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
           if (shouldExtend) {
@@ -157,7 +158,9 @@ export class SessionTimeoutService {
   stop(): void {
     this.removeListeners();
     this.pause();
+    clearTimeout(this.terminateCancelTimeout);
     if (this.warningDialogRef) {
+      this.afterClosedSubscription?.unsubscribe();
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
