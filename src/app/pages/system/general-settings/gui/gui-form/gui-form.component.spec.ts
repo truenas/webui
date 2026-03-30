@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -19,6 +19,7 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { allThemes } from 'app/modules/theme/theme.constants';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -26,7 +27,7 @@ import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
-import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
+import { selectPreferences, selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('GuiFormComponent', () => {
@@ -107,24 +108,47 @@ describe('GuiFormComponent', () => {
             },
           },
           {
-            selector: selectTheme,
-            value: 'ix-dark',
+            selector: selectPreferencesState,
+            value: {
+              areLoaded: true,
+              preferences: { userTheme: 'ix-dark', syncThemeWithOS: false },
+              previewTheme: null,
+            },
           },
         ],
       }),
-      ThemeService,
-      mockWindow({
-        location: {
-          replace: jest.fn(),
-        },
-        localStorage: {
-          setItem: jest.fn(),
-        },
-        sessionStorage: {
-          getItem: () => 'ix-dark',
-          setItem: () => {},
-        },
+      mockProvider(ThemeService, {
+        allThemes,
+        findTheme: jest.fn((name: string) => allThemes.find((theme) => theme.name === name)),
+        updateThemeInLocalStorage: jest.fn(),
       }),
+      {
+        provide: WINDOW,
+        useValue: {
+          location: {
+            protocol: 'http:',
+            href: 'http://truenas.com',
+            hostname: 'truenas.com',
+            port: '',
+            pathname: '/',
+            replace: jest.fn(),
+          },
+          open: jest.fn(),
+          localStorage: {
+            setItem: jest.fn(),
+            getItem: jest.fn(),
+            removeItem: jest.fn(),
+          },
+          sessionStorage: {
+            getItem: () => 'ix-dark',
+            setItem: jest.fn(),
+          },
+          matchMedia: jest.fn().mockReturnValue({
+            matches: false,
+            addEventListener: jest.fn(),
+          }),
+        },
+      },
       mockAuth(),
     ],
   });
@@ -145,6 +169,7 @@ describe('GuiFormComponent', () => {
           'GUI SSL Certificate': 'freenas_default',
           'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
           'Show Console Messages': false,
+          'Sync Theme With OS': false,
           Theme: 'iX Dark',
           'Usage collection & UI error reporting': false,
           'Web Interface HTTP -> HTTPS Redirect': false,

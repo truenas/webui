@@ -4,9 +4,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { of, BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -44,6 +45,9 @@ describe('GuiCardComponent', () => {
             },
           },
         ],
+      }),
+      mockProvider(ThemeService, {
+        activeTheme$: new BehaviorSubject('ix-dark'),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),

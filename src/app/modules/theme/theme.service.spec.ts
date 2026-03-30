@@ -2,7 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 
 describe('ThemeService', () => {
   let spectator: SpectatorService<ThemeService>;
@@ -13,12 +13,21 @@ describe('ThemeService', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectTheme,
-            value: 'ix-dark',
+            selector: selectPreferencesState,
+            value: {
+              areLoaded: true,
+              preferences: { userTheme: 'ix-dark', syncThemeWithOS: false },
+              previewTheme: null,
+            },
           },
         ],
       }),
-      mockWindow(),
+      mockWindow({
+        matchMedia: jest.fn().mockReturnValue({
+          matches: false,
+          addEventListener: jest.fn(),
+        }),
+      }),
     ],
   });
 
