@@ -33,6 +33,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
+import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -81,6 +82,8 @@ export class GuiFormComponent implements OnInit {
 
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
+    lightTheme: [''],
+    darkTheme: [''],
     syncThemeWithOS: [false],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
@@ -151,6 +154,8 @@ export class GuiFormComponent implements OnInit {
     };
     delete params.theme;
     delete params.syncThemeWithOS;
+    delete params.lightTheme;
+    delete params.darkTheme;
 
     if (this.isStigMode()) {
       delete params.usage_collection;
@@ -177,7 +182,12 @@ export class GuiFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(guiFormSubmitted({ theme: values.theme, syncThemeWithOS: values.syncThemeWithOS }));
+        this.store$.dispatch(guiFormSubmitted({
+          theme: values.theme,
+          lightTheme: values.lightTheme,
+          darkTheme: values.darkTheme,
+          syncThemeWithOS: values.syncThemeWithOS,
+        }));
         this.store$.dispatch(generalConfigUpdated());
         this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading.set(false);
@@ -271,6 +281,8 @@ export class GuiFormComponent implements OnInit {
       this.configData = config;
       this.formGroup.patchValue({
         theme: preferences.userTheme,
+        lightTheme: preferences.lightTheme && preferences.lightTheme !== 'default' ? preferences.lightTheme : defaultPreferences.lightTheme,
+        darkTheme: preferences.darkTheme && preferences.darkTheme !== 'default' ? preferences.darkTheme : defaultPreferences.darkTheme,
         syncThemeWithOS: preferences.syncThemeWithOS,
         ui_certificate: config.ui_certificate?.id?.toString(),
         ui_address: config.ui_address,

@@ -13,6 +13,8 @@ export interface Preferences {
   timeFormat: string;
   sidenavStatus: SidenavStatusData;
   userTheme: string;
+  lightTheme: string;
+  darkTheme: string;
   syncThemeWithOS: boolean;
   tableDisplayedColumns: TableDisplayedColumns[];
   hideBuiltinUsers: boolean;

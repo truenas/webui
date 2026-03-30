@@ -3,6 +3,8 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 
 export const defaultPreferences: Preferences = {
   userTheme: 'default',
+  lightTheme: 'ix-blue',
+  darkTheme: 'ix-dark',
   syncThemeWithOS: false,
   dateFormat: 'yyyy-MM-DD',
   timeFormat: 'HH:mm:ss',

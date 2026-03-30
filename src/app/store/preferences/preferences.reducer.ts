@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { createReducer, on } from '@ngrx/store';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -74,9 +75,18 @@ export const preferencesReducer = createReducer(
   on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
     showSnapshotExtraColumns: !state.preferences?.showSnapshotExtraColumns,
   })),
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  on(guiFormSubmitted, (state, { theme, syncThemeWithOS }) => ({
-    ...updatePreferences(state, { userTheme: theme, syncThemeWithOS }),
+  on(guiFormSubmitted, (state, {
+    theme,
+    lightTheme,
+    darkTheme,
+    syncThemeWithOS,
+  }) => ({
+    ...updatePreferences(state, {
+      userTheme: theme,
+      lightTheme,
+      darkTheme,
+      syncThemeWithOS,
+    }),
     previewTheme: null as string | null,
   })),
   on(themeChangedInGuiForm, (state, { theme }) => ({ ...state, previewTheme: theme })),

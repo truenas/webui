@@ -23,6 +23,21 @@
           [options]="options.themes"
           [required]="true"
         ></ix-select>
+        
+        <ix-select
+          formControlName="lightTheme"
+          [label]="'Light Theme' | translate"
+          [options]="options.themes"
+          [required]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="darkTheme"
+          [label]="'Dark Theme' | translate"
+          [options]="options.themes"
+          [required]="true"
+        ></ix-select>
+
         <ix-with-manage-certificates-link>
           <ix-select
             formControlName="ui_certificate"
