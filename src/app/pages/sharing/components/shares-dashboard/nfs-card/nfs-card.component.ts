@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -38,7 +38,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -79,11 +81,14 @@ export class NfsCardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
+  private poolStoreService = inject(poolStore);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
+  /** null = pools not yet loaded; string[] once pool.query completes */
+  private activePoolPaths = signal<string[] | null>(null);
   protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
@@ -101,6 +106,8 @@ export class NfsCardComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
+      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     actionsWithMenuColumn({
       cssClass: 'tight-actions',
@@ -127,7 +134,18 @@ export class NfsCardComponent implements OnInit {
     const nfsShares$ = this.api.call('sharing.nfs.query').pipe(takeUntilDestroyed(this.destroyRef));
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.setDefaultSort();
-    this.dataProvider.load();
+
+    this.poolStoreService.call.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (pools) => {
+        this.activePoolPaths.set(pools.map((pool) => pool.path));
+        this.dataProvider.load();
+      },
+      error: () => {
+        this.dataProvider.load();
+      },
+    });
   }
 
   protected openForm(row?: NfsShare): void {

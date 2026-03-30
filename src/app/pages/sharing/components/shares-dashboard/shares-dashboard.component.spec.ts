@@ -1,7 +1,7 @@
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -10,6 +10,7 @@ import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboa
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
+import { poolStore } from 'app/services/global-store/stores.constant';
 
 describe('SharesDashboardComponent', () => {
   let spectator: Spectator<SharesDashboardComponent>;
@@ -17,9 +18,9 @@ describe('SharesDashboardComponent', () => {
     component: SharesDashboardComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('pool.query', () => [{ id: 1 }] as Pool[]),
-      ]),
+      mockProvider(poolStore, {
+        call: of([{ id: 1 }] as Pool[]),
+      }),
       provideMockStore({
         initialState: {
           systemInfo: {

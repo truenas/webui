@@ -221,11 +221,11 @@ export class IxExplorerComponent implements ControlValueAccessor {
     this.inputValue = inputValue;
     this.value = this.multiple() ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
+    this.onChange(this.value);
     const node = await this.expandTreeToPathNode(inputValue);
     if (node) {
       this.lastSelectedNode.set(node);
     }
-    this.onChange(this.value);
   }
 
   private async expandTreeToPathNode(path: string): Promise<TreeNode<ExplorerNodeData> | null> {

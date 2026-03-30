@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -14,6 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -148,6 +150,16 @@ describe('CloudBackupFormComponent', () => {
       expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
       expect(await useAbsolutePathsControl.getValue()).toBe(false);
     });
+
+    it('does not call getBuckets when credentials value is ADD_NEW', fakeAsync(() => {
+      const cloudCredentialService = spectator.inject(CloudCredentialService);
+      cloudCredentialService.getBuckets = jest.fn(() => of([]));
+
+      spectator.component.form.controls.credentials.setValue(addNewIxSelectValue as unknown as number);
+      tick();
+
+      expect(cloudCredentialService.getBuckets).not.toHaveBeenCalled();
+    }));
 
     it('adds a new cloud backup task and creates a new bucket', async () => {
       const form = await loader.getHarness(IxFormHarness);

@@ -2,17 +2,17 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { sharesEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import { sharesDashboardElements } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.elements';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
 import { SmbCardComponent } from './smb-card/smb-card.component';
@@ -35,7 +35,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
   ],
 })
 export class SharesDashboardComponent {
-  private api = inject(ApiService);
+  private poolStoreService = inject(poolStore);
   private translate = inject(TranslateService);
   private router = inject(Router);
 
@@ -51,5 +51,5 @@ export class SharesDashboardComponent {
     },
   };
 
-  readonly pools = toSignal(this.api.call('pool.query', [[], { count: true }]) as unknown as Observable<number>, { initialValue: null });
+  readonly pools = toSignal(this.poolStoreService.call.pipe(map((pools) => pools.length)), { initialValue: null });
 }
