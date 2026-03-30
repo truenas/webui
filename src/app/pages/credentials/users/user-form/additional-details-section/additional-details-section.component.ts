@@ -578,11 +578,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((shellAccess) => {
-      if (this.editingUser()) {
-        // When editing, don't auto-set shell - keep user's current shell
-        return;
-      }
-      if (!shellAccess) {
+      if (shellAccess) {
+        if (this.editingUser() && this.form.value.shell?.includes('nologin')) {
+          this.setFirstShellOption();
+        }
+      } else {
         this.setNoLoginShell();
       }
     });
