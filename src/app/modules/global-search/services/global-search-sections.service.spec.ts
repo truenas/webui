@@ -69,13 +69,13 @@ describe('GlobalSearchSectionsProvider', () => {
 
   it('should generate help section results based on search term and app version', () => {
     const searchTerm = 'feature';
-    const appVersion = '24.10';
+    const appVersion = '27';
 
     const results = spectator.service.getHelpSectionResults(searchTerm, appVersion);
 
     expect(results).toEqual([{
       hierarchy: ['Search Documentation for «{value}»'],
-      targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=feature',
+      targetHref: 'https://www.truenas.com/docs/scale/27/search/?query=feature',
       section: GlobalSearchSection.Help,
     }]);
   });
