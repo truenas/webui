@@ -305,6 +305,7 @@ export class GuiFormComponent implements OnInit {
   private setupThemePreview(): void {
     const {
       theme,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       syncThemeWithOS,
       lightTheme,
       darkTheme,
