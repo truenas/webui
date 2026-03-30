@@ -141,6 +141,21 @@ describe('UsageCardComponent', () => {
     );
   });
 
+  it('shows containers row', () => {
+    spectator.setInput('dataset', {
+      ...datasetDummy,
+      containers: [
+        { name: 'container1', path: 'container1path' },
+        { name: 'container1', path: 'container1path' },
+        { name: 'container2', path: 'container2path' },
+      ],
+    });
+
+    expect(spectator.query('.containers.value')).toHaveText(
+      'This dataset is used by: container1, container2',
+    );
+  });
+
   it('shows apps row when dataset has name `ix-apps`', () => {
     spectator.setInput('dataset', {
       ...datasetDummy,
@@ -171,6 +186,7 @@ describe('UsageCardComponent', () => {
       children: [],
       apps: [],
       vms: [],
+      containers: [],
     });
     spectator.setInput('hasChildrenWithShares', false);
 
@@ -241,6 +257,7 @@ describe('UsageCardComponent', () => {
         children: [],
         apps: [],
         vms: [],
+        containers: [],
       });
       spectator.setInput('hasChildrenWithShares', false);
 
@@ -259,6 +276,7 @@ describe('UsageCardComponent', () => {
         children: [],
         apps: [],
         vms: [],
+        containers: [],
       });
       spectator.setInput('hasChildrenWithShares', false);
       spectator.detectChanges();
@@ -358,6 +376,22 @@ describe('UsageCardComponent', () => {
       expect(spectator.component.canCreateShare()).toBe(false);
     });
 
+    it('returns false when dataset has containers', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshare_shares: [],
+        apps: [],
+        vms: [],
+        containers: [{ name: 'container1', path: 'path1' }],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
     it('returns false when dataset has SMB shares', () => {
       spectator.setInput('dataset', {
         ...datasetDummy,
@@ -428,6 +462,7 @@ describe('UsageCardComponent', () => {
         webshare_shares: [],
         apps: [],
         vms: [],
+        containers: [],
       });
       spectator.setInput('hasChildrenWithShares', false);
 

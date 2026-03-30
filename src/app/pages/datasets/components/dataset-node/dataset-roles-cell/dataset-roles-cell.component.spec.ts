@@ -54,6 +54,13 @@ describe('DatasetRolesCellComponent', () => {
     expect(spectator.query(TnTooltipDirective)!.message).toBe('This dataset is used by: vm1, vm2');
   });
 
+  it('shows "Container" icon and tooltip when dataset has containers', async () => {
+    await setupTest({ name: 'root', containers: [{ name: 'container1', path: '' }, { name: 'container1', path: '' }, { name: 'container2', path: '' }] } as DatasetDetails, false);
+
+    expect(await ixIcon.getName()).toBe('mdi-package-variant-closed');
+    expect(spectator.query(TnTooltipDirective)!.message).toBe('This dataset is used by: container1, container2');
+  });
+
   it('shows "Share" icon when dataset or children has shares', async () => {
     await setupTest({
       name: 'root/shares',
