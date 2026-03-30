@@ -242,6 +242,34 @@ describe('SessionTimeoutService', () => {
     tick(30 * 1000);
 
     expect(authService.clearAuthToken).toHaveBeenCalled();
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
+  }));
+
+  it('extends session when user clicks Extend in warning dialog', fakeAsync(() => {
+    const matDialog = spectator.inject(MatDialog);
+
+    const dialogAfterClosed$ = new Subject<boolean>();
+    jest.spyOn(matDialog, 'open').mockReturnValue({
+      afterClosed: () => dialogAfterClosed$,
+      close: jest.fn(),
+    } as unknown as ReturnType<typeof matDialog.open>);
+
+    spectator.service.start();
+    tick(0);
+
+    // Wait for warning dialog to appear
+    tick(300 * 1000);
+    expect(matDialog.open).toHaveBeenCalledTimes(1);
+
+    // User clicks "Extend session"
+    dialogAfterClosed$.next(true);
+    tick(0);
+
+    // Timer should restart — wait full lifetime again and expect a second warning
+    tick(300 * 1000);
+    expect(matDialog.open).toHaveBeenCalledTimes(2);
+
+    spectator.service.stop();
   }));
 
   it('closes warning dialog and resets timer when preferences change during warning', fakeAsync(() => {

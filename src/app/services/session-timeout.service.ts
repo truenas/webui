@@ -158,7 +158,6 @@ export class SessionTimeoutService {
   stop(): void {
     this.removeListeners();
     this.pause();
-    clearTimeout(this.terminateCancelTimeout);
     if (this.warningDialogRef) {
       this.afterClosedSubscription?.unsubscribe();
       this.warningDialogRef.close();
