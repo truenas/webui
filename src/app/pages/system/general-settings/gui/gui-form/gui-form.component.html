@@ -17,26 +17,30 @@
           [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
         ></ix-checkbox>
         
-        <ix-select
-          formControlName="theme"
-          [label]="'Theme' | translate"
-          [options]="options.themes"
-          [required]="true"
-        ></ix-select>
+        @if (!formGroup.controls.syncThemeWithOS.value) {
+            <ix-select
+              formControlName="theme"
+              [label]="'Theme' | translate"
+              [options]="options.themes"
+              [required]="true"
+            ></ix-select>
+        }
         
-        <ix-select
-          formControlName="lightTheme"
-          [label]="'Light Theme' | translate"
-          [options]="options.themes"
-          [required]="true"
-        ></ix-select>
+        @if (formGroup.controls.syncThemeWithOS.value) {
+            <ix-select
+            formControlName="lightTheme"
+            [label]="'Light Theme' | translate"
+            [options]="options.themes"
+            [required]="true"
+            ></ix-select>
 
-        <ix-select
-          formControlName="darkTheme"
-          [label]="'Dark Theme' | translate"
-          [options]="options.themes"
-          [required]="true"
-        ></ix-select>
+            <ix-select
+            formControlName="darkTheme"
+            [label]="'Dark Theme' | translate"
+            [options]="options.themes"
+            [required]="true"
+            ></ix-select>
+        }
 
         <ix-with-manage-certificates-link>
           <ix-select
