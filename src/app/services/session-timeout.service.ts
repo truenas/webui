@@ -76,9 +76,11 @@ export class SessionTimeoutService {
       }, showWarningDialogFor);
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
-      this.warningDialogRef.afterClosed()
+      const dialogRef = this.warningDialogRef;
+      dialogRef.afterClosed()
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((shouldExtend) => {
+          if (this.warningDialogRef !== dialogRef) return;
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
           if (shouldExtend) {
