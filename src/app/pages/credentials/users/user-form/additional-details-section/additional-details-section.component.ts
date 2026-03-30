@@ -570,9 +570,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       this.updateShellOptions(group, groups);
     });
 
-    // Handle setting nologin shell when shell access is disabled for new users.
-    // Note: setFirstShellOption() is handled by the effect in the constructor
-    // to avoid duplicate API calls.
+    // Handle shell changes when shell access is toggled.
+    // For new users, setFirstShellOption() on enable is handled by the effect
+    // in the constructor to avoid duplicate API calls.
     this.userFormStore.state$.pipe(
       map((state) => state.setupDetails.allowedAccess.shellAccess),
       distinctUntilChanged(),
