@@ -63,11 +63,7 @@ export class SessionTimeoutService {
 
   private resetTimer(): void {
     this.pause();
-    // Warning dialog may be open when preferences change triggers a reset
     if (this.warningDialogRef) {
-      clearTimeout(this.terminateCancelTimeout);
-      this.afterClosedSubscription?.unsubscribe();
-      this.afterClosedSubscription = null;
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
@@ -81,7 +77,6 @@ export class SessionTimeoutService {
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
       this.afterClosedSubscription = this.warningDialogRef.afterClosed()
-        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((shouldExtend) => {
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
@@ -162,8 +157,6 @@ export class SessionTimeoutService {
     this.removeListeners();
     this.pause();
     if (this.warningDialogRef) {
-      this.afterClosedSubscription?.unsubscribe();
-      this.afterClosedSubscription = null;
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
