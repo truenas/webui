@@ -364,6 +364,31 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(Object.keys(values)).not.toContain('UID');
     });
 
+    it('switches shell from nologin to zsh when shell access is enabled', fakeAsync(() => {
+      spectator = createComponent({
+        props: {
+          editingUser: { ...mockUser, shell: '/usr/sbin/nologin' } as User,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      setShellAccess(false);
+      spectator.detectChanges();
+
+      setShellAccess(true);
+      spectator.detectChanges();
+      tick();
+
+      expect(spectator.component.form.value.shell).toBe('/usr/bin/zsh');
+    }));
+
+    it('keeps current shell when shell access is enabled and shell is not nologin', fakeAsync(() => {
+      setShellAccess(true);
+      spectator.detectChanges();
+      tick();
+
+      expect(spectator.component.form.value.shell).toBe('/usr/bin/bash');
+    }));
+
     it('skips SMB home share query when editing a user to preserve existing home path', () => {
       const smbCalls = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .filter(([method]: [string]) => method === 'sharing.smb.query');
