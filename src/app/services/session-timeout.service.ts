@@ -67,6 +67,7 @@ export class SessionTimeoutService {
     if (this.warningDialogRef) {
       clearTimeout(this.terminateCancelTimeout);
       this.afterClosedSubscription?.unsubscribe();
+      this.afterClosedSubscription = null;
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
@@ -153,6 +154,8 @@ export class SessionTimeoutService {
     clearTimeout(this.debounceTimeout);
     clearTimeout(this.actionWaitTimeout);
     clearTimeout(this.terminateCancelTimeout);
+    this.afterClosedSubscription?.unsubscribe();
+    this.afterClosedSubscription = null;
   }
 
   stop(): void {
@@ -160,6 +163,7 @@ export class SessionTimeoutService {
     this.pause();
     if (this.warningDialogRef) {
       this.afterClosedSubscription?.unsubscribe();
+      this.afterClosedSubscription = null;
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }

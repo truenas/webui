@@ -243,6 +243,7 @@ describe('SessionTimeoutService', () => {
 
     expect(authService.clearAuthToken).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
+    expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
   }));
 
   it('extends session when user clicks Extend in warning dialog', fakeAsync(() => {
