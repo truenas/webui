@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, merge, of } from 'rxjs';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -298,11 +298,30 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
+  private getOsTheme(light: string, dark: string): string {
+    return this.window.matchMedia('(prefers-color-scheme: dark)').matches ? dark : light;
+  }
+
   private setupThemePreview(): void {
-    this.formGroup.controls.theme.valueChanges.pipe(
+    const {
+      theme,
+      syncThemeWithOS,
+      lightTheme,
+      darkTheme,
+    } = this.formGroup.controls;
+
+    merge(
+      theme.valueChanges,
+      syncThemeWithOS.valueChanges,
+      lightTheme.valueChanges,
+      darkTheme.valueChanges,
+    ).pipe(
       untilDestroyed(this),
-    ).subscribe((theme) => {
-      this.store$.dispatch(themeChangedInGuiForm({ theme }));
+    ).subscribe(() => {
+      const effectiveTheme = syncThemeWithOS.value
+        ? this.getOsTheme(lightTheme.value, darkTheme.value)
+        : theme.value;
+      this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
     });
   }
 }
