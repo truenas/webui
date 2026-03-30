@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -15,6 +16,7 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { AppState } from 'app/store';
@@ -29,6 +31,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './gui-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     MatCard,
     UiSearchDirective,
     MatToolbarRow,
@@ -45,6 +48,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private slideIn = inject(SlideIn);
+  protected themeService = inject(ThemeService);
 
   protected readonly searchableElements = guiCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];

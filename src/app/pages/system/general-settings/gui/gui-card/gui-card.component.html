@@ -19,8 +19,8 @@
     <mat-list>
       <mat-list-item [ixUiSearch]="searchableElements.elements.theme">
         <span class="label">{{ 'Theme' | translate }}:</span>
-        <span *ixWithLoadingState="preferences$ as preferences" class="value">
-          {{ preferences.userTheme }}
+        <span class="value">
+          {{ themeService.activeTheme$ | async }}
         </span>
       </mat-list-item>
       <mat-list-item [ixUiSearch]="searchableElements.elements.sslCertificate">
