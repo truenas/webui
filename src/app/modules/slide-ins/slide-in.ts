@@ -312,7 +312,7 @@ export class SlideIn {
       getData: (): D | undefined => {
         return cloneDeep(slideInInstance.data);
       },
-      requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
+      requireConfirmationWhen: (needConfirmation: (() => Observable<boolean>) | undefined): void => {
         slideInInstance.needConfirmation = needConfirmation;
       },
     } as SlideInRef<D, R>;

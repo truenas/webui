@@ -47,8 +47,8 @@ export class SessionExpiringDialog {
   }
 
   openPreferences(): void {
-    this.extendSession();
     this.slideIn.open(PreferencesFormComponent);
     this.navigateAndHighlight.waitForElement('session-timeout');
+    this.extendSession();
   }
 }
