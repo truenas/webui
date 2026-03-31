@@ -10,6 +10,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -38,6 +39,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
+    IxCheckboxComponent,
     IxFieldsetComponent,
     IxInputComponent,
     IxSelectComponent,
@@ -63,6 +65,9 @@ export class PreferencesFormComponent implements OnInit {
 
   protected form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
+    syncThemeWithOS: [false],
+    lightTheme: [''],
+    darkTheme: [''],
     language: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
@@ -100,6 +105,9 @@ export class PreferencesFormComponent implements OnInit {
     this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
       this.form.patchValue({
         theme: preferences.userTheme,
+        syncThemeWithOS: preferences.syncThemeWithOS,
+        lightTheme: preferences.lightTheme && preferences.lightTheme !== 'default' ? preferences.lightTheme : defaultPreferences.lightTheme,
+        darkTheme: preferences.darkTheme && preferences.darkTheme !== 'default' ? preferences.darkTheme : defaultPreferences.darkTheme,
         language: preferences.language || defaultPreferences.language,
         date_format: preferences.dateFormat || defaultPreferences.dateFormat,
         time_format: preferences.timeFormat || defaultPreferences.timeFormat,
