@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { merge, of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -149,11 +149,31 @@ export class PreferencesFormComponent implements OnInit {
     this.timeFormatOptions = of(this.localeService.getTimeFormatOptions(tz));
   }
 
+  private getOsTheme(light: string, dark: string): string {
+    return this.window.matchMedia('(prefers-color-scheme: dark)').matches ? dark : light;
+  }
+
   private setupThemePreview(): void {
-    this.form.controls.theme.valueChanges.pipe(
+    const {
+      theme,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      syncThemeWithOS,
+      lightTheme,
+      darkTheme,
+    } = this.form.controls;
+
+    merge(
+      theme.valueChanges,
+      syncThemeWithOS.valueChanges,
+      lightTheme.valueChanges,
+      darkTheme.valueChanges,
+    ).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((theme) => {
-      this.store$.dispatch(themeChangedInGuiForm({ theme }));
+    ).subscribe(() => {
+      const effectiveTheme = syncThemeWithOS.value
+        ? this.getOsTheme(lightTheme.value, darkTheme.value)
+        : theme.value;
+      this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
     });
   }
 }
