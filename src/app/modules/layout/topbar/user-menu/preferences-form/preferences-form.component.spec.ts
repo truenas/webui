@@ -84,6 +84,10 @@ describe('PreferencesFormComponent', () => {
         localStorage: {
           setItem: jest.fn(),
         },
+        matchMedia: jest.fn().mockReturnValue({
+          matches: false,
+          addEventListener: jest.fn(),
+        }),
       }),
     ],
   });
@@ -98,6 +102,7 @@ describe('PreferencesFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
+      'Sync Theme With OS': false,
       Theme: 'Dark',
       'Session Timeout': '600',
       Language: 'English (en)',
@@ -135,7 +140,12 @@ describe('PreferencesFormComponent', () => {
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 120 }));
-    expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({ theme: 'ix-blue' }));
+    expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({
+      theme: 'ix-blue',
+      syncThemeWithOS: false,
+      lightTheme: 'ix-blue',
+      darkTheme: 'ix-dark',
+    }));
     expect(store$.dispatch).toHaveBeenCalledWith(localizationFormSubmitted({
       dateFormat: 'MMMM d, yyyy',
       timeFormat: 'hh:mm:ss aa',
