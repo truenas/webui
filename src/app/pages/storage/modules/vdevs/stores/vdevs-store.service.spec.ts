@@ -62,6 +62,7 @@ describe('VDevsStore', () => {
         a: {
           isLoading: true,
           error: null,
+          poolName: '',
           nodes: [],
           diskDictionary: {},
           poolId: 4,
@@ -70,6 +71,7 @@ describe('VDevsStore', () => {
         b: {
           isLoading: false,
           error: null,
+          poolName: 'tank',
           nodes: [
             {
               children: [
