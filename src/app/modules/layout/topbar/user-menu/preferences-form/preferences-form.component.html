@@ -4,18 +4,20 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-select
-          formControlName="theme"
-          [label]="'Theme' | translate"
-          [options]="themeOptions"
-          [required]="true"
-        ></ix-select>
+      <ix-fieldset [title]="'GUI' | translate">
         <ix-checkbox
           formControlName="syncThemeWithOS"
           [label]="'Sync Theme With OS' | translate"
           [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
         ></ix-checkbox>
+        @if (!form.controls.syncThemeWithOS.value) {
+            <ix-select
+              formControlName="theme"
+              [label]="'Theme' | translate"
+              [options]="themeOptions"
+              [required]="true"
+            ></ix-select>
+        }
         @if (form.controls.syncThemeWithOS.value) {
           <ix-select
             formControlName="lightTheme"
