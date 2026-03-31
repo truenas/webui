@@ -7,7 +7,7 @@
   "Include Accept-Encoding header as part of the signature. Uncheck this if your S3 server is behind a proxy that modifies HTTP headers and you are experiencing <i>SignatureDoesNotMatch</i> errors.": "Incluye la cabecera Accept-Encoding como parte de la firma. Desmarca esto si tu servidor S3 está detrás de un proxy que modifica las cabeceras HTTP y estás experimentando errores <i>SignatureDoesNotMatch</i>.",
   "Share is on an exported pool": "El recurso está en un pool exportado",
   "Sign Accept-Encoding": "Firmar Accept-Encoding",
-  "This action is not available for root shares": "Esta acción no está disponible para los recursos raíz"
+  "This action is not available for root shares": "Esta acción no está disponible para los recursos raíz",
   " as of {dateTime}": " a fecha de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidad bruta utilizable estimada",
