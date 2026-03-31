@@ -31,6 +31,10 @@ export class NavigateAndHighlightService {
     });
   }
 
+  /**
+   * Polls for an element by id and highlights it when found.
+   * Retries up to 50 times at 100ms intervals (5 seconds total).
+   */
   waitForElement(hash: string, attemptCount = 0): void {
     const maxAttempts = 50; // 5 seconds total (50 * 100ms)
     const htmlElement = this.window.document.getElementById(hash);
