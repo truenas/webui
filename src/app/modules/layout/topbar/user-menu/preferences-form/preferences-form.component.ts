@@ -65,6 +65,8 @@ export class PreferencesFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
+  private hasSaved = false;
+
   protected form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     syncThemeWithOS: [false],
@@ -121,6 +123,7 @@ export class PreferencesFormComponent implements OnInit {
   protected onSubmit(): void {
     const values = this.form.getRawValue();
 
+    this.hasSaved = true;
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime }));
     this.store$.dispatch(guiFormSubmitted({
       theme: values.theme,
@@ -170,9 +173,20 @@ export class PreferencesFormComponent implements OnInit {
     ).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
+      if (this.hasSaved) {
+        return;
+      }
       const effectiveTheme = syncThemeWithOS.value
         ? this.getOsTheme(lightTheme.value, darkTheme.value)
         : theme.value;
+      this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
+    });
+
+    this.window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (this.hasSaved || !syncThemeWithOS.value) {
+        return;
+      }
+      const effectiveTheme = this.getOsTheme(lightTheme.value, darkTheme.value);
       this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
     });
   }
