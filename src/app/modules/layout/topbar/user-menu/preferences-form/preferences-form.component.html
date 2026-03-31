@@ -23,11 +23,13 @@
             formControlName="lightTheme"
             [label]="'Light Theme' | translate"
             [options]="themeOptions"
+            [required]="true"
           ></ix-select>
           <ix-select
             formControlName="darkTheme"
             [label]="'Dark Theme' | translate"
             [options]="themeOptions"
+            [required]="true"
           ></ix-select>
         }
         <ix-input
