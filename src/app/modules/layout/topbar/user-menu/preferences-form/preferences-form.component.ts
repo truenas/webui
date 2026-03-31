@@ -120,7 +120,12 @@ export class PreferencesFormComponent implements OnInit {
     const values = this.form.getRawValue();
 
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime }));
-    this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+    this.store$.dispatch(guiFormSubmitted({
+      theme: values.theme,
+      syncThemeWithOS: values.syncThemeWithOS,
+      lightTheme: values.lightTheme,
+      darkTheme: values.darkTheme,
+    }));
     this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
 
     this.store$.dispatch(localizationFormSubmitted({
