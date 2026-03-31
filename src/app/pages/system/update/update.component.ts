@@ -23,6 +23,7 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { extractVersion } from 'app/modules/global-search/helpers/extract-version';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -81,15 +82,14 @@ export class UpdateComponent implements OnInit {
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly manualUpdateUrl = computed(() => {
-    const versionRegex = new RegExp(/(\d+\.\d+)/);
     const sysver = this.systemVersion();
-    const version = versionRegex.exec(sysver);
+    const version = extractVersion(sysver);
 
     if (sysver.includes('MASTER') || !version) {
       return 'https://www.truenas.com/docs/scale/systemsettings/update/update/#manually-updating';
     }
 
-    return `https://www.truenas.com/docs/scale/${version[0]}/systemsettings/update/update/#manually-updating`;
+    return `https://www.truenas.com/docs/scale/${version}/systemsettings/update/update/#manually-updating`;
   });
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
