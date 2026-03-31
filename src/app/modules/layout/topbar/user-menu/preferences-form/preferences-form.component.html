@@ -11,6 +11,23 @@
           [options]="themeOptions"
           [required]="true"
         ></ix-select>
+        <ix-checkbox
+          formControlName="syncThemeWithOS"
+          [label]="'Sync Theme With OS' | translate"
+          [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
+        ></ix-checkbox>
+        @if (form.controls.syncThemeWithOS.value) {
+          <ix-select
+            formControlName="lightTheme"
+            [label]="'Light Theme' | translate"
+            [options]="themeOptions"
+          ></ix-select>
+          <ix-select
+            formControlName="darkTheme"
+            [label]="'Dark Theme' | translate"
+            [options]="themeOptions"
+          ></ix-select>
+        }
         <ix-input
           id="session-timeout"
           formControlName="token_lifetime"
