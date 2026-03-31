@@ -109,7 +109,7 @@ export class PreferencesFormComponent implements OnInit {
     this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
       this.form.patchValue({
         theme: preferences.userTheme,
-        syncThemeWithOS: preferences.syncThemeWithOS,
+        syncThemeWithOS: preferences.syncThemeWithOS ?? false,
         lightTheme: preferences.lightTheme && preferences.lightTheme !== 'default' ? preferences.lightTheme : defaultPreferences.lightTheme,
         darkTheme: preferences.darkTheme && preferences.darkTheme !== 'default' ? preferences.darkTheme : defaultPreferences.darkTheme,
         language: preferences.language || defaultPreferences.language,
