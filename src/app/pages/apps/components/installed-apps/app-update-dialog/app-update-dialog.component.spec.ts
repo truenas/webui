@@ -78,7 +78,7 @@ describe('AppUpdateDialog', () => {
       const versionRows = spectator.queryAll('.version-row');
       expect(versionRows).toHaveLength(1);
 
-      // Check that only revision row is shown (only library version changed, app version stayed the same)
+      // Only revision row is shown (app version stayed the same)
       expect(versionRows[0].textContent).toContain('Revision');
       expect(versionRows[0].textContent).toContain('1.0.1');
       expect(versionRows[0].textContent).toContain('1.0.2');
@@ -96,6 +96,41 @@ describe('AppUpdateDialog', () => {
     it('shows version dropdown when multiple versions are available', () => {
       const versionDropdown = spectator.query('.resource mat-select');
       expect(versionDropdown).toBeTruthy();
+    });
+  });
+
+  describe('with app version change', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(MatDialogRef),
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: {
+              appInfo: fakeAppInfo,
+              upgradeSummary: {
+                ...fakeUpgradeSummary,
+                latest_version: '1.0.3',
+                latest_app_version: '8.7.1',
+                latest_human_version: '8.7.1_1.0.3',
+              },
+            },
+          },
+        ],
+      });
+    });
+
+    it('displays both version and revision rows', () => {
+      const versionRows = spectator.queryAll('.version-row');
+      expect(versionRows).toHaveLength(2);
+
+      expect(versionRows[0].textContent).toContain('Version');
+      expect(versionRows[0].textContent).toContain('8.7.0');
+      expect(versionRows[0].textContent).toContain('8.7.1');
+
+      expect(versionRows[1].textContent).toContain('Revision');
+      expect(versionRows[1].textContent).toContain('1.0.1');
+      expect(versionRows[1].textContent).toContain('1.0.3');
     });
   });
 
