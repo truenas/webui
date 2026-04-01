@@ -49,6 +49,7 @@ export class SessionExpiringDialog {
   openPreferences(): void {
     this.extendSession();
     this.slideIn.open(PreferencesFormComponent);
-    this.navigateAndHighlight.waitForElement('session-timeout');
+    // Wait a frame for the slide-in to render before polling for the element.
+    setTimeout(() => this.navigateAndHighlight.waitForElement('session-timeout'));
   }
 }

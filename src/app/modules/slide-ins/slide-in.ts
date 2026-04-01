@@ -43,9 +43,9 @@ export class SlideIn {
     const instances = [...this.slideInInstances()].reverse();
 
     for (const instance of instances) {
-      instance.slideInRef.requireConfirmationWhen(undefined);
+      instance.slideInRef?.requireConfirmationWhen(undefined);
       instance.cdkOverlayRef.dispose();
-      instance.slideInRef.close({ response: false, error: undefined });
+      instance.slideInRef?.close({ response: undefined });
     }
 
     this.slideInInstances.set([]);
@@ -294,7 +294,7 @@ export class SlideIn {
           next: () => {
             this.swap(
               component,
-              options,
+              options ?? {},
             );
           },
         });
@@ -302,13 +302,13 @@ export class SlideIn {
       getData: (): D | undefined => {
         return cloneDeep(slideInInstance.data);
       },
-      requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
+      requireConfirmationWhen: (needConfirmation: (() => Observable<boolean>) | undefined): void => {
         slideInInstance.needConfirmation = needConfirmation;
       },
     } as SlideInRef<D, R>;
   }
 
-  private canCloseSlideIn(needConfirmation: () => Observable<boolean>): Observable<boolean> {
+  private canCloseSlideIn(needConfirmation: (() => Observable<boolean>) | undefined): Observable<boolean> {
     if (!needConfirmation) {
       return of(true);
     }

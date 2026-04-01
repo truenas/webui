@@ -168,10 +168,7 @@ export class SessionTimeoutService {
       disableClose: true,
       data: {
         title: this.translate.instant('Logout'),
-        message: this.translate.instant(`
-              It looks like your session has been inactive for more than {lifetime} seconds.<br>
-              For security reasons we will log you out at {time}.
-            `, { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
+        message: this.translate.instant('It looks like your session has been inactive for more than {lifetime} seconds.<br>\nFor security reasons we will log you out at {time}.', { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
         buttonText: this.translate.instant('Extend session'),
       } as SessionExpiringDialogOptions,
     });
@@ -179,12 +176,12 @@ export class SessionTimeoutService {
 
   private addListeners(): void {
     this.removeListeners();
-    this.window.addEventListener('mouseover', this.resume, false);
-    this.window.addEventListener('keypress', this.resume, false);
+    // this.window.addEventListener('mouseover', this.resume, false);
+    // this.window.addEventListener('keypress', this.resume, false);
   }
 
   private removeListeners(): void {
-    this.window.removeEventListener('mouseover', this.resume, false);
-    this.window.removeEventListener('keypress', this.resume, false);
+    // this.window.removeEventListener('mouseover', this.resume, false);
+    // this.window.removeEventListener('keypress', this.resume, false);
   }
 }
