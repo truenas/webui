@@ -14,7 +14,12 @@
   </a>
 
   @if (isEnterprise()) {
-    <button mat-button ixTest="tiering" (click)="onTiering()">
+    <button
+      mat-button
+      ixTest="tiering"
+      [ixUiSearch]="searchableElements.elements.tiering"
+      (click)="onTiering()"
+    >
       {{ 'Tiering' | translate }}
     </button>
   }
