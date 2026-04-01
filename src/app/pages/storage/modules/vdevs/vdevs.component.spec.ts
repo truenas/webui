@@ -8,7 +8,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/hardware-disk-encryption.component';
@@ -19,15 +18,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 describe('VDevsComponent', () => {
   let spectator: Spectator<VDevsComponent>;
-
-  const pools = [
-    {
-      id: 2,
-      name: 'test',
-      guid: '9053312858708049075',
-      path: '/mnt/test',
-    },
-  ] as Pool[];
 
   const selectedNode = {
     name: 'ca0f5344-267c-4be9-a40e-489535c84e9b',
@@ -202,7 +192,6 @@ describe('VDevsComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('pool.query', pools),
         mockCall('system.advanced.sed_global_password_is_set', false),
         mockCall('disk.query', [{ passwd: '' } as unknown as Disk]),
       ]),
@@ -219,6 +208,7 @@ describe('VDevsComponent', () => {
         selectedNode$: of(selectedNode),
         selectedParentNode$: of(parentNode),
         nodes$: of(nodes),
+        poolName$: of('test'),
         selectedTopologyCategory$: of(VDevType.Data),
         loadNodes: jest.fn(),
         selectedBranch$: of(selectedBranch),
