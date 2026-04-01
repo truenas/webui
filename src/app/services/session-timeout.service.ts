@@ -176,12 +176,12 @@ export class SessionTimeoutService {
 
   private addListeners(): void {
     this.removeListeners();
-    // this.window.addEventListener('mouseover', this.resume, false);
-    // this.window.addEventListener('keypress', this.resume, false);
+    this.window.addEventListener('mouseover', this.resume, false);
+    this.window.addEventListener('keypress', this.resume, false);
   }
 
   private removeListeners(): void {
-    // this.window.removeEventListener('mouseover', this.resume, false);
-    // this.window.removeEventListener('keypress', this.resume, false);
+    this.window.removeEventListener('mouseover', this.resume, false);
+    this.window.removeEventListener('keypress', this.resume, false);
   }
 }
