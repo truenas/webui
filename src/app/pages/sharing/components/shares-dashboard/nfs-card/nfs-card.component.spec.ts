@@ -75,6 +75,7 @@ describe('NfsCardComponent', () => {
     mockAuth(),
     mockProvider(DialogService, {
       confirm: jest.fn(() => of(true)),
+      confirmDelete: jest.fn(() => of(undefined)),
     }),
     mockProvider(SlideInRef, slideInRef),
     mockProvider(MatDialog, {
@@ -155,9 +156,7 @@ describe('NfsCardComponent', () => {
       await menu.open();
       await menu.clickItem({ text: 'Delete' });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.delete', [10]);
-      expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalled();
     });
 
     it('updates NFS Enabled status once mat-toggle is updated', async () => {

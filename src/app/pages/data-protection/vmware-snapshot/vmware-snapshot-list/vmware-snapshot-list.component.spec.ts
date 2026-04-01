@@ -2,13 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -40,13 +39,10 @@ describe('VmwareSnapshotListComponent', () => {
         mockCall('vmware.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
     ],
   });
@@ -91,15 +87,12 @@ describe('VmwareSnapshotListComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Are you sure you want to delete this snapshot?',
-      hideCheckbox: true,
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.delete', [1]);
-    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });

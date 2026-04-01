@@ -38,7 +38,6 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -79,7 +78,6 @@ export class CloudBackupCardComponent implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  private loader = inject(LoaderService);
   private router = inject(Router);
   protected emptyService = inject(EmptyService);
   private window = inject<Window>(WINDOW);
@@ -205,26 +203,16 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   protected doDelete(row: CloudBackup): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {
         name: row.description,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('cloud_backup.delete', [row.id]),
+      successMessage: this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
-        this.getCloudBackups();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getCloudBackups());
   }
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {

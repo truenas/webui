@@ -4,8 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { switchMap } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
@@ -28,7 +26,6 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -37,7 +34,6 @@ import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-init-shutdown-list',
@@ -63,8 +59,6 @@ export class InitShutdownListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
-  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -138,18 +132,11 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   private deleteScript(script: InitShutdownScript): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this script?'),
-      hideCheckbox: true,
+      call: () => this.api.call('initshutdownscript.delete', [script.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => {
-        return this.api.call('initshutdownscript.delete', [script.id]).pipe(
-          this.errorHandler.withErrorHandler(),
-          this.loader.withLoader(),
-        );
-      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dataProvider.load());
   }

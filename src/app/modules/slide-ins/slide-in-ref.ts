@@ -13,6 +13,6 @@ export class SlideInRef<D, R> {
    * wizard to form.
    */
   swap?: (component: ComponentInSlideIn<D, R>, options?: { wide?: boolean }) => void;
-  getData: () => D;
-  requireConfirmationWhen: (confirm: () => Observable<boolean>) => void;
+  getData: () => D | undefined;
+  requireConfirmationWhen: (confirm: (() => Observable<boolean>) | undefined) => void;
 }

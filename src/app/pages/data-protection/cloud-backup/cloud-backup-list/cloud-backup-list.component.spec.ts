@@ -9,6 +9,7 @@ import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -78,6 +79,7 @@ describe('CloudBackupListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -202,11 +204,11 @@ describe('CloudBackupListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Backup Task <b>"UA"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Backup Task «UA» deleted.',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);

@@ -128,6 +128,10 @@ export class UsageCardComponent {
     return uniq(this.dataset().vms?.map((app) => app.name))?.join(', ');
   });
 
+  readonly containerNames = computed(() => {
+    return uniq(this.dataset().containers?.map((container) => container.name))?.join(', ');
+  });
+
   readonly isSystemDataset = computed(() => {
     return this.dataset().name === this.systemDataset();
   });
@@ -185,6 +189,7 @@ export class UsageCardComponent {
       && !this.isApplications()
       && !this.dataset().apps?.length
       && !this.dataset().vms?.length
+      && !this.dataset().containers?.length
       && !this.dataset().smb_shares?.length
       && !this.dataset().nfs_shares?.length
       && !this.dataset().iscsi_shares?.length

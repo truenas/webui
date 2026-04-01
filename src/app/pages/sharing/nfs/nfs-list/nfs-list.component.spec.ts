@@ -21,7 +21,6 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -56,6 +55,7 @@ const commonProviders = [
   mockProvider(SlideInRef, slideInRef),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
+    confirmDelete: jest.fn(() => of(undefined)),
   }),
   mockProvider(SlideIn, {
     open: jest.fn(() => SlideInResult.empty()),
@@ -126,7 +126,11 @@ describe('NfsListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+      call: expect.any(Function),
+    });
   });
 
   it('should show table rows', async () => {

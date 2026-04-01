@@ -218,26 +218,16 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   protected doDelete(cloudsyncTask: CloudSyncTaskUi): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: cloudsyncTask.description,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('cloudsync.delete', [cloudsyncTask.id]),
+      successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }));
-        this.getCloudSyncTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getCloudSyncTasks());
   }
 
   protected onAdd(): void {
@@ -343,7 +333,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.getCloudSyncTasks();
       });
   }
-
 
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
     this.api

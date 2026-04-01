@@ -8,7 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import { filter, from, switchMap } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,12 +27,10 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @Component({
@@ -60,10 +58,8 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 })
 export class TunableCardComponent implements OnInit {
   private translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
@@ -127,27 +123,17 @@ export class TunableCardComponent implements OnInit {
 
   onDelete(row: Tunable): void {
     const type = row.type?.toUpperCase() || '';
-    this.dialog.confirm({
+    this.dialog.confirmDelete({
       title: this.translate.instant('Delete Tunable ({type})', { type }),
       message: this.translate.instant('Are you sure you want to delete "{name}"?', {
         name: row.var,
       }),
-      buttonText: this.translate.instant('Delete'),
-    })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => this.api.job('tunable.delete', [row.id])),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Variable deleted.'));
-          this.loadItems();
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-        },
-      });
+      job: () => this.api.job('tunable.delete', [row.id]),
+      jobProgressTitle: this.translate.instant('Deleting...'),
+      successMessage: this.translate.instant('Variable deleted.'),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.loadItems());
   }
 
   onEdit(row: Tunable): void {

@@ -18,7 +18,11 @@ div.message-content {
   word-wrap: break-word;
 }
 
-b {
+.preferences-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
   color: var(--primary);
   cursor: pointer;
   text-decoration: underline;

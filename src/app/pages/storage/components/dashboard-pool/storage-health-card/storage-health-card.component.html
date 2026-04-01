@@ -85,7 +85,7 @@
       }
     }
 
-    @if (pool().dedup_table_size > 0) {
+    @if (pool().dedup_table_size > 0 || pool().topology?.dedup?.length > 0) {
       <ix-deduplication-stats [pool]="pool()"></ix-deduplication-stats>
     }
   </mat-card-content>

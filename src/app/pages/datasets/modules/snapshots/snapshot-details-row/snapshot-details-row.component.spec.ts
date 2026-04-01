@@ -38,6 +38,7 @@ describe('SnapshotDetailsRowComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockApi([
         mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
@@ -104,12 +105,12 @@ describe('SnapshotDetailsRowComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Delete',
-        message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
-      }),
-    );
-    expect(api.call).toHaveBeenCalledWith('pool.snapshot.delete', [fakeZfsSnapshot.name]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
+      call: expect.any(Function),
+      successMessage: 'Snapshot deleted.',
+    });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
   });
 });

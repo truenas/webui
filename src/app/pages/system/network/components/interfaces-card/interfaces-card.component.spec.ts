@@ -99,6 +99,7 @@ describe('InterfacesCardComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockAuth(),
     ],
@@ -152,9 +153,12 @@ describe('InterfacesCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Interface',
-    }));
+      message: expect.any(String),
+      call: expect.any(Function),
+    });
+
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('interface.delete', ['vlan1']);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);

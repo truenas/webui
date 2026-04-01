@@ -6,9 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, switchMap, tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,7 +25,6 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -35,7 +32,6 @@ import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorize
 import {
   authorizedAccessListElements,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @Component({
@@ -64,12 +60,10 @@ import { IscsiService } from 'app/services/iscsi.service';
 })
 export class AuthorizedAccessListComponent implements OnInit {
   emptyService = inject(EmptyService);
-  private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
-  private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private iscsiService = inject(IscsiService);
   private destroyRef = inject(DestroyRef);
@@ -115,21 +109,12 @@ export class AuthorizedAccessListComponent implements OnInit {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
-            this.dialogService.confirm({
-              title: this.translate.instant('Delete'),
+            this.dialogService.confirmDelete({
               message: this.translate.instant('Are you sure you want to delete this item?'),
-              buttonText: this.translate.instant('Delete'),
-              buttonColor: 'warn',
+              call: () => this.api.call('iscsi.auth.delete', [row.id]),
             }).pipe(
-              filter(Boolean),
-              switchMap(() => this.api.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),
               takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              next: () => this.refresh(),
-              error: (error: unknown) => {
-                this.errorHandler.showErrorModal(error);
-              },
-            });
+            ).subscribe(() => this.refresh());
           },
           requiredRoles: this.requiredRoles,
         },

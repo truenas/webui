@@ -8,11 +8,11 @@ import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,12 +56,10 @@ describe('KerberosKeytabsListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
-      }),
-      mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
       mockAuth(),
     ],
@@ -95,9 +93,12 @@ describe('KerberosKeytabsListComponent', () => {
     const deleteIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'keytab1');
     await deleteIcon.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: 'Are you sure you want to delete this item?',
+      call: expect.any(Function),
+    });
+
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.delete', [1]);
-    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
   it('calls directoryservices.sync_keytab when Sync is pressed', async () => {

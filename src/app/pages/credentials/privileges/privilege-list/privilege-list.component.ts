@@ -6,7 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
-  filter, map, shareReplay, switchMap, take,
+  map, shareReplay, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -33,14 +33,12 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/privileges/privilege-list/privilege-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-privilege-list',
@@ -68,9 +66,7 @@ export class PrivilegeListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
-  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -166,26 +162,18 @@ export class PrivilegeListComponent implements OnInit {
 
   doDelete(privilege: Privilege): void {
     this.dialogService
-      .confirm({
+      .confirmDelete({
         title: this.translate.instant('Delete Privilege'),
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: privilege.name,
         }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
+        call: () => this.api.call('privilege.delete', [privilege.id]),
       })
       .pipe(
-        filter(Boolean),
-        switchMap(() => this.api.call('privilege.delete', [privilege.id]).pipe(this.loader.withLoader())),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe({
-        next: () => {
-          this.getPrivileges();
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-        },
+      .subscribe(() => {
+        this.getPrivileges();
       });
   }
 

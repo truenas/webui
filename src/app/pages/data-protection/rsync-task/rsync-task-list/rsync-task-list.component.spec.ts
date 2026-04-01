@@ -93,6 +93,7 @@ describe('RsyncTaskListComponent', () => {
       mockAuth(),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockApi([
         mockCall('rsynctask.query', tasks),
@@ -208,9 +209,12 @@ describe('RsyncTaskListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Task',
       message: 'Are you sure you want to delete this task?',
-    }));
+      call: expect.any(Function),
+    });
+
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 

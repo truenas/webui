@@ -54,6 +54,18 @@
         </a>
       </div>
     }
+    @if (dataset().containers?.length) {
+      <div class="details-item">
+        <tn-icon class="icon" name="mdi-package-variant-closed"></tn-icon>
+        <div class="label">{{ 'Containers' | translate }}:</div>
+        <div class="containers value">
+          {{ 'This dataset is used by: {containers}' | translate: { containers: containerNames() } }}
+        </div>
+        <a class="action" ixTest="manage-containers" [routerLink]="['/containers']">
+          {{ 'Manage Containers' | translate }}
+        </a>
+      </div>
+    }
     @if (dataset().smb_shares?.length) {
       <div class="details-item">
         <tn-icon name="tn-smb-share" class="icon"></tn-icon>

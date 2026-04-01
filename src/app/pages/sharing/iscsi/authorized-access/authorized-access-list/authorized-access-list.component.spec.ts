@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
@@ -61,7 +60,7 @@ describe('AuthorizedAccessListComponent', () => {
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -113,8 +112,12 @@ describe('AuthorizedAccessListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.auth.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: 'Are you sure you want to delete this item?',
+      call: expect.any(Function),
+    });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.auth.delete', [1]);
   });
 
   it('should show table rows', async () => {

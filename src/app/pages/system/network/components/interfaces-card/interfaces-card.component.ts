@@ -228,13 +228,17 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   protected onDelete(row: NetworkInterface): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Delete Interface'),
       message: this.translate.instant(helptextInterfaces.deleteDialogText),
-      buttonText: this.translate.instant('Delete'),
-    })
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.makeDeleteCall(row));
+      call: () => this.api.call('interface.delete', [row.id]),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.interfacesUpdated.emit();
+      this.interfacesStore$.loadInterfaces();
+      this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
+    });
   }
 
   protected onReset(row: NetworkInterface): void {
