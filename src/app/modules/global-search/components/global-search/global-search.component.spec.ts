@@ -63,7 +63,7 @@ describe('GlobalSearchComponent', () => {
             selector: selectSystemInfoState,
             value: {
               systemInfo: {
-                version: 'TrueNAS-SCALE-24.10.0-MASTER-20240324-065034',
+                version: 'TrueNAS-SCALE-27.0.0-MASTER-20240324-065034',
               },
             } as SystemInfoState,
           },
@@ -100,7 +100,7 @@ describe('GlobalSearchComponent', () => {
       {
         hierarchy: ['Search Documentation for «{value}»'],
         section: GlobalSearchSection.Help,
-        targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=Filtered',
+        targetHref: 'https://www.truenas.com/docs/scale/27/search/?query=Filtered',
       },
     ]);
 
@@ -129,7 +129,7 @@ describe('GlobalSearchComponent', () => {
         {
           hierarchy: ['Search Documentation for «{value}»'],
           section: GlobalSearchSection.Help,
-          targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=Unknown',
+          targetHref: 'https://www.truenas.com/docs/scale/27/search/?query=Unknown',
         },
       ]);
       expect(spectator.component.searchResults).toHaveLength(1);
