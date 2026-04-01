@@ -962,7 +962,7 @@ describe('VDevsCardComponent', () => {
       expect(spectator.queryAll('.vdev-line .warning tn-icon')).toHaveLength(2);
 
       expect(captions[0]).toHaveText('Data VDEVs');
-      expect(captions[1]).toHaveText('Metadata');
+      expect(captions[1]).toHaveText('Special');
       expect(values[0]).toHaveText('2 x RAIDZ3 | 7 wide | Mixed Capacity');
       expect(values[1]).toHaveText('3 x RAIDZ2 | 8 wide | Mixed Capacity');
     });
@@ -1697,7 +1697,7 @@ describe('VDevsCardComponent', () => {
       expect(values[4]).toHaveText('3 x 8 TiB');
 
       // Redundancy level should match data VDEVs
-      expect(captions[1]).toHaveText('Metadata');
+      expect(captions[1]).toHaveText('Special');
       expect(values[1]).toHaveText('1 x MIRROR | 3 wide | 4 TiB');
       expect(captions[5]).toHaveText('Dedup VDEVs');
       expect(values[5]).toHaveText('4 x DISK | 1 wide | 4 TiB');
