@@ -36,7 +36,7 @@ export const helptextPoolCreation = {
 
   dRaidChildrenExplanation: T('The number of children must at the minimum accommodate the total number of disks required for the previous configuration options including parity drives.'),
 
-  addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
+  addVdevStripeSpecialWarning: T('Adding a stripe special VDEV introduces a single point of failure to your pool.'),
   addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
 
   specialRedundancyMismatchWarning: T('The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),

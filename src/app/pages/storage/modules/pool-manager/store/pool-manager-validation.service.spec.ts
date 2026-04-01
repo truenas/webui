@@ -443,7 +443,7 @@ describe('PoolManagerValidationService', () => {
             {
               severity: PoolCreationSeverity.ErrorWarning,
               step: PoolCreationWizardStep.Metadata,
-              text: 'Adding a stripe metadata VDEV introduces a single point of failure to your pool.',
+              text: 'Adding a stripe special VDEV introduces a single point of failure to your pool.',
             },
           ],
         });

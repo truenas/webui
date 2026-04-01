@@ -228,7 +228,7 @@ describe('PoolManagerComponent – step changing', () => {
       VDevType.Cache,
     ]);
 
-    // Metadata
+    // Special
     await wizard.clickNext();
     await wizard.fillStep({
       Layout: 'Stripe',
