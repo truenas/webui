@@ -13,7 +13,7 @@ import { GlobalSearchResultsComponent } from './global-search-results.component'
 const mockedHelpElement = {
   hierarchy: ['Help Section Item'],
   section: GlobalSearchSection.Help,
-  targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=test',
+  targetHref: 'https://www.truenas.com/docs/scale/27/search/?query=test',
 };
 
 const mockedUiElement = {

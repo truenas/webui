@@ -61,4 +61,10 @@ export const helptextInterfacesForm = {
  with network interfaces and equipment. <i>1500</i> and <i>9000</i>\
  are standard Ethernet MTU sizes. Leaving blank restores the field to\
  the default value of <i>1500</i>.'),
+  fecModeTooltip: T('Forward Error Correction (FEC) mode for this\
+ interface. FEC is used on high-speed links to detect and correct\
+ transmission errors. Misconfiguring this field can cause the interface\
+ to lose link. <b>Auto</b> allows the NIC to negotiate the best mode.\
+ Only change this setting if you are experiencing link issues and know\
+ the correct FEC mode for your environment.'),
 };

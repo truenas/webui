@@ -207,6 +207,15 @@
           [label]="'MTU' | translate"
           [tooltip]="helptext.mtuTooltip | translate"
         ></ix-input>
+
+        @if (showFecMode()) {
+          <ix-select
+            formControlName="fec_mode"
+            [label]="'FEC Mode' | translate"
+            [options]="fecModeOptions$"
+            [tooltip]="helptext.fecModeTooltip | translate"
+          ></ix-select>
+        }
       </ix-fieldset>
 
       <ix-form-actions>

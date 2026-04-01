@@ -1,13 +1,15 @@
 <div class="actions">
   @if (visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {
-      <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
+      @let isSingleActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+      @let singleActionTooltip = action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '';
+      <div [matTooltip]="isSingleActionDisabled ? getDisabledTooltip(action) : singleActionTooltip">
         <button
           *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
           mat-icon-button
           [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
           [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
-          [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+          [disabled]="isSingleActionDisabled"
           (click)="$event.stopPropagation(); action.onClick(row())"
         >
           <tn-icon [name]="action.iconName"></tn-icon>
@@ -28,16 +30,19 @@
     </button>
     <mat-menu #actionMenu="matMenu">
       @for (action of visibleActions(); track action) {
-        <button
-          *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
-          mat-menu-item
-          [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
-          [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
-          (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
-        >
-          <tn-icon class="menu-icon" [name]="action.iconName"></tn-icon>
-          <span>{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</span>
-        </button>
+        @let isActionDisabled = action.disabled ? (action.disabled(row()) | async) : false;
+        <div matTooltipPosition="left" [matTooltip]="isActionDisabled ? getDisabledTooltip(action) : ''">
+          <button
+            *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
+            mat-menu-item
+            [ixTest]="[uniqueRowTag(row()), 'more-action', action.iconName, 'row-action']"
+            [disabled]="isActionDisabled"
+            (click)="$event.stopPropagation(); action.onClick(row()); menuTrigger.closeMenu();"
+          >
+            <tn-icon class="menu-icon" [name]="action.iconName"></tn-icon>
+            <span>{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</span>
+          </button>
+        </div>
       }
     </mat-menu>
   }

@@ -203,6 +203,7 @@ export interface DatasetDetails {
   nvmet_shares?: DatasetShareSummary[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
+  containers?: { name: string; path: string }[];
   webshare_shares?: NamedDatasetShareSummary[];
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume

@@ -4,7 +4,9 @@ import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface SessionExpiringDialogOptions {
@@ -24,12 +26,13 @@ export interface SessionExpiringDialogOptions {
     MatDialogActions,
     MatButton,
     TranslateModule,
-    NavigateAndHighlightDirective,
     TestDirective,
   ],
 })
 export class SessionExpiringDialog {
   private dialogRef = inject<MatDialogRef<SessionExpiringDialog>>(MatDialogRef);
+  private slideIn = inject(SlideIn);
+  private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   options: SessionExpiringDialogOptions;
 
@@ -43,7 +46,10 @@ export class SessionExpiringDialog {
     this.dialogRef.close(true);
   }
 
-  viewSessionsCard(): void {
+  openPreferences(): void {
     this.extendSession();
+    this.slideIn.open(PreferencesFormComponent);
+    // Wait a frame for the slide-in to render before polling for the element.
+    setTimeout(() => this.navigateAndHighlight.waitForElement('session-timeout'));
   }
 }

@@ -12,7 +12,7 @@ export class NavigateAndHighlightService {
   private router = inject(Router);
   private window = inject<Window>(WINDOW);
 
-  private prevHighlightDiv: HTMLDivElement | null = null;
+  private prevHighlightTarget: HTMLElement | null = null;
   private prevSubscription: Subscription | null = null;
   private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -27,11 +27,15 @@ export class NavigateAndHighlightService {
       }
 
       // Wait for element with retries (for loading states)
-      this.waitForElement(hash, 0);
+      this.waitForElement(hash);
     });
   }
 
-  private waitForElement(hash: string, attemptCount: number): void {
+  /**
+   * Polls for an element by id and highlights it when found.
+   * Retries up to 50 times at 100ms intervals (5 seconds total).
+   */
+  waitForElement(hash: string, attemptCount = 0): void {
     const maxAttempts = 50; // 5 seconds total (50 * 100ms)
     const htmlElement = this.window.document.getElementById(hash);
 
@@ -56,59 +60,31 @@ export class NavigateAndHighlightService {
 
   scrollIntoView(htmlElement: HTMLElement): void {
     htmlElement.scrollIntoView({ block: 'center' });
-    this.createOverlay(htmlElement);
+    this.highlight(htmlElement);
   }
 
-  createOverlay(targetElement: HTMLElement): void {
+  highlight(targetElement: HTMLElement): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
 
-    this.prevHighlightDiv = this.window.document.createElement('div');
-
-    const rect = targetElement.getBoundingClientRect();
-    this.prevHighlightDiv.style.position = 'absolute';
-    this.prevHighlightDiv.style.top = `${rect.top + this.window.scrollY}px`;
-    this.prevHighlightDiv.style.left = `${rect.left + this.window.scrollX}px`;
-    this.prevHighlightDiv.style.width = `${rect.width}px`;
-    this.prevHighlightDiv.style.height = `${rect.height}px`;
-    this.prevHighlightDiv.style.border = '2px solid var(--primary)';
-    this.prevHighlightDiv.style.pointerEvents = 'none';
-    this.prevHighlightDiv.style.zIndex = '1000';
-
-    this.window.document.body.appendChild(this.prevHighlightDiv);
-
-    const updatePosition = (): void => this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
-    this.window.addEventListener('scroll', updatePosition, true);
+    targetElement.style.outline = '2px solid var(--primary)';
+    targetElement.style.outlineOffset = '2px';
+    this.prevHighlightTarget = targetElement;
 
     this.prevSubscription = timer(2150).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.cleanupPreviousHighlight();
-      this.window.removeEventListener('scroll', updatePosition, true);
     });
 
     targetElement.addEventListener(
       'click',
       () => {
         this.cleanupPreviousHighlight();
-        this.window.removeEventListener('scroll', updatePosition, true);
       },
       { once: true },
     );
 
     this.addClickOutsideListener(targetElement);
-  }
-
-  private updateOverlayPosition(targetElement: HTMLElement, overlay: HTMLDivElement | null): void {
-    if (!targetElement || !overlay) return;
-
-    const rect = targetElement.getBoundingClientRect();
-    const scrollTop = this.window.pageYOffset || this.window.document.documentElement.scrollTop;
-    const scrollLeft = this.window.pageXOffset || this.window.document.documentElement.scrollLeft;
-
-    overlay.style.top = `${rect.top + scrollTop}px`;
-    overlay.style.left = `${rect.left + scrollLeft}px`;
-    overlay.style.width = `${rect.width}px`;
-    overlay.style.height = `${rect.height}px`;
   }
 
   private addClickOutsideListener(targetElement: HTMLElement): void {
@@ -122,9 +98,10 @@ export class NavigateAndHighlightService {
   }
 
   private cleanupPreviousHighlight(): void {
-    if (this.prevHighlightDiv) {
-      this.prevHighlightDiv.remove();
-      this.prevHighlightDiv = null;
+    if (this.prevHighlightTarget) {
+      this.prevHighlightTarget.style.outline = '';
+      this.prevHighlightTarget.style.outlineOffset = '';
+      this.prevHighlightTarget = null;
     }
 
     if (this.prevSubscription) {

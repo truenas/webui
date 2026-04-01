@@ -8,7 +8,6 @@ import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -46,9 +45,7 @@ describe('GuiFormComponent', () => {
       'TLSv1.3',
     ],
     ui_consolemsg: false,
-    ui_certificate: {
-      id: 1,
-    } as Certificate,
+    ui_certificate: 1,
   } as SystemGeneralConfig;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
