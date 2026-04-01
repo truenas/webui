@@ -29,7 +29,12 @@
     <div class="content-container">
       @if (topologyState.data !== notAssignedDev) {
         <div class="vdev-line">
-          <b>{{ 'Data VDEVs' | translate }}</b>
+          <b>
+            {{ 'Data VDEVs' | translate }}
+            @if (showTierLabels()) {
+              <span class="tier-label">({{ 'Regular Tier' | translate }})</span>
+            }
+          </b>
           <div class="vdev-stats">
             @if (!!topologyWarningsState.data && !isPoolOffline()) {
               <span
@@ -53,7 +58,12 @@
 
       @if (topologyState.metadata !== notAssignedDev && !isPoolOffline()) {
         <div class="vdev-line">
-          <b>{{ 'Metadata VDEVs' | translate }}</b>
+          <b>
+            {{ 'Special VDEVs' | translate }}
+            @if (showTierLabels()) {
+              <span class="tier-label">({{ 'Performance Tier' | translate }})</span>
+            }
+          </b>
           <div class="vdev-stats">
             @if (!!topologyWarningsState.metadata) {
               <span class="warning" [matTooltip]="topologyWarningsState.metadata">

@@ -192,7 +192,7 @@ describe('PoolManagerComponent – create pool', () => {
       Width: '1',
     });
 
-    // Metadata
+    // Special
     await wizard.clickNext();
     await wizard.fillStep({
       Layout: 'Stripe',
@@ -217,7 +217,7 @@ describe('PoolManagerComponent – create pool', () => {
       Dedup: '1 × STRIPE | 1 × 20 GiB (HDD)',
       Log: '1 × STRIPE | 1 × 20 GiB (HDD)',
       Spare: '1 × 20 GiB (HDD)',
-      Metadata: '1 × STRIPE | 1 × 20 GiB (HDD)',
+      Special: '1 × STRIPE | 1 × 20 GiB (HDD)',
     });
     expect(await reviewView.getWarnings()).toEqual([
       'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
@@ -225,7 +225,7 @@ describe('PoolManagerComponent – create pool', () => {
     expect(await reviewView.getErrors()).toEqual([
       'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
       'A stripe dedup VDEV is highly discouraged and will result in data loss if it fails',
-      'A stripe metadata VDEV is highly discouraged and will result in data loss if it fails',
+      'A stripe special VDEV is highly discouraged and will result in data loss if it fails',
     ]);
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();

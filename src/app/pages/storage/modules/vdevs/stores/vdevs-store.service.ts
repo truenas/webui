@@ -171,7 +171,7 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     if (topology.special.length) {
       dataNodes.push({
         children: topology.special,
-        group: this.translate.instant('Metadata'),
+        group: this.translate.instant('Special'),
         guid: VDevType.Special,
       });
     }

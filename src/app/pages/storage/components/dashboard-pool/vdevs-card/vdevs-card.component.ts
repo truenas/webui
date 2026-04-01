@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject, signal,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -20,6 +22,7 @@ import {
   VDevItem,
 } from 'app/interfaces/storage.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { vDevsCardElements } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.elements';
 import { StorageService } from 'app/services/storage.service';
@@ -61,9 +64,16 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   router = inject(Router);
   translate = inject(TranslateService);
   storageService = inject(StorageService);
+  private tierService = inject(SharingTierService);
 
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
+
+  protected tierEnabled = signal(false);
+
+  protected showTierLabels = computed(() => {
+    return this.tierEnabled() && this.poolState().topology?.special?.length > 0;
+  });
 
   protected readonly searchableElements = vDevsCardElements;
   protected readonly vdevsHelpTooltip = this.translate.instant('A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together');
@@ -124,6 +134,9 @@ export class VDevsCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.parseTopology(this.poolState().topology);
+    this.tierService.getTierConfig().subscribe((config) => {
+      this.tierEnabled.set(config.enabled);
+    });
   }
 
   parseTopology(topology: PoolTopology): void {
