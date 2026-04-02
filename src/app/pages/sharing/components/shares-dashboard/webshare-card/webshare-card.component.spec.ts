@@ -5,13 +5,14 @@ import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { of, throwError } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -83,10 +84,13 @@ describe('WebShareCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
+      }),
       mockProvider(SnackbarService),
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
+        mockCall('sharing.webshare.delete'),
         mockCall('tn_connect.config', mockTnConnectConfig),
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
@@ -170,18 +174,6 @@ describe('WebShareCardComponent', () => {
   });
 
   it('shows delete confirmation and deletes WebShare', () => {
-    const dialog = spectator.inject(DialogService);
-    const api = spectator.inject(ApiService);
-    const snackbar = spectator.inject(SnackbarService);
-
-    jest.spyOn(dialog, 'confirm').mockReturnValue(of(true as unknown as never));
-    jest.spyOn(api, 'call').mockImplementation((method) => {
-      if (method === 'sharing.webshare.delete') {
-        return of(true);
-      }
-      return of(mockWebShares);
-    });
-
     // Find and click delete button for first row
     const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
     expect(deleteButtons.length).toBeGreaterThan(0);
@@ -189,54 +181,23 @@ describe('WebShareCardComponent', () => {
     deleteButtons[0].dispatchEvent(new Event('click'));
     spectator.detectChanges();
 
-    expect(dialog.confirm).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Delete WebShare',
-        buttonText: 'Delete',
-      }),
-    );
-
-    expect(api.call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
-    expect(snackbar.success).toHaveBeenCalledWith('WebShare deleted');
-  });
-
-  it('handles error when deleting WebShare fails', () => {
-    const dialog = spectator.inject(DialogService);
-    const api = spectator.inject(ApiService);
-
-    jest.spyOn(dialog, 'confirm').mockReturnValue(of(true as unknown as never));
-    jest.spyOn(api, 'call').mockImplementation((method) => {
-      if (method === 'sharing.webshare.delete') {
-        return throwError(() => new Error('Delete failed'));
-      }
-      return of(mockWebShares);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete WebShare',
+      message: 'Are you sure you want to delete the WebShare "documents"?<br><br>Users will no longer be able to access /mnt/tank/documents through WebShare.',
+      call: expect.any(Function),
+      successMessage: 'WebShare deleted',
     });
-    jest.spyOn(dialog, 'error');
-
-    const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
-    deleteButtons[0].dispatchEvent(new Event('click'));
-    spectator.detectChanges();
-
-    expect(dialog.error).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Error deleting WebShare',
-      }),
-    );
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
   });
 
   it('does not delete when confirmation is cancelled', () => {
-    const dialog = spectator.inject(DialogService);
-    const api = spectator.inject(ApiService);
-
-    jest.spyOn(dialog, 'confirm').mockReturnValue(of(false as unknown as never));
-    jest.spyOn(api, 'call');
+    (spectator.inject(DialogService).confirmDelete as jest.Mock).mockReturnValue(EMPTY);
 
     const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
     deleteButtons[0].dispatchEvent(new Event('click'));
     spectator.detectChanges();
 
-    // API should not be called if confirmation is cancelled
-    expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
   it('does not show info message when TrueNAS Connect is configured', () => {

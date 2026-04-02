@@ -6,7 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { switchMap, filter, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -23,13 +23,11 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-acme-dns-authenticator-list',
@@ -59,8 +57,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private dialog = inject(DialogService);
-  private errorHandler = inject(ErrorHandlerService);
-  private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
@@ -131,22 +127,14 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
 
   doDelete(authenticator: DnsAuthenticator): void {
     this.dialog
-      .confirm({
+      .confirmDelete({
         title: this.translate.instant('Delete DNS Authenticator'),
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> DNS Authenticator?', {
           name: authenticator.name,
         }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
+        call: () => this.api.call('acme.dns.authenticator.delete', [authenticator.id]),
       })
       .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('acme.dns.authenticator.delete', [authenticator.id]).pipe(
-            this.loader.withLoader(),
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {

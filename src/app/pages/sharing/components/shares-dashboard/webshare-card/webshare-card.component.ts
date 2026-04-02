@@ -37,9 +37,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -88,13 +86,11 @@ export class WebShareCardComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
-  private loader = inject(LoaderService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   protected dataProvider: AsyncDataProvider<WebShareTableRow>;
@@ -176,7 +172,6 @@ export class WebShareCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('WebShare')],
   });
 
-
   ngOnInit(): void {
     const webshares$ = this.webShares$.pipe(
       map((shares) => this.webShareService.transformToTableRows(shares)),
@@ -238,35 +233,16 @@ export class WebShareCardComponent implements OnInit {
   }
 
   protected doDelete(row: WebShareTableRow): void {
-    this.dialog.confirm({
+    this.dialog.confirmDelete({
       title: this.translate.instant(this.helptext.delete_dialog_title),
       message: this.translate.instant(this.helptext.delete_dialog_message, {
         name: row.name,
         path: row.path,
       }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
-    })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('sharing.webshare.delete', [row.id]).pipe(
-            this.loader.withLoader(),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('WebShare deleted'));
-          this.refreshConfig$.next();
-        },
-        error: (error: unknown) => {
-          this.dialog.error({
-            title: this.translate.instant('Error deleting WebShare'),
-            message: (error as Error).message,
-          });
-        },
-      });
+      call: () => this.api.call('sharing.webshare.delete', [row.id]),
+      successMessage: this.translate.instant('WebShare deleted'),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.refreshConfig$.next());
   }
 }

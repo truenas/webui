@@ -3,15 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -36,10 +36,7 @@ describe('DeviceActionsMenuComponent', () => {
       mockAuth(),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.success(false)),
@@ -84,7 +81,12 @@ describe('DeviceActionsMenuComponent', () => {
 
       await menu.clickItem({ text: 'Delete' });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+        title: 'Delete Item',
+        message: 'Are you sure you want to delete USB 1234:5678?',
+        call: expect.any(Function),
+        successMessage: 'Device was deleted',
+      });
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.delete', [123]);
       expect(spectator.inject(ContainerDevicesStore).deviceDeleted).toHaveBeenCalledWith(123);
     });

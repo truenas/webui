@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
-  filter, map, of, shareReplay, switchMap,
+  filter, map, of, shareReplay,
   withLatestFrom,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -40,14 +40,12 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-user-api-keys',
@@ -76,8 +74,7 @@ export class UserApiKeysComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private loader = inject(LoaderService);
-  private errorHandler = inject(ErrorHandlerService);
+
   private authService = inject(AuthService);
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
@@ -193,21 +190,13 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   doDelete(apiKey: ApiKey): void {
-    this.dialog.confirm({
+    this.dialog.confirmDelete({
       title: this.translate.instant('Delete API Key'),
       message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> API Key?', { name: apiKey.name }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
+      call: () => this.api.call('api_key.delete', [apiKey.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('api_key.delete', [apiKey.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => this.dataProvider.load(),
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.dataProvider.load());
   }
 
   private setSearchProperties(): void {

@@ -7,7 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
-  EMPTY, NEVER, Observable, filter, switchMap, tap,
+  NEVER, filter, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container.enum';
@@ -163,39 +163,21 @@ export class DeviceActionsMenuComponent {
   }
 
   protected deletePressed(): void {
-    this.dialog.confirm({
+    const deviceId = this.device().id;
+    if (!deviceId) return;
+
+    this.dialog.confirmDelete({
+      title: this.translate.instant('Delete Item'),
       message: this.translate.instant(
         'Are you sure you want to delete {item}?',
         { item: this.deviceDescription() },
       ),
-      title: this.translate.instant('Delete Item'),
-    })
-      .pipe(
-        switchMap((confirmed) => {
-          if (!confirmed) {
-            return EMPTY;
-          }
-
-          return this.deleteDevice();
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-
-  private deleteDevice(): Observable<unknown> {
-    const deviceId = this.device().id;
-    if (!deviceId) {
-      return NEVER;
-    }
-    return this.api.call('container.device.delete', [deviceId])
-      .pipe(
-        this.loader.withLoader(),
-        this.errorHandler.withErrorHandler(),
-        tap(() => {
-          this.snackbar.success(this.translate.instant('Device was deleted'));
-          this.devicesStore.deviceDeleted(deviceId);
-        }),
-      );
+      call: () => this.api.call('container.device.delete', [deviceId]),
+      successMessage: this.translate.instant('Device was deleted'),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.devicesStore.deviceDeleted(deviceId);
+    });
   }
 }

@@ -101,7 +101,6 @@ export class CloudSyncListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
-
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
@@ -306,27 +305,13 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   protected doDelete(row: CloudSyncTaskUi): void {
-    this.dialogService.confirm({
-      message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
-        name: row.description,
-      }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+    this.dialogService.confirmDelete({
+      message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', { name: row.description }),
+      call: () => this.api.call('cloudsync.delete', [row.id]),
+      successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: row.description }),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('cloudsync.delete', [row.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(
-          this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: row.description }),
-        );
-        this.getCloudSyncTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getCloudSyncTasks());
   }
 
   protected onListFiltered(query: string): void {

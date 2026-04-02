@@ -22,10 +22,11 @@
 
 .form-actions {
   align-items: center;
-  border-top: 1px solid var(--lines);
   display: flex;
+  flex-wrap: nowrap;
   justify-content: space-between;
   padding-top: 16px;
+  margin-top: 12px;
 
   ix-checkbox {
     margin: 0;

@@ -10,33 +10,37 @@
       [formGroup]="form"
       (submit)="onSubmit()"
     >
-      <p
-      [innerHTML]="
-        'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
-          : {
-              snapshot: publicSnapshot.snapshot_name,
-              dataset: publicSnapshot.dataset,
-              datetime: publicSnapshot.properties.creation.parsed.$date | formatDateTime
-            }
-        "
-      ></p>
+      <div mat-dialog-content>
+        <p
+          [innerHTML]="
+            'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
+              : {
+                  snapshot: publicSnapshot.snapshot_name,
+                  dataset: publicSnapshot.dataset,
+                  datetime: publicSnapshot.properties?.creation?.parsed?.$date | formatDateTime
+                }
+            "
+        ></p>
 
-      <ix-fieldset>
-        <ix-radio-group
-          id="recursive"
-          class="mt-field"
-          [formControlName]="recursive.fcName"
-          [label]="recursive.label | translate"
-          [tooltip]="recursive.tooltip | translate"
-          [options]="recursive.options"
-        ></ix-radio-group>
-      </ix-fieldset>
+        <ix-fieldset>
+          <ix-radio-group
+            id="recursive"
+            class="mt-field"
+            [formControlName]="recursive.fcName"
+            [label]="recursive.label | translate"
+            [tooltip]="recursive.tooltip | translate"
+            [options]="recursive.options"
+          ></ix-radio-group>
+        </ix-fieldset>
 
-      <p
-        [innerHTML]="'<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.' | translate"
-      ></p>
+        <tn-banner
+          type="warning"
+          [heading]="'Rolling back destroys data' | translate"
+          [message]="'Rolling the dataset back destroys data on the dataset and can destroy additional snapshots that are related to the dataset. This can result in permanent data loss. Do not roll back until all desired data and snapshots are backed up.' | translate"
+        ></tn-banner>
+      </div>
 
-      <div class="form-actions">
+      <div mat-dialog-actions class="form-actions">
         <ix-checkbox
           [formControlName]="force.fcName"
           [label]="force.label"

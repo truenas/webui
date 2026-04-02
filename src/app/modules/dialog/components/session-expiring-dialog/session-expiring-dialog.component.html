@@ -5,14 +5,9 @@
 
     <p>
       {{ 'Change Session Timeout in' | translate }}
-      <b
-        ixNavigateAndHighlight
-        navigateHash="access-card"
-        [navigateRoute]="['/system', 'advanced']"
-        (click)="viewSessionsCard()"
-      >
-        {{ 'Advanced Settings → Access' | translate }}
-      </b>
+      <button class="preferences-link" (click)="openPreferences()">
+        {{ 'Preferences' | translate }}
+      </button>
     </p>
   </div>
 </div>

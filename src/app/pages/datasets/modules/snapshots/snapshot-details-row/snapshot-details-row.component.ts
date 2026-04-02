@@ -9,7 +9,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter, switchMap, tap, map,
+  map,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
@@ -54,7 +53,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
-  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   readonly snapshot = input.required<ZfsSnapshotUi>();
@@ -132,23 +130,11 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   doDelete(snapshot: ZfsSnapshot): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => {
-        return this.api.call('pool.snapshot.delete', [snapshot.name]).pipe(
-          this.loader.withLoader(),
-          this.errorHandler.withErrorHandler(),
-          tap(() => {
-            this.snackbar.success(this.translate.instant('Snapshot deleted.'));
-          }),
-        );
-      }),
+      call: () => this.api.call('pool.snapshot.delete', [snapshot.name]),
+      successMessage: this.translate.instant('Snapshot deleted.'),
     // Deliberately not unsubscribing to make sure "Snapshot deleted" message is shown.
-    ).subscribe();
+    }).subscribe();
   }
 }

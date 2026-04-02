@@ -73,6 +73,7 @@ describe('StorageHealthCardComponent', () => {
           stats: { read_errors: 1, checksum_errors: 1, write_errors: 0 },
         },
       ],
+      dedup: [],
     },
   } as Pool;
   const scrubTask = {
@@ -367,9 +368,32 @@ describe('StorageHealthCardComponent', () => {
   });
 
   describe('deduplication', () => {
-    it('does not show deduplication line if there are no deduplication stats', () => {
-      const detailsItem = spectator.query(byText('Deduplication Table:'));
-      expect(detailsItem).not.toExist();
+    it('does not show deduplication section when dedup table is empty and no dedup vdevs exist', () => {
+      expect(spectator.query(DeduplicationStatsComponent)).not.toExist();
+    });
+
+    it('shows deduplication section when dedup_table_size is greater than 0', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_size: 1024,
+      });
+      spectator.detectChanges();
+
+      expect(spectator.query(DeduplicationStatsComponent)).toExist();
+    });
+
+    it('shows deduplication section when dedup vdevs exist but dedup table is empty', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_size: 0,
+        topology: {
+          ...pool.topology,
+          dedup: [{ guid: 'dedup-vdev-1' }],
+        },
+      });
+      spectator.detectChanges();
+
+      expect(spectator.query(DeduplicationStatsComponent)).toExist();
     });
   });
 });
