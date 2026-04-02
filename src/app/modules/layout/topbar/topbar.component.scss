@@ -75,6 +75,14 @@
       z-index: 1;
     }
   }
+
+  &.severity-critical,
+  &.severity-warning {
+    .mat-badge-content {
+      background: var(--bg2) !important;
+      color: var(--fg2) !important;
+    }
+  }
 }
 
 ix-truenas-logo {
@@ -109,10 +117,12 @@ ix-truenas-logo {
   }
 
   tn-icon.alert-critical {
+    animation: bell-ring 2s ease-in-out infinite, glow-critical 2s ease-in-out infinite;
     color: var(--red) !important;
   }
 
   tn-icon.alert-warning {
+    animation: bell-ring 2s ease-in-out infinite, glow-warning 2s ease-in-out infinite;
     color: var(--orange) !important;
   }
 
@@ -155,5 +165,29 @@ ix-truenas-logo {
 
   15% {
     transform: rotate(-1deg);
+  }
+}
+
+@keyframes glow-critical {
+  0%,
+  20%,
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+
+  10% {
+    filter: drop-shadow(0 0 6px var(--red));
+  }
+}
+
+@keyframes glow-warning {
+  0%,
+  20%,
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+
+  10% {
+    filter: drop-shadow(0 0 6px var(--orange));
   }
 }
