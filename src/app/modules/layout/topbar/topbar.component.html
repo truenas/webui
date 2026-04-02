@@ -70,6 +70,7 @@
 
         <!-- Alert toggle button -->
         @let alertBadgeCount = alertBadgeCount$ | async;
+        @let alertSeverity = alertSeverity$ | async;
         <button
           #alertIndicator
           matBadgeSize="small"
@@ -84,7 +85,13 @@
           [ixUiSearch]="searchableElements.elements.alerts"
           (click)="onAlertIndicatorPressed()"
         >
-          <tn-icon size="lg" name="bell" library="mdi"></tn-icon>
+          <tn-icon
+            size="lg"
+            name="bell"
+            library="mdi"
+            [class.alert-critical]="alertSeverity === 'critical'"
+            [class.alert-warning]="alertSeverity === 'warning'"
+          ></tn-icon>
         </button>
 
         <ix-user-menu></ix-user-menu>

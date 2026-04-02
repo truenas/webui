@@ -20,7 +20,9 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { AlertSlice, selectImportantUnreadAlertsCount, selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
+import {
+  AlertSlice, selectImportantUnreadAlertsCount, selectIsAlertPanelOpen, selectTopAlertSeverity,
+} from 'app/modules/alerts/store/alert.selectors';
 import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -112,6 +114,7 @@ export class TopbarComponent implements OnInit {
 
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+  readonly alertSeverity$ = this.store$.select(selectTopAlertSeverity);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   updateText = computed(() => {

@@ -45,3 +45,19 @@ export const selectAlertsForNavBadges = createSelector(
   selectUnreadAlerts,
   (alerts) => alerts.filter((alert) => ![AlertLevel.Info, AlertLevel.Notice].includes(alert.level)),
 );
+
+const criticalLevels: AlertLevel[] = [
+  AlertLevel.Critical, AlertLevel.Alert, AlertLevel.Emergency, AlertLevel.Error,
+];
+
+export type AlertSeverity = 'critical' | 'warning' | null;
+
+export const selectTopAlertSeverity = createSelector(
+  selectUnreadAlerts,
+  (alerts): AlertSeverity => {
+    const important = alerts.filter((alert) => ![AlertLevel.Info, AlertLevel.Notice].includes(alert.level));
+    if (important.length === 0) return null;
+    if (important.some((alert) => criticalLevels.includes(alert.level))) return 'critical';
+    return 'warning';
+  },
+);
