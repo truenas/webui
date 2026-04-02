@@ -7,6 +7,7 @@ import {
   selectDismissedAlerts,
   selectImportantUnreadAlertsCount,
   selectIsAlertPanelOpen,
+  selectTopAlertSeverity,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
 
@@ -167,6 +168,35 @@ describe('Alert Selectors', () => {
       const noImportantState = adapter.setAll(noImportantAlerts, alertsInitialState);
       const result = selectImportantUnreadAlertsCount({ alerts: noImportantState });
       expect(result).toBe(0);
+    });
+  });
+
+  describe('selectTopAlertSeverity', () => {
+    it('returns null when no important unread alerts exist', () => {
+      const infoAlerts = [
+        {
+          id: '1', level: AlertLevel.Info, dismissed: false, datetime: { $date: 1000 },
+        } as Alert,
+        {
+          id: '2', level: AlertLevel.Notice, dismissed: false, datetime: { $date: 2000 },
+        } as Alert,
+      ];
+      const infoState = adapter.setAll(infoAlerts, alertsInitialState);
+      expect(selectTopAlertSeverity({ alerts: infoState })).toBeNull();
+    });
+
+    it('returns critical when critical-level alerts exist', () => {
+      expect(selectTopAlertSeverity(rootState)).toBe('critical');
+    });
+
+    it('returns warning when only warning-level alerts exist', () => {
+      const warningAlerts = [
+        {
+          id: '1', level: AlertLevel.Warning, dismissed: false, datetime: { $date: 1000 },
+        } as Alert,
+      ];
+      const warningState = adapter.setAll(warningAlerts, alertsInitialState);
+      expect(selectTopAlertSeverity({ alerts: warningState })).toBe('warning');
     });
   });
 

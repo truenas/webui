@@ -112,17 +112,16 @@ ix-truenas-logo {
 
   tn-icon.alert-critical,
   tn-icon.alert-warning {
-    animation: bell-ring 2s ease-in-out infinite;
     transform-origin: top center;
   }
 
   tn-icon.alert-critical {
-    animation: bell-ring 2s ease-in-out infinite, glow-critical 2s ease-in-out infinite;
+    animation: ring-critical 2s ease-in-out infinite;
     color: var(--red) !important;
   }
 
   tn-icon.alert-warning {
-    animation: bell-ring 2s ease-in-out infinite, glow-warning 2s ease-in-out infinite;
+    animation: ring-warning 2s ease-in-out infinite;
     color: var(--orange) !important;
   }
 
@@ -136,11 +135,12 @@ ix-truenas-logo {
   }
 }
 
-@keyframes bell-ring {
+@keyframes ring-critical {
   0%,
   20%,
   100% {
     transform: rotate(0deg);
+    filter: drop-shadow(0 0 0 transparent);
   }
 
   2.5% {
@@ -157,6 +157,7 @@ ix-truenas-logo {
 
   10% {
     transform: rotate(-6deg);
+    filter: drop-shadow(0 0 6px var(--red));
   }
 
   12.5% {
@@ -168,26 +169,46 @@ ix-truenas-logo {
   }
 }
 
-@keyframes glow-critical {
+@keyframes ring-warning {
   0%,
   20%,
   100% {
+    transform: rotate(0deg);
     filter: drop-shadow(0 0 0 transparent);
   }
 
+  2.5% {
+    transform: rotate(12deg);
+  }
+
+  5% {
+    transform: rotate(-10deg);
+  }
+
+  7.5% {
+    transform: rotate(8deg);
+  }
+
   10% {
-    filter: drop-shadow(0 0 6px var(--red));
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 0 6px var(--orange));
+  }
+
+  12.5% {
+    transform: rotate(3deg);
+  }
+
+  15% {
+    transform: rotate(-1deg);
   }
 }
 
-@keyframes glow-warning {
-  0%,
-  20%,
-  100% {
-    filter: drop-shadow(0 0 0 transparent);
-  }
-
-  10% {
-    filter: drop-shadow(0 0 6px var(--orange));
+@media (prefers-reduced-motion: reduce) {
+  :host ::ng-deep nav mat-toolbar {
+    tn-icon.alert-critical,
+    tn-icon.alert-warning {
+      animation: none;
+      filter: none;
+    }
   }
 }
