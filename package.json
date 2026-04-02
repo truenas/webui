@@ -155,7 +155,7 @@
     "js-yaml": "~4.1.1",
     "lint-staged": "^15.2.10",
     "lodash": "~4.17.23",
-    "lodash-es": "~4.17.23",
+    "lodash-es": "~4.18.1",
     "marked": "^12.0.2",
     "messageformat-parser": "~4.1.3",
     "mime-types": "~2.1.35",
