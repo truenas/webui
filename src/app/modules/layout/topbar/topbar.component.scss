@@ -102,6 +102,20 @@ ix-truenas-logo {
     color: var(--topbar-txt) !important;
   }
 
+  tn-icon.alert-critical,
+  tn-icon.alert-warning {
+    animation: bell-ring 2s ease-in-out infinite;
+    transform-origin: top center;
+  }
+
+  tn-icon.alert-critical {
+    color: var(--red) !important;
+  }
+
+  tn-icon.alert-warning {
+    color: var(--orange) !important;
+  }
+
   .mat-mdc-select-value {
     color: #fff;
     font-weight: 400;
@@ -109,5 +123,37 @@ ix-truenas-logo {
 
   .topbar-button-right {
     margin-left: 0.5rem !important;
+  }
+}
+
+@keyframes bell-ring {
+  0%,
+  20%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  2.5% {
+    transform: rotate(12deg);
+  }
+
+  5% {
+    transform: rotate(-10deg);
+  }
+
+  7.5% {
+    transform: rotate(8deg);
+  }
+
+  10% {
+    transform: rotate(-6deg);
+  }
+
+  12.5% {
+    transform: rotate(3deg);
+  }
+
+  15% {
+    transform: rotate(-1deg);
   }
 }
