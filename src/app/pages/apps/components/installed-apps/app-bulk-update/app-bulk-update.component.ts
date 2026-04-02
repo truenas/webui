@@ -131,10 +131,16 @@ export class AppBulkUpdateComponent {
     const currentCatalogVersion = app.version;
 
     const summary = this.upgradeSummaryMap.get(appName);
-    // Use the latest_app_version field from the API if available, otherwise extract from latest_human_version
-    const latestAppVersion = summary?.latest_app_version
+    const selectedVersion = this.form.value[appName];
+
+    // Find the selected version's app_version from available_versions_for_upgrade
+    const selectedAvailableVersion = summary?.available_versions_for_upgrade?.find(
+      (vrs) => vrs.version === selectedVersion,
+    );
+    const latestAppVersion = selectedAvailableVersion?.app_version
+      || (selectedVersion === summary?.latest_version ? summary?.latest_app_version : undefined)
       || extractAppVersion(summary?.latest_human_version, summary?.latest_version || app.latest_version);
-    const latestCatalogVersion = this.form.value[appName] || app.latest_version;
+    const latestCatalogVersion = selectedVersion || app.latest_version;
 
     return {
       currentAppVersion,
