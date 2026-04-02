@@ -21,6 +21,7 @@ import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/uti
 interface Version {
   latest_version: string;
   latest_human_version: string;
+  latest_app_version?: string;
   available_versions_for_upgrade: {
     version: string;
     human_version: string;
@@ -68,6 +69,7 @@ export class AppUpdateDialog {
     this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {
       latest_version: this.dialogConfig.upgradeSummary.latest_version,
       latest_human_version: this.dialogConfig.upgradeSummary.latest_human_version,
+      latest_app_version: this.dialogConfig.upgradeSummary.latest_app_version,
       available_versions_for_upgrade: this.dialogConfig.upgradeSummary.available_versions_for_upgrade,
     });
 
@@ -77,6 +79,7 @@ export class AppUpdateDialog {
           this.versionOptions.set(availableVersion.version, {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
+            latest_app_version: availableVersion.app_version,
             available_versions_for_upgrade: null,
           });
         }
@@ -100,34 +103,19 @@ export class AppUpdateDialog {
   }
 
   getLatestAppVersion(): string {
-    // Use latest_app_version if available, otherwise extract from latest_human_version
-    return this.dialogConfig.upgradeSummary.latest_app_version
+    return this.selectedVersion?.latest_app_version
       || extractAppVersion(
-        this.dialogConfig.upgradeSummary.latest_human_version,
-        this.dialogConfig.upgradeSummary.latest_version,
+        this.selectedVersion?.latest_human_version,
+        this.selectedVersion?.latest_version ?? this.dialogConfig.upgradeSummary.latest_version,
       );
   }
 
   hasAppVersionChange(): boolean {
-    // Use dialogConfig.upgradeSummary directly to avoid timing issues with selectedVersion
     const currentAppVersion = extractAppVersion(
       this.dialogConfig.appInfo.human_version,
       this.dialogConfig.appInfo.version,
     );
-    // Use the latest_app_version field from the API if available
-    const latestAppVersion = this.dialogConfig.upgradeSummary.latest_app_version;
-
-    // If backend provides latest_app_version, use it for comparison
-    // Otherwise, extract from latest_human_version as fallback
-    if (latestAppVersion !== undefined) {
-      return currentAppVersion !== latestAppVersion;
-    }
-
-    // Fallback: extract from latest_human_version
-    const extractedLatestAppVersion = extractAppVersion(
-      this.dialogConfig.upgradeSummary.latest_human_version,
-      this.dialogConfig.upgradeSummary.latest_version,
-    );
-    return currentAppVersion !== extractedLatestAppVersion;
+    const latestAppVersion = this.getLatestAppVersion();
+    return currentAppVersion !== latestAppVersion;
   }
 }

@@ -97,6 +97,25 @@ describe('AppUpdateDialog', () => {
       const versionDropdown = spectator.query('.resource mat-select');
       expect(versionDropdown).toBeTruthy();
     });
+
+    it('updates version row when a different version is selected from dropdown', () => {
+      // Initially no version row (app version 8.7.0 -> 8.7.0, no change)
+      let versionRows = spectator.queryAll('.version-row');
+      expect(versionRows).toHaveLength(1);
+      expect(versionRows[0].textContent).toContain('Revision');
+
+      // Select version 1.0.3 which has app version 8.7.1
+      spectator.component.selectedVersionKey = '1.0.3';
+      spectator.component.onVersionOptionChanged();
+      spectator.detectChanges();
+
+      versionRows = spectator.queryAll('.version-row');
+      expect(versionRows).toHaveLength(2);
+      expect(versionRows[0].textContent).toContain('Version');
+      expect(versionRows[0].textContent).toContain('8.7.1');
+      expect(versionRows[1].textContent).toContain('Revision');
+      expect(versionRows[1].textContent).toContain('1.0.3');
+    });
   });
 
   describe('with app version change', () => {
