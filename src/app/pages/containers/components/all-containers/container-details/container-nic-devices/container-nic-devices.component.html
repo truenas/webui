@@ -33,7 +33,11 @@
           }
         </div>
       } @empty {
-        <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
+        <div class="device default-device">
+          <span class="device-description">
+            {{ defaultBridge() }} ({{ 'Default' | translate }})
+          </span>
+        </div>
       }
     }
   </mat-card-content>

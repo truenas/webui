@@ -56,6 +56,7 @@ describe('ContainerNicDevicesComponent', () => {
       }),
       mockApi([
         mockCall('interface.has_pending_changes', false),
+        mockCall('lxc.config', { bridge: 'truenasbr0' }),
       ]),
     ],
   });
@@ -82,5 +83,37 @@ describe('ContainerNicDevicesComponent', () => {
   it('shows the add NIC menu if no pending changes', () => {
     const addMenu = spectator.query(AddNicMenuComponent);
     expect(addMenu).toExist();
+  });
+
+  describe('when no NIC devices are configured', () => {
+    const createEmptyComponent = createComponentFactory({
+      component: ContainerNicDevicesComponent,
+      imports: [
+        NgxSkeletonLoaderComponent,
+        MockComponent(AddNicMenuComponent),
+        MockComponent(DeviceActionsMenuComponent),
+      ],
+      providers: [
+        mockProvider(ContainerDevicesStore, {
+          isLoading: () => false,
+          devices: () => [],
+        }),
+        mockProvider(ContainersStore, {
+          selectedContainer: () => ({
+            status: { state: ContainerStatus.Stopped },
+          }),
+        }),
+        mockApi([
+          mockCall('interface.has_pending_changes', false),
+          mockCall('lxc.config', { bridge: 'truenasbr0' }),
+        ]),
+      ],
+    });
+
+    it('shows default bridge when no NIC devices are added', () => {
+      const emptySpectator = createEmptyComponent();
+      const defaultDevice = emptySpectator.query('.default-device');
+      expect(defaultDevice).toHaveText('truenasbr0 (Default)');
+    });
   });
 });
