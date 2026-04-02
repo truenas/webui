@@ -4,7 +4,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { catchError, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -40,6 +40,13 @@ export class ContainerNicDevicesComponent {
 
   protected readonly hasPendingInterfaceChanges = toSignal(
     this.api.call('interface.has_pending_changes').pipe(catchError(() => of(false))),
+  );
+
+  protected readonly defaultBridge = toSignal(
+    this.api.call('lxc.config').pipe(
+      map((config) => config.bridge || 'truenasbr0'),
+      catchError(() => of('truenasbr0')),
+    ),
   );
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
