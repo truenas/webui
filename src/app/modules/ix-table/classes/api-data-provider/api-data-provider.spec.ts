@@ -1,7 +1,7 @@
 import { of } from 'rxjs';
+import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ApiDataProvider } from './api-data-provider';
 
 describe('ApiDataProvider', () => {
   let dataProvider: ApiDataProvider<'vm.query'>;
