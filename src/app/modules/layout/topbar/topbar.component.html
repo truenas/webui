@@ -83,12 +83,8 @@
           [matBadge]="alertBadgeCount"
           [matBadgeHidden]="alertBadgeCount === 0"
           [attr.aria-expanded]="isAlertPanelOpen$ | async"
-          [attr.aria-label]="alertSeverity === 'critical'
-            ? (tooltips.alertsCritical | translate)
-            : alertSeverity === 'warning'
-              ? (tooltips.alertsWarning | translate)
-              : (tooltips.alerts | translate)"
-          [matTooltip]="tooltips.alerts | translate"
+          [attr.aria-label]="alertTooltip()"
+          [matTooltip]="alertTooltip()"
           [ixUiSearch]="searchableElements.elements.alerts"
           (click)="onAlertIndicatorPressed()"
         >
