@@ -54,6 +54,7 @@ export class IxTablePagerComponent<T> implements OnInit {
       pageNumber: this.currentPage(),
       pageSize: this.pageSize(),
     });
+    this.totalItems.set(this.dataProvider().totalRows);
 
     // Skip the BehaviorSubject replay (which holds the value from setPagination above)
     // to avoid an unnecessary initial sync.
