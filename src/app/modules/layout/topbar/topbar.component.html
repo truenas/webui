@@ -69,7 +69,6 @@
         <ix-jobs-indicator></ix-jobs-indicator>
 
         <!-- Alert toggle button -->
-        @let alertBadgeCount = alertBadgeCount$ | async;
         <button
           #alertIndicator
           matBadgeSize="small"
@@ -79,8 +78,8 @@
           ixTest="alerts-indicator"
           [class.severity-critical]="alertSeverity() === 'critical'"
           [class.severity-warning]="alertSeverity() === 'warning'"
-          [matBadge]="alertBadgeCount"
-          [matBadgeHidden]="alertBadgeCount === 0"
+          [matBadge]="alertBadgeCount()"
+          [matBadgeHidden]="alertBadgeCount() === 0"
           [attr.aria-expanded]="isAlertPanelOpen$ | async"
           [attr.aria-label]="alertTooltip()"
           [matTooltip]="alertTooltip()"

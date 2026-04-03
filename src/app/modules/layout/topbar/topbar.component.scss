@@ -76,7 +76,11 @@
     }
   }
 
-  /* Keep badge neutral so the colored bell icon is the primary severity indicator. */
+  /*
+   * When the bell icon is already colored red/orange, keep the badge neutral
+   * so the icon remains the primary severity indicator.
+   * !important is required to override Material's inline badge styles.
+   */
   &.severity-critical,
   &.severity-warning {
     .mat-badge-content {
@@ -111,6 +115,13 @@ ix-truenas-logo {
     color: var(--topbar-txt) !important;
   }
 
+  /*
+   * Alert-severity bell styles.
+   * !important overrides the broad `button tn-icon { color: var(--topbar-txt) !important }` rule above.
+   * Animation plays when severity class is first applied (null→warning, null→critical,
+   * or warning↔critical); it intentionally does NOT retrigger on count-only changes
+   * to avoid distraction while the user is already aware of active alerts.
+   */
   tn-icon.alert-critical,
   tn-icon.alert-warning {
     transform-origin: top center;
