@@ -55,8 +55,8 @@ export class IxTablePagerComponent<T> implements OnInit {
       pageSize: this.pageSize(),
     });
 
-    // Skip the first emission caused by setPagination above to avoid an unnecessary sync.
-    // This works because setPagination triggers currentPage$.next() synchronously before subscribe().
+    // Skip the BehaviorSubject replay (which holds the value from setPagination above)
+    // to avoid an unnecessary initial sync.
     this.dataProvider().currentPage$.pipe(
       skip(1),
       takeUntilDestroyed(this.destroyRef),

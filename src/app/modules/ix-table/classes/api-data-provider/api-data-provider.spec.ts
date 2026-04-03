@@ -13,7 +13,8 @@ describe('ApiDataProvider', () => {
   });
 
   it('resets pagination to page 1 when sorting changes', () => {
-    api.call.mockReturnValue(of(3));
+    api.call.mockReturnValueOnce(of(3));
+    api.call.mockReturnValueOnce(of([]));
     dataProvider.load();
 
     dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
