@@ -76,6 +76,7 @@
     }
   }
 
+  /* Keep badge neutral so the colored bell icon is the primary severity indicator. */
   &.severity-critical,
   &.severity-warning {
     .mat-badge-content {
