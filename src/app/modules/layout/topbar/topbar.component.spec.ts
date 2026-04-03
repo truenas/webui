@@ -330,5 +330,15 @@ describe('TopbarComponent', () => {
       const host = await alertButton.host();
       expect(await host.getAttribute('aria-label')).toBe('Alerts - Critical alerts present');
     });
+
+    it('updates aria-label and tooltip on alert button when severity is warning', async () => {
+      setSeverity('warning');
+
+      const alertButton = await loader.getHarness(
+        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+      );
+      const host = await alertButton.host();
+      expect(await host.getAttribute('aria-label')).toBe('Alerts - Warnings present');
+    });
   });
 });

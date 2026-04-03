@@ -70,7 +70,6 @@
 
         <!-- Alert toggle button -->
         @let alertBadgeCount = alertBadgeCount$ | async;
-        @let alertSeverity = alertSeverity$ | async;
         <button
           #alertIndicator
           matBadgeSize="small"
@@ -78,8 +77,8 @@
           mat-icon-button
           class="topbar-button-right"
           ixTest="alerts-indicator"
-          [class.severity-critical]="alertSeverity === 'critical'"
-          [class.severity-warning]="alertSeverity === 'warning'"
+          [class.severity-critical]="alertSeverity() === 'critical'"
+          [class.severity-warning]="alertSeverity() === 'warning'"
           [matBadge]="alertBadgeCount"
           [matBadgeHidden]="alertBadgeCount === 0"
           [attr.aria-expanded]="isAlertPanelOpen$ | async"
@@ -92,8 +91,8 @@
             size="lg"
             name="bell"
             library="mdi"
-            [class.alert-critical]="alertSeverity === 'critical'"
-            [class.alert-warning]="alertSeverity === 'warning'"
+            [class.alert-critical]="alertSeverity() === 'critical'"
+            [class.alert-warning]="alertSeverity() === 'warning'"
           ></tn-icon>
         </button>
 
