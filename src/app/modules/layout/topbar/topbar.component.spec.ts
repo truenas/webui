@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -268,6 +268,47 @@ describe('TopbarComponent', () => {
     it('should not be disabled', () => {
       const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
       expect(feedbackButton).not.toHaveAttribute('disabled');
+    });
+  });
+
+  describe('alert severity', () => {
+    function setSeverity(severity: 'critical' | 'warning' | null): void {
+      spectator.inject(MockStore).overrideSelector(selectTopAlertSeverity, severity);
+      spectator.inject(MockStore).refreshState();
+      spectator.detectChanges();
+    }
+
+    it('applies alert-critical class to bell icon when severity is critical', async () => {
+      setSeverity('critical');
+
+      const bellIcon = await loader.getHarness(TnIconHarness.with({ name: 'bell' }));
+      const host = await bellIcon.host();
+      expect(await host.hasClass('alert-critical')).toBe(true);
+    });
+
+    it('applies alert-warning class to bell icon when severity is warning', async () => {
+      setSeverity('warning');
+
+      const bellIcon = await loader.getHarness(TnIconHarness.with({ name: 'bell' }));
+      const host = await bellIcon.host();
+      expect(await host.hasClass('alert-warning')).toBe(true);
+    });
+
+    it('does not apply severity class to bell icon when severity is null', async () => {
+      const bellIcon = await loader.getHarness(TnIconHarness.with({ name: 'bell' }));
+      const host = await bellIcon.host();
+      expect(await host.hasClass('alert-critical')).toBe(false);
+      expect(await host.hasClass('alert-warning')).toBe(false);
+    });
+
+    it('updates aria-label on alert button when severity is critical', async () => {
+      setSeverity('critical');
+
+      const alertButton = await loader.getHarness(
+        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+      );
+      const host = await alertButton.host();
+      expect(await host.getAttribute('aria-label')).toBe('Alerts - Critical alerts present');
     });
   });
 });

@@ -31,11 +31,6 @@ export const selectDismissedAlerts = createSelector(
   (alerts) => alerts.filter((alert) => alert.dismissed),
 );
 
-export const selectImportantUnreadAlertsCount = createSelector(
-  selectUnreadAlerts,
-  (alerts) => alerts.filter((alert) => ![AlertLevel.Info, AlertLevel.Notice].includes(alert.level)).length,
-);
-
 /**
  * Selector to get unread alerts for badge calculation
  * Components can enhance these alerts with SmartAlertService and compute badge counts
@@ -44,6 +39,11 @@ export const selectImportantUnreadAlertsCount = createSelector(
 export const selectAlertsForNavBadges = createSelector(
   selectUnreadAlerts,
   (alerts) => alerts.filter((alert) => ![AlertLevel.Info, AlertLevel.Notice].includes(alert.level)),
+);
+
+export const selectImportantUnreadAlertsCount = createSelector(
+  selectAlertsForNavBadges,
+  (alerts) => alerts.length,
 );
 
 const criticalLevels: AlertLevel[] = [
