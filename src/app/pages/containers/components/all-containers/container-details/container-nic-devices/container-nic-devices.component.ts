@@ -4,7 +4,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -44,8 +44,17 @@ export class ContainerNicDevicesComponent {
 
   protected readonly defaultBridge = toSignal(
     this.api.call('lxc.config').pipe(
-      map((config) => config.bridge || 'truenasbr0'),
-      catchError(() => of('truenasbr0')),
+      switchMap((config) => {
+        if (config.bridge) {
+          return of(config.bridge);
+        }
+
+        return this.api.call('lxc.bridge_choices').pipe(
+          map((choices) => {
+            return Object.keys(choices).find((key) => key !== '[AUTO]') ?? null;
+          }),
+        );
+      }),
     ),
   );
 
@@ -60,6 +69,12 @@ export class ContainerNicDevicesComponent {
     return this.devicesStore.devices().filter((device): device is ContainerNicDevice => {
       return device.dtype === ContainerDeviceType.Nic;
     });
+  });
+
+  protected readonly showDefaultBridge = computed(() => {
+    const bridge = this.defaultBridge();
+    if (!bridge) return false;
+    return !this.shownDevices().some((device) => device.nic_attach === bridge);
   });
 
   protected getDeviceDescription(device: ContainerDevice): string {
