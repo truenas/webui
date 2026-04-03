@@ -301,7 +301,27 @@ describe('TopbarComponent', () => {
       expect(await host.hasClass('alert-warning')).toBe(false);
     });
 
-    it('updates aria-label on alert button when severity is critical', async () => {
+    it('applies severity-critical class to alert button when severity is critical', async () => {
+      setSeverity('critical');
+
+      const alertButton = await loader.getHarness(
+        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+      );
+      const host = await alertButton.host();
+      expect(await host.hasClass('severity-critical')).toBe(true);
+    });
+
+    it('applies severity-warning class to alert button when severity is warning', async () => {
+      setSeverity('warning');
+
+      const alertButton = await loader.getHarness(
+        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+      );
+      const host = await alertButton.host();
+      expect(await host.hasClass('severity-warning')).toBe(true);
+    });
+
+    it('updates aria-label and tooltip on alert button when severity is critical', async () => {
       setSeverity('critical');
 
       const alertButton = await loader.getHarness(
