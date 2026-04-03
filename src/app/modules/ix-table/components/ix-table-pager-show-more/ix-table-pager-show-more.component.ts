@@ -1,4 +1,5 @@
-import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostBinding, input, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,8 +17,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChecked {
+export class IxTablePagerShowMoreComponent<T> implements OnInit {
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
   dataProvider = input.required<DataProvider<T>>();
@@ -46,11 +48,13 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
       pageNumber: this.currentPage(),
       pageSize: this.pageSize(),
     });
-  }
 
-  ngAfterContentChecked(): void {
-    this.totalItems.set(this.dataProvider().totalRows);
-    this.cdr.markForCheck();
+    this.dataProvider().currentPage$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.totalItems.set(this.dataProvider().totalRows);
+      this.cdr.markForCheck();
+    });
   }
 
   showMore(): void {
