@@ -73,11 +73,11 @@ export class IxTablePagerComponent<T> implements OnInit {
       // Set directly instead of goToPage to avoid calling setPagination back on the provider.
       this.currentPage.set(providerPage);
     } else if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
+      // Set directly without calling setPagination to avoid a feedback loop
+      // (setPagination → updateCurrentPage → currentPage$.next → syncWithDataProvider again).
       this.currentPage.set(1);
-      this.dataProvider().setPagination({
-        pageNumber: 1,
-        pageSize: this.pageSize(),
-      });
+      this.dataProvider().pagination.pageNumber = 1;
+      this.dataProvider().pagination.pageSize = this.pageSize();
     }
     this.cdr.markForCheck();
   }

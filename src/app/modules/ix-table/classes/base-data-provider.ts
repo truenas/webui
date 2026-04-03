@@ -76,7 +76,6 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   setFilter(filter: TableFilter<T>): void {
     this.resetPaginationToFirstPage();
     const filteredRows = filterTableRows(filter);
-    this.totalRows = filteredRows.length;
     this.setRows(filteredRows);
   }
 

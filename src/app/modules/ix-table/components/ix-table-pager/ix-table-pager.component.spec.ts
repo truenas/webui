@@ -90,6 +90,22 @@ describe('IxTablePagerComponent', () => {
     expect(await buttons[3].isDisabled()).toBe(true);
   });
 
+  it('resets pager to page 1 when rows are removed and current page exceeds total pages', async () => {
+    const dataProvider = spectator.component.dataProvider();
+    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    await buttons[3].click();
+
+    expect(spectator.component.currentPage()).toBe(2);
+
+    dataProvider.setRows([
+      { numberField: 1, stringField: 'a', booleanField: true },
+    ]);
+    spectator.detectChanges();
+
+    expect(spectator.component.currentPage()).toBe(1);
+    expect(dataProvider.pagination.pageNumber).toBe(1);
+  });
+
   it('resets pager to page 1 when sorting changes', async () => {
     const dataProvider = spectator.component.dataProvider();
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
