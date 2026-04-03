@@ -130,6 +130,49 @@ describe('AddNicMenuComponent', () => {
   });
 });
 
+describe('AddNicMenuComponent - Default Bridge Filtering', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('container.device.nic_attach_choices', {
+          BRIDGE: ['truenasbr0'],
+          MACVLAN: ['ens1'],
+        }),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: () => [] as ContainerDevice[],
+        isLoading: () => false,
+      }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({ props: { defaultBridge: 'truenasbr0' } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('excludes default bridge from available choices when no NICs are explicitly configured', async () => {
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+    await menu.open();
+
+    const menuItems = await menu.getItems();
+    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+
+    expect(itemTexts).not.toContain('truenasbr0');
+    expect(itemTexts).toContain('ens1');
+  });
+});
+
 describe('AddNicMenuComponent - NIC Deduplication', () => {
   let spectator: Spectator<AddNicMenuComponent>;
   let loader: HarnessLoader;
