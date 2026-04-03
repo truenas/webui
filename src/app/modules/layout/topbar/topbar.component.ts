@@ -113,7 +113,7 @@ export class TopbarComponent implements OnInit {
   });
 
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
-  readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+  readonly alertBadgeCount = toSignal(this.store$.select(selectImportantUnreadAlertsCount), { initialValue: 0 });
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   protected readonly alertSeverity = toSignal(this.store$.select(selectTopAlertSeverity), { initialValue: null });
