@@ -16,6 +16,8 @@ export const helptextTopbar = {
     replication: T('Replication'),
     taskManager: T('Running Jobs'),
     alerts: T('Alerts'),
+    alertsCritical: T('Alerts - Critical alerts present'),
+    alertsWarning: T('Alerts - Warnings present'),
     settings: T('Settings'),
     power: T('Power'),
   },

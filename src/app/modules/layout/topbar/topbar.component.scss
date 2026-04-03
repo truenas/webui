@@ -117,13 +117,13 @@ ix-truenas-logo {
 
   tn-icon.alert-critical {
     --alert-glow: var(--red);
-    animation: ring 2s ease-in-out infinite;
+    animation: ring 6s ease-in-out infinite;
     color: var(--red) !important;
   }
 
   tn-icon.alert-warning {
     --alert-glow: var(--orange);
-    animation: ring 2s ease-in-out infinite;
+    animation: ring 6s ease-in-out infinite;
     color: var(--orange) !important;
   }
 
