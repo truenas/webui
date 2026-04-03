@@ -58,4 +58,37 @@ describe('ArrayDataProvider', () => {
       { numberField: 3, stringField: 'd', booleanField: true },
     ]);
   });
+
+  it('resets pagination to page 1 when sorting changes', async () => {
+    const dataProvider = new ArrayDataProvider<TestTableData>();
+    dataProvider.setRows(testTableData);
+    dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
+
+    dataProvider.setSorting({ active: 0, direction: SortDirection.Asc, propertyName: 'numberField' });
+
+    expect(dataProvider.pagination.pageNumber).toBe(1);
+    expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
+      { numberField: 1, stringField: 'a', booleanField: true },
+      { numberField: 2, stringField: 'c', booleanField: false },
+    ]);
+  });
+
+  it('resets pagination to page 1 when filter changes', () => {
+    const dataProvider = new ArrayDataProvider<TestTableData>();
+    dataProvider.setRows(testTableData);
+    dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
+
+    dataProvider.setFilter({ query: 'a', columnKeys: ['stringField'], list: testTableData });
+
+    expect(dataProvider.pagination.pageNumber).toBe(1);
+  });
+
+  it('does not reset pagination when it has not been initialized', () => {
+    const dataProvider = new ArrayDataProvider<TestTableData>();
+    dataProvider.setRows(testTableData);
+
+    dataProvider.setSorting({ active: 0, direction: SortDirection.Asc, propertyName: 'numberField' });
+
+    expect(dataProvider.pagination.pageNumber).toBeNull();
+  });
 });

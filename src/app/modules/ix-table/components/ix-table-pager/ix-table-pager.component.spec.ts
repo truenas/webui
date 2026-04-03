@@ -6,6 +6,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 
 interface TestTableData {
   numberField: number;
@@ -87,5 +88,19 @@ describe('IxTablePagerComponent', () => {
     expect(await buttons[1].isDisabled()).toBe(false);
     expect(await buttons[2].isDisabled()).toBe(true);
     expect(await buttons[3].isDisabled()).toBe(true);
+  });
+
+  it('resets pager to page 1 when sorting changes', async () => {
+    const dataProvider = spectator.component.dataProvider();
+    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    await buttons[3].click();
+
+    expect(spectator.component.currentPage()).toBe(2);
+
+    dataProvider.setSorting({ active: 0, direction: SortDirection.Asc, propertyName: 'numberField' });
+    spectator.detectChanges();
+
+    expect(spectator.component.currentPage()).toBe(1);
+    expect(spectator.query('.pages')!.textContent!.trim()).toBe('1 – 2  of 4');
   });
 });

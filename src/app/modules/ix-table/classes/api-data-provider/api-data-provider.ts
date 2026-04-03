@@ -70,13 +70,12 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
    *                   Avoids race conditions by skipping the emptyType$ check and load trigger.
    */
   override setSorting(sorting: TableSort<ApiCallResponseType<T>>, skipLoad = false): void {
-    this.sorting = sorting;
+    super.setSorting(sorting, true);
     if (!skipLoad) {
       this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
         this.sortingStrategy.handleCurrentPage(this.load.bind(this));
       });
     }
-    this.sortingOrPaginationUpdate.emit();
   }
 
   /**
