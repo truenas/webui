@@ -73,13 +73,11 @@ export class IxTablePagerComponent<T> implements OnInit {
       // Set directly instead of goToPage to avoid calling setPagination back on the provider.
       this.currentPage.set(providerPage);
     } else if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
-      if (this.totalPages() === 0) {
-        // When there are no results (e.g. after filtering), reset directly
-        // since goToPage guards against pageNumber > totalPages.
-        this.currentPage.set(1);
-      } else {
-        this.goToPage(1);
-      }
+      this.currentPage.set(1);
+      this.dataProvider().setPagination({
+        pageNumber: 1,
+        pageSize: this.pageSize(),
+      });
     }
     this.cdr.markForCheck();
   }
