@@ -76,6 +76,17 @@ describe('AsyncDataProvider', () => {
     ).toEqual([{ numberField: 2, stringField: 'c', booleanField: false }]);
   });
 
+  it('resets pagination to page 1 when filter changes', () => {
+    const request$ = of(testTableData);
+    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
+    dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
+
+    dataProvider.setFilter({ query: 'a', columnKeys: ['stringField'] });
+
+    expect(dataProvider.pagination.pageNumber).toBe(1);
+  });
+
   it('filters rows based on "size" query param with a pre-defined margin', async () => {
     const request$ = of(testTableData);
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
