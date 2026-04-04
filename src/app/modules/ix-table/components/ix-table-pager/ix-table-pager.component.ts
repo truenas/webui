@@ -28,6 +28,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxTablePagerComponent<T> implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+  private syncing = false;
 
   readonly dataProvider = input.required<DataProvider<T>>();
   readonly pageSize = model(50);
@@ -67,17 +68,25 @@ export class IxTablePagerComponent<T> implements OnInit {
   }
 
   private syncWithDataProvider(): void {
+    if (this.syncing) {
+      return;
+    }
+
     this.totalItems.set(this.dataProvider().totalRows);
     const providerPage = this.dataProvider().pagination.pageNumber;
     if (providerPage !== null && providerPage !== this.currentPage()) {
       // Set directly instead of goToPage to avoid calling setPagination back on the provider.
       this.currentPage.set(providerPage);
     } else if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
-      // Set directly without calling setPagination to avoid a feedback loop
+      // Use a guard flag to break the feedback loop
       // (setPagination → updateCurrentPage → currentPage$.next → syncWithDataProvider again).
+      this.syncing = true;
       this.currentPage.set(1);
-      this.dataProvider().pagination.pageNumber = 1;
-      this.dataProvider().pagination.pageSize = this.pageSize();
+      this.dataProvider().setPagination({
+        pageNumber: 1,
+        pageSize: this.pageSize(),
+      });
+      this.syncing = false;
     }
     this.cdr.markForCheck();
   }
