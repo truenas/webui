@@ -33,7 +33,9 @@
       </button>
     }
 
-    <mat-divider></mat-divider>
+    @if (unusedHosts().length) {
+      <mat-divider></mat-divider>
+    }
 
     <button
       mat-menu-item
