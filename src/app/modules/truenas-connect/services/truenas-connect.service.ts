@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  filter, map, merge, Observable, of, switchMap, tap,
+  filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -34,13 +34,10 @@ export class TruenasConnectService {
    * observable which calls and subscribes to `tn_connect.config` and survives websocket
    * disconnects due to webui restarts.
    */
-  config$: Observable<TruenasConnectConfig | null> = this.wsStatus.isAuthenticated$.pipe(
+  config$: Observable<TruenasConnectConfig> = this.wsStatus.isAuthenticated$.pipe(
     // we depend on `isAuthenticated$` and, when it's false, we emit `null`
-    switchMap((isAuthenticated) => {
-      if (!isAuthenticated) {
-        return of(null);
-      }
-
+    filter((isAuthenticated: boolean) => isAuthenticated),
+    switchMap(() => {
       // otherwise, we assume the websocket just now connected and we re-subscribe
       // to the API call, since it probably died. (or is first being established)
       //
@@ -57,7 +54,11 @@ export class TruenasConnectService {
     }),
   );
 
-  config = toSignal(this.config$, { initialValue: null });
+  /**
+   * signal derived directly from `config$`. will be `undefined` until first
+   * connection is established.
+   */
+  config = toSignal(this.config$, { initialValue: undefined });
 
   disableService(): Observable<TruenasConnectConfig> {
     return this.api.call('tn_connect.update', [{
