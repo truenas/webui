@@ -46,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class AddNicMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
-  defaultBridge = input<string>();
+  defaultBridge = input<string | null>();
 
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);

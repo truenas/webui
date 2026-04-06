@@ -148,5 +148,52 @@ describe('ContainerNicDevicesComponent', () => {
       const defaultDevice = nullSpectator.query('.default-device');
       expect(defaultDevice).not.toExist();
     });
+
+    it('shows empty state message', () => {
+      const nullSpectator = createNullNetworkComponent();
+      const noDevices = nullSpectator.query('.no-devices');
+      expect(noDevices).toHaveText('No NIC devices added.');
+    });
+  });
+
+  describe('when default bridge matches an existing NIC device', () => {
+    const createMatchingBridgeComponent = createComponentFactory({
+      component: ContainerNicDevicesComponent,
+      imports: [
+        NgxSkeletonLoaderComponent,
+        MockComponent(AddNicMenuComponent),
+        MockComponent(DeviceActionsMenuComponent),
+      ],
+      providers: [
+        mockProvider(ContainerDevicesStore, {
+          isLoading: () => false,
+          devices: (): ContainerDevice[] => [
+            {
+              id: 1,
+              dtype: ContainerDeviceType.Nic,
+              type: ContainerNicDeviceType.Virtio,
+              nic_attach: 'truenasbr0',
+              mac: null,
+              trust_guest_rx_filters: false,
+            } as ContainerDevice,
+          ],
+        }),
+        mockProvider(ContainersStore, {
+          selectedContainer: () => ({
+            default_network: 'truenasbr0',
+            status: { state: ContainerStatus.Stopped },
+          }),
+        }),
+        mockApi([
+          mockCall('interface.has_pending_changes', false),
+        ]),
+      ],
+    });
+
+    it('does not show default bridge row when a NIC device already uses the same bridge', () => {
+      const matchSpectator = createMatchingBridgeComponent();
+      const defaultDevice = matchSpectator.query('.default-device');
+      expect(defaultDevice).not.toExist();
+    });
   });
 });
