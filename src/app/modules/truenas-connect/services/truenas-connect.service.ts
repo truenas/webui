@@ -38,7 +38,7 @@ export class TruenasConnectService {
     // only do *anything* once we're authenticated
     filter((isAuthenticated: boolean) => isAuthenticated),
     switchMap(() => {
-      // otherwise, we assume the websocket just now connected and we re-subscribe
+      // on authentication, we assume the websocket just now connected and we re-subscribe
       // to the API call, since it probably died. (or is first being established)
       //
       // this prevents behavior where the subscription goes stale and doesn't emit after
