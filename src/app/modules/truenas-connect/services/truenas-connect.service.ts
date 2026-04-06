@@ -35,7 +35,7 @@ export class TruenasConnectService {
    * disconnects due to webui restarts.
    */
   config$: Observable<TruenasConnectConfig> = this.wsStatus.isAuthenticated$.pipe(
-    // we depend on `isAuthenticated$` and, when it's false, we emit `null`
+    // only do *anything* once we're authenticated
     filter((isAuthenticated: boolean) => isAuthenticated),
     switchMap(() => {
       // otherwise, we assume the websocket just now connected and we re-subscribe
