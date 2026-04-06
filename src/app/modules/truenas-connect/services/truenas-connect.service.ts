@@ -57,7 +57,7 @@ export class TruenasConnectService {
     }),
   );
 
-  config = toSignal(this.config$);
+  config = toSignal(this.config$, { initialValue: null });
 
   disableService(): Observable<TruenasConnectConfig> {
     return this.api.call('tn_connect.update', [{
