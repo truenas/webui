@@ -63,7 +63,6 @@ describe('WebShareListComponent', () => {
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
         mockCall('sharing.webshare.delete', true),
-        mockCall('tn_connect.config', mockTruenasConnectConfig),
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
