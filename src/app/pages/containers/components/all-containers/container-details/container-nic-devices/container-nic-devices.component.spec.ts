@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerDevice, ContainerGlobalConfig } from 'app/interfaces/container.interface';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 import {
   AddNicMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
@@ -51,12 +51,12 @@ describe('ContainerNicDevicesComponent', () => {
       }),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({
+          default_network: 'truenasbr0',
           status: { state: ContainerStatus.Stopped },
         }),
       }),
       mockApi([
         mockCall('interface.has_pending_changes', false),
-        mockCall('lxc.config', { bridge: 'truenasbr0' } as ContainerGlobalConfig),
       ]),
     ],
   });
@@ -101,12 +101,12 @@ describe('ContainerNicDevicesComponent', () => {
         }),
         mockProvider(ContainersStore, {
           selectedContainer: () => ({
+            default_network: 'truenasbr0',
             status: { state: ContainerStatus.Stopped },
           }),
         }),
         mockApi([
           mockCall('interface.has_pending_changes', false),
-          mockCall('lxc.config', { bridge: 'truenasbr0' } as ContainerGlobalConfig),
         ]),
       ],
     });
@@ -118,8 +118,8 @@ describe('ContainerNicDevicesComponent', () => {
     });
   });
 
-  describe('when bridge is not configured in lxc.config', () => {
-    const createNullBridgeComponent = createComponentFactory({
+  describe('when default_network is null', () => {
+    const createNullNetworkComponent = createComponentFactory({
       component: ContainerNicDevicesComponent,
       imports: [
         NgxSkeletonLoaderComponent,
@@ -133,21 +133,20 @@ describe('ContainerNicDevicesComponent', () => {
         }),
         mockProvider(ContainersStore, {
           selectedContainer: () => ({
+            default_network: null,
             status: { state: ContainerStatus.Stopped },
           }),
         }),
         mockApi([
           mockCall('interface.has_pending_changes', false),
-          mockCall('lxc.config', { bridge: null } as ContainerGlobalConfig),
-          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', truenasbr0: 'truenasbr0' }),
         ]),
       ],
     });
 
-    it('falls back to first bridge from bridge_choices', () => {
-      const nullBridgeSpectator = createNullBridgeComponent();
-      const defaultDevice = nullBridgeSpectator.query('.default-device');
-      expect(defaultDevice).toHaveText('truenasbr0 (Default)');
+    it('does not show default bridge row', () => {
+      const nullSpectator = createNullNetworkComponent();
+      const defaultDevice = nullSpectator.query('.default-device');
+      expect(defaultDevice).not.toExist();
     });
   });
 });

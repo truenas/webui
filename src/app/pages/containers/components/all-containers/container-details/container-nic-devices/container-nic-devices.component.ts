@@ -4,7 +4,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -42,21 +42,9 @@ export class ContainerNicDevicesComponent {
     this.api.call('interface.has_pending_changes').pipe(catchError(() => of(false))),
   );
 
-  protected readonly defaultBridge = toSignal(
-    this.api.call('lxc.config').pipe(
-      switchMap((config) => {
-        if (config.bridge) {
-          return of(config.bridge);
-        }
-
-        return this.api.call('lxc.bridge_choices').pipe(
-          map((choices) => {
-            return Object.keys(choices).find((key) => key !== '[AUTO]') ?? null;
-          }),
-        );
-      }),
-    ),
-  );
+  protected readonly defaultBridge = computed(() => {
+    return this.containersStore.selectedContainer()?.default_network ?? null;
+  });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
