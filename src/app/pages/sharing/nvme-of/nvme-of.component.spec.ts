@@ -17,8 +17,14 @@ import {
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfComponent } from 'app/pages/sharing/nvme-of/nvme-of.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import {
+  SubsystemDetailsComponent,
+} from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-details.component';
 import { SubsystemNamespacesCardComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/subsystem-namespaces-card.component';
 import { SubsystemPortsCardComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.component';
+import {
+  SubsystemsDetailsHeaderComponent,
+} from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystems-details-header.component';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -30,6 +36,8 @@ describe('NvmeOfComponent', () => {
     declarations: [
       MockComponents(
         SubsystemsListComponent,
+        SubsystemDetailsComponent,
+        SubsystemsDetailsHeaderComponent,
         SubsystemNamespacesCardComponent,
         SubsystemPortsCardComponent,
       ),

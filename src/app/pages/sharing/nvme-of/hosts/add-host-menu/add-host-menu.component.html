@@ -1,4 +1,4 @@
-@if (noHostsExist()) {
+@if (noHostsExist() && !showAllowAnyHost()) {
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
@@ -40,7 +40,9 @@
       </button>
     }
 
-    <mat-divider></mat-divider>
+    @if (unusedHosts().length) {
+      <mat-divider></mat-divider>
+    }
 
     <button
       mat-menu-item
