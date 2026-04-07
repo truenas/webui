@@ -24,6 +24,7 @@ import {
   reopenAllAlertsPressed,
 } from 'app/modules/alerts/store/alert.actions';
 import {
+  criticalLevels,
   selectAlertState,
   selectDismissedAlerts,
   selectUnreadAlerts,
@@ -266,12 +267,7 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   private isCritical(level: AlertLevel): boolean {
-    return [
-      AlertLevel.Critical,
-      AlertLevel.Alert,
-      AlertLevel.Emergency,
-      AlertLevel.Error,
-    ].includes(level);
+    return criticalLevels.includes(level);
   }
 
   private isWarning(level: AlertLevel): boolean {

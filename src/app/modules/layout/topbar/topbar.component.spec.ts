@@ -305,7 +305,7 @@ describe('TopbarComponent', () => {
       setSeverity('critical');
 
       const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+        MatButtonHarness.with({ selector: '[aria-label="Alerts - Critical alerts present"]' }),
       );
       const host = await alertButton.host();
       expect(await host.hasClass('severity-critical')).toBe(true);
@@ -315,7 +315,7 @@ describe('TopbarComponent', () => {
       setSeverity('warning');
 
       const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+        MatButtonHarness.with({ selector: '[aria-label="Alerts - Warnings present"]' }),
       );
       const host = await alertButton.host();
       expect(await host.hasClass('severity-warning')).toBe(true);
@@ -325,7 +325,7 @@ describe('TopbarComponent', () => {
       setSeverity('critical');
 
       const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+        MatButtonHarness.with({ selector: '[aria-label^="Alerts"]' }),
       );
       const host = await alertButton.host();
       expect(await host.getAttribute('aria-label')).toBe('Alerts - Critical alerts present');
@@ -335,7 +335,7 @@ describe('TopbarComponent', () => {
       setSeverity('warning');
 
       const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="alerts-indicator"]' }),
+        MatButtonHarness.with({ selector: '[aria-label^="Alerts"]' }),
       );
       const host = await alertButton.host();
       expect(await host.getAttribute('aria-label')).toBe('Alerts - Warnings present');
