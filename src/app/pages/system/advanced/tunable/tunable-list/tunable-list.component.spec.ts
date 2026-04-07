@@ -5,18 +5,19 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import {
   mockApi, mockCall, mockJob,
 } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
@@ -109,13 +110,10 @@ describe('TunableListComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => of({
-          afterClosed: of(null),
-        })),
+        confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
       }),
       mockApi([
         mockCall('core.get_jobs'),
@@ -180,15 +178,14 @@ describe('TunableListComponent', () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteIcon.click();
 
-    const dialogService = spectator.inject(DialogService);
-    expect(dialogService.confirm).toHaveBeenCalledWith({
-      buttonText: 'Delete',
-      message: 'Are you sure you want to delete "kernel.hostname"?',
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Tunable (SYSCTL)',
-      buttonColor: 'warn',
+      message: 'Are you sure you want to delete "kernel.hostname"?',
+      job: expect.any(Function),
+      jobProgressTitle: 'Deleting...',
+      successMessage: 'Tunable "kernel.hostname" deleted',
     });
 
-    expect(dialogService.jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [12]);
   });
 });

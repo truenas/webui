@@ -8,6 +8,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { UsageCardComponent } from 'app/pages/datasets/components/usage-card/usage-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -40,7 +41,7 @@ describe('UsageCardComponent', () => {
         } as TruenasConnectConfig),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(LicenseService, {
         hasTruenasConnect$: of(true),
@@ -141,6 +142,21 @@ describe('UsageCardComponent', () => {
     );
   });
 
+  it('shows containers row', () => {
+    spectator.setInput('dataset', {
+      ...datasetDummy,
+      containers: [
+        { name: 'container1', path: 'container1path' },
+        { name: 'container1', path: 'container1path' },
+        { name: 'container2', path: 'container2path' },
+      ],
+    });
+
+    expect(spectator.query('.containers.value')).toHaveText(
+      'This dataset is used by: container1, container2',
+    );
+  });
+
   it('shows apps row when dataset has name `ix-apps`', () => {
     spectator.setInput('dataset', {
       ...datasetDummy,
@@ -171,6 +187,7 @@ describe('UsageCardComponent', () => {
       children: [],
       apps: [],
       vms: [],
+      containers: [],
     });
     spectator.setInput('hasChildrenWithShares', false);
 
@@ -241,6 +258,7 @@ describe('UsageCardComponent', () => {
         children: [],
         apps: [],
         vms: [],
+        containers: [],
       });
       spectator.setInput('hasChildrenWithShares', false);
 
@@ -259,6 +277,7 @@ describe('UsageCardComponent', () => {
         children: [],
         apps: [],
         vms: [],
+        containers: [],
       });
       spectator.setInput('hasChildrenWithShares', false);
       spectator.detectChanges();
@@ -358,6 +377,22 @@ describe('UsageCardComponent', () => {
       expect(spectator.component.canCreateShare()).toBe(false);
     });
 
+    it('returns false when dataset has containers', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshare_shares: [],
+        apps: [],
+        vms: [],
+        containers: [{ name: 'container1', path: 'path1' }],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
     it('returns false when dataset has SMB shares', () => {
       spectator.setInput('dataset', {
         ...datasetDummy,
@@ -428,6 +463,7 @@ describe('UsageCardComponent', () => {
         webshare_shares: [],
         apps: [],
         vms: [],
+        containers: [],
       });
       spectator.setInput('hasChildrenWithShares', false);
 

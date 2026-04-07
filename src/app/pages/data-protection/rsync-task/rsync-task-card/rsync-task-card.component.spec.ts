@@ -20,6 +20,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
@@ -99,9 +100,10 @@ describe('RsyncTaskCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -176,11 +178,10 @@ describe('RsyncTaskCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Rsync Task <b>"asd - asdad"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);

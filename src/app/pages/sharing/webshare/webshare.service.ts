@@ -5,7 +5,7 @@ import {
   Observable, of, forkJoin,
 } from 'rxjs';
 import {
-  switchMap, take, map, catchError, shareReplay,
+  defaultIfEmpty, switchMap, take, map, catchError, shareReplay,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -124,8 +124,9 @@ export class WebShareService {
           return of(false);
         }
 
-        return this.slideIn.open(WebShareSharesFormComponent, { data }).pipe(
-          map((result) => !!result?.response),
+        return this.slideIn.open(WebShareSharesFormComponent, { data }).success$.pipe(
+          map(() => true),
+          defaultIfEmpty(false),
         );
       }),
     );

@@ -3,13 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersCardComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
 import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
@@ -60,10 +61,10 @@ describe('NtpServerCardComponent', () => {
         mockCall('system.ntpserver.delete', true),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });
@@ -106,6 +107,12 @@ describe('NtpServerCardComponent', () => {
   it('should display confirm dialog of deleting ntp server', async () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete NTP Server',
+      message: 'Are you sure you want to delete the <b>2.debian.pool.ntp.org</b> NTP Server?',
+      call: expect.any(Function),
+    });
 
     expect(api.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
   });

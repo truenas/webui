@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
@@ -19,6 +20,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -69,11 +71,10 @@ describe('WebShareListComponent', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        error: jest.fn(),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
@@ -168,9 +169,6 @@ describe('WebShareListComponent', () => {
   });
 
   it('should delete share when Delete action is confirmed', () => {
-    const dialog = spectator.inject(DialogService);
-    const snackbar = spectator.inject(SnackbarService);
-
     // Call the delete method directly to test delete confirmation flow
     spectator.component.doDelete({
       id: 1,
@@ -178,68 +176,26 @@ describe('WebShareListComponent', () => {
       path: '/mnt/tank/documents',
     });
 
-    expect(dialog.confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete WebShare',
       message: 'Are you sure you want to delete the WebShare "{name}"?<br><br>Users will no longer be able to access {path} through WebShare.',
-      buttonText: 'Delete',
-      buttonColor: 'warn',
+      call: expect.any(Function),
+      successMessage: 'WebShare deleted',
     });
 
     expect(api.call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
-
-    expect(snackbar.success).toHaveBeenCalledWith('WebShare deleted');
   });
 
-  it('should not delete share when Delete action is cancelled', async () => {
-    const dialog = spectator.inject(DialogService);
-    jest.spyOn(dialog, 'confirm').mockReturnValue(of(false as unknown as never));
+  it('should not delete share when confirmation is cancelled', () => {
+    (spectator.inject(DialogService).confirmDelete as jest.Mock).mockReturnValue(EMPTY);
 
-    // Call the delete method directly to test cancellation flow
     spectator.component.doDelete({
       id: 1,
       name: 'documents',
       path: '/mnt/tank/documents',
     });
 
-    // Wait for any pending operations
-    await spectator.fixture.whenStable();
-
-    // Verify delete was not called
-    const deleteCallsMade = (api.call as jest.Mock).mock.calls.filter(
-      (call) => call[0] === 'sharing.webshare.delete',
-    );
-    expect(deleteCallsMade).toHaveLength(0);
-  });
-
-  it('should handle delete error gracefully', async () => {
-    const dialog = spectator.inject(DialogService);
-    jest.spyOn(dialog, 'confirm').mockReturnValue(of(true as unknown as never));
-    jest.spyOn(api, 'call').mockImplementation((method: string) => {
-      if (method === 'sharing.webshare.delete') {
-        return throwError(() => new Error('Delete failed'));
-      }
-      if (method === 'sharing.webshare.query') {
-        return of(mockWebShares);
-      }
-      if (method === 'tn_connect.config') {
-        return of(mockTruenasConnectConfig);
-      }
-      return of(null);
-    });
-
-    // Call the delete method directly to test error handling flow
-    spectator.component.doDelete({
-      id: 1,
-      name: 'documents',
-      path: '/mnt/tank/documents',
-    });
-
-    await spectator.fixture.whenStable();
-
-    expect(dialog.error).toHaveBeenCalledWith({
-      title: 'Error deleting WebShare',
-      message: 'Delete failed',
-    });
+    expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
   it('should filter shares based on search query', () => {
@@ -258,7 +214,7 @@ describe('WebShareListComponent', () => {
   });
 
   it('should reload data after successful form submission', () => {
-    jest.spyOn(slideIn, 'open').mockReturnValue(of({ response: true, error: null }));
+    jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
     jest.spyOn(spectator.component.dataProvider, 'load');
 
     spectator.component.doAdd();
@@ -334,11 +290,10 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        error: jest.fn(),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
@@ -419,11 +374,10 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         mockCall('user.query', []),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        error: jest.fn(),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SnackbarService),
       mockProvider(EmptyService),

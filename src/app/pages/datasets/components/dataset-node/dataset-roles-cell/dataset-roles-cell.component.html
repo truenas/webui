@@ -26,6 +26,13 @@
   ></tn-icon>
 }
 
+@if (dataset().containers?.length) {
+  <tn-icon
+    name="mdi-package-variant-closed"
+    [tnTooltip]="'This dataset is used by: {containers}' | translate: { containers: containerNames() }"
+  ></tn-icon>
+}
+
 @if (hasShares()) {
   <tn-icon
     name="share"

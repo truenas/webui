@@ -75,11 +75,11 @@ describe('SmbUsersWarningComponent', () => {
     const options = spectator.queryAll('ul li');
 
     options[0].querySelector('a')?.click();
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: false });
+    expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
 
     options[1].querySelector('a')?.click();
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: false });
+    expect(slideInRef.close).toHaveBeenCalledWith({ response: undefined });
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'directory-services']);
   });
 

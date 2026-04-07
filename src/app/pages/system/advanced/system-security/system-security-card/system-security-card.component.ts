@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  Subject, filter, shareReplay, startWith, switchMap,
+  Subject, shareReplay, startWith, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
@@ -56,11 +55,8 @@ export class SystemSecurityCardComponent {
   protected readonly rulesetLabels = passwordComplexityRulesetLabels;
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    this.slideIn.open(SystemSecurityFormComponent, { data: config }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
+    this.slideIn.open(SystemSecurityFormComponent, { data: config }).onSuccess(() => {
       this.reloadConfig$.next();
-    });
+    }, this.destroyRef);
   }
 }

@@ -16,9 +16,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, of, take, tap,
-} from 'rxjs';
+import { of, tap } from 'rxjs';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -55,8 +53,10 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
+import { getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -101,6 +101,7 @@ export class SmbListComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
+  private poolStoreService = inject(poolStore);
 
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
@@ -113,6 +114,8 @@ export class SmbListComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmbShare>;
 
   smbShares: SmbShare[] = [];
+  /** null = pools not yet loaded; string[] once pool.query completes */
+  private activePoolPaths = signal<string[] | null>(null);
   columns = createTable<SmbShare>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -131,6 +134,8 @@ export class SmbListComponent implements OnInit {
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
       onRowToggle: (row) => this.onChangeEnabledState(row),
+      isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
@@ -142,55 +147,44 @@ export class SmbListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
-            this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } }).pipe(
-              take(1),
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.dataProvider.load());
+            this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } })
+              .onSuccess(() => this.dataProvider.load(), this.destroyRef);
           },
         },
         {
           iconName: tnIconMarker('share-variant', 'mdi'),
           tooltip: this.translate.instant('Edit Share ACL'),
+          disabled: (row) => of(isShareUnavailable(row, this.activePoolPaths())),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
           onClick: (row) => {
-            if (row.locked) {
-              this.lockedPathDialog(row.path);
-            } else {
-              // A home share has a name (homes) set; row.name works for other shares
-              const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
-                ? 'homes'
-                : row.name;
-              this.loader.open();
-              this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
-                .pipe(takeUntilDestroyed(this.destroyRef))
-                .subscribe((shareAcl) => {
-                  this.loader.close();
-                  this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
-                    take(1),
-                    filter((response) => !!response.response),
-                    takeUntilDestroyed(this.destroyRef),
-                  ).subscribe(() => {
-                    this.dataProvider.load();
-                  });
-                });
-            }
+            // A home share has a name (homes) set; row.name works for other shares
+            const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
+              ? 'homes'
+              : row.name;
+            this.loader.open();
+            this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe((shareAcl) => {
+                this.loader.close();
+                this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
+                  .onSuccess(() => this.dataProvider.load(), this.destroyRef);
+              });
           },
         },
         {
           iconName: tnIconMarker('security', 'mdi'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          disabled: (row) => of(isRootShare(row.path)),
+          disabled: (row) => of(isRootShare(row.path) || isShareUnavailable(row, this.activePoolPaths())),
+          disabledTooltip: (row: SmbShare) => this.translate.instant(
+            getFilesystemAclUnavailableReason(row, this.activePoolPaths()),
+          ),
           onClick: (row) => {
-            if (row.locked) {
-              this.lockedPathDialog(row.path);
-            } else {
-              this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-                queryParams: {
-                  path: row.path,
-                  returnUrl: this.router.url,
-                },
-              });
-            }
+            this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+              queryParams: {
+                path: row.path,
+                returnUrl: this.router.url,
+              },
+            });
           },
         },
         {
@@ -198,25 +192,12 @@ export class SmbListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
-            this.dialog.confirm({
+            this.dialog.confirmDelete({
               title: this.translate.instant('Unshare {name}', { name: row.name }),
               message: this.translate.instant(shared.deleteShareMessage),
               buttonText: this.translate.instant('Unshare'),
-              buttonColor: 'warn',
-            }).pipe(
-              filter(Boolean),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              next: () => {
-                this.api.call('sharing.smb.delete', [row.id]).pipe(
-                  this.loader.withLoader(),
-                  this.errorHandler.withErrorHandler(),
-                  takeUntilDestroyed(this.destroyRef),
-                ).subscribe(() => {
-                  this.dataProvider.load();
-                });
-              },
-            });
+              call: () => this.api.call('sharing.smb.delete', [row.id]),
+            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.dataProvider.load());
           },
         },
       ],
@@ -232,10 +213,21 @@ export class SmbListComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
-    this.dataProvider.load();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
+    });
+
+    this.poolStoreService.call.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (pools) => {
+        this.activePoolPaths.set(pools.map((pool) => pool.path));
+        this.dataProvider.load();
+      },
+      error: () => {
+        this.dataProvider.load();
+      },
     });
   }
 
@@ -248,15 +240,8 @@ export class SmbListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(SmbFormComponent).pipe(
-      take(1),
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-    });
+    this.slideIn.open(SmbFormComponent)
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {
@@ -272,13 +257,6 @@ export class SmbListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
-  }
-
-  private lockedPathDialog(path: string): void {
-    this.dialog.error({
-      title: this.translate.instant('Error'),
-      message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
-    });
   }
 
   private onChangeEnabledState(row: SmbShare): void {

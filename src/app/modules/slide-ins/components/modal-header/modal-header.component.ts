@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class ModalHeaderComponent {
   private translate = inject(TranslateService);
-  private slideInRef = inject<SlideInRef<unknown, false>>(SlideInRef);
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
   private authService = inject(AuthService);
   private slideIn = inject(SlideIn);
 
@@ -54,6 +54,6 @@ export class ModalHeaderComponent {
   });
 
   close(): void {
-    this.slideInRef.close({ response: false });
+    this.slideInRef.close({ response: undefined });
   }
 }

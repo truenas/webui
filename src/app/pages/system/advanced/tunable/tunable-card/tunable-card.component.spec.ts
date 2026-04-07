@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -51,10 +51,10 @@ describe('TunableCardComponent', () => {
         mockJob('tunable.delete', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteJobOptions) => options.job()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, { close: jest.fn() }),
       mockProvider(FirstTimeWarningService, {
@@ -106,6 +106,14 @@ describe('TunableCardComponent', () => {
   it('deletes a tunable variable with confirmation when Delete button is pressed', async () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 4);
     await deleteIcon.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Tunable (ZFS)',
+      message: 'Are you sure you want to delete "zfs_arc_max"?',
+      job: expect.any(Function),
+      jobProgressTitle: 'Deleting...',
+      successMessage: 'Variable deleted.',
+    });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [1]);
   });

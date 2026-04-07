@@ -31,6 +31,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SnapshotTaskFormComponent,
@@ -117,7 +118,7 @@ describe('SnapshotTaskListComponent', () => {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(LocaleService),
@@ -193,7 +194,7 @@ describe('SnapshotTaskListComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
   });
 
   it('reloads the data provider when an event is received from pool.snapshottask.query', () => {

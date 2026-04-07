@@ -12,6 +12,7 @@ import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 
 export interface PoolsDashboardState {
   pools: Pool[];
@@ -36,6 +37,7 @@ const initialState: PoolsDashboardState = {
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
+  private poolStoreService = inject(poolStore);
 
   readonly pools = computed(() => this.state().pools);
   readonly arePoolsLoading = computed(() => this.state().arePoolsLoading);
@@ -59,6 +61,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly loadDashboard = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       tap(() => {
+        this.poolStoreService.invalidate();
         this.patchState({
           ...initialState,
           arePoolsLoading: true,

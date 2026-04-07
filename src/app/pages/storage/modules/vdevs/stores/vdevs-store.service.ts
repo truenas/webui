@@ -16,6 +16,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export interface VDevsState {
   isLoading: boolean;
   poolId: number | null;
+  poolName: string;
   error: unknown;
   nodes: VDevNestedDataNode[];
   diskDictionary: Record<string, Disk>;
@@ -25,6 +26,7 @@ export interface VDevsState {
 const initialState: VDevsState = {
   isLoading: false,
   poolId: null,
+  poolName: '',
   error: null,
   nodes: [],
   diskDictionary: {},
@@ -41,6 +43,7 @@ export class VDevsStore extends ComponentStore<VDevsState> {
 
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
+  readonly poolName$ = this.select((state) => state.poolName);
   readonly nodes$ = this.select((state) => state.nodes);
   readonly diskDictionary$ = this.select((state) => state.diskDictionary);
   readonly selectedBranch$ = this.select((state) => {
@@ -91,6 +94,7 @@ export class VDevsStore extends ComponentStore<VDevsState> {
                 this.patchState({
                   isLoading: false,
                   error: null,
+                  poolName: pools[0].name,
                   diskDictionary: keyBy(disks, (disk) => disk.devname),
                   nodes: this.createDataNodes(pools[0].topology),
                 });

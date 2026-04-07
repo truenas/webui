@@ -65,11 +65,6 @@
       margin-right: 0;
     }
 
-    .profile-mismatch {
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
     h4 {
       align-items: flex-start;
       display: flex;
@@ -80,7 +75,11 @@
     .versions {
       display: grid;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
+
+      h4 {
+        font-size: 14px;
+      }
 
       ngx-skeleton-loader {
         height: 18px;

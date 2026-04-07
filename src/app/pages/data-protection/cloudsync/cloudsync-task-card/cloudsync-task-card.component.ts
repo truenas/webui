@@ -40,6 +40,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -81,6 +82,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   private taskService = inject(TaskService);
@@ -216,46 +218,26 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   protected doDelete(cloudsyncTask: CloudSyncTaskUi): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: cloudsyncTask.description,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('cloudsync.delete', [cloudsyncTask.id]),
+      successMessage: this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: cloudsyncTask.description }));
-        this.getCloudSyncTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getCloudSyncTasks());
   }
 
   protected onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getCloudSyncTasks();
-      },
-    });
+    this.slideIn.open(CloudSyncWizardComponent, { wide: true })
+      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
   }
 
   protected onEdit(row?: CloudSyncTaskUi): void {
-    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getCloudSyncTasks();
-    });
+    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row })
+      .onSuccess(() => this.getCloudSyncTasks(), this.destroyRef);
   }
 
   protected runNow(row: CloudSyncTaskUi): void {
@@ -351,7 +333,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
         this.getCloudSyncTasks();
       });
   }
-
 
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
     this.api

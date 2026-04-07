@@ -7,14 +7,12 @@ import {
 } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -22,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-container-general-info',
@@ -49,9 +46,7 @@ export class ContainerGeneralInfoComponent {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
-  private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
   private containersStore = inject(ContainersStore);
 
@@ -65,28 +60,14 @@ export class ContainerGeneralInfoComponent {
   editContainer(): void {
     this.slideIn
       .open(ContainerFormComponent, { data: this.container() })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (result) => {
-          // Reload the container data if the form was saved successfully
-          if (result?.response) {
-            this.containersStore.reload();
-          }
-        },
-      });
+      .onSuccess(() => this.containersStore.reload(), this.destroyRef);
   }
 
   deleteContainer(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Delete {name}?', { name: this.container().name }),
-      buttonColor: 'warn',
+      call: () => this.api.call('container.delete', [this.container().id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('container.delete', [this.container().id]).pipe(
-        this.loader.withLoader(),
-      )),
-      this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.router.navigate(['/containers']);

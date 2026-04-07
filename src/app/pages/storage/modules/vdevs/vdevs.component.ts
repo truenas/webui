@@ -1,7 +1,7 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterViewInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,7 +14,6 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -45,13 +44,12 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
 export class VDevsComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
   private breakpointObserver = inject(BreakpointObserver);
   protected vDevsStore = inject(VDevsStore);
   private destroyRef = inject(DestroyRef);
 
   protected poolId = signal<number | null>(null);
-  protected poolName = signal<string>('');
+  protected poolName = toSignal(this.vDevsStore.poolName$, { initialValue: '' });
 
   protected readonly requiredRoles = [Role.PoolWrite];
 
@@ -85,7 +83,6 @@ export class VDevsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.poolId.set(Number(this.route.snapshot.paramMap.get('poolId')));
-    this.getPool();
   }
 
   ngAfterViewInit(): void {
@@ -100,14 +97,6 @@ export class VDevsComponent implements OnInit, AfterViewInit {
           this.isMobileView.set(false);
         }
       });
-  }
-
-  private getPool(): void {
-    this.api.call('pool.query', [[['id', '=', this.poolId()]]]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pools) => {
-      if (pools.length) {
-        this.poolName.set(pools[0]?.name);
-      }
-    });
   }
 
   closeMobileDetails(): void {

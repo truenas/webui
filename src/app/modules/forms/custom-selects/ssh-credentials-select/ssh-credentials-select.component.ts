@@ -6,11 +6,10 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -28,7 +27,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IxSelectComponent],
 })
-export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
+export class SshCredentialsSelectComponent extends IxSelectWithNewOption<KeychainCredential> {
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
@@ -41,8 +40,8 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  getValueFromSlideInResponse(result: SlideInResponse<SshCredentials>): IxSelectValue {
-    return result.response.id || null;
+  getValueFromSlideInResponse(result: KeychainCredential): IxSelectValue {
+    return result.id || null;
   }
 
   getFormComponentType(): ComponentType<SshConnectionFormComponent> {

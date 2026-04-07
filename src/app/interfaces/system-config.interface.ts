@@ -1,12 +1,11 @@
-import { Certificate } from 'app/interfaces/certificate.interface';
-
 export interface SystemGeneralConfig {
   id: number;
   kbdmap: string;
   language: string;
   timezone: string;
   ui_address: string[];
-  ui_certificate: Certificate;
+  ui_certificate: number;
+  ui_certificate_name: string | null;
   ui_consolemsg: boolean;
   ui_httpsport: number;
   ui_httpsprotocols: string[];

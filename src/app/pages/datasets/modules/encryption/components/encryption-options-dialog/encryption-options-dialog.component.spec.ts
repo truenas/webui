@@ -40,7 +40,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         mockCall('pool.dataset.inherit_parent_encryption_properties'),
         mockCall('pool.dataset.query', [{
           pbkdf2iters: {
-            rawvalue: '100000',
+            rawvalue: '1300000',
           },
         } as Dataset]),
       ]),
@@ -82,7 +82,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     spectator.component.ngOnInit();
 
     const pbkdf2iters = await form.getControl('pbkdf2iters');
-    expect(await pbkdf2iters.getValue()).toBe('100000');
+    expect(await pbkdf2iters.getValue()).toBe('1300000');
   });
 
   it('allows to inherit when there is an encrypted parent', async () => {
@@ -186,7 +186,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         'Encryption Type': 'Passphrase',
         Passphrase: '12345678',
         'Confirm Passphrase': '12345678',
-        pbkdf2iters: '350001',
+        pbkdf2iters: '1300001',
         Confirm: true,
       },
     );
@@ -196,9 +196,39 @@ describe('EncryptionOptionsDialogComponent', () => {
 
     expect(api.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
-      ['pool/parent/child', { passphrase: '12345678', pbkdf2iters: 350001 }],
+      ['pool/parent/child', { passphrase: '12345678', pbkdf2iters: 1300001 }],
     );
     expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('allows saving when switching from passphrase to key with mismatched passphrase fields', async () => {
+    await setupTest();
+
+    await form.fillForm(
+      {
+        'Encryption Type': 'Passphrase',
+        Passphrase: '12345678',
+      },
+    );
+
+    const key = 'k'.repeat(64);
+    await form.fillForm(
+      {
+        'Encryption Type': 'Key',
+        Key: key,
+        Confirm: true,
+      },
+    );
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(false);
+
+    await saveButton.click();
+
+    expect(api.job).toHaveBeenCalledWith(
+      'pool.dataset.change_key',
+      ['pool/parent/child', { key, generate_key: false }],
+    );
   });
 
   it('only allows key encryption when dataset has a key-encrypted child', async () => {

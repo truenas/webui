@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -8,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -34,13 +36,14 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
+import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { poolStore } from 'app/services/global-store/stores.constant';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -73,7 +76,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class NfsListComponent implements OnInit {
-  private loader = inject(LoaderService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
@@ -83,6 +85,7 @@ export class NfsListComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
+  private poolStoreService = inject(poolStore);
 
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
@@ -94,6 +97,8 @@ export class NfsListComponent implements OnInit {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   nfsShares: NfsShare[] = [];
+  /** null = pools not yet loaded; string[] once pool.query completes */
+  private activePoolPaths = signal<string[] | null>(null);
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -126,6 +131,8 @@ export class NfsListComponent implements OnInit {
       propertyName: 'enabled',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
+      isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
+      getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
     }),
     yesNoColumn({
       title: this.translate.instant('Expose Snapshots'),
@@ -138,34 +145,19 @@ export class NfsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
-            this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
+            this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } })
+              .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
-            this.dialog.confirm({
+            this.dialog.confirmDelete({
               title: this.translate.instant('Delete {name}', { name: row.path }),
               message: this.translate.instant(shared.deleteShareMessage),
-              buttonText: this.translate.instant('Delete'),
-              buttonColor: 'warn',
-            }).pipe(
-              filter(Boolean),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              next: () => {
-                this.api.call('sharing.nfs.delete', [row.id]).pipe(
-                  this.loader.withLoader(),
-                  takeUntilDestroyed(this.destroyRef),
-                ).subscribe({
-                  next: () => this.refresh(),
-                });
-              },
-            });
+              call: () => this.api.call('sharing.nfs.delete', [row.id]),
+            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.refresh());
           },
           requiredRoles: this.requiredRoles,
         },
@@ -183,9 +175,20 @@ export class NfsListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
     this.setDefaultSort();
-    this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
+    });
+
+    this.poolStoreService.call.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (pools) => {
+        this.activePoolPaths.set(pools.map((pool) => pool.path));
+        this.refresh();
+      },
+      error: () => {
+        this.refresh();
+      },
     });
   }
 
@@ -198,14 +201,8 @@ export class NfsListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(NfsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.refresh();
-      },
-    });
+    this.slideIn.open(NfsFormComponent)
+      .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {

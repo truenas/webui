@@ -7,9 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import {
-  filter, map, switchMap, tap,
-} from 'rxjs';
+import { map, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -34,7 +32,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-kerberos-realms-list',
@@ -65,7 +62,6 @@ export class KerberosRealmsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   protected dialogService = inject(DialogService);
-  private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
@@ -102,10 +98,8 @@ export class KerberosRealmsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(KerberosRealmsFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosRealms());
+            this.slideIn.open(KerberosRealmsFormComponent, { data: row })
+              .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
           },
         },
         {
@@ -113,21 +107,13 @@ export class KerberosRealmsListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
-            this.dialogService.confirm({
+            this.dialogService.confirmDelete({
               title: this.translate.instant(helptextKerberosRealms.deleteDialogTitle),
               message: this.translate.instant('Are you sure you want to delete this item?'),
+              call: () => this.api.call('kerberos.realm.delete', [row.id]),
             }).pipe(
-              filter(Boolean),
-              switchMap(() => this.api.call('kerberos.realm.delete', [row.id])),
               takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              error: (error: unknown) => {
-                this.errorHandler.showErrorModal(error);
-              },
-              complete: () => {
-                this.getKerberosRealms();
-              },
-            });
+            ).subscribe(() => this.getKerberosRealms());
           },
         },
       ],
@@ -173,10 +159,8 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosRealmsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getKerberosRealms());
+    this.slideIn.open(KerberosRealmsFormComponent)
+      .onSuccess(() => this.getKerberosRealms(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

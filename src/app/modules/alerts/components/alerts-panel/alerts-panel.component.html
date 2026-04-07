@@ -10,16 +10,12 @@
       [matMenuTriggerFor]="alertSettingsMenu"
     ></tn-icon-button>
     <mat-menu #alertSettingsMenu="matMenu">
-      <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
+      <button mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}
-      </a>
-      <a
-        mat-menu-item
-        ixTest="email-settings"
-        (click)="openEmailForm()"
-      >
+      </button>
+      <button mat-menu-item ixTest="email-settings" (click)="openEmailForm()">
         {{ 'Email' | translate }}
-      </a>
+      </button>
     </mat-menu>
     <tn-icon-button
       name="close"

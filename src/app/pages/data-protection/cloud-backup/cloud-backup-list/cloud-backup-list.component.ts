@@ -190,33 +190,20 @@ export class CloudBackupListComponent {
 
   openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => this.dataProvider().load());
+      .onSuccess(() => this.dataProvider().load(), this.destroyRef);
   }
 
   doDelete(row: CloudBackup): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
       message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {
         name: row.description,
       }),
+      call: () => this.api.call('cloud_backup.delete', [row.id]),
+      successMessage: this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
-        this.dataProvider().load();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.dataProvider().load());
   }
 
   expanded(row: CloudBackup): void {

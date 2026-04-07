@@ -536,6 +536,7 @@ export interface ApiCallDirectory {
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
 
   // Interface
+  'interface.available_fec_modes': { params: [id: string]; response: string[] };
   'interface.bridge_members_choices': { params: [id?: string]; response: Choices };
   'interface.cancel_rollback': { params: void; response: void };
   'interface.checkin': { params: void; response: void };
@@ -726,7 +727,7 @@ export interface ApiCallDirectory {
   'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
   'pool.scrub.update': { params: [id: number, params: CreateScrubTask]; response: ScrubTask };
   'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
-  'pool.snapshottask.delete': { params: [id: number, fixate_removal_date?: boolean]; response: boolean };
+  'pool.snapshottask.delete': { params: [id: number, options?: { fixate_removal_date: boolean }]; response: boolean };
   'pool.snapshottask.delete_will_change_retention_for': { params: [id: number]; response: Record<string, string[]> };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };

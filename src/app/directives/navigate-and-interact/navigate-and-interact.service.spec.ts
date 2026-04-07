@@ -42,29 +42,26 @@ describe('NavigateAndInteractService', () => {
     expect(scrollIntoViewMock).toHaveBeenCalled();
   }));
 
-  it('creates an overlay around element and removes it on click', () => {
+  it('highlights element with outline and removes it on click', () => {
     const element = document.createElement('div');
-    spectator.service.createOverlay(element);
+    spectator.service.highlight(element);
 
-    const overlay = document.body.lastElementChild as HTMLDivElement;
-    expect(overlay).toBeTruthy();
+    expect(element.style.outline).toBe('2px solid var(--primary)');
 
-    overlay.dispatchEvent(new MouseEvent('click'));
-    expect(document.body.contains(overlay)).toBe(false);
+    element.dispatchEvent(new MouseEvent('click'));
+    expect(element.style.outline).toBe('');
   });
 
-  it('cleans up previous highlight when another element selected', () => {
+  it('cleans up previous highlight when another element is highlighted', () => {
     const element1 = document.createElement('div');
-    spectator.service.createOverlay(element1);
-    const overlay1 = document.body.lastElementChild as HTMLDivElement;
+    spectator.service.highlight(element1);
 
-    expect(document.body.contains(overlay1)).toBe(true);
+    expect(element1.style.outline).toBe('2px solid var(--primary)');
 
     const element2 = document.createElement('div');
-    spectator.service.createOverlay(element2);
-    const overlay2 = document.body.lastElementChild as HTMLDivElement;
+    spectator.service.highlight(element2);
 
-    expect(document.body.contains(overlay1)).toBe(false);
-    expect(document.body.contains(overlay2)).toBe(true);
+    expect(element1.style.outline).toBe('');
+    expect(element2.style.outline).toBe('2px solid var(--primary)');
   });
 });

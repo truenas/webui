@@ -91,10 +91,8 @@ export class KerberosKeytabsListComponent implements OnInit {
           iconName: tnIconMarker('pencil', 'mdi'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            this.slideIn.open(KerberosKeytabsFormComponent, { data: row }).pipe(
-              filter((response) => !!response.response),
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.getKerberosKeytabs());
+            this.slideIn.open(KerberosKeytabsFormComponent, { data: row })
+              .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
           },
         },
         {
@@ -102,21 +100,12 @@ export class KerberosKeytabsListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
-            this.dialogService.confirm({
-              title: this.translate.instant('Delete'),
+            this.dialogService.confirmDelete({
               message: this.translate.instant('Are you sure you want to delete this item?'),
+              call: () => this.api.call('kerberos.keytab.delete', [row.id]),
             }).pipe(
-              filter(Boolean),
-              switchMap(() => this.api.call('kerberos.keytab.delete', [row.id])),
               takeUntilDestroyed(this.destroyRef),
-            ).subscribe({
-              error: (error: unknown) => {
-                this.errorHandler.showErrorModal(error);
-              },
-              complete: () => {
-                this.getKerberosKeytabs();
-              },
-            });
+            ).subscribe(() => this.getKerberosKeytabs());
           },
         },
       ],
@@ -166,10 +155,8 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(KerberosKeytabsFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getKerberosKeytabs());
+    this.slideIn.open(KerberosKeytabsFormComponent)
+      .onSuccess(() => this.getKerberosKeytabs(), this.destroyRef);
   }
 
   onListFiltered(query: string): void {

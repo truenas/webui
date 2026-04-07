@@ -4,6 +4,8 @@
     [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row())"
     [ixTest]="[title, uniqueRowTag(row()), 'row-toggle']"
     [checked]="checked"
+    [disabled]="disabled"
+    [matTooltip]="tooltip"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
   ></mat-slide-toggle>
@@ -15,6 +17,8 @@
     [aria-label]="(checked ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + getAriaLabel(row())"
     [ixTest]="[title, uniqueRowTag(row()), 'row-toggle']"
     [checked]="checked"
+    [disabled]="disabled"
+    [matTooltip]="tooltip"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"
   ></mat-slide-toggle>

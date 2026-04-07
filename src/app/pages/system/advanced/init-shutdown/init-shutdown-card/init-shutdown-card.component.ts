@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  switchMap, filter, tap,
+  switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -29,14 +29,12 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 @Component({
@@ -64,10 +62,8 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 })
 export class InitShutdownCardComponent implements OnInit {
   private translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
@@ -137,23 +133,18 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   onDelete(row: InitShutdownScript): void {
-    this.dialog.confirm({
+    this.dialog.confirmDelete({
       title: this.translate.instant('Delete Script'),
       message: this.translate.instant('Delete Init/Shutdown Script {script}?', {
         script: row.command,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('initshutdownscript.delete', [row.id]),
+      successMessage: this.translate.instant('Script deleted.'),
     })
       .pipe(
-        filter(Boolean),
-        switchMap(() => this.api.call('initshutdownscript.delete', [row.id])),
-        filter(Boolean),
-        this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Script deleted.'));
         this.loadScripts();
       });
   }
@@ -164,8 +155,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   private openForm(row?: InitShutdownScript): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(InitShutdownFormComponent, { data: row })),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(InitShutdownFormComponent, { data: row }).success$),
       tap(() => this.loadScripts()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();

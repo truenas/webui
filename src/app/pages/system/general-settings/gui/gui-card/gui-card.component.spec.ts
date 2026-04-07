@@ -4,9 +4,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -23,9 +23,8 @@ describe('GuiCardComponent', () => {
           {
             selector: selectGeneralConfig,
             value: {
-              ui_certificate: {
-                name: 'truenas_default',
-              },
+              ui_certificate: 1,
+              ui_certificate_name: 'truenas_default',
               ui_address: ['0.0.0.0'],
               ui_v6address: ['0.0.0.0'],
               ui_port: 80,
@@ -39,7 +38,7 @@ describe('GuiCardComponent', () => {
         ],
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });

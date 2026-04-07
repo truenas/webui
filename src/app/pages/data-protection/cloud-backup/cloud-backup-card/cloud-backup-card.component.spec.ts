@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -82,13 +83,12 @@ describe('CloudBackupCardComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(ErrorHandlerService),
       mockProvider(SnackbarService),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({
-          response: true,
-        })),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       provideMockStore({
         initialState: {
@@ -221,11 +221,11 @@ describe('CloudBackupCardComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Backup Task <b>"test one"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Backup Task «test one» deleted.',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);

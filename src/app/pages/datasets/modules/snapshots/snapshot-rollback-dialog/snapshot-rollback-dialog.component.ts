@@ -8,6 +8,7 @@ import {
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -49,6 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RouterLink,
     MatDialogActions,
     MatAnchor,
+    TnBannerComponent,
   ],
 })
 export class SnapshotRollbackDialog implements OnInit {
@@ -67,7 +69,7 @@ export class SnapshotRollbackDialog implements OnInit {
   wasDatasetRolledBack = false;
   form = this.fb.group({
     recursive: ['' as RollbackRecursiveType],
-    force: [false, [Validators.requiredTrue]],
+    force: [null as (boolean | null), [Validators.requiredTrue]],
   });
 
   publicSnapshot: ZfsSnapshot;

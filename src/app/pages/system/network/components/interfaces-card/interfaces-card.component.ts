@@ -210,14 +210,10 @@ export class InterfacesCardComponent implements OnInit {
       data: {
         interfaces: this.interfaces,
       },
-    })
-      .pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => {
-        this.interfacesUpdated.emit();
-        this.interfacesStore$.loadInterfaces();
-      });
+    }).onSuccess(() => {
+      this.interfacesUpdated.emit();
+      this.interfacesStore$.loadInterfaces();
+    }, this.destroyRef);
   }
 
   protected onEdit(row: NetworkInterface): void {
@@ -225,23 +221,24 @@ export class InterfacesCardComponent implements OnInit {
       data: {
         interface: row,
       },
+    }).onSuccess(() => {
+      this.interfacesUpdated.emit();
+      this.interfacesStore$.loadInterfaces();
+    }, this.destroyRef);
+  }
+
+  protected onDelete(row: NetworkInterface): void {
+    this.dialogService.confirmDelete({
+      title: this.translate.instant('Delete Interface'),
+      message: this.translate.instant(helptextInterfaces.deleteDialogText),
+      call: () => this.api.call('interface.delete', [row.id]),
     }).pipe(
-      filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.interfacesUpdated.emit();
       this.interfacesStore$.loadInterfaces();
+      this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
     });
-  }
-
-  protected onDelete(row: NetworkInterface): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete Interface'),
-      message: this.translate.instant(helptextInterfaces.deleteDialogText),
-      buttonText: this.translate.instant('Delete'),
-    })
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.makeDeleteCall(row));
   }
 
   protected onReset(row: NetworkInterface): void {

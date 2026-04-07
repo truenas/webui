@@ -132,21 +132,13 @@ export class SshKeypairCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(SshKeypairFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getCredentials();
-    });
+    this.slideIn.open(SshKeypairFormComponent)
+      .onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   doEdit(credential: KeychainSshKeyPair): void {
-    this.slideIn.open(SshKeypairFormComponent, { data: credential }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getCredentials();
-    });
+    this.slideIn.open(SshKeypairFormComponent, { data: credential })
+      .onSuccess(() => this.getCredentials(), this.destroyRef);
   }
 
   doDelete(credential: KeychainSshKeyPair): void {

@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   NvmeOfHost,
@@ -15,6 +14,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemsListComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystems-list.component';
 
@@ -63,9 +63,7 @@ describe('SubsystemsListComponent', () => {
     providers: [
       mockProvider(EmptyService),
       mockProvider(SlideIn, {
-        open: jest.fn(() => {
-          return of({ response: { ...mockSubsystems[0], name: 'subsys-3' } });
-        }),
+        open: jest.fn(() => SlideInResult.success({ ...mockSubsystems[0], name: 'subsys-3' })),
       }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),

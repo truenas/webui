@@ -204,14 +204,12 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   private deleteTask(taskId: number, fixateRemovalDate: boolean): Observable<boolean> {
-    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]);
+    return this.api.call('pool.snapshottask.delete', [taskId, { fixate_removal_date: fixateRemovalDate }]).pipe(this.loader.withLoader());
   }
 
   protected openForm(row?: PeriodicSnapshotTaskUi): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true })
+      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
   protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
