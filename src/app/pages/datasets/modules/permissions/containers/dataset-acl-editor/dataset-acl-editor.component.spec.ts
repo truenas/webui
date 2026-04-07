@@ -225,6 +225,36 @@ describe('DatasetAclEditorComponent', () => {
     });
   });
 
+  describe('homeShare query param', () => {
+    it('does not load home share preset when homeShare is false', () => {
+      spectator = createComponent({
+        queryParams: {
+          path: '/mnt/pool/dataset',
+          homeShare: 'false',
+        },
+      });
+      const store = spectator.inject(DatasetAclEditorStore);
+      jest.spyOn(store, 'loadHomeSharePreset');
+
+      expect(store.loadHomeSharePreset).not.toHaveBeenCalled();
+    });
+
+    it('loads home share preset when homeShare is true', () => {
+      spectator = createComponent({
+        queryParams: {
+          path: '/mnt/pool/dataset',
+          homeShare: 'true',
+        },
+      });
+      const store = spectator.inject(DatasetAclEditorStore);
+      jest.spyOn(store, 'loadHomeSharePreset');
+
+      spectator.component.ngOnInit();
+
+      expect(store.loadHomeSharePreset).toHaveBeenCalled();
+    });
+  });
+
   describe('return URL navigation', () => {
     beforeEach(() => {
       spectator = createComponent({
