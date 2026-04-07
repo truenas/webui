@@ -167,6 +167,7 @@ export class AddNicMenuComponent {
       next: () => {
         this.snackbar.success(this.translate.instant('NIC Device was added'));
         this.devicesStore.reload();
+        this.containersStore.reload();
       },
     });
   }
