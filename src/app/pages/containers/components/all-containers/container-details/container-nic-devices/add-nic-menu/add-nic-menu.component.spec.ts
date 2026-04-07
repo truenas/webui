@@ -53,7 +53,7 @@ describe('AddNicMenuComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({ props: { defaultBridge: null } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -112,7 +112,6 @@ describe('AddNicMenuComponent', () => {
       afterClosed: jest.fn(() => of({
         useDefault: true,
         type: ContainerNicDeviceType.E1000,
-        // Note: trust_guest_rx_filters should NOT be included for E1000
       })),
     }));
 
@@ -124,7 +123,6 @@ describe('AddNicMenuComponent', () => {
         dtype: ContainerDeviceType.Nic,
         type: ContainerNicDeviceType.E1000,
         nic_attach: 'truenasbr0',
-        // trust_guest_rx_filters should NOT be present for E1000
       } as ContainerDevice,
     }]);
   });
@@ -182,7 +180,6 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
     providers: [
       mockAuth(),
       mockApi([
-        // Mock API to return eth0 in both BRIDGE and MACVLAN groups
         mockCall('container.device.nic_attach_choices', {
           BRIDGE: ['eth0', 'truenasbr0'],
           MACVLAN: ['eth0', 'ens1'],
@@ -201,7 +198,7 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({ props: { defaultBridge: null } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -225,4 +222,3 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
     expect(eth0Index).toBeLessThan(macvlanIndex);
   });
 });
-
