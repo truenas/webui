@@ -92,7 +92,7 @@ export class DatasetAclEditorComponent implements OnInit {
   }
 
   get isHomeShare(): boolean {
-    return this.route.snapshot.queryParams['homeShare'] === 'true';
+    return Boolean(this.route.snapshot.queryParams['homeShare']);
   }
 
   readonly helptext = helptextAcl;
