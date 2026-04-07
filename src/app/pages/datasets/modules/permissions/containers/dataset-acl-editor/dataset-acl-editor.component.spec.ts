@@ -228,6 +228,7 @@ describe('DatasetAclEditorComponent', () => {
   describe('homeShare query param', () => {
     it('does not load home share preset when homeShare is false', () => {
       spectator = createComponent({
+        detectChanges: false,
         queryParams: {
           path: '/mnt/pool/dataset',
           homeShare: 'false',
@@ -236,11 +237,14 @@ describe('DatasetAclEditorComponent', () => {
       const store = spectator.inject(DatasetAclEditorStore);
       jest.spyOn(store, 'loadHomeSharePreset');
 
+      spectator.detectChanges();
+
       expect(store.loadHomeSharePreset).not.toHaveBeenCalled();
     });
 
     it('loads home share preset when homeShare is true', () => {
       spectator = createComponent({
+        detectChanges: false,
         queryParams: {
           path: '/mnt/pool/dataset',
           homeShare: 'true',
@@ -249,7 +253,7 @@ describe('DatasetAclEditorComponent', () => {
       const store = spectator.inject(DatasetAclEditorStore);
       jest.spyOn(store, 'loadHomeSharePreset');
 
-      spectator.component.ngOnInit();
+      spectator.detectChanges();
 
       expect(store.loadHomeSharePreset).toHaveBeenCalled();
     });
