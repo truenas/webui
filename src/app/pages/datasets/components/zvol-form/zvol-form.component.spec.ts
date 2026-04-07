@@ -20,8 +20,11 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -151,6 +154,11 @@ describe('ZvolFormComponent', () => {
         }),
       ]),
       mockProvider(DialogService),
+      mockProvider(FormErrorHandlerService),
+      mockProvider(SnackbarService),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -315,6 +323,11 @@ describe('ZvolFormComponent', () => {
           }),
         ]),
         mockProvider(DialogService),
+        mockProvider(FormErrorHandlerService),
+        mockProvider(SnackbarService),
+        mockProvider(SlideIn, {
+          openSlideIns: jest.fn(() => 1),
+        }),
         mockProvider(SlideInRef, {
           ...slideInRef,
           getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
@@ -388,7 +401,7 @@ describe('ZvolFormComponent', () => {
       });
     });
 
-    it('saves updated zvol when form opened for edit is saved', async () => {
+    it('sends only changed properties when form opened for edit is saved', async () => {
       await form.fillForm({
         Size: '2 GiB',
       });
@@ -397,13 +410,6 @@ describe('ZvolFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
-        comments: '',
-        compression: 'LZ4',
-        deduplication: 'OFF',
-        force_size: false,
-        readonly: 'INHERIT',
-        snapdev: 'INHERIT',
-        sync: 'STANDARD',
         volsize: 2147483648,
       }]);
 
@@ -493,6 +499,11 @@ describe('ZvolFormComponent', () => {
             close: jest.fn(),
           }),
           mockProvider(DialogService),
+          mockProvider(FormErrorHandlerService),
+          mockProvider(SnackbarService),
+          mockProvider(SlideIn, {
+            openSlideIns: jest.fn(() => 1),
+          }),
           mockProvider(ErrorHandlerService, {
             withErrorHandler: () => tap(),
           }),

@@ -180,7 +180,7 @@ describe('IxFormComponent', () => {
       await saveButton.click();
 
       const ixForm = spectator.component.ixForm();
-      expect(ixForm.isLoading()).toBe(false);
+      expect(ixForm.isSubmitting()).toBe(false);
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
         .toHaveBeenCalledWith(error, spectator.component.form);
     });

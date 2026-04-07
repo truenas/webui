@@ -6,10 +6,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 
@@ -26,12 +27,14 @@ describe('KernelFormComponent', () => {
       mockApi([
         mockCall('system.advanced.update'),
       ]),
+      mockProvider(FormErrorHandlerService),
+      mockProvider(SnackbarService),
       mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+        openSlideIns: jest.fn(() => 1),
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
-        getData: jest.fn((): undefined => undefined),
+        getData: jest.fn(() => true),
         requireConfirmationWhen: jest.fn(),
       }),
       provideMockStore(),
@@ -40,15 +43,7 @@ describe('KernelFormComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, {
-          close: jest.fn(),
-          getData: jest.fn(() => true),
-          requireConfirmationWhen: jest.fn(),
-        }),
-      ],
-    });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
   });
