@@ -39,20 +39,16 @@ describe('ContainerNicDevicesComponent', () => {
     {
       id: 1,
       dtype: ContainerDeviceType.Nic,
-      trust_guest_rx_filters: false,
       type: ContainerNicDeviceType.Virtio,
       nic_attach: 'br0',
-      mac: null,
     },
     {
       id: 2,
       dtype: ContainerDeviceType.Nic,
-      trust_guest_rx_filters: false,
       type: ContainerNicDeviceType.E1000,
       nic_attach: 'br1',
-      mac: null,
     },
-  ];
+  ] as ContainerDevice[];
 
   const createComponent = createComponentFactory({
     component: ContainerNicDevicesComponent,
@@ -153,10 +149,7 @@ describe('ContainerNicDevicesComponent', () => {
             {
               id: 1,
               dtype: ContainerDeviceType.Nic,
-              type: ContainerNicDeviceType.Virtio,
               nic_attach: 'truenasbr0',
-              mac: null,
-              trust_guest_rx_filters: false,
             } as ContainerDevice,
           ],
         }),
