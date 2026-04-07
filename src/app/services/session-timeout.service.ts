@@ -46,6 +46,7 @@ export class SessionTimeoutService {
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
   private warningDialogRef: MatDialogRef<SessionExpiringDialog> | null = null;
+  private afterClosedSubscription: Subscription | null = null;
 
   private readonly defaultLifetime = 300;
   private readonly debounceMs = 1000;
@@ -62,6 +63,10 @@ export class SessionTimeoutService {
 
   private resetTimer(): void {
     this.pause();
+    if (this.warningDialogRef) {
+      this.warningDialogRef.close();
+      this.warningDialogRef = null;
+    }
     const lifetime = this.currentLifetime ?? this.defaultLifetime;
     this.actionWaitTimeout = setTimeout(() => {
       const showWarningDialogFor = 30000;
@@ -71,8 +76,7 @@ export class SessionTimeoutService {
       }, showWarningDialogFor);
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
-      this.warningDialogRef.afterClosed()
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      this.afterClosedSubscription = this.warningDialogRef.afterClosed()
         .subscribe((shouldExtend) => {
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
@@ -142,9 +146,11 @@ export class SessionTimeoutService {
   }
 
   pause(): void {
-    if (this.actionWaitTimeout) {
-      clearTimeout(this.actionWaitTimeout);
-    }
+    clearTimeout(this.debounceTimeout);
+    clearTimeout(this.actionWaitTimeout);
+    clearTimeout(this.terminateCancelTimeout);
+    this.afterClosedSubscription?.unsubscribe();
+    this.afterClosedSubscription = null;
   }
 
   stop(): void {
@@ -155,7 +161,6 @@ export class SessionTimeoutService {
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
-    clearTimeout(this.terminateCancelTimeout);
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = null;
   }
