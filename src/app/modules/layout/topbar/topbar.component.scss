@@ -118,9 +118,12 @@ ix-truenas-logo {
   /*
    * Alert-severity bell styles.
    * !important overrides the broad `button tn-icon { color: var(--topbar-txt) !important }` rule above.
-   * Animation plays when severity class is first applied (null→warning, null→critical,
-   * or warning↔critical); it intentionally does NOT retrigger on count-only changes
-   * to avoid distraction while the user is already aware of active alerts.
+   * Animation plays when severity class is first applied (null→warning, null→critical);
+   * it intentionally does NOT retrigger on count-only changes to avoid distraction
+   * while the user is already aware of active alerts.
+   * Note: the animation DOES retrigger on severity transitions (warning↔critical),
+   * e.g. when the last critical alert is dismissed and only warnings remain.
+   * This is acceptable since a severity change is a meaningful state shift.
    */
   tn-icon.alert-critical,
   tn-icon.alert-warning {
