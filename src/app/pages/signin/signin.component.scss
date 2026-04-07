@@ -59,6 +59,7 @@
 }
 
 .logo-wrapper {
+  align-items: center;
   background-color: var(--bg2);
 
   // Fallback for browsers that don't support image-set
@@ -68,15 +69,18 @@
   url('assets/images/signin/stars-sky-1200w.avif') 3x);
   background-size: cover;
   border-bottom: solid 1px var(--lines);
-  height: 250px;
+  display: flex;
+  justify-content: center;
+  min-height: 200px;
 
-  padding: 20% 0;
+  padding: 40px 0;
   position: relative;
   text-align: center;
 
   .logo {
     fill: #fff;
     height: auto;
+    max-width: 80%;
     position: relative;
     width: 256px;
     z-index: 2;
@@ -142,10 +146,8 @@
   }
 
   .logo-wrapper {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    padding: 20% 0;
+    min-height: 150px;
+    padding: 24px 0;
   }
 }
 
