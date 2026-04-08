@@ -6,12 +6,22 @@
     ></mat-spinner>
   } @else {
     <mat-card-header class="header">
-      <mat-card-title class="header-title">
-        {{ 'ACL Editor' | translate }}
-      </mat-card-title>
-      <div class="dataset-path">
-        <label class="header-label">{{ 'Path' | translate }}:</label>
-        <div>{{ datasetPath }}</div>
+      <div class="title-row">
+        <mat-card-title class="header-title">
+          {{ 'ACL Editor' | translate }}
+        </mat-card-title>
+        <div class="dataset-path">
+          <label class="header-label">{{ 'Path' | translate }}:</label>
+          <div>{{ datasetPath }}</div>
+        </div>
+        <button
+          mat-button
+          class="cancel-button"
+          ixTest="cancel"
+          (click)="onCancel()"
+        >
+          {{ 'Cancel' | translate }}
+        </button>
       </div>
 
       <div class="ownership-row" [formGroup]="ownerFormGroup">

@@ -8,7 +8,7 @@ import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -21,6 +21,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
   AclEditorListComponent,
 } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -123,6 +124,9 @@ describe('DatasetAclEditorComponent', () => {
         })),
       }),
       mockAuth(),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
+      }),
     ],
     queryParams: {
       path: '/mnt/pool/dataset',
@@ -207,6 +211,13 @@ describe('DatasetAclEditorComponent', () => {
         expect(router.navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pool/dataset']);
       });
 
+      it('navigates to dataset page when Cancel is pressed without returnUrl', async () => {
+        const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+        await cancelButton.click();
+
+        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pool/dataset']);
+      });
+
       it('adds another ace when Add item is pressed', async () => {
         const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
         await addAceButton.click();
@@ -221,6 +232,21 @@ describe('DatasetAclEditorComponent', () => {
     describe('saving', () => {
       it('renders save controls', () => {
         expect(spectator.query(AclEditorSaveControlsComponent)).toExist();
+      });
+    });
+
+    describe('canDeactivate', () => {
+      it('allows deactivation when no changes were made', async () => {
+        const result = await firstValueFrom(spectator.component.canDeactivate());
+        expect(result).toBe(true);
+      });
+
+      it('shows confirm dialog when ACL has been modified', async () => {
+        spectator.component.onAddItemPressed();
+        spectator.detectChanges();
+
+        await firstValueFrom(spectator.component.canDeactivate());
+        expect(spectator.inject(UnsavedChangesService).showConfirmDialog).toHaveBeenCalled();
       });
     });
   });
@@ -279,6 +305,14 @@ describe('DatasetAclEditorComponent', () => {
       spectator.component.onStripAclPressed();
 
       expect(router.navigate).toHaveBeenCalledWith(['/sharing']);
+    });
+
+    it('navigates to returnUrl when Cancel is pressed', async () => {
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+      await cancelButton.click();
+
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing']);
     });
   });
 });
