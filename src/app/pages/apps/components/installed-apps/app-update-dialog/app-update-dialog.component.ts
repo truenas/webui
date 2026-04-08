@@ -16,7 +16,7 @@ import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -25,6 +25,7 @@ interface Version {
   available_versions_for_upgrade: {
     version: string;
     human_version: string;
+    app_version?: string;
   }[] | null;
 }
 
@@ -103,11 +104,11 @@ export class AppUpdateDialog {
   }
 
   getLatestAppVersion(): string {
-    return this.selectedVersion?.latest_app_version
-      || extractAppVersion(
-        this.selectedVersion?.latest_human_version,
-        this.selectedVersion?.latest_version ?? this.dialogConfig.upgradeSummary.latest_version,
-      );
+    return resolveAppVersion({
+      appVersion: this.selectedVersion?.latest_app_version,
+      humanVersion: this.selectedVersion?.latest_human_version,
+      libraryVersion: this.selectedVersion?.latest_version ?? this.dialogConfig.upgradeSummary.latest_version,
+    });
   }
 
   hasAppVersionChange(): boolean {
