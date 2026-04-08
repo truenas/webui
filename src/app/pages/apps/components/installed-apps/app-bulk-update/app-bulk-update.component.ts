@@ -33,7 +33,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -137,9 +137,13 @@ export class AppBulkUpdateComponent {
     const selectedAvailableVersion = summary?.available_versions_for_upgrade?.find(
       (vrs) => vrs.version === selectedVersion,
     );
-    const latestAppVersion = selectedAvailableVersion?.app_version
-      || (selectedVersion === summary?.latest_version ? summary?.latest_app_version : undefined)
-      || extractAppVersion(summary?.latest_human_version, summary?.latest_version || app.latest_version);
+    const directAppVersion = selectedAvailableVersion?.app_version
+      || (selectedVersion === summary?.latest_version ? summary?.latest_app_version : undefined);
+    const latestAppVersion = resolveAppVersion({
+      appVersion: directAppVersion,
+      humanVersion: summary?.latest_human_version,
+      libraryVersion: summary?.latest_version || app.latest_version,
+    });
     const latestCatalogVersion = selectedVersion || app.latest_version;
 
     return {

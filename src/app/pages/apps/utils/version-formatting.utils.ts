@@ -73,3 +73,21 @@ export function formatVersionWithRevision(libraryVersion: string, humanVersion: 
   const appVersion = extractAppVersion(humanVersion, libraryVersion);
   return `Version: ${appVersion} / Revision: ${libraryVersion}`;
 }
+
+/**
+ * Resolves the app version using a preferred app_version if available,
+ * falling back to extracting it from humanVersion and libraryVersion.
+ *
+ * @param options.appVersion - Pre-resolved app version from the API (preferred)
+ * @param options.humanVersion - Human-readable version string for extraction fallback
+ * @param options.libraryVersion - Library/catalog version for extraction fallback
+ * @returns The resolved app version string
+ */
+export function resolveAppVersion(options: {
+  appVersion?: string;
+  humanVersion?: string;
+  libraryVersion: string;
+}): string {
+  return options.appVersion
+    || extractAppVersion(options.humanVersion, options.libraryVersion);
+}
