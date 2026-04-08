@@ -43,16 +43,18 @@ type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version'
   ],
 })
 export class AppUpdateDialog {
-  dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
-  dialogService = inject(DialogService);
-  data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
+  private dialogService = inject(DialogService);
+  private data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
 
-  dialogConfig: AppUpdateDialogConfig;
-  imagePlaceholder = appImagePlaceholder;
-  helptext = helptextApps;
-  versionOptions = new Map<string, Version>();
-  selectedVersionKey: string;
-  selectedVersion: Version | undefined;
+  protected dialogConfig: AppUpdateDialogConfig;
+  protected imagePlaceholder = appImagePlaceholder;
+  protected helptext = helptextApps;
+  protected versionOptions = new Map<string, Version>();
+  protected selectedVersionKey: string;
+  protected selectedVersion: Version | undefined;
+  protected latestAppVersion: string;
+  protected hasAppVersionChange: boolean;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -81,10 +83,12 @@ export class AppUpdateDialog {
 
     this.selectedVersionKey = Array.from(this.versionOptions.keys())[0];
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
+    this.updateVersionInfo();
   }
 
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
+    this.updateVersionInfo();
   }
 
   originalOrder(): number {
@@ -95,20 +99,17 @@ export class AppUpdateDialog {
     return formatVersionWithRevision(libraryVersion, humanVersion);
   }
 
-  getLatestAppVersion(): string {
-    return resolveAppVersion({
+  private updateVersionInfo(): void {
+    this.latestAppVersion = resolveAppVersion({
       appVersion: this.selectedVersion?.latest_app_version,
       humanVersion: this.selectedVersion?.latest_human_version,
       libraryVersion: this.selectedVersion?.latest_version ?? this.dialogConfig.upgradeSummary.latest_version,
     });
-  }
 
-  hasAppVersionChange(): boolean {
     const currentAppVersion = extractAppVersion(
       this.dialogConfig.appInfo.human_version,
       this.dialogConfig.appInfo.version,
     );
-    const latestAppVersion = this.getLatestAppVersion();
-    return currentAppVersion !== latestAppVersion;
+    this.hasAppVersionChange = currentAppVersion !== this.latestAppVersion;
   }
 }

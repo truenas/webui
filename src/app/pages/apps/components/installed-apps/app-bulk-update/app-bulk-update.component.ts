@@ -139,9 +139,10 @@ export class AppBulkUpdateComponent {
     );
     const directAppVersion = selectedAvailableVersion?.app_version
       ?? (selectedVersion === summary?.latest_version ? summary?.latest_app_version : undefined);
+    const selectedHumanVersion = selectedAvailableVersion?.human_version ?? summary?.latest_human_version;
     const latestAppVersion = resolveAppVersion({
       appVersion: directAppVersion,
-      humanVersion: summary?.latest_human_version,
+      humanVersion: selectedHumanVersion,
       libraryVersion: summary?.latest_version || app.latest_version,
     });
     const latestCatalogVersion = selectedVersion || app.latest_version;
