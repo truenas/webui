@@ -158,6 +158,7 @@ export class DeviceActionsMenuComponent {
       ).subscribe(() => {
         this.snackbar.success(this.translate.instant('NIC Device was updated'));
         this.devicesStore.reload();
+        this.containersStore.reload();
       });
       return;
     }

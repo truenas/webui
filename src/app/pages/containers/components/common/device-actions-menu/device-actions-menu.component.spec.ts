@@ -51,6 +51,7 @@ describe('DeviceActionsMenuComponent', () => {
       ]),
       mockProvider(ContainersStore, {
         selectedContainer,
+        reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
         loadDevices: jest.fn(),

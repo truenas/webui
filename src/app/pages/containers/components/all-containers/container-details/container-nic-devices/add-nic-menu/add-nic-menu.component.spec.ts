@@ -31,6 +31,7 @@ describe('AddNicMenuComponent', () => {
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -144,6 +145,7 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
         devices: () => [] as ContainerDevice[],
@@ -187,6 +189,7 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
         devices: () => [] as ContainerDevice[],
