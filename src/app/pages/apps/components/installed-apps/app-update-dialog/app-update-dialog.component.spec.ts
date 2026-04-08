@@ -1,5 +1,8 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { App } from 'app/interfaces/app.interface';
@@ -50,6 +53,8 @@ describe('AppUpdateDialog', () => {
   });
 
   describe('with multiple versions available', () => {
+    let loader: HarnessLoader;
+
     beforeEach(() => {
       spectator = createComponent({
         providers: [
@@ -63,6 +68,7 @@ describe('AppUpdateDialog', () => {
           },
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows title as application name', () => {
@@ -96,15 +102,16 @@ describe('AppUpdateDialog', () => {
       expect(versionDropdown).toBeTruthy();
     });
 
-    it('updates version row when a different version is selected from dropdown', () => {
+    it('updates version row when a different version is selected from dropdown', async () => {
       // Initially no version row (app version 8.7.0 -> 8.7.0, no change)
       let versionRows = spectator.queryAll('.version-row');
       expect(versionRows).toHaveLength(1);
       expect(versionRows[0].textContent).toContain('Revision');
 
-      // Select version 1.0.3 which has app version 8.7.1
-      spectator.component.selectedVersionKey = '1.0.3';
-      spectator.component.onVersionOptionChanged();
+      // Select version 1.0.3 which has app version 8.7.1 via the dropdown
+      const select = await loader.getHarness(MatSelectHarness);
+      await select.open();
+      await select.clickOptions({ text: /Revision: 1.0.3/ });
       spectator.detectChanges();
 
       versionRows = spectator.queryAll('.version-row');
