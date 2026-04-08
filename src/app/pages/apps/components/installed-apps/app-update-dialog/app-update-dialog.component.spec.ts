@@ -19,7 +19,6 @@ const fakeAppInfo = {
 } as unknown as App;
 
 const fakeUpgradeSummary = {
-  container_images_to_update: {},
   changelog: '',
   available_versions_for_upgrade: [
     {
@@ -33,7 +32,6 @@ const fakeUpgradeSummary = {
       app_version: '8.7.1',
     },
   ],
-  image_update_available: false,
   latest_version: '1.0.2',
   latest_app_version: '8.7.0',
   upgrade_version: '1.0.2',
