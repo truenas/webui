@@ -14,7 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
@@ -44,7 +43,6 @@ type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version'
 })
 export class AppUpdateDialog {
   protected dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
-  private dialogService = inject(DialogService);
   private data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
 
   protected dialogConfig: AppUpdateDialogConfig;
@@ -53,8 +51,8 @@ export class AppUpdateDialog {
   protected versionOptions = new Map<string, Version>();
   protected selectedVersionKey: string;
   protected selectedVersion: Version | undefined;
-  protected latestAppVersion: string;
-  protected hasAppVersionChange: boolean;
+  protected latestAppVersion!: string;
+  protected hasAppVersionChange!: boolean;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
