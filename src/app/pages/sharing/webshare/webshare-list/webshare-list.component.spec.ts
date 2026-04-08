@@ -22,7 +22,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
@@ -66,7 +65,6 @@ describe('WebShareListComponent', () => {
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
         mockCall('sharing.webshare.delete', true),
-        mockCall('tn_connect.config', mockTruenasConnectConfig),
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
@@ -79,6 +77,11 @@ describe('WebShareListComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(EmptyService),
       mockProvider(MatDialog),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTruenasConnectConfig),
+        config: () => mockTruenasConnectConfig,
+        openStatusModal: jest.fn(),
+      }),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
         get: jest.fn(() => of({})),
@@ -240,19 +243,11 @@ describe('WebShareListComponent', () => {
   });
 
   it('should open TrueNAS Connect dialog', () => {
-    const matDialog = spectator.inject(MatDialog);
+    const tnc = spectator.inject(TruenasConnectService);
 
     spectator.component.openTruenasConnectDialog();
 
-    expect(matDialog.open).toHaveBeenCalledWith(TruenasConnectStatusModalComponent, {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: {
-        top: '48px',
-        right: '16px',
-      },
-    });
+    expect(tnc.openStatusModal).toHaveBeenCalled();
   });
 
   it('should check for TrueNAS Connect before adding share', () => {

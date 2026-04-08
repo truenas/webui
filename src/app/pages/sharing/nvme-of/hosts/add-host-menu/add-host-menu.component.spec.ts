@@ -72,6 +72,18 @@ describe('AddHostMenuComponent', () => {
     expect(spectator.component.hostSelected.emit).toHaveBeenCalledWith(newHost);
   });
 
+  it('shows menu with Allow all hosts option when no hosts exist but showAllowAnyHost is true', async () => {
+    jest.spyOn(spectator.component.allowAllHostsSelected, 'emit');
+    spectator.setInput('showAllowAnyHost', true);
+
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+    await menu.open();
+
+    await menu.clickItem({ text: 'Allow all hosts' });
+
+    expect(spectator.component.allowAllHostsSelected.emit).toHaveBeenCalled();
+  });
+
   describe('some hosts exist in the system', () => {
     beforeEach(() => {
       allHosts.set([usedHost, unusedHost]);

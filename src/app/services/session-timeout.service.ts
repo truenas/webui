@@ -41,32 +41,34 @@ export class SessionTimeoutService {
   private destroyRef = inject(DestroyRef);
 
   private actionWaitTimeout: Timeout;
+  private debounceTimeout: Timeout;
   private terminateCancelTimeout: Timeout;
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
-  private isResumeActive = false;
   private warningDialogRef: MatDialogRef<SessionExpiringDialog> | null = null;
+  private afterClosedSubscription: Subscription | null = null;
 
   private readonly defaultLifetime = 300;
+  private readonly debounceMs = 1000;
 
-  private resume = (): void => {
-    // If warning dialog is open, user activity should close it and reset the timer
+  private onActivity = (): void => {
+    // Ignore activity while warning dialog is open — user must explicitly click "Extend session"
     if (this.warningDialogRef) {
-      clearTimeout(this.terminateCancelTimeout);
-      this.warningDialogRef.close(true);
-      this.warningDialogRef = null;
       return;
     }
 
-    if (this.isResumeActive) {
-      return;
-    }
+    clearTimeout(this.debounceTimeout);
+    this.debounceTimeout = setTimeout(() => this.resetTimer(), this.debounceMs);
+  };
 
+  private resetTimer(): void {
     this.pause();
-    this.isResumeActive = true;
+    if (this.warningDialogRef) {
+      this.warningDialogRef.close();
+      this.warningDialogRef = null;
+    }
     const lifetime = this.currentLifetime ?? this.defaultLifetime;
     this.actionWaitTimeout = setTimeout(() => {
-      this.isResumeActive = false;
       const showWarningDialogFor = 30000;
 
       this.terminateCancelTimeout = setTimeout(() => {
@@ -74,8 +76,7 @@ export class SessionTimeoutService {
       }, showWarningDialogFor);
 
       this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
-      this.warningDialogRef.afterClosed()
-        .pipe(takeUntilDestroyed(this.destroyRef))
+      this.afterClosedSubscription = this.warningDialogRef.afterClosed()
         .subscribe((shouldExtend) => {
           this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
@@ -84,7 +85,7 @@ export class SessionTimeoutService {
           }
         });
     }, lifetime * 1000);
-  };
+  }
 
   constructor() {
     this.matDialog.afterOpened.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((dialog) => {
@@ -120,7 +121,7 @@ export class SessionTimeoutService {
     this.tokenLastUsedService.setupTokenLastUsedValue(this.authService.user$);
     this.subscribeToPreferences();
     this.addListeners();
-    this.resume();
+    this.resetTimer();
   }
 
   private subscribeToPreferences(): void {
@@ -138,17 +139,18 @@ export class SessionTimeoutService {
           this.currentLifetime = lifetime;
           this.tokenLastUsedService.updateTokenLifetime(lifetime);
           if (shouldResetTimeout) {
-            this.resume();
+            this.resetTimer();
           }
         }
       });
   }
 
   pause(): void {
-    this.isResumeActive = false;
-    if (this.actionWaitTimeout) {
-      clearTimeout(this.actionWaitTimeout);
-    }
+    clearTimeout(this.debounceTimeout);
+    clearTimeout(this.actionWaitTimeout);
+    clearTimeout(this.terminateCancelTimeout);
+    this.afterClosedSubscription?.unsubscribe();
+    this.afterClosedSubscription = null;
   }
 
   stop(): void {
@@ -158,7 +160,6 @@ export class SessionTimeoutService {
       this.warningDialogRef.close();
       this.warningDialogRef = null;
     }
-    clearTimeout(this.terminateCancelTimeout);
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = null;
   }
@@ -176,12 +177,12 @@ export class SessionTimeoutService {
 
   private addListeners(): void {
     this.removeListeners();
-    this.window.addEventListener('mouseover', this.resume, false);
-    this.window.addEventListener('keypress', this.resume, false);
+    this.window.addEventListener('mouseover', this.onActivity, false);
+    this.window.addEventListener('keypress', this.onActivity, false);
   }
 
   private removeListeners(): void {
-    this.window.removeEventListener('mouseover', this.resume, false);
-    this.window.removeEventListener('keypress', this.resume, false);
+    this.window.removeEventListener('mouseover', this.onActivity, false);
+    this.window.removeEventListener('keypress', this.onActivity, false);
   }
 }
