@@ -173,6 +173,38 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
   });
 });
 
+describe('AddNicMenuComponent - No NICs Available', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('container.device.nic_attach_choices', {}),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: () => [] as ContainerDevice[],
+        isLoading: () => false,
+      }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({ props: { defaultBridge: null } });
+  });
+
+  it('shows "No NIC Devices Available" when there are no NICs to add', () => {
+    expect(spectator.query('.no-devices-available')).toHaveText('No NIC Devices Available');
+  });
+});
+
 describe('AddNicMenuComponent - NIC Deduplication', () => {
   let spectator: Spectator<AddNicMenuComponent>;
   let loader: HarnessLoader;
