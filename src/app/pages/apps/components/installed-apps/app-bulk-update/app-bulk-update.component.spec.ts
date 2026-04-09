@@ -152,4 +152,57 @@ describe('AppBulkUpdateComponent', () => {
     expect(nativeElement).toHaveText('1.2.9');
     // Note: latest_version (1.2.10) is no longer shown in the header, only in expanded view
   });
+
+  describe('getVersionInfo', () => {
+    it('returns version info using upgrade summary when panel is expanded', () => {
+      const expandHeader = spectator.query('mat-expansion-panel-header')!;
+      expandHeader.dispatchEvent(new Event('click'));
+      spectator.detectChanges();
+
+      const result = spectator.component.getVersionInfo(fakeAppOne, 'test-app-one');
+
+      expect(result).toEqual({
+        currentAppVersion: '2022.10_1.0.7',
+        currentCatalogVersion: '1',
+        latestAppVersion: '24.0.6',
+        latestCatalogVersion: '15.3.36',
+        hasAppVersionChange: true,
+      });
+    });
+
+    it('returns version info with app_version from available_versions_for_upgrade when selected', () => {
+      const summaryWithAppVersion = {
+        ...fakeUpgradeSummary,
+        available_versions_for_upgrade: [
+          { version: '15.3.36', human_version: '24.0.6_15.3.36', app_version: '24.0.6' },
+          { version: '15.3.35', human_version: '24.0.5_15.3.35', app_version: '24.0.5' },
+        ],
+      } as AppUpgradeSummary;
+
+      spectator.component.upgradeSummaryMap.set('test-app-one', summaryWithAppVersion);
+      spectator.component.form.controls['test-app-one'].setValue('15.3.35', { emitEvent: false });
+
+      const result = spectator.component.getVersionInfo(fakeAppOne, 'test-app-one');
+
+      expect(result).toEqual({
+        currentAppVersion: '2022.10_1.0.7',
+        currentCatalogVersion: '1',
+        latestAppVersion: '24.0.5',
+        latestCatalogVersion: '15.3.35',
+        hasAppVersionChange: true,
+      });
+    });
+
+    it('falls back to app latest_version when no upgrade summary exists', () => {
+      const result = spectator.component.getVersionInfo(fakeAppThree, 'test-app-three');
+
+      expect(result).toEqual({
+        currentAppVersion: '1.2.9',
+        currentCatalogVersion: '1',
+        latestAppVersion: '1.2.10',
+        latestCatalogVersion: '1.2.10',
+        hasAppVersionChange: true,
+      });
+    });
+  });
 });

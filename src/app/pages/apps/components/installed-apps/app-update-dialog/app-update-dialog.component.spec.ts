@@ -1,5 +1,8 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectHarness } from '@angular/material/select/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { App } from 'app/interfaces/app.interface';
@@ -19,7 +22,6 @@ const fakeAppInfo = {
 } as unknown as App;
 
 const fakeUpgradeSummary = {
-  container_images_to_update: {},
   changelog: '',
   available_versions_for_upgrade: [
     {
@@ -33,7 +35,6 @@ const fakeUpgradeSummary = {
       app_version: '8.7.1',
     },
   ],
-  image_update_available: false,
   latest_version: '1.0.2',
   latest_app_version: '8.7.0',
   upgrade_version: '1.0.2',
@@ -52,6 +53,8 @@ describe('AppUpdateDialog', () => {
   });
 
   describe('with multiple versions available', () => {
+    let loader: HarnessLoader;
+
     beforeEach(() => {
       spectator = createComponent({
         providers: [
@@ -65,6 +68,7 @@ describe('AppUpdateDialog', () => {
           },
         ],
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows title as application name', () => {
@@ -78,7 +82,7 @@ describe('AppUpdateDialog', () => {
       const versionRows = spectator.queryAll('.version-row');
       expect(versionRows).toHaveLength(1);
 
-      // Check that only revision row is shown (only library version changed, app version stayed the same)
+      // Only revision row is shown (app version stayed the same)
       expect(versionRows[0].textContent).toContain('Revision');
       expect(versionRows[0].textContent).toContain('1.0.1');
       expect(versionRows[0].textContent).toContain('1.0.2');
@@ -96,6 +100,61 @@ describe('AppUpdateDialog', () => {
     it('shows version dropdown when multiple versions are available', () => {
       const versionDropdown = spectator.query('.resource mat-select');
       expect(versionDropdown).toBeTruthy();
+    });
+
+    it('updates version row when a different version is selected from dropdown', async () => {
+      // Initially no version row (app version 8.7.0 -> 8.7.0, no change)
+      let versionRows = spectator.queryAll('.version-row');
+      expect(versionRows).toHaveLength(1);
+      expect(versionRows[0].textContent).toContain('Revision');
+
+      // Select version 1.0.3 which has app version 8.7.1 via the dropdown
+      const select = await loader.getHarness(MatSelectHarness);
+      await select.open();
+      await select.clickOptions({ text: /Revision: 1.0.3/ });
+      spectator.detectChanges();
+
+      versionRows = spectator.queryAll('.version-row');
+      expect(versionRows).toHaveLength(2);
+      expect(versionRows[0].textContent).toContain('Version');
+      expect(versionRows[0].textContent).toContain('8.7.1');
+      expect(versionRows[1].textContent).toContain('Revision');
+      expect(versionRows[1].textContent).toContain('1.0.3');
+    });
+  });
+
+  describe('with app version change', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(MatDialogRef),
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: {
+              appInfo: fakeAppInfo,
+              upgradeSummary: {
+                ...fakeUpgradeSummary,
+                latest_version: '1.0.3',
+                latest_app_version: '8.7.1',
+                latest_human_version: '8.7.1_1.0.3',
+              },
+            },
+          },
+        ],
+      });
+    });
+
+    it('displays both version and revision rows', () => {
+      const versionRows = spectator.queryAll('.version-row');
+      expect(versionRows).toHaveLength(2);
+
+      expect(versionRows[0].textContent).toContain('Version');
+      expect(versionRows[0].textContent).toContain('8.7.0');
+      expect(versionRows[0].textContent).toContain('8.7.1');
+
+      expect(versionRows[1].textContent).toContain('Revision');
+      expect(versionRows[1].textContent).toContain('1.0.1');
+      expect(versionRows[1].textContent).toContain('1.0.3');
     });
   });
 

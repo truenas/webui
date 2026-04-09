@@ -33,7 +33,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -131,10 +131,21 @@ export class AppBulkUpdateComponent {
     const currentCatalogVersion = app.version;
 
     const summary = this.upgradeSummaryMap.get(appName);
-    // Use the latest_app_version field from the API if available, otherwise extract from latest_human_version
-    const latestAppVersion = summary?.latest_app_version
-      || extractAppVersion(summary?.latest_human_version, summary?.latest_version || app.latest_version);
-    const latestCatalogVersion = this.form.value[appName] || app.latest_version;
+    const selectedVersion = this.form.value[appName];
+
+    // Find the selected version's app_version from available_versions_for_upgrade
+    const selectedAvailableVersion = summary?.available_versions_for_upgrade?.find(
+      (vrs) => vrs.version === selectedVersion,
+    );
+    const directAppVersion = selectedAvailableVersion?.app_version
+      ?? (selectedVersion === summary?.latest_version ? summary?.latest_app_version : undefined);
+    const selectedHumanVersion = selectedAvailableVersion?.human_version ?? summary?.latest_human_version;
+    const latestAppVersion = resolveAppVersion({
+      appVersion: directAppVersion,
+      humanVersion: selectedHumanVersion,
+      libraryVersion: summary?.latest_version || app.latest_version,
+    });
+    const latestCatalogVersion = selectedVersion || app.latest_version;
 
     return {
       currentAppVersion,

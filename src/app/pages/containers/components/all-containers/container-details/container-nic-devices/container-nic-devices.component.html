@@ -5,7 +5,7 @@
     </h3>
 
     @if (!hasPendingInterfaceChanges()) {
-      <ix-add-nic-menu></ix-add-nic-menu>
+      <ix-add-nic-menu [defaultBridge]="defaultBridge()"></ix-add-nic-menu>
     }
   </mat-card-header>
 
@@ -19,6 +19,16 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
+      @if (showDefaultBridge()) {
+        <div
+          class="device default-device"
+          [matTooltip]="'Default network interface, always active' | translate"
+        >
+          <span class="device-description">
+            {{ defaultBridge() }} ({{ 'Default' | translate }})
+          </span>
+        </div>
+      }
       @for (device of shownDevices(); track device.id) {
         <div class="device">
           <span class="device-description">{{ getDeviceDescription(device) }}</span>
@@ -33,7 +43,9 @@
           }
         </div>
       } @empty {
-        <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
+        @if (!showDefaultBridge()) {
+          <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
+        }
       }
     }
   </mat-card-content>

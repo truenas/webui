@@ -11,6 +11,7 @@ import { EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.inte
 import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
+import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
 import { AppState } from 'app/store';
 
 /**
@@ -146,7 +147,7 @@ export class PageAlertsComponent {
     // Sort by severity: critical -> warning -> info
     return alerts.sort((a, b) => {
       const getSeverityOrder = (level: AlertLevel): number => {
-        if ([AlertLevel.Critical, AlertLevel.Alert, AlertLevel.Emergency, AlertLevel.Error].includes(level)) {
+        if (criticalLevels.includes(level)) {
           return 0; // Critical
         }
         if (level === AlertLevel.Warning) {

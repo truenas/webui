@@ -166,6 +166,10 @@ describe('AppInfoCardComponent', () => {
         value: '3.2.1',
       },
       {
+        label: 'Revision:',
+        value: '1.2.3',
+      },
+      {
         label: 'Source:',
         value: 'github.com/ix-test-app/ix-test-app',
       },

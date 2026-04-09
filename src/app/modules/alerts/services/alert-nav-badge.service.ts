@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
-import { selectAlertsForNavBadges } from 'app/modules/alerts/store/alert.selectors';
+import { selectActionableAlerts } from 'app/modules/alerts/store/alert.selectors';
 import { AppState } from 'app/store';
 import { SmartAlertService } from './smart-alert.service';
 
@@ -57,7 +57,7 @@ export class AlertNavBadgeService {
   private translate = inject(TranslateService);
 
   private alertsSignal = toSignal(
-    this.store$.select(selectAlertsForNavBadges),
+    this.store$.select(selectActionableAlerts),
     { initialValue: [] },
   );
 
