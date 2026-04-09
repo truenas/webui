@@ -54,10 +54,11 @@ describe('PreferencesFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(ThemeService, {
         allThemes: [
-          { name: 'ix-dark', label: 'Dark' },
-          { name: 'ix-blue', label: 'Blue' },
-          { name: 'dracula', label: 'Dracula' },
+          { name: 'ix-dark', label: 'Dark', bg2: '#282828' },
+          { name: 'ix-blue', label: 'Blue', bg2: '#ffffff' },
+          { name: 'dracula', label: 'Dracula', bg2: '#282a36' },
         ],
+        isDarkTheme: jest.fn((name: string) => name !== 'ix-blue'),
         findTheme: jest.fn((name: string) => ({ name })),
         updateThemeInLocalStorage: jest.fn(),
       }),
@@ -167,6 +168,27 @@ describe('PreferencesFormComponent', () => {
     expect(labels).toContain('Light Theme');
     expect(labels).toContain('Dark Theme');
     expect(labels).not.toContain('Theme');
+  });
+
+  it('dispatches preview theme during editing and stops after save', async () => {
+    const store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      Theme: 'Dracula',
+    });
+
+    expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
+
+    jest.clearAllMocks();
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(store$.dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: themeChangedInGuiForm.type }),
+    );
   });
 
   it('dispatches guiFormSubmitted with sync fields when saving with OS sync enabled', async () => {

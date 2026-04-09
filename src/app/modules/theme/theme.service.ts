@@ -79,6 +79,7 @@ export class ThemeService {
       this.onThemeChanged(theme);
     });
 
+    // No removeEventListener needed — this service is providedIn: 'root' and lives for the app lifetime.
     this.darkModeQuery.addEventListener('change', () => {
       const state = this.latestState;
       if (state?.preferences?.syncThemeWithOS && !state.previewTheme) {

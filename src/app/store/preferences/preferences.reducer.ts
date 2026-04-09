@@ -71,9 +71,8 @@ export const preferencesReducer = createReducer(
   on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
     showSnapshotExtraColumns: !state.preferences?.showSnapshotExtraColumns,
   })),
-  // syncThemeWithOS matches the backend API field name (auth.set_attribute)
-  /* eslint-disable @typescript-eslint/naming-convention */
   on(guiFormSubmitted, (state, {
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- "OS" acronym violates strictCamelCase
     theme, syncThemeWithOS, lightTheme, darkTheme,
   }) => ({
     ...updatePreferences(state, {
@@ -81,7 +80,6 @@ export const preferencesReducer = createReducer(
     }),
     previewTheme: null as string | null,
   })),
-  /* eslint-enable @typescript-eslint/naming-convention */
   on(themeChangedInGuiForm, (state, { theme }) => ({ ...state, previewTheme: theme })),
   on(guiFormClosedWithoutSaving, (state) => ({ ...state, previewTheme: null as string | null })),
   on(themeNotFound, (state) => updatePreferences(state, {

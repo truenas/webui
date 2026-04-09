@@ -1,13 +1,15 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { merge, of } from 'rxjs';
+import {
+  Subscription, merge, of, startWith,
+} from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -65,15 +67,13 @@ export class PreferencesFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
-  // Prevents theme preview dispatches after save, avoiding a race with the final theme action.
-  // Safe because slideInRef.close() is called immediately after save.
-  private hasSaved = false;
+  private previewSubscription: Subscription;
 
   protected form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     syncThemeWithOS: [false],
-    lightTheme: ['', [Validators.required]],
-    darkTheme: ['', [Validators.required]],
+    lightTheme: [''],
+    darkTheme: [''],
     language: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
@@ -83,6 +83,23 @@ export class PreferencesFormComponent implements OnInit {
       Validators.max(2147482),
     ]],
   });
+
+  protected isSyncWithOs = toSignal(
+    this.form.controls.syncThemeWithOS.valueChanges.pipe(startWith(false)),
+    { initialValue: false },
+  );
+
+  protected lightThemeOptions = of(
+    this.themeService.allThemes
+      .filter((theme) => !this.themeService.isDarkTheme(theme.name))
+      .map((theme) => ({ label: theme.label, value: theme.name })),
+  );
+
+  protected darkThemeOptions = of(
+    this.themeService.allThemes
+      .filter((theme) => this.themeService.isDarkTheme(theme.name))
+      .map((theme) => ({ label: theme.label, value: theme.name })),
+  );
 
   protected themeOptions = of(
     this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name })),
@@ -120,12 +137,31 @@ export class PreferencesFormComponent implements OnInit {
         token_lifetime: preferences.lifetime || defaultPreferences.lifetime,
       });
     });
+
+    this.form.controls.syncThemeWithOS.valueChanges.pipe(
+      startWith(this.form.controls.syncThemeWithOS.value),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((sync) => {
+      const { theme, lightTheme, darkTheme } = this.form.controls;
+      if (sync) {
+        theme.clearValidators();
+        lightTheme.setValidators([Validators.required]);
+        darkTheme.setValidators([Validators.required]);
+      } else {
+        theme.setValidators([Validators.required]);
+        lightTheme.clearValidators();
+        darkTheme.clearValidators();
+      }
+      theme.updateValueAndValidity();
+      lightTheme.updateValueAndValidity();
+      darkTheme.updateValueAndValidity();
+    });
   }
 
   protected onSubmit(): void {
     const values = this.form.getRawValue();
 
-    this.hasSaved = true;
+    this.previewSubscription.unsubscribe();
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime }));
     this.store$.dispatch(guiFormSubmitted({
       theme: values.theme,
@@ -164,14 +200,13 @@ export class PreferencesFormComponent implements OnInit {
   private setupThemePreview(): void {
     const {
       theme,
-      // syncThemeWithOS matches the backend API field name (auth.set_attribute)
-      // eslint-disable-next-line @typescript-eslint/naming-convention
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- "OS" acronym violates strictCamelCase
       syncThemeWithOS,
       lightTheme,
       darkTheme,
     } = this.form.controls;
 
-    merge(
+    this.previewSubscription = merge(
       theme.valueChanges,
       syncThemeWithOS.valueChanges,
       lightTheme.valueChanges,
@@ -179,9 +214,6 @@ export class PreferencesFormComponent implements OnInit {
     ).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      if (this.hasSaved) {
-        return;
-      }
       const effectiveTheme = syncThemeWithOS.value
         ? this.getOsTheme(lightTheme.value, darkTheme.value)
         : theme.value;
@@ -190,7 +222,7 @@ export class PreferencesFormComponent implements OnInit {
 
     const mediaQuery = this.window.matchMedia('(prefers-color-scheme: dark)');
     const onOsThemeChange = (): void => {
-      if (this.hasSaved || !syncThemeWithOS.value) {
+      if (!syncThemeWithOS.value) {
         return;
       }
       const effectiveTheme = this.getOsTheme(lightTheme.value, darkTheme.value);

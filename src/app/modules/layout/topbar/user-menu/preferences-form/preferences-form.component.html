@@ -10,7 +10,7 @@
           [label]="'Sync Theme With OS' | translate"
           [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
         ></ix-checkbox>
-        @if (!form.controls.syncThemeWithOS.value) {
+        @if (!isSyncWithOs()) {
           <ix-select
             formControlName="theme"
             [label]="'Theme' | translate"
@@ -21,13 +21,13 @@
           <ix-select
             formControlName="lightTheme"
             [label]="'Light Theme' | translate"
-            [options]="themeOptions"
+            [options]="lightThemeOptions"
             [required]="true"
           ></ix-select>
           <ix-select
             formControlName="darkTheme"
             [label]="'Dark Theme' | translate"
-            [options]="themeOptions"
+            [options]="darkThemeOptions"
             [required]="true"
           ></ix-select>
         }
