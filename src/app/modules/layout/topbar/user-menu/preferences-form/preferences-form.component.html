@@ -17,8 +17,7 @@
             [options]="themeOptions"
             [required]="true"
           ></ix-select>
-        }
-        @if (form.controls.syncThemeWithOS.value) {
+        } @else {
           <ix-select
             formControlName="lightTheme"
             [label]="'Light Theme' | translate"

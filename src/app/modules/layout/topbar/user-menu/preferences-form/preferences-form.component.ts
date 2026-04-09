@@ -65,13 +65,15 @@ export class PreferencesFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
+  // Prevents theme preview dispatches after save, avoiding a race with the final theme action.
+  // Safe because slideInRef.close() is called immediately after save.
   private hasSaved = false;
 
   protected form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     syncThemeWithOS: [false],
-    lightTheme: [''],
-    darkTheme: [''],
+    lightTheme: ['', [Validators.required]],
+    darkTheme: ['', [Validators.required]],
     language: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
@@ -162,6 +164,7 @@ export class PreferencesFormComponent implements OnInit {
   private setupThemePreview(): void {
     const {
       theme,
+      // syncThemeWithOS matches the backend API field name (auth.set_attribute)
       // eslint-disable-next-line @typescript-eslint/naming-convention
       syncThemeWithOS,
       lightTheme,

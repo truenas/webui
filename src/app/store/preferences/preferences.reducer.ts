@@ -71,6 +71,7 @@ export const preferencesReducer = createReducer(
   on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
     showSnapshotExtraColumns: !state.preferences?.showSnapshotExtraColumns,
   })),
+  // syncThemeWithOS matches the backend API field name (auth.set_attribute)
   /* eslint-disable @typescript-eslint/naming-convention */
   on(guiFormSubmitted, (state, {
     theme, syncThemeWithOS, lightTheme, darkTheme,
