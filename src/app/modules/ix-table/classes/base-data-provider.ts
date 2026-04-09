@@ -66,6 +66,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
    */
   setSorting(sorting: TableSort<T>, skipLoad = false): void {
     this.sorting = sorting;
+    this.resetPaginationToFirstPage();
     if (!skipLoad) {
       this.updateCurrentPage(this.allRows);
     }
@@ -73,9 +74,15 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   setFilter(filter: TableFilter<T>): void {
+    this.resetPaginationToFirstPage();
     const filteredRows = filterTableRows(filter);
-    this.totalRows = filteredRows.length;
     this.setRows(filteredRows);
+  }
+
+  protected resetPaginationToFirstPage(): void {
+    if (this.pagination.pageNumber !== null) {
+      this.pagination.pageNumber = 1;
+    }
   }
 
   /**
