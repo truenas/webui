@@ -42,6 +42,10 @@ export class ContainerNicDevicesComponent {
     this.api.call('interface.has_pending_changes').pipe(catchError(() => of(false))),
   );
 
+  protected readonly defaultBridge = computed(() => {
+    return this.containersStore.selectedContainer()?.default_network ?? null;
+  });
+
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly isContainerRunning = computed(() => {
@@ -53,6 +57,12 @@ export class ContainerNicDevicesComponent {
     return this.devicesStore.devices().filter((device): device is ContainerNicDevice => {
       return device.dtype === ContainerDeviceType.Nic;
     });
+  });
+
+  protected readonly showDefaultBridge = computed(() => {
+    const bridge = this.defaultBridge();
+    if (!bridge) return false;
+    return !this.shownDevices().some((device) => device.nic_attach === bridge);
   });
 
   protected getDeviceDescription(device: ContainerDevice): string {
