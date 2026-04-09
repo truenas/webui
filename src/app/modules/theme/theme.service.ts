@@ -70,7 +70,7 @@ export class ThemeService {
         const isDark = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
         theme = isDark ? state.preferences.darkTheme : state.preferences.lightTheme;
       } else {
-        theme = state.preferences?.userTheme;
+        theme = state.preferences?.userTheme ?? this.defaultTheme;
       }
       this.window.sessionStorage.setItem('theme', theme);
       this.onThemeChanged(theme);
