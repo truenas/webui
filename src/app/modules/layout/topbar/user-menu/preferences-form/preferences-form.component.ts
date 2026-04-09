@@ -110,8 +110,8 @@ export class PreferencesFormComponent implements OnInit {
       this.form.patchValue({
         theme: preferences.userTheme,
         syncThemeWithOS: preferences.syncThemeWithOS ?? false,
-        lightTheme: preferences.lightTheme && preferences.lightTheme !== 'default' ? preferences.lightTheme : defaultPreferences.lightTheme,
-        darkTheme: preferences.darkTheme && preferences.darkTheme !== 'default' ? preferences.darkTheme : defaultPreferences.darkTheme,
+        lightTheme: preferences.lightTheme ?? defaultPreferences.lightTheme,
+        darkTheme: preferences.darkTheme ?? defaultPreferences.darkTheme,
         language: preferences.language || defaultPreferences.language,
         date_format: preferences.dateFormat || defaultPreferences.dateFormat,
         time_format: preferences.timeFormat || defaultPreferences.timeFormat,
@@ -131,7 +131,10 @@ export class PreferencesFormComponent implements OnInit {
       lightTheme: values.lightTheme,
       darkTheme: values.darkTheme,
     }));
-    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
+    const effectiveTheme = values.syncThemeWithOS
+      ? this.getOsTheme(values.lightTheme, values.darkTheme)
+      : values.theme;
+    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(effectiveTheme));
 
     this.store$.dispatch(localizationFormSubmitted({
       dateFormat: values.date_format,
@@ -182,12 +185,15 @@ export class PreferencesFormComponent implements OnInit {
       this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
     });
 
-    this.window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const mediaQuery = this.window.matchMedia('(prefers-color-scheme: dark)');
+    const onOsThemeChange = (): void => {
       if (this.hasSaved || !syncThemeWithOS.value) {
         return;
       }
       const effectiveTheme = this.getOsTheme(lightTheme.value, darkTheme.value);
       this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
-    });
+    };
+    mediaQuery.addEventListener('change', onOsThemeChange);
+    this.destroyRef.onDestroy(() => mediaQuery.removeEventListener('change', onOsThemeChange));
   }
 }

@@ -1,5 +1,5 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnThemeService, TnTheme } from '@truenas/ui-components';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -7,6 +7,15 @@ import { selectPreferencesState } from 'app/store/preferences/preferences.select
 
 describe('ThemeService', () => {
   let spectator: SpectatorService<ThemeService>;
+  let store$: MockStore;
+  let mediaChangeHandler: () => void;
+  const mediaQueryState = { matches: false };
+  const matchMediaMock = jest.fn().mockImplementation(() => ({
+    get matches() { return mediaQueryState.matches; },
+    addEventListener: jest.fn((_, handler: () => void) => {
+      mediaChangeHandler = handler;
+    }),
+  }));
 
   const createService = createServiceFactory({
     service: ThemeService,
@@ -24,10 +33,7 @@ describe('ThemeService', () => {
         ],
       }),
       mockWindow({
-        matchMedia: jest.fn().mockReturnValue({
-          matches: false,
-          addEventListener: jest.fn(),
-        }),
+        matchMedia: matchMediaMock,
       }),
       mockProvider(TnThemeService, {
         setTheme: jest.fn(() => true),
@@ -36,7 +42,9 @@ describe('ThemeService', () => {
   });
 
   beforeEach(() => {
+    mediaQueryState.matches = false;
     spectator = createService();
+    store$ = spectator.inject(MockStore);
   });
 
   describe('darkTest', () => {
@@ -79,6 +87,87 @@ describe('ThemeService', () => {
       spectator.service.onThemeChanged('unknown-theme');
 
       expect(tnThemeService.setTheme).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sync with OS', () => {
+    it('uses light theme when OS is in light mode and sync is enabled', () => {
+      mediaQueryState.matches = false;
+
+      store$.overrideSelector(selectPreferencesState, {
+        areLoaded: true,
+        preferences: {
+          userTheme: 'ix-dark',
+          syncThemeWithOS: true,
+          lightTheme: 'ix-blue',
+          darkTheme: 'ix-dark',
+        },
+        previewTheme: null,
+        dashboardState: null,
+      });
+      store$.refreshState();
+
+      expect(spectator.service.activeTheme).toBe('ix-blue');
+    });
+
+    it('uses dark theme when OS is in dark mode and sync is enabled', () => {
+      mediaQueryState.matches = true;
+
+      store$.overrideSelector(selectPreferencesState, {
+        areLoaded: true,
+        preferences: {
+          userTheme: 'ix-blue',
+          syncThemeWithOS: true,
+          lightTheme: 'ix-blue',
+          darkTheme: 'ix-dark',
+        },
+        previewTheme: null,
+        dashboardState: null,
+      });
+      store$.refreshState();
+
+      expect(spectator.service.activeTheme).toBe('ix-dark');
+    });
+
+    it('uses preview theme over OS sync when preview is active', () => {
+      store$.overrideSelector(selectPreferencesState, {
+        areLoaded: true,
+        preferences: {
+          userTheme: 'ix-dark',
+          syncThemeWithOS: true,
+          lightTheme: 'ix-blue',
+          darkTheme: 'ix-dark',
+        },
+        previewTheme: 'dracula',
+        dashboardState: null,
+      });
+      store$.refreshState();
+
+      expect(spectator.service.activeTheme).toBe('dracula');
+    });
+
+    it('switches theme when OS appearance changes', () => {
+      mediaQueryState.matches = false;
+
+      store$.overrideSelector(selectPreferencesState, {
+        areLoaded: true,
+        preferences: {
+          userTheme: 'ix-dark',
+          syncThemeWithOS: true,
+          lightTheme: 'ix-blue',
+          darkTheme: 'ix-dark',
+        },
+        previewTheme: null,
+        dashboardState: null,
+      });
+      store$.refreshState();
+
+      expect(spectator.service.activeTheme).toBe('ix-blue');
+
+      mediaQueryState.matches = true;
+      mediaChangeHandler();
+
+      expect(spectator.service.activeTheme).toBe('ix-dark');
     });
   });
 });

@@ -29,7 +29,8 @@ export class ThemeService {
   allThemes: Theme[] = allThemes;
   loadTheme$ = new Subject<string>();
 
-  private latestState: PreferencesState;
+  private latestState!: PreferencesState;
+  private darkModeQuery: MediaQueryList;
 
   /**
    * Maps WebUI theme names to component library theme enum values.
@@ -50,6 +51,8 @@ export class ThemeService {
   }
 
   constructor() {
+    this.darkModeQuery = this.window.matchMedia('(prefers-color-scheme: dark)');
+
     this.loadTheme$.subscribe(() => {
       const savedTheme = this.window.sessionStorage.getItem('theme') || defaultTheme.name;
 
@@ -67,7 +70,7 @@ export class ThemeService {
       if (state.previewTheme) {
         theme = state.previewTheme;
       } else if (state.preferences?.syncThemeWithOS) {
-        const isDark = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = this.darkModeQuery.matches;
         theme = isDark ? state.preferences.darkTheme : state.preferences.lightTheme;
       } else {
         theme = state.preferences?.userTheme ?? this.defaultTheme;
@@ -76,10 +79,10 @@ export class ThemeService {
       this.onThemeChanged(theme);
     });
 
-    this.window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    this.darkModeQuery.addEventListener('change', () => {
       const state = this.latestState;
       if (state?.preferences?.syncThemeWithOS && !state.previewTheme) {
-        const isDark = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = this.darkModeQuery.matches;
         const theme = isDark ? state.preferences.darkTheme : state.preferences.lightTheme;
         this.window.sessionStorage.setItem('theme', theme);
         this.onThemeChanged(theme);

@@ -11,12 +11,12 @@
           [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
         ></ix-checkbox>
         @if (!form.controls.syncThemeWithOS.value) {
-            <ix-select
-              formControlName="theme"
-              [label]="'Theme' | translate"
-              [options]="themeOptions"
-              [required]="true"
-            ></ix-select>
+          <ix-select
+            formControlName="theme"
+            [label]="'Theme' | translate"
+            [options]="themeOptions"
+            [required]="true"
+          ></ix-select>
         }
         @if (form.controls.syncThemeWithOS.value) {
           <ix-select

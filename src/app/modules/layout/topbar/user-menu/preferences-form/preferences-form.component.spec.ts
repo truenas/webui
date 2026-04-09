@@ -155,4 +155,40 @@ describe('PreferencesFormComponent', () => {
     expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('fr');
     expect(slideInRef.close).toHaveBeenCalled();
   });
+
+  it('shows Light Theme and Dark Theme dropdowns when Sync Theme With OS is checked', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Sync Theme With OS': true,
+    });
+
+    const labels = await form.getLabels();
+    expect(labels).toContain('Light Theme');
+    expect(labels).toContain('Dark Theme');
+    expect(labels).not.toContain('Theme');
+  });
+
+  it('dispatches guiFormSubmitted with sync fields when saving with OS sync enabled', async () => {
+    const store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Sync Theme With OS': true,
+    });
+    await form.fillForm({
+      'Light Theme': 'Blue',
+      'Dark Theme': 'Dracula',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({
+      theme: 'ix-dark',
+      syncThemeWithOS: true,
+      lightTheme: 'ix-blue',
+      darkTheme: 'dracula',
+    }));
+  });
 });
