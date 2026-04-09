@@ -1,8 +1,12 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  Observable, filter, map, of, switchMap, tap,
+} from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
+  ConfirmDeleteOptions,
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
   DialogWithSecondaryCheckboxResult, FullScreenDialogOptions,
@@ -16,14 +20,74 @@ import { GeneralDialog, GeneralDialogConfig } from 'app/modules/dialog/component
 import { InfoDialog } from 'app/modules/dialog/components/info-dialog/info-dialog.component';
 import { JobProgressDialog } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { MultiErrorDialog } from 'app/modules/dialog/components/multi-error-dialog/multi-error-dialog.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogService {
   private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private injector = inject(Injector);
 
+  // Lazy to break circular dependency: DialogService → ErrorHandlerService → DialogService.
+  // ErrorHandlerService uses the same pattern (see error-handler.service.ts:29-34).
+  private _errorHandler: ErrorHandlerService | undefined;
+  private get errorHandler(): ErrorHandlerService {
+    this._errorHandler ??= this.injector.get(ErrorHandlerService);
+    return this._errorHandler;
+  }
+
+  /**
+   * Confirms deletion, executes the API call or job, handles loading/errors/snackbar.
+   * Caller only needs to subscribe and refresh.
+   *
+   * Usage (simple api.call):
+   * ```
+   * this.dialogService.confirmDelete({
+   *   message: this.translate.instant('Delete "{name}"?', { name: row.name }),
+   *   call: () => this.api.call('endpoint.delete', [row.id]),
+   *   successMessage: this.translate.instant('Deleted.'),
+   * }).pipe(takeUntilDestroyed(this.destroyRef))
+   *   .subscribe(() => this.refresh());
+   * ```
+   *
+   * Usage (long-running job):
+   * ```
+   * this.dialogService.confirmDelete({
+   *   message: this.translate.instant('Delete "{name}"?', { name: row.name }),
+   *   job: () => this.api.job('endpoint.delete', [row.id]),
+   *   jobProgressTitle: this.translate.instant('Deleting...'),
+   *   successMessage: this.translate.instant('Deleted.'),
+   * }).pipe(takeUntilDestroyed(this.destroyRef))
+   *   .subscribe(() => this.refresh());
+   * ```
+   *
+   * Emits once (`void`) on successful deletion.
+   * Completes without emitting if the user cancels the confirmation dialog.
+   */
+  confirmDelete(options: ConfirmDeleteOptions): Observable<void> {
+    return this.confirm({
+      title: options.title ?? this.translate.instant('Delete'),
+      message: options.message,
+      buttonText: options.buttonText ?? this.translate.instant('Delete'),
+      buttonColor: 'warn',
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.executeDelete(options)),
+      tap(() => {
+        if (options.successMessage) {
+          this.snackbar.success(options.successMessage);
+        }
+      }),
+      map(() => undefined as void),
+    );
+  }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): Observable<DialogWithSecondaryCheckboxResult>;
@@ -116,6 +180,20 @@ export class DialogService {
     for (const openDialog of (this.matDialog.openDialogs || [])) {
       openDialog.close();
     }
+  }
+
+  private executeDelete(options: ConfirmDeleteOptions): Observable<unknown> {
+    if ('job' in options) {
+      return this.jobDialog(options.job(), {
+        title: options.jobProgressTitle ?? this.translate.instant('Deleting...'),
+      }).afterClosed().pipe(
+        this.errorHandler.withErrorHandler(),
+      );
+    }
+    return options.call().pipe(
+      this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
+    );
   }
 
   /**

@@ -23,9 +23,8 @@ describe('GuiCardComponent', () => {
           {
             selector: selectGeneralConfig,
             value: {
-              ui_certificate: {
-                name: 'truenas_default',
-              },
+              ui_certificate: 1,
+              ui_certificate_name: 'truenas_default',
               ui_address: ['0.0.0.0'],
               ui_v6address: ['0.0.0.0'],
               ui_port: 80,

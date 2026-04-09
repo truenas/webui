@@ -93,4 +93,14 @@ describe('DeduplicationStatsComponent', () => {
       } as Pool,
     });
   });
+
+  it('hides Prune link when dedup table is empty', () => {
+    spectator.setInput('pool', {
+      dedup_table_quota: 'auto',
+      dedup_table_size: 0,
+    } as Pool);
+
+    expect(spectator.query(byText('Prune'))).not.toExist();
+    expect(spectator.query(byText('Set Quota'))).toExist();
+  });
 });

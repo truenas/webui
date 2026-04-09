@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  map, filter, switchMap, BehaviorSubject, of,
+  map, BehaviorSubject, of,
 } from 'rxjs';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,7 +38,6 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -86,7 +85,6 @@ export class SmbCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -190,21 +188,13 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected doDelete(smb: SmbShare): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
+      call: () => this.api.call('sharing.smb.delete', [smb.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('sharing.smb.delete', [smb.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.dataProvider.load();
     });
   }
 

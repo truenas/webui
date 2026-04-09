@@ -71,6 +71,7 @@ const commonProviders = [
   mockProvider(SlideInRef, slideInRef),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
+    confirmDelete: jest.fn(() => of(undefined)),
   }),
   mockProvider(SlideIn, {
     open: jest.fn(() => SlideInResult.empty()),
@@ -178,7 +179,12 @@ describe('SmbListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+      buttonText: expect.any(String),
+      call: expect.any(Function),
+    });
   });
 
   it('updates SMB Enabled status once mat-toggle is updated', async () => {

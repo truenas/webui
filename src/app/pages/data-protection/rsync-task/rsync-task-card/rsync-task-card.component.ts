@@ -172,24 +172,16 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   doDelete(row: RsyncTaskUi): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Rsync Task <b>"{name}"</b>?', {
         name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('rsynctask.delete', [row.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('rsynctask.delete', [row.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getRsyncTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.getRsyncTasks();
     });
   }
 

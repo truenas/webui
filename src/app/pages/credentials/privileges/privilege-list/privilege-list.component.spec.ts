@@ -2,14 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -53,13 +52,10 @@ describe('PrivilegeListComponent', () => {
         mockCall('group.query', []),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
       mockAuth(),
     ],
@@ -95,7 +91,12 @@ describe('PrivilegeListComponent', () => {
     const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'privilege2');
     await deleteButton.click();
 
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Delete Privilege',
+      message: 'Are you sure you want to delete the <b>privilege2</b>?',
+      call: expect.any(Function),
+    });
+
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('privilege.delete', [2]);
-    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });

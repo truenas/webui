@@ -159,6 +159,7 @@ describe('ReplicationListComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -232,17 +233,14 @@ describe('ReplicationListComponent', () => {
   });
 
   it('deletes a task with confirmation when delete button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
-
     await table.expandRow(0);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       message: 'Delete Replication Task <b>"pewl - pewl"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);

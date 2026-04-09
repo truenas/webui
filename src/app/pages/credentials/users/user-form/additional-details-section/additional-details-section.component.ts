@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, Signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
@@ -17,6 +17,7 @@ import {
   EMPTY,
 } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -145,6 +146,18 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   protected homeEditable = viewChild<EditableComponent>('homeEditable');
 
+  private readonly homeNotMntRootValidator = (control: FormControl<string>): ValidationErrors | null => {
+    const value = control.value?.trim().replace(/\/+$/, '');
+    if (value === mntPath) {
+      return {
+        homeAtMntRoot: {
+          message: this.translate.instant('Home directory cannot be set to {mntPath}', { mntPath }),
+        },
+      };
+    }
+    return null;
+  };
+
   protected onHomeEditableOpened(): void {
     if (this.editingUser()) return;
 
@@ -194,7 +207,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     group_create: [true],
     groups: [[] as number[]],
     email: [null as string, [emailValidator()]],
-    home: [defaultHomePath],
+    home: [defaultHomePath, [this.homeNotMntRootValidator]],
     home_mode: ['700'],
     home_create: [true],
     default_permissions: [true],

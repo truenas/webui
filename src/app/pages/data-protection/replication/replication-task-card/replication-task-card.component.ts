@@ -186,25 +186,15 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   protected doDelete(replicationTask: ReplicationTask): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: replicationTask.name,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('replication.delete', [replicationTask.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('replication.delete', [replicationTask.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getReplicationTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getReplicationTasks());
   }
 
   protected addReplicationTask(): void {

@@ -10,9 +10,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import {
-  filter, switchMap, map,
-} from 'rxjs';
+import { filter, map } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -38,9 +36,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -90,13 +86,11 @@ export class WebShareListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
-  private loader = inject(LoaderService);
   private router = inject(Router);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
@@ -227,36 +221,17 @@ export class WebShareListComponent implements OnInit {
   }
 
   doDelete(row: WebShareTableRow): void {
-    this.dialog.confirm({
+    this.dialog.confirmDelete({
       title: this.translate.instant(this.helptext.delete_dialog_title),
       message: this.translate.instant(this.helptext.delete_dialog_message, {
         name: row.name,
         path: row.path,
       }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
-    })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('sharing.webshare.delete', [row.id]).pipe(
-            this.loader.withLoader(),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('WebShare deleted'));
-          this.loadWebShareConfig();
-        },
-        error: (error: unknown) => {
-          this.dialog.error({
-            title: this.translate.instant('Error deleting WebShare'),
-            message: (error as Error).message,
-          });
-        },
-      });
+      call: () => this.api.call('sharing.webshare.delete', [row.id]),
+      successMessage: this.translate.instant('WebShare deleted'),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.loadWebShareConfig());
   }
 
   private setDataProvider(): void {

@@ -6,7 +6,6 @@ import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -24,13 +23,11 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServersElements } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.elements';
 import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-ntp-servers-card',
@@ -54,10 +51,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class NtpServersCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
 
@@ -123,18 +118,14 @@ export class NtpServersCardComponent implements OnInit {
   }
 
   doDelete(server: NtpServer): void {
-    this.dialog.confirm({
+    this.dialog.confirmDelete({
       title: this.translate.instant('Delete NTP Server'),
       message: this.translate.instant(
         'Are you sure you want to delete the <b>{address}</b> NTP Server?',
         { address: server.address },
       ),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
+      call: () => this.api.call('system.ntpserver.delete', [server.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('system.ntpserver.delete', [server.id]).pipe(this.loader.withLoader())),
-      this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.loadItems();

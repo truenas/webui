@@ -7,7 +7,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
-  switchMap, filter, tap, Observable,
+  tap, Observable,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -26,7 +26,6 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -64,7 +63,6 @@ export class CloudCredentialsCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
   private dialog = inject(DialogService);
-  private loader = inject(LoaderService);
   private cloudCredentialService = inject(CloudCredentialService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
@@ -164,18 +162,14 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   protected doDelete(credential: CloudSyncCredential): void {
     this.dialog
-      .confirm({
+      .confirmDelete({
         title: this.translate.instant('Delete Cloud Credential'),
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: credential.name,
         }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
+        call: () => this.api.call('cloudsync.credentials.delete', [credential.id]),
       })
       .pipe(
-        filter(Boolean),
-        switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id]).pipe(this.loader.withLoader())),
-        this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {

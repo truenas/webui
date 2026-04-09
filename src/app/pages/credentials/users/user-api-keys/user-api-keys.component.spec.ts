@@ -11,11 +11,11 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -79,7 +79,7 @@ describe('UserApiKeysComponent', () => {
         timezone: 'America/Los_Angeles',
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -94,9 +94,6 @@ describe('UserApiKeysComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$: unknown) => source$),
-      }),
     ],
   });
 
@@ -147,14 +144,12 @@ describe('UserApiKeysComponent', () => {
     const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete API Key',
-      buttonText: 'Delete',
-      buttonColor: 'warn',
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
+      call: expect.any(Function),
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);
-    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 });

@@ -4,9 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, switchMap, tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,12 +25,10 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-tunable-list',
@@ -56,13 +52,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TunableListComponent implements OnInit {
-  private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
-  private snackbar = inject(SnackbarService);
   private slideIn = inject(SlideIn);
   private destroyRef = inject(DestroyRef);
 
@@ -140,34 +134,14 @@ export class TunableListComponent implements OnInit {
 
   protected doDelete(tunable: Tunable): void {
     const type = tunable.type?.toUpperCase() || '';
-    this.dialogService
-      .confirm({
-        title: this.translate.instant('Delete Tunable ({type})', { type }),
-        message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
-        buttonText: this.translate.instant('Delete'),
-        buttonColor: 'warn',
-      })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.dialogService.jobDialog(
-            this.api.job('tunable.delete', [tunable.id]),
-            {
-              title: this.translate.instant('Deleting...'),
-            },
-          )
-            .afterClosed()
-            .pipe(
-              tap(() => {
-                this.getTunables();
-                this.snackbar.success(this.translate.instant('Tunable "{name}" deleted', { name: tunable.var }));
-              }),
-              this.errorHandler.withErrorHandler(),
-            );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
+    this.dialogService.confirmDelete({
+      title: this.translate.instant('Delete Tunable ({type})', { type }),
+      message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
+      job: () => this.api.job('tunable.delete', [tunable.id]),
+      jobProgressTitle: this.translate.instant('Deleting...'),
+      successMessage: this.translate.instant('Tunable "{name}" deleted', { name: tunable.var }),
+    }).pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.getTunables());
   }
 
   protected onListFiltered(query: string): void {

@@ -39,7 +39,6 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -49,7 +48,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 
 @Component({
@@ -81,8 +79,6 @@ export class RsyncTaskListComponent implements OnInit {
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
-  private errorHandler = inject(ErrorHandlerService);
-  private loader = inject(LoaderService);
   private crontabExplanation = inject(CrontabExplanationPipe);
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);
@@ -256,23 +252,13 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected delete(row: RsyncTask): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Delete Task'),
       message: this.translate.instant('Are you sure you want to delete this task?'),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
-    })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('rsynctask.delete', [row.id]).pipe(
-            this.loader.withLoader(),
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => this.refresh());
+      call: () => this.api.call('rsynctask.delete', [row.id]),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.refresh());
   }
 
   protected refresh(): void {

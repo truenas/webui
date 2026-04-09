@@ -16,7 +16,7 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
-import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
@@ -35,7 +35,14 @@ describe('PoolUsageCardComponent', () => {
       ThemeService,
       provideMockStore({
         selectors: [
-          { selector: selectTheme, value: 'ix-dark' },
+          {
+            selector: selectPreferencesState,
+            value: {
+              areLoaded: true,
+              preferences: { userTheme: 'ix-dark' },
+              previewTheme: null,
+            },
+          },
         ],
       }),
       mockProvider(
@@ -63,6 +70,10 @@ describe('PoolUsageCardComponent', () => {
           getItem: jest.fn(),
           setItem: jest.fn(),
         },
+        matchMedia: () => ({
+          matches: false,
+          addEventListener: jest.fn(),
+        }),
       }),
     ],
   });
