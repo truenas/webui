@@ -1,4 +1,6 @@
-import { extractAppVersion, formatVersionLabel, formatVersionWithRevision } from './version-formatting.utils';
+import {
+  extractAppVersion, formatVersionLabel, formatVersionWithRevision, resolveAppVersion,
+} from './version-formatting.utils';
 
 describe('Version Formatting Utils', () => {
   describe('extractAppVersion', () => {
@@ -76,6 +78,29 @@ describe('Version Formatting Utils', () => {
 
     it('handles when library version is not a suffix', () => {
       expect(formatVersionWithRevision('2.1.22', '32.0.3_2.1.20')).toBe('Version: 32.0.3_2.1.20 / Revision: 2.1.22');
+    });
+  });
+
+  describe('resolveAppVersion', () => {
+    it('returns appVersion when provided', () => {
+      expect(resolveAppVersion({
+        appVersion: '32.0.3',
+        humanVersion: '32.0.3_2.1.22',
+        libraryVersion: '2.1.22',
+      })).toBe('32.0.3');
+    });
+
+    it('falls back to extracting from humanVersion when appVersion is undefined', () => {
+      expect(resolveAppVersion({
+        humanVersion: '32.0.3_2.1.22',
+        libraryVersion: '2.1.22',
+      })).toBe('32.0.3');
+    });
+
+    it('falls back to libraryVersion when both appVersion and humanVersion are undefined', () => {
+      expect(resolveAppVersion({
+        libraryVersion: '2.1.22',
+      })).toBe('2.1.22');
     });
   });
 });
