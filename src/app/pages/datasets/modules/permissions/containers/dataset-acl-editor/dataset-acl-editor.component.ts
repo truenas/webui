@@ -147,13 +147,12 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
         this.cdr.markForCheck();
       });
 
-    // saveSucceeded$ is a synchronous Subject, so these values are nulled
+    // saveSucceeded$ is a synchronous Subject, so dirty state is reset
     // before the router guard runs during the navigation in makeSaveRequest.
     this.store.saveSucceeded$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.initialAcl = null;
-        this.initialOwnerValues = null;
+        this.resetDirtyState();
       });
   }
 
@@ -179,7 +178,11 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
     this.skipDeactivateCheck = true;
     const returnUrl = this.store.state().returnUrl;
     const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
-    this.router.navigate(returnRoute);
+    this.router.navigate(returnRoute).then((success) => {
+      if (!success) {
+        this.skipDeactivateCheck = false;
+      }
+    });
   }
 
   onAddItemPressed(): void {
@@ -199,8 +202,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
           return;
         }
 
-        this.initialAcl = null;
-        this.initialOwnerValues = null;
+        this.resetDirtyState();
         const returnUrl = this.store.state().returnUrl;
         const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
         this.router.navigate(returnRoute);
@@ -223,6 +225,11 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
         datasetPath: this.datasetPath,
       } as SelectPresetModalConfig,
     });
+  }
+
+  private resetDirtyState(): void {
+    this.initialAcl = null;
+    this.initialOwnerValues = null;
   }
 
   private onFirstLoad(): void {
