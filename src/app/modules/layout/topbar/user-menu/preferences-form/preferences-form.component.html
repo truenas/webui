@@ -4,13 +4,33 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-select
-          formControlName="theme"
-          [label]="'Theme' | translate"
-          [options]="themeOptions"
-          [required]="true"
-        ></ix-select>
+      <ix-fieldset [title]="'GUI' | translate">
+        <ix-checkbox
+          formControlName="syncThemeWithOS"
+          [label]="'Sync Theme With OS' | translate"
+          [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
+        ></ix-checkbox>
+        @if (!isSyncWithOs()) {
+          <ix-select
+            formControlName="theme"
+            [label]="'Theme' | translate"
+            [options]="themeOptions"
+            [required]="true"
+          ></ix-select>
+        } @else {
+          <ix-select
+            formControlName="lightTheme"
+            [label]="'Light Theme' | translate"
+            [options]="lightThemeOptions"
+            [required]="true"
+          ></ix-select>
+          <ix-select
+            formControlName="darkTheme"
+            [label]="'Dark Theme' | translate"
+            [options]="darkThemeOptions"
+            [required]="true"
+          ></ix-select>
+        }
         <ix-input
           id="session-timeout"
           formControlName="token_lifetime"

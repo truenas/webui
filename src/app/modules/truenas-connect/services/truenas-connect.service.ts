@@ -12,13 +12,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
-// Global reference to persist across potential service reinstantiation
-let globalTruenasConnectWindow: Window | null = null;
-
-// Export function to reset global state for testing
-export function resetGlobalTruenasConnectWindow(): void {
-  globalTruenasConnectWindow = null;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -101,33 +94,17 @@ export class TruenasConnectService {
   }
 
   openTruenasConnectWindow(url: string): void {
-    const truenasTabName = 'TrueNASConnect';
-
-    if (!globalTruenasConnectWindow || globalTruenasConnectWindow.closed) {
-      // First time, or the old tab was closed - open new window with URL
-      const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
-      globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
-
-      if (globalTruenasConnectWindow) {
-        globalTruenasConnectWindow.focus();
-      }
-      return;
-    }
-
-    // Tab is still open - just focus it without navigation/reload
-    // Use empty URL to focus only, no reload
-    const existingWindow = this.window.open('', truenasTabName);
-    if (existingWindow && !existingWindow.closed) {
-      existingWindow.focus();
-      globalTruenasConnectWindow = existingWindow; // Update reference
-      return;
-    }
-
-    // Window reference was stale, open new one
+    const truenasTabName = 'TrueNAS Connect';
     const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
-    globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
-    if (globalTruenasConnectWindow) {
-      globalTruenasConnectWindow.focus();
+
+    // always call window.open with the URL - this will either:
+    // 1. if the tab doesn't exist, it will be created and registration will be navigated to.
+    // 2. if the tab DOES exist, then its URL will be set to the registration URL. this will
+    //    overwrite any other URL in the tab, which is what we want.
+    const truenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
+
+    if (truenasConnectWindow) {
+      truenasConnectWindow.focus();
     }
   }
 

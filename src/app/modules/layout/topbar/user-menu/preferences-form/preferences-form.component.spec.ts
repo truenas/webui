@@ -54,10 +54,11 @@ describe('PreferencesFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(ThemeService, {
         allThemes: [
-          { name: 'ix-dark', label: 'Dark' },
-          { name: 'ix-blue', label: 'Blue' },
-          { name: 'dracula', label: 'Dracula' },
+          { name: 'ix-dark', label: 'Dark', bg2: '#282828' },
+          { name: 'ix-blue', label: 'Blue', bg2: '#ffffff' },
+          { name: 'dracula', label: 'Dracula', bg2: '#282a36' },
         ],
+        isDarkTheme: jest.fn((name: string) => name !== 'ix-blue'),
         findTheme: jest.fn((name: string) => ({ name })),
         updateThemeInLocalStorage: jest.fn(),
       }),
@@ -84,6 +85,11 @@ describe('PreferencesFormComponent', () => {
         localStorage: {
           setItem: jest.fn(),
         },
+        matchMedia: jest.fn().mockReturnValue({
+          matches: false,
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+        }),
       }),
     ],
   });
@@ -98,6 +104,7 @@ describe('PreferencesFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
+      'Sync Theme With OS': false,
       Theme: 'Dark',
       'Session Timeout': '600',
       Language: 'English (en)',
@@ -135,7 +142,12 @@ describe('PreferencesFormComponent', () => {
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 120 }));
-    expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({ theme: 'ix-blue' }));
+    expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({
+      theme: 'ix-blue',
+      syncThemeWithOS: false,
+      lightTheme: 'ix-blue',
+      darkTheme: 'ix-dark',
+    }));
     expect(store$.dispatch).toHaveBeenCalledWith(localizationFormSubmitted({
       dateFormat: 'MMMM d, yyyy',
       timeFormat: 'hh:mm:ss aa',
@@ -144,5 +156,62 @@ describe('PreferencesFormComponent', () => {
     expect(spectator.inject(ThemeService).updateThemeInLocalStorage).toHaveBeenCalled();
     expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('fr');
     expect(slideInRef.close).toHaveBeenCalled();
+  });
+
+  it('shows Light Theme and Dark Theme dropdowns when Sync Theme With OS is checked', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Sync Theme With OS': true,
+    });
+
+    const labels = await form.getLabels();
+    expect(labels).toContain('Light Theme');
+    expect(labels).toContain('Dark Theme');
+    expect(labels).not.toContain('Theme');
+  });
+
+  it('dispatches preview theme during editing and stops after save', async () => {
+    const store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      Theme: 'Dracula',
+    });
+
+    expect(store$.dispatch).toHaveBeenCalledWith(themeChangedInGuiForm({ theme: 'dracula' }));
+
+    jest.clearAllMocks();
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(store$.dispatch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: themeChangedInGuiForm.type }),
+    );
+  });
+
+  it('dispatches guiFormSubmitted with sync fields when saving with OS sync enabled', async () => {
+    const store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Sync Theme With OS': true,
+    });
+    await form.fillForm({
+      'Light Theme': 'Blue',
+      'Dark Theme': 'Dracula',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({
+      theme: 'ix-dark',
+      syncThemeWithOS: true,
+      lightTheme: 'ix-blue',
+      darkTheme: 'dracula',
+    }));
   });
 });

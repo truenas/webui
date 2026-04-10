@@ -45,7 +45,7 @@ import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
 import { AppState } from 'app/store';
-import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @Component({
@@ -209,8 +209,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       },
     });
 
-    this.store$.select(selectTheme).pipe(
-      filter(Boolean),
+    this.themeService.activeTheme$.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();
