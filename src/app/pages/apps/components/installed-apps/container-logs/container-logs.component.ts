@@ -87,7 +87,7 @@ export class ContainerLogsComponent implements OnInit {
     }
 
     this.logsChangedListener = this.matDialog.open(LogsDetailsDialog, { width: '400px' }).afterClosed().pipe(
-      tap((value: LogsDetailsDialog['form']['value'] | boolean) => {
+      tap((value: LogsDetailsDialog['form']['value'] | boolean | undefined) => {
         if (!value) {
           this.router.navigate(['/apps/installed/', this.train, this.appName]);
           return;
