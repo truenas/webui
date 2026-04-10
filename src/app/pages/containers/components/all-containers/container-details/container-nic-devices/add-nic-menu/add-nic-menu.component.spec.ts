@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -201,7 +202,7 @@ describe('AddNicMenuComponent - No NICs Available', () => {
   });
 
   it('shows "No NIC Devices Available" when there are no NICs to add', () => {
-    expect(spectator.query('.no-devices-available')).toHaveText('No NIC Devices Available');
+    expect(spectator.query(byText('No NIC Devices Available'))).toExist();
   });
 });
 

@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -135,7 +136,7 @@ describe('AddGpuDeviceMenuComponent', () => {
     });
 
     it('shows "No GPU Devices Available" when there are no devices to add', () => {
-      expect(spectator.query('.no-devices-available')).toHaveText('No GPU Devices Available');
+      expect(spectator.query(byText('No GPU Devices Available'))).toExist();
     });
   });
 });
