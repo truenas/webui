@@ -135,8 +135,8 @@ describe('AddGpuDeviceMenuComponent', () => {
       spectator = createComponent();
     });
 
-    it('shows "No GPU Devices Available" when there are no devices to add', () => {
-      expect(spectator.query(byText('No GPU Devices Available'))).toExist();
+    it('shows "No GPU devices available" when there are no devices to add', () => {
+      expect(spectator.query(byText('No GPU devices available'))).toExist();
     });
   });
 });
