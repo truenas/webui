@@ -131,6 +131,11 @@ describe('ContainerNicDevicesComponent', () => {
       const nullSpectator = createNullNetworkComponent();
       expect(nullSpectator.query('.default-device')).not.toExist();
     });
+
+    it('shows empty state message', () => {
+      const nullSpectator = createNullNetworkComponent();
+      expect(nullSpectator.query('.no-devices')).toHaveText('No NIC devices added.');
+    });
   });
 
   describe('when default bridge matches an existing NIC device', () => {

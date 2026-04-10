@@ -133,8 +133,8 @@ describe('AddUsbDeviceMenuComponent', () => {
       spectator = createComponent();
     });
 
-    it('shows "No USB Devices Available" when there are no devices to add', () => {
-      expect(spectator.query(byText('No USB Devices Available'))).toExist();
+    it('shows "No USB devices available" when there are no devices to add', () => {
+      expect(spectator.query(byText('No USB devices available'))).toExist();
     });
   });
 });

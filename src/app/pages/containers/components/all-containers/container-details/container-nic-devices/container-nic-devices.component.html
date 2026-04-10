@@ -42,6 +42,10 @@
             ></ix-device-actions-menu>
           }
         </div>
+      } @empty {
+        @if (!showDefaultBridge()) {
+          <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
+        }
       }
     }
   </mat-card-content>

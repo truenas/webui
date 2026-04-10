@@ -201,8 +201,8 @@ describe('AddNicMenuComponent - No NICs Available', () => {
     spectator = createComponent({ props: { defaultBridge: null } });
   });
 
-  it('shows "No NIC Devices Available" when there are no NICs to add', () => {
-    expect(spectator.query(byText('No NIC Devices Available'))).toExist();
+  it('shows "No NIC devices available" when there are no NICs to add', () => {
+    expect(spectator.query(byText('No NIC devices available'))).toExist();
   });
 });
 
