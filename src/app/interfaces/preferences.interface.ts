@@ -13,6 +13,9 @@ export interface Preferences {
   timeFormat: string;
   sidenavStatus: SidenavStatusData;
   userTheme: string;
+  syncThemeWithOS: boolean;
+  lightTheme: string;
+  darkTheme: string;
   tableDisplayedColumns: TableDisplayedColumns[];
   hideBuiltinGroups: boolean;
   autoRefreshReports: boolean;
