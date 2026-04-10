@@ -9,7 +9,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, filter, map, Subscription, switchMap, tap,
+  combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -96,7 +96,6 @@ export class ContainerLogsComponent implements OnInit {
         this.logs.set([]);
         this.isLoading.set(true);
       }),
-      filter(Boolean),
       switchMap((details: LogsDetailsDialog['form']['value']) => {
         return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
