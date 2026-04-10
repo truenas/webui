@@ -1,17 +1,20 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  Subscription, merge, of, startWith,
+} from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -40,6 +43,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
+    IxCheckboxComponent,
     IxFieldsetComponent,
     IxInputComponent,
     IxSelectComponent,
@@ -63,8 +67,13 @@ export class PreferencesFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
+  private previewSubscription: Subscription;
+
   protected form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
+    syncThemeWithOS: [false],
+    lightTheme: [''],
+    darkTheme: [''],
     language: ['', [Validators.required]],
     date_format: [''],
     time_format: [''],
@@ -74,6 +83,23 @@ export class PreferencesFormComponent implements OnInit {
       Validators.max(2147482),
     ]],
   });
+
+  protected isSyncWithOs = toSignal(
+    this.form.controls.syncThemeWithOS.valueChanges.pipe(startWith(false)),
+    { initialValue: false },
+  );
+
+  protected lightThemeOptions = of(
+    this.themeService.allThemes
+      .filter((theme) => !this.themeService.isDarkTheme(theme.name))
+      .map((theme) => ({ label: theme.label, value: theme.name })),
+  );
+
+  protected darkThemeOptions = of(
+    this.themeService.allThemes
+      .filter((theme) => this.themeService.isDarkTheme(theme.name))
+      .map((theme) => ({ label: theme.label, value: theme.name })),
+  );
 
   protected themeOptions = of(
     this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name })),
@@ -102,20 +128,51 @@ export class PreferencesFormComponent implements OnInit {
     this.store$.pipe(waitForPreferences, takeUntilDestroyed(this.destroyRef)).subscribe((preferences) => {
       this.form.patchValue({
         theme: preferences.userTheme,
+        syncThemeWithOS: preferences.syncThemeWithOS ?? false,
+        lightTheme: preferences.lightTheme ?? defaultPreferences.lightTheme,
+        darkTheme: preferences.darkTheme ?? defaultPreferences.darkTheme,
         language: preferences.language || defaultPreferences.language,
         date_format: preferences.dateFormat || defaultPreferences.dateFormat,
         time_format: preferences.timeFormat || defaultPreferences.timeFormat,
         token_lifetime: preferences.lifetime || defaultPreferences.lifetime,
       });
     });
+
+    this.form.controls.syncThemeWithOS.valueChanges.pipe(
+      startWith(this.form.controls.syncThemeWithOS.value),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((sync) => {
+      const { theme, lightTheme, darkTheme } = this.form.controls;
+      if (sync) {
+        theme.clearValidators();
+        lightTheme.setValidators([Validators.required]);
+        darkTheme.setValidators([Validators.required]);
+      } else {
+        theme.setValidators([Validators.required]);
+        lightTheme.clearValidators();
+        darkTheme.clearValidators();
+      }
+      theme.updateValueAndValidity();
+      lightTheme.updateValueAndValidity();
+      darkTheme.updateValueAndValidity();
+    });
   }
 
   protected onSubmit(): void {
     const values = this.form.getRawValue();
 
+    this.previewSubscription.unsubscribe();
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: values.token_lifetime }));
-    this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
-    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
+    this.store$.dispatch(guiFormSubmitted({
+      theme: values.theme,
+      syncThemeWithOS: values.syncThemeWithOS,
+      lightTheme: values.lightTheme,
+      darkTheme: values.darkTheme,
+    }));
+    const effectiveTheme = values.syncThemeWithOS
+      ? this.getOsTheme(values.lightTheme, values.darkTheme)
+      : values.theme;
+    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(effectiveTheme));
 
     this.store$.dispatch(localizationFormSubmitted({
       dateFormat: values.date_format,
@@ -136,11 +193,42 @@ export class PreferencesFormComponent implements OnInit {
     this.timeFormatOptions = of(this.localeService.getTimeFormatOptions(tz));
   }
 
+  private getOsTheme(light: string, dark: string): string {
+    return this.window.matchMedia('(prefers-color-scheme: dark)').matches ? dark : light;
+  }
+
   private setupThemePreview(): void {
-    this.form.controls.theme.valueChanges.pipe(
+    const {
+      theme,
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- "OS" acronym violates strictCamelCase
+      syncThemeWithOS,
+      lightTheme,
+      darkTheme,
+    } = this.form.controls;
+
+    this.previewSubscription = merge(
+      theme.valueChanges,
+      syncThemeWithOS.valueChanges,
+      lightTheme.valueChanges,
+      darkTheme.valueChanges,
+    ).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((theme) => {
-      this.store$.dispatch(themeChangedInGuiForm({ theme }));
+    ).subscribe(() => {
+      const effectiveTheme = syncThemeWithOS.value
+        ? this.getOsTheme(lightTheme.value, darkTheme.value)
+        : theme.value;
+      this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
     });
+
+    const mediaQuery = this.window.matchMedia('(prefers-color-scheme: dark)');
+    const onOsThemeChange = (): void => {
+      if (!syncThemeWithOS.value) {
+        return;
+      }
+      const effectiveTheme = this.getOsTheme(lightTheme.value, darkTheme.value);
+      this.store$.dispatch(themeChangedInGuiForm({ theme: effectiveTheme }));
+    };
+    mediaQuery.addEventListener('change', onOsThemeChange);
+    this.destroyRef.onDestroy(() => mediaQuery.removeEventListener('change', onOsThemeChange));
   }
 }
