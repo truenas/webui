@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -133,7 +134,7 @@ describe('AddUsbDeviceMenuComponent', () => {
     });
 
     it('shows "No USB Devices Available" when there are no devices to add', () => {
-      expect(spectator.query('.no-devices-available')).toHaveText('No USB Devices Available');
+      expect(spectator.query(byText('No USB Devices Available'))).toExist();
     });
   });
 });

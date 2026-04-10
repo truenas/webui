@@ -22,8 +22,6 @@
             [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
           ></ix-device-actions-menu>
         </div>
-      } @empty {
-        <div class="no-devices">{{ 'No USB devices added.' | translate }}</div>
       }
     }
   </mat-card-content>
