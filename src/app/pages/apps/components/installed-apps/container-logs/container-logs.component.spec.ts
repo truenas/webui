@@ -21,7 +21,7 @@ describe('ContainerLogsComponent', () => {
   let loader: HarnessLoader;
 
   describe('When dialog is set a value', () => {
-    const createComponent = createComponentFactoryWithDialogResponse(false);
+    const createComponent = createComponentFactoryWithDialogResponse({ tail_lines: 650 } as LogsDetailsDialog['form']['value']);
 
     beforeEach(() => {
       spectator = createComponent();
@@ -151,7 +151,7 @@ describe('ContainerLogsComponent', () => {
   });
 
   describe('When cancel is clicked', () => {
-    const createComponent = createComponentFactoryWithDialogResponse(true);
+    const createComponent = createComponentFactoryWithDialogResponse(false);
 
     beforeEach(() => {
       spectator = createComponent();
@@ -162,7 +162,25 @@ describe('ContainerLogsComponent', () => {
     }));
   });
 
-  function createComponentFactoryWithDialogResponse(cancel = false): SpectatorFactory<ContainerLogsComponent> {
+  describe('When dialog is dismissed by clicking outside', () => {
+    const createComponent = createComponentFactoryWithDialogResponse(undefined);
+
+    beforeEach(() => {
+      spectator = createComponent();
+    });
+
+    it('navigates back to installed apps', fakeAsync(() => {
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps/installed/', undefined, 'ix-test-app']);
+    }));
+
+    it('does not subscribe to logs', fakeAsync(() => {
+      expect(spectator.inject(ApiService).subscribe).not.toHaveBeenCalled();
+    }));
+  });
+
+  function createComponentFactoryWithDialogResponse(
+    response: LogsDetailsDialog['form']['value'] | false | undefined,
+  ): SpectatorFactory<ContainerLogsComponent> {
     return createComponentFactory({
       component: ContainerLogsComponent,
       imports: [
@@ -175,15 +193,7 @@ describe('ContainerLogsComponent', () => {
         mockProvider(Router),
         mockProvider(MatDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => {
-              if (cancel) {
-                return of(false);
-              }
-
-              return of({
-                tail_lines: 650,
-              } as LogsDetailsDialog['form']['value']);
-            }),
+            afterClosed: jest.fn(() => of(response)),
           }) as unknown as MatDialogRef<LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
