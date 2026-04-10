@@ -248,6 +248,16 @@ describe('DatasetAclEditorComponent', () => {
         await firstValueFrom(spectator.component.canDeactivate());
         expect(spectator.inject(UnsavedChangesService).showConfirmDialog).toHaveBeenCalled();
       });
+
+      it('allows deactivation after save has been completed', async () => {
+        spectator.component.onAddItemPressed();
+        spectator.detectChanges();
+
+        spectator.inject(DatasetAclEditorStore).saveSucceeded$.next();
+
+        const result = await firstValueFrom(spectator.component.canDeactivate());
+        expect(result).toBe(true);
+      });
     });
   });
 

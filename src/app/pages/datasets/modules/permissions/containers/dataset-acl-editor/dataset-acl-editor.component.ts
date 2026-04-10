@@ -145,6 +145,13 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
 
         this.cdr.markForCheck();
       });
+
+    this.store.saveSucceeded$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.initialAcl = null;
+        this.initialOwnerValues = null;
+      });
   }
 
   canDeactivate(): Observable<boolean> {
@@ -188,6 +195,8 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
           return;
         }
 
+        this.initialAcl = null;
+        this.initialOwnerValues = null;
         const returnUrl = this.store.state().returnUrl;
         const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
         this.router.navigate(returnRoute);
