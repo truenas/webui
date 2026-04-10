@@ -4,7 +4,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import { union, without, omit } from 'lodash-es';
 import {
-  EMPTY, forkJoin, Observable, of,
+  EMPTY, forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import {
   catchError, filter, map, switchMap, tap, withLatestFrom,
@@ -47,6 +47,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   private router = inject(Router);
   private translate = inject(TranslateService);
   private storageService = inject(StorageService);
+
+  readonly saveSucceeded$ = new Subject<void>();
 
   constructor() {
     super(initialState);
@@ -252,6 +254,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       .pipe(
         this.errorHandler.withErrorHandler(),
         tap(() => {
+          this.saveSucceeded$.next();
           const returnUrl = this.state().returnUrl;
           const returnRoute = returnUrl
             ? [returnUrl]
