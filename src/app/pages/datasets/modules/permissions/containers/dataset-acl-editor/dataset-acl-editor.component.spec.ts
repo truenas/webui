@@ -139,6 +139,7 @@ describe('DatasetAclEditorComponent', () => {
       api = spectator.inject(MockApiService);
       matDialog = spectator.inject(MatDialog);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
     });
 
     it('sets returnUrl to null when not provided', () => {
@@ -228,6 +229,20 @@ describe('DatasetAclEditorComponent', () => {
         const result = await firstValueFrom(spectator.component.canDeactivate());
         expect(result).toBe(true);
         expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
+      });
+
+      it('resets skipDeactivateCheck when navigation fails after Cancel', async () => {
+        spectator.component.onAddItemPressed();
+        spectator.detectChanges();
+
+        const router = spectator.inject(Router);
+        jest.spyOn(router, 'navigate').mockResolvedValue(false);
+
+        spectator.component.onCancel();
+        await Promise.resolve();
+
+        await firstValueFrom(spectator.component.canDeactivate());
+        expect(spectator.inject(UnsavedChangesService).showConfirmDialog).toHaveBeenCalled();
       });
 
       it('adds another ace when Add item is pressed', async () => {
@@ -330,6 +345,7 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     it('navigates to returnUrl when Cancel is pressed', async () => {
+      jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
       await cancelButton.click();
