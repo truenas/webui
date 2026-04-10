@@ -4,7 +4,7 @@
   "Manage Containers": "Xestionar contedores",
   "Rolling back destroys data": "Reverter destrúe datos",
   "Rolling the dataset back destroys data on the dataset and can destroy additional snapshots that are related to the dataset. This can result in permanent data loss. Do not roll back until all desired data and snapshots are backed up.": "Reverter o dataset destrúe os datos do dataset e pode destruír instantáneas adicionais que estean relacionadas con el. Isto pode provocar unha perda permanente de datos. Non revertas ata que todos os datos e instantáneas que desexes conservar estean respaldados.",
-  "This dataset is used by: {containers}": "Este dataset está sendo usado por: {containers}"
+  "This dataset is used by: {containers}": "Este dataset está sendo usado por: {containers}",
   " as of {dateTime}": " a data de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidade bruta utilizable estimada",
