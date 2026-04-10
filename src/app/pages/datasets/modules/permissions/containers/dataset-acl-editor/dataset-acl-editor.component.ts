@@ -87,6 +87,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
 
   private initialAcl: (NfsAclItem | PosixAclItem)[] | null = null;
   private initialOwnerValues: { owner: string; ownerGroup: string } | null = null;
+  private skipDeactivateCheck = false;
 
   ownerFormGroup = this.formBuilder.group({
     owner: ['', Validators.required],
@@ -140,12 +141,14 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
             owner: state.stat.user,
             ownerGroup: state.stat.group,
           };
-          this.initialAcl = structuredClone(state.acl.acl) as (NfsAclItem | PosixAclItem)[];
+          this.initialAcl = structuredClone(state.acl.acl);
         }
 
         this.cdr.markForCheck();
       });
 
+    // saveSucceeded$ is a synchronous Subject, so these values are nulled
+    // before the router guard runs during the navigation in makeSaveRequest.
     this.store.saveSucceeded$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -155,7 +158,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   canDeactivate(): Observable<boolean> {
-    if (!this.initialAcl || !this.initialOwnerValues) {
+    if (this.skipDeactivateCheck || !this.initialAcl || !this.initialOwnerValues) {
       return of(true);
     }
 
@@ -173,6 +176,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onCancel(): void {
+    this.skipDeactivateCheck = true;
     const returnUrl = this.store.state().returnUrl;
     const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
     this.router.navigate(returnRoute);

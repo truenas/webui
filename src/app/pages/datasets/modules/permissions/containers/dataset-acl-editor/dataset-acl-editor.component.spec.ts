@@ -218,6 +218,18 @@ describe('DatasetAclEditorComponent', () => {
         expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pool/dataset']);
       });
 
+      it('skips unsaved changes dialog when Cancel is pressed with dirty form', async () => {
+        spectator.component.onAddItemPressed();
+        spectator.detectChanges();
+
+        const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+        await cancelButton.click();
+
+        const result = await firstValueFrom(spectator.component.canDeactivate());
+        expect(result).toBe(true);
+        expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
+      });
+
       it('adds another ace when Add item is pressed', async () => {
         const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
         await addAceButton.click();
