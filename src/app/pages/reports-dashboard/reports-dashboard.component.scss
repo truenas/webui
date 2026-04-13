@@ -4,8 +4,7 @@
 
 :host {
   align-items: stretch;
-  display: flex;
-  flex-direction: column;
+  display: block;
   height: 100%;
   justify-items: stretch;
   position: relative;
@@ -52,7 +51,7 @@
 }
 
 .master-container {
-  flex-grow: 1;
+  height: 100%;
 }
 
 cdk-virtual-scroll-viewport {

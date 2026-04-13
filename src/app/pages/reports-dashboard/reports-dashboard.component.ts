@@ -8,6 +8,7 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Option } from 'app/interfaces/option.interface';
 import { LayoutService } from 'app/modules/layout/layout.service';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
@@ -30,6 +31,7 @@ import { ReportsService } from './reports.service';
     CdkVirtualForOf,
     ReportComponent,
     MatCard,
+    PageContentComponent,
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
