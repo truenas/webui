@@ -23,6 +23,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -201,8 +202,10 @@ describe('CloudSyncFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
+        openSlideIns: jest.fn(() => 1),
       }),
       mockProvider(FilesystemService),
+      mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
