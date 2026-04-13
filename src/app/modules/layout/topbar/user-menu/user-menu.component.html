@@ -1,23 +1,21 @@
 @if ((loggedInUser$ | async); as user) {
-  <div class="user-menu-wrapper">
+  <div class="user-menu-wrapper gap-2 mx-2">
+    @if (user.pw_name) {
+      <div
+        class="bg-background! h-[50px]! w-[200px]! rounded-full! px-4 flex items-center justify-center !text-foreground"
+      >
+        {{ user.pw_name }}
+      </div>
+    }
     <button
       name="Settings"
       mat-icon-button
-      class="topbar-button-right bg-background! h-[50px]! rounded-full! px-4 flex items-center"
+      class="bg-background! h-[50px]! w-[50px]! rounded-full! flex items-center justify-center"
       ixTest="user-menu"
       [matTooltip]="tooltips.settings | translate"
       [ixUiSearch]="searchableElements.elements.userMenu"
       [matMenuTriggerFor]="userMenu"
     >
-      @if (user.pw_name) {
-        <span
-          class="username !text-foreground"
-          [matTooltip]="user.pw_name"
-          [matMenuTriggerFor]="userMenu"
-        >
-          {{ user.pw_name }}
-        </span>
-      }
       <tn-icon size="lg" name="app-account_circle" library="custom" class="!text-foreground"></tn-icon>
     </button>
 
