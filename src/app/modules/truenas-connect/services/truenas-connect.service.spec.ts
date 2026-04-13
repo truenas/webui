@@ -192,7 +192,67 @@ describe('TruenasConnectService', () => {
     expect(mockTncWindow.focus).toHaveBeenCalled();
   });
 
-  it('should test getConfig method', () => {
+  it('should not reload page when navigating to same URL in existing window', () => {
+    const windowMock = spectator.inject(WINDOW) as unknown as jest.Mocked<Window>;
+    const sameUrl = 'https://same-url.com';
+
+    // Mock an existing window object that's already on the target URL
+    const mockTncWindow = {
+      closed: false,
+      location: { href: sameUrl },
+      focus: jest.fn(),
+    };
+    windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
+
+    // First connection - open window
+    spectator.service.openTruenasConnectWindow(sameUrl);
+    expect(windowMock.open).toHaveBeenCalledTimes(1);
+
+    // Reset focus mock and location.href setter
+    mockTncWindow.focus.mockClear();
+    const originalHref = mockTncWindow.location.href;
+
+    // Second connection with same URL - should only focus, not navigate
+    spectator.service.openTruenasConnectWindow(sameUrl);
+
+    // Should call open again with empty URL (focus only) and not change location
+    expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
+    expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
+    expect(mockTncWindow.location.href).toBe(originalHref); // URL unchanged
+  });
+
+  it('should focus existing window without navigation even with different URL', () => {
+    const windowMock = spectator.inject(WINDOW) as unknown as jest.Mocked<Window>;
+    const firstUrl = 'https://first-url.com';
+    const secondUrl = 'https://second-url.com';
+
+    // Mock an existing window object
+    const mockTncWindow = {
+      closed: false,
+      location: { href: firstUrl },
+      focus: jest.fn(),
+    };
+    windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
+
+    // First connection
+    spectator.service.openTruenasConnectWindow(firstUrl);
+    expect(windowMock.open).toHaveBeenCalledTimes(1);
+
+    // Reset focus mock
+    mockTncWindow.focus.mockClear();
+
+    // Second connection with different URL - should only focus, no navigation
+    spectator.service.openTruenasConnectWindow(secondUrl);
+
+    // Should call open with empty URL (focus only) and not navigate
+    expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
+    expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
+    expect(mockTncWindow.location.href).toBe(firstUrl); // URL unchanged - stays at original
+  });
+
+  it('should fetch config and subscribe to updates when authenticated', () => {
     expect(spectator.service.config()).toEqual(config);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('tn_connect.config');
     expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('tn_connect.config');
