@@ -1,4 +1,3 @@
-import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard } from '@angular/material/card';
@@ -26,9 +25,6 @@ import { ReportsService } from './reports.service';
     PageHeaderComponent,
     ReportsGlobalControlsComponent,
     UiSearchDirective,
-    CdkVirtualScrollViewport,
-    CdkFixedSizeVirtualScroll,
-    CdkVirtualForOf,
     ReportComponent,
     MatCard,
     PageContentComponent,

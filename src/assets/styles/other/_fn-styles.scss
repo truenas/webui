@@ -9,7 +9,8 @@
 /*---- Globals -----*/
 html {
   font-size: 87.5%
-    /* 14px */;
+    /* 14px */
+  ;
 }
 
 html,
@@ -209,25 +210,25 @@ body .mat-mdc-select-trigger {
   margin-right: 16px;
 }
 
-.scrollbar {
-  --sb-track-color: #fff;
-  --sb-thumb-color: #6715ff;
-  --sb-size: 15px;
+// .scrollbar {
+//   --sb-track-color: #fff;
+//   --sb-thumb-color: #6715ff;
+//   --sb-size: 15px;
 
-  &::-webkit-scrollbar {
-    width: var(--sb-size);
-  }
+//   &::-webkit-scrollbar {
+//     width: var(--sb-size);
+//   }
 
-  &::-webkit-scrollbar-track {
-    background: var(--sb-track-color);
-    border-radius: 25px;
-  }
+//   &::-webkit-scrollbar-track {
+//     background: var(--sb-track-color);
+//     border-radius: 25px;
+//   }
 
-  &::-webkit-scrollbar-thumb {
-    background: var(--sb-thumb-color);
-    border-radius: 25px;
-  }
-}
+//   &::-webkit-scrollbar-thumb {
+//     background: var(--sb-thumb-color);
+//     border-radius: 25px;
+//   }
+// }
 
 /*-------- Chart js ---------*/
 .chart {

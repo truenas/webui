@@ -10,8 +10,8 @@
     class="master-container"
     [ixUiSearch]="searchableElements.elements.reporting"
   >
-    <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
-      <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">
+    @for (key of visibleReports; track key; let i = $index) {
+      <div class="report-container">
         @if (activeReports[key] && activeReports[key].identifiers.length > 0) {
           <ix-report
             [report]="activeReports[key]"
@@ -24,8 +24,8 @@
           ></ix-report>
         }
       </div>
-      <div class="bottom-spacer"></div>
-    </cdk-virtual-scroll-viewport>
+    }
+    <div class="bottom-spacer h-2"></div>
   </div>
 } @else {
   @for (_ of [1,2,3,4]; track _) {

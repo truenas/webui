@@ -59,7 +59,7 @@
       display: flex;
       height: 32px;
 
-      > h4 {
+      >h4 {
         display: flex;
         gap: 8px;
       }
@@ -267,7 +267,7 @@ span.disk-detail-subtitle {
   display: table-row;
 }
 
-.disk-detail-item > div {
+.disk-detail-item>div {
   display: table-cell;
 }
 
@@ -368,8 +368,15 @@ div.line-chart-tools {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 32px;
   justify-content: flex-end;
+
+  .steps-group,
+  .zoom-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
   .mat-icon-button {
     align-items: center;
@@ -423,7 +430,7 @@ div.line-chart-tools ul {
   background-size: contain;
 }
 
-.data-container > div {
+.data-container>div {
   margin: 8px 16px;
   text-align: left;
 }
