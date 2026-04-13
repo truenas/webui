@@ -11,8 +11,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [FileSizePipe, TranslateModule, TestDirective],
 })
 export class IxCellSizeComponent<T> extends ColumnComponent<T> {
-  get size(): number {
-    return this.value as number;
+  get size(): number | null | undefined {
+    return this.value as number | null | undefined;
   }
 }
 

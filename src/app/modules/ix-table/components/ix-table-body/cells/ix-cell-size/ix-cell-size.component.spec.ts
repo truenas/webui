@@ -3,7 +3,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxCellSizeComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 
-interface TestTableData { numberField: number }
+interface TestTableData { numberField: number | null }
 
 describe('IxCellSizeComponent', () => {
   let spectator: Spectator<IxCellSizeComponent<TestTableData>>;
@@ -29,7 +29,7 @@ describe('IxCellSizeComponent', () => {
 
   it('shows N/A when value is null', () => {
     spectator.component.propertyName = 'numberField';
-    spectator.component.setRow({ numberField: null } as unknown as TestTableData);
+    spectator.component.setRow({ numberField: null });
     spectator.detectChanges();
 
     expect(spectator.element.textContent!.trim()).toBe('N/A');
