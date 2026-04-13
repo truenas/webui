@@ -1,11 +1,12 @@
-/* eslint-disable @angular-eslint/component-max-inline-declarations */
+/* eslint-disable @angular-eslint/component-max-inline-declarations, max-classes-per-file */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, throwError } from 'rxjs';
+import { EMPTY, of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -50,6 +51,41 @@ describe('IxFormComponent', () => {
     form = this.fb.group({
       name: [''],
       description: [''],
+    });
+
+    handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+  }
+
+  @Component({
+    template: `
+      <ix-form
+        [formGroup]="form"
+        [editData]="editData"
+        [addTitle]="'Add Group'"
+        [editTitle]="'Edit Group'"
+        [requiredRoles]="[role]"
+        [submitHandler]="handleSubmit"
+      >
+        <ix-fieldset>
+          <ix-input formControlName="name" [label]="'Name'" />
+        </ix-fieldset>
+        <button ixExtraActions mat-button type="button">Advanced Options</button>
+      </ix-form>
+    `,
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'ix-auto-title-host',
+    imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent, MatButton],
+  })
+  class AutoTitleHostComponent {
+    ixForm = viewChild.required(IxFormComponent);
+    role = Role.FullAdmin;
+    editData: Record<string, unknown> | null = null;
+
+    private fb = inject(FormBuilder);
+
+    form = this.fb.group({
+      name: [''],
     });
 
     handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
@@ -117,6 +153,42 @@ describe('IxFormComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Saved!');
       expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
     });
+
+    it('passes the API result to onSuccess callback', async () => {
+      const onSuccessSpy = jest.fn();
+      const apiResult = { id: 42, name: 'Created' };
+      submitHandlerSpy.mockReturnValue({
+        request$: of(apiResult),
+        successMessage: 'Saved!' as never,
+        onSuccess: onSuccessSpy,
+      });
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(onSuccessSpy).toHaveBeenCalledWith(apiResult);
+    });
+
+    it('resets isSubmitting when observable completes without emitting', async () => {
+      submitHandlerSpy.mockReturnValue({
+        request$: EMPTY,
+        successMessage: 'Saved!' as never,
+      });
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const ixForm = spectator.component.ixForm();
+      expect(ixForm.isSubmitting()).toBe(false);
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      expect(slideInRef.close).not.toHaveBeenCalled();
+    });
   });
 
   describe('edit mode', () => {
@@ -183,6 +255,43 @@ describe('IxFormComponent', () => {
       expect(ixForm.isSubmitting()).toBe(false);
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
         .toHaveBeenCalledWith(error, spectator.component.form);
+    });
+  });
+
+  describe('auto title and extra actions', () => {
+    const createAutoTitleComponent = createComponentFactory({
+      component: AutoTitleHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(FormErrorHandlerService),
+        mockProvider(SnackbarService),
+        mockProvider(SlideIn, {
+          openSlideIns: jest.fn(() => 1),
+        }),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('uses addTitle in create mode', () => {
+      const autoTitleSpectator = createAutoTitleComponent();
+      const ixForm = autoTitleSpectator.component.ixForm();
+      expect(ixForm.resolvedTitle()).toBe('Add Group');
+    });
+
+    it('uses editTitle in edit mode', () => {
+      const autoTitleSpectator = createAutoTitleComponent({ detectChanges: false });
+      autoTitleSpectator.component.editData = { name: 'wheel' };
+      autoTitleSpectator.detectChanges();
+      const ixForm = autoTitleSpectator.component.ixForm();
+      expect(ixForm.resolvedTitle()).toBe('Edit Group');
+    });
+
+    it('renders extra action buttons via ixExtraActions slot', () => {
+      const autoTitleSpectator = createAutoTitleComponent();
+      const extraButton = autoTitleSpectator.query('button[ixExtraActions]');
+      expect(extraButton).toBeTruthy();
+      expect(extraButton).toHaveText('Advanced Options');
     });
   });
 });

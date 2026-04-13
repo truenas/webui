@@ -1,6 +1,6 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles()"
-  [title]="title()"
+  [title]="resolvedTitle()"
   [loading]="isLoading()"
 ></ix-modal-header>
 
@@ -10,6 +10,8 @@
       <ng-content />
 
       <ix-form-actions>
+        <ng-content select="[ixExtraActions]" />
+
         <button
           *ixRequiresRoles="requiredRoles()"
           mat-button

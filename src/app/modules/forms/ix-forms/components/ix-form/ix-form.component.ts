@@ -50,9 +50,9 @@ export interface SubmitResult {
   /**
    * Optional callback invoked after the request succeeds and before
    * the slide-in closes. Use for side effects like dispatching store
-   * actions.
+   * actions. Receives the value emitted by request$.
    */
-  onSuccess?: () => void;
+  onSuccess?: (result: unknown) => void;
 
   /**
    * Optional custom error handler. Return true if the error was handled
@@ -71,13 +71,25 @@ export interface SubmitResult {
  * - Dirty confirmation: auto-registers with SlideInRef (when present).
  * - Submit lifecycle: loading → API call → success snackbar + close / error handling.
  *
- * Simple usage (auto-patches form with editData):
+ * Simple usage (auto title from addTitle/editTitle, auto-patches form with editData):
  * ```html
- * <ix-form [formGroup]="form" [editData]="existingEntity" [title]="title"
+ * <ix-form [formGroup]="form" [editData]="existingEntity"
+ *          [addTitle]="'Add Group' | translate"
+ *          [editTitle]="'Edit Group' | translate"
  *          [requiredRoles]="requiredRoles" [submitHandler]="handleSubmit">
  *   <ix-fieldset [title]="'Options' | translate">
  *     <ix-input formControlName="name" [label]="'Name' | translate" />
  *   </ix-fieldset>
+ * </ix-form>
+ * ```
+ *
+ * With extra action buttons:
+ * ```html
+ * <ix-form [formGroup]="form" [addTitle]="'Add NFS Share' | translate" ...>
+ *   <ix-fieldset>...</ix-fieldset>
+ *   <button ixExtraActions mat-button (click)="toggleAdvanced()">
+ *     {{ 'Advanced Options' | translate }}
+ *   </button>
  * </ix-form>
  * ```
  *
@@ -88,19 +100,6 @@ export interface SubmitResult {
  *          [requiredRoles]="requiredRoles" [submitHandler]="handleSubmit">
  *   ...
  * </ix-form>
- * ```
- * ```typescript
- * formSnapshot = signal<Record<string, unknown> | null>(null);
- * setupLoading = signal(false);
- *
- * ngOnInit() {
- *   this.setupLoading.set(true);
- *   this.api.call(...).subscribe(data => {
- *     this.form.patchValue(data);
- *     this.formSnapshot.set(this.form.getRawValue());
- *     this.setupLoading.set(false);
- *   });
- * }
  * ```
  */
 @Component({
@@ -140,9 +139,22 @@ export class IxFormComponent implements OnInit {
   readonly initialFormSnapshot = input<Record<string, unknown> | null>(null);
 
   /**
-   * Title shown in the modal header.
+   * Explicit title shown in the modal header.
+   * Takes precedence over addTitle/editTitle.
    */
   readonly title = input<string>('');
+
+  /**
+   * Title for create mode (e.g. 'Add Group' | translate).
+   * Used when no explicit title is set and the form is in create mode.
+   */
+  readonly addTitle = input<string>('');
+
+  /**
+   * Title for edit mode (e.g. 'Edit Group' | translate).
+   * Used when no explicit title is set and the form is in edit mode.
+   */
+  readonly editTitle = input<string>('');
 
   /**
    * Roles required to submit the form.
@@ -184,6 +196,14 @@ export class IxFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
+  /**
+   * Resolved title: explicit title wins, otherwise picks addTitle or editTitle
+   * based on mode.
+   */
+  readonly resolvedTitle = computed(() => {
+    return this.title() || (this.isEdit ? this.editTitle() : this.addTitle());
+  });
+
   private get snapshot(): Record<string, unknown> | null {
     return this.initialFormSnapshot() ?? this.internalSnapshot;
   }
@@ -217,17 +237,24 @@ export class IxFormComponent implements OnInit {
     } = this.submitHandler()(event);
 
     this.isSubmitting.set(true);
+    let emitted = false;
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
+        emitted = true;
         this.snackbar.success(successMessage);
         this.isSubmitting.set(false);
-        onSuccess?.();
+        onSuccess?.(result);
         this.slideInRef?.close({ response: result ?? true });
       },
       error: (error: unknown) => {
         this.isSubmitting.set(false);
         if (!onError?.(error)) {
           this.errorHandler.handleValidationErrors(error, this.formGroup());
+        }
+      },
+      complete: () => {
+        if (!emitted) {
+          this.isSubmitting.set(false);
         }
       },
     });
