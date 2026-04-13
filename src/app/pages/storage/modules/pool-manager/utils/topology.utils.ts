@@ -121,6 +121,28 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
   return poolManagerTopology;
 }
 
+/**
+ * Non-data vdevs (special, dedup) don't support DRAID, but should match the
+ * redundancy level of the data vdevs. This maps any layout to its non-DRAID
+ * equivalent with the same parity level.
+ */
+export function nonDraidEquivalent(layout: CreateVdevLayout): CreateVdevLayout {
+  switch (layout) {
+    case CreateVdevLayout.Draid1: return CreateVdevLayout.Raidz1;
+    case CreateVdevLayout.Draid2: return CreateVdevLayout.Raidz2;
+    case CreateVdevLayout.Draid3: return CreateVdevLayout.Raidz3;
+    default: return layout;
+  }
+}
+
+export const nonDraidLayouts: CreateVdevLayout[] = [
+  CreateVdevLayout.Stripe,
+  CreateVdevLayout.Mirror,
+  CreateVdevLayout.Raidz1,
+  CreateVdevLayout.Raidz2,
+  CreateVdevLayout.Raidz3,
+];
+
 export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType): boolean {
   return [
     CreateVdevLayout.Draid1,

@@ -12,7 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { nonDraidEquivalent, nonDraidLayouts, parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-metadata-wizard-step',
@@ -46,7 +46,7 @@ export class MetadataWizardStepComponent implements OnInit {
   readonly helptext = helptextPoolCreation;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
-  protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
+  protected allowedLayouts = nonDraidLayouts;
 
   goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -72,7 +72,8 @@ export class MetadataWizardStepComponent implements OnInit {
         const parsedVdevName = parseDraidVdevName(metadataTopology[0].name);
         type = parsedVdevName.layout as unknown as TopologyItemType;
       }
-      this.allowedLayouts = [type] as unknown as CreateVdevLayout[];
+      const layout = nonDraidEquivalent(type as unknown as CreateVdevLayout);
+      this.allowedLayouts = [layout];
       this.canChangeLayout = false;
       this.cdr.markForCheck();
     });

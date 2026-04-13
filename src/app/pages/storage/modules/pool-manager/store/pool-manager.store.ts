@@ -30,6 +30,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import {
   isDraidLayout,
+  nonDraidEquivalent,
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -204,13 +205,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       case VDevType.Cache:
         return of([CreateVdevLayout.Stripe]);
       case VDevType.Dedup:
-        return this.select((state) => [state.topology[VDevType.Data].layout]);
+      case VDevType.Special:
+        return this.select((state) => [nonDraidEquivalent(state.topology[VDevType.Data].layout)]);
       case VDevType.Log:
         return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
       case VDevType.Spare:
         return of([CreateVdevLayout.Stripe]);
-      case VDevType.Special:
-        return this.select((state) => [state.topology[VDevType.Data].layout]);
       default:
         return of(Object.values(CreateVdevLayout));
     }

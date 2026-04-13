@@ -5,6 +5,7 @@ import {
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
+  nonDraidEquivalent,
   parseDraidVdevName,
   topologyCategoryToDisks,
   topologyToDisks, topologyToPayload,
@@ -127,6 +128,22 @@ describe('topologyToPayload', () => {
         },
       ],
     });
+  });
+});
+
+describe('nonDraidEquivalent', () => {
+  it('maps DRAID layouts to equivalent RAIDZ layouts', () => {
+    expect(nonDraidEquivalent(CreateVdevLayout.Draid1)).toBe(CreateVdevLayout.Raidz1);
+    expect(nonDraidEquivalent(CreateVdevLayout.Draid2)).toBe(CreateVdevLayout.Raidz2);
+    expect(nonDraidEquivalent(CreateVdevLayout.Draid3)).toBe(CreateVdevLayout.Raidz3);
+  });
+
+  it('returns non-DRAID layouts unchanged', () => {
+    expect(nonDraidEquivalent(CreateVdevLayout.Mirror)).toBe(CreateVdevLayout.Mirror);
+    expect(nonDraidEquivalent(CreateVdevLayout.Stripe)).toBe(CreateVdevLayout.Stripe);
+    expect(nonDraidEquivalent(CreateVdevLayout.Raidz1)).toBe(CreateVdevLayout.Raidz1);
+    expect(nonDraidEquivalent(CreateVdevLayout.Raidz2)).toBe(CreateVdevLayout.Raidz2);
+    expect(nonDraidEquivalent(CreateVdevLayout.Raidz3)).toBe(CreateVdevLayout.Raidz3);
   });
 });
 
