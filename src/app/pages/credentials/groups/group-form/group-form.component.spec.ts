@@ -16,6 +16,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 
@@ -75,6 +76,7 @@ describe('GroupFormComponent', () => {
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
+      mockProvider(SnackbarService),
       provideMockStore(),
       mockAuth(),
     ],

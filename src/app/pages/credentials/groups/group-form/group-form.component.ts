@@ -1,32 +1,25 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, computed,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, computed,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of, shareReplay } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
@@ -38,44 +31,28 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './group-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    IxFormComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
     IxChipsComponent,
     IxCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
   ],
 })
 export class GroupFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<GroupSlice>>(Store);
-  private snackbar = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
+  private slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AccountWrite];
 
-  get isNew(): boolean {
-    return !this.editingGroup;
-  }
+  private editingGroup = this.slideInRef.getData();
 
-  get title(): string {
-    return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
-  }
-
-  protected isFormLoading = signal(false);
-  protected editingGroup: Group | undefined;
+  protected formSnapshot = signal<Record<string, unknown> | null>(null);
 
   form = this.fb.group({
     gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
@@ -113,6 +90,10 @@ export class GroupFormComponent implements OnInit {
         );
       }
 
+      if (this.editingGroup) {
+        this.formSnapshot.set(this.form.getRawValue() as Record<string, unknown>);
+      }
+
       return privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }));
     }),
     shareReplay({ bufferSize: 1, refCount: true }),
@@ -124,13 +105,6 @@ export class GroupFormComponent implements OnInit {
         && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
     });
   });
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingGroup = this.slideInRef.getData();
-  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -144,6 +118,44 @@ export class GroupFormComponent implements OnInit {
           .filter((label) => label.trim().toLowerCase().includes(query.trim().toLowerCase()));
       }),
     );
+  };
+
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    const values = this.form.getRawValue();
+    const commonBody = {
+      name: values.name,
+      smb: values.smb,
+      sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+      sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
+    };
+
+    const request$ = (this.editingGroup
+      ? this.api.call('group.update', [this.editingGroup.id, commonBody])
+      : this.api.call('group.create', [{ ...commonBody, gid: values.gid as number }])
+    ).pipe(
+      switchMap((id) => this.api.call('group.query', [[['id', '=', id]]])),
+      map((groups) => groups[0]),
+      switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
+    );
+
+    return {
+      request$,
+      successMessage: event.isEdit
+        ? this.translate.instant('Group updated')
+        : this.translate.instant('Group added'),
+      onSuccess: (result: unknown) => {
+        const group = result as Group;
+        const roles = this.privileges()
+          .filter((privilege) => this.form.getRawValue().privileges.some((id) => id === privilege.id))
+          .map((role) => role.builtin_name) as Role[];
+
+        if (event.isEdit) {
+          this.store$.dispatch(groupChanged({ group: { ...group, roles } }));
+        } else {
+          this.store$.dispatch(groupAdded({ group: { ...group, roles } }));
+        }
+      },
+    };
   };
 
   protected setupForm(): void {
@@ -165,65 +177,10 @@ export class GroupFormComponent implements OnInit {
       this.setNamesInUseValidator(this.editingGroup.group);
     } else {
       this.api.call('group.get_next_gid').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((nextId) => {
-        this.form.patchValue({
-          gid: nextId,
-        });
-        this.cdr.markForCheck();
+        this.form.patchValue({ gid: nextId });
       });
       this.setNamesInUseValidator();
     }
-  }
-
-  protected onSubmit(): void {
-    const values = this.form.value;
-    const commonBody = {
-      name: values.name,
-      smb: values.smb,
-      sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
-      sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
-    };
-
-    this.isFormLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingGroup) {
-      request$ = this.api.call('group.update', [
-        this.editingGroup.id,
-        commonBody,
-      ]);
-    } else {
-      request$ = this.api.call('group.create', [{
-        ...commonBody,
-        gid: values.gid,
-      }]);
-    }
-
-    request$.pipe(
-      switchMap((id) => this.api.call('group.query', [[['id', '=', id]]])),
-      map((groups) => groups[0]),
-      switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (group) => {
-        const roles = this.privileges()
-          .filter((privilege) => this.form.getRawValue().privileges.some((id) => id === privilege.id))
-          .map((role) => role.builtin_name) as Role[];
-
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Group added'));
-          this.store$.dispatch(groupAdded({ group: { ...group, roles } }));
-        } else {
-          this.snackbar.success(this.translate.instant('Group updated'));
-          this.store$.dispatch(groupChanged({ group: { ...group, roles } }));
-        }
-
-        this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
   }
 
   private togglePrivilegesForGroup(groupId: number): Observable<Privilege[]> {
