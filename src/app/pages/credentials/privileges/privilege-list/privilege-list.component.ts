@@ -6,7 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
-  filter, map, shareReplay, switchMap, take,
+  map, shareReplay, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -39,7 +39,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/privileges/privilege-list/privilege-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-privilege-list',
@@ -68,7 +67,6 @@ export class PrivilegeListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);
-  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -158,36 +156,24 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   openForm(privilege?: Privilege): void {
-    this.slideIn.open(PrivilegeFormComponent, { data: privilege }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.getPrivileges();
-    });
+    this.slideIn.open(PrivilegeFormComponent, { data: privilege })
+      .onSuccess(() => this.getPrivileges(), this.destroyRef);
   }
 
   doDelete(privilege: Privilege): void {
     this.dialogService
-      .confirm({
+      .confirmDelete({
         title: this.translate.instant('Delete Privilege'),
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: privilege.name,
         }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
+        call: () => this.api.call('privilege.delete', [privilege.id]),
       })
       .pipe(
-        filter(Boolean),
-        switchMap(() => this.api.call('privilege.delete', [privilege.id])),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe({
-        next: () => {
-          this.getPrivileges();
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-        },
+      .subscribe(() => {
+        this.getPrivileges();
       });
   }
 

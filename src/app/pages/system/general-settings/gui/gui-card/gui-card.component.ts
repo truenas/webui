@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -41,7 +40,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private slideIn = inject(SlideIn);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = guiCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -54,8 +52,6 @@ export class GuiCardComponent {
   readonly helptext = helptext;
 
   openSettings(): void {
-    this.slideIn.open(GuiFormComponent).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    this.slideIn.open(GuiFormComponent);
   }
 }

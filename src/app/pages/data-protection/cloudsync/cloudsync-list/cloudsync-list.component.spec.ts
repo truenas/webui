@@ -12,6 +12,7 @@ import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -30,6 +31,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -112,7 +114,7 @@ describe('CloudSyncListComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockAuth(),
       mockApi([
@@ -122,9 +124,10 @@ describe('CloudSyncListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -205,22 +208,18 @@ describe('CloudSyncListComponent', () => {
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
-
     await table.expandRow(0);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       message: 'Delete Cloud Sync Task <b>"custom-cloudlist"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
+      call: expect.any(Function),
+      successMessage: 'Cloud Sync Task «custom-cloudlist» deleted.',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» deleted.');
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -247,7 +246,7 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Test Cloud Sync',
-      message: 'Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.',
+      message: 'Start a dry run test of this cloud sync task? The system will connect to the cloud service provider and simulate transferring a file. No data will be sent or received.',
       hideCheckbox: true,
     });
 

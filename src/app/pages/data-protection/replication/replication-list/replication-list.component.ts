@@ -249,44 +249,23 @@ export class ReplicationListComponent implements OnInit {
 
   protected openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(
-        ReplicationFormComponent,
-        { data: row, wide: true },
-      ).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe({
-        next: () => {
-          this.getReplicationTasks();
-        },
-      });
+      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
+        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-        filter((response) => !!response.response),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent, { wide: true })
+        .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
     }
   }
 
   protected doDelete(row: ReplicationTask): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: row.name,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('replication.delete', [row.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.loader.withLoader())),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getReplicationTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getReplicationTasks());
   }
 
   protected onListFiltered(query: string): void {

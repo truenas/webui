@@ -115,7 +115,7 @@ export class CloudSyncFormComponent implements OnInit {
   protected matDialog = inject(MatDialog);
   private filesystemService = inject(FilesystemService);
   protected cloudCredentialService = inject(CloudCredentialService);
-  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>>(SlideInRef);
+  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask>>(SlideInRef);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
@@ -806,7 +806,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.slideInRef.close({ response: false });
+    this.slideInRef.close({ response: undefined });
   }
 
   private getInitialData(): void {

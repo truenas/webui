@@ -310,10 +310,7 @@ export class DatasetQuotasListComponent implements OnInit {
   doAdd(): void {
     this.slideIn.open(DatasetQuotaAddFormComponent, {
       data: { quotaType: this.quotaType, datasetId: this.datasetId },
-    }).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getQuotas());
+    }).onSuccess(() => this.getQuotas(), this.destroyRef);
   }
 
   private getQuotaType(): void {
@@ -347,10 +344,7 @@ export class DatasetQuotasListComponent implements OnInit {
   private doEdit(row: DatasetQuota): void {
     this.slideIn.open(DatasetQuotaEditFormComponent, {
       data: { quotaType: this.quotaType, datasetId: this.datasetId, id: row.id },
-    }).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getQuotas());
+    }).onSuccess(() => this.getQuotas(), this.destroyRef);
   }
 
   private doDelete(row: DatasetQuota): void {

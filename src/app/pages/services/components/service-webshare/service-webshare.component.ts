@@ -96,7 +96,7 @@ export class ServiceWebshareComponent implements OnInit {
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

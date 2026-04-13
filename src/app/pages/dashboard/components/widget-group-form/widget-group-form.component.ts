@@ -44,7 +44,7 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   ],
 })
 export class WidgetGroupFormComponent {
-  slideInRef = inject<SlideInRef<WidgetGroup | undefined, WidgetGroup | false>>(SlideInRef);
+  slideInRef = inject<SlideInRef<WidgetGroup | undefined, WidgetGroup | undefined>>(SlideInRef);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 

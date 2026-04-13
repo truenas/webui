@@ -28,7 +28,10 @@ export const builtinGroupsToggled = createAction('[Preferences] Builtin Groups T
 export const snapshotExtraColumnsToggled = createAction('[Preferences] Snapshot Extra Columns Toggled');
 
 export const themeChangedInGuiForm = createAction('[Preferences] Theme Changed In GUI Form', props<{ theme: string }>());
-export const guiFormSubmitted = createAction('[Preferences] GUI Form Submitted', props<{ theme: string }>());
+export const guiFormSubmitted = createAction(
+  '[Preferences] GUI Form Submitted',
+  props<{ theme: string; syncThemeWithOS: boolean; lightTheme: string; darkTheme: string }>(),
+);
 export const guiFormClosedWithoutSaving = createAction('[Preferences] GUI Form Closed Without Saving');
 
 export const dashboardStateLoaded = createAction('[Preferences API] Dashboard State Loaded', props<{ dashboardState: DashConfigItem[] }>());

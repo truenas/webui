@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import { BehaviorSubject, filter, switchMap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -147,30 +147,18 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected openForm(row?: NfsShare): void {
-    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.dataProvider.load();
-    });
+    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } })
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected doDelete(nfs: NfsShare): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Are you sure you want to delete NFS Share <b>"{path}"</b>?', { path: nfs.path }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('sharing.nfs.delete', [nfs.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('sharing.nfs.delete', [nfs.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.dataProvider.load();
     });
   }
 

@@ -3,6 +3,7 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
@@ -14,6 +15,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('TruenasConnectService', () => {
   let spectator: SpectatorService<TruenasConnectService>;
@@ -60,6 +62,9 @@ describe('TruenasConnectService', () => {
       }),
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn().mockReturnValue((source: unknown) => source),
+      }),
+      mockProvider(WebSocketStatusService, {
+        isAuthenticated$: of(true),
       }),
     ],
   });

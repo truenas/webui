@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
@@ -33,7 +34,7 @@ describe('CustomAppButtonComponent', () => {
         selectedPool$: of('selected pool'),
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });

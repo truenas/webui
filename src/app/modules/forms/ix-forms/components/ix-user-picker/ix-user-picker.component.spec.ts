@@ -12,7 +12,7 @@ import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-com
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 
 class FakeProvider implements IxComboboxProvider {
   constructor(private options: Option[]) { }
@@ -185,10 +185,7 @@ describe('IxUserPickerComponent', () => {
       let addNewSpectator: SpectatorHost<IxUserPickerComponent>;
       const addNewFormControl = new FormControl<unknown>();
       const mockSlideIn = {
-        open: jest.fn(() => of({
-          response: { username: 'newuser' } as User,
-          error: false,
-        } as SlideInResponse<User>)),
+        open: jest.fn(() => SlideInResult.success({ username: 'newuser' } as User)),
       };
 
       const createHostWithSlideIn = createHostFactory({
@@ -283,10 +280,7 @@ describe('IxUserPickerComponent', () => {
       let uidSpectator: SpectatorHost<IxUserPickerComponent>;
       const uidFormControl = new FormControl<unknown>();
       const mockSlideInWithUid = {
-        open: jest.fn(() => of({
-          response: { username: 'testuser', uid: 1001, id: 500 } as User,
-          error: false,
-        } as SlideInResponse<User>)),
+        open: jest.fn(() => SlideInResult.success({ username: 'testuser', uid: 1001, id: 500 } as User)),
       };
 
       const createHostWithUidProvider = createHostFactory({
@@ -337,10 +331,7 @@ describe('IxUserPickerComponent', () => {
       let cancelSpectator: SpectatorHost<IxUserPickerComponent>;
       const cancelFormControl = new FormControl<unknown>();
       const mockSlideIn = {
-        open: jest.fn(() => of({
-          response: null,
-          error: true,
-        } as SlideInResponse<User>)),
+        open: jest.fn(() => SlideInResult.cancel()),
       };
 
       const createHostWithSlideIn = createHostFactory({

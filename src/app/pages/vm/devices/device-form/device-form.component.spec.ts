@@ -14,6 +14,7 @@ import {
 import { transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -25,6 +26,7 @@ import {
   VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -99,6 +101,13 @@ describe('DeviceFormComponent', () => {
           '/dev/zvol/bassein/zvol1': 'bassein/zvol1',
           '/dev/zvol/bassein/zvol+with+spaces': 'bassein/zvol with spaces',
         }),
+        mockCall('vm.device.query', [
+          { vm: 2, attributes: { dtype: VmDeviceType.Disk, path: '/dev/zvol/bassein/zvol1' } },
+        ] as VmDiskDevice[]),
+        mockCall('vm.query', [
+          { id: 1, name: 'test-vm' },
+          { id: 2, name: 'other-vm' },
+        ] as VirtualMachine[]),
         mockCall('vm.device.usb_controller_choices', {
           'piix3-uhci': 'piix3-uhci',
           'pci-ohci': 'pci-ohci',
@@ -106,6 +115,7 @@ describe('DeviceFormComponent', () => {
         mockCall('system.advanced.config', {
           isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
         } as AdvancedConfig),
+        mockCall('pool.filesystem_choices', ['bassein', 'bassein/datasets']),
       ]),
       mockAuth(),
       mockProvider(DialogService, {
@@ -425,6 +435,92 @@ describe('DeviceFormComponent', () => {
           order: 1001,
           vm: 45,
         }]);
+      });
+
+      it('does not show radio toggle when editing existing disk', async () => {
+        const radioGroups = await loader.getAllHarnesses(IxRadioGroupHarness);
+        expect(radioGroups).toHaveLength(0);
+      });
+    });
+
+    describe('adds disk with create new zvol', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('shows radio toggle when adding new disk device', async () => {
+        await form.fillForm({ Type: 'Disk' });
+        const radioGroups = await loader.getAllHarnesses(IxRadioGroupHarness);
+        expect(radioGroups).toHaveLength(1);
+      });
+
+      it('defaults to Use existing disk image', async () => {
+        await form.fillForm({ Type: 'Disk' });
+        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
+        expect(await radioGroup.getValue()).toBe('Use existing disk image');
+      });
+
+      it('shows Zvol Location and Size when Create new is selected', async () => {
+        await form.fillForm({ Type: 'Disk' });
+        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
+        await radioGroup.setValue('Create new disk image');
+        spectator.detectChanges();
+
+        const values = await form.getValues();
+        expect(values).toHaveProperty('Zvol Location');
+        expect(values).toHaveProperty('Size');
+        expect(values).not.toHaveProperty('Zvol');
+      });
+
+      it('shows Zvol select when Use existing is selected', async () => {
+        await form.fillForm({ Type: 'Disk' });
+        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
+        await radioGroup.setValue('Use existing disk image');
+        spectator.detectChanges();
+
+        const values = await form.getValues();
+        expect(values).toHaveProperty('Zvol');
+        expect(values).not.toHaveProperty('Zvol Location');
+        expect(values).not.toHaveProperty('Size');
+      });
+
+      it('submits with create_zvol when Create new is selected', async () => {
+        await form.fillForm({ Type: 'Disk' });
+        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
+        await radioGroup.setValue('Create new disk image');
+        spectator.detectChanges();
+
+        await form.fillForm({
+          'Zvol Location': 'bassein',
+          Size: '10 GiB',
+          Mode: 'VirtIO',
+          'Disk Sector Size': '512',
+        });
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [
+          expect.objectContaining({
+            vm: 45,
+            attributes: expect.objectContaining({
+              dtype: VmDeviceType.Disk,
+              create_zvol: true,
+              zvol_name: expect.stringMatching(/^bassein\/test-vm-/),
+              zvol_volsize: 10 * (2 ** 30),
+              type: VmDiskMode.Virtio,
+              logical_sectorsize: 512,
+              physical_sectorsize: 512,
+            }),
+          }),
+        ]);
       });
     });
   });

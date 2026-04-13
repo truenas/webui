@@ -9,7 +9,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, map, Subscription, switchMap, tap,
+  combineLatest, filter, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -87,12 +87,13 @@ export class ContainerLogsComponent implements OnInit {
     }
 
     this.logsChangedListener = this.matDialog.open(LogsDetailsDialog, { width: '400px' }).afterClosed().pipe(
-      tap((value: LogsDetailsDialog['form']['value'] | boolean) => {
-        if (typeof value === 'boolean' && !value) {
+      tap((value: LogsDetailsDialog['form']['value'] | undefined) => {
+        if (!value) {
           this.router.navigate(['/apps/installed/', this.train, this.appName]);
-          return;
         }
-
+      }),
+      filter(Boolean),
+      tap(() => {
         this.logs.set([]);
         this.isLoading.set(true);
       }),
@@ -100,7 +101,7 @@ export class ContainerLogsComponent implements OnInit {
         return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
           app_name: this.appName,
           container_id: this.containerId,
-          tail_lines: details?.tail_lines || this.defaultTailLines,
+          tail_lines: details.tail_lines || this.defaultTailLines,
         })}`);
       }),
       map((apiEvent) => apiEvent.fields),

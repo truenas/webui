@@ -6,9 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import {
-  filter, switchMap, tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { alertLevelLabels } from 'app/enums/alert-level.enum';
@@ -28,12 +26,12 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-alert-service-list',
@@ -61,11 +59,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class AlertServiceListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
-  private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -139,10 +137,7 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   protected addAlertService(): void {
-    this.slideIn.open(AlertServiceComponent).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getAlertServices());
+    this.slideIn.open(AlertServiceComponent).onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   protected onListFiltered(query: string): void {
@@ -157,22 +152,15 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   private editAlertService(row: AlertService): void {
-    this.slideIn.open(AlertServiceComponent, { data: row }).pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getAlertServices());
+    this.slideIn.open(AlertServiceComponent, { data: row }).onSuccess(() => this.getAlertServices(), this.destroyRef);
   }
 
   private confirmDeleteAlertService(alertService: AlertService): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
-      message: this.translate.instant('Delete Alert Service <b>"{name}"</b>?', {
-        name: alertService.name,
-      }),
+      message: this.translate.instant('Delete Alert Service <b>"{name}"</b>?', { name: alertService.name }),
+      call: () => this.api.call('alertservice.delete', [alertService.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('alertservice.delete', [alertService.id])),
-      this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getAlertServices());
   }

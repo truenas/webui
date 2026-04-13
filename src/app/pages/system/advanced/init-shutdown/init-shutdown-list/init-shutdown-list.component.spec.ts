@@ -2,7 +2,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
@@ -13,6 +12,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
@@ -55,10 +55,10 @@ describe('InitShutdownListComponent', () => {
         mockCall('initshutdownscript.delete'),
       ]),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of([])),
+        open: jest.fn(() => SlideInResult.success([])),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockAuth(),
     ],
@@ -91,6 +91,12 @@ describe('InitShutdownListComponent', () => {
   it('deletes an item when delete button is pressed', async () => {
     const deleteButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteButton.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: 'Confirmation',
+      message: 'Are you sure you want to delete this script?',
+      call: expect.any(Function),
+    });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
   });

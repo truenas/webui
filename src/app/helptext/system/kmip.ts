@@ -34,15 +34,15 @@ export const helptextSystemKmip = {
   },
 
   changeServer: {
-    tooltip: T('Move existing keys from the current key server to a new key server. \
- To switch to a different key server, key synchronization must be <i>Enabled</i>, then \
+    tooltip: T('Move existing keys from the current key server to a new key server.\
+ To switch to a different key server, key synchronization must be <i>Enabled</i>, then\
  enable this setting, update the key server connection configuration, and click <b>SAVE</b>.'),
   },
 
   validate: {
-    tooltip: T('Tests the server connection and verifies the chosen <b>Certificate</b> \
- chain. To test, configure the <i>Server</i> and <i>Port</i> values, select a \
- <i>Certificate</i> and <i>Certificate Authority</i>, enable this setting, and \
+    tooltip: T('Tests the server connection and verifies the chosen <b>Certificate</b>\
+ chain. To test, configure the <i>Server</i> and <i>Port</i> values, select a\
+ <i>Certificate</i> and <i>Certificate Authority</i>, enable this setting, and\
  click <b>SAVE</b>.'),
   },
 

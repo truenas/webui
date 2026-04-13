@@ -25,6 +25,7 @@ import {
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
@@ -70,9 +71,10 @@ const commonProviders = [
   mockProvider(SlideInRef, slideInRef),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),
+    confirmDelete: jest.fn(() => of(undefined)),
   }),
   mockProvider(SlideIn, {
-    open: jest.fn(() => of(true)),
+    open: jest.fn(() => SlideInResult.empty()),
   }),
   provideMockStore({
     selectors: [
@@ -177,7 +179,12 @@ describe('SmbListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      title: expect.any(String),
+      message: expect.any(String),
+      buttonText: expect.any(String),
+      call: expect.any(Function),
+    });
   });
 
   it('updates SMB Enabled status once mat-toggle is updated', async () => {

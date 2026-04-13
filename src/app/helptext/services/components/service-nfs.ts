@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextServiceNfs = {
   bindipTooltip: T('Select IP addresses to listen to for NFS requests.\
- Leave empty for NFS to listen to all available addresses. \
+ Leave empty for NFS to listen to all available addresses.\
  Static IPs need to be configured on the interface to appear on the list.'),
 
   serversTooltip: T('Enter an optimal number of threads used\
@@ -34,7 +34,7 @@ export const helptextServiceNfs = {
  href="https://linux.die.net/man/8/rpc.lockd"\
  target="_blank">rpc.lockd(8)</a>.'),
 
-  userdManageGids: T('Enable server-side management of group memberships. \
- This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client. \
+  userdManageGids: T('Enable server-side management of group memberships.\
+ This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client.\
  This can support more than 16 groups and provide more accurate group memberships.'),
 };

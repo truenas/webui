@@ -40,6 +40,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -86,6 +87,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private matDialog = inject(MatDialog);
   private download = inject(DownloadService);
@@ -184,38 +186,25 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   protected doDelete(replicationTask: ReplicationTask): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: replicationTask.name,
       }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('replication.delete', [replicationTask.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('replication.delete', [replicationTask.id])),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getReplicationTasks();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
-  }
-
-  protected addReplicationTask(): void {
-    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getReplicationTasks());
   }
 
+  protected addReplicationTask(): void {
+    this.slideIn.open(ReplicationWizardComponent, { wide: true })
+      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
+  }
+
   private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.getReplicationTasks());
+      .onSuccess(() => this.getReplicationTasks(), this.destroyRef);
   }
 
   protected runNow(row: ReplicationTask): void {

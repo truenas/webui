@@ -28,7 +28,6 @@ export class AddSubsystemNamespaceComponent {
   onSubmit(newNamespace: NamespaceChanges): void {
     this.slideInRef.close({
       response: newNamespace,
-      error: null,
     });
   }
 }

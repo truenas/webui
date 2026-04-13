@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  map, filter, switchMap, BehaviorSubject, of,
+  map, BehaviorSubject, of,
 } from 'rxjs';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -183,30 +183,18 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected openForm(row?: SmbShare): void {
-    this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.dataProvider.load();
-    });
+    this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } })
+      .onSuccess(() => this.dataProvider.load(), this.destroyRef);
   }
 
   protected doDelete(smb: SmbShare): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
-      buttonText: this.translate.instant('Delete'),
-      buttonColor: 'warn',
+      call: () => this.api.call('sharing.smb.delete', [smb.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('sharing.smb.delete', [smb.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.dataProvider.load();
     });
   }
 
@@ -217,12 +205,8 @@ export class SmbCardComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (shareAcl: SmbSharesec) => {
-          this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
-            filter((response) => !!response.response),
-            takeUntilDestroyed(this.destroyRef),
-          ).subscribe(() => {
-            this.dataProvider.load();
-          });
+          this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name })
+            .onSuccess(() => this.dataProvider.load(), this.destroyRef);
         },
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);

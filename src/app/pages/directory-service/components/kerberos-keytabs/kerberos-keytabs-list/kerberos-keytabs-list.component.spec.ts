@@ -2,16 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
+import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KerberosKeytabsFormComponent,
@@ -31,7 +34,7 @@ describe('KerberosKeytabsListComponent', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi([
         mockCall('kerberos.keytab.query', [
@@ -48,10 +51,12 @@ describe('KerberosKeytabsListComponent', () => {
           type: DirectoryServiceType.ActiveDirectory,
           status: DirectoryServiceStatus.Healthy,
         } as DirectoryServicesStatus),
+        mockCall('kerberos.keytab.delete'),
         mockJob('directoryservices.sync_keytab'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
@@ -84,6 +89,18 @@ describe('KerberosKeytabsListComponent', () => {
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(KerberosKeytabsFormComponent);
   });
 
+  it('deletes a keytab with confirmation when Delete button is pressed', async () => {
+    const deleteIcon = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'keytab1');
+    await deleteIcon.click();
+
+    expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
+      message: 'Are you sure you want to delete this item?',
+      call: expect.any(Function),
+    });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kerberos.keytab.delete', [1]);
+  });
+
   it('calls directoryservices.sync_keytab when Sync is pressed', async () => {
     const syncButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sync' }));
     await syncButton.click();
@@ -105,7 +122,7 @@ describe('KerberosKeytabsListComponent - LDAP mode', () => {
     ],
     providers: [
       mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
+        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi([
         mockCall('kerberos.keytab.query', []),

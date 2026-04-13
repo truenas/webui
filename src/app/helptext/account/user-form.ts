@@ -25,28 +25,28 @@ export const helptextUsers = {
  here when editing a user.'),
   homeDirectoryPermissionsTooltip: T('Sets default Unix permissions of the user home\
  directory. This is read-only for built-in users.'),
-  publicKeyTooltip: T('Enter or paste the user\'s <b>public</b> SSH key(s) to allow \
-key-based authentication (stored in <i>authorized_keys</i>). Multiple keys can be \
-entered, one per line. <b>Do not paste private keys.</b>'),
-  disablePasswordTooltip: T('<i>Yes:</i> Disables the <b>Password</b> \
- fields. The account cannot \
- use password-based logins for services. For example, disabling the \
- password prevents using account credentials to log in to an SMB share \
- or open an SSH session on the system. The <b>Lock User</b> and \
- <b>Permit Sudo</b> options are also removed.<br><br> \
- <i>No:</i> Requires adding a <b>Password</b> to the account. The \
- account can use the saved <b>Password</b> to authenticate with \
+  publicKeyTooltip: T('Enter or paste the user\'s <b>public</b> SSH key(s) to allow\
+ key-based authentication (stored in <i>authorized_keys</i>). Multiple keys can be\
+ entered, one per line. <b>Do not paste private keys.</b>'),
+  disablePasswordTooltip: T('<i>Yes:</i> Disables the <b>Password</b>\
+ fields. The account cannot\
+ use password-based logins for services. For example, disabling the\
+ password prevents using account credentials to log in to an SMB share\
+ or open an SSH session on the system. The <b>Lock User</b> and\
+ <b>Permit Sudo</b> options are also removed.<br><br>\
+ <i>No:</i> Requires adding a <b>Password</b> to the account. The\
+ account can use the saved <b>Password</b> to authenticate with\
  password-based services.'),
-  oneTimePasswordWarning: T('Once generated, one time-password is only valid for one login within 24 hours and does not persist across reboots. \
-User will be required to set new password after they log in.<br><br> \
-Do you want to continue?'),
-  oneTimePasswordTooltip: T('Temporary password will be generated and shown to you once form is saved. \
- <br><br>This password is only valid for one login within 24 hours and does not persist across reboots. \
+  oneTimePasswordWarning: T('Once generated, one time-password is only valid for one login within 24 hours and does not persist across reboots.\
+ User will be required to set new password after they log in.<br><br>\
+ Do you want to continue?'),
+  oneTimePasswordTooltip: T('Temporary password will be generated and shown to you once form is saved.\
+ <br><br>This password is only valid for one login within 24 hours and does not persist across reboots.\
  <br><br>User will be encouraged to choose their own password after they login for the first time.'),
   shellTooltip: T('Select the shell to use for local and SSH logins.'),
-  lockUserTooltip: T('Prevent the user from logging in or \
- using password-based services until this option is unset. Locking an \
- account is only possible when <b>Disable Password</b> is <i>No</i> and \
+  lockUserTooltip: T('Prevent the user from logging in or\
+ using password-based services until this option is unset. Locking an\
+ account is only possible when <b>Disable Password</b> is <i>No</i> and\
  a <b>Password</b> has been created for the account.'),
   smbTooltip: T('Set to allow user to authenticate to Samba shares.'),
   smbBuiltin: T('Cannot be enabled for built-in users.'),

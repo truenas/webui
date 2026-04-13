@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,7 +27,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
 @Component({
@@ -60,7 +59,6 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = vmwareSnapshotListElements;
@@ -118,37 +116,24 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(VmwareSnapshotFormComponent).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent)
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doEdit(snapshot: VmwareSnapshot): void {
-    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
-      filter((response) => !!response.response),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot })
+      .onSuccess(() => this.getSnapshotsData(), this.destroyRef);
   }
 
   protected doDelete(snapshot: VmwareSnapshot): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this snapshot?'),
-      hideCheckbox: true,
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
+      call: () => this.api.call('vmware.delete', [snapshot.id]),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('vmware.delete', [snapshot.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.getSnapshotsData();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-      },
+    ).subscribe(() => {
+      this.getSnapshotsData();
     });
   }
 }

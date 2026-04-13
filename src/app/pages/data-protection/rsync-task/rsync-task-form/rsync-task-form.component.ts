@@ -74,7 +74,7 @@ export class RsyncTaskFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
-  slideInRef = inject<SlideInRef<RsyncTask | undefined, RsyncTask | false>>(SlideInRef);
+  slideInRef = inject<SlideInRef<RsyncTask | undefined, RsyncTask>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];

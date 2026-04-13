@@ -113,8 +113,7 @@ export class AllowedAddressesCardComponent implements OnInit {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AllowedAddressesFormComponent)),
-      filter((response) => !!response.response),
+      switchMap(() => this.slideIn.open(AllowedAddressesFormComponent).success$),
       tap(() => {
         this.getAllowedAddresses();
       }),

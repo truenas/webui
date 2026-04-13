@@ -10,7 +10,8 @@ import { Theme } from 'app/interfaces/theme.interface';
 import { allThemes, defaultTheme } from 'app/modules/theme/theme.constants';
 import { AppState } from 'app/store';
 import { themeNotFound } from 'app/store/preferences/preferences.actions';
-import { selectTheme } from 'app/store/preferences/preferences.selectors';
+import { PreferencesState } from 'app/store/preferences/preferences.reducer';
+import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,9 @@ export class ThemeService {
 
   allThemes: Theme[] = allThemes;
   loadTheme$ = new Subject<string>();
+
+  private latestState!: PreferencesState;
+  private darkModeQuery: MediaQueryList;
 
   /**
    * Maps WebUI theme names to component library theme enum values.
@@ -47,6 +51,8 @@ export class ThemeService {
   }
 
   constructor() {
+    this.darkModeQuery = this.window.matchMedia('(prefers-color-scheme: dark)');
+
     this.loadTheme$.subscribe(() => {
       const savedTheme = this.window.sessionStorage.getItem('theme') || defaultTheme.name;
 
@@ -55,12 +61,33 @@ export class ThemeService {
       }
     });
 
-    this.store$.select(selectTheme).pipe(
-      filter(Boolean),
+    this.store$.select(selectPreferencesState).pipe(
+      filter((state) => state.areLoaded),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((theme: string) => {
+    ).subscribe((state) => {
+      this.latestState = state;
+      let theme: string;
+      if (state.previewTheme) {
+        theme = state.previewTheme;
+      } else if (state.preferences?.syncThemeWithOS) {
+        const isDark = this.darkModeQuery.matches;
+        theme = isDark ? state.preferences.darkTheme : state.preferences.lightTheme;
+      } else {
+        theme = state.preferences?.userTheme ?? this.defaultTheme;
+      }
       this.window.sessionStorage.setItem('theme', theme);
       this.onThemeChanged(theme);
+    });
+
+    // No removeEventListener needed — this service is providedIn: 'root' and lives for the app lifetime.
+    this.darkModeQuery.addEventListener('change', () => {
+      const state = this.latestState;
+      if (state?.preferences?.syncThemeWithOS && !state.previewTheme) {
+        const isDark = this.darkModeQuery.matches;
+        const theme = isDark ? state.preferences.darkTheme : state.preferences.lightTheme;
+        this.window.sessionStorage.setItem('theme', theme);
+        this.onThemeChanged(theme);
+      }
     });
   }
 
