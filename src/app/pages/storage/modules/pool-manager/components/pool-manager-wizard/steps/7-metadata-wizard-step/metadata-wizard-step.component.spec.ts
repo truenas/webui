@@ -8,6 +8,7 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 describe('MetadataWizardStepComponent', () => {
   let spectator: Spectator<MetadataWizardStepComponent>;
@@ -60,7 +61,7 @@ describe('MetadataWizardStepComponent', () => {
     expect(layoutComponent.description).toBe(helptextPoolCreation.specialVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual(Object.values(CreateVdevLayout));
+    expect(layoutComponent.limitLayouts).toStrictEqual(nonDraidLayouts);
     expect(layoutComponent.type).toStrictEqual(VDevType.Special);
   });
 });
