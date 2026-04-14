@@ -31,6 +31,7 @@ import {
 import {
   isDraidLayout,
   nonDraidEquivalent,
+  nonDraidLayouts,
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -207,7 +208,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       case VDevType.Special: {
         return this.select((state) => {
           const { layout } = state.topology[VDevType.Data];
-          return layout !== null ? [nonDraidEquivalent(layout)] : [];
+          return layout !== null ? [nonDraidEquivalent(layout)] : nonDraidLayouts;
         });
       }
       case VDevType.Log:
