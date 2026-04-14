@@ -45,8 +45,8 @@ export class DataWizardStepComponent implements OnInit {
   protected readonly vDevType = VDevType;
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Data);
   protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
-  readonly helptext = helptextPoolCreation;
-  canChangeLayout = true;
+  protected readonly helptext = helptextPoolCreation;
+  protected canChangeLayout = true;
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(

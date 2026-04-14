@@ -30,8 +30,6 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import {
   isDraidLayout,
-  nonDraidEquivalent,
-  nonDraidLayouts,
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -198,28 +196,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   isUsingDraidLayout(topology: PoolManagerTopology): boolean {
     const { layout } = topology[VDevType.Data];
     return layout !== null && isDraidLayout(layout);
-  }
-
-  getLayoutsForVdevType(vdevType: VDevType): Observable<CreateVdevLayout[]> {
-    switch (vdevType) {
-      case VDevType.Cache:
-        return of([CreateVdevLayout.Stripe]);
-      // Special (metadata) and dedup vdevs don't support dRAID but should match
-      // the redundancy level of the data vdevs for data safety.
-      case VDevType.Dedup:
-      case VDevType.Special: {
-        return this.select((state) => {
-          const { layout } = state.topology[VDevType.Data];
-          return layout !== null ? [nonDraidEquivalent(layout)] : [...nonDraidLayouts];
-        });
-      }
-      case VDevType.Log:
-        return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-      case VDevType.Spare:
-        return of([CreateVdevLayout.Stripe]);
-      default:
-        return of(Object.values(CreateVdevLayout));
-    }
   }
 
   readonly inventory$ = this.select(
