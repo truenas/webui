@@ -113,7 +113,7 @@ describe('SmbListComponent', () => {
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
-        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
+        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, max_used_percentage: 80 }),
       ]),
       mockProvider(SharingTierService, {
         getTierConfig: () => of({ enabled: false }),
