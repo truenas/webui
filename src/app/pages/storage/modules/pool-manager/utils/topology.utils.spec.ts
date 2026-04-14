@@ -175,6 +175,11 @@ describe('resolveTopologyLayout', () => {
     const items = [{ type: TopologyItemType.Raidz1, children: [{}, {}, {}] }] as VDevItem[];
     expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Raidz1);
   });
+
+  it('returns null for unhandled topology types', () => {
+    const items = [{ type: TopologyItemType.Replacing, children: [] }] as VDevItem[];
+    expect(resolveTopologyLayout(items)).toBeNull();
+  });
 });
 
 describe('existingVdevLayout', () => {
