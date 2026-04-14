@@ -20,6 +20,10 @@ export class SharingTierService {
     return this.tierConfig$;
   }
 
+  invalidate(): void {
+    this.tierConfig$ = null;
+  }
+
   subscribeTierJobUpdates(): Observable<ZfsTierRewriteJobEntry> {
     return this.api.subscribe('zfs.tier.rewrite_job_query').pipe(
       map((event) => event.fields),

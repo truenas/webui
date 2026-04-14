@@ -15,6 +15,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
@@ -54,6 +55,7 @@ export class PoolsDashboardComponent implements OnInit {
   protected translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
+  private tierService = inject(SharingTierService);
 
   protected readonly requiredRoles = [Role.PoolWrite];
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -95,6 +97,9 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   protected onTiering(): void {
-    this.slideIn.open(TierConfigFormComponent);
+    this.slideIn.open(TierConfigFormComponent).onSuccess(() => {
+      this.tierService.invalidate();
+      this.store.loadDashboard();
+    }, this.destroyRef);
   }
 }
