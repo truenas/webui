@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { VDevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -46,7 +46,7 @@ export class MetadataWizardStepComponent implements OnInit {
   readonly helptext = helptextPoolCreation;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
-  protected allowedLayouts = nonDraidLayouts;
+  protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
 
   goToReviewStep(): void {
     this.goToLastStep.emit();
