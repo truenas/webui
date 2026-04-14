@@ -204,11 +204,13 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     switch (vdevType) {
       case VDevType.Cache:
         return of([CreateVdevLayout.Stripe]);
+      // Special (metadata) and dedup vdevs don't support dRAID but should match
+      // the redundancy level of the data vdevs for data safety.
       case VDevType.Dedup:
       case VDevType.Special: {
         return this.select((state) => {
           const { layout } = state.topology[VDevType.Data];
-          return layout !== null ? [nonDraidEquivalent(layout)] : nonDraidLayouts;
+          return layout !== null ? [nonDraidEquivalent(layout)] : [...nonDraidLayouts];
         });
       }
       case VDevType.Log:

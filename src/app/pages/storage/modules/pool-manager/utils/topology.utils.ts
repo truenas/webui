@@ -32,6 +32,7 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
     }
 
     if (category.layout === null) {
+      console.warn(`topologyToPayload: category "${vdevType}" has vdevs but no layout set — skipping.`);
       return;
     }
 
@@ -180,7 +181,7 @@ export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLay
   return layout !== null ? nonDraidEquivalent(layout) : null;
 }
 
-export const nonDraidLayouts: CreateVdevLayout[] = Object.values(CreateVdevLayout)
+export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(CreateVdevLayout)
   .filter((layout) => !isDraidLayout(layout));
 
 export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType): boolean {
