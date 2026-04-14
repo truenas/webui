@@ -90,7 +90,7 @@ describe('NfsListComponent', () => {
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
-        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 }),
+        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, max_used_percentage: 80 }),
       ]),
       mockProvider(SharingTierService, {
         getTierConfig: () => of({ enabled: false }),

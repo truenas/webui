@@ -22,7 +22,7 @@ describe('TierConfigFormComponent', () => {
   const mockConfig = {
     enabled: true,
     max_concurrent_jobs: 3,
-    min_available_space: 10,
+    max_used_percentage: 80,
   } as ZfsTierConfig;
 
   const slideInRef: SlideInRef<void, boolean> = {
@@ -62,7 +62,7 @@ describe('TierConfigFormComponent', () => {
     expect(values).toEqual({
       Enabled: true,
       'Max Concurrent Jobs': '3',
-      'Minimum Available Space (GiB)': '10',
+      'Max Used Percentage': '10',
     });
   });
 
@@ -71,7 +71,7 @@ describe('TierConfigFormComponent', () => {
     await form.fillForm({
       Enabled: false,
       'Max Concurrent Jobs': 5,
-      'Minimum Available Space (GiB)': 20,
+      'Max Used Percentage': 20,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -80,13 +80,13 @@ describe('TierConfigFormComponent', () => {
     expect(api.call).toHaveBeenCalledWith('zfs.tier.update', [{
       enabled: false,
       max_concurrent_jobs: 5,
-      min_available_space: 20,
+      max_used_percentage: 90,
     }]);
     expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
   });
 
   it('shows warning when enabling tiering for the first time', async () => {
-    const disabledConfig = { enabled: false, max_concurrent_jobs: 1, min_available_space: 0 } as ZfsTierConfig;
+    const disabledConfig = { enabled: false, max_concurrent_jobs: 1, max_used_percentage: 80 } as ZfsTierConfig;
     jest.spyOn(api, 'call').mockReturnValueOnce(of(disabledConfig));
 
     spectator = createComponent();

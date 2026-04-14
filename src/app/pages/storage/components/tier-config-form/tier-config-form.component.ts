@@ -54,7 +54,7 @@ export class TierConfigFormComponent implements OnInit {
   formGroup = this.fb.nonNullable.group({
     enabled: [false],
     max_concurrent_jobs: [1],
-    min_available_space: [0],
+    max_used_percentage: [80],
   });
 
   private initialEnabled = false;

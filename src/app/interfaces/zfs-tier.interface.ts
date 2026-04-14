@@ -4,7 +4,7 @@ import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 export interface ZfsTierConfig {
   enabled: boolean;
   max_concurrent_jobs: number;
-  min_available_space: number;
+  max_used_percentage: number;
 }
 
 export interface ZfsTierRewriteJobStats {
