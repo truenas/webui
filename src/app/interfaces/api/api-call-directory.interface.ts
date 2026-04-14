@@ -270,6 +270,7 @@ import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truen
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
+import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
@@ -289,7 +290,6 @@ import {
 import {
   WebShareConfig, WebShareConfigUpdate, WebShare, WebShareUpdate,
 } from 'app/interfaces/webshare-config.interface';
-import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,

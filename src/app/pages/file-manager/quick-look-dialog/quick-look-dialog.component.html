@@ -19,16 +19,16 @@
       </div>
     } @else if (isVideo()) {
       <video
-        [src]="mediaUrl()"
         class="preview-video"
         controls
         autoplay
+        [src]="mediaUrl()"
       ></video>
     } @else {
       <img
+        class="preview-image"
         [src]="mediaUrl()"
         [alt]="data.fileItem.name"
-        class="preview-image"
       />
     }
   </div>
