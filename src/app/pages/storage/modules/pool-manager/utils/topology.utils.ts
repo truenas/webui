@@ -146,6 +146,7 @@ export function nonDraidEquivalent(layout: CreateVdevLayout): CreateVdevLayout {
 const topologyTypeToLayout: Record<string, CreateVdevLayout> = {
   [TopologyItemType.Stripe]: CreateVdevLayout.Stripe,
   [TopologyItemType.Mirror]: CreateVdevLayout.Mirror,
+  [TopologyItemType.Raidz]: CreateVdevLayout.Raidz1,
   [TopologyItemType.Raidz1]: CreateVdevLayout.Raidz1,
   [TopologyItemType.Raidz2]: CreateVdevLayout.Raidz2,
   [TopologyItemType.Raidz3]: CreateVdevLayout.Raidz3,

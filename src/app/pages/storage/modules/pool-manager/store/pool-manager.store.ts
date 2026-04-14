@@ -210,7 +210,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       case VDevType.Special: {
         return this.select((state) => {
           const { layout } = state.topology[VDevType.Data];
-          return layout !== null ? [nonDraidEquivalent(layout)] : nonDraidLayouts as CreateVdevLayout[];
+          return layout !== null ? [nonDraidEquivalent(layout)] : [...nonDraidLayouts];
         });
       }
       case VDevType.Log:

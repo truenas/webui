@@ -184,6 +184,11 @@ describe('resolveTopologyLayout', () => {
     expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Draid2);
   });
 
+  it('returns Raidz1 for bare RAIDZ vdevs', () => {
+    const items = [{ type: TopologyItemType.Raidz, children: [{}, {}, {}] }] as VDevItem[];
+    expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Raidz1);
+  });
+
   it('returns Raidz1 for raidz1 vdevs', () => {
     const items = [{ type: TopologyItemType.Raidz1, children: [{}, {}, {}] }] as VDevItem[];
     expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Raidz1);

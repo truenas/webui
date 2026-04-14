@@ -42,7 +42,7 @@ export class DedupWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  canChangeLayout = true;
+  protected canChangeLayout = true;
 
   protected readonly vDevType = VDevType;
   readonly helptext = helptextPoolCreation;
