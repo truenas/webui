@@ -43,7 +43,7 @@ export class MetadataWizardStepComponent implements OnInit {
   protected canChangeLayout = true;
 
   protected readonly vDevType = VDevType;
-  readonly helptext = helptextPoolCreation;
+  protected readonly helptext = helptextPoolCreation;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
   protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];

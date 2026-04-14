@@ -40,10 +40,10 @@ export class LogWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  canChangeLayout = true;
+  protected canChangeLayout = true;
 
   protected readonly vDevType = VDevType;
-  readonly helptext = helptextPoolCreation;
+  protected readonly helptext = helptextPoolCreation;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Log);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
