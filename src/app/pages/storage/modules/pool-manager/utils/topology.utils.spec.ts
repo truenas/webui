@@ -103,6 +103,19 @@ describe('topologyToPayload', () => {
     });
   });
 
+  it('throws when a non-spare category has vdevs but layout is null', () => {
+    const topology = {
+      [VDevType.Data]: {
+        layout: null,
+        vdevs: [[{ devname: 'ada1' } as DetailsDisk]],
+      },
+    } as PoolManagerTopology;
+
+    expect(() => topologyToPayload(topology)).toThrow(
+      'topologyToPayload: category "data" has vdevs but no layout set.',
+    );
+  });
+
   it('converts dRAID layout to websocket payload', () => {
     const disk1 = { devname: 'ada1' } as DetailsDisk;
     const disk2 = { devname: 'ada2' } as DetailsDisk;
