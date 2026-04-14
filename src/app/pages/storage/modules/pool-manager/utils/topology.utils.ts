@@ -71,13 +71,8 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
     if (!vdevs?.length) {
       continue;
     }
-    let layoutType: TopologyItemType = vdevs[0].type;
-    let width = vdevs[0].children.length;
-
-    if (!vdevs[0].children.length && layoutType === TopologyItemType.Disk) {
-      layoutType = TopologyItemType.Stripe;
-      width = 1;
-    }
+    const layout = resolveTopologyLayout(vdevs);
+    const width = vdevs[0].children.length || 1;
     const minSize = Math.min(...(disks.map((disk) => disk.size)));
 
     let draidDataDisks: number = null;
@@ -87,13 +82,12 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
       const parsedDraidInfo = parseDraidVdevName(vdevs[0].name);
       draidDataDisks = parsedDraidInfo.dataDisks;
       draidSpareDisks = parsedDraidInfo.spareDisks;
-      layoutType = parsedDraidInfo.layout as unknown as TopologyItemType;
     }
 
     poolManagerTopology[category as VDevType] = {
       diskType: disks[0].type,
       diskSize: minSize,
-      layout: layoutType as unknown as CreateVdevLayout,
+      layout,
       vdevsNumber: vdevs.length,
       width,
       hasCustomDiskSelection: vdevs.some((vdev) => vdevs[0].children.length !== vdev.children.length),
@@ -136,6 +130,7 @@ export function nonDraidEquivalent(layout: CreateVdevLayout): CreateVdevLayout {
   }
 }
 
+/** Used only via {@link resolveTopologyLayout}; Disk and Draid are handled before lookup. */
 const topologyTypeToLayout: Record<string, CreateVdevLayout> = {
   [TopologyItemType.Stripe]: CreateVdevLayout.Stripe,
   [TopologyItemType.Mirror]: CreateVdevLayout.Mirror,
