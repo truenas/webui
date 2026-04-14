@@ -4,6 +4,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -38,6 +39,10 @@ describe('DedupWizardStepComponent', () => {
     ],
     providers: [
       mockProvider(CdkStepper),
+      mockProvider(AddVdevsStore, {
+        pool$: of(null),
+        isLoading$: of(false),
+      }),
       mockProvider(PoolManagerStore, {
         topology$: of({
           [VDevType.Data]: { layout: CreateVdevLayout.Raidz1 },
