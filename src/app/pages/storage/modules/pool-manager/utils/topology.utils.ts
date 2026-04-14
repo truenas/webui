@@ -2,6 +2,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DataPoolTopologyUpdate, PoolTopology, UpdatePoolTopology } from 'app/interfaces/pool.interface';
+import { VDevItem } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
@@ -135,13 +136,27 @@ export function nonDraidEquivalent(layout: CreateVdevLayout): CreateVdevLayout {
   }
 }
 
-export const nonDraidLayouts: CreateVdevLayout[] = [
-  CreateVdevLayout.Stripe,
-  CreateVdevLayout.Mirror,
-  CreateVdevLayout.Raidz1,
-  CreateVdevLayout.Raidz2,
-  CreateVdevLayout.Raidz3,
-];
+/**
+ * Resolves the layout of existing vdev items to a non-DRAID CreateVdevLayout.
+ * Returns null when there are no existing items.
+ */
+export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
+  if (!items?.length) {
+    return null;
+  }
+  // TODO: Similar code in poolTopologyToStoreTopology
+  let type = items[0].type;
+  if (type === TopologyItemType.Disk && !items[0].children.length) {
+    type = TopologyItemType.Stripe as TopologyItemType;
+  } else if (type === TopologyItemType.Draid) {
+    const parsedVdevName = parseDraidVdevName(items[0].name);
+    type = parsedVdevName.layout as unknown as TopologyItemType;
+  }
+  return nonDraidEquivalent(type as unknown as CreateVdevLayout);
+}
+
+export const nonDraidLayouts: CreateVdevLayout[] = Object.values(CreateVdevLayout)
+  .filter((layout) => !isDraidLayout(layout));
 
 export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType): boolean {
   return [
