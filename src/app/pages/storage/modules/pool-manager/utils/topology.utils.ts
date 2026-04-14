@@ -136,23 +136,41 @@ export function nonDraidEquivalent(layout: CreateVdevLayout): CreateVdevLayout {
   }
 }
 
+const topologyTypeToLayout: Record<string, CreateVdevLayout> = {
+  [TopologyItemType.Stripe]: CreateVdevLayout.Stripe,
+  [TopologyItemType.Mirror]: CreateVdevLayout.Mirror,
+  [TopologyItemType.Raidz1]: CreateVdevLayout.Raidz1,
+  [TopologyItemType.Raidz2]: CreateVdevLayout.Raidz2,
+  [TopologyItemType.Raidz3]: CreateVdevLayout.Raidz3,
+};
+
 /**
- * Resolves the layout of existing vdev items to a non-DRAID CreateVdevLayout.
+ * Resolves the layout of existing vdev items to a CreateVdevLayout.
+ * All items in the array are assumed to share the same layout (ZFS guarantees
+ * this per vdev category), so only the first item is inspected.
  * Returns null when there are no existing items.
  */
-export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
+export function resolveTopologyLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
   if (!items?.length) {
     return null;
   }
-  // TODO: Similar code in poolTopologyToStoreTopology
-  let type = items[0].type;
-  if (type === TopologyItemType.Disk && !items[0].children.length) {
-    type = TopologyItemType.Stripe as TopologyItemType;
-  } else if (type === TopologyItemType.Draid) {
-    const parsedVdevName = parseDraidVdevName(items[0].name);
-    type = parsedVdevName.layout as unknown as TopologyItemType;
+  const firstItem = items[0];
+  if (firstItem.type === TopologyItemType.Disk && !firstItem.children.length) {
+    return CreateVdevLayout.Stripe;
   }
-  return nonDraidEquivalent(type as unknown as CreateVdevLayout);
+  if (firstItem.type === TopologyItemType.Draid) {
+    return parseDraidVdevName(firstItem.name).layout;
+  }
+  return topologyTypeToLayout[firstItem.type];
+}
+
+/**
+ * Like resolveTopologyLayout, but maps dRAID layouts to their raidz equivalents.
+ * Used for non-data vdevs (special, dedup) that don't support dRAID.
+ */
+export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
+  const layout = resolveTopologyLayout(items);
+  return layout !== null ? nonDraidEquivalent(layout) : null;
 }
 
 export const nonDraidLayouts: CreateVdevLayout[] = Object.values(CreateVdevLayout)

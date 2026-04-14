@@ -204,8 +204,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       case VDevType.Cache:
         return of([CreateVdevLayout.Stripe]);
       case VDevType.Dedup:
-      case VDevType.Special:
-        return this.select((state) => [nonDraidEquivalent(state.topology[VDevType.Data].layout)]);
+      case VDevType.Special: {
+        return this.select((state) => {
+          const { layout } = state.topology[VDevType.Data];
+          return layout !== null ? [nonDraidEquivalent(layout)] : [];
+        });
+      }
       case VDevType.Log:
         return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
       case VDevType.Spare:
