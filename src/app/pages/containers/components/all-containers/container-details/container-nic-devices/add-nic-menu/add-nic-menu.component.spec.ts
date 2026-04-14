@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -170,6 +171,38 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
 
     expect(itemTexts).not.toContain('truenasbr0');
     expect(itemTexts).toContain('ens1');
+  });
+});
+
+describe('AddNicMenuComponent - No NICs Available', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('container.device.nic_attach_choices', {}),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: () => [] as ContainerDevice[],
+        isLoading: () => false,
+      }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({ props: { defaultBridge: null } });
+  });
+
+  it('shows "No NIC devices available" when there are no NICs to add', () => {
+    expect(spectator.query(byText('No NIC devices available'))).toExist();
   });
 });
 
