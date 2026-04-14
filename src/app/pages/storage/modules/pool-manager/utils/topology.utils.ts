@@ -19,7 +19,11 @@ export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCat
 export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopology {
   const payload: UpdatePoolTopology = {};
 
-  Object.entries(topology).forEach(([vdevType, category]: [VDevType, PoolManagerTopologyCategory]) => {
+  (Object.entries(topology) as [VDevType, PoolManagerTopologyCategory][]).forEach(([vdevType, category]) => {
+    if (!category.vdevs.length) {
+      return;
+    }
+
     if (vdevType === VDevType.Spare) {
       payload.spares = category.vdevs.flatMap((vdev) => {
         return vdev.map((disk) => disk.devname);
@@ -27,13 +31,19 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
       return;
     }
 
+    if (category.layout === null) {
+      return;
+    }
+
+    const { layout } = category;
+
     payload[vdevType] = category.vdevs.map((vdev) => {
       let typePayload = {
-        type: category.layout,
+        type: layout,
         disks: vdev.map((disk) => disk.devname),
       };
 
-      if (isDraidLayout(category.layout)) {
+      if (isDraidLayout(layout)) {
         typePayload = {
           ...typePayload,
           draid_data_disks: category.draidDataDisks,
@@ -55,6 +65,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
     return {
       ...topologySoFar,
       [value]: {
+        layout: null,
         width: null,
         diskSize: null,
         diskType: null,
@@ -62,6 +73,8 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
         treatDiskSizeAsMinimum: false,
         vdevs: [],
         hasCustomDiskSelection: false,
+        draidDataDisks: null,
+        draidSpareDisks: null,
       } as PoolManagerTopologyCategory,
     };
   }, {} as PoolManagerTopology);
@@ -75,8 +88,8 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
     const width = vdevs[0].children.length || 1;
     const minSize = Math.min(...(disks.map((disk) => disk.size)));
 
-    let draidDataDisks: number = null;
-    let draidSpareDisks: number = null;
+    let draidDataDisks: number | null = null;
+    let draidSpareDisks: number | null = null;
 
     if (vdevs[0].type === TopologyItemType.Draid) {
       const parsedDraidInfo = parseDraidVdevName(vdevs[0].name);
@@ -103,9 +116,8 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
               } as DetailsDisk),
             );
           }
-          return [
-            { ...disks.find((disk) => disk.devname === topologyItem.disk) },
-          ];
+          const matchedDisk = disks.find((disk) => disk.devname === topologyItem.disk);
+          return matchedDisk ? [{ ...matchedDisk }] : [];
         },
       ),
       treatDiskSizeAsMinimum: false,
