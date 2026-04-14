@@ -95,8 +95,8 @@ const initialTopology = Object.values(VDevType).reduce((topology, value) => {
       vdevs: [] as DetailsDisk[][],
       hasCustomDiskSelection: false,
 
-      draidDataDisks: 0,
-      draidSpareDisks: 0,
+      draidDataDisks: null,
+      draidSpareDisks: null,
     } as PoolManagerTopologyCategory,
   };
 }, {} as PoolManagerTopology);
