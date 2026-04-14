@@ -48,11 +48,11 @@ export class MetadataWizardStepComponent implements OnInit {
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
   protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
 
-  goToReviewStep(): void {
+  protected goToReviewStep(): void {
     this.goToLastStep.emit();
   }
 
-  resetStep(): void {
+  protected resetStep(): void {
     this.store.resetStep(VDevType.Special);
   }
 

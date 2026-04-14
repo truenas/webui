@@ -50,11 +50,11 @@ export class DedupWizardStepComponent implements OnInit {
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Dedup);
   protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
 
-  goToReviewStep(): void {
+  protected goToReviewStep(): void {
     this.goToLastStep.emit();
   }
 
-  resetStep(): void {
+  protected resetStep(): void {
     this.store.resetStep(VDevType.Dedup);
   }
 
