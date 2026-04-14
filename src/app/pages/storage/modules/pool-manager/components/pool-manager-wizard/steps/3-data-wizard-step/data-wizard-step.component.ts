@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -14,7 +14,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { resolveTopologyLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-data-wizard-step',
@@ -50,21 +50,13 @@ export class DataWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
-      map((pool) => pool?.topology[VDevType.Data]),
+      map((pool) => resolveTopologyLayout(pool?.topology[VDevType.Data])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((dataTopology) => {
-      if (!dataTopology?.length) {
+    ).subscribe((layout) => {
+      if (!layout) {
         return;
       }
-      // TODO: Similar code in poolTopologyToStoreTopology
-      let type = dataTopology[0].type;
-      if (type === TopologyItemType.Disk && !dataTopology[0].children.length) {
-        type = TopologyItemType.Stripe;
-      } else if (type === TopologyItemType.Draid) {
-        const parsedVdevName = parseDraidVdevName(dataTopology[0].name);
-        type = parsedVdevName.layout as unknown as TopologyItemType;
-      }
-      this.allowedLayouts = [type] as unknown as CreateVdevLayout[];
+      this.allowedLayouts = [layout];
       this.canChangeLayout = false;
       this.cdr.markForCheck();
     });

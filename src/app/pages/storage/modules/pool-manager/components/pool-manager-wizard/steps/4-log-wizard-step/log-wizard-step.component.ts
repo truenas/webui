@@ -5,13 +5,14 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { resolveTopologyLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-log-wizard-step',
@@ -49,21 +50,15 @@ export class LogWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
-      map((pool) => pool?.topology[VDevType.Log]),
+      map((pool) => resolveTopologyLayout(pool?.topology[VDevType.Log])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (logTopology) => {
-        if (!logTopology?.length) {
-          return;
-        }
-        let type = logTopology[0].type;
-        if (type === TopologyItemType.Disk && !logTopology[0].children.length) {
-          type = TopologyItemType.Stripe;
-        }
-        this.allowedLayouts = [type] as unknown as CreateVdevLayout[];
-        this.canChangeLayout = false;
-        this.cdr.markForCheck();
-      },
+    ).subscribe((layout) => {
+      if (!layout) {
+        return;
+      }
+      this.allowedLayouts = [layout];
+      this.canChangeLayout = false;
+      this.cdr.markForCheck();
     });
   }
 

@@ -9,6 +9,7 @@ import {
   existingVdevLayout,
   nonDraidEquivalent,
   parseDraidVdevName,
+  resolveTopologyLayout,
   topologyCategoryToDisks,
   topologyToDisks, topologyToPayload,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -146,6 +147,33 @@ describe('nonDraidEquivalent', () => {
     expect(nonDraidEquivalent(CreateVdevLayout.Raidz1)).toBe(CreateVdevLayout.Raidz1);
     expect(nonDraidEquivalent(CreateVdevLayout.Raidz2)).toBe(CreateVdevLayout.Raidz2);
     expect(nonDraidEquivalent(CreateVdevLayout.Raidz3)).toBe(CreateVdevLayout.Raidz3);
+  });
+});
+
+describe('resolveTopologyLayout', () => {
+  it('returns null for empty or undefined items', () => {
+    expect(resolveTopologyLayout([])).toBeNull();
+    expect(resolveTopologyLayout(undefined)).toBeNull();
+  });
+
+  it('returns Stripe for a single disk with no children', () => {
+    const items = [{ type: TopologyItemType.Disk, children: [] }] as VDevItem[];
+    expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Stripe);
+  });
+
+  it('returns Mirror for mirror vdevs', () => {
+    const items = [{ type: TopologyItemType.Mirror, children: [{}, {}] }] as VDevItem[];
+    expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Mirror);
+  });
+
+  it('returns dRAID layout for dRAID vdevs', () => {
+    const items = [{ type: TopologyItemType.Draid, children: [], name: 'draid2:1d:6c:2s-0' }] as VDevItem[];
+    expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Draid2);
+  });
+
+  it('returns Raidz1 for raidz1 vdevs', () => {
+    const items = [{ type: TopologyItemType.Raidz1, children: [{}, {}, {}] }] as VDevItem[];
+    expect(resolveTopologyLayout(items)).toBe(CreateVdevLayout.Raidz1);
   });
 });
 
