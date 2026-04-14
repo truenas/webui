@@ -14,7 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { existingVdevLayout, nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { existingVdevLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-dedup-wizard-step',
@@ -48,7 +48,7 @@ export class DedupWizardStepComponent implements OnInit {
   readonly helptext = helptextPoolCreation;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Dedup);
-  protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
+  protected allowedLayouts: CreateVdevLayout[] = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
 
   goToReviewStep(): void {
     this.goToLastStep.emit();

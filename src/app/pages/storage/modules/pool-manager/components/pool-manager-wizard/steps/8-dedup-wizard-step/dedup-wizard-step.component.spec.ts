@@ -10,7 +10,6 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { DedupWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/8-dedup-wizard-step/dedup-wizard-step.component';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 describe('DedupWizardStepComponent', () => {
   let spectator: Spectator<DedupWizardStepComponent>;
@@ -63,7 +62,7 @@ describe('DedupWizardStepComponent', () => {
     expect(layoutComponent.description).toBe(helptextPoolCreation.dedupVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual(nonDraidLayouts);
+    expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
     expect(layoutComponent.type).toStrictEqual(VDevType.Dedup);
   });
 
