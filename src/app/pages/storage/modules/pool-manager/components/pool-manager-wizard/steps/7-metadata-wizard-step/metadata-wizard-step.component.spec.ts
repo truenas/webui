@@ -63,7 +63,7 @@ describe('MetadataWizardStepComponent', () => {
     expect(layoutComponent.description).toBe(helptextPoolCreation.specialVdevDescription);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual(nonDraidLayouts);
+    expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
     expect(layoutComponent.type).toStrictEqual(VDevType.Special);
   });
 
