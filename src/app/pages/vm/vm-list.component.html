@@ -37,6 +37,7 @@
     </button>
   </ix-page-header>
 
+  <ix-page-content>
   <ix-table
     class="table"
     [ixUiSearch]="searchableElements.elements.vm"
@@ -64,11 +65,19 @@
     </tbody>
   </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  </ix-page-content>
 } @else {
   <ix-page-header [pageTitle]="'Virtual Machines' | translate"></ix-page-header>
-  <mat-card>
-    <mat-card-content>
-      <ix-empty [conf]="vmNotSupportedConfig"></ix-empty>
-    </mat-card-content>
-  </mat-card>
+  <ix-page-content>
+    <mat-card>
+      <mat-card-content>
+        <ix-empty [conf]="null">
+          <div class="flex flex-col justify-center items-center my-24">
+            <img src="assets/images/virtual-machines-empty.svg" alt="Virtual Machines Empty" class="logo" />
+            <p class="font-bold text-2xl">{{ "Virtualization is not supported" | translate }}</p>
+          </div>
+        </ix-empty>
+      </mat-card-content>
+    </mat-card>
+  </ix-page-content>
 }

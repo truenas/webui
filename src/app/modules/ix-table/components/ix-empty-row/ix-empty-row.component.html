@@ -9,9 +9,9 @@
       <mat-spinner [diameter]="40"></mat-spinner>
     } @else {
       <div class="icon-div">
-        <tn-icon [customSize]="conf().large ? '100px' : '50px'" [name]="getIcon()"></tn-icon>
+         <img src="assets/images/empty-row.svg" alt="Empty Row" class="logo" />
       </div>
-      <div>
+      <div class="mt-8">
         <h3 class="empty-title">{{ conf().title | translate }}</h3>
         <!-- Messages -->
         @if (conf().message && !conf().compact) {

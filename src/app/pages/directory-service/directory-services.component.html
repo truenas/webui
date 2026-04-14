@@ -1,17 +1,21 @@
 @if(isDirectoryServicesDisabled()) {
   <div class="everything-disabled">
-    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="configure-active-directory"
-        [ixUiSearch]="searchableElements.elements.configureDirectoryServices"
-        (click)="openDirectoryServicesForm()"
-      >
-        {{ 'Configure Directory Services' | translate }}
-      </button>
-    </div>
+    <ix-empty [conf]="null">
+      <div class="flex flex-col justify-center items-center my-24">
+        <img src="assets/images/directory-services.svg" alt="Directory Services" />
+        <p class="text-[20px] font-medium text-[#000]">{{ 'Directory services are disabled.' | translate }}</p>
+        <p class="text-[#6F6F6F] text-[14px]">{{ 'Configure directory services to see details.' | translate }}</p>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          class="w-[338px] h-[70px] text-[16px] mt-8 bg-[#6715FF] text-[#fff] rounded-full"
+          ixTest="configure-active-directory"
+          [ixUiSearch]="searchableElements.elements.configureDirectoryServices"
+          (click)="openDirectoryServicesForm()"
+        >
+          {{ 'Configure Directory Services' | translate }}
+        </button>
+      </div>
+    </ix-empty>
   </div>
 } @else {
   <div
@@ -63,8 +67,8 @@
           </button>
 
           <mat-menu #actionsMenu="matMenu">
-            <button 
-              mat-menu-item 
+            <button
+              mat-menu-item
               [ixTest]="[card.title, 'settings']"
               [ixUiSearch]="searchableElements.elements.settings"
               (click)="card.onSettingsPressed()"
@@ -72,7 +76,7 @@
               <tn-icon name="cog" library="mdi"></tn-icon>
               <span>{{ 'Settings' | translate }}</span>
             </button>
-            <button 
+            <button
               *ixRequiresRoles="requiredRoles"
               mat-menu-item
               [ixTest]="[card.title, 'rebuild-cache']"

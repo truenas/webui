@@ -49,13 +49,6 @@ export class EnclosureDashboardComponent {
     large: true,
   } as EmptyConfig;
 
-  emptyDashboardConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('Enclosure Unavailable'),
-    message: this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.'),
-  };
-
   protected readonly isLoading = this.enclosureStore.isLoading;
 
   constructor() {

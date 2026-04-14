@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, i
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     CdkPortalOutlet,
     MatProgressSpinner,
-    TnIconComponent,
     MatButton,
     TranslateModule,
     TestDirective,

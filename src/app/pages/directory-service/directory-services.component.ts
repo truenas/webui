@@ -12,7 +12,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent } from '@truenas/ui-components';
 import {
   forkJoin,
 } from 'rxjs';
@@ -26,7 +26,6 @@ import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.in
 import { credentialTypeLabels } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -116,13 +115,6 @@ export class DirectoryServicesComponent implements OnInit {
 
   private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
   private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
-
-  readonly noDirectoryServicesConfig: EmptyConfig = {
-    title: this.translate.instant('Directory services are disabled.'),
-    message: this.translate.instant('Configure directory services to see details.'),
-    large: true,
-    icon: tnIconMarker('account-box', 'mdi'),
-  };
 
   constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);

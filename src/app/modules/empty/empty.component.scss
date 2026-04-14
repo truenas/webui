@@ -25,6 +25,10 @@
   justify-content: center;
   margin: 8px;
   padding: 8px;
+
+  &.is-hidden {
+    display: contents;
+  }
 }
 
 .empty-page {
