@@ -1,3 +1,7 @@
-<span
-  [ixTest]="[title, uniqueRowTag(row()), 'row-size']"
->{{ size | ixFileSize }}</span>
+<span [ixTest]="[title, uniqueRowTag(row()), 'row-size']">
+  @if (size !== null && size !== undefined) {
+    {{ size | ixFileSize }}
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</span>
