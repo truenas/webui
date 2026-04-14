@@ -168,7 +168,7 @@ export function resolveTopologyLayout(items: VDevItem[] | undefined): CreateVdev
   if (firstItem.type === TopologyItemType.Draid) {
     return parseDraidVdevName(firstItem.name).layout;
   }
-  return topologyTypeToLayout[firstItem.type];
+  return topologyTypeToLayout[firstItem.type] ?? null;
 }
 
 /**
