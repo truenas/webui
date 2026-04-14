@@ -32,8 +32,7 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
     }
 
     if (category.layout === null) {
-      console.error(`topologyToPayload: category "${vdevType}" has vdevs but no layout set.`);
-      return;
+      throw new Error(`topologyToPayload: category "${vdevType}" has vdevs but no layout set.`);
     }
 
     const { layout } = category;
@@ -156,7 +155,8 @@ const topologyTypeToLayout: Record<string, CreateVdevLayout> = {
  * Resolves the layout of existing vdev items to a CreateVdevLayout.
  * All items in the array are assumed to share the same layout (ZFS guarantees
  * this per vdev category), so only the first item is inspected.
- * Returns null when there are no existing items.
+ * Returns null when there are no existing items or the type is unrecognised
+ * (e.g. transient states like Replacing / Spare).
  */
 export function resolveTopologyLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
   if (!items?.length) {
