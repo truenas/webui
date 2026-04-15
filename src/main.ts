@@ -133,9 +133,16 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding(),
       withNavigationErrorHandler((error: NavigationError) => {
-        const chunkFailedMessage = /Loading chunk \d+ failed/;
+        const chunkFailedMessage = /Loading chunk \d+ failed|Failed to fetch dynamically imported module/;
         if (chunkFailedMessage.test(String(error.error))) {
-          inject<Window>(WINDOW).location.reload();
+          const window = inject<Window>(WINDOW);
+          const reloadKey = 'chunk-reload-attempted';
+          if (!window.sessionStorage.getItem(reloadKey)) {
+            window.sessionStorage.setItem(reloadKey, 'true');
+            window.location.reload();
+          } else {
+            window.sessionStorage.removeItem(reloadKey);
+          }
         }
         console.error(error);
       }),
