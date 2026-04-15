@@ -14,8 +14,7 @@
           [ixTest]="subItem.name"
           [routerLink]="['/', menuName(), subItem.state]"
         >
-          <span class="submenu-text">
-            {{ subItem.name | translate }}
+          <span class="submenu-text">{{ subItem.name | translate }}
             @if (badgeCount > 0) {
               <span
                 class="submenu-badge-dot"
