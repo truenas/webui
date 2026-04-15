@@ -1,10 +1,11 @@
 import { NavigationError, Event as RouterEvent } from '@angular/router';
-import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
+import { chunkReloadKey, handleChunkLoadError, resetReloadedFlag } from 'app/helpers/handle-chunk-load-error';
 
 describe('handleChunkLoadError', () => {
   let mockWindow: Window;
 
   beforeEach(() => {
+    resetReloadedFlag();
     mockWindow = {
       sessionStorage: {
         getItem: jest.fn().mockReturnValue(null),
@@ -12,7 +13,10 @@ describe('handleChunkLoadError', () => {
         removeItem: jest.fn(),
       },
       location: { reload: jest.fn() },
-      document: { body: { innerHTML: '' } },
+      document: {
+        body: { innerHTML: '' },
+        getElementById: jest.fn().mockReturnValue({ addEventListener: jest.fn() }),
+      },
     } as unknown as Window;
   });
 
@@ -56,7 +60,7 @@ describe('handleChunkLoadError', () => {
     expect(mockWindow.location.reload).toHaveBeenCalled();
   });
 
-  it('falls back to reload when sessionStorage throws', () => {
+  it('falls back to reload when sessionStorage throws on first attempt', () => {
     (mockWindow.sessionStorage.getItem as jest.Mock).mockImplementation(() => {
       throw new Error('SecurityError');
     });
@@ -64,6 +68,17 @@ describe('handleChunkLoadError', () => {
     handleChunkLoadError(makeNavigationError('Loading chunk 5 failed'), mockWindow);
 
     expect(mockWindow.location.reload).toHaveBeenCalled();
+  });
+
+  it('shows fallback page when sessionStorage throws on repeated attempts', () => {
+    (mockWindow.sessionStorage.getItem as jest.Mock).mockImplementation(() => {
+      throw new Error('SecurityError');
+    });
+
+    handleChunkLoadError(makeNavigationError('Loading chunk 5 failed'), mockWindow);
+    handleChunkLoadError(makeNavigationError('Loading chunk 5 failed'), mockWindow);
+
+    expect(mockWindow.document.body.innerHTML).toContain('Click here to refresh');
   });
 
   it('does not reload for non-chunk navigation errors', () => {
