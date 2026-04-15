@@ -57,6 +57,8 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     schedule_method: [ScheduleMethod.Cron, [Validators.required]],
     schedule_picker: [CronPresetValue.Daily, [Validators.required]],
     readonly: [true],
+    source_lifetime_value: [2, [Validators.required]],
+    source_lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
     retention_policy: [RetentionPolicy.Source, [Validators.required]],
     lifetime_value: [2, [Validators.required]],
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
@@ -106,9 +108,13 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
       if (method === ScheduleMethod.Cron) {
         this.form.controls.schedule_picker.enable();
         this.form.controls.readonly.disable();
+        this.form.controls.source_lifetime_value.enable();
+        this.form.controls.source_lifetime_unit.enable();
       } else {
         this.form.controls.schedule_picker.disable();
         this.form.controls.readonly.enable();
+        this.form.controls.source_lifetime_value.disable();
+        this.form.controls.source_lifetime_unit.disable();
       }
     });
     this.form.controls.retention_policy.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((policy) => {
