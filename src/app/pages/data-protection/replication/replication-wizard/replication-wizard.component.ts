@@ -82,6 +82,7 @@ export class ReplicationWizardComponent {
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   isCustomRetentionVisible = true;
+  isSourceLocal = false;
 
   eligibleSnapshots = 0;
   existSnapshotTasks: number[] = [];

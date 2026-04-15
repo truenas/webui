@@ -126,6 +126,7 @@ export const helptextReplicationWizard = {
   sourceLifetimeTooltip: T('How long snapshots created by the periodic\
  snapshot task on the source system are kept before being deleted.\
  Enter a number and choose a measure of time from the drop-down.'),
+  sourceLifetimeUnitLabel: T('Unit'),
 
   retentionPolicyLabel: T('Destination Snapshot Lifetime'),
   retentionPolicyTooltip: T('When replicated snapshots are deleted\

@@ -89,6 +89,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private destroyRef = inject(DestroyRef);
 
   readonly customRetentionVisibleChange = output<boolean>();
+  readonly sourceLocalChange = output<boolean>();
 
   protected sourceNodeProvider: TreeNodeProvider;
   protected targetNodeProvider: TreeNodeProvider;
@@ -210,6 +211,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         this.disableSource();
       }
       this.checkCustomVisible();
+      this.sourceLocalChange.emit(value === DatasetSource.Local);
     });
 
     this.form.controls.custom_snapshots.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
