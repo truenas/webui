@@ -33,7 +33,7 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
-import { filter, take } from 'rxjs';
+import { filter, firstValueFrom, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
@@ -132,10 +132,10 @@ bootstrapApplication(AppComponent, {
     provideAppInitializer(() => {
       const router = inject(Router);
       const windowRef = inject<Window>(WINDOW);
-      router.events.pipe(
+      return firstValueFrom(router.events.pipe(
         filter((event) => event instanceof NavigationEnd),
         take(1),
-      ).subscribe(() => {
+      )).then(() => {
         try {
           windowRef.sessionStorage.removeItem(chunkReloadKey);
         } catch { /* sessionStorage may be unavailable */ }
