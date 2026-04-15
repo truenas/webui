@@ -1,11 +1,14 @@
 import { NavigationError } from '@angular/router';
 
+// "error loading" variant is a defensive catch — not observed in a specific browser, but included
+// as a safeguard against future bundler/runtime error message changes.
 const chunkFailedPattern = /Loading chunk \d+ failed|(?:Failed to fetch|error loading) dynamically imported module/i;
 export const chunkReloadKey = 'chunk-reload-attempted';
 const reloadGuardMs = 30_000;
 
 let reloadedThisSession = false;
 
+/** @internal Exposed for testing only — not used at runtime. */
 export function resetReloadedFlag(): void {
   reloadedThisSession = false;
 }
