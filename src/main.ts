@@ -136,14 +136,19 @@ bootstrapApplication(AppComponent, {
         const chunkFailedPattern = /Loading chunk \d+ failed|(?:failed|error)\s.*dynamically imported module/i;
         if (chunkFailedPattern.test(String(error.error))) {
           const window = inject<Window>(WINDOW);
-          const reloadKey = 'chunk-reload-attempted';
-          const lastAttempt = Number(window.sessionStorage.getItem(reloadKey));
-          const now = Date.now();
-          if (!lastAttempt || now - lastAttempt > 10_000) {
-            window.sessionStorage.setItem(reloadKey, String(now));
+          try {
+            const reloadKey = 'chunk-reload-attempted';
+            const lastAttempt = Number(window.sessionStorage.getItem(reloadKey));
+            const now = Date.now();
+            if (!lastAttempt || now - lastAttempt > 10_000) {
+              window.sessionStorage.setItem(reloadKey, String(now));
+              window.location.reload();
+            } else {
+              window.sessionStorage.removeItem(reloadKey);
+              window.document.body.innerText = 'The application has been updated. Please refresh the page.';
+            }
+          } catch {
             window.location.reload();
-          } else {
-            window.sessionStorage.removeItem(reloadKey);
           }
         }
         console.error(error);
