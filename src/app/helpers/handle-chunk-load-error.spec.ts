@@ -1,11 +1,10 @@
 import { NavigationError } from '@angular/router';
-import { chunkReloadKey, handleChunkLoadError, resetReloadedFlag } from 'app/helpers/handle-chunk-load-error';
+import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 
 describe('handleChunkLoadError', () => {
   let mockWindow: Window;
 
   beforeEach(() => {
-    resetReloadedFlag();
     mockWindow = {
       sessionStorage: {
         getItem: jest.fn().mockReturnValue(null),
@@ -18,6 +17,10 @@ describe('handleChunkLoadError', () => {
         getElementById: jest.fn().mockReturnValue({ addEventListener: jest.fn() }),
       },
     } as unknown as Window;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   function makeNavigationError(message: string): NavigationError {

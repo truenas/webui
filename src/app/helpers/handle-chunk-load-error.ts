@@ -6,12 +6,7 @@ const chunkFailedPattern = /Loading chunk \d+ failed|(?:Failed to fetch|error lo
 export const chunkReloadKey = 'chunk-reload-attempted';
 const reloadGuardMs = 30_000;
 
-let reloadedThisSession = false;
-
-/** @internal Exposed for testing only — not used at runtime. */
-export function resetReloadedFlag(): void {
-  reloadedThisSession = false;
-}
+const reloadedWindows = new WeakSet<Window>();
 
 export function handleChunkLoadError(error: NavigationError, window: Window): void {
   if (!chunkFailedPattern.test(String(error.error))) {
@@ -30,8 +25,8 @@ export function handleChunkLoadError(error: NavigationError, window: Window): vo
       showFallbackPage(window);
     }
   } catch {
-    if (!reloadedThisSession) {
-      reloadedThisSession = true;
+    if (!reloadedWindows.has(window)) {
+      reloadedWindows.add(window);
       window.location.reload();
     } else {
       showFallbackPage(window);
@@ -42,7 +37,7 @@ export function handleChunkLoadError(error: NavigationError, window: Window): vo
 function showFallbackPage(window: Window): void {
   // Outside Angular DI context — translations are unavailable at this point.
   window.document.body.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif">
+    <div lang="en" style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif">
       <div style="text-align:center">
         <p>The application has been updated.</p>
         <button id="chunk-reload-btn" style="background:none;border:none;color:blue;cursor:pointer;text-decoration:underline;font:inherit">
@@ -51,7 +46,7 @@ function showFallbackPage(window: Window): void {
       </div>
     </div>
   `;
-  window.document.getElementById('chunk-reload-btn')?.addEventListener('click', () => {
+  window.document.getElementById('chunk-reload-btn').addEventListener('click', () => {
     window.location.reload();
   });
 }
