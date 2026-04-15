@@ -34,6 +34,7 @@ import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
@@ -125,6 +126,11 @@ bootstrapApplication(AppComponent, {
       const spriteLoader = inject(TnSpriteLoaderService);
       return spriteLoader.ensureSpriteLoaded();
     }),
+    provideAppInitializer(() => {
+      try {
+        inject<Window>(WINDOW).sessionStorage.removeItem(chunkReloadKey);
+      } catch { /* sessionStorage may be unavailable */ }
+    }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
@@ -133,25 +139,7 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding(),
       withNavigationErrorHandler((error: NavigationError) => {
-        const chunkFailedPattern = /Loading chunk \d+ failed|(?:failed|error)\s.*dynamically imported module/i;
-        if (chunkFailedPattern.test(String(error.error))) {
-          const window = inject<Window>(WINDOW);
-          try {
-            const reloadKey = 'chunk-reload-attempted';
-            const lastAttempt = Number(window.sessionStorage.getItem(reloadKey));
-            const now = Date.now();
-            if (!lastAttempt || now - lastAttempt > 10_000) {
-              window.sessionStorage.setItem(reloadKey, String(now));
-              window.location.reload();
-            } else {
-              window.sessionStorage.removeItem(reloadKey);
-              window.document.body.innerText = 'The application has been updated. Please refresh the page.';
-            }
-          } catch {
-            window.location.reload();
-          }
-        }
-        console.error(error);
+        handleChunkLoadError(error, inject<Window>(WINDOW));
       }),
     ),
   ],
