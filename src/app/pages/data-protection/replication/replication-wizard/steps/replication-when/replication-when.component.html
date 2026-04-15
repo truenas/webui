@@ -34,6 +34,7 @@
       <ix-select
         class="unit"
         formControlName="source_lifetime_unit"
+        [label]="helptext.sourceLifetimeUnitLabel | translate"
         [options]="lifetimeUnitOptions$"
         [required]="true"
       ></ix-select>

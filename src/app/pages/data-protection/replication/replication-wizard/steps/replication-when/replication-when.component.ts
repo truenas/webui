@@ -49,6 +49,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   private destroyRef = inject(DestroyRef);
 
   readonly isCustomRetentionVisible = input(true);
+  readonly isSourceLocal = input(false);
   readonly isLoading = input(false);
 
   readonly save = output();
@@ -98,24 +99,26 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     if (changes.isCustomRetentionVisible && !changes.isCustomRetentionVisible.currentValue) {
       this.form.controls.retention_policy.setValue(RetentionPolicy.Source);
     }
+    if (changes.isSourceLocal) {
+      this.updateSourceLifetimeState();
+    }
   }
 
   ngOnInit(): void {
     this.form.controls.readonly.disable();
     this.form.controls.lifetime_value.disable();
     this.form.controls.lifetime_unit.disable();
+    this.form.controls.source_lifetime_value.disable();
+    this.form.controls.source_lifetime_unit.disable();
     this.form.controls.schedule_method.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((method) => {
       if (method === ScheduleMethod.Cron) {
         this.form.controls.schedule_picker.enable();
         this.form.controls.readonly.disable();
-        this.form.controls.source_lifetime_value.enable();
-        this.form.controls.source_lifetime_unit.enable();
       } else {
         this.form.controls.schedule_picker.disable();
         this.form.controls.readonly.enable();
-        this.form.controls.source_lifetime_value.disable();
-        this.form.controls.source_lifetime_unit.disable();
       }
+      this.updateSourceLifetimeState();
     });
     this.form.controls.retention_policy.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((policy) => {
       if (policy === RetentionPolicy.Custom) {
@@ -126,6 +129,18 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         this.form.controls.lifetime_unit.disable();
       }
     });
+  }
+
+  private updateSourceLifetimeState(): void {
+    const showSourceLifetime = this.isSourceLocal()
+      && this.form.controls.schedule_method.value === ScheduleMethod.Cron;
+    if (showSourceLifetime) {
+      this.form.controls.source_lifetime_value.enable();
+      this.form.controls.source_lifetime_unit.enable();
+    } else {
+      this.form.controls.source_lifetime_value.disable();
+      this.form.controls.source_lifetime_unit.disable();
+    }
   }
 
   getSummary(): SummarySection {

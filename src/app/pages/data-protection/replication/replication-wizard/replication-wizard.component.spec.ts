@@ -203,4 +203,45 @@ describe('ReplicationWizardComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
     expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
   });
+
+  it('uses custom source snapshot lifetime for periodic snapshot tasks', async () => {
+    await form!.fillForm(
+      {
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+        Recursive: false,
+        'Replicate Custom Snapshots': true,
+        'Snapshot Name Regular Expression': '.*',
+        Source: ['pool1/'],
+        Destination: 'pool3/',
+      },
+    );
+
+    await goToNextStep();
+
+    await form!.fillForm({
+      'Source Snapshot Lifetime': 3,
+      Unit: 'Hours',
+    });
+
+    const lifeTimeRadioGroup = await loader.getHarness(
+      IxRadioGroupHarness.with({ label: 'Destination Snapshot Lifetime' }),
+    );
+    await lifeTimeRadioGroup.setValue('Custom');
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+      dataset: 'pool1/',
+      enabled: true,
+      lifetime_unit: LifetimeUnit.Hour,
+      lifetime_value: 3,
+      naming_schema: 'auto-%Y-%m-%d_%H-%M',
+      recursive: false,
+      schedule: {
+        dom: '*', dow: '*', hour: '0', minute: '0', month: '*',
+      },
+    }]);
+  });
 });
