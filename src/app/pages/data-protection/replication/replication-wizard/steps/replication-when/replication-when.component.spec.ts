@@ -43,6 +43,8 @@ describe('ReplicationWhenComponent', () => {
     expect(spectator.component.getPayload()).toEqual({
       schedule_method: ScheduleMethod.Cron,
       schedule_picker: '0 0 * * *',
+      source_lifetime_value: 2,
+      source_lifetime_unit: LifetimeUnit.Week,
       retention_policy: RetentionPolicy.Custom,
       lifetime_value: 2,
       lifetime_unit: LifetimeUnit.Week,
