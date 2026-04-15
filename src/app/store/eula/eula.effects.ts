@@ -41,22 +41,19 @@ export class EulaEffects {
   ), { dispatch: false });
 
   private showEulaDialog(): Observable<void> {
-    return this.api.call('truenas.get_eula').pipe(
-      switchMap((eula) => {
-        return forkJoin({
-          title: this.translate.get('End User License Agreement - TrueNAS'),
-          buttonText: this.translate.get('I Agree'),
-        }).pipe(
-          switchMap(({ title, buttonText }) => {
-            return this.dialogService.confirm({
-              title,
-              message: ignoreTranslation(eula),
-              hideCheckbox: true,
-              buttonText,
-              hideCancel: true,
-            });
-          }),
-        );
+    return forkJoin({
+      eula: this.api.call('truenas.get_eula'),
+      title: this.translate.get('End User License Agreement - TrueNAS'),
+      buttonText: this.translate.get('I Agree'),
+    }).pipe(
+      switchMap(({ eula, title, buttonText }) => {
+        return this.dialogService.confirm({
+          title,
+          message: ignoreTranslation(eula),
+          hideCheckbox: true,
+          buttonText,
+          hideCancel: true,
+        });
       }),
       filter(Boolean),
       switchMap(() => this.api.call('truenas.accept_eula')),
