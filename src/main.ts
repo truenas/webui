@@ -133,12 +133,14 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding(),
       withNavigationErrorHandler((error: NavigationError) => {
-        const chunkFailedMessage = /Loading chunk \d+ failed|Failed to fetch dynamically imported module/;
-        if (chunkFailedMessage.test(String(error.error))) {
+        const chunkFailedPattern = /Loading chunk \d+ failed|(?:failed|error)\s.*dynamically imported module/i;
+        if (chunkFailedPattern.test(String(error.error))) {
           const window = inject<Window>(WINDOW);
           const reloadKey = 'chunk-reload-attempted';
-          if (!window.sessionStorage.getItem(reloadKey)) {
-            window.sessionStorage.setItem(reloadKey, 'true');
+          const lastAttempt = Number(window.sessionStorage.getItem(reloadKey));
+          const now = Date.now();
+          if (!lastAttempt || now - lastAttempt > 10_000) {
+            window.sessionStorage.setItem(reloadKey, String(now));
             window.location.reload();
           } else {
             window.sessionStorage.removeItem(reloadKey);
