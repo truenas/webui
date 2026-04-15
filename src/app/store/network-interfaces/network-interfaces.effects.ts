@@ -57,12 +57,19 @@ export class NetworkInterfacesEffects {
   ).pipe(
     filter(() => this.router.url !== '/system/network'),
     switchMap(() => {
-      return this.dialogService.confirm({
-        title: this.translate.instant(helptextInterfaces.checkinTitle),
-        message: this.translate.instant(helptextInterfaces.pendingCheckinDialogText),
-        hideCheckbox: true,
-        buttonText: this.translate.instant(helptextInterfaces.goToNetwork),
+      return forkJoin({
+        title: this.translate.get(helptextInterfaces.checkinTitle),
+        message: this.translate.get(helptextInterfaces.pendingCheckinDialogText),
+        buttonText: this.translate.get(helptextInterfaces.goToNetwork),
       }).pipe(
+        switchMap(({ title, message, buttonText }) => {
+          return this.dialogService.confirm({
+            title,
+            message,
+            hideCheckbox: true,
+            buttonText,
+          });
+        }),
         filter(Boolean),
         tap(() => {
           this.router.navigate(['/system/network']);
