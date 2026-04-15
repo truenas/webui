@@ -13,6 +13,8 @@ import {
   withPreloading,
   provideRouter,
   PreloadAllModules,
+  Router,
+  NavigationEnd,
   withComponentInputBinding,
   withNavigationErrorHandler,
   NavigationError,
@@ -31,6 +33,7 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
+import { filter, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
@@ -127,9 +130,16 @@ bootstrapApplication(AppComponent, {
       return spriteLoader.ensureSpriteLoaded();
     }),
     provideAppInitializer(() => {
-      try {
-        inject<Window>(WINDOW).sessionStorage.removeItem(chunkReloadKey);
-      } catch { /* sessionStorage may be unavailable */ }
+      const router = inject(Router);
+      const windowRef = inject<Window>(WINDOW);
+      router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        take(1),
+      ).subscribe(() => {
+        try {
+          windowRef.sessionStorage.removeItem(chunkReloadKey);
+        } catch { /* sessionStorage may be unavailable */ }
+      });
     }),
     ApiService,
     provideCharts(withDefaultRegisterables()),

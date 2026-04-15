@@ -1,4 +1,4 @@
-import { NavigationError, Event as RouterEvent } from '@angular/router';
+import { NavigationError } from '@angular/router';
 import { chunkReloadKey, handleChunkLoadError, resetReloadedFlag } from 'app/helpers/handle-chunk-load-error';
 
 describe('handleChunkLoadError', () => {
@@ -25,7 +25,6 @@ describe('handleChunkLoadError', () => {
       id: 1,
       url: '/test',
       error: new Error(message),
-      type: 2 as unknown as RouterEvent,
     } as unknown as NavigationError;
   }
 
