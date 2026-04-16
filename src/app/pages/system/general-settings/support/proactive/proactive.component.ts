@@ -10,7 +10,6 @@ import { forkJoin, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfig, SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -48,7 +47,6 @@ export class ProactiveComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
-  private dialogService = inject(DialogService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -139,10 +137,7 @@ export class ProactiveComponent implements OnInit {
   private supportUnavailable(): void {
     this.isFormDisabled = true;
     this.form.disable();
-    this.dialogService.warn(
-      helptext.proactive.dialogUnavailableTitle,
-      helptext.proactive.dialogUnavailableWarning,
-    );
+    this.cdr.markForCheck();
   }
 
   private patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {

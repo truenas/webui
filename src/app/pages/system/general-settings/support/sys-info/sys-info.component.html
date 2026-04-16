@@ -33,6 +33,18 @@
           {{ 'Manage' | translate }}
         </button>
       </mat-list-item>
+    } @else if (!isProactiveSupportAvailable()) {
+      <mat-list-item class="proactive-status">
+        <span class="label">{{ 'Proactive Support' | translate }}:</span>
+        <button
+          mat-button
+          class="edit-contacts-btn"
+          disabled
+          [matTooltip]="'Proactive support is not available on your license.' | translate"
+        >
+          {{ 'Manage' | translate }}
+        </button>
+      </mat-list-item>
     }
     <mat-list-item class="model-row">
       <span class="label">{{ 'Model' | translate }}:</span>

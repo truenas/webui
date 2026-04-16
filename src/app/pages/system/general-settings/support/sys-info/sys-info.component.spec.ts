@@ -69,6 +69,7 @@ describe('SysInfoComponent', () => {
     spectator.setInput({
       licenseInfo: licenseInfo as LicenseInfoInSupport,
       hasLicense: true,
+      isProactiveSupportAvailable: true,
     });
 
     const infoRows = getInfoRows();
@@ -89,6 +90,7 @@ describe('SysInfoComponent', () => {
       spectator.setInput({
         licenseInfo: licenseInfo as LicenseInfoInSupport,
         hasLicense: true,
+        isProactiveSupportAvailable: true,
         isProactiveSupportEnabled: true,
       });
     });
@@ -110,13 +112,33 @@ describe('SysInfoComponent', () => {
       expect(editContactsEmitted).toBe(true);
     });
 
-    it('does not show proactive support row when not enabled', () => {
+    it('does not show proactive support row when not enabled but available', () => {
       spectator.setInput({
+        isProactiveSupportAvailable: true,
         isProactiveSupportEnabled: false,
       });
 
       const proactiveRow = spectator.query('.proactive-status');
       expect(proactiveRow).not.toExist();
+    });
+  });
+
+  describe('Proactive support not available', () => {
+    beforeEach(() => {
+      spectator.setInput({
+        licenseInfo: licenseInfo as LicenseInfoInSupport,
+        hasLicense: true,
+        isProactiveSupportAvailable: false,
+        isProactiveSupportEnabled: false,
+      });
+    });
+
+    it('shows proactive support row with disabled Manage button', async () => {
+      const proactiveRow = spectator.query('.proactive-status');
+      expect(proactiveRow).toExist();
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      expect(await manageButton.isDisabled()).toBe(true);
     });
   });
 
@@ -126,6 +148,7 @@ describe('SysInfoComponent', () => {
       spectator.setInput({
         licenseInfo: licenseInfo as LicenseInfoInSupport,
         hasLicense: true,
+        isProactiveSupportAvailable: true,
         productionControl,
       });
 
