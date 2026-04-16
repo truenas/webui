@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=e0693ec8ca",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=5806f89927",
   "icons": [
     "app-account_circle",
     "app-assignment",
@@ -70,7 +70,6 @@
     "mat-vpn_key",
     "mat-warning",
     "mdi-account",
-    "mdi-account-box",
     "mdi-account-group",
     "mdi-account-multiple",
     "mdi-alert",
