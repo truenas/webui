@@ -6,7 +6,7 @@ import { MatStepperPrevious } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { Role } from 'app/enums/role.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
@@ -61,7 +61,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     source_lifetime_value: [2, [Validators.required, Validators.min(1)]],
     source_lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
     retention_policy: [RetentionPolicy.Source, [Validators.required]],
-    lifetime_value: [2, [Validators.required]],
+    lifetime_value: [2, [Validators.required, Validators.min(1)]],
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
@@ -157,6 +157,16 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         label: this.translate.instant(helptextReplicationWizard.scheduleMethodLabel),
         value: this.translate.instant('Run Once'),
       });
+    }
+
+    if (values.source_lifetime_value != null && values.source_lifetime_unit != null) {
+      const unitName = lifetimeUnitNames.get(values.source_lifetime_unit);
+      if (unitName) {
+        summary.push({
+          label: this.translate.instant(helptextReplicationWizard.sourceLifetimeLabel),
+          value: `${values.source_lifetime_value} ${this.translate.instant(unitName)}`,
+        });
+      }
     }
 
     return summary;

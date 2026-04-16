@@ -55,6 +55,7 @@ describe('ReplicationWhenComponent', () => {
   it('returns summary when getSummary() is called', () => {
     expect(spectator.component.getSummary()).toEqual([
       { label: 'Replication Schedule', value: 'Run On a Schedule' },
+      { label: 'Source Snapshot Lifetime', value: '2 Week(s)' },
     ]);
   });
 
