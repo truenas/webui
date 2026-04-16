@@ -22,13 +22,16 @@
     ></ix-checkbox>
   }
   @if (form.controls.source_lifetime_value.enabled) {
+    <ix-label
+      [label]="helptext.sourceLifetimeLabel | translate"
+      [tooltip]="helptext.sourceLifetimeTooltip | translate"
+      [required]="true"
+    ></ix-label>
     <div class="lifetime">
       <ix-input
         class="value"
         formControlName="source_lifetime_value"
         type="number"
-        [label]="helptext.sourceLifetimeLabel | translate"
-        [tooltip]="helptext.sourceLifetimeTooltip | translate"
         [required]="true"
       ></ix-input>
       <ix-select
