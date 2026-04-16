@@ -46,7 +46,7 @@ function showFallbackPage(window: Window): void {
       </div>
     </div>
   `;
-  window.document.getElementById('chunk-reload-btn').addEventListener('click', () => {
+  window.document.getElementById('chunk-reload-btn')?.addEventListener('click', () => {
     window.location.reload();
   });
 }
