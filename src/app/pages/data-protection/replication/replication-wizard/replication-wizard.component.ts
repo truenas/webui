@@ -11,6 +11,7 @@ import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.cons
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
@@ -264,8 +265,8 @@ export class ReplicationWizardComponent {
         dataset,
         recursive: data.recursive,
         schedule: crontabToSchedule(data.schedule_picker),
-        lifetime_value: data.source_lifetime_value,
-        lifetime_unit: data.source_lifetime_unit,
+        lifetime_value: data.source_lifetime_value ?? 2,
+        lifetime_unit: data.source_lifetime_unit ?? LifetimeUnit.Week,
         naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
         enabled: true,
       });

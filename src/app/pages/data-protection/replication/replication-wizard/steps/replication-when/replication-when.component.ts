@@ -58,7 +58,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     schedule_method: [ScheduleMethod.Cron, [Validators.required]],
     schedule_picker: [CronPresetValue.Daily, [Validators.required]],
     readonly: [true],
-    source_lifetime_value: [2, [Validators.required]],
+    source_lifetime_value: [2, [Validators.required, Validators.min(1)]],
     source_lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
     retention_policy: [RetentionPolicy.Source, [Validators.required]],
     lifetime_value: [2, [Validators.required]],
