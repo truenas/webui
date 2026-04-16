@@ -222,12 +222,12 @@ describe('ReplicationWizardComponent', () => {
     await goToNextStep();
 
     const sourceLifetimeInput = await loader.getHarness(
-      IxInputHarness.with({ selector: '[formControlName="source_lifetime_value"]' }),
+      IxInputHarness.with({ label: 'Source Snapshot Lifetime' }),
     );
     await sourceLifetimeInput.setValue('3');
 
     const sourceLifetimeUnit = await loader.getHarness(
-      IxSelectHarness.with({ selector: '[formControlName="source_lifetime_unit"]' }),
+      IxSelectHarness.with({ label: 'Unit' }),
     );
     await sourceLifetimeUnit.setValue('Hours');
 
