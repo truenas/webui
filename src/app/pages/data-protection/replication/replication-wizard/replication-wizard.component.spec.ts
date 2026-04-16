@@ -18,7 +18,9 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -219,10 +221,13 @@ describe('ReplicationWizardComponent', () => {
 
     await goToNextStep();
 
-    await form!.fillForm({
-      'Source Snapshot Lifetime': 3,
-      Unit: 'Hours',
-    });
+    const sourceLifetimeInput = await loader.getHarness(IxInputHarness.with({ label: 'Source Snapshot Lifetime' }));
+    await sourceLifetimeInput.setValue('3');
+
+    const sourceLifetimeUnit = await loader.getHarness(
+      IxSelectHarness.with({ selector: '[formControlName="source_lifetime_unit"]' }),
+    );
+    await sourceLifetimeUnit.setValue('Hours');
 
     const lifeTimeRadioGroup = await loader.getHarness(
       IxRadioGroupHarness.with({ label: 'Destination Snapshot Lifetime' }),

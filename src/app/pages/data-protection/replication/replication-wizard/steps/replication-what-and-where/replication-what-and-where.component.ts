@@ -213,6 +213,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       this.checkCustomVisible();
       this.sourceLocalChange.emit(value === DatasetSource.Local);
     });
+    this.sourceLocalChange.emit(this.form.controls.source_datasets_from.value === DatasetSource.Local);
 
     this.form.controls.custom_snapshots.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.form.controls.custom_snapshots.enabled) {
