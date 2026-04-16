@@ -118,6 +118,7 @@
         [systemInfo]="systemInfo"
         [licenseInfo]="licenseInfo"
         [productionControl]="hasLicense ? isProductionControl : null"
+        [isProactiveSupportAvailable]="isProactiveSupportAvailable()"
         [isProactiveSupportEnabled]="isProactiveSupportEnabled()"
         (editContacts)="openProactive()"
       ></ix-sys-info>
