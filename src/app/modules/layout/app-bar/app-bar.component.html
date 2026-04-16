@@ -11,16 +11,7 @@
           [routerLink]="getRouterLink(item.state)"
           (click)="onItemClick(item)"
         >
-          <tn-icon
-            class="size-6"
-            [name]="item.status === 'open' ? item.iconActive : item.icon"
-            [ngClass]="[
-              item.status === 'open' ? 'text-background!' : 'text-foreground!',
-              item.state === 'desktop' ? '' : 'hidden'
-            ]"
-          ></tn-icon>
-
-          <div class="size-6" [ngClass]="item.state === 'desktop' ? 'hidden' : ''">
+          <div class="size-6">
             <ix-harbor-icon [name]="item.status === 'open' ? item.iconActive : item.icon"></ix-harbor-icon>
           </div>
         </button>

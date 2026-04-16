@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, DestroyRef, Component, inject, OnInit } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TnIconComponent } from '@truenas/ui-components';
 import { take } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppBarItem } from 'app/interfaces/app-bar.interface';
@@ -17,7 +16,7 @@ import { selectAppBarState } from 'app/store/app-bar/app-bar.selectors';
   selector: 'ix-app-bar',
   templateUrl: './app-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnIconComponent, HarborIconComponent, RouterLink, AsyncPipe, NgClass],
+  imports: [HarborIconComponent, RouterLink, AsyncPipe, NgClass],
 })
 export class AppBarComponent implements OnInit {
   private store = inject(Store);
@@ -27,12 +26,17 @@ export class AppBarComponent implements OnInit {
   readonly appBarState$ = this.store.select(selectAppBarState);
   readonly sortedAppBarState$ = this.appBarState$.pipe(
     map((items) => {
-      const desktopItem = items.find((item) => item.state === 'desktop');
+      const cleanedItems = items.map((item) => ({
+        ...item,
+        icon: this.formatIcon(item.icon),
+        iconActive: this.formatIcon(item.iconActive),
+      }));
+      const desktopItem = cleanedItems.find((item) => item.state === 'desktop');
       if (!desktopItem) {
-        return items;
+        return cleanedItems;
       }
 
-      return [desktopItem, ...items.filter((item) => item.state !== 'desktop')];
+      return [desktopItem, ...cleanedItems.filter((item) => item.state !== 'desktop')];
     }),
   );
 
@@ -62,8 +66,8 @@ export class AppBarComponent implements OnInit {
           this.store.dispatch(appBarOpened({
             item: {
               name: matchedItem.name,
-              icon: matchedItem.icon,
-              iconActive: matchedItem.iconActive,
+              icon: this.formatIcon(matchedItem.icon),
+              iconActive: this.formatIcon(matchedItem.iconActive),
               state: matchedItem.state,
               status: 'open',
             },
@@ -71,6 +75,10 @@ export class AppBarComponent implements OnInit {
         }
       }
     });
+  }
+
+  private formatIcon(icon: string): string {
+    return icon?.replace('mdi-monitor', 'desktop');
   }
 
   private getAllMenuItems(items: MenuItem[] | MenuItem['sub']): MenuItem[] {
@@ -97,8 +105,8 @@ export class AppBarComponent implements OnInit {
       this.store.dispatch(appBarOpened({
         item: {
           name: item.name,
-          icon: item.icon,
-          iconActive: item.iconActive,
+          icon: this.formatIcon(item.icon),
+          iconActive: this.formatIcon(item.iconActive),
           state: item.state,
           status: 'open',
         },
