@@ -37,6 +37,7 @@
       <mat-list-item class="proactive-status">
         <span class="label">{{ 'Proactive Support' | translate }}:</span>
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           class="edit-contacts-btn"
           disabled
