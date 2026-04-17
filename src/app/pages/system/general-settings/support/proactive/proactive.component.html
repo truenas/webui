@@ -14,7 +14,7 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
         <ix-fieldset
-          [class.form-disable]="isFormDisabled"
+          [class.form-disable]="isSupportUnavailable()"
           [title]="helptext.proactive.primaryContact | translate"
           [tooltip]="helptext.proactive.instructions | translate"
         >
@@ -49,7 +49,7 @@
         </ix-fieldset>
 
         <ix-fieldset
-          [class.form-disable]="isFormDisabled"
+          [class.form-disable]="isSupportUnavailable()"
           [title]="helptext.proactive.secondaryContact | translate"
         >
           <ix-input
@@ -84,7 +84,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading() || isFormDisabled"
+          [disabled]="form.invalid || isLoading() || isSupportUnavailable()"
         >
           {{ 'Save' | translate }}
         </button>
