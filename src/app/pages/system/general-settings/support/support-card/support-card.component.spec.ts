@@ -151,6 +151,20 @@ describe('SupportCardComponent', () => {
         expect(slideIn.open).toHaveBeenCalledWith(ProactiveComponent, { wide: true });
       });
 
+      it('re-checks proactive support availability after the slide-in closes', async () => {
+        const slideIn = spectator.inject(SlideIn);
+        jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.cancel());
+
+        const api = spectator.inject(ApiService);
+        const apiCallSpy = jest.spyOn(api, 'call');
+        apiCallSpy.mockClear();
+
+        const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable' }));
+        await enableButton.click();
+
+        expect(apiCallSpy).toHaveBeenCalledWith('support.is_available');
+      });
+
       it('hides proactive support banner when enabled', () => {
         const api = spectator.inject(ApiService);
         jest.spyOn(api, 'call').mockImplementation((method: string) => {
