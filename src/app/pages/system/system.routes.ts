@@ -119,8 +119,13 @@ export const systemRoutes: Routes = [
       },
       {
         path: 'support',
-        data: { title: T('Support'), breadcrumb: T('Support') },
+        data: { title: T('Support'), breadcrumb: null },
         children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: '/system/general',
+          },
           {
             path: 'eula',
             component: EulaComponent,
