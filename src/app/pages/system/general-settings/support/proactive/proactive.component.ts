@@ -14,6 +14,7 @@ import { SupportConfig, SupportConfigUpdate } from 'app/modules/feedback/interfa
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -38,6 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxCheckboxComponent,
     RequiresRolesDirective,
     MatButton,
+    WarningComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -57,7 +59,8 @@ export class ProactiveComponent implements OnInit {
 
   protected isLoading = signal(false);
   title = helptext.proactive.title;
-  isFormDisabled = false;
+  protected isFormDisabled = false;
+  protected isSupportUnavailable = signal(false);
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
     title: ['', [Validators.required]],
@@ -136,6 +139,7 @@ export class ProactiveComponent implements OnInit {
 
   private supportUnavailable(): void {
     this.isFormDisabled = true;
+    this.isSupportUnavailable.set(true);
     this.form.disable();
     this.cdr.markForCheck();
   }

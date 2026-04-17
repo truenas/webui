@@ -20,28 +20,19 @@
         }
       </span>
     </mat-list-item>
-    @if (isProactiveSupportEnabled()) {
+    @if (isProactiveSupportEnabled() || !isProactiveSupportAvailable()) {
       <mat-list-item class="proactive-status">
         <span class="label">{{ 'Proactive Support' | translate }}:</span>
-        <span class="value">{{ 'Enabled' | translate }}</span>
+        @if (isProactiveSupportEnabled()) {
+          <span class="value">{{ 'Enabled' | translate }}</span>
+        }
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
           class="edit-contacts-btn"
+          [disabled]="!isProactiveSupportAvailable()"
+          [matTooltip]="isProactiveSupportAvailable() ? '' : ('Proactive support is not available on your license.' | translate)"
           (click)="editContacts.emit()"
-        >
-          {{ 'Manage' | translate }}
-        </button>
-      </mat-list-item>
-    } @else if (!isProactiveSupportAvailable()) {
-      <mat-list-item class="proactive-status">
-        <span class="label">{{ 'Proactive Support' | translate }}:</span>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          class="edit-contacts-btn"
-          disabled
-          [matTooltip]="'Proactive support is not available on your license.' | translate"
         >
           {{ 'Manage' | translate }}
         </button>
