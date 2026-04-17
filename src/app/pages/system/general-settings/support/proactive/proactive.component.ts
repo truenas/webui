@@ -138,7 +138,6 @@ export class ProactiveComponent implements OnInit {
   private supportUnavailable(): void {
     this.isSupportUnavailable.set(true);
     this.form.disable();
-    this.cdr.markForCheck();
   }
 
   private patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {

@@ -8,6 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextSystemSupport } from 'app/helptext/system/support';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import {
   IxSlideToggleComponent,
@@ -42,4 +43,5 @@ export class SysInfoComponent {
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly getLabelForContractType = getLabelForContractType;
+  protected readonly helptext = helptextSystemSupport;
 }

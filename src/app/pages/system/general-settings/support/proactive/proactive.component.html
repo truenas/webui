@@ -8,7 +8,7 @@
   <mat-card-content>
     @if (isSupportUnavailable()) {
       <ix-warning
-        [message]="'Proactive support is not available on your license.' | translate"
+        [message]="helptext.proactive.unavailableMessage | translate"
       ></ix-warning>
     }
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
