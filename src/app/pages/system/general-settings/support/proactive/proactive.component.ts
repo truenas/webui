@@ -59,7 +59,6 @@ export class ProactiveComponent implements OnInit {
 
   protected isLoading = signal(false);
   title = helptext.proactive.title;
-  protected isFormDisabled = false;
   protected isSupportUnavailable = signal(false);
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -129,7 +128,6 @@ export class ProactiveComponent implements OnInit {
           this.patchFormValues(config, isEnabled);
         },
         error: (error: unknown) => {
-          this.isFormDisabled = true;
           this.form.disable();
           this.cdr.markForCheck();
           this.errorHandler.showErrorModal(error);
@@ -138,7 +136,6 @@ export class ProactiveComponent implements OnInit {
   }
 
   private supportUnavailable(): void {
-    this.isFormDisabled = true;
     this.isSupportUnavailable.set(true);
     this.form.disable();
     this.cdr.markForCheck();
