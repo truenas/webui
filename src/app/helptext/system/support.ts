@@ -12,6 +12,7 @@ export const helptextSystemSupport = {
     secondaryContact: T('Secondary Contact'),
 
     dialogMessage: T('Successfully saved proactive support settings.'),
+    unavailableMessage: T('Proactive support is not available on your license.'),
   },
 
   bug: {
