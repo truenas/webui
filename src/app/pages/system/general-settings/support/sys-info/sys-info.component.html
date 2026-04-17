@@ -31,7 +31,7 @@
           mat-button
           class="edit-contacts-btn"
           [disabled]="!isProactiveSupportAvailable()"
-          [matTooltip]="isProactiveSupportAvailable() ? null : (helptext.proactive.unavailableMessage | translate)"
+          [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
           (click)="editContacts.emit()"
         >
           {{ 'Manage' | translate }}
