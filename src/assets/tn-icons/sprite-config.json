@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=5806f89927",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=9c8ea42ad5",
   "icons": [
     "app-account_circle",
     "app-assignment",
@@ -30,6 +30,8 @@
     "app-desktop-virtual-machines-active",
     "app-emoticon",
     "app-enclosure",
+    "app-featured-photos",
+    "app-featured-photos-active",
     "app-harbor-logo",
     "app-harbor-logo-mark",
     "app-harbor-logo-mark-color",

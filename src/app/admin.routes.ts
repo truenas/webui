@@ -119,6 +119,12 @@ export const adminRoutes: Routes = [
         path: 'containers',
         loadChildren: () => import('app/pages/containers/containers.routes').then((module) => module.containersRoutes),
       },
+      {
+        path: 'featured-photos/admin',
+        loadComponent: () => import('app/pages/featured-photos/featured-photos-admin.component')
+          .then((m) => m.FeaturedPhotosAdminComponent),
+        data: { title: T('Featured Photos'), breadcrumb: T('Featured Photos') },
+      },
     ],
   },
 ];

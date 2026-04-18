@@ -1,0 +1,146 @@
+<!-- Loading -->
+@if (view() === 'loading') {
+  <div class="fp-screen fp-loading">
+    <div class="fp-spinner"></div>
+  </div>
+}
+
+<!-- Empty library -->
+@if (view() === 'empty') {
+  <div class="fp-screen fp-empty">
+    <div class="fp-empty-card">
+      <h1>No photos found</h1>
+      <p>Configure the library path in the Featured Photos admin panel.</p>
+    </div>
+  </div>
+}
+
+<!-- Offline / service unavailable -->
+@if (view() === 'offline') {
+  <div class="fp-screen fp-offline">
+    @if (currentPhoto(); as photo) {
+      <div class="fp-bg-blur" [style.--bg-url]="mediaBgUrl(photo)"></div>
+      <img class="fp-img fp-offline-img" alt="" [src]="mediaUrl(photo)" />
+    }
+    <div class="fp-offline-badge">
+      Service unavailable — retrying&hellip;
+    </div>
+  </div>
+}
+
+<!-- Photo display -->
+@if (view() === 'display') {
+  <div class="fp-screen fp-display">
+
+    <!-- Slot A — persistent DOM node; becomes current or next depending on activeSlot -->
+    <div class="fp-slide"
+         data-slot="a"
+         [class.fp-slide-current]="activeSlot() === 'a'"
+         [class.fp-slide-next]="activeSlot() === 'b'"
+         [class.fp-fade-out]="activeSlot() === 'a' && isCrossfading()"
+         [class.fp-fade-in]="activeSlot() === 'b' && isCrossfading()">
+      @if (slotA(); as photo) {
+        @if (photo.media_type !== 'video') {
+          <div class="fp-bg-blur" [style.--bg-url]="mediaBgUrl(photo)"></div>
+        }
+        @if (photo.media_type === 'video') {
+          <video class="fp-img fp-video-clickable"
+                 preload="auto"
+                 playsinline
+                 aria-label="Photo slideshow"
+                 [src]="mediaUrl(photo)"
+                 [muted]="videoMuted()"
+                 (click)="toggleVideoPlayPause($event)"
+                 (ended)="onVideoEnded($event)"
+                 (timeupdate)="onVideoTimeUpdate($event)"
+                 (volumechange)="onVolumeChange($event)">
+          </video>
+        } @else {
+          <img class="fp-img fp-ken-burns"
+               alt=""
+               [src]="mediaUrl(photo)"
+               [style.--kb-from]="kenBurnsFromA()"
+               [style.--kb-to]="kenBurnsToA()" />
+        }
+      }
+    </div>
+
+    <!-- Slot B — persistent DOM node; becomes current or next depending on activeSlot -->
+    <div class="fp-slide"
+         data-slot="b"
+         [class.fp-slide-current]="activeSlot() === 'b'"
+         [class.fp-slide-next]="activeSlot() === 'a'"
+         [class.fp-fade-out]="activeSlot() === 'b' && isCrossfading()"
+         [class.fp-fade-in]="activeSlot() === 'a' && isCrossfading()">
+      @if (slotB(); as photo) {
+        @if (photo.media_type !== 'video') {
+          <div class="fp-bg-blur" [style.--bg-url]="mediaBgUrl(photo)"></div>
+        }
+        @if (photo.media_type === 'video') {
+          <video class="fp-img fp-video-clickable"
+                 preload="auto"
+                 playsinline
+                 aria-label="Photo slideshow"
+                 [src]="mediaUrl(photo)"
+                 [muted]="videoMuted()"
+                 (click)="toggleVideoPlayPause($event)"
+                 (ended)="onVideoEnded($event)"
+                 (timeupdate)="onVideoTimeUpdate($event)"
+                 (volumechange)="onVolumeChange($event)">
+          </video>
+        } @else {
+          <img class="fp-img fp-ken-burns"
+               alt=""
+               [src]="mediaUrl(photo)"
+               [style.--kb-from]="kenBurnsFromB()"
+               [style.--kb-to]="kenBurnsToB()" />
+        }
+      }
+    </div>
+
+    <!-- Metadata overlay -->
+    <div class="fp-meta" [class.fp-meta-visible]="metaVisible()">
+      @if (currentDate(); as date) {
+        <span class="fp-meta-date">{{ date }}</span>
+      }
+    </div>
+
+    <!-- Pause icon overlay (videos only) -->
+    @if (videoPaused()) {
+      <div class="fp-pause-overlay" aria-hidden="true">
+        <svg class="fp-pause-icon" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="5" y="3" width="4" height="18" rx="1"/>
+          <rect x="15" y="3" width="4" height="18" rx="1"/>
+        </svg>
+      </div>
+    }
+
+    <!-- Video progress bar (shown only when paused) -->
+    @if (videoPaused() && currentPhoto()?.media_type === 'video') {
+      <span class="fp-progress-time">{{ videoRemainingFormatted() }}</span>
+      <div class="fp-progress" role="progressbar" [attr.aria-valuenow]="videoProgress() * 100">
+        <div class="fp-progress-bar" [style.width.%]="videoProgress() * 100"></div>
+      </div>
+    }
+
+    <!-- Mute toggle (videos only) -->
+    @if (currentPhoto()?.media_type === 'video') {
+      <button class="fp-mute-btn" [attr.aria-label]="videoMuted() ? 'Unmute' : 'Mute'" (click)="toggleMute()">
+        @if (videoMuted()) {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        }
+      </button>
+    }
+
+  </div>
+}

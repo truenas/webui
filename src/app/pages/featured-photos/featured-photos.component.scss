@@ -1,0 +1,338 @@
+// All styles are scoped to this component — intentionally isolated from
+// the TrueNAS admin UI design system.
+
+// The gallery is a standalone full-screen page intentionally isolated from
+// the WebUI admin theme. Use hardcoded dark values everywhere — never inherit
+// WebUI CSS variables whose values depend on the active theme.
+
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  font-family: system-ui, -apple-system, 'Inter', sans-serif;
+}
+
+// ---------------------------------------------------------------------------
+// Shared screen wrapper
+// ---------------------------------------------------------------------------
+
+.fp-screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// ---------------------------------------------------------------------------
+// Loading
+// ---------------------------------------------------------------------------
+
+.fp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.fp-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255 255 255 / 0.15);
+  border-top-color: rgba(255 255 255 / 0.6);
+  border-radius: 50%;
+  animation: fp-spin 0.9s linear infinite;
+}
+
+@keyframes fp-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ---------------------------------------------------------------------------
+// Empty / Offline info screens
+// ---------------------------------------------------------------------------
+
+.fp-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  color: #fff;
+  text-align: center;
+}
+
+.fp-empty-card {
+  max-width: 600px;
+  padding: 48px;
+  background: rgba(255 255 255 / 0.05);
+  border: 1px solid rgba(255 255 255 / 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0 0 0 / 0.4);
+  backdrop-filter: blur(10px);
+
+  h1 {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    margin: 0 0 24px;
+    color: #fff;
+  }
+
+  p {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255 255 255 / 0.7);
+    line-height: 1.6;
+    margin: 0 0 12px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Offline badge
+// ---------------------------------------------------------------------------
+
+.fp-offline-img {
+  opacity: 0.4;
+}
+
+.fp-offline-badge {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  background: rgba(0 0 0 / 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255 255 255 / 0.12);
+  border-radius: 100px;
+  color: rgba(255 255 255 / 0.7);
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+// ---------------------------------------------------------------------------
+// Display: slides
+// ---------------------------------------------------------------------------
+
+.fp-display {
+  background: #000;
+}
+
+.fp-slide {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.fp-slide-current {
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+
+  &.fp-fade-out {
+    opacity: 0;
+  }
+}
+
+.fp-slide-next {
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+
+  &.fp-fade-in {
+    opacity: 1;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Blurred background fill layer
+// ---------------------------------------------------------------------------
+// Sits behind the foreground image/video. Fills the letterbox bars that appear
+// when a portrait image is displayed on a landscape screen (or vice-versa).
+// The same thumbnail is blurred and darkened so it looks cinematic rather than
+// exposing a plain black bar.
+
+.fp-bg-blur {
+  position: absolute;
+  inset: 0;
+  background-image: var(--bg-url);
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.35) saturate(1.2);
+  // Scale past the edges so the Gaussian blur fade-out is hidden by overflow:hidden
+  transform: scale(1.2);
+  transform-origin: center;
+}
+
+// ---------------------------------------------------------------------------
+// Image / video fill
+// ---------------------------------------------------------------------------
+
+.fp-img {
+  position: relative; // stack above .fp-bg-blur (DOM order + z-index)
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  // contain: show the full image — portrait photos are no longer cropped.
+  // Letterbox bars are filled by .fp-bg-blur instead of empty black.
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+// ---------------------------------------------------------------------------
+// Ken Burns
+// ---------------------------------------------------------------------------
+
+.fp-ken-burns {
+  animation: fp-kb 8s ease-in-out forwards;
+}
+
+@keyframes fp-kb {
+  from { transform: var(--kb-from, scale(1.0)); }
+  to   { transform: var(--kb-to,   scale(1.06)); }
+}
+
+// ---------------------------------------------------------------------------
+// Metadata overlay (glass pill, bottom-left)
+// ---------------------------------------------------------------------------
+
+.fp-meta {
+  position: absolute;
+  bottom: 32px;
+  left: 40px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+
+  &.fp-meta-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Video click-to-play cursor
+// ---------------------------------------------------------------------------
+
+.fp-video-clickable {
+  cursor: pointer;
+}
+
+// ---------------------------------------------------------------------------
+// Pause icon overlay (centered, videos only)
+// ---------------------------------------------------------------------------
+
+.fp-pause-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.fp-pause-icon {
+  width: 72px;
+  height: 72px;
+  color: rgba(255 255 255 / 0.85);
+  filter: drop-shadow(0 2px 12px rgba(0 0 0 / 0.6));
+  animation: fp-pause-in 0.15s ease-out both;
+}
+
+@keyframes fp-pause-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+// ---------------------------------------------------------------------------
+// Video progress bar (bottom edge, shown when paused)
+// ---------------------------------------------------------------------------
+
+.fp-progress-time {
+  position: absolute;
+  bottom: 32px;
+  left: 40px;
+  z-index: 10;
+  padding: 3px 10px;
+  background: rgba(0 0 0 / 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255 255 255 / 0.12);
+  border-radius: 100px;
+  color: rgba(255 255 255 / 0.85);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.fp-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 3px;
+  background: rgba(255 255 255 / 0.18);
+}
+
+.fp-progress-bar {
+  height: 100%;
+  background: rgba(255 255 255 / 0.75);
+  transition: width 0.25s linear;
+}
+
+// ---------------------------------------------------------------------------
+// Mute toggle button (bottom-right, videos only)
+// ---------------------------------------------------------------------------
+
+.fp-mute-btn {
+  position: absolute;
+  bottom: 32px;
+  right: 40px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(0 0 0 / 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255 255 255 / 0.12);
+  border-radius: 50%;
+  color: rgba(255 255 255 / 0.85);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: rgba(255 255 255 / 0.15);
+    border-color: rgba(255 255 255 / 0.3);
+  }
+}
+
+.fp-meta-date {
+  display: inline-block;
+  padding: 7px 18px;
+  background: rgba(0 0 0 / 0.45);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255 255 255 / 0.12);
+  border-radius: 100px;
+  color: rgba(255 255 255 / 0.85);
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}

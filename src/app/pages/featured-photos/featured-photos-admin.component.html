@@ -1,0 +1,121 @@
+<div class="fpa-page">
+
+  <!-- Gallery Access Card -->
+  <div class="fpa-card">
+    <h2 class="fpa-card-title">Gallery Access</h2>
+
+    @if (loadError()) {
+      <p class="fpa-msg fpa-msg-error">
+        Cannot reach the Featured Photos service. Make sure it is running.
+      </p>
+    } @else if (isLoading()) {
+      <p class="fpa-msg">Loading&hellip;</p>
+    } @else if (token()) {
+      <div class="fpa-field">
+        <label class="fpa-label">Token</label>
+        <div class="fpa-row">
+          <code class="fpa-token">{{ tokenDisplayed() }}</code>
+          <button class="fpa-btn fpa-btn-ghost" (click)="toggleReveal()">
+            {{ revealed() ? 'Hide' : 'Show' }}
+          </button>
+          <button class="fpa-btn fpa-btn-ghost" (click)="copyToken()">Copy</button>
+        </div>
+      </div>
+
+      <div class="fpa-field">
+        <label class="fpa-label">Gallery Link</label>
+        <div class="fpa-row fpa-row-url">
+          <input class="fpa-url-input" readonly [value]="galleryUrl()" />
+          <button class="fpa-btn fpa-btn-ghost" (click)="copyGalleryUrl()">Copy Link</button>
+          <button class="fpa-btn fpa-btn-primary" (click)="openGallery()">Open Gallery</button>
+        </div>
+      </div>
+    } @else {
+      <p class="fpa-msg">No token configured. Generate one to start using the gallery.</p>
+    }
+
+    <div class="fpa-card-footer">
+      <button
+        class="fpa-btn fpa-btn-danger"
+        (click)="resetToken()"
+        [disabled]="isResetting()"
+      >
+        {{ token() ? 'Reset Token' : 'Generate Token' }}
+      </button>
+      @if (copyFeedback()) {
+        <span class="fpa-copy-feedback">{{ copyFeedback() }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- Library Path Card -->
+  <div class="fpa-card">
+    <h2 class="fpa-card-title">Library Path</h2>
+
+    @if (isLoading()) {
+      <p class="fpa-msg">Loading&hellip;</p>
+    } @else {
+      <div class="fpa-field">
+        <div class="fpa-row fpa-row-url">
+          <input
+            class="fpa-url-input"
+            type="text"
+            [ngModel]="libraryPathDraft()"
+            (ngModelChange)="libraryPathDraft.set($event)"
+            [disabled]="libraryPathLocked() || isSavingPath()"
+            placeholder="/mnt"
+          />
+          <button
+            class="fpa-btn fpa-btn-primary"
+            (click)="saveLibraryPath()"
+            [disabled]="libraryPathLocked() || isSavingPath() || !libraryPathDraft().trim() || libraryPathDraft().trim() === libraryPath()"
+          >
+            Save
+          </button>
+          @if (libraryPathDraft() !== libraryPath() && !libraryPathLocked()) {
+            <button
+              class="fpa-btn fpa-btn-ghost"
+              (click)="resetLibraryPathDraft()"
+              [disabled]="isSavingPath()"
+            >
+              Cancel
+            </button>
+          }
+        </div>
+        @if (libraryPathLocked()) {
+          <p class="fpa-msg">
+            Path is set by the <code>FEATURED_PHOTOS_LIBRARY</code> environment variable. Unset it to edit here.
+          </p>
+        }
+        @if (libraryPathSaveError()) {
+          <p class="fpa-msg fpa-msg-error">{{ libraryPathSaveError() }}</p>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Indexing Status Card -->
+  <div class="fpa-card">
+    <div class="fpa-card-header">
+      <h2 class="fpa-card-title">Indexing Status</h2>
+      <button class="fpa-btn fpa-btn-ghost" (click)="loadStatus()" [disabled]="isLoading()">
+        Refresh
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <p class="fpa-msg">Loading&hellip;</p>
+    } @else {
+      <dl class="fpa-status-grid">
+        <dt>Eligible Photos</dt>
+        <dd>{{ eligibleCount() }}</dd>
+
+        @if (lastScanError()) {
+          <dt>Last Scan Error</dt>
+          <dd class="fpa-error">{{ lastScanError() }}</dd>
+        }
+      </dl>
+    }
+  </div>
+
+</div>

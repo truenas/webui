@@ -1,4 +1,10 @@
 {
+    "/featured-photos-api/**": {
+        "target": "http://localhost:8686",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    },
     "/api/**": {
         "target": "http://_REMOTE_",
         "secure": false,

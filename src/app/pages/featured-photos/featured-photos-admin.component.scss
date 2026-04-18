@@ -1,0 +1,229 @@
+:host {
+  display: block;
+  padding: 24px;
+}
+
+.fpa-page {
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ---------------------------------------------------------------------------
+// Cards
+// ---------------------------------------------------------------------------
+
+.fpa-card {
+  background: var(--bg2, var(--card-background, rgba(0, 0, 0, 0.04)));
+  border: 1px solid var(--border-color, var(--card-border, rgba(0, 0, 0, 0.08)));
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fpa-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fpa-card-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--fg1, var(--primary-txt, inherit));
+}
+
+.fpa-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+// ---------------------------------------------------------------------------
+// Fields
+// ---------------------------------------------------------------------------
+
+.fpa-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fpa-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg2, var(--secondary-txt, rgba(0, 0, 0, 0.5)));
+}
+
+.fpa-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fpa-row-url {
+  flex-wrap: nowrap;
+}
+
+// ---------------------------------------------------------------------------
+// Token display
+// ---------------------------------------------------------------------------
+
+.fpa-token {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--fg1, var(--primary-txt, inherit));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: all;
+}
+
+// ---------------------------------------------------------------------------
+// Gallery URL input
+// ---------------------------------------------------------------------------
+
+.fpa-url-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg1, var(--input-background, rgba(0, 0, 0, 0.06)));
+  border: 1px solid var(--border-color, var(--input-border, rgba(0, 0, 0, 0.1)));
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+  color: var(--fg1, var(--primary-txt, inherit));
+  cursor: text;
+  user-select: all;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Buttons
+// ---------------------------------------------------------------------------
+
+.fpa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.fpa-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-color, var(--btn-ghost-border, rgba(0, 0, 0, 0.15)));
+  color: var(--fg1, var(--primary-txt, inherit));
+
+  &:hover:not(:disabled) {
+    background: var(--bg1, rgba(0, 0, 0, 0.06));
+  }
+}
+
+.fpa-btn-primary {
+  background: var(--primary);
+  color: var(--primary-txt);
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+}
+
+.fpa-btn-danger {
+  background: var(--danger, #e53e3e);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Status grid
+// ---------------------------------------------------------------------------
+
+.fpa-status-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 24px;
+  margin: 0;
+
+  dt {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg2, var(--secondary-txt, rgba(0, 0, 0, 0.5)));
+    white-space: nowrap;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 14px;
+    word-break: break-all;
+    color: var(--fg1, var(--primary-txt, inherit));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Messages
+// ---------------------------------------------------------------------------
+
+.fpa-msg {
+  margin: 0;
+  font-size: 14px;
+  color: var(--fg2, var(--secondary-txt, rgba(0, 0, 0, 0.6)));
+}
+
+.fpa-msg-error {
+  color: var(--danger, #e53e3e);
+}
+
+.fpa-error {
+  color: var(--danger, #e53e3e);
+  font-size: 13px;
+}
+
+.fpa-copy-feedback {
+  font-size: 13px;
+  color: var(--success, #48bb78);
+  animation: fpa-fade-in 0.15s ease;
+}
+
+@keyframes fpa-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

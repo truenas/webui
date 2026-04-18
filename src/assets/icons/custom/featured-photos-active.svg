@@ -1,0 +1,32 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 3h4c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5c0-1.1 .9-2 2-2z" fill="url(#paint0_linear_photo_act)"/>
+
+<g filter="url(#filter0_f_photo_act)">
+<path d="M6 3h4c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5c0-1.1 .9-2 2-2z" fill="url(#paint0_linear_photo_act)"/>
+</g>
+
+<path d="M10 6h4c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2V8c0-1.1 .9-2 2-2z" fill="white"/>
+<path d="M10 6h4c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2V8c0-1.1 .9-2 2-2z" fill="url(#paint0_linear_photo_act)"/>
+
+<path d="M 12 8.34 L 12.82 10.87 L 15.48 10.87 L 13.33 12.43 L 14.15 14.96 L 12 13.4 L 9.85 14.96 L 10.67 12.43 L 8.52 10.87 L 11.18 10.87 Z" fill="white"/>
+
+<defs>
+<filter id="filter0_f_photo_act" x="-2" y="-2" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="1.5" result="effect1_foregroundBlur_photo_act"/>
+</filter>
+
+<linearGradient id="paint0_linear_photo_act" x1="10" y1="18" x2="10" y2="2" gradientUnits="userSpaceOnUse">
+<stop stop-color="white" stop-opacity="0.4"/>
+<stop offset="0.02" stop-color="#F3EDFF" stop-opacity="0.44"/>
+<stop offset="0.12" stop-color="#CEB4FF" stop-opacity="0.59"/>
+<stop offset="0.22" stop-color="#AE82FF" stop-opacity="0.72"/>
+<stop offset="0.32" stop-color="#945AFF" stop-opacity="0.82"/>
+<stop offset="0.44" stop-color="#803BFF" stop-opacity="0.9"/>
+<stop offset="0.57" stop-color="#7125FF" stop-opacity="0.96"/>
+<stop offset="0.73" stop-color="#6918FF" stop-opacity="0.99"/>
+<stop offset="1" stop-color="#6715FF"/>
+</linearGradient>
+</defs>
+</svg>

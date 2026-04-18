@@ -1,0 +1,61 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_photo" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="60" height="60">
+<path d="M60 0H0V60H60V0Z" fill="white"/>
+<path d="M13 8h24c2.76 0 5 2.24 5 5v26c0 2.76-2.24 5-5 5H13c-2.76 0-5-2.24-5-5V13c0-2.76 2.24-5 5-5z" fill="black"/>
+</mask>
+<g mask="url(#mask0_photo)">
+<g filter="url(#filter0_f_photo)">
+<path d="M13 8h24c2.76 0 5 2.24 5 5v26c0 2.76-2.24 5-5 5H13c-2.76 0-5-2.24-5-5V13c0-2.76 2.24-5 5-5z" fill="url(#paint0_linear_photo)"/>
+</g>
+</g>
+<path d="M13 8h24c2.76 0 5 2.24 5 5v26c0 2.76-2.24 5-5 5H13c-2.76 0-5-2.24-5-5V13c0-2.76 2.24-5 5-5z" fill="url(#paint0_linear_photo)"/>
+
+<mask id="mask1_photo" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="5" y="5" width="45" height="45">
+<path d="M13 8h24c2.76 0 5 2.24 5 5v26c0 2.76-2.24 5-5 5H13c-2.76 0-5-2.24-5-5V13c0-2.76 2.24-5 5-5z" fill="white"/>
+</mask>
+<g mask="url(#mask1_photo)">
+<g filter="url(#filter0_f_photo)">
+<path d="M13 8h24c2.76 0 5 2.24 5 5v26c0 2.76-2.24 5-5 5H13c-2.76 0-5-2.24-5-5V13c0-2.76 2.24-5 5-5z" fill="url(#paint0_linear_photo)"/>
+</g>
+</g>
+
+<path d="M25 18h24c2.76 0 5 2.24 5 5v26c0 2.76-2.24 5-5 5H25c-2.76 0-5-2.24-5-5V23c0-2.76 2.24-5 5-5z" fill="url(#paint2_linear_photo)"/>
+<path d="M49 54H25c-2.76 0-5-2.24-5-5V23c0-2.76 2.24-5 5-5v31c0 2.76 2.24 5 5 5H49z" fill="url(#paint3_linear_photo)"/>
+
+<path d="M 37 25 L 39.46 32.61 L 47.46 32.61 L 40.99 37.29 L 43.45 44.89 L 37 40.2 L 30.55 44.89 L 33.01 37.29 L 26.54 32.61 L 34.54 32.61 Z" fill="url(#paint4_linear_photo)"/>
+
+<defs>
+<filter id="filter0_f_photo" x="-2" y="-2" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="5" result="effect1_foregroundBlur_photo"/>
+</filter>
+
+<linearGradient id="paint0_linear_photo" x1="30" y1="45" x2="30" y2="5" gradientUnits="userSpaceOnUse">
+<stop stop-color="white" stop-opacity="0.4"/>
+<stop offset="0.02" stop-color="#F3EDFF" stop-opacity="0.44"/>
+<stop offset="0.12" stop-color="#CEB4FF" stop-opacity="0.59"/>
+<stop offset="0.22" stop-color="#AE82FF" stop-opacity="0.72"/>
+<stop offset="0.32" stop-color="#945AFF" stop-opacity="0.82"/>
+<stop offset="0.44" stop-color="#803BFF" stop-opacity="0.9"/>
+<stop offset="0.57" stop-color="#7125FF" stop-opacity="0.96"/>
+<stop offset="0.73" stop-color="#6918FF" stop-opacity="0.99"/>
+<stop offset="1" stop-color="#6715FF"/>
+</linearGradient>
+
+<linearGradient id="paint2_linear_photo" x1="37" y1="20" x2="37" y2="52" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E3E3E5" stop-opacity="0.8"/>
+<stop offset="1" stop-color="#BBBBC0" stop-opacity="0.4"/>
+</linearGradient>
+
+<linearGradient id="paint3_linear_photo" x1="37" y1="20" x2="37" y2="40" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+
+<linearGradient id="paint4_linear_photo" x1="37" y1="45" x2="37" y2="25" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6715FF"/>
+<stop offset="1" stop-color="#945AFF"/>
+</linearGradient>
+</defs>
+</svg>

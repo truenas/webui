@@ -109,6 +109,14 @@ export class NavigationService {
       isVisible$: this.license.hasApps$,
     },
     {
+      name: T('Featured Photos'),
+      type: MenuItemType.Link,
+      tooltip: T('Featured Photos'),
+      icon: tnIconMarker('app-featured-photos', 'custom'),
+      iconActive: tnIconMarker('app-featured-photos-active', 'custom'),
+      state: 'featured-photos/admin',
+    },
+    {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),

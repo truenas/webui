@@ -33,6 +33,13 @@ export const rootRoutes: Routes = [
     loadChildren: () => import('app/admin.routes').then((module) => module.adminRoutes),
   },
   {
+    path: 'featured-photos/gallery',
+    loadComponent: () => import('app/pages/featured-photos/featured-photos.component')
+      .then((m) => m.FeaturedPhotosComponent),
+    // No guards — this route must be accessible without WebSocket or auth session.
+    canActivate: [],
+  },
+  {
     path: '**',
     redirectTo: 'dashboard',
     pathMatch: 'full',
