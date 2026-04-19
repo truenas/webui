@@ -29,11 +29,11 @@
           <span class="value">{{ 'Not Available' | translate }}</span>
         }
         <span
-          *ixRequiresRoles="requiredRoles"
           class="edit-contacts-wrapper"
           [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
         >
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             class="edit-contacts-btn"
             [disabled]="!isProactiveSupportAvailable()"
