@@ -37,8 +37,8 @@
     <div class="fpa-card-footer">
       <button
         class="fpa-btn fpa-btn-danger"
-        (click)="resetToken()"
         [disabled]="isResetting()"
+        (click)="resetToken()"
       >
         {{ token() ? 'Reset Token' : 'Generate Token' }}
       </button>
@@ -60,23 +60,23 @@
           <input
             class="fpa-url-input"
             type="text"
-            [ngModel]="libraryPathDraft()"
-            (ngModelChange)="libraryPathDraft.set($event)"
-            [disabled]="libraryPathLocked() || isSavingPath()"
             placeholder="/mnt"
+            [ngModel]="libraryPathDraft()"
+            [disabled]="libraryPathLocked() || isSavingPath()"
+            (ngModelChange)="libraryPathDraft.set($event)"
           />
           <button
             class="fpa-btn fpa-btn-primary"
-            (click)="saveLibraryPath()"
             [disabled]="libraryPathLocked() || isSavingPath() || !libraryPathDraft().trim() || libraryPathDraft().trim() === libraryPath()"
+            (click)="saveLibraryPath()"
           >
             Save
           </button>
           @if (libraryPathDraft() !== libraryPath() && !libraryPathLocked()) {
             <button
               class="fpa-btn fpa-btn-ghost"
-              (click)="resetLibraryPathDraft()"
               [disabled]="isSavingPath()"
+              (click)="resetLibraryPathDraft()"
             >
               Cancel
             </button>
@@ -98,7 +98,7 @@
   <div class="fpa-card">
     <div class="fpa-card-header">
       <h2 class="fpa-card-title">Indexing Status</h2>
-      <button class="fpa-btn fpa-btn-ghost" (click)="loadStatus()" [disabled]="isLoading()">
+      <button class="fpa-btn fpa-btn-ghost" [disabled]="isLoading()" (click)="loadStatus()">
         Refresh
       </button>
     </div>
