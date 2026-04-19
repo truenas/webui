@@ -7,9 +7,7 @@
 <mat-card>
   <mat-card-content>
     @if (isSupportUnavailable()) {
-      <ix-warning
-        [message]="helptext.proactive.unavailableMessage | translate"
-      ></ix-warning>
+      <ix-warning [message]="helptext.proactive.unavailableMessage"></ix-warning>
     }
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">

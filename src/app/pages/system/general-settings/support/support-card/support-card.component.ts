@@ -165,7 +165,7 @@ export class SupportCardComponent implements OnInit {
 
   openProactive(): void {
     this.slideIn.open(ProactiveComponent, { wide: true })
-      .onClose(() => this.checkProactiveSupportAvailability(), this.destroyRef);
+      .onSuccess(() => this.checkProactiveSupportAvailability(), this.destroyRef);
   }
 
   private updateProductionStatus(newStatus: boolean): void {
