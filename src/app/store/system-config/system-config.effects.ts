@@ -1,8 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY, forkJoin } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, of } from 'rxjs';
+import {
+  catchError, map, mergeMap, switchMap,
+} from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
+import { Certificate } from 'app/interfaces/certificate.interface';
+import { Choices } from 'app/interfaces/choices.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -24,6 +29,20 @@ export class SystemConfigEffects {
         this.api.call('system.general.config'),
         this.api.call('system.advanced.config'),
       ]).pipe(
+        switchMap(([generalConfig, advancedConfig]) => {
+          const uiCertificate = generalConfig.ui_certificate as unknown;
+
+          if (typeof uiCertificate !== 'number') {
+            return of([generalConfig, advancedConfig] as const);
+          }
+
+          return this.api.call('system.general.ui_certificate_choices').pipe(
+            map((certificateChoices) => [
+              this.normalizeUiCertificate(generalConfig, uiCertificate, certificateChoices),
+              advancedConfig,
+            ] as const),
+          );
+        }),
         map(([generalConfig, advancedConfig]) => {
           return systemConfigLoaded({ generalConfig, advancedConfig });
         }),
@@ -35,4 +54,18 @@ export class SystemConfigEffects {
       );
     }),
   ));
+
+  private normalizeUiCertificate(
+    generalConfig: SystemGeneralConfig,
+    certificateId: number,
+    certificateChoices: Choices,
+  ): SystemGeneralConfig {
+    return {
+      ...generalConfig,
+      ui_certificate: {
+        id: certificateId,
+        name: certificateChoices[certificateId] || String(certificateId),
+      } as Certificate,
+    };
+  }
 }
