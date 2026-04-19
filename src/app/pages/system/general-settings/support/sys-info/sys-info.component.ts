@@ -41,7 +41,8 @@ export class SysInfoComponent {
 
   readonly editContacts = output();
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly productionToggleRoles = [Role.FullAdmin];
+  protected readonly manageProactiveRoles = [Role.SupportWrite];
   protected readonly getLabelForContractType = getLabelForContractType;
   protected readonly helptext = helptextSystemSupport;
 }
