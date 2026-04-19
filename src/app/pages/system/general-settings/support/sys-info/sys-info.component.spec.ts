@@ -134,9 +134,8 @@ describe('SysInfoComponent', () => {
     });
 
     it('shows proactive support row with disabled Manage button and Not Available value', async () => {
-      const proactiveRow = spectator.query('.proactive-status');
-      expect(proactiveRow).toExist();
-      expect(proactiveRow!.querySelector('.value')!.textContent!.trim()).toBe('Not Available');
+      expect(spectator.query('.proactive-status')).toExist();
+      expect(spectator.query('.proactive-status .value')?.textContent?.trim()).toBe('Not Available');
 
       const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(true);

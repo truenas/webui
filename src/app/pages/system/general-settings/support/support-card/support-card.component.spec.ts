@@ -151,9 +151,9 @@ describe('SupportCardComponent', () => {
         expect(slideIn.open).toHaveBeenCalledWith(ProactiveComponent, { wide: true });
       });
 
-      it('re-checks proactive support availability after the slide-in closes', async () => {
+      it('re-checks proactive support availability after saving in the slide-in', async () => {
         const slideIn = spectator.inject(SlideIn);
-        jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.cancel());
+        jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
 
         const api = spectator.inject(ApiService);
         const apiCallSpy = jest.spyOn(api, 'call');
