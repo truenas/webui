@@ -93,7 +93,7 @@ span.code {
   max-width: 960px;
 }
 
-.mat-mdc-card > .no-padding {
+.mat-mdc-card>.no-padding {
   padding: 0 !important;
 }
 
@@ -231,6 +231,7 @@ mat-checkbox {
 }
 
 ix-tooltip button {
+
   i,
   tn-icon {
     opacity: 0.5;
@@ -393,7 +394,7 @@ body .mat-mdc-card {
 
 .mat-mdc-card .mat-toolbar-row,
 body .mdc-card__actions,
-.mat-mdc-card .mat-mdc-card-content > div,
+.mat-mdc-card .mat-mdc-card-content>div,
 .mat-mdc-card .mat-mdc-card-footer {
   padding: 16px;
 }
@@ -420,7 +421,7 @@ body .mdc-card__actions,
     align-items: center;
     display: flex;
 
-    > a {
+    >a {
       @include line-clamp(2);
     }
   }
@@ -671,14 +672,14 @@ ix-root {
   .ix-tree-node:focus,
   ix-app-row:focus-visible,
   ix-app-row:focus,
-  .ix-nested-tree-node > div:focus-visible {
+  .ix-nested-tree-node>div:focus-visible {
     @extend %focused-shared;
   }
 }
 
 // needed to correctly put box shadow on :focus-visible
 ix-tree-node,
-ix-nested-tree-node > div {
+ix-nested-tree-node>div {
   padding: 1px;
 }
 
@@ -798,7 +799,7 @@ body {
     transform: scale(0.9);
   }
 
-  ix-dynamic-form-item.highlighted > div:first-child {
+  ix-dynamic-form-item.highlighted>div:first-child {
     outline: 1.5px solid var(--primary);
   }
 
@@ -836,7 +837,7 @@ body .mat-calendar-next-button::after {
 }
 
 .mat-mdc-menu-item {
-  > span {
+  >span {
     align-items: center;
     display: flex;
     width: 100%;
@@ -893,6 +894,7 @@ mat-list-item {
 }
 
 @media (max-width: $breakpoint-sm) {
+
   .mdc-dialog__container,
   mat-dialog-container {
     max-width: 100% !important;
@@ -923,11 +925,10 @@ mat-tab-nav-panel {
 
 // When debug panel is open, adjust the backdrop
 body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
+
   .custom-slide-in-backdrop,
   .custom-slide-in-nobackdrop {
-    right: var(
-      --debug-panel-width,
-      550px
-    ) !important; // Use dynamic debug panel width
+    right: var(--debug-panel-width,
+        550px) !important; // Use dynamic debug panel width
   }
 }

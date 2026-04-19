@@ -2,6 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, model, OnChanges, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,6 +25,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
+    MatCheckboxModule,
     MatMenuTrigger,
     TnIconComponent,
     MatMenu,

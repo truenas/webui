@@ -8,32 +8,33 @@
 </button>
 
 <mat-menu #menu="matMenu" multiple overlapTrigger="false">
-  <div (click)="$event.stopPropagation()">
-    <button
-      mat-menu-item
+  <div class="menu-checkbox-item" (click)="$event.stopPropagation()">
+    <mat-checkbox
+      color="primary"
       [ixTest]="['toggle-all-columns']"
-      (click)="toggleAll(); saveColumnPreferences(); enableResetButton();"
+      [checked]="isAllSelected"
+      (change)="toggleAll(); saveColumnPreferences(); enableResetButton();"
     >
-      <tn-icon library="mdi" [name]="!isAllSelected ? 'minus-circle' : 'check-circle'"></tn-icon>
       @if (isAllSelected) {
         <span>{{ 'Unselect All' | translate }}</span>
       } @else {
         <span>{{ 'Select All' | translate }}</span>
       }
-    </button>
+    </mat-checkbox>
   </div>
 
-  <div (click)="$event.stopPropagation()">
+  <div class="menu-checkbox-group" (click)="$event.stopPropagation()">
     @for (column of columns(); track column) {
       @if (column.title) {
-        <button
-          mat-menu-item
+        <mat-checkbox
+          color="primary"
+          class="menu-checkbox-item"
           [ixTest]="['toggle-column', column.title]"
-          (click)="toggle(column); saveColumnPreferences(); enableResetButton();"
+          [checked]="!isSelected(column)"
+          (change)="toggle(column); saveColumnPreferences(); enableResetButton();"
         >
-          <tn-icon library="mdi" [name]="isSelected(column) ? 'minus-circle' : 'check-circle'"></tn-icon>
           <span>{{ column.title | translate }}</span>
-        </button>
+        </mat-checkbox>
       }
     }
   </div>

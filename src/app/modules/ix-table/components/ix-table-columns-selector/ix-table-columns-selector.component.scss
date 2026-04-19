@@ -1,3 +1,15 @@
 :host {
   display: block;
 }
+
+.menu-checkbox-item {
+  align-items: center;
+  display: flex;
+  min-height: 40px;
+  padding: 0 16px;
+}
+
+.menu-checkbox-group {
+  max-height: 240px;
+  overflow: auto;
+}
