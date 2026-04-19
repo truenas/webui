@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=9c8ea42ad5",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=212e218675",
   "icons": [
     "app-account_circle",
     "app-assignment",
@@ -123,7 +123,6 @@
     "mdi-console",
     "mdi-console-line",
     "mdi-content-copy",
-    "mdi-content-cut",
     "mdi-content-paste",
     "mdi-cpu-64-bit",
     "mdi-database",
@@ -242,7 +241,6 @@
     "mdi-text-box",
     "mdi-text-search-variant",
     "mdi-timer-cog-outline",
-    "mdi-trending-up",
     "mdi-tune",
     "mdi-undo",
     "mdi-update",

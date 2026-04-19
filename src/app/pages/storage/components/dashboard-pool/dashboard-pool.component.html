@@ -16,17 +16,6 @@
         }
 
         <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="accent"
-          [ixTest]="['disconnect', pool()?.name]"
-          [ixUiSearch]="searchableElements.elements.disconnect"
-          (click)="onDisconnect()"
-        >
-          {{ 'Disconnect' | translate }}
-        </button>
-
-        <button
           mat-icon-button
           [matTooltip]="'Advanced Actions' | translate"
           [attr.aria-label]="'Advanced Actions' | translate"
@@ -34,6 +23,17 @@
           [ixTest]="['advanced-actions', pool()?.name]"
         >
           <tn-icon name="dots-vertical" library="mdi"></tn-icon>
+        </button>
+
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="red"
+          [ixTest]="['disconnect', pool()?.name]"
+          [ixUiSearch]="searchableElements.elements.disconnect"
+          (click)="onDisconnect()"
+        >
+          {{ 'Disconnect' | translate }}
         </button>
 
         <mat-menu #advancedMenu="matMenu">
@@ -44,7 +44,6 @@
             [ixUiSearch]="searchableElements.elements.expand"
             (click)="onExpand()"
           >
-            <tn-icon name="trending-up" library="mdi"></tn-icon>
             {{ 'Expand Pool' | translate }}
           </button>
 
@@ -54,7 +53,6 @@
             [ixTest]="['auto-trim', pool()?.name]"
             (click)="onEditAutotrim()"
           >
-            <tn-icon name="content-cut" library="mdi"></tn-icon>
             {{ 'Auto TRIM' | translate }}
           </button>
         </mat-menu>
