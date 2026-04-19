@@ -25,6 +25,8 @@
         <span class="label">{{ 'Proactive Support' | translate }}:</span>
         @if (isProactiveSupportEnabled()) {
           <span class="value">{{ 'Enabled' | translate }}</span>
+        } @else if (!isProactiveSupportAvailable()) {
+          <span class="value">{{ 'Not Available' | translate }}</span>
         }
         <button
           *ixRequiresRoles="requiredRoles"

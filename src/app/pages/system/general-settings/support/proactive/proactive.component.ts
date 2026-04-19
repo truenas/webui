@@ -128,6 +128,7 @@ export class ProactiveComponent implements OnInit {
           this.patchFormValues(config, isEnabled);
         },
         error: (error: unknown) => {
+          this.isLoading.set(false);
           this.form.disable();
           this.cdr.markForCheck();
           this.errorHandler.showErrorModal(error);
