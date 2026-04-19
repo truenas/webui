@@ -2,8 +2,10 @@
   background-color: var(--bg2);
   border: 1px solid var(--lines);
   border-radius: 12px;
+  box-sizing: border-box;
   color: var(--fg2);
   height: 100%;
+  overflow: hidden;
   padding: 0 15px;
   width: 100%;
 
