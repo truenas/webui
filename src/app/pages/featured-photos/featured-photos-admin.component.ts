@@ -78,7 +78,9 @@ export class FeaturedPhotosAdminComponent implements OnInit {
   galleryUrl = computed(() => {
     const current = this.token();
     if (!current || !isPlatformBrowser(this.platformId)) return '';
-    return `${this.window.location.origin}/featured-photos/gallery?token=${current}`;
+    const url = new URL('featured-photos/gallery', this.window.document.baseURI);
+    url.searchParams.set('token', current);
+    return url.toString();
   });
 
   // ---------------------------------------------------------------------------
