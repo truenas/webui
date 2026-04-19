@@ -95,7 +95,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (!event.shiftKey) {
-          if (this.isSearchInputFocused) moveToNextFocusableElement(this.document);
           moveToNextFocusableElement(this.document);
         }
 

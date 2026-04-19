@@ -97,15 +97,19 @@
     }
 
     &.highlighted-result {
-      background-color: var(--bg1);
+      background-color: var(--hover-bg) !important;
+      box-shadow: 0 0 0 1px var(--lines) inset;
     }
 
     &:hover {
-      background-color: var(--bg1);
+      background-color: var(--hover-bg) !important;
+      box-shadow: 0 0 0 1px var(--lines) inset;
     }
 
+    &:focus,
     &:focus-visible {
-      background-color: var(--bg1);
+      background-color: var(--hover-bg) !important;
+      box-shadow: 0 0 0 1px var(--lines) inset;
       outline: none;
     }
 

@@ -148,7 +148,7 @@ describe('GlobalSearchComponent', () => {
   });
 
   it('handles keydown events', fakeAsync(() => {
-    jest.spyOn(focusHelper, 'moveToNextFocusableElement').mockImplementation();
+    const moveToNextFocusableElementSpy = jest.spyOn(focusHelper, 'moveToNextFocusableElement').mockImplementation();
 
     const inputElement = spectator.query<HTMLInputElement>('.search-input');
 
@@ -163,8 +163,12 @@ describe('GlobalSearchComponent', () => {
     expect(spectator.component.searchControl.value).toBe('Filtered');
     expect(spectator.component.searchResults).toHaveLength(3);
 
+    moveToNextFocusableElementSpy.mockClear();
+    spectator.dispatchKeyboardEvent(inputElement!, 'keydown', 'ArrowDown');
+    expect(moveToNextFocusableElementSpy).toHaveBeenCalledTimes(1);
+
     spectator.dispatchKeyboardEvent(inputElement!, 'keydown', 'Enter');
-    expect(focusHelper.moveToNextFocusableElement).toHaveBeenCalled();
+    expect(moveToNextFocusableElementSpy).toHaveBeenCalledTimes(2);
   }));
 
   it('should close all backdrops', () => {
