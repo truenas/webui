@@ -15,26 +15,19 @@ $standard-height: 40px;
 $ix-primary: mat.m2-define-palette($md-primary);
 $ix-accent: mat.m2-define-palette($md-accent);
 
-$ix-typography: mat.m2-define-typography-config(
-  $body-1: mat.m2-define-typography-level(
-      $font-size: 0.875rem,
+$ix-typography: mat.m2-define-typography-config($body-1: mat.m2-define-typography-level($font-size: 0.875rem,
       $font-family: var(--font-family-body),
     ),
-  $body-2: mat.m2-define-typography-level(
-      $font-size: 0.875rem,
+    $body-2: mat.m2-define-typography-level($font-size: 0.875rem,
       $font-family: var(--font-family-body),
     ),
-);
+  );
 
-$ix-theme: mat.m2-define-light-theme(
-  (
-    color: (
-      primary: $ix-primary,
-      accent: $ix-accent,
-    ),
-    typography: $ix-typography,
-  )
-);
+$ix-theme: mat.m2-define-light-theme((color: (primary: $ix-primary,
+        accent: $ix-accent,
+      ),
+      typography: $ix-typography,
+    ));
 
 $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
@@ -49,11 +42,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   }
 
   .mat-color-primary,
-  .sidebar-panel.mat-sidenav
-    .sidebar-list-item.open
-    .sub-menu
-    .mat-mdc-list-item.selected
-    a {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-mdc-list-item.selected a {
     color: map.get($md-primary, 500) !important;
   }
 
@@ -61,10 +50,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     color: rgba(0, 0, 0, 0.94);
   }
 
-  .sidebar-panel.mat-sidenav
-    .sidebar-list-item.open
-    > .mat-mdc-list-item-unscoped-content
-    > .sub-menu {
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open>.mat-mdc-list-item-unscoped-content>.sub-menu {
     @include variable(border-left, --primary, $primary, !important);
   }
 
@@ -131,10 +117,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-fab.mat-primary,
   .mat-mini-fab.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
-  .mat-step-header
-    .mat-step-icon:not(.mat-step-icon-state-error):not(
-      .mat-step-icon-state-number
-    ):not(.mat-step-icon-state-edit) {
+  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
@@ -190,9 +173,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     @include variable(color, --fg2, $fg2, !important);
   }
 
-  .mat-mdc-form-field
-    .mat-mdc-select.mat-mdc-select-disabled
-    .mat-mdc-select-arrow,
+  .mat-mdc-form-field .mat-mdc-select.mat-mdc-select-disabled .mat-mdc-select-arrow,
   .mat-mdc-select-disabled .mat-mdc-select-value {
     @include variable(color, --fg2, $fg2);
     cursor: not-allowed;
@@ -284,9 +265,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     cursor: default;
   }
 
-  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(
-      .mat-calendar-body-comparison-identical
-    ) {
+  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
     border-color: var(--focus-brd);
   }
 
@@ -329,8 +308,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-mdc-select-panel .mat-mdc-option:focus,
   .mat-mdc-select-panel .mat-mdc-option:focus-visible,
   .mat-mdc-select-panel .mat-mdc-option:focus-visible,
-  .mat-mdc-select-panel
-    .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
+  .mat-mdc-select-panel .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
   .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -353,13 +331,9 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-mdc-select-panel .mat-mdc-option:hover,
   mat-option.mat-mdc-option-active,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
-  .mat-mdc-menu-content
-    button.mat-mdc-menu-item:hover
-    .mat-icon:not(.theme-picker-swatch-icon),
+  .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
-  .mat-mdc-menu-content
-    button.mat-mdc-menu-item:focus
-    .mat-icon:not(.theme-picker-swatch-icon) {
+  .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon) {
     background-color: var(--hover-bg) !important;
   }
 
@@ -384,7 +358,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     max-width: 800px;
 
     :not(.mat-mdc-dialog-content) {
-      > form {
+      >form {
         padding: 0 24px 24px;
 
         .mat-mdc-dialog-content,
@@ -494,12 +468,10 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   .fn-theme-tooltip {
     @import "ngx-popperjs/scss/theme";
-    @include ngx-popperjs-theme(
-      var(--primary),
+    @include ngx-popperjs-theme(var(--primary),
       var(--primary-txt),
       400px,
-      20001
-    );
+      20001);
   }
 
   .fn-theme-red {
@@ -561,10 +533,10 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   .mdc-button--outlined {
     background-color: transparent !important;
-    border: 1px solid currentColor !important;
+    border: 1px solid #A4ACB9 !important;
     border-radius: 25px !important;
-    height: 30px;
-    line-height: 30px;
+    height: 36px;
+    line-height: 36px;
 
     &.fn-theme-primary {
       @include variable(color, --primary, $primary, !important);
@@ -707,8 +679,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     background: var(--bg2) !important;
   }
 
-  .mat-autocomplete-panel
-    .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
+  .mat-autocomplete-panel .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
   .mat-autocomplete-panel .mat-mdc-option:hover {
     background-color: var(--primary) !important;
   }
@@ -806,7 +777,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     background-color: var(--bg2);
     border-left: 6px solid var(--primary);
 
-    .mat-mdc-list-item-unscoped-content > a {
+    .mat-mdc-list-item-unscoped-content>a {
       background-color: var(--bg2);
 
       tn-icon {
@@ -814,7 +785,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
       }
     }
 
-    .mat-mdc-list-item-unscoped-content > a:focus-visible {
+    .mat-mdc-list-item-unscoped-content>a:focus-visible {
       background: var(--hover-bg);
     }
   }
@@ -844,8 +815,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
   // End slide-in menu ////////////////
 
-  a[href*='//']
-  {
+  a[href*='//'] {
     color: var(--primary);
 
     &:focus-visible {
@@ -895,14 +865,16 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     color: var(--orange);
     margin-right: 10px;
   }
-} // end of ix theme
+}
+
+// end of ix theme
 
 .mdc-list-item__primary-text {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
 
-  > span {
+  >span {
     align-items: center;
     display: flex;
   }

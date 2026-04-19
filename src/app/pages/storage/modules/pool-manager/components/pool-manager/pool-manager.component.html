@@ -1,19 +1,21 @@
 <ix-page-header></ix-page-header>
-<div class="root-container">
-  <div class="main-container">
-    <ix-pool-manager-wizard
-      #poolManagerWizard
-      (stepChanged)="onStepChanged($event)"
-    ></ix-pool-manager-wizard>
-  </div>
-  <div class="sidebar">
-    <div class="details-container">
-      @if (hasConfigurationPreview) {
-        <ix-configuration-preview></ix-configuration-preview>
-      }
+<ix-page-content>
+  <div class="root-container">
+    <div class="main-container">
+      <ix-pool-manager-wizard
+        #poolManagerWizard
+        (stepChanged)="onStepChanged($event)"
+      ></ix-pool-manager-wizard>
+    </div>
+    <div class="sidebar">
+      <div class="details-container">
+        @if (hasConfigurationPreview) {
+          <ix-configuration-preview></ix-configuration-preview>
+        }
 
-      <ix-inventory></ix-inventory>
+        <ix-inventory></ix-inventory>
+      </div>
     </div>
   </div>
-</div>
+</ix-page-content>
 

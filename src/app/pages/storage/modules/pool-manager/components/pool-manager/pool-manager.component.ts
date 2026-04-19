@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, ViewChild, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
@@ -25,6 +26,7 @@ import {
     ConfigurationPreviewComponent,
     InventoryComponent,
     PageHeaderComponent,
+    PageContentComponent,
   ],
   providers: [
     DiskStore,
