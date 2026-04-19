@@ -33,7 +33,7 @@
           [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
         >
           <button
-            *ixRequiresRoles="requiredRoles"
+            *ixRequiresRoles="manageProactiveRoles"
             mat-button
             class="edit-contacts-btn"
             [disabled]="!isProactiveSupportAvailable()"
@@ -49,7 +49,7 @@
       <span class="value">{{ license.model || systemInfo().model }}</span>
       @if (productionControl()) {
         <ix-slide-toggle
-          *ixRequiresRoles="requiredRoles"
+          *ixRequiresRoles="productionToggleRoles"
           class="production-toggle"
           color="primary"
           [formControl]="productionControl()"
