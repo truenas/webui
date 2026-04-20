@@ -1,8 +1,8 @@
 {
   "0": "0",
-  "No GPU devices available": "",
-  "No NIC devices available": "",
-  "No USB devices available": "",
+  "No GPU devices available": "Non hai dispositivos GPU dispoñibles",
+  "No NIC devices available": "Non hai dispositivos NIC dispoñibles",
+  "No USB devices available": "Non hai dispositivos USB dispoñibles",
   " as of {dateTime}": " a data de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidade bruta utilizable estimada",
