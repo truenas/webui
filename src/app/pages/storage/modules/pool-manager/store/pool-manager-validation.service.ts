@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
@@ -62,6 +63,7 @@ export class PoolManagerValidationService {
         } else {
           errors.push(...this.validateAddVdevs(topology));
         }
+        errors.push(...this.validateIncompleteCategories(topology));
 
         return uniqBy(errors, 'text')
           .sort((a, b) => {
@@ -107,7 +109,6 @@ export class PoolManagerValidationService {
       errors.push(...this.validateDuplicateSerialDiskVdevs(topologyCategory));
       errors.push(...this.validateExportedPoolDiskVdevs(topologyCategory));
     });
-    errors.push(...this.validateIncompleteCategories(topology));
     return errors;
   }
 
@@ -300,8 +301,6 @@ export class PoolManagerValidationService {
       errors.push(...this.validateAddVdevRedundancy(topologyCategory, topologyCategoryType));
     });
 
-    errors.push(...this.validateIncompleteCategories(topology));
-
     return errors;
   }
 
@@ -314,25 +313,46 @@ export class PoolManagerValidationService {
    * error indicator even though the form inside the step is invalid.
    */
   private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
-    const optionalCategoryToStep: Partial<Record<VDevType, PoolCreationWizardStep>> = {
-      [VDevType.Log]: PoolCreationWizardStep.Log,
-      [VDevType.Spare]: PoolCreationWizardStep.Spare,
-      [VDevType.Cache]: PoolCreationWizardStep.Cache,
-      [VDevType.Special]: PoolCreationWizardStep.Metadata,
-      [VDevType.Dedup]: PoolCreationWizardStep.Dedup,
-    };
+    const incompleteCategoryRules: {
+      vdevType: VDevType;
+      step: PoolCreationWizardStep;
+      text: string;
+    }[] = [
+      {
+        vdevType: VDevType.Log,
+        step: PoolCreationWizardStep.Log,
+        text: T('Log VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+      },
+      {
+        vdevType: VDevType.Spare,
+        step: PoolCreationWizardStep.Spare,
+        text: T('Spare VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+      },
+      {
+        vdevType: VDevType.Cache,
+        step: PoolCreationWizardStep.Cache,
+        text: T('Cache VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+      },
+      {
+        vdevType: VDevType.Special,
+        step: PoolCreationWizardStep.Metadata,
+        text: T('Metadata VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+      },
+      {
+        vdevType: VDevType.Dedup,
+        step: PoolCreationWizardStep.Dedup,
+        text: T('Dedup VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+      },
+    ];
 
     const errors: PoolCreationError[] = [];
-    Object.entries(optionalCategoryToStep).forEach(([vdevType, step]) => {
-      const category = topology[vdevType as VDevType];
+    incompleteCategoryRules.forEach(({ vdevType, step, text }) => {
+      const category = topology[vdevType];
       const startedConfiguring = category?.diskSize !== null && category?.diskSize !== undefined;
       const hasNoVdevs = !category?.vdevs?.length;
       if (startedConfiguring && hasNoVdevs) {
         errors.push({
-          text: this.translate.instant(
-            '{step} VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
-            { step: step as string },
-          ),
+          text: this.translate.instant(text),
           severity: PoolCreationSeverity.Error,
           step,
         });

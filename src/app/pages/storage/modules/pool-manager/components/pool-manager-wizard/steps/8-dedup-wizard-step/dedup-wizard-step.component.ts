@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -65,6 +65,7 @@ export class DedupWizardStepComponent implements OnInit {
         pool?.topology[VDevType.Data],
         topology[VDevType.Data]?.layout,
       )),
+      distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((layout) => {
       if (!layout) {
