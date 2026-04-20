@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, distinctUntilChanged, map } from 'rxjs';
+import { take } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -12,7 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { nonDraidLayouts, resolveSpecialLayoutLock } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { lockedSpecialLayout$, nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-metadata-wizard-step',
@@ -40,8 +40,6 @@ export class MetadataWizardStepComponent implements OnInit {
 
   readonly goToLastStep = output();
 
-  protected canChangeLayout = true;
-
   protected readonly vDevType = VDevType;
   protected readonly helptext = helptextPoolCreation;
 
@@ -57,23 +55,21 @@ export class MetadataWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    combineLatest([this.addVdevsStore.pool$, this.store.topology$]).pipe(
-      map(([pool, topology]) => resolveSpecialLayoutLock(
-        pool?.topology[VDevType.Special],
-        pool?.topology[VDevType.Data],
-        topology[VDevType.Data]?.layout,
-      )),
-      distinctUntilChanged(),
+    lockedSpecialLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((layout) => {
-      if (!layout) {
-        this.allowedLayouts = [...nonDraidLayouts];
-        this.canChangeLayout = true;
-      } else {
-        this.allowedLayouts = [layout];
-        this.canChangeLayout = false;
-      }
+      this.allowedLayouts = layout ? [layout] : [...nonDraidLayouts];
+      this.resetIfCurrentLayoutNotAllowed();
       this.cdr.markForCheck();
+    });
+  }
+
+  private resetIfCurrentLayoutNotAllowed(): void {
+    this.store.topology$.pipe(take(1)).subscribe((topology) => {
+      const currentLayout = topology[VDevType.Special]?.layout;
+      if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
+        this.store.resetStep(VDevType.Special);
+      }
     });
   }
 }

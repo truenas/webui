@@ -1,7 +1,10 @@
+import { combineLatest, distinctUntilChanged, map, Observable } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { DataPoolTopologyUpdate, PoolTopology, UpdatePoolTopology } from 'app/interfaces/pool.interface';
+import {
+  DataPoolTopologyUpdate, Pool, PoolTopology, UpdatePoolTopology,
+} from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
@@ -129,6 +132,17 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Detai
 }
 
 /**
+ * Single source of truth for which CreateVdevLayout values are dRAID.
+ * isDraidLayout and nonDraidLayouts both derive from this so a new DRAID
+ * enum member can't slip into nonDraidLayouts by accident.
+ */
+const draidCreateLayouts: readonly CreateVdevLayout[] = [
+  CreateVdevLayout.Draid1,
+  CreateVdevLayout.Draid2,
+  CreateVdevLayout.Draid3,
+];
+
+/**
  * Non-data vdevs (special, dedup) don't support DRAID, but should match the
  * redundancy level of the data vdevs. This maps any layout to its non-DRAID
  * equivalent with the same parity level.
@@ -177,7 +191,7 @@ export function resolveTopologyLayout(items: VDevItem[] | undefined): CreateVdev
  * Like resolveTopologyLayout, but maps dRAID layouts to their raidz equivalents.
  * Used for non-data vdevs (special, dedup) that don't support dRAID.
  */
-export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
+function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
   const layout = resolveTopologyLayout(items);
   return layout !== null ? nonDraidEquivalent(layout) : null;
 }
@@ -208,14 +222,34 @@ export function resolveSpecialLayoutLock(
   return wizardDataLayout ? nonDraidEquivalent(wizardDataLayout) : null;
 }
 
+/**
+ * Emits the layout that the given special/dedup category must lock to, or
+ * null when no lock applies yet. Shared by the metadata and dedup wizard
+ * steps so both react to the same set of inputs in the same way.
+ */
+export function lockedSpecialLayout$(
+  pool$: Observable<Pool | null>,
+  topology$: Observable<PoolManagerTopology>,
+  vdevType: VDevType.Special | VDevType.Dedup,
+): Observable<CreateVdevLayout | null> {
+  return combineLatest([pool$, topology$]).pipe(
+    map(([pool, topology]) => resolveSpecialLayoutLock(
+      pool?.topology[vdevType],
+      pool?.topology[VDevType.Data],
+      topology[VDevType.Data]?.layout,
+    )),
+    distinctUntilChanged(),
+  );
+}
+
 export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(CreateVdevLayout)
-  .filter((layout) => !isDraidLayout(layout));
+  .filter((layout) => !draidCreateLayouts.includes(layout));
 
 export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType | null | undefined): boolean {
-  return layout === CreateVdevLayout.Draid1
-    || layout === CreateVdevLayout.Draid2
-    || layout === CreateVdevLayout.Draid3
-    || layout === TopologyItemType.Draid;
+  if (layout === TopologyItemType.Draid) {
+    return true;
+  }
+  return draidCreateLayouts.includes(layout as CreateVdevLayout);
 }
 
 export function parseDraidVdevName(

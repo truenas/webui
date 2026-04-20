@@ -348,9 +348,11 @@ export class PoolManagerValidationService {
     const errors: PoolCreationError[] = [];
     incompleteCategoryRules.forEach(({ vdevType, step, text }) => {
       const category = topology[vdevType];
-      const startedConfiguring = category?.diskSize !== null && category?.diskSize !== undefined;
-      const hasNoVdevs = !category?.vdevs?.length;
-      if (startedConfiguring && hasNoVdevs) {
+      if (!category) {
+        return;
+      }
+      const hasNoVdevs = !category.vdevs?.length;
+      if (hasNoVdevs && this.isCategoryPartiallyConfigured(category)) {
         errors.push({
           text: this.translate.instant(text),
           severity: PoolCreationSeverity.Error,
@@ -359,6 +361,21 @@ export class PoolManagerValidationService {
       }
     });
     return errors;
+  }
+
+  /**
+   * True when the user has touched any of the category's configurable fields.
+   * `layout` is intentionally excluded: Spare/Cache carry a default layout of
+   * Stripe even when untouched, and layout can also be set programmatically by
+   * the data-parity lock.
+   */
+  private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
+    return category.diskSize != null
+      || category.diskType != null
+      || category.width != null
+      || category.vdevsNumber != null
+      || category.draidDataDisks != null
+      || category.draidSpareDisks != null;
   }
 
   private validateAddVdevRedundancy(

@@ -6,7 +6,6 @@ import {
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
-  existingVdevLayout,
   nonDraidEquivalent,
   parseDraidVdevName,
   resolveSpecialLayoutLock,
@@ -198,28 +197,6 @@ describe('resolveTopologyLayout', () => {
   it('returns null for unhandled topology types', () => {
     const items = [{ type: TopologyItemType.Replacing, children: [] }] as VDevItem[];
     expect(resolveTopologyLayout(items)).toBeNull();
-  });
-});
-
-describe('existingVdevLayout', () => {
-  it('returns null for empty or undefined items', () => {
-    expect(existingVdevLayout([])).toBeNull();
-    expect(existingVdevLayout(undefined)).toBeNull();
-  });
-
-  it('returns Stripe for a single disk with no children', () => {
-    const items = [{ type: TopologyItemType.Disk, children: [] }] as VDevItem[];
-    expect(existingVdevLayout(items)).toBe(CreateVdevLayout.Stripe);
-  });
-
-  it('returns Mirror for mirror vdevs', () => {
-    const items = [{ type: TopologyItemType.Mirror, children: [{}, {}] }] as VDevItem[];
-    expect(existingVdevLayout(items)).toBe(CreateVdevLayout.Mirror);
-  });
-
-  it('maps dRAID vdevs to equivalent RAIDZ layout', () => {
-    const items = [{ type: TopologyItemType.Draid, children: [], name: 'draid2:1d:6c:2s-0' }] as VDevItem[];
-    expect(existingVdevLayout(items)).toBe(CreateVdevLayout.Raidz2);
   });
 });
 
