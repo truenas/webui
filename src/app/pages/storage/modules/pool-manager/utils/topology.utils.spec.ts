@@ -9,6 +9,7 @@ import {
   existingVdevLayout,
   nonDraidEquivalent,
   parseDraidVdevName,
+  resolveSpecialLayoutLock,
   resolveTopologyLayout,
   topologyCategoryToDisks,
   topologyToDisks, topologyToPayload,
@@ -219,6 +220,49 @@ describe('existingVdevLayout', () => {
   it('maps dRAID vdevs to equivalent RAIDZ layout', () => {
     const items = [{ type: TopologyItemType.Draid, children: [], name: 'draid2:1d:6c:2s-0' }] as VDevItem[];
     expect(existingVdevLayout(items)).toBe(CreateVdevLayout.Raidz2);
+  });
+});
+
+describe('resolveSpecialLayoutLock', () => {
+  const mirrorVdev = [{ type: TopologyItemType.Mirror, children: [{}, {}] }] as VDevItem[];
+  const raidz2Vdev = [{ type: TopologyItemType.Raidz2, children: [{}, {}, {}, {}] }] as VDevItem[];
+  const draid2Vdev = [{
+    type: TopologyItemType.Draid, children: [], name: 'draid2:1d:6c:2s-0',
+  }] as VDevItem[];
+
+  it('prefers existing category layout over everything else', () => {
+    expect(
+      resolveSpecialLayoutLock(mirrorVdev, raidz2Vdev, CreateVdevLayout.Raidz3),
+    ).toBe(CreateVdevLayout.Mirror);
+  });
+
+  it('falls back to existing data layout when category is empty', () => {
+    expect(
+      resolveSpecialLayoutLock(undefined, raidz2Vdev, CreateVdevLayout.Raidz1),
+    ).toBe(CreateVdevLayout.Raidz2);
+  });
+
+  it('maps existing data dRAID layout to its non-dRAID equivalent', () => {
+    expect(
+      resolveSpecialLayoutLock(undefined, draid2Vdev, null),
+    ).toBe(CreateVdevLayout.Raidz2);
+  });
+
+  it('uses wizard data layout when no existing topology is present', () => {
+    expect(
+      resolveSpecialLayoutLock(undefined, undefined, CreateVdevLayout.Raidz2),
+    ).toBe(CreateVdevLayout.Raidz2);
+  });
+
+  it('maps wizard dRAID layout to its non-dRAID equivalent', () => {
+    expect(
+      resolveSpecialLayoutLock(undefined, undefined, CreateVdevLayout.Draid3),
+    ).toBe(CreateVdevLayout.Raidz3);
+  });
+
+  it('returns null when nothing is set', () => {
+    expect(resolveSpecialLayoutLock(undefined, undefined, null)).toBeNull();
+    expect(resolveSpecialLayoutLock([], [], null)).toBeNull();
   });
 });
 

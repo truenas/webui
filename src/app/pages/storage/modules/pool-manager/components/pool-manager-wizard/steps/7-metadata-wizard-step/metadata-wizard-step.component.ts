@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -12,7 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { existingVdevLayout, nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { nonDraidLayouts, resolveSpecialLayoutLock } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-metadata-wizard-step',
@@ -57,15 +57,21 @@ export class MetadataWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.addVdevsStore.pool$.pipe(
-      map((pool) => existingVdevLayout(pool?.topology[VDevType.Special])),
+    combineLatest([this.addVdevsStore.pool$, this.store.topology$]).pipe(
+      map(([pool, topology]) => resolveSpecialLayoutLock(
+        pool?.topology[VDevType.Special],
+        pool?.topology[VDevType.Data],
+        topology[VDevType.Data]?.layout,
+      )),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((layout) => {
       if (!layout) {
-        return;
+        this.allowedLayouts = [...nonDraidLayouts];
+        this.canChangeLayout = true;
+      } else {
+        this.allowedLayouts = [layout];
+        this.canChangeLayout = false;
       }
-      this.allowedLayouts = [layout];
-      this.canChangeLayout = false;
       this.cdr.markForCheck();
     });
   }
