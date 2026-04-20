@@ -62,11 +62,11 @@ export class DataWizardStepComponent implements OnInit {
     });
   }
 
-  goToReviewStep(): void {
+  protected goToReviewStep(): void {
     this.goToLastStep.emit();
   }
 
-  resetStep(): void {
+  protected resetStep(): void {
     this.store.resetStep(VDevType.Data);
   }
 }
