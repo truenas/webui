@@ -2682,7 +2682,7 @@
       "New Share"
     ],
     "requiredRoles": [
-      "SHARING_WRITE"
+      "SHARING_WEBSHARE_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
