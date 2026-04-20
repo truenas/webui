@@ -107,6 +107,7 @@ export class PoolManagerValidationService {
       errors.push(...this.validateDuplicateSerialDiskVdevs(topologyCategory));
       errors.push(...this.validateExportedPoolDiskVdevs(topologyCategory));
     });
+    errors.push(...this.validateIncompleteCategories(topology));
     return errors;
   }
 
@@ -299,6 +300,44 @@ export class PoolManagerValidationService {
       errors.push(...this.validateAddVdevRedundancy(topologyCategory, topologyCategoryType));
     });
 
+    errors.push(...this.validateIncompleteCategories(topology));
+
+    return errors;
+  }
+
+  /**
+   * Flags an optional category that the user has partially configured (picked
+   * a disk size) but that currently has no vdevs. The typical trigger is the
+   * data-parity lock changing the metadata/dedup layout, which invalidates a
+   * previously picked width and clears the category's vdevs. Without this,
+   * the Review step silently omits the category and the step header shows no
+   * error indicator even though the form inside the step is invalid.
+   */
+  private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
+    const optionalCategoryToStep: Partial<Record<VDevType, PoolCreationWizardStep>> = {
+      [VDevType.Log]: PoolCreationWizardStep.Log,
+      [VDevType.Spare]: PoolCreationWizardStep.Spare,
+      [VDevType.Cache]: PoolCreationWizardStep.Cache,
+      [VDevType.Special]: PoolCreationWizardStep.Metadata,
+      [VDevType.Dedup]: PoolCreationWizardStep.Dedup,
+    };
+
+    const errors: PoolCreationError[] = [];
+    Object.entries(optionalCategoryToStep).forEach(([vdevType, step]) => {
+      const category = topology[vdevType as VDevType];
+      const startedConfiguring = category?.diskSize !== null && category?.diskSize !== undefined;
+      const hasNoVdevs = !category?.vdevs?.length;
+      if (startedConfiguring && hasNoVdevs) {
+        errors.push({
+          text: this.translate.instant(
+            '{step} VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
+            { step: step as string },
+          ),
+          severity: PoolCreationSeverity.Error,
+          step,
+        });
+      }
+    });
     return errors;
   }
 

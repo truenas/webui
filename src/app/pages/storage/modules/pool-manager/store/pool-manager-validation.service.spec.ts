@@ -545,4 +545,129 @@ describe('PoolManagerValidationService', () => {
       });
     });
   });
+
+  describe('incomplete optional category validation', () => {
+    const emptyCategory: Partial<PoolManagerTopologyCategory> = { vdevs: [], diskSize: null, layout: null };
+    const dataCategory: Partial<PoolManagerTopologyCategory> = {
+      vdevs: [[{}]] as PoolManagerTopologyCategory['vdevs'],
+      layout: CreateVdevLayout.Raidz2,
+    };
+
+    const sharedProviders = [
+      mockProvider(AddVdevsStore, { pool$: of(null) }),
+      provideMockStore({
+        selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+      }),
+    ];
+    const sharedStoreMock = {
+      name$: of('Pool'),
+      nameErrors$: of(null),
+      enclosureSettings$: of({
+        limitToSingleEnclosure: null,
+        dispersalStrategy: DispersalStrategy.None,
+      }),
+      hasMultipleEnclosuresAfterFirstStep$: of(false),
+    };
+
+    describe('when user picked a disk size for metadata but width was cleared', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Special]: {
+                ...emptyCategory,
+                diskSize: 12000138625024,
+                layout: CreateVdevLayout.Raidz2,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags metadata step', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'metadata VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
+        });
+      });
+    });
+
+    describe('when user picked a disk size for dedup but width was cleared', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Dedup]: {
+                ...emptyCategory,
+                diskSize: 12000138625024,
+                layout: CreateVdevLayout.Raidz2,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags dedup step', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Dedup,
+          text: 'dedup VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
+        });
+      });
+    });
+
+    describe('when optional categories were never configured', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Log]: emptyCategory,
+              [VDevType.Spare]: emptyCategory,
+              [VDevType.Cache]: emptyCategory,
+              [VDevType.Special]: emptyCategory,
+              [VDevType.Dedup]: emptyCategory,
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not flag any incomplete errors', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
+        expect(incompleteErrors).toEqual([]);
+      });
+    });
+  });
 });
