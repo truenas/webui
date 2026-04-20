@@ -316,37 +316,17 @@ export class PoolManagerValidationService {
     const incompleteCategoryRules: {
       vdevType: VDevType;
       step: PoolCreationWizardStep;
-      text: string;
+      name: string;
     }[] = [
-      {
-        vdevType: VDevType.Log,
-        step: PoolCreationWizardStep.Log,
-        text: T('Log VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Spare,
-        step: PoolCreationWizardStep.Spare,
-        text: T('Spare VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Cache,
-        step: PoolCreationWizardStep.Cache,
-        text: T('Cache VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Special,
-        step: PoolCreationWizardStep.Metadata,
-        text: T('Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Dedup,
-        step: PoolCreationWizardStep.Dedup,
-        text: T('Dedup VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
+      { vdevType: VDevType.Log, step: PoolCreationWizardStep.Log, name: T('Log') },
+      { vdevType: VDevType.Spare, step: PoolCreationWizardStep.Spare, name: T('Spare') },
+      { vdevType: VDevType.Cache, step: PoolCreationWizardStep.Cache, name: T('Cache') },
+      { vdevType: VDevType.Special, step: PoolCreationWizardStep.Metadata, name: T('Metadata') },
+      { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup, name: T('Dedup') },
     ];
 
     const errors: PoolCreationError[] = [];
-    incompleteCategoryRules.forEach(({ vdevType, step, text }) => {
+    incompleteCategoryRules.forEach(({ vdevType, step, name }) => {
       const category = topology[vdevType];
       if (!category) {
         return;
@@ -354,7 +334,10 @@ export class PoolManagerValidationService {
       const hasNoVdevs = !category.vdevs?.length;
       if (hasNoVdevs && this.isCategoryPartiallyConfigured(category)) {
         errors.push({
-          text: this.translate.instant(text),
+          text: this.translate.instant(
+            T('{name} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
+            { name: this.translate.instant(name) },
+          ),
           severity: PoolCreationSeverity.Error,
           step,
         });
