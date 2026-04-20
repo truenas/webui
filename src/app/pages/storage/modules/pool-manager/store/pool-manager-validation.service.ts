@@ -321,27 +321,27 @@ export class PoolManagerValidationService {
       {
         vdevType: VDevType.Log,
         step: PoolCreationWizardStep.Log,
-        text: T('Log VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+        text: T('Log VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
       },
       {
         vdevType: VDevType.Spare,
         step: PoolCreationWizardStep.Spare,
-        text: T('Spare VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+        text: T('Spare VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
       },
       {
         vdevType: VDevType.Cache,
         step: PoolCreationWizardStep.Cache,
-        text: T('Cache VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+        text: T('Cache VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
       },
       {
         vdevType: VDevType.Special,
         step: PoolCreationWizardStep.Metadata,
-        text: T('Metadata VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+        text: T('Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
       },
       {
         vdevType: VDevType.Dedup,
         step: PoolCreationWizardStep.Dedup,
-        text: T('Dedup VDEV configuration is incomplete. Select a valid width and number of VDEVs.'),
+        text: T('Dedup VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
       },
     ];
 

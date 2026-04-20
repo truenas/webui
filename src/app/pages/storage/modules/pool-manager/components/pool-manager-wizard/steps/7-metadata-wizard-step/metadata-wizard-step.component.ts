@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
-import { take } from 'rxjs';
+import { withLatestFrom } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -56,20 +56,15 @@ export class MetadataWizardStepComponent implements OnInit {
 
   ngOnInit(): void {
     lockedSpecialLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special).pipe(
+      withLatestFrom(this.store.topology$),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((layout) => {
-      this.allowedLayouts = layout ? [layout] : [...nonDraidLayouts];
-      this.resetIfCurrentLayoutNotAllowed();
-      this.cdr.markForCheck();
-    });
-  }
-
-  private resetIfCurrentLayoutNotAllowed(): void {
-    this.store.topology$.pipe(take(1)).subscribe((topology) => {
+    ).subscribe(([layout, topology]) => {
+      this.allowedLayouts = layout !== null ? [layout] : [...nonDraidLayouts];
       const currentLayout = topology[VDevType.Special]?.layout;
       if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
         this.store.resetStep(VDevType.Special);
       }
+      this.cdr.markForCheck();
     });
   }
 }
