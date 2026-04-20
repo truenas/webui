@@ -6,6 +6,6 @@ export enum EncryptionKeyFormat {
 }
 
 export const encryptionKeyFormatNames = new Map<EncryptionKeyFormat, string>([
-  [EncryptionKeyFormat.Hex, T('HEX')],
-  [EncryptionKeyFormat.Passphrase, T('PASSPHRASE')],
+  [EncryptionKeyFormat.Hex, T('Key')],
+  [EncryptionKeyFormat.Passphrase, T('Passphrase')],
 ]);

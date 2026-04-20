@@ -4,8 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
@@ -18,7 +19,6 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -68,6 +68,7 @@ import { ReplicationService } from 'app/services/replication.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    TnBannerComponent,
   ],
 })
 export class ReplicationFormComponent implements OnInit {
@@ -75,7 +76,6 @@ export class ReplicationFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private translate = inject(TranslateService);
-  formatter = inject(IxFormatterService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
@@ -101,6 +101,8 @@ export class ReplicationFormComponent implements OnInit {
 
   eligibleSnapshotsMessage = '';
   isEligibleSnapshotsMessageRed = false;
+  sourceEncrypted = false;
+
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
@@ -124,6 +126,8 @@ export class ReplicationFormComponent implements OnInit {
     this.updateExplorersOnChanges();
     this.updateExplorers();
     this.listenForSudoEnabled();
+    this.listenForCrossSectionChanges();
+    this.listenForSourceEncryption();
 
     if (this.existingReplication) {
       this.setForEdit();
@@ -162,8 +166,60 @@ export class ReplicationFormComponent implements OnInit {
     return this.sourceSection().form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
 
+  get isLocalTarget(): boolean {
+    return this.isLocal || !this.isPush;
+  }
+
+  get sourcePreservesProperties(): boolean {
+    return this.sourceSection().form.controls.properties.value || this.sourceSection().form.controls.replicate.value;
+  }
+
+  get sourceEncryptedWithPreservedProperties(): boolean {
+    return this.sourceEncrypted && this.sourcePreservesProperties;
+  }
+
+  get pushMissingSnapshotConfig(): boolean {
+    if (!this.isPush) return false;
+    const source = this.sourceSection().form.getRawValue();
+    const hasTasks = source.periodic_snapshot_tasks?.length > 0;
+    const hasNaming = this.usesNameRegex
+      ? false
+      : (source.also_include_naming_schema?.length > 0);
+    const hasRegex = this.usesNameRegex ? Boolean(source.name_regex) : false;
+    return !hasTasks && !hasNaming && !hasRegex;
+  }
+
+  get pushAutoMissingScheduleOrTasks(): boolean {
+    if (!this.isPush) return false;
+    const schedule = this.scheduleSection().form.getRawValue();
+    if (!schedule.auto) return false;
+    const source = this.sourceSection().form.getRawValue();
+    const hasTasks = source.periodic_snapshot_tasks?.length > 0;
+    return !hasTasks && !schedule.schedule;
+  }
+
+  get pullMissingNamingConfig(): boolean {
+    if (this.isPush) return false;
+    const source = this.sourceSection().form.getRawValue();
+    const hasNaming = this.usesNameRegex ? false : (source.naming_schema?.length > 0);
+    const hasRegex = this.usesNameRegex ? Boolean(source.name_regex) : false;
+    return !hasNaming && !hasRegex;
+  }
+
+  get pullAutoMissingSchedule(): boolean {
+    if (this.isPush) return false;
+    const schedule = this.scheduleSection().form.getRawValue();
+    if (!schedule.auto) return false;
+    return !schedule.schedule;
+  }
+
   get isFormValid(): boolean {
-    return this.sections.every((section) => section.form.valid);
+    return this.sections.every((section) => section.form.valid)
+      && !this.targetSection().validatingTarget()
+      && !this.pushMissingSnapshotConfig
+      && !this.pushAutoMissingScheduleOrTasks
+      && !this.pullMissingNamingConfig
+      && !this.pullAutoMissingSchedule;
   }
 
   setForEdit(): void {
@@ -325,6 +381,55 @@ export class ReplicationFormComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  private listenForCrossSectionChanges(): void {
+    merge(
+      this.sourceSection().form.controls.properties.valueChanges,
+      this.sourceSection().form.controls.replicate.valueChanges,
+      this.sourceSection().form.controls.periodic_snapshot_tasks.valueChanges,
+      this.sourceSection().form.controls.naming_schema.valueChanges,
+      this.sourceSection().form.controls.also_include_naming_schema.valueChanges,
+      this.sourceSection().form.controls.name_regex.valueChanges,
+      this.sourceSection().form.controls.schema_or_regex.valueChanges,
+      this.generalSection().form.controls.direction.valueChanges,
+      this.scheduleSection().form.controls.auto.valueChanges,
+      this.scheduleSection().form.controls.schedule.valueChanges,
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.cdr.markForCheck();
+    });
+  }
+
+  private get isLocalSource(): boolean {
+    return this.isLocal || this.isPush;
+  }
+
+  private listenForSourceEncryption(): void {
+    merge(
+      this.sourceSection().form.controls.source_datasets.valueChanges,
+      this.generalSection().form.controls.direction.valueChanges,
+      this.generalSection().form.controls.transport.valueChanges,
+    ).pipe(
+      debounceTime(300),
+      startWith(null),
+      switchMap(() => {
+        const sourceDatasets = this.sourceSection().form.controls.source_datasets.value;
+        const datasetIds = Array.isArray(sourceDatasets) ? sourceDatasets as string[] : [sourceDatasets as string];
+        if (!datasetIds?.length || !datasetIds[0] || !this.isLocalSource) {
+          return of(false);
+        }
+        return this.api.call('pool.dataset.query', [[['id', 'in', datasetIds]]]).pipe(
+          map((datasets) => datasets.length > 0 && datasets.every((dataset) => dataset.encrypted)),
+          catchError(() => of(false)),
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((encrypted) => {
+      this.sourceEncrypted = encrypted;
+      this.cdr.markForCheck();
+    });
+  }
+
   private listenForSudoEnabled(): void {
     this.keychainCredentials.getSshConnections()
       .pipe(
@@ -338,10 +443,16 @@ export class ReplicationFormComponent implements OnInit {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
 
-        if (!selectedCredential || isRootUser || this.isSudoDialogShown) {
+        if (!selectedCredential || isRootUser) {
+          this.isSudoDialogShown = false;
           return;
         }
 
+        if (this.isSudoDialogShown) {
+          return;
+        }
+
+        this.isSudoDialogShown = true;
         this.dialog.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
@@ -349,7 +460,6 @@ export class ReplicationFormComponent implements OnInit {
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.generalSection().form.controls.sudo.setValue(useSudo);
-          this.isSudoDialogShown = true;
         });
       });
   }

@@ -16,6 +16,11 @@ type SomeError = Record<string, unknown>;
 
 export const ixManualValidateError = 'ixManualValidateError';
 
+export interface IxManualValidateError {
+  message: string;
+  removable?: boolean;
+}
+
 @Component({
   selector: 'ix-errors',
   templateUrl: './ix-errors.component.html',
@@ -279,7 +284,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   private announceErrors(): void {
     const messages = [...this.messages];
     const manualError = (
-      this.control().errors?.[ixManualValidateError] as { message: string } | undefined
+      this.control().errors?.[ixManualValidateError] as IxManualValidateError | undefined
     )?.message;
     if (manualError) {
       messages.push(manualError);

@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, OnChanges, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Direction } from 'app/enums/direction.enum';
@@ -11,12 +14,14 @@ import { helptextReplication } from 'app/helptext/data-protection/replication/re
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -47,12 +52,14 @@ import { TaskService } from 'app/services/task.service';
     TranslateModule,
   ],
 })
-export class SourceSectionComponent implements OnChanges {
+export class SourceSectionComponent implements OnChanges, OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private taskService = inject(TaskService);
   private translate = inject(TranslateService);
   private propertiesOverrideValidator = inject(PropertiesOverrideValidatorService);
+  private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly replication = input<ReplicationTask>();
   readonly direction = input<Direction>();
@@ -74,7 +81,7 @@ export class SourceSectionComponent implements OnChanges {
     schema_or_regex: [SnapshotNamingOption.NamingSchema],
     naming_schema: [[] as string[]],
     also_include_naming_schema: [[] as string[]],
-    name_regex: [''],
+    name_regex: ['', [regexValidator()]],
     hold_pending_snapshots: [false],
   });
 
@@ -99,8 +106,11 @@ export class SourceSectionComponent implements OnChanges {
   protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
 
+  private formValuesApplied = false;
+
   ngOnChanges(): void {
-    if (this.replication()) {
+    if (this.replication() && !this.formValuesApplied) {
+      this.formValuesApplied = true;
       this.setFormValues(this.replication());
     }
 
@@ -109,6 +119,10 @@ export class SourceSectionComponent implements OnChanges {
     } else {
       this.form.controls.source_datasets.disable();
     }
+  }
+
+  ngOnInit(): void {
+    this.listenForRegexConflict();
   }
 
   protected isPush = computed(() => {
@@ -185,16 +199,63 @@ export class SourceSectionComponent implements OnChanges {
       payload.exclude = [];
     }
 
-    if (this.usesNamingSchema) {
+    if (this.isPush()) {
+      payload.naming_schema = [];
+      payload.name_regex = null;
+      payload.also_include_naming_schema = this.usesNamingSchema
+        ? values.also_include_naming_schema
+        : [];
+      if (!this.usesNamingSchema) {
+        payload.name_regex = values.name_regex;
+      }
+    } else if (this.usesNamingSchema) {
       payload.naming_schema = values.naming_schema;
       payload.also_include_naming_schema = values.also_include_naming_schema;
       payload.name_regex = null;
     } else {
+      payload.naming_schema = [];
       payload.also_include_naming_schema = [];
       payload.name_regex = values.name_regex;
     }
 
     return payload;
+  }
+
+  private listenForRegexConflict(): void {
+    merge(
+      this.form.controls.schema_or_regex.valueChanges,
+      this.form.controls.name_regex.valueChanges,
+      this.form.controls.periodic_snapshot_tasks.valueChanges,
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.validateRegexConflict();
+    });
+
+    this.validateRegexConflict();
+  }
+
+  private validateRegexConflict(): void {
+    const usesRegex = this.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
+    const hasRegex = Boolean(this.form.controls.name_regex.value);
+    const hasTasks = this.form.controls.periodic_snapshot_tasks.value?.length > 0;
+
+    if (usesRegex && hasRegex && hasTasks) {
+      this.form.controls.name_regex.setErrors({
+        ...this.form.controls.name_regex.errors,
+        [ixManualValidateError]: {
+          message: this.translate.instant('Naming regex cannot be used with periodic snapshot tasks.'),
+          removable: false,
+        },
+      });
+    } else {
+      const errors = { ...this.form.controls.name_regex.errors };
+      if (errors?.[ixManualValidateError]) {
+        delete errors[ixManualValidateError];
+        this.form.controls.name_regex.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+    this.cdr.markForCheck();
   }
 
   private getPropertiesOverride(): ReplicationCreate['properties_override'] {

@@ -5,7 +5,7 @@
     [required]="true"
     [rootNodes]="emptyRootNode"
     [tooltip]="helptext.targetDatasetTooltip | translate"
-    [nodeProvider]="nodeProvider()"
+    [nodeProvider]="nodeProvider()!"
   ></ix-explorer>
   <ix-select
     formControlName="readonly"
@@ -14,6 +14,9 @@
     [required]="true"
     [tooltip]="helptext.readonlyTooltip | translate"
   ></ix-select>
+  @if (readonlyWarning()) {
+    <tn-banner type="warning" [heading]="readonlyWarning()"></tn-banner>
+  }
   <ix-checkbox
     formControlName="encryption"
     [label]="'Encryption' | translate"
@@ -30,25 +33,11 @@
   @if (hasEncryption && !hasEncryptionInherit) {
     <ix-select
       formControlName="encryption_key_format"
-      [label]="'Encryption Key Format' | translate"
+      [label]="'Encryption Type' | translate"
       [options]="encryptionKeyFormats$"
       [required]="true"
-      [tooltip]="helptext.encryptionKeyGenerateTooltip | translate"
+      [tooltip]="helptext.encryptionKeyFormatTooltip | translate"
     ></ix-select>
-    @if (isHex) {
-      <ix-checkbox
-        formControlName="encryption_key_generate"
-        [label]="'Generate Encryption Key' | translate"
-        [tooltip]="helptext.encryptionKeyGenerateTooltip | translate"
-      ></ix-checkbox>
-    }
-    @if (isHex && !form.value.encryption_key_generate) {
-      <ix-input
-        formControlName="encryption_key_hex"
-        [label]="'Encryption Key' | translate"
-        [tooltip]="helptext.encryptionKeyHexTooltip | translate"
-      ></ix-input>
-    }
     @if (!isHex) {
       <ix-input
         formControlName="encryption_key_passphrase"

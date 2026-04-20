@@ -65,9 +65,12 @@ export class GeneralSectionComponent implements OnChanges {
     return this.form.controls.transport.value === TransportMode.Local;
   }
 
+  private formValuesApplied = false;
+
   ngOnChanges(): void {
     const replication = this.replication();
-    if (replication) {
+    if (replication && !this.formValuesApplied) {
+      this.formValuesApplied = true;
       this.form.patchValue({
         ...replication,
         logging_level: replication.logging_level || LoggingLevel.Default,

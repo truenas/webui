@@ -8,18 +8,20 @@
     @if (control().errors && control().errors?.[ixManualValidateError]) {
       <mat-error class="manual-error">
         <span class="manual-message" [innerHTML]="control().errors && control().errors?.[ixManualValidateError]?.message"></span>
-        <tn-icon
-          class="close-icon"
-          role="button"
-          tabindex="0"
-          library="mdi"
-          [tnTooltip]="'Remove this error to try again' | translate"
-          [name]="'close'"
-          [attr.aria-label]="'Remove this error to try again' | translate"
-          (click)="removeManualError()"
-          (keydown.enter)="removeManualError()"
-          (keydown.space)="removeManualError()"
-        ></tn-icon>
+        @if (control().errors?.[ixManualValidateError]?.removable !== false) {
+          <tn-icon
+            class="close-icon"
+            role="button"
+            tabindex="0"
+            library="mdi"
+            [tnTooltip]="'Remove this error to try again' | translate"
+            [name]="'close'"
+            [attr.aria-label]="'Remove this error to try again' | translate"
+            (click)="removeManualError()"
+            (keydown.enter)="removeManualError()"
+            (keydown.space)="removeManualError()"
+          ></tn-icon>
+        }
       </mat-error>
     }
   </div>

@@ -46,9 +46,12 @@ export class ScheduleSectionComponent implements OnChanges {
   protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
 
+  private formValuesApplied = false;
+
   ngOnChanges(): void {
     const replication = this.replication();
-    if (replication) {
+    if (replication && !this.formValuesApplied) {
+      this.formValuesApplied = true;
       this.setFormValues(replication);
     }
   }
