@@ -13,6 +13,8 @@ import {
   withPreloading,
   provideRouter,
   PreloadAllModules,
+  Router,
+  NavigationEnd,
   withComponentInputBinding,
   withNavigationErrorHandler,
   NavigationError,
@@ -31,9 +33,11 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
+import { filter, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
@@ -125,6 +129,18 @@ bootstrapApplication(AppComponent, {
       const spriteLoader = inject(TnSpriteLoaderService);
       return spriteLoader.ensureSpriteLoaded();
     }),
+    provideAppInitializer(() => {
+      const router = inject(Router);
+      const windowRef = inject<Window>(WINDOW);
+      router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        take(1),
+      ).subscribe(() => {
+        try {
+          windowRef.sessionStorage.removeItem(chunkReloadKey);
+        } catch { /* sessionStorage may be unavailable */ }
+      });
+    }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
@@ -133,11 +149,7 @@ bootstrapApplication(AppComponent, {
       withPreloading(PreloadAllModules),
       withComponentInputBinding(),
       withNavigationErrorHandler((error: NavigationError) => {
-        const chunkFailedMessage = /Loading chunk \d+ failed/;
-        if (chunkFailedMessage.test(String(error.error))) {
-          inject<Window>(WINDOW).location.reload();
-        }
-        console.error(error);
+        handleChunkLoadError(error, inject<Window>(WINDOW));
       }),
     ),
   ],
