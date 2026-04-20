@@ -599,7 +599,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
-          text: 'metadata VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
+          text: 'Metadata VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
         });
       });
     });
@@ -634,7 +634,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Dedup,
-          text: 'dedup VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
+          text: 'Dedup VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
         });
       });
     });
