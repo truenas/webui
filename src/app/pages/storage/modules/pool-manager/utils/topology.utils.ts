@@ -212,11 +212,11 @@ export function resolveSpecialLayoutLock(
   wizardDataLayout: CreateVdevLayout | null | undefined,
 ): CreateVdevLayout | null {
   const categoryLayout = existingVdevLayout(existingCategory);
-  if (categoryLayout) {
+  if (categoryLayout !== null) {
     return categoryLayout;
   }
   const dataLayout = existingVdevLayout(existingData);
-  if (dataLayout) {
+  if (dataLayout !== null) {
     return dataLayout;
   }
   return wizardDataLayout ? nonDraidEquivalent(wizardDataLayout) : null;
