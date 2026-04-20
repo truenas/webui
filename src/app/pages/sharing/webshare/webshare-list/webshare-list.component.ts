@@ -82,8 +82,8 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class WebShareListComponent implements OnInit {
-  readonly requiredRoles = [Role.SharingWebshareWrite];
-  readonly EmptyType = EmptyType;
+  protected readonly requiredRoles = [Role.SharingWebshareWrite];
+  protected readonly EmptyType = EmptyType;
   protected readonly searchableElements = webshareListElements;
 
   private api = inject(ApiService);

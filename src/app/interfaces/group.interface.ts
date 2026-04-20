@@ -1,7 +1,5 @@
 import { Role } from 'app/enums/role.enum';
-import { directIdMapping } from 'app/interfaces/user.interface';
-
-export type UsernsIdmap = number | null | typeof directIdMapping;
+import { UsernsIdmap } from 'app/interfaces/user.interface';
 
 export interface Group {
   builtin: boolean;
