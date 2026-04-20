@@ -123,6 +123,11 @@ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to p
   readonlyTooltip: T('Setting this option changes the destination dataset to be read-only.\
  To continue using the default or existing dataset read permissions, leave this option unset.'),
 
+  sourceLifetimeLabel: T('Source Snapshot Lifetime'),
+  sourceLifetimeTooltip: T('How long snapshots created by the periodic\
+ snapshot task on the source system are kept before being deleted.\
+ Enter a number and choose a measure of time from the drop-down.'),
+
   retentionPolicyLabel: T('Destination Snapshot Lifetime'),
   retentionPolicyTooltip: T('When replicated snapshots are deleted \
  from the destination system: <br> \
