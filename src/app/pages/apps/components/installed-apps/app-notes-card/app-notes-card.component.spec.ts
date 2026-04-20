@@ -1,12 +1,19 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { App, ChartFormValue } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
+import {
+  AppNotesDialog,
+} from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-dialog/app-notes-dialog.component';
 import { AppNotesCardComponent } from './app-notes-card.component';
 
 describe('AppNotesCardComponent', () => {
   let spectator: Spectator<AppNotesCardComponent>;
+  let loader: HarnessLoader;
   const existingAppEdit = {
     name: 'app-name',
     id: 'app_name',
@@ -50,6 +57,9 @@ describe('AppNotesCardComponent', () => {
       MarkdownModule.forRoot(),
       CardExpandCollapseComponent,
     ],
+    providers: [
+      mockProvider(TnDialog),
+    ],
   });
 
   beforeEach(() => {
@@ -61,6 +71,7 @@ describe('AppNotesCardComponent', () => {
         app: existingAppEdit,
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows header', () => {
@@ -83,5 +94,21 @@ describe('AppNotesCardComponent', () => {
     expect(paragraphs[0]).toHaveText('Thank you for installing MinIO App.');
     expect(paragraphs[1]).toHaveText('Documentation for this app can be found at https://docs.ixsystems.com.');
     expect(paragraphs[2]).toHaveText('If you find a bug in this app, please file an issue at https://jira.ixsystems.com');
+  });
+
+  it('opens notes in a larger dialog when expand button is clicked', async () => {
+    const tnDialog = spectator.inject(TnDialog);
+    const expandButton = await loader.getHarness(
+      TnIconButtonHarness.with({ name: 'open-in-new' }),
+    );
+
+    await expandButton.click();
+
+    expect(tnDialog.open).toHaveBeenCalledWith(AppNotesDialog, {
+      data: {
+        name: existingAppEdit.name,
+        notes: existingAppEdit.notes,
+      },
+    });
   });
 });

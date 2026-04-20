@@ -1,10 +1,17 @@
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { AppMetadata } from 'app/interfaces/app.interface';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
+import { App, AppMetadata } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
+import {
+  AppMetadataDialog,
+} from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-dialog/app-metadata-dialog.component';
 
 describe('AppMetadataCardComponent', () => {
   let spectator: Spectator<AppMetadataCardComponent>;
+  let loader: HarnessLoader;
 
   const appMetadata = {
     capabilities: Array.from({ length: 2 }).map((value, index) => ({
@@ -24,18 +31,24 @@ describe('AppMetadataCardComponent', () => {
     })),
   } as AppMetadata;
 
+  const app = { name: 'app-name' } as App;
+
   const createComponent = createComponentFactory({
     component: AppMetadataCardComponent,
     imports: [CardExpandCollapseComponent],
-    providers: [],
+    providers: [
+      mockProvider(TnDialog),
+    ],
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
+        app,
         appMetadata,
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   function getDetails(selector: string): Record<string, string> {
@@ -77,5 +90,21 @@ describe('AppMetadataCardComponent', () => {
 
     const runAsContextEntries = spectator.queryAll('#runAsContext .details-entry');
     expect(runAsContextEntries).toHaveLength(4);
+  });
+
+  it('opens metadata in a larger dialog when expand button is clicked', async () => {
+    const tnDialog = spectator.inject(TnDialog);
+    const expandButton = await loader.getHarness(
+      TnIconButtonHarness.with({ name: 'open-in-new' }),
+    );
+
+    await expandButton.click();
+
+    expect(tnDialog.open).toHaveBeenCalledWith(AppMetadataDialog, {
+      data: {
+        name: app.name,
+        metadata: appMetadata,
+      },
+    });
   });
 });

@@ -1,50 +1,38 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      <span>{{ 'Application Metadata' | translate }}</span>
-    </h3>
-    <tn-icon-button
-      name="open-in-new"
-      library="mdi"
-      [tooltip]="'Expand' | translate"
-      [ariaLabel]="'Expand Application Metadata' | translate"
-      (onClick)="openInDialog()"
-    ></tn-icon-button>
-  </mat-card-header>
-  <mat-card-content>
-    @if (appMetadata().host_mounts.length) {
-      <ix-card-expand-collapse id="hostMounts" [maxHeight]="maxHeight()">
+<tn-dialog-shell [title]="'{app} Metadata' | translate: { app: data.name }">
+  <div class="metadata">
+    @if (data.metadata.host_mounts.length) {
+      <section>
         <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
         <div class="details-list">
-          @for (item of appMetadata().host_mounts; track item) {
+          @for (item of data.metadata.host_mounts; track item) {
             <div class="details-item">
               <div class="label">{{ item.hostPath }}</div>
               <div class="value">{{ item.description }}</div>
             </div>
           }
         </div>
-      </ix-card-expand-collapse>
+      </section>
     }
 
-    @if (appMetadata().capabilities?.length) {
-      <ix-card-expand-collapse id="capabilities" [maxHeight]="maxHeight()">
+    @if (data.metadata.capabilities?.length) {
+      <section>
         <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
         <div class="details-list">
-          @for (item of appMetadata().capabilities; track item) {
+          @for (item of data.metadata.capabilities; track item) {
             <div class="details-item">
               <div class="label">{{ item.name }}</div>
               <div class="value">{{ item.description }}</div>
             </div>
           }
         </div>
-      </ix-card-expand-collapse>
+      </section>
     }
 
-    @if (appMetadata().run_as_context?.length) {
-      <ix-card-expand-collapse id="runAsContext" [maxHeight]="maxHeight()">
+    @if (data.metadata.run_as_context?.length) {
+      <section>
         <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
         <div class="details-list">
-          @for (item of appMetadata().run_as_context; track item) {
+          @for (item of data.metadata.run_as_context; track item) {
             <div class="details-entry">
               <div class="details-item">
                 <div class="label">{{ 'UID' | translate }}:</div>
@@ -69,7 +57,15 @@
             </div>
           }
         </div>
-      </ix-card-expand-collapse>
+      </section>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      [label]="'Close' | translate"
+      (onClick)="close()"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>
