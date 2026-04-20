@@ -4,7 +4,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness, TnTooltipDirective } from '@truenas/ui-components';
 import { kb, Mb } from 'app/constants/bits.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
-import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
+import { NetworkInterfaceReport } from 'app/interfaces/reporting.interface';
 import {
   InterfaceStatusIconComponent,
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
@@ -17,7 +17,7 @@ describe('InterfaceStatusIconComponent', () => {
     component: InterfaceStatusIconComponent,
   });
 
-  function setupTest(update: NetworkInterfaceUpdate): void {
+  function setupTest(update: NetworkInterfaceReport): void {
     spectator = createComponent({
       props: { update },
     });
@@ -26,14 +26,14 @@ describe('InterfaceStatusIconComponent', () => {
 
   describe('disabled', () => {
     it('shows disabled icon when link state is not Up', async () => {
-      setupTest({ link_state: LinkState.Down } as NetworkInterfaceUpdate);
+      setupTest({ link_state: LinkState.Down } as NetworkInterfaceReport);
 
       const icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('tn-network-upload-download-disabled');
     });
 
     it('shows disabled icon when link state is not available', async () => {
-      setupTest({ } as NetworkInterfaceUpdate);
+      setupTest({ } as NetworkInterfaceReport);
 
       const icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('tn-network-upload-download-disabled');
@@ -46,7 +46,7 @@ describe('InterfaceStatusIconComponent', () => {
         link_state: LinkState.Up,
         sent_bytes_rate: 100 * kb,
         received_bytes_rate: 30 * Mb,
-      } as NetworkInterfaceUpdate);
+      } as NetworkInterfaceReport);
     });
 
     it('shows sent and received rate in icon tooltip', () => {
@@ -60,7 +60,7 @@ describe('InterfaceStatusIconComponent', () => {
         link_state: LinkState.Up,
         sent_bytes_rate: 100 * Mb,
         received_bytes_rate: 0,
-      } as NetworkInterfaceUpdate);
+      } as NetworkInterfaceReport);
       let icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('tn-network-upload-download-up');
 
@@ -68,7 +68,7 @@ describe('InterfaceStatusIconComponent', () => {
         link_state: LinkState.Up,
         sent_bytes_rate: 0,
         received_bytes_rate: 100 * Mb,
-      } as NetworkInterfaceUpdate);
+      } as NetworkInterfaceReport);
       icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('tn-network-upload-download-down');
 
@@ -76,7 +76,7 @@ describe('InterfaceStatusIconComponent', () => {
         link_state: LinkState.Up,
         sent_bytes_rate: 0,
         received_bytes_rate: 0,
-      } as NetworkInterfaceUpdate);
+      } as NetworkInterfaceReport);
       icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('tn-network-upload-download');
 
@@ -84,7 +84,7 @@ describe('InterfaceStatusIconComponent', () => {
         link_state: LinkState.Up,
         sent_bytes_rate: 100 * Mb,
         received_bytes_rate: 100 * Mb,
-      } as NetworkInterfaceUpdate);
+      } as NetworkInterfaceReport);
       icon = await loader.getHarness(TnIconHarness);
       expect(await icon.getName()).toBe('tn-network-upload-download-both');
     });

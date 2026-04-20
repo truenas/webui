@@ -961,7 +961,7 @@
       "Notifications"
     ],
     "requiredRoles": [
-      "ALERT_LIST_WRITE"
+      "ALERT_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4475,8 +4475,7 @@
       "Task"
     ],
     "requiredRoles": [
-      "REPLICATION_TASK_WRITE",
-      "REPLICATION_TASK_WRITE_PULL"
+      "REPLICATION_TASK_WRITE"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4638,7 +4637,6 @@
     ],
     "requiredRoles": [
       "API_KEY_WRITE",
-      "SHARING_ADMIN",
       "READONLY_ADMIN"
     ],
     "visibleTokens": [],

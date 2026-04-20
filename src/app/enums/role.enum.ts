@@ -139,6 +139,16 @@ export enum Role {
   DirectoryServiceRead = 'DIRECTORY_SERVICE_READ',
   DirectoryServiceWrite = 'DIRECTORY_SERVICE_WRITE',
   DockerWrite = 'DOCKER_WRITE',
+  ContainerDeviceRead = 'CONTAINER_DEVICE_READ',
+  ContainerDeviceWrite = 'CONTAINER_DEVICE_WRITE',
+  ContainerImageRead = 'CONTAINER_IMAGE_READ',
+  MailWrite = 'MAIL_WRITE',
+  SharingWebshareRead = 'SHARING_WEBSHARE_READ',
+  SharingWebshareWrite = 'SHARING_WEBSHARE_WRITE',
+  SystemProductRead = 'SYSTEM_PRODUCT_READ',
+  SystemProductWrite = 'SYSTEM_PRODUCT_WRITE',
+  ZfsResourceRead = 'ZFS_RESOURCE_READ',
+  ZfsResourceDelete = 'ZFS_RESOURCE_DELETE',
 }
 
 export const roleNames = new Map<Role, string>([
@@ -283,4 +293,14 @@ export const roleNames = new Map<Role, string>([
   [Role.DirectoryServiceRead, T('Directory Service Read')],
   [Role.DirectoryServiceWrite, T('Directory Service Write')],
   [Role.DockerWrite, T('Docker Write')],
+  [Role.ContainerDeviceRead, T('Container Device Read')],
+  [Role.ContainerDeviceWrite, T('Container Device Write')],
+  [Role.ContainerImageRead, T('Container Image Read')],
+  [Role.MailWrite, T('Mail Write')],
+  [Role.SharingWebshareRead, T('Sharing Webshare Read')],
+  [Role.SharingWebshareWrite, T('Sharing Webshare Write')],
+  [Role.SystemProductRead, T('System Product Read')],
+  [Role.SystemProductWrite, T('System Product Write')],
+  [Role.ZfsResourceRead, T('ZFS Resource Read')],
+  [Role.ZfsResourceDelete, T('ZFS Resource Delete')],
 ]);

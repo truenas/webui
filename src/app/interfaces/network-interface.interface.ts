@@ -133,6 +133,7 @@ export interface NetworkInterfaceCreate {
   vlan_pcp?: number;
   mtu?: number;
   enable_learning?: boolean;
+  stp?: boolean;
 }
 
 export type NetworkInterfaceUpdate = Omit<NetworkInterfaceCreate, 'type'>;

@@ -119,6 +119,7 @@ export type DiskTemperatureAgg = Record<string, TemperatureAgg>;
 
 export interface DiskDetailsParams {
   join_partitions?: boolean;
+  type?: string;
 }
 
 export interface DiskDetailsResponse {

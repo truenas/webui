@@ -172,7 +172,6 @@ import {
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
-import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
   NetworkConfiguration,
@@ -184,7 +183,7 @@ import {
   ServiceRestartedOnNetworkSync,
 } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
-import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
+import { NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
 import {
   Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
 } from 'app/interfaces/nfs-share.interface';
@@ -459,11 +458,6 @@ export interface ApiCallDirectory {
   'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
   'directoryservices.certificate_choices': { params: void; response: Choices };
 
-  // LDAP
-  'ldap.config': { params: void; response: LdapConfig };
-  'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.schema_choices': { params: void; response: string[] };
-
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
@@ -543,16 +537,13 @@ export interface ApiCallDirectory {
   'interface.checkin_waiting': { params: void; response: number | null };
   'interface.commit': { params: [{ checkin_timeout: number }]; response: void };
   'interface.create': { params: [NetworkInterfaceCreate]; response: NetworkInterface };
-  'interface.default_route_will_be_removed': { params: void; response: boolean };
   'interface.network_config_to_be_removed': { params: void; response: { ipv4gateway?: string; nameserver1?: string; nameserver2?: string; nameserver3?: string } };
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
   'interface.lag_ports_choices': { params: [id?: string]; response: Choices };
-  'interface.lag_supported_protocols': { params: void; response: string[] };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.rollback': { params: void; response: void };
-  'interface.save_default_route': { params: string[]; response: void };
   'interface.save_network_config': { params: [{ ipv4gateway: string; nameserver1?: string; nameserver2?: string; nameserver3?: string }]; response: void };
   'interface.services_restarted_on_sync': { params: void; response: ServiceRestartedOnNetworkSync[] };
   'interface.update': { params: [id: string, update: NetworkInterfaceUpdate]; response: NetworkInterface };
@@ -608,16 +599,15 @@ export interface ApiCallDirectory {
 
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };
+  'kerberos.update': { params: [KerberosConfigUpdate]; response: KerberosConfig };
   'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };
   'kerberos.keytab.delete': { params: [id: number]; response: boolean };
-  'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
   'kerberos.keytab.query': { params: QueryParams<KerberosKeytab>; response: KerberosKeytab[] };
   'kerberos.keytab.update': { params: [id: number, update: KerberosKeytabUpdate]; response: KerberosKeytab };
   'kerberos.realm.create': { params: [KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.delete': { params: [id: number]; response: boolean };
   'kerberos.realm.query': { params: QueryParams<KerberosRealm>; response: KerberosRealm[] };
   'kerberos.realm.update': { params: [id: number, update: KerberosRealmUpdate]; response: KerberosRealm };
-  'kerberos.update': { params: [KerberosConfigUpdate]; response: KerberosConfig };
 
   // Keychain credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
@@ -651,7 +641,6 @@ export interface ApiCallDirectory {
   'network.general.summary': { params: void; response: NetworkSummary };
 
   // NFS
-  'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
   'nfs.bindip_choices': { params: void; response: Choices };
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
@@ -775,7 +764,7 @@ export interface ApiCallDirectory {
 
   // Service
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
+  'service.update': { params: [number | ServiceName, { enable: boolean }]; response: number };
 
   // Sharing
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
@@ -915,7 +904,6 @@ export interface ApiCallDirectory {
   'container.device.delete': { params: [id: number, options?: ContainerDeviceDelete]; response: boolean };
   'container.device.query': { params: QueryParams<ContainerDeviceEntry>; response: ContainerDeviceEntry[] };
   'container.device.update': { params: [id: number, update: ContainerDevicePayload]; response: ContainerDeviceEntry };
-  'container.device.disk_choices': { params: []; response: Record<string, string> };
   'container.device.gpu_choices': { params: []; response: Record<string, string> };
   'container.device.nic_attach_choices': { params: []; response: Record<string, string[]> };
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };

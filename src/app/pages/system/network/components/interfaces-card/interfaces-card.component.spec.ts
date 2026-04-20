@@ -8,7 +8,7 @@ import { BehaviorSubject, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { AllNetworkInterfacesUpdate, NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
+import { AllNetworkInterfacesUpdate, NetworkInterfaceReport } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   InterfaceStatusIconComponent,
@@ -191,7 +191,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('subscribes to updates and shows interface status in first column', () => {
-    const someUpdate = {} as NetworkInterfaceUpdate;
+    const someUpdate = {} as NetworkInterfaceReport;
 
     updateSubject$.next({
       eno1: someUpdate,

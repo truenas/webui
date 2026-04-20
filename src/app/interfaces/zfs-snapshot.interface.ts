@@ -29,6 +29,8 @@ export interface CreateZfsSnapshot {
   naming_schema?: string;
   recursive?: boolean;
   vmware_sync?: boolean;
+  exclude?: string[];
+  suspend_vms?: boolean;
   properties?: Record<string, unknown>;
 }
 

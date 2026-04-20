@@ -1,13 +1,15 @@
 import { Role } from 'app/enums/role.enum';
 import { directIdMapping } from 'app/interfaces/user.interface';
 
+export type UsernsIdmap = number | null | typeof directIdMapping;
+
 export interface Group {
   builtin: boolean;
   gid: number;
   group: string;
   name: string;
   id: number;
-  userns_idmap: number | null | typeof directIdMapping;
+  userns_idmap: UsernsIdmap;
   id_type_both: boolean;
   local: boolean;
   smb: boolean;
@@ -32,6 +34,8 @@ export interface CreateGroup {
   smb: boolean;
   sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
+  users?: number[];
+  userns_idmap?: UsernsIdmap;
 }
 
 export interface UpdateGroup {
@@ -40,5 +44,5 @@ export interface UpdateGroup {
   sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
   users?: number[];
-  userns_idmap?: number | null | typeof directIdMapping;
+  userns_idmap?: UsernsIdmap;
 }

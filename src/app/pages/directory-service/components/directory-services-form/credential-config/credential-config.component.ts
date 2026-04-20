@@ -80,9 +80,9 @@ export class CredentialConfigComponent implements OnInit {
   );
 
   protected kerberosPrincipals$: Observable<Option[]> = this.api.call(
-    'kerberos.keytab.kerberos_principal_choices',
+    'kerberos.keytab.query',
   ).pipe(
-    map((choices) => choices.map((choice) => ({ label: choice, value: choice } as Option))),
+    map((keytabs) => keytabs.map((keytab) => ({ label: keytab.name, value: keytab.name } as Option))),
   );
 
   ngOnInit(): void {

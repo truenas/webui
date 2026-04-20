@@ -18,9 +18,6 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  AddSpnDialog,
-} from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -160,17 +157,6 @@ describe('ServiceNfsComponent', () => {
       'NFSv4 DNS Domain': true,
       'Require Kerberos for NFSv4': true,
     });
-  });
-
-  it('should open dialog form when add SPN button is pressed', async () => {
-    await form.fillForm({
-      'Require Kerberos for NFSv4': true,
-    });
-
-    const addSpnButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add SPN' }));
-    await addSpnButton.click();
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AddSpnDialog);
   });
 
   it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {

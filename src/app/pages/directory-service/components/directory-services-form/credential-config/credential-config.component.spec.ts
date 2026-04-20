@@ -15,7 +15,10 @@ describe('CredentialConfigComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
-  const mockKerberosPrincipals = ['host/test@REALM.COM', 'nfs/test@REALM.COM'];
+  const mockKeytabs = [
+    { id: 1, name: 'host/test@REALM.COM', file: '' },
+    { id: 2, name: 'nfs/test@REALM.COM', file: '' },
+  ];
 
   const createComponent = createComponentFactory({
     component: CredentialConfigComponent,
@@ -24,7 +27,7 @@ describe('CredentialConfigComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
+        mockCall('kerberos.keytab.query', mockKeytabs),
         mockCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
       ]),
       DirectoryServiceValidationService,
@@ -48,7 +51,7 @@ describe('CredentialConfigComponent', () => {
 
   it('should fetch kerberos principals on init', () => {
     const api = spectator.inject(ApiService);
-    expect(api.call).toHaveBeenCalledWith('kerberos.keytab.kerberos_principal_choices');
+    expect(api.call).toHaveBeenCalledWith('kerberos.keytab.query');
   });
 
   describe('form validation', () => {

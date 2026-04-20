@@ -31,6 +31,9 @@ export interface SystemGeneralConfigUpdate {
   ui_port?: number;
   ui_v6address?: string[];
   ui_allowlist?: string[];
+  ui_restart_delay?: number;
+  ui_x_frame_options?: string;
+  rollback_timeout?: number;
   usage_collection?: boolean;
   sysloglevel?: string;
   syslogserver?: string;
