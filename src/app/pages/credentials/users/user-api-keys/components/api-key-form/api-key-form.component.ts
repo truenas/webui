@@ -79,7 +79,7 @@ export class ApiKeyFormComponent implements OnInit {
   protected readonly editingRow = signal<ApiKey | undefined>(undefined);
   protected readonly isNew = computed(() => !this.editingRow());
   protected readonly isLoading = signal(false);
-  protected readonly requiredRoles = [Role.ApiKeyWrite, Role.ReadonlyAdmin];
+  protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
   protected readonly isFullAdmin = toSignal(this.authService.hasRole([Role.FullAdmin]));
   protected readonly isAllowedToReset = computed(
     () => this.username() === this.form.value.username || this.isFullAdmin(),

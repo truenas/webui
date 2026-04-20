@@ -82,7 +82,7 @@ export class UserApiKeysComponent implements OnInit {
 
   protected searchQuery: SearchQuery<ApiKey>;
   protected searchProperties: SearchProperty<ApiKey>[] = [];
-  protected readonly requiredRoles = [Role.ApiKeyWrite, Role.ReadonlyAdmin];
+  protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
   protected readonly searchableElements = userApiKeysElements;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ~ "admin"');
 

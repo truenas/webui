@@ -1,11 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import {
   filter, map, shareReplay, take,
 } from 'rxjs/operators';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { LinkAggregationProtocol } from 'app/enums/network-interface.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -48,7 +47,7 @@ export class NetworkService {
   }
 
   getLaggProtocolChoices(): Observable<string[]> {
-    return of(Object.values(LinkAggregationProtocol));
+    return this.api.call('interface.lag_supported_protocols');
   }
 
   getBridgeMembersChoices(id?: string): Observable<Choices> {

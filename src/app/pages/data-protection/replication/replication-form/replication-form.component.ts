@@ -104,7 +104,7 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  protected readonly requiredRoles = [Role.ReplicationTaskWrite];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   constructor() {
     this.existingReplication = this.slideInRef.getData();

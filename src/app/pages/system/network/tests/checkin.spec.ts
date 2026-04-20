@@ -115,6 +115,7 @@ describe('NetworkComponent', () => {
         mockCall('interface.query', () => [existingInterface]),
         mockCall('interface.xmit_hash_policy_choices'),
         mockCall('interface.lacpdu_rate_choices'),
+        mockCall('interface.default_route_will_be_removed'),
       ]),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => of(undefined)),
