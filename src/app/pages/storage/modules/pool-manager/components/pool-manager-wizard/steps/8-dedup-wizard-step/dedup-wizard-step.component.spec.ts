@@ -61,10 +61,110 @@ describe('DedupWizardStepComponent', () => {
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent)!;
     expect(layoutComponent.description).toBe(helptextPoolCreation.dedupVdevDescription);
-    expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
     expect(layoutComponent.type).toStrictEqual(VDevType.Dedup);
+  });
+
+  describe('when creating a new pool without a data layout chosen yet', () => {
+    const createComponentNoLayout = createComponentFactory({
+      component: DedupWizardStepComponent,
+      declarations: [
+        MockComponent(LayoutStepComponent),
+      ],
+      providers: [
+        mockProvider(CdkStepper),
+        mockProvider(AddVdevsStore, {
+          pool$: of(null),
+          isLoading$: of(false),
+        }),
+        mockProvider(PoolManagerStore, {
+          topology$: of({
+            [VDevType.Data]: { layout: null },
+          } as PoolManagerTopology),
+          getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        }),
+      ],
+    });
+
+    it('allows any non-dRAID layout when no data layout is set', () => {
+      spectator = createComponentNoLayout();
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
+      expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
+    });
+  });
+
+  describe('when creating a new pool with a RAIDZ1 data layout', () => {
+    it('locks dedup layout to match the wizard data layout', () => {
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz1]);
+      expect(layoutComponent.canChangeLayout).toBeFalsy();
+    });
+  });
+
+  describe('when creating a new pool with a DRAID2 data layout', () => {
+    const createComponentDraid = createComponentFactory({
+      component: DedupWizardStepComponent,
+      declarations: [
+        MockComponent(LayoutStepComponent),
+      ],
+      providers: [
+        mockProvider(CdkStepper),
+        mockProvider(AddVdevsStore, {
+          pool$: of(null),
+          isLoading$: of(false),
+        }),
+        mockProvider(PoolManagerStore, {
+          topology$: of({
+            [VDevType.Data]: { layout: CreateVdevLayout.Draid2 },
+          } as PoolManagerTopology),
+          getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        }),
+      ],
+    });
+
+    it('locks dedup layout to the non-dRAID equivalent', () => {
+      spectator = createComponentDraid();
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+      expect(layoutComponent.canChangeLayout).toBeFalsy();
+    });
+  });
+
+  describe('when adding the first dedup vdev to an existing pool', () => {
+    const createComponentExistingData = createComponentFactory({
+      component: DedupWizardStepComponent,
+      declarations: [
+        MockComponent(LayoutStepComponent),
+      ],
+      providers: [
+        mockProvider(CdkStepper),
+        mockProvider(AddVdevsStore, {
+          pool$: of({
+            topology: {
+              [VDevType.Data]: [
+                { type: TopologyItemType.Raidz2, children: [{}, {}, {}, {}] },
+              ] as VDevItem[],
+              [VDevType.Dedup]: [] as VDevItem[],
+            },
+          } as Pool),
+          isLoading$: of(false),
+        }),
+        mockProvider(PoolManagerStore, {
+          topology$: of({
+            [VDevType.Data]: { layout: null },
+          } as PoolManagerTopology),
+          getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        }),
+      ],
+    });
+
+    it('locks dedup layout to match the existing pool data layout', () => {
+      spectator = createComponentExistingData();
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+      expect(layoutComponent.canChangeLayout).toBeFalsy();
+    });
   });
 
   describe('when pool has existing dedup vdevs', () => {

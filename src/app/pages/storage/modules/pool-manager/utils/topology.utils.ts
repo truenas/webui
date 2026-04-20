@@ -182,6 +182,32 @@ export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLay
   return layout !== null ? nonDraidEquivalent(layout) : null;
 }
 
+/**
+ * Resolves the layout that a special or dedup vdev must be locked to.
+ * These vdevs' failure destroys the whole pool, so their redundancy must match
+ * the data vdev's. Preference order:
+ *   1. Existing special/dedup layout (already in the pool).
+ *   2. Existing data layout (pool already has data vdevs).
+ *   3. Wizard-selected data layout (new pool being created).
+ * Returns null when none are set (e.g. user jumps to this step before picking
+ * a data layout); callers should allow the full non-dRAID list in that case.
+ */
+export function resolveSpecialLayoutLock(
+  existingCategory: VDevItem[] | undefined,
+  existingData: VDevItem[] | undefined,
+  wizardDataLayout: CreateVdevLayout | null | undefined,
+): CreateVdevLayout | null {
+  const categoryLayout = existingVdevLayout(existingCategory);
+  if (categoryLayout) {
+    return categoryLayout;
+  }
+  const dataLayout = existingVdevLayout(existingData);
+  if (dataLayout) {
+    return dataLayout;
+  }
+  return wizardDataLayout ? nonDraidEquivalent(wizardDataLayout) : null;
+}
+
 export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(CreateVdevLayout)
   .filter((layout) => !isDraidLayout(layout));
 
