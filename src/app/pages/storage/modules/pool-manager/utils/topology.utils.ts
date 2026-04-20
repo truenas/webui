@@ -143,7 +143,7 @@ export function nonDraidEquivalent(layout: CreateVdevLayout): CreateVdevLayout {
 }
 
 /** Used only via {@link resolveTopologyLayout}; Disk and Draid are handled before lookup. */
-const topologyTypeToLayout: Record<string, CreateVdevLayout> = {
+const topologyTypeToLayout: Partial<Record<TopologyItemType, CreateVdevLayout>> = {
   [TopologyItemType.Stripe]: CreateVdevLayout.Stripe,
   [TopologyItemType.Mirror]: CreateVdevLayout.Mirror,
   [TopologyItemType.Raidz]: CreateVdevLayout.Raidz1,
@@ -211,10 +211,11 @@ export function resolveSpecialLayoutLock(
 export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(CreateVdevLayout)
   .filter((layout) => !isDraidLayout(layout));
 
-export function isDraidLayout(layout: CreateVdevLayout | null): boolean {
+export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType | null | undefined): boolean {
   return layout === CreateVdevLayout.Draid1
     || layout === CreateVdevLayout.Draid2
-    || layout === CreateVdevLayout.Draid3;
+    || layout === CreateVdevLayout.Draid3
+    || layout === TopologyItemType.Draid;
 }
 
 export function parseDraidVdevName(
