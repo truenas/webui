@@ -39,9 +39,11 @@ describe('DedupWizardStepComponent', () => {
   const makeFactory = ({
     pool = null,
     dataLayout = null,
+    dedupLayout = null,
   }: {
     pool?: Partial<Pool> | null;
     dataLayout?: CreateVdevLayout | null;
+    dedupLayout?: CreateVdevLayout | null;
   } = {}): SpectatorFactory<DedupWizardStepComponent> => createComponentFactory({
     component: DedupWizardStepComponent,
     declarations: [
@@ -56,6 +58,7 @@ describe('DedupWizardStepComponent', () => {
       mockProvider(PoolManagerStore, {
         topology$: of({
           [VDevType.Data]: { layout: dataLayout },
+          [VDevType.Dedup]: { layout: dedupLayout },
         } as PoolManagerTopology),
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),
@@ -79,7 +82,7 @@ describe('DedupWizardStepComponent', () => {
     it('locks dedup layout to match the wizard data layout', () => {
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz1]);
-      expect(layoutComponent.canChangeLayout).toBeFalsy();
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 
@@ -101,7 +104,7 @@ describe('DedupWizardStepComponent', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
-      expect(layoutComponent.canChangeLayout).toBeFalsy();
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 
@@ -121,7 +124,33 @@ describe('DedupWizardStepComponent', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
-      expect(layoutComponent.canChangeLayout).toBeFalsy();
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
+    });
+  });
+
+  describe('when the locked layout no longer allows the current store selection', () => {
+    const createComponent = makeFactory({
+      dataLayout: CreateVdevLayout.Raidz2,
+      dedupLayout: CreateVdevLayout.Mirror,
+    });
+
+    it('resets the dedup step so the invalid selection is cleared', () => {
+      spectator = createComponent();
+      const store = spectator.inject(PoolManagerStore);
+      expect(store.resetStep).toHaveBeenCalledWith(VDevType.Dedup);
+    });
+  });
+
+  describe('when the current store layout matches the lock', () => {
+    const createComponent = makeFactory({
+      dataLayout: CreateVdevLayout.Raidz2,
+      dedupLayout: CreateVdevLayout.Raidz2,
+    });
+
+    it('does not reset the dedup step', () => {
+      spectator = createComponent();
+      const store = spectator.inject(PoolManagerStore);
+      expect(store.resetStep).not.toHaveBeenCalled();
     });
   });
 
@@ -141,7 +170,7 @@ describe('DedupWizardStepComponent', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
-      expect(layoutComponent.canChangeLayout).toBeFalsy();
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 });

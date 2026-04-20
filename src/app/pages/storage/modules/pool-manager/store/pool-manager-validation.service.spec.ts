@@ -639,6 +639,40 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
+    describe('when user picked a width for metadata but diskSize was never set', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Special]: {
+                ...emptyCategory,
+                width: 2,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags metadata step even without a disk size', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Metadata VDEV configuration is incomplete. Select a valid width and number of VDEVs.',
+        });
+      });
+    });
+
     describe('when optional categories were never configured', () => {
       let spectator: SpectatorService<PoolManagerValidationService>;
       const createService = createServiceFactory({
