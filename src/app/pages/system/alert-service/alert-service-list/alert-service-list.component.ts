@@ -69,7 +69,7 @@ export class AlertServiceListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AlertListWrite];
+  protected readonly requiredRoles = [Role.AlertWrite];
   protected readonly searchableElements = alertServiceListElements;
 
   dataProvider: AsyncDataProvider<AlertService>;

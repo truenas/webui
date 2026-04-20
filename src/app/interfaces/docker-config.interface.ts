@@ -23,7 +23,9 @@ export interface DockerAddressPool {
 export interface DockerConfigUpdate {
   pool?: string | null;
   address_pools?: DockerAddressPool[];
+  cidr_v6?: string;
   enable_image_updates?: boolean;
+  migrate_applications?: boolean;
   registry_mirrors?: RegistryMirror[];
 }
 

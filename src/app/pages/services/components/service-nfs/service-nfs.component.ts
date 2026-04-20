@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -20,7 +19,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -33,9 +31,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -58,7 +54,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     RequiresRolesDirective,
     MatButton,
     TestDirective,
-    TooltipComponent,
     TranslateModule,
 
   ],
@@ -70,16 +65,12 @@ export class ServiceNfsComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
-  private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
-  private matDialog = inject(MatDialog);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly isFormLoading = signal(false);
-  protected readonly isAddSpnDisabled = signal(true);
-  protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
   protected form = this.fb.group({
@@ -185,8 +176,6 @@ export class ServiceNfsComponent implements OnInit {
     return this.api.call('nfs.config')
       .pipe(
         tap((config) => {
-          this.isAddSpnDisabled.set(!config.v4_krb);
-          this.hasNfsStatus.set(config.keytab_has_nfs_spn);
           this.form.patchValue({
             ...config,
             servers_auto: config.managed_nfsd,
@@ -241,27 +230,6 @@ export class ServiceNfsComponent implements OnInit {
           this.form.controls[field].disable();
         }
       });
-    });
-  }
-
-  get isAddSpnVisible(): boolean {
-    return !this.hasNfsStatus()
-      && this.form.getRawValue().v4_krb
-      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
-  }
-
-  addSpn(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Add Kerberos SPN Entry'),
-      message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
-      hideCheckbox: true,
-      buttonText: this.translate.instant('Yes'),
-      cancelText: this.translate.instant('No'),
-    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
-      if (!confirmed) {
-        return;
-      }
-      this.matDialog.open(AddSpnDialog);
     });
   }
 }

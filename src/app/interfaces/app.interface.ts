@@ -137,6 +137,7 @@ export interface AppCreate {
   catalog_app: string;
   train: string;
   version?: string;
+  custom_compose_config?: Record<string, unknown>;
   custom_compose_config_string?: string;
   custom_app?: boolean;
 }

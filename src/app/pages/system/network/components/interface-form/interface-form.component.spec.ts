@@ -116,7 +116,6 @@ describe('InterfaceFormComponent', () => {
         }),
         mockCall('interface.create'),
         mockCall('interface.update'),
-        mockCall('interface.save_default_route'),
         mockCall('network.configuration.update'),
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],

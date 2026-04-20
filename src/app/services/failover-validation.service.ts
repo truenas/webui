@@ -141,7 +141,7 @@ export class FailoverValidationService {
     return this.api.subscribe('core.get_jobs').pipe(
       filter((event) => {
         const job = event.fields as Job;
-        return job.method === 'failover.events.vrrp_master'
+        return (job.method as string) === 'failover.events.vrrp_master'
           && terminalStates.includes(job.state);
       }),
       take(1), // Take first event with terminal state

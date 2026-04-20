@@ -80,6 +80,7 @@ export interface CreatePool {
   name: string;
   topology: UpdatePoolTopology;
   checksum?: string;
+  dedup_table_quota?: NewDeduplicationQuotaSetting;
   deduplication?: DeduplicationSetting;
   allow_duplicate_serials?: boolean;
 }
@@ -88,6 +89,7 @@ export interface UpdatePool {
   topology?: UpdatePoolTopology;
   autotrim?: OnOff;
   allow_duplicate_serials?: boolean;
+  all_sed?: boolean;
   dedup_table_quota?: NewDeduplicationQuotaSetting;
   dedup_table_quota_value?: number;
 }
