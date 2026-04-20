@@ -43,7 +43,7 @@ interface GpuMenuItem {
   ],
 })
 export class AddGpuDeviceMenuComponent {
-  protected readonly requiredRoles = [Role.ContainerDeviceWrite];
+  protected readonly requiredRoles = [Role.ContainerWrite];
 
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);

@@ -122,7 +122,7 @@ describe('FailoverValidationService', () => {
         fields: {
           ...fakeSuccessfulJob(),
           id: 1,
-          method: 'failover.events.vrrp_master' as Job['method'],
+          method: 'failover.events.vrrp_master',
           state: JobState.Success,
         } as Job,
       };
@@ -149,7 +149,7 @@ describe('FailoverValidationService', () => {
         fields: {
           ...fakeSuccessfulJob(),
           id: 1,
-          method: 'failover.events.vrrp_master' as Job['method'],
+          method: 'failover.events.vrrp_master',
           state: JobState.Failed,
           error: 'Network issue',
         } as Job,

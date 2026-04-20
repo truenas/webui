@@ -1,0 +1,39 @@
+<h1 matDialogTitle>
+  {{ 'Add Kerberos SPN Entry' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-input
+    formControlName="username"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <ix-input
+    formControlName="password"
+    type="password"
+    [label]="'Password' | translate"
+    [required]="true"
+  ></ix-input>
+
+  <div class="form-actions">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >
+      {{ 'Submit' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel"
+      matDialogClose
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+  </div>
+</form>

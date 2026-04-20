@@ -103,7 +103,7 @@ export class ReplicationListComponent implements OnInit {
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<ReplicationTask>;
   readonly jobState = JobState;
-  protected readonly requiredRoles = [Role.ReplicationTaskWrite];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
   protected readonly emptyConfig = replicationTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;

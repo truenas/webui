@@ -95,7 +95,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   replicationTasks: ReplicationTask[] = [];
-  protected readonly requiredRoles = [Role.ReplicationTaskWrite];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly emptyConfig = replicationTaskEmptyConfig;
   protected readonly cardMenuPath = ['data-protection', 'replication'];
 

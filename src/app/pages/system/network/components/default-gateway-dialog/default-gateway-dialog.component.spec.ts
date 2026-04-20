@@ -28,6 +28,7 @@ describe('DefaultGatewayDialogComponent', () => {
         default_routes: ['1.1.1.1'],
         nameservers: ['8.8.8.8', '8.8.4.4'],
       } as NetworkSummary),
+      mockCall('interface.save_default_route'),
       mockCall('interface.save_network_config'),
       mockCall('network.configuration.update'),
     ]),

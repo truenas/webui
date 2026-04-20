@@ -44,7 +44,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AddNicMenuComponent {
-  protected readonly requiredRoles = [Role.ContainerDeviceWrite];
+  protected readonly requiredRoles = [Role.ContainerWrite];
 
   readonly defaultBridge = input.required<string | null>();
 

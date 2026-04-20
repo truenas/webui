@@ -159,7 +159,11 @@ export class IscsiWizardComponent implements OnInit {
     this.destroyRef,
   );
 
-  protected readonly requiredRoles = [Role.SharingWrite];
+  protected readonly requiredRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
 
   get isNewZvol(): boolean {
     return this.form.controls.extent.enabled && this.form.value.extent.disk === newOption;
