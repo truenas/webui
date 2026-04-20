@@ -48,7 +48,7 @@ export class LicenseComponent {
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.SystemProductWrite];
 
   isFormLoading = false;
 
