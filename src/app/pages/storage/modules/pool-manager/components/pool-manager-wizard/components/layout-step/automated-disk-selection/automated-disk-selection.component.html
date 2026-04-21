@@ -11,7 +11,7 @@
     ></ix-select>
   </div>
 } @else {
-  @if (isDataVdev() || isMetadataVdev() || isDedupVdev()) {
+  @if (isDataVdev()) {
     <ix-input
       [ixTestOverride]="['layout']"
       [keepLastPart]="true"

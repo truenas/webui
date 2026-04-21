@@ -46,7 +46,6 @@ export class DedupWizardStepComponent implements OnInit {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Dedup);
   protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
-  protected canChangeLayout = true;
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -61,7 +60,6 @@ export class DedupWizardStepComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ lockedLayout, currentLayout }) => {
         this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : [...nonDraidLayouts];
-        this.canChangeLayout = lockedLayout === null;
         if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
           this.store.resetStep(VDevType.Dedup);
         }

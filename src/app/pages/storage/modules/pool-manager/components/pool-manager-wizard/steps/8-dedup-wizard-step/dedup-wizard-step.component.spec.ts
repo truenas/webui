@@ -82,7 +82,7 @@ describe('DedupWizardStepComponent', () => {
     it('locks dedup layout to match the wizard data layout', () => {
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz1]);
-      expect(layoutComponent.canChangeLayout).toBe(false);
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 
@@ -92,7 +92,7 @@ describe('DedupWizardStepComponent', () => {
     it('allows any non-dRAID layout', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.canChangeLayout).toBe(true);
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
       expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
     });
   });
@@ -104,7 +104,7 @@ describe('DedupWizardStepComponent', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
-      expect(layoutComponent.canChangeLayout).toBe(false);
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 
@@ -124,7 +124,7 @@ describe('DedupWizardStepComponent', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
-      expect(layoutComponent.canChangeLayout).toBe(false);
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 
@@ -170,7 +170,7 @@ describe('DedupWizardStepComponent', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
-      expect(layoutComponent.canChangeLayout).toBe(false);
+      expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 });
