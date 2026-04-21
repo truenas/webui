@@ -109,6 +109,14 @@ describe('AutomatedDiskSelection', () => {
     expect(await layoutSelect!.getValue()).toBe('');
   });
 
+  it('keeps the sole allowed layout selected after a reset when parity-locked', () => {
+    spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
+
+    resetStep$.next(VDevType.Data);
+
+    expect(spectator.component.layoutControl.value).toBe(CreateVdevLayout.Raidz2);
+  });
+
   it('updates layout in store when it is changed', async () => {
     await layoutSelect!.setValue('Mirror');
 
