@@ -254,6 +254,11 @@ export function lockedParityLayout$(
   );
 }
 
+/**
+ * Order follows CreateVdevLayout declaration order, which also drives the
+ * ordering of options in the layout dropdown. Reordering enum members will
+ * change the visible option order.
+ */
 export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(CreateVdevLayout)
   .filter((layout) => !draidCreateLayouts.includes(layout));
 
