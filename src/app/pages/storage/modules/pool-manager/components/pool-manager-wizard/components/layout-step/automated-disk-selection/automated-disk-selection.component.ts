@@ -49,29 +49,11 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout | null, Validators.required);
 
-  protected isDataVdev = computed(() => {
-    return this.type() === VDevType.Data;
-  });
-
-  protected isMetadataVdev = computed(() => {
-    return this.type() === VDevType.Special;
-  });
-
-  protected isDedupVdev = computed(() => {
-    return this.type() === VDevType.Dedup;
-  });
+  protected isDataVdev = computed(() => this.type() === VDevType.Data);
 
   protected requiresDataParity = computed(() => {
-    return this.isMetadataVdev() || this.isDedupVdev();
-  });
-
-  /**
-   * True only when a parity-dependent vdev type currently has exactly one
-   * allowed layout — i.e. the dropdown shows a single option the user cannot
-   * change. That's the only case where the hint explains the constraint.
-   */
-  protected showLayoutRestrictionHint = computed(() => {
-    return this.requiresDataParity() && this.limitLayouts().length === 1;
+    const type = this.type();
+    return type === VDevType.Special || type === VDevType.Dedup;
   });
 
   protected dataLayoutTooltip = computed(() => {
@@ -82,8 +64,14 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return '';
   });
 
+  /**
+   * Non-empty only when a special/dedup step is locked to a single layout —
+   * the dropdown shows one choice and the hint explains why. Rendered as a
+   * mat-hint on the layout select so screen readers pick it up via the form
+   * field's aria-describedby wiring.
+   */
   protected layoutRestrictionHint = computed(() => {
-    if (!this.requiresDataParity()) {
+    if (!this.requiresDataParity() || this.limitLayouts().length !== 1) {
       return '';
     }
 

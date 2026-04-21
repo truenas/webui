@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
-import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
@@ -313,40 +313,17 @@ export class PoolManagerValidationService {
    * error indicator even though the form inside the step is invalid.
    */
   private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
-    const incompleteCategoryRules: {
-      vdevType: VDevType;
-      step: PoolCreationWizardStep;
-      message: string;
-    }[] = [
-      {
-        vdevType: VDevType.Log,
-        step: PoolCreationWizardStep.Log,
-        message: T('Log VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Spare,
-        step: PoolCreationWizardStep.Spare,
-        message: T('Spare VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Cache,
-        step: PoolCreationWizardStep.Cache,
-        message: T('Cache VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Special,
-        step: PoolCreationWizardStep.Metadata,
-        message: T('Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
-      {
-        vdevType: VDevType.Dedup,
-        step: PoolCreationWizardStep.Dedup,
-        message: T('Dedup VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.'),
-      },
+    const incompleteCategoryRules: { vdevType: VDevType; step: PoolCreationWizardStep }[] = [
+      { vdevType: VDevType.Log, step: PoolCreationWizardStep.Log },
+      { vdevType: VDevType.Spare, step: PoolCreationWizardStep.Spare },
+      { vdevType: VDevType.Cache, step: PoolCreationWizardStep.Cache },
+      { vdevType: VDevType.Special, step: PoolCreationWizardStep.Metadata },
+      { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup },
     ];
+    const messageTemplate = T('{vdevType} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.');
 
     const errors: PoolCreationError[] = [];
-    incompleteCategoryRules.forEach(({ vdevType, step, message }) => {
+    incompleteCategoryRules.forEach(({ vdevType, step }) => {
       const category = topology[vdevType];
       if (!category) {
         return;
@@ -354,7 +331,9 @@ export class PoolManagerValidationService {
       const hasNoVdevs = !category.vdevs?.length;
       if (hasNoVdevs && this.isCategoryPartiallyConfigured(category)) {
         errors.push({
-          text: this.translate.instant(message),
+          text: this.translate.instant(messageTemplate, {
+            vdevType: this.translate.instant(vdevTypeLabels.get(vdevType)),
+          }),
           severity: PoolCreationSeverity.Error,
           step,
         });
