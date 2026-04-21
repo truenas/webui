@@ -59,11 +59,8 @@ export class DedupWizardStepComponent implements OnInit {
   ngOnInit(): void {
     lockedParityLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Dedup)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ lockedLayout, currentLayout }) => {
+      .subscribe(({ lockedLayout }) => {
         this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : this.allAllowedLayouts;
-        if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
-          this.store.resetStep(VDevType.Dedup);
-        }
         this.cdr.markForCheck();
       });
   }
