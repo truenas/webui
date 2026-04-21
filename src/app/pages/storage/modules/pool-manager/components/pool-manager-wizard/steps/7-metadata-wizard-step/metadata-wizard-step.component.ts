@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
-import { withLatestFrom } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -12,7 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { lockedSpecialLayout$, nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { lockedParityLayout$, nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-metadata-wizard-step',
@@ -45,6 +44,7 @@ export class MetadataWizardStepComponent implements OnInit {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
   protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
+  protected canChangeLayout = true;
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -55,16 +55,15 @@ export class MetadataWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    lockedSpecialLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special).pipe(
-      withLatestFrom(this.store.topology$),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([layout, topology]) => {
-      this.allowedLayouts = layout !== null ? [layout] : [...nonDraidLayouts];
-      const currentLayout = topology[VDevType.Special]?.layout;
-      if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
-        this.store.resetStep(VDevType.Special);
-      }
-      this.cdr.markForCheck();
-    });
+    lockedParityLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ lockedLayout, currentLayout }) => {
+        this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : [...nonDraidLayouts];
+        this.canChangeLayout = lockedLayout === null;
+        if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
+          this.store.resetStep(VDevType.Special);
+        }
+        this.cdr.markForCheck();
+      });
   }
 }

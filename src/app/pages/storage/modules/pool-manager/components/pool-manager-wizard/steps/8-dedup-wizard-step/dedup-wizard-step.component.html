@@ -2,7 +2,7 @@
   [description]="helptext.dedupVdevDescription | translate"
   [type]="vDevType.Dedup"
   [inventory]="(inventory$ | async) || []"
-  [canChangeLayout]="true"
+  [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive()"
 ></ix-layout-step>

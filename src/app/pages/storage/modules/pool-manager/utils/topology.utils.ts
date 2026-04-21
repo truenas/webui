@@ -206,7 +206,7 @@ function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | n
  * Returns null when none are set (e.g. user jumps to this step before picking
  * a data layout); callers should allow the full non-dRAID list in that case.
  */
-export function resolveSpecialLayoutLock(
+export function resolveParityLockedLayout(
   existingCategory: VDevItem[] | undefined,
   existingData: VDevItem[] | undefined,
   wizardDataLayout: CreateVdevLayout | null | undefined,
@@ -222,23 +222,35 @@ export function resolveSpecialLayoutLock(
   return wizardDataLayout ? nonDraidEquivalent(wizardDataLayout) : null;
 }
 
+export interface ParityLayoutLockState {
+  lockedLayout: CreateVdevLayout | null;
+  currentLayout: CreateVdevLayout | null;
+}
+
 /**
- * Emits the layout that the given special/dedup category must lock to, or
- * null when no lock applies yet. Shared by the metadata and dedup wizard
- * steps so both react to the same set of inputs in the same way.
+ * Emits the lock state for the given special/dedup category: the layout the
+ * category must match (or null when no lock applies), plus the layout the
+ * store currently holds for that category so callers can detect and clear
+ * stale selections in a single subscription. Shared by the metadata and
+ * dedup wizard steps so both react to the same set of inputs in the same way.
  */
-export function lockedSpecialLayout$(
+export function lockedParityLayout$(
   pool$: Observable<Pool | null>,
   topology$: Observable<PoolManagerTopology>,
   vdevType: VDevType.Special | VDevType.Dedup,
-): Observable<CreateVdevLayout | null> {
+): Observable<ParityLayoutLockState> {
   return combineLatest([pool$, topology$]).pipe(
-    map(([pool, topology]) => resolveSpecialLayoutLock(
-      pool?.topology[vdevType],
-      pool?.topology[VDevType.Data],
-      topology[VDevType.Data]?.layout,
+    map(([pool, topology]): ParityLayoutLockState => ({
+      lockedLayout: resolveParityLockedLayout(
+        pool?.topology[vdevType],
+        pool?.topology[VDevType.Data],
+        topology[VDevType.Data]?.layout,
+      ),
+      currentLayout: topology[vdevType]?.layout ?? null,
+    })),
+    distinctUntilChanged((a, b) => (
+      a.lockedLayout === b.lockedLayout && a.currentLayout === b.currentLayout
     )),
-    distinctUntilChanged(),
   );
 }
 
