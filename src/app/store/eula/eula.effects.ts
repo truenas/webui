@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import {
   filter, mergeMap, switchMap,
 } from 'rxjs/operators';
@@ -41,13 +41,17 @@ export class EulaEffects {
   ), { dispatch: false });
 
   private showEulaDialog(): Observable<void> {
-    return this.api.call('truenas.get_eula').pipe(
-      switchMap((eula) => {
+    return forkJoin({
+      eula: this.api.call('truenas.get_eula'),
+      title: this.translate.get('End User License Agreement - TrueNAS'),
+      buttonText: this.translate.get('I Agree'),
+    }).pipe(
+      switchMap(({ eula, title, buttonText }) => {
         return this.dialogService.confirm({
-          title: this.translate.instant('End User License Agreement - TrueNAS'),
+          title,
           message: ignoreTranslation(eula),
           hideCheckbox: true,
-          buttonText: this.translate.instant('I Agree'),
+          buttonText,
           hideCancel: true,
         });
       }),

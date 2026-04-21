@@ -1,6 +1,7 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { of, ReplaySubject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -27,6 +28,9 @@ describe('EulaEffects', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(TranslateService, {
+        get: jest.fn((key: string) => of(key)),
       }),
       provideMockStore({
         selectors: [{
