@@ -11,7 +11,7 @@
     ></ix-select>
   </div>
 } @else {
-  @if (isDataVdev() || isMetadataVdev()) {
+  @if (isDataVdev() || isMetadataVdev() || isDedupVdev()) {
     <ix-input
       [ixTestOverride]="['layout']"
       [keepLastPart]="true"
@@ -22,6 +22,12 @@
       [required]="false"
     ></ix-input>
   }
+}
+
+@if (requiresDataParity()) {
+  <p class="layout-restriction-hint">
+    {{ layoutRestrictionHint() }}
+  </p>
 }
 
 @if (usesDraidLayout) {

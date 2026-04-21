@@ -53,12 +53,34 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return this.type() === VDevType.Data;
   });
 
+  protected isMetadataVdev = computed(() => {
+    return this.type() === VDevType.Special;
+  });
+
+  protected isDedupVdev = computed(() => {
+    return this.type() === VDevType.Dedup;
+  });
+
+  protected requiresDataParity = computed(() => {
+    return this.isMetadataVdev() || this.isDedupVdev();
+  });
+
   protected dataLayoutTooltip = computed(() => {
-    if (this.isDataVdev()) {
+    if (this.isDataVdev() || this.requiresDataParity()) {
       return this.translate.instant('Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool');
     }
 
     return '';
+  });
+
+  protected layoutRestrictionHint = computed(() => {
+    if (!this.requiresDataParity()) {
+      return '';
+    }
+
+    return this.translate.instant(
+      'Special and deduplication vdevs must use the same layout as the data vdevs so the pool keeps consistent redundancy. dRAID layouts are not available for these vdev types.',
+    );
   });
 
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
@@ -77,10 +99,6 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   protected get usesDraidLayout(): boolean {
     return !!this.layoutControl.value && isDraidLayout(this.layoutControl.value);
   }
-
-  protected isMetadataVdev = computed(() => {
-    return this.type() === VDevType.Special;
-  });
 
   private updateStoreOnChanges(): void {
     this.store.isLoading$
