@@ -128,35 +128,16 @@ describe('DedupWizardStepComponent', () => {
     });
   });
 
-  describe('when the locked layout no longer allows the current store selection', () => {
+  describe('when the lock changes with a stale store selection', () => {
     const createComponent = makeFactory({
       dataLayout: CreateVdevLayout.Raidz2,
       dedupLayout: CreateVdevLayout.Mirror,
     });
 
-    it('resets the dedup step so the invalid selection is cleared', () => {
-      spectator = createComponent();
-      const store = spectator.inject(PoolManagerStore);
-      expect(store.resetStep).toHaveBeenCalledWith(VDevType.Dedup);
-    });
-
-    it('keeps the allowed layouts locked to the lock after the reset', () => {
+    it('locks limitLayouts to the new lock even while the store selection is stale', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
-    });
-  });
-
-  describe('when the current store layout matches the lock', () => {
-    const createComponent = makeFactory({
-      dataLayout: CreateVdevLayout.Raidz2,
-      dedupLayout: CreateVdevLayout.Raidz2,
-    });
-
-    it('does not reset the dedup step', () => {
-      spectator = createComponent();
-      const store = spectator.inject(PoolManagerStore);
-      expect(store.resetStep).not.toHaveBeenCalled();
     });
   });
 

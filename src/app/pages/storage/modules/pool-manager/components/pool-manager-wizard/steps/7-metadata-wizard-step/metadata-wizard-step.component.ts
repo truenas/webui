@@ -57,11 +57,8 @@ export class MetadataWizardStepComponent implements OnInit {
   ngOnInit(): void {
     lockedParityLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ lockedLayout, currentLayout }) => {
+      .subscribe(({ lockedLayout }) => {
         this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : this.allAllowedLayouts;
-        if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
-          this.store.resetStep(VDevType.Special);
-        }
         this.cdr.markForCheck();
       });
   }

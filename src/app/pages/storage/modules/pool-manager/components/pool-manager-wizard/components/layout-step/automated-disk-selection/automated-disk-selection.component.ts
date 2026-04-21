@@ -132,11 +132,9 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
         const limitLayouts = this.limitLayouts();
         const hasSingleChoice = limitLayouts.length === 1;
         const shouldPreselect = !this.canChangeLayout() || hasSingleChoice;
-        if (shouldPreselect) {
-          setValueIfNotSame(this.layoutControl, limitLayouts[0]);
-        } else {
-          this.layoutControl.setValue(null);
-        }
+        // Always setValue (even when same) so valueChanges re-syncs the store
+        // after a resetStep clears topology[type].layout to null.
+        this.layoutControl.setValue(shouldPreselect ? limitLayouts[0] : null);
       });
   }
 
