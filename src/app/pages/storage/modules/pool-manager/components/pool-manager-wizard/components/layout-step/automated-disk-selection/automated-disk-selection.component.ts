@@ -136,8 +136,12 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
     const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
     this.vdevLayoutOptions$ = of(allowedLayouts);
+    if (!limitLayouts.length) {
+      return;
+    }
     const cannotChangeLayout = this.canChangeLayout() === false;
-    if (cannotChangeLayout && limitLayouts.length) {
+    const hasSingleChoice = limitLayouts.length === 1;
+    if (cannotChangeLayout || hasSingleChoice) {
       setValueIfNotSame(this.layoutControl, limitLayouts[0]);
     }
   }

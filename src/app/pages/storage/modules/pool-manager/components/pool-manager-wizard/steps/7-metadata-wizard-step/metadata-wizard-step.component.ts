@@ -44,7 +44,6 @@ export class MetadataWizardStepComponent implements OnInit {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
   protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
-  protected canChangeLayout = true;
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -59,7 +58,6 @@ export class MetadataWizardStepComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ lockedLayout, currentLayout }) => {
         this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : [...nonDraidLayouts];
-        this.canChangeLayout = lockedLayout === null;
         if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
           this.store.resetStep(VDevType.Special);
         }
