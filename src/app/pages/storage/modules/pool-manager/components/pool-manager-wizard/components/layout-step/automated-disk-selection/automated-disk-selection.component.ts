@@ -65,6 +65,15 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return this.isMetadataVdev() || this.isDedupVdev();
   });
 
+  /**
+   * True only when a parity-dependent vdev type currently has exactly one
+   * allowed layout — i.e. the dropdown shows a single option the user cannot
+   * change. That's the only case where the hint explains the constraint.
+   */
+  protected showLayoutRestrictionHint = computed(() => {
+    return this.requiresDataParity() && this.limitLayouts().length === 1;
+  });
+
   protected dataLayoutTooltip = computed(() => {
     if (this.isDataVdev()) {
       return this.translate.instant('Read only field: this Data VDEV\'s layout is locked to match the existing Data devices in the pool.');

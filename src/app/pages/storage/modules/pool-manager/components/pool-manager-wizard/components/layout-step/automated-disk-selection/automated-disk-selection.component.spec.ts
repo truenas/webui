@@ -130,16 +130,24 @@ describe('AutomatedDiskSelection', () => {
     expect(spectator.query('.layout-restriction-hint')).toBeNull();
   });
 
-  it('shows a data parity hint for special (metadata) vdevs', () => {
+  it('does not show the data parity hint for metadata vdevs when any layout is allowed', () => {
     spectator.setInput('type', VDevType.Special);
+
+    expect(spectator.query('.layout-restriction-hint')).toBeNull();
+  });
+
+  it('shows the data parity hint for metadata vdevs when the layout is locked to a single option', () => {
+    spectator.setInput('type', VDevType.Special);
+    spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
     const hint = spectator.query('.layout-restriction-hint');
     expect(hint).not.toBeNull();
     expect(hint!.textContent).toContain('Special and deduplication vdevs');
   });
 
-  it('shows a data parity hint for dedup vdevs', () => {
+  it('shows the data parity hint for dedup vdevs when the layout is locked to a single option', () => {
     spectator.setInput('type', VDevType.Dedup);
+    spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
     const hint = spectator.query('.layout-restriction-hint');
     expect(hint).not.toBeNull();
