@@ -117,4 +117,24 @@ describe('AutomatedDiskSelection', () => {
       CreateVdevLayout.Mirror,
     );
   });
+
+  it('does not show the data parity hint for data vdevs', () => {
+    expect(spectator.query('.layout-restriction-hint')).toBeNull();
+  });
+
+  it('shows a data parity hint for special (metadata) vdevs', () => {
+    spectator.setInput('type', VDevType.Special);
+
+    const hint = spectator.query('.layout-restriction-hint');
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Special and deduplication vdevs');
+  });
+
+  it('shows a data parity hint for dedup vdevs', () => {
+    spectator.setInput('type', VDevType.Dedup);
+
+    const hint = spectator.query('.layout-restriction-hint');
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Special and deduplication vdevs');
+  });
 });
