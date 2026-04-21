@@ -8,6 +8,7 @@
       [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
       [options]="vdevLayoutOptions$ | translateOptions"
       [required]="true"
+      [hint]="layoutRestrictionHint()"
     ></ix-select>
   </div>
 } @else {
@@ -22,12 +23,6 @@
       [required]="false"
     ></ix-input>
   }
-}
-
-@if (showLayoutRestrictionHint()) {
-  <p class="layout-restriction-hint">
-    {{ layoutRestrictionHint() }}
-  </p>
 }
 
 @if (usesDraidLayout) {

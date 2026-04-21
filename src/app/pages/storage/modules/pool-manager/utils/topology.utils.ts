@@ -222,42 +222,29 @@ export function resolveParityLockedLayout(
   return wizardDataLayout ? nonDraidEquivalent(wizardDataLayout) : null;
 }
 
-export interface ParityLayoutLockState {
-  lockedLayout: CreateVdevLayout | null;
-  currentLayout: CreateVdevLayout | null;
-}
-
 /**
- * Emits the lock state for the given special/dedup category: the layout the
- * category must match (or null when no lock applies), plus the layout the
- * store currently holds for that category so callers can detect and clear
- * stale selections in a single subscription. Shared by the metadata and
- * dedup wizard steps so both react to the same set of inputs in the same way.
+ * Emits the layout that the given special/dedup category must be locked to,
+ * or null when no lock applies. Shared by the metadata and dedup wizard steps
+ * so both react to the same set of inputs in the same way.
  */
 export function lockedParityLayout$(
   pool$: Observable<Pool | null>,
   topology$: Observable<PoolManagerTopology>,
   vdevType: VDevType.Special | VDevType.Dedup,
-): Observable<ParityLayoutLockState> {
+): Observable<CreateVdevLayout | null> {
   return combineLatest([pool$, topology$]).pipe(
-    map(([pool, topology]): ParityLayoutLockState => ({
-      lockedLayout: resolveParityLockedLayout(
-        pool?.topology[vdevType],
-        pool?.topology[VDevType.Data],
-        topology[VDevType.Data]?.layout,
-      ),
-      currentLayout: topology[vdevType]?.layout ?? null,
-    })),
-    distinctUntilChanged((a, b) => (
-      a.lockedLayout === b.lockedLayout && a.currentLayout === b.currentLayout
+    map(([pool, topology]) => resolveParityLockedLayout(
+      pool?.topology[vdevType],
+      pool?.topology[VDevType.Data],
+      topology[VDevType.Data].layout,
     )),
+    distinctUntilChanged(),
   );
 }
 
 /**
- * Order follows CreateVdevLayout declaration order, which also drives the
- * ordering of options in the layout dropdown. Reordering enum members will
- * change the visible option order.
+ * Every CreateVdevLayout value except the dRAID ones. Order is not semantic —
+ * dropdown ordering is driven by {@link vdevLayoutOptions} in the component.
  */
 export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(CreateVdevLayout)
   .filter((layout) => !draidCreateLayouts.includes(layout));
