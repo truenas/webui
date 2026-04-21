@@ -35,6 +35,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
+import { AppActionRequiredBadgeComponent } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -67,6 +68,7 @@ import { RedirectService } from 'app/services/redirect.service';
     MatTooltip,
     TnIconComponent,
     RouterLink,
+    AppActionRequiredBadgeComponent,
   ],
 })
 export class AppInfoCardComponent {
