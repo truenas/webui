@@ -44,8 +44,9 @@ export class DedupWizardStepComponent implements OnInit {
   protected readonly vDevType = VDevType;
   protected readonly helptext = helptextPoolCreation;
 
+  private readonly allAllowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Dedup);
-  protected allowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
+  protected allowedLayouts: CreateVdevLayout[] = this.allAllowedLayouts;
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -59,7 +60,7 @@ export class DedupWizardStepComponent implements OnInit {
     lockedParityLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Dedup)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ lockedLayout, currentLayout }) => {
-        this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : [...nonDraidLayouts];
+        this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : this.allAllowedLayouts;
         if (currentLayout && !this.allowedLayouts.includes(currentLayout)) {
           this.store.resetStep(VDevType.Dedup);
         }

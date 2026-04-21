@@ -365,9 +365,11 @@ export class PoolManagerValidationService {
 
   /**
    * True when the user has touched any of the category's configurable fields.
-   * `layout` is intentionally excluded: Spare/Cache carry a default layout of
-   * Stripe even when untouched, and layout can also be set programmatically by
-   * the data-parity lock.
+   * `layout` is intentionally excluded because it can be set programmatically:
+   * AutomatedDiskSelectionComponent auto-selects the sole choice when a
+   * category has only one allowed layout, and resetTopologyCategory preloads
+   * Stripe for Spare/Cache. A non-null layout therefore does not imply that
+   * the user engaged with the category.
    */
   private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
     return category.diskSize != null
