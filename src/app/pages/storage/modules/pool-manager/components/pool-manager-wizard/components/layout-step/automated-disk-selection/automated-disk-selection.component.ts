@@ -66,7 +66,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   });
 
   protected dataLayoutTooltip = computed(() => {
-    if (this.isDataVdev() || this.requiresDataParity()) {
+    if (this.isDataVdev()) {
       return this.translate.instant('Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool');
     }
 
@@ -129,7 +129,10 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.layoutControl.setValue(this.canChangeLayout() ? null : this.limitLayouts()[0]);
+        const limitLayouts = this.limitLayouts();
+        const hasSingleChoice = limitLayouts.length === 1;
+        const shouldPreselect = !this.canChangeLayout() || hasSingleChoice;
+        this.layoutControl.setValue(shouldPreselect ? limitLayouts[0] : null);
       });
   }
 

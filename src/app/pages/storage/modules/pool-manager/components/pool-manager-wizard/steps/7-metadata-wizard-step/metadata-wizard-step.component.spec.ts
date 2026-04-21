@@ -139,6 +139,12 @@ describe('MetadataWizardStepComponent', () => {
       const store = spectator.inject(PoolManagerStore);
       expect(store.resetStep).toHaveBeenCalledWith(VDevType.Special);
     });
+
+    it('keeps the allowed layouts locked to the lock after the reset', () => {
+      spectator = createComponent();
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+    });
   });
 
   describe('when the current store layout matches the lock', () => {
