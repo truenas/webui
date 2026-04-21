@@ -10,6 +10,9 @@ import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import {
+  AppActionRequiredBadgeComponent,
+} from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
@@ -50,7 +53,7 @@ describe('AppRowComponent', () => {
       NetworkSpeedPipe,
     ],
     declarations: [
-      MockComponents(AppStateCellComponent, AppUpdateCellComponent),
+      MockComponents(AppStateCellComponent, AppUpdateCellComponent, AppActionRequiredBadgeComponent),
     ],
     providers: [
       mockAuth(),
@@ -83,6 +86,11 @@ describe('AppRowComponent', () => {
     const updateCell = spectator.query(AppUpdateCellComponent)!;
     expect(updateCell).toBeTruthy();
     expect(updateCell.hasUpdate).toBeFalsy();
+  });
+
+  it('renders action-required badge component', () => {
+    const badge = spectator.query(AppActionRequiredBadgeComponent);
+    expect(badge).toBeTruthy();
   });
 
   it('shows app usages stats', () => {

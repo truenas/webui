@@ -1,0 +1,13 @@
+@if (isVisible()) {
+  <span
+    class="action-required-badge"
+    role="status"
+    matTooltipPosition="above"
+    [ixTest]="[app().name, 'action-required']"
+    [tnTooltip]="'Please check the Notes card for the actions needed' | translate"
+    [attr.aria-label]="'Please check the Notes card for the actions needed' | translate"
+  >
+    <tn-icon name="alert" library="mdi"></tn-icon>
+    <span>{{ 'Action Required' | translate }}</span>
+  </span>
+}

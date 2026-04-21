@@ -1,0 +1,23 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.action-required-badge {
+  align-items: center;
+  background: var(--alt-bg2);
+  border: 1px solid var(--orange);
+  border-radius: 12px;
+  color: var(--orange);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 4px;
+  line-height: 1;
+  padding: 3px 8px;
+
+  tn-icon {
+    height: 14px;
+    width: 14px;
+  }
+}
