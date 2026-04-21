@@ -2,7 +2,7 @@
   [description]="helptext.specialVdevDescription | translate"
   [type]="vDevType.Special"
   [inventory]="(inventory$ | async) || []"
-  [canChangeLayout]="true"
+  [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive()"
 ></ix-layout-step>

@@ -8,7 +8,7 @@ import {
 import {
   nonDraidEquivalent,
   parseDraidVdevName,
-  resolveSpecialLayoutLock,
+  resolveParityLockedLayout,
   resolveTopologyLayout,
   topologyCategoryToDisks,
   topologyToDisks, topologyToPayload,
@@ -200,7 +200,7 @@ describe('resolveTopologyLayout', () => {
   });
 });
 
-describe('resolveSpecialLayoutLock', () => {
+describe('resolveParityLockedLayout', () => {
   const mirrorVdev = [{ type: TopologyItemType.Mirror, children: [{}, {}] }] as VDevItem[];
   const raidz2Vdev = [{ type: TopologyItemType.Raidz2, children: [{}, {}, {}, {}] }] as VDevItem[];
   const draid2Vdev = [{
@@ -209,37 +209,37 @@ describe('resolveSpecialLayoutLock', () => {
 
   it('prefers existing category layout over everything else', () => {
     expect(
-      resolveSpecialLayoutLock(mirrorVdev, raidz2Vdev, CreateVdevLayout.Raidz3),
+      resolveParityLockedLayout(mirrorVdev, raidz2Vdev, CreateVdevLayout.Raidz3),
     ).toBe(CreateVdevLayout.Mirror);
   });
 
   it('falls back to existing data layout when category is empty', () => {
     expect(
-      resolveSpecialLayoutLock(undefined, raidz2Vdev, CreateVdevLayout.Raidz1),
+      resolveParityLockedLayout(undefined, raidz2Vdev, CreateVdevLayout.Raidz1),
     ).toBe(CreateVdevLayout.Raidz2);
   });
 
   it('maps existing data dRAID layout to its non-dRAID equivalent', () => {
     expect(
-      resolveSpecialLayoutLock(undefined, draid2Vdev, null),
+      resolveParityLockedLayout(undefined, draid2Vdev, null),
     ).toBe(CreateVdevLayout.Raidz2);
   });
 
   it('uses wizard data layout when no existing topology is present', () => {
     expect(
-      resolveSpecialLayoutLock(undefined, undefined, CreateVdevLayout.Raidz2),
+      resolveParityLockedLayout(undefined, undefined, CreateVdevLayout.Raidz2),
     ).toBe(CreateVdevLayout.Raidz2);
   });
 
   it('maps wizard dRAID layout to its non-dRAID equivalent', () => {
     expect(
-      resolveSpecialLayoutLock(undefined, undefined, CreateVdevLayout.Draid3),
+      resolveParityLockedLayout(undefined, undefined, CreateVdevLayout.Draid3),
     ).toBe(CreateVdevLayout.Raidz3);
   });
 
   it('returns null when nothing is set', () => {
-    expect(resolveSpecialLayoutLock(undefined, undefined, null)).toBeNull();
-    expect(resolveSpecialLayoutLock([], [], null)).toBeNull();
+    expect(resolveParityLockedLayout(undefined, undefined, null)).toBeNull();
+    expect(resolveParityLockedLayout([], [], null)).toBeNull();
   });
 });
 
