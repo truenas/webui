@@ -31,6 +31,14 @@ import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topo
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
+const incompleteCategoryRules: { vdevType: VDevType; step: PoolCreationWizardStep }[] = [
+  { vdevType: VDevType.Log, step: PoolCreationWizardStep.Log },
+  { vdevType: VDevType.Spare, step: PoolCreationWizardStep.Spare },
+  { vdevType: VDevType.Cache, step: PoolCreationWizardStep.Cache },
+  { vdevType: VDevType.Special, step: PoolCreationWizardStep.Metadata },
+  { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup },
+];
+
 @Injectable()
 export class PoolManagerValidationService {
   protected store = inject(PoolManagerStore);
@@ -313,13 +321,6 @@ export class PoolManagerValidationService {
    * error indicator even though the form inside the step is invalid.
    */
   private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
-    const incompleteCategoryRules: { vdevType: VDevType; step: PoolCreationWizardStep }[] = [
-      { vdevType: VDevType.Log, step: PoolCreationWizardStep.Log },
-      { vdevType: VDevType.Spare, step: PoolCreationWizardStep.Spare },
-      { vdevType: VDevType.Cache, step: PoolCreationWizardStep.Cache },
-      { vdevType: VDevType.Special, step: PoolCreationWizardStep.Metadata },
-      { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup },
-    ];
     const messageTemplate = T('{vdevType} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.');
 
     const errors: PoolCreationError[] = [];
@@ -357,7 +358,8 @@ export class PoolManagerValidationService {
       || category.width != null
       || category.vdevsNumber != null
       || category.draidDataDisks != null
-      || category.draidSpareDisks != null;
+      || category.draidSpareDisks != null
+      || category.treatDiskSizeAsMinimum === true;
   }
 
   private validateAddVdevRedundancy(

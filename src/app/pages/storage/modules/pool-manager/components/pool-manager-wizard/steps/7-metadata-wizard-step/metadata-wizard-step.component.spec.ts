@@ -6,6 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -18,23 +19,9 @@ describe('MetadataWizardStepComponent', () => {
   let spectator: Spectator<MetadataWizardStepComponent>;
 
   const fakeInventory = [
-    {
-      identifier: '{serial_lunid}8HG7MZJH_5000cca2700de678',
-      name: 'sdo',
-      number: 2272,
-      serial: '8HG7MZJH',
-      size: 12000138625024,
-      type: 'HDD',
-    },
-    {
-      identifier: '{serial_lunid}8DJ61EBH_5000cca2537bba6c',
-      name: 'sdv',
-      number: 16720,
-      serial: '8DJ61EBH',
-      size: 12000138625024,
-      type: 'HDD',
-    },
-  ];
+    { name: 'sdo', size: 12000138625024 },
+    { name: 'sdv', size: 12000138625024 },
+  ] as DetailsDisk[];
 
   const makeFactory = ({
     pool = null,
