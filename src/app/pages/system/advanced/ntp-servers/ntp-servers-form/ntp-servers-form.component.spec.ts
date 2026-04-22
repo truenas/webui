@@ -111,7 +111,7 @@ describe('NtpServerFormComponent', () => {
       });
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends only the changed fields on update when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Address: 'updated.mock.ntp.server',
@@ -125,12 +125,7 @@ describe('NtpServerFormComponent', () => {
         1,
         {
           address: 'updated.mock.ntp.server',
-          burst: false,
-          iburst: true,
-          prefer: false,
-          minpoll: 6,
           maxpoll: 14,
-          force: false,
         },
       ]);
     });

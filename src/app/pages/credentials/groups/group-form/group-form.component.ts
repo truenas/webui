@@ -6,7 +6,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of, shareReplay } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextGroups } from 'app/helptext/account/groups';
@@ -77,7 +77,7 @@ export class GroupFormComponent implements OnInit {
   private readonly privileges = signal<Privilege[]>([]);
 
   protected readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
-    map((privileges) => {
+    tap((privileges) => {
       this.privileges.set(privileges);
 
       const initialPrivileges = privileges.filter((privilege) => {
@@ -94,9 +94,8 @@ export class GroupFormComponent implements OnInit {
       if (this.editingGroup) {
         this.formSnapshot.set(this.form.getRawValue() as Record<string, unknown>);
       }
-
-      return privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }));
     }),
+    map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

@@ -1,4 +1,5 @@
 <ix-form
+  #ixForm
   [formGroup]="form"
   [addTitle]="'Add Cloud Sync Task' | translate"
   [editTitle]="'Edit Cloud Sync Task' | translate"
@@ -291,7 +292,7 @@
     mat-button
     type="button"
     ixTest="dry-run"
-    [disabled]="form.invalid || isLoading()"
+    [disabled]="form.invalid || isLoading() || ixForm.isSubmitting()"
     (click)="onDryRun()"
   >
     {{ helptext.dryRunButton | translate }}
@@ -302,6 +303,7 @@
       mat-button
       type="button"
       ixTest="switch-to-wizard"
+      [disabled]="ixForm.isSubmitting()"
       (click)="onSwitchToWizard()"
     >
       {{ 'Switch To Wizard' | translate }}

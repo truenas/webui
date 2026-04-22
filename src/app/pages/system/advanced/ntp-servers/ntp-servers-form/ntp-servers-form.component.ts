@@ -63,7 +63,7 @@ export class NtpServersFormComponent {
 
   protected handleSubmit = (event: FormSubmitEvent<CreateNtpServer>): SubmitResult => ({
     request$: this.editingServer
-      ? this.api.call('system.ntpserver.update', [this.editingServer.id, event.allValues])
+      ? this.api.call('system.ntpserver.update', [this.editingServer.id, event.changedValues])
       : this.api.call('system.ntpserver.create', [event.allValues]),
     successMessage: this.editingServer
       ? this.translate.instant('NTP server updated')

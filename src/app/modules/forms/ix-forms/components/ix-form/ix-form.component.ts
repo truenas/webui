@@ -257,7 +257,7 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
         this.snackbar.success(successMessage);
         this.isSubmitting.set(false);
         onSuccess?.(result);
-        this.slideInRef?.close({ response: result ?? true });
+        this.slideInRef?.close({ response: result === undefined ? true : result });
       },
       error: (error: unknown) => {
         this.isSubmitting.set(false);
