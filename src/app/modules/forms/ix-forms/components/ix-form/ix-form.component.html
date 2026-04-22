@@ -6,7 +6,12 @@
 
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" [formGroup]="formGroup()" (ngSubmit)="onFormSubmit()">
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup()"
+      [attr.aria-busy]="isLoading() || null"
+      (ngSubmit)="onFormSubmit()"
+    >
       <ng-content />
 
       <ix-form-actions>
@@ -19,8 +24,9 @@
           color="primary"
           ixTest="save"
           [disabled]="formGroup().invalid || isLoading()"
+          [attr.aria-label]="isSubmitting() ? ('Saving' | translate) : null"
         >
-          {{ 'Save' | translate }}
+          {{ (isSubmitting() ? 'Saving…' : 'Save') | translate }}
         </button>
       </ix-form-actions>
     </form>

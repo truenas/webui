@@ -14,7 +14,9 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import { Observable, of, take } from 'rxjs';
+import {
+  defer, Observable, of, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -37,8 +39,11 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
   allValues: T;
 
   /**
-   * Only the properties that changed from the initial state.
-   * In create mode this is the same as allValues.
+   * Keys from `allValues` that differ from the initial snapshot.
+   * In create mode this equals `allValues`. Only keys present in the current
+   * form value are considered — fields removed from the form structure
+   * after init won't appear here. If a submit depends on a group of fields
+   * moving together (e.g. paired toggles), prefer `allValues` over this.
    */
   changedValues: Partial<T>;
 }
@@ -48,17 +53,28 @@ export interface SubmitResult {
   successMessage: TranslatedString;
 
   /**
-   * Optional callback invoked after the request succeeds and before
-   * the slide-in closes. Use for side effects like dispatching store
-   * actions. Receives the value emitted by request$.
+   * Callback invoked after the request succeeds and before the slide-in
+   * closes. Runs synchronously between the snackbar and the close call,
+   * so store dispatches / navigations here will fire before the slide-in
+   * animates out. Receives the value emitted by request$.
    */
   onSuccess?: (result: unknown) => void;
 
   /**
-   * Optional custom error handler. Return true if the error was handled
-   * and the default form error handler should be skipped.
+   * Custom error handler. Return true if the error was handled and the
+   * default form error handler should be skipped.
    */
   onError?: (error: unknown) => boolean;
+
+  /**
+   * Override the payload the slide-in closes with. Receives the value
+   * emitted by request$ and must return what downstream listeners
+   * (success$ / onSuccess on the caller side) should observe. When
+   * omitted, the raw request$ result is passed through — or `true` if
+   * the request emitted `undefined`, since `undefined` is reserved to
+   * signal a cancelled close.
+   */
+  closeWith?: (result: unknown) => unknown;
 }
 
 /**
@@ -135,8 +151,12 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   /**
    * Initial entity data for edit mode. Pass undefined/null for create mode.
-   * When provided, the form is auto-patched with this data on init.
-   * For complex forms that do their own patching, use initialFormSnapshot instead.
+   * When provided, the form is auto-patched via `patchValue` on init.
+   *
+   * Only safe to use when the entity shape matches the form-control shape
+   * 1-to-1. For entities that need key renames or transforms (e.g. API
+   * `group` → form `name`), skip this and use `initialFormSnapshot` with
+   * your own setup logic.
    */
   readonly editData = input<Partial<T> | null | undefined>(null);
 
@@ -174,6 +194,11 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * Callback that receives the form submit event and returns the API
    * request and success message. The component handles the full lifecycle:
    * loading state → API call → snackbar + close / error handling.
+   *
+   * Note: Angular templates don't support explicit generic type args on
+   * components, so `T` defaults to `Record<string, unknown>` at the binding
+   * site. Consumers get real type safety on `event` by typing the handler
+   * itself as `(event: FormSubmitEvent<MyFormShape>) => SubmitResult`.
    */
   readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult>();
 
@@ -185,10 +210,14 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly externalLoading = input(false);
 
   /**
-   * Explicit edit-mode override. When set, takes precedence over the
-   * value inferred from editData/initialFormSnapshot. Use this for forms
-   * that asynchronously resolve their snapshot so the title doesn't
-   * flicker between add/edit during setup.
+   * Explicit edit-mode override. When set, takes precedence over the value
+   * inferred from `editData` / `initialFormSnapshot`.
+   *
+   * Recommended whenever the inferred check would be ambiguous — e.g. forms
+   * that pass an always-populated `editData` object, forms whose snapshot
+   * resolves asynchronously, or singleton-config forms that are "always
+   * editing". The inferred edit state only checks for `!= null` on the
+   * snapshot, which treats an empty object as edit mode.
    */
   readonly isEditMode = input<boolean | null>(null);
 
@@ -231,7 +260,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   ngOnInit(): void {
     if (this.slideInRef) {
-      this.slideInRef.requireConfirmationWhen(() => of(this.formGroup().dirty));
+      // `defer` makes the dirty read lazy no matter how the slide-in chooses
+      // to consume the returned observable (call-time or subscribe-time).
+      this.slideInRef.requireConfirmationWhen(() => defer(() => of(this.formGroup().dirty)));
     }
 
     if (this.initialFormSnapshot() != null) {
@@ -254,7 +285,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     };
 
     const {
-      request$, successMessage, onSuccess, onError,
+      request$, successMessage, onSuccess, onError, closeWith,
     } = this.submitHandler()(event);
 
     this.isSubmitting.set(true);
@@ -263,7 +294,10 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         this.snackbar.success(successMessage);
         this.isSubmitting.set(false);
         onSuccess?.(result);
-        this.slideInRef?.close({ response: result === undefined ? true : result });
+        const payload = closeWith ? closeWith(result) : result;
+        // SlideInResponse treats `undefined` as a cancelled close, so coerce
+        // to `true` when no caller-chosen payload is available.
+        this.slideInRef?.close({ response: payload === undefined ? true : payload });
       },
       error: (error: unknown) => {
         this.isSubmitting.set(false);

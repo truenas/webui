@@ -172,7 +172,7 @@ describe('IxFormComponent', () => {
       expect(onSuccessSpy).toHaveBeenCalledWith(apiResult);
     });
 
-    it('resets isSubmitting when observable completes without emitting', async () => {
+    it('re-enables the save button when observable completes without emitting', async () => {
       submitHandlerSpy.mockReturnValue({
         request$: EMPTY,
         successMessage: 'Saved!' as never,
@@ -183,11 +183,30 @@ describe('IxFormComponent', () => {
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
+      spectator.detectChanges();
 
-      const ixForm = spectator.component.ixForm();
-      expect(ixForm.isSubmitting()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
       expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
       expect(slideInRef.close).not.toHaveBeenCalled();
+    });
+
+    it('uses closeWith to transform the slide-in close payload', async () => {
+      const apiResult = { id: 42 };
+      const closeWithSpy = jest.fn(() => ({ navigateTo: '/items/42' }));
+      submitHandlerSpy.mockReturnValue({
+        request$: of(apiResult),
+        successMessage: 'Saved!' as never,
+        closeWith: closeWithSpy,
+      });
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(closeWithSpy).toHaveBeenCalledWith(apiResult);
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: { navigateTo: '/items/42' } });
     });
   });
 
