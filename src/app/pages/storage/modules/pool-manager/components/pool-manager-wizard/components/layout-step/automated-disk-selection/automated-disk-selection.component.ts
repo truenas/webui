@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, OnChan
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { merge, of } from 'rxjs';
+import { of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -120,19 +120,24 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   }
 
   private listenForResetEvents(): void {
-    merge(
-      this.store.startOver$,
-      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
-    )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        const limitLayouts = this.limitLayouts();
-        const hasSingleChoice = limitLayouts.length === 1;
-        const shouldPreselect = !this.canChangeLayout() || hasSingleChoice;
-        // Always setValue (even when same) so valueChanges re-syncs the store
-        // after a resetStep clears topology[type].layout to null.
-        this.layoutControl.setValue(shouldPreselect ? limitLayouts[0] : null);
-      });
+    // Start over wipes every category, so clear the control and let the
+    // reactive parity-lock subscription re-apply the lock asynchronously if
+    // data layout is still set. Reading limitLayouts here would observe the
+    // pre-reset value (the store state update follows startOver$.next()).
+    this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.layoutControl.setValue(null));
+
+    // Reset-step only clears this category; re-apply the current lock so a
+    // parity-locked step preserves its forced layout after the user resets it.
+    this.store.resetStep$.pipe(
+      filter((vdevType) => vdevType === this.type()),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      const limitLayouts = this.limitLayouts();
+      const hasSingleChoice = limitLayouts.length === 1;
+      const shouldPreselect = !this.canChangeLayout() || hasSingleChoice;
+      this.layoutControl.setValue(shouldPreselect ? limitLayouts[0] : null);
+    });
   }
 
   private updateLayoutOptionsFromLimitedLayouts(limitLayouts: readonly CreateVdevLayout[]): void {
