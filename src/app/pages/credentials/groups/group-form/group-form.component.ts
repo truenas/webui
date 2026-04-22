@@ -45,7 +45,7 @@ export class GroupFormComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<GroupSlice>>(Store);
-  private slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AccountWrite];

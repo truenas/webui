@@ -121,7 +121,7 @@ export interface SubmitResult {
     TranslateModule,
   ],
 })
-export class IxFormComponent<T extends Record<string, unknown> = Record<string, unknown>> implements OnInit {
+export class IxFormComponent<T extends object = Record<string, unknown>> implements OnInit {
   /**
    * The reactive FormGroup this form manages.
    */

@@ -3,6 +3,7 @@
   [formGroup]="form"
   [addTitle]="'Add Cloud Sync Task' | translate"
   [editTitle]="'Edit Cloud Sync Task' | translate"
+  [isEditMode]="!isNew"
   [requiredRoles]="requiredRoles"
   [externalLoading]="isLoading()"
   [submitHandler]="handleSubmit"

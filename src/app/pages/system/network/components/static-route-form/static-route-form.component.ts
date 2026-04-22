@@ -52,7 +52,7 @@ export class StaticRouteFormComponent {
 
   protected handleSubmit = (event: FormSubmitEvent<UpdateStaticRoute>): SubmitResult => ({
     request$: this.editingRoute
-      ? this.api.call('staticroute.update', [this.editingRoute.id, event.changedValues as UpdateStaticRoute])
+      ? this.api.call('staticroute.update', [this.editingRoute.id, event.changedValues])
       : this.api.call('staticroute.create', [event.allValues]),
     successMessage: this.editingRoute
       ? this.translate.instant('Static route updated')
