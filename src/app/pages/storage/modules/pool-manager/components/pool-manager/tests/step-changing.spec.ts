@@ -166,12 +166,16 @@ describe('PoolManagerComponent – step changing', () => {
       'Number of VDEVs': '1',
     });
 
+    // Setting the data layout parity-locks metadata/dedup, so their layouts
+    // get auto-synced via the shared lockedParityLayout$ subscription — that's
+    // why Special and Dedup appear before Data here even though the user only
+    // touched the Data step.
     expect(store.state().categorySequence).toEqual([
       VDevType.Log,
-      VDevType.Special,
-      VDevType.Dedup,
       VDevType.Spare,
       VDevType.Cache,
+      VDevType.Special,
+      VDevType.Dedup,
       VDevType.Data,
     ]);
 
@@ -184,10 +188,10 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VDevType.Special,
-      VDevType.Dedup,
       VDevType.Spare,
       VDevType.Cache,
+      VDevType.Special,
+      VDevType.Dedup,
       VDevType.Data,
       VDevType.Log,
     ]);
@@ -200,9 +204,9 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
+      VDevType.Cache,
       VDevType.Special,
       VDevType.Dedup,
-      VDevType.Cache,
       VDevType.Data,
       VDevType.Log,
       VDevType.Spare,
