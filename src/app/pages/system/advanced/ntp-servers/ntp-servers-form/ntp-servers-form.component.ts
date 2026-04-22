@@ -35,7 +35,7 @@ export class NtpServersFormComponent {
 
   protected editingServer = this.slideInRef.getData();
 
-  formGroup = this.fb.nonNullable.group({
+  form = this.fb.nonNullable.group({
     address: [''],
     burst: [false],
     iburst: [true],

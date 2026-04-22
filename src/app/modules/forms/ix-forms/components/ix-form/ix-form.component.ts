@@ -96,7 +96,8 @@ export interface SubmitResult {
  * Complex usage (form manages its own patching and async setup):
  * ```html
  * <ix-form [formGroup]="form" [initialFormSnapshot]="formSnapshot()"
- *          [externalLoading]="setupLoading()" [title]="title"
+ *          [externalLoading]="setupLoading()" [isEditMode]="!!editingEntity"
+ *          [addTitle]="'Add X' | translate" [editTitle]="'Edit X' | translate"
  *          [requiredRoles]="requiredRoles" [submitHandler]="handleSubmit">
  *   ...
  * </ix-form>
@@ -104,6 +105,11 @@ export interface SubmitResult {
  *
  * Pick one of `editData` or `initialFormSnapshot` — when both are provided
  * `initialFormSnapshot` wins and the editData auto-patch is skipped.
+ *
+ * When the snapshot resolves asynchronously (e.g. after an API call), pair
+ * `initialFormSnapshot` with an explicit `isEditMode` binding driven by the
+ * source entity. Otherwise the title briefly shows "Add …" before the
+ * snapshot settles, since inferred edit state sees a null snapshot on init.
  */
 @Component({
   selector: 'ix-form',
@@ -265,6 +271,8 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
           this.errorHandler.handleValidationErrors(error, this.formGroup());
         }
       },
+      // Safety net for observables that complete without emitting (e.g. EMPTY) —
+      // neither next nor error would run, leaving the form stuck in submitting.
       complete: () => {
         this.isSubmitting.set(false);
       },
