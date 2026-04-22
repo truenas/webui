@@ -225,6 +225,12 @@ describe('resolveParityLockedLayout', () => {
     ).toBe(CreateVdevLayout.Raidz2);
   });
 
+  it('maps existing category dRAID layout to its non-dRAID equivalent', () => {
+    expect(
+      resolveParityLockedLayout(draid2Vdev, undefined, null),
+    ).toBe(CreateVdevLayout.Raidz2);
+  });
+
   it('uses wizard data layout when no existing topology is present', () => {
     expect(
       resolveParityLockedLayout(undefined, undefined, CreateVdevLayout.Raidz2),

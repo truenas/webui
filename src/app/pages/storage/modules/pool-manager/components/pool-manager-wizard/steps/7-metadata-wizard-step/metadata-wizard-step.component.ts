@@ -42,9 +42,8 @@ export class MetadataWizardStepComponent implements OnInit {
   protected readonly vDevType = VDevType;
   protected readonly helptext = helptextPoolCreation;
 
-  private readonly allAllowedLayouts: CreateVdevLayout[] = [...nonDraidLayouts];
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
-  protected allowedLayouts: CreateVdevLayout[] = this.allAllowedLayouts;
+  protected allowedLayouts: readonly CreateVdevLayout[] = nonDraidLayouts;
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -58,7 +57,7 @@ export class MetadataWizardStepComponent implements OnInit {
     lockedParityLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((lockedLayout) => {
-        this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : this.allAllowedLayouts;
+        this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : nonDraidLayouts;
         this.cdr.markForCheck();
       });
   }
