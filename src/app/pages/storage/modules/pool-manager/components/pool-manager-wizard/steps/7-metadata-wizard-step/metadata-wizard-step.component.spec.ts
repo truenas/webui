@@ -26,10 +26,12 @@ describe('MetadataWizardStepComponent', () => {
   const makeFactory = ({
     pool = null,
     dataLayout = null,
+    dataWidth = null,
     specialLayout = null,
   }: {
     pool?: Partial<Pool> | null;
     dataLayout?: CreateVdevLayout | null;
+    dataWidth?: number | null;
     specialLayout?: CreateVdevLayout | null;
   } = {}): SpectatorFactory<MetadataWizardStepComponent> => createComponentFactory({
     component: MetadataWizardStepComponent,
@@ -44,7 +46,7 @@ describe('MetadataWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         topology$: of({
-          [VDevType.Data]: { layout: dataLayout },
+          [VDevType.Data]: { layout: dataLayout, width: dataWidth },
           [VDevType.Special]: { layout: specialLayout },
         } as PoolManagerTopology),
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
@@ -53,7 +55,7 @@ describe('MetadataWizardStepComponent', () => {
   });
 
   describe('when creating a new pool with a RAIDZ1 data layout', () => {
-    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Raidz1 });
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Raidz1, dataWidth: 3 });
 
     beforeEach(() => {
       spectator = createComponent();
@@ -66,9 +68,12 @@ describe('MetadataWizardStepComponent', () => {
       expect(layoutComponent.type).toStrictEqual(VDevType.Special);
     });
 
-    it('locks special layout to match the wizard data layout', () => {
+    it('allows any layout that tolerates at least 1 drive failure', () => {
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz1]);
+      expect(layoutComponent.limitLayouts).toStrictEqual([
+        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz1, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+      ]);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
@@ -81,17 +86,34 @@ describe('MetadataWizardStepComponent', () => {
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.canChangeLayout).toBeTruthy();
       expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
     });
   });
 
   describe('when creating a new pool with a DRAID2 data layout', () => {
-    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Draid2 });
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Draid2, dataWidth: 4 });
 
-    it('locks special layout to the non-dRAID equivalent', () => {
+    it('matches dRAID2 parity: RAIDZ2, RAIDZ3, or a 3+-way mirror', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+      expect(layoutComponent.limitLayouts).toStrictEqual([
+        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+      ]);
+      expect(layoutComponent.minMirrorWidth).toBe(3);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
+    });
+  });
+
+  describe('when creating a new pool with a 3-way mirror data layout', () => {
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Mirror, dataWidth: 3 });
+
+    it('raises minMirrorWidth to match the data mirror width', () => {
+      spectator = createComponent();
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.limitLayouts).toStrictEqual([
+        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+      ]);
+      expect(layoutComponent.minMirrorWidth).toBe(3);
     });
   });
 
@@ -107,10 +129,13 @@ describe('MetadataWizardStepComponent', () => {
       } as Pool,
     });
 
-    it('locks special layout to match the existing pool data layout', () => {
+    it('matches existing data parity: RAIDZ2, RAIDZ3, or 3+-way mirror', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+      expect(layoutComponent.limitLayouts).toStrictEqual([
+        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+      ]);
+      expect(layoutComponent.minMirrorWidth).toBe(3);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
@@ -118,13 +143,17 @@ describe('MetadataWizardStepComponent', () => {
   describe('when the lock changes with a stale store selection', () => {
     const createComponent = makeFactory({
       dataLayout: CreateVdevLayout.Raidz2,
-      specialLayout: CreateVdevLayout.Mirror,
+      dataWidth: 4,
+      specialLayout: CreateVdevLayout.Stripe,
     });
 
-    it('locks limitLayouts to the new lock even while the store selection is stale', () => {
+    it('applies the new parity lock even while the store selection is stale', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+      expect(layoutComponent.limitLayouts).toStrictEqual([
+        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+      ]);
+      expect(layoutComponent.minMirrorWidth).toBe(3);
     });
   });
 
@@ -138,12 +167,14 @@ describe('MetadataWizardStepComponent', () => {
         },
       } as Pool,
       dataLayout: CreateVdevLayout.Raidz1,
+      dataWidth: 3,
     });
 
-    it('locks layout to match existing vdev layout', () => {
+    it('strict-locks to the existing category layout (no parity-level fan-out)', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });

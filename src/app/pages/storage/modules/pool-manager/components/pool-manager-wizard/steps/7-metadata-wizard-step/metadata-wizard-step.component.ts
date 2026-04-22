@@ -11,7 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { lockedParityLayout$, nonDraidLayouts } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { nonDraidLayouts, parityLock$ } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-metadata-wizard-step',
@@ -44,6 +44,7 @@ export class MetadataWizardStepComponent implements OnInit {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
   protected allowedLayouts: readonly CreateVdevLayout[] = nonDraidLayouts;
+  protected minMirrorWidth = 2;
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -54,10 +55,11 @@ export class MetadataWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    lockedParityLayout$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special)
+    parityLock$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((lockedLayout) => {
-        this.allowedLayouts = lockedLayout !== null ? [lockedLayout] : nonDraidLayouts;
+      .subscribe((lock) => {
+        this.allowedLayouts = lock.allowedLayouts;
+        this.minMirrorWidth = lock.minMirrorWidth;
         this.cdr.markForCheck();
       });
   }

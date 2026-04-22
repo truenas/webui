@@ -136,21 +136,32 @@ describe('AutomatedDiskSelection', () => {
     expect(spectator.query('mat-hint')).toBeNull();
   });
 
-  it('shows the data parity hint for metadata vdevs when the layout is locked to a single option', () => {
+  it('shows the single-layout hint for metadata vdevs when the layout is strict-locked', () => {
     spectator.setInput('type', VDevType.Special);
     spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
     const hint = spectator.query('mat-hint');
     expect(hint).not.toBeNull();
-    expect(hint!.textContent).toContain('Special and deduplication vdevs');
+    expect(hint!.textContent).toContain('Locked to this layout');
   });
 
-  it('shows the data parity hint for dedup vdevs when the layout is locked to a single option', () => {
+  it('shows the single-layout hint for dedup vdevs when the layout is strict-locked', () => {
     spectator.setInput('type', VDevType.Dedup);
     spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
     const hint = spectator.query('mat-hint');
     expect(hint).not.toBeNull();
-    expect(hint!.textContent).toContain('Special and deduplication vdevs');
+    expect(hint!.textContent).toContain('Locked to this layout');
+  });
+
+  it('shows the parity-level hint for metadata vdevs when multiple layouts match data parity', () => {
+    spectator.setInput('type', VDevType.Special);
+    spectator.setInput('limitLayouts', [
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+
+    const hint = spectator.query('mat-hint');
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('tolerate at least as many drive failures');
   });
 });
