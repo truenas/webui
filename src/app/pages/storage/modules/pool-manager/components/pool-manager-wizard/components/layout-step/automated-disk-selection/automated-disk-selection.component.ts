@@ -45,7 +45,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly type = input<VDevType>();
   readonly inventory = input<DetailsDisk[]>([]);
   readonly canChangeLayout = input(false);
-  readonly limitLayouts = input<CreateVdevLayout[]>([]);
+  readonly limitLayouts = input<readonly CreateVdevLayout[]>([]);
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout | null, Validators.required);
 
@@ -135,7 +135,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
       });
   }
 
-  private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
+  private updateLayoutOptionsFromLimitedLayouts(limitLayouts: readonly CreateVdevLayout[]): void {
     const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
     this.vdevLayoutOptions$ = of(allowedLayouts);
     if (!limitLayouts.length) {

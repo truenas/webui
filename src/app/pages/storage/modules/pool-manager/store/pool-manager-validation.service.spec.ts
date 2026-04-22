@@ -673,6 +673,44 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
+    describe.each([
+      [VDevType.Log, PoolCreationWizardStep.Log, 'Log'],
+      [VDevType.Spare, PoolCreationWizardStep.Spare, 'Spare'],
+      [VDevType.Cache, PoolCreationWizardStep.Cache, 'Cache'],
+    ])('when %s category is partially configured', (vdevType, step, label) => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [vdevType]: {
+                ...emptyCategory,
+                diskSize: 12000138625024,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it(`flags ${label} step`, async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step,
+          text: `${label} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.`,
+        });
+      });
+    });
+
     describe('when optional categories were never configured', () => {
       let spectator: SpectatorService<PoolManagerValidationService>;
       const createService = createServiceFactory({
