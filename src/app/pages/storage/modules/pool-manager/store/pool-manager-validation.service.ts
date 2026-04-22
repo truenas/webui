@@ -351,6 +351,7 @@ export class PoolManagerValidationService {
    * the user engaged with the category.
    */
   private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
+    // `!= null` intentionally catches both null and undefined — any touched field counts.
     return category.diskSize != null
       || category.diskType != null
       || category.width != null
