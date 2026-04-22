@@ -397,23 +397,7 @@ describe('PoolManagerValidationService', () => {
       [VDevType.Special]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
-        vdevs: [
-          [
-            {
-              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
-              name: 'sdc',
-              subsystem: 'scsi',
-              number: 2080,
-              serial: '8HG29G5H',
-              lunid: '5000cca2700430f8',
-              enclosure: {
-                number: 0,
-                slot: 1,
-              },
-              devname: 'sdc',
-            },
-          ],
-        ],
+        vdevs: [[{ devname: 'sdc' }]],
       },
     });
     const mockEnclosureSettings$ = of({
@@ -476,23 +460,7 @@ describe('PoolManagerValidationService', () => {
       [VDevType.Dedup]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
-        vdevs: [
-          [
-            {
-              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
-              name: 'sdc',
-              subsystem: 'scsi',
-              number: 2080,
-              serial: '8HG29G5H',
-              lunid: '5000cca2700430f8',
-              enclosure: {
-                number: 0,
-                slot: 1,
-              },
-              devname: 'sdc',
-            },
-          ],
-        ],
+        vdevs: [[{ devname: 'sdc' }]],
       },
     });
     const mockEnclosureSettings$ = of({

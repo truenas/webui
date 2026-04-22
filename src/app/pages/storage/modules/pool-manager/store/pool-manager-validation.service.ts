@@ -352,7 +352,9 @@ export class PoolManagerValidationService {
    * the user engaged with the category.
    */
   private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
-    // `!= null` intentionally catches both null and undefined — any touched field counts.
+    // PoolManagerTopologyCategory types these fields as `T | null`, but we use
+    // `!= null` defensively so any future state that leaves a field undefined
+    // (partial fixtures, out-of-band patches) still reads as "not touched".
     return category.diskSize != null
       || category.diskType != null
       || category.width != null

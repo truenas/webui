@@ -35,6 +35,10 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
     }
 
     if (category.layout === null) {
+      // Invariant assertion: by the time submit runs, every category with vdevs
+      // must have a layout. A silent skip here would drop the user's configured
+      // vdevs from the payload, so failing loud is preferable to a pool missing
+      // its special/dedup category.
       throw new Error(`topologyToPayload: category "${vdevType}" has vdevs but no layout set.`);
     }
 
@@ -191,7 +195,7 @@ export function resolveTopologyLayout(items: VDevItem[] | undefined): CreateVdev
  * Like resolveTopologyLayout, but maps dRAID layouts to their raidz equivalents.
  * Used for non-data vdevs (special, dedup) that don't support dRAID.
  */
-function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
+export function existingVdevLayout(items: VDevItem[] | undefined): CreateVdevLayout | null {
   const layout = resolveTopologyLayout(items);
   return layout !== null ? nonDraidEquivalent(layout) : null;
 }
