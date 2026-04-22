@@ -139,7 +139,7 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
    * does its own async setup/patching. Pass the result of
    * formGroup.getRawValue() after setup is complete.
    */
-  readonly initialFormSnapshot = input<Record<string, unknown> | null>(null);
+  readonly initialFormSnapshot = input<Partial<T> | null>(null);
 
   /**
    * Explicit title shown in the modal header.
@@ -188,14 +188,14 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
    */
   readonly isLoading = computed(() => this.isSubmitting() || this.externalLoading());
 
-  private readonly internalSnapshot = signal<Record<string, unknown> | null>(null);
+  private readonly internalSnapshot = signal<Partial<T> | null>(null);
 
   private slideInRef = inject(SlideInRef, { optional: true }) as SlideInRef<unknown, unknown> | null;
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  private readonly snapshot = computed<Record<string, unknown> | null>(() => {
+  private readonly snapshot = computed<Partial<T> | null>(() => {
     return this.initialFormSnapshot() ?? this.internalSnapshot();
   });
 
@@ -221,7 +221,7 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
     const data = this.editData();
     if (data != null) {
       this.formGroup().patchValue(data as Record<string, unknown>);
-      this.internalSnapshot.set(this.formGroup().getRawValue() as Record<string, unknown>);
+      this.internalSnapshot.set(this.formGroup().getRawValue() as Partial<T>);
     }
   }
 
@@ -276,7 +276,7 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
 
     const changed: Partial<T> = {};
     for (const key of Object.keys(current) as (keyof T)[]) {
-      if (!(key as string in snapshot) || !isEqual(current[key], snapshot[key as string])) {
+      if (!(key in snapshot) || !isEqual(current[key], snapshot[key])) {
         changed[key] = current[key];
       }
     }
