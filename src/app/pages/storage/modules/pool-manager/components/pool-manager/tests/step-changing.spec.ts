@@ -166,16 +166,16 @@ describe('PoolManagerComponent – step changing', () => {
       'Number of VDEVs': '1',
     });
 
-    // Setting the data layout parity-locks metadata/dedup, so their layouts
-    // get auto-synced via the shared lockedParityLayout$ subscription — that's
-    // why Special and Dedup appear before Data here even though the user only
-    // touched the Data step.
+    // Stripe data has no redundancy, so the parity lock for metadata/dedup is
+    // unconstrained — it admits every non-dRAID layout, so AutomatedDiskSelection
+    // can't auto-pick one. Special and Dedup therefore stay unmoved until the
+    // user actually visits those steps.
     expect(store.state().categorySequence).toEqual([
       VDevType.Log,
-      VDevType.Spare,
-      VDevType.Cache,
       VDevType.Special,
       VDevType.Dedup,
+      VDevType.Spare,
+      VDevType.Cache,
       VDevType.Data,
     ]);
 
@@ -188,10 +188,10 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VDevType.Spare,
-      VDevType.Cache,
       VDevType.Special,
       VDevType.Dedup,
+      VDevType.Spare,
+      VDevType.Cache,
       VDevType.Data,
       VDevType.Log,
     ]);
@@ -204,9 +204,9 @@ describe('PoolManagerComponent – step changing', () => {
     });
 
     expect(store.state().categorySequence).toEqual([
-      VDevType.Cache,
       VDevType.Special,
       VDevType.Dedup,
+      VDevType.Cache,
       VDevType.Data,
       VDevType.Log,
       VDevType.Spare,

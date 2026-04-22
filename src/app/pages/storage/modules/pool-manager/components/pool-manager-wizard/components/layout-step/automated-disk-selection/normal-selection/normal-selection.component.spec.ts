@@ -122,6 +122,22 @@ describe('NormalSelectionComponent', () => {
     expect(await vdevsSelect.getOptionLabels()).toStrictEqual(['1', '2', '3']);
   });
 
+  it('raises the mirror width floor when minMirrorWidth is set', async () => {
+    spectator.setInput('layout', CreateVdevLayout.Mirror);
+    spectator.setInput('minMirrorWidth', 3);
+    await sizeSelect.setValue('12 TiB (HDD)');
+
+    expect(await widthSelect.getOptionLabels()).toStrictEqual(['3', '4', '5', '6', '7']);
+  });
+
+  it('does not affect non-Mirror layouts when minMirrorWidth is set', async () => {
+    spectator.setInput('layout', CreateVdevLayout.Raidz1);
+    spectator.setInput('minMirrorWidth', 4);
+    await sizeSelect.setValue('12 TiB (HDD)');
+
+    expect(await widthSelect.getOptionLabels()).toStrictEqual(['3', '4', '5', '6', '7']);
+  });
+
   it('updates width and vdev options when layout changes to Raidz1', async () => {
     spectator.setInput('layout', CreateVdevLayout.Raidz1);
     await sizeSelect.setValue('12 TiB (HDD)');

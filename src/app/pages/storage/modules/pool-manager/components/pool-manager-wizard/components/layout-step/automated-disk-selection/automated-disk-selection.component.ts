@@ -46,6 +46,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly inventory = input<DetailsDisk[]>([]);
   readonly canChangeLayout = input(false);
   readonly limitLayouts = input<readonly CreateVdevLayout[]>([]);
+  readonly minMirrorWidth = input<number>(2);
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout | null, Validators.required);
 
@@ -65,18 +66,30 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   });
 
   /**
-   * Non-empty only when a special/dedup step is locked to a single layout —
-   * the dropdown shows one choice and the hint explains why. Rendered as a
+   * Explains the parity lock on special/dedup layout dropdowns. Rendered as a
    * mat-hint on the layout select so screen readers pick it up via the form
    * field's aria-describedby wiring.
+   *   - No hint when the Stripe option is present (data has no redundancy, so
+   *     there's no meaningful restriction to explain).
+   *   - Exact-match copy when only one layout remains (pool already has vdevs
+   *     in this category — we lock to that layout, not just its parity).
+   *   - Parity-level copy otherwise (a 3-way mirror alongside RAIDZ2, etc.).
    */
   protected layoutRestrictionHint = computed(() => {
-    if (!this.requiresDataParity() || this.limitLayouts().length !== 1) {
+    if (!this.requiresDataParity()) {
       return '';
     }
-
+    const layouts = this.limitLayouts();
+    if (!layouts.length || layouts.includes(CreateVdevLayout.Stripe)) {
+      return '';
+    }
+    if (layouts.length === 1) {
+      return this.translate.instant(
+        'Locked to this layout because the pool already has special or deduplication vdevs using it. dRAID layouts are not available for these vdev types.',
+      );
+    }
     return this.translate.instant(
-      'Special and deduplication vdevs must use the same layout as the data vdevs so the pool keeps consistent redundancy. dRAID layouts are not available for these vdev types.',
+      'Special and deduplication vdevs must tolerate at least as many drive failures as the data vdevs. dRAID layouts are not available for these vdev types.',
     );
   });
 
@@ -149,6 +162,15 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     const cannotChangeLayout = this.canChangeLayout() === false;
     const hasSingleChoice = limitLayouts.length === 1;
     if (cannotChangeLayout || hasSingleChoice) {
+      setValueIfNotSame(this.layoutControl, limitLayouts[0]);
+      return;
+    }
+    // Data layout can change after the user picked a special/dedup layout
+    // (e.g. data switches from RAIDZ1 to RAIDZ2 and our previous Stripe pick
+    // is no longer permitted). Snap to the first still-valid option rather
+    // than leaving the control on a stale selection that isn't in the menu.
+    const currentValue = this.layoutControl.value;
+    if (currentValue && !limitLayouts.includes(currentValue)) {
       setValueIfNotSame(this.layoutControl, limitLayouts[0]);
     }
   }

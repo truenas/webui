@@ -7,9 +7,12 @@ import {
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   existingVdevLayout,
+  layoutParity,
   nonDraidEquivalent,
+  nonDraidLayouts,
+  parityLockForMinParity,
   parseDraidVdevName,
-  resolveParityLockedLayout,
+  resolveParityLock,
   resolveTopologyLayout,
   topologyCategoryToDisks,
   topologyToDisks,
@@ -219,52 +222,144 @@ describe('existingVdevLayout', () => {
   });
 });
 
-describe('resolveParityLockedLayout', () => {
-  const mirrorVdev = [{ type: TopologyItemType.Mirror, children: [{}, {}] }] as VDevItem[];
+describe('layoutParity', () => {
+  it('returns 0 for Stripe regardless of width', () => {
+    expect(layoutParity(CreateVdevLayout.Stripe, 1)).toBe(0);
+    expect(layoutParity(CreateVdevLayout.Stripe, 5)).toBe(0);
+  });
+
+  it('returns width-1 for Mirror', () => {
+    expect(layoutParity(CreateVdevLayout.Mirror, 2)).toBe(1);
+    expect(layoutParity(CreateVdevLayout.Mirror, 3)).toBe(2);
+    expect(layoutParity(CreateVdevLayout.Mirror, 4)).toBe(3);
+  });
+
+  it('returns 1/2/3 for RAIDZ and dRAID variants', () => {
+    expect(layoutParity(CreateVdevLayout.Raidz1, 3)).toBe(1);
+    expect(layoutParity(CreateVdevLayout.Draid1, 3)).toBe(1);
+    expect(layoutParity(CreateVdevLayout.Raidz2, 4)).toBe(2);
+    expect(layoutParity(CreateVdevLayout.Draid2, 4)).toBe(2);
+    expect(layoutParity(CreateVdevLayout.Raidz3, 5)).toBe(3);
+    expect(layoutParity(CreateVdevLayout.Draid3, 5)).toBe(3);
+  });
+});
+
+describe('parityLockForMinParity', () => {
+  it('allows all non-dRAID layouts when minParity is 0', () => {
+    const lock = parityLockForMinParity(0);
+    expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
+    expect(lock.minMirrorWidth).toBe(2);
+  });
+
+  it('drops Stripe and keeps Mirror + RAIDZ1/2/3 at minParity 1', () => {
+    const lock = parityLockForMinParity(1);
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz1, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(2);
+  });
+
+  it('keeps Mirror + RAIDZ2/3 and raises minMirrorWidth at minParity 2', () => {
+    const lock = parityLockForMinParity(2);
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(3);
+  });
+
+  it('keeps only Mirror + RAIDZ3 and requires 4-wide mirror at minParity 3', () => {
+    const lock = parityLockForMinParity(3);
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(4);
+  });
+});
+
+describe('resolveParityLock', () => {
+  const mirror2Vdev = [{ type: TopologyItemType.Mirror, children: [{}, {}] }] as VDevItem[];
+  const mirror3Vdev = [{ type: TopologyItemType.Mirror, children: [{}, {}, {}] }] as VDevItem[];
   const raidz2Vdev = [{ type: TopologyItemType.Raidz2, children: [{}, {}, {}, {}] }] as VDevItem[];
   const draid2Vdev = [{
     type: TopologyItemType.Draid, children: [], name: 'draid2:1d:6c:2s-0',
   }] as VDevItem[];
 
-  it('prefers existing category layout over everything else', () => {
-    expect(
-      resolveParityLockedLayout(mirrorVdev, raidz2Vdev, CreateVdevLayout.Raidz3),
-    ).toBe(CreateVdevLayout.Mirror);
+  it('prefers existing category layout over everything else (strict single-layout match)', () => {
+    const lock = resolveParityLock(
+      mirror2Vdev,
+      raidz2Vdev,
+      { layout: CreateVdevLayout.Raidz3, width: 5 },
+    );
+    expect(lock.allowedLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
+    expect(lock.minMirrorWidth).toBe(2);
   });
 
-  it('falls back to existing data layout when category is empty', () => {
-    expect(
-      resolveParityLockedLayout(undefined, raidz2Vdev, CreateVdevLayout.Raidz1),
-    ).toBe(CreateVdevLayout.Raidz2);
+  it('falls back to existing data parity when category is empty', () => {
+    const lock = resolveParityLock(undefined, raidz2Vdev, { layout: CreateVdevLayout.Raidz1, width: 3 });
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(3);
   });
 
-  it('maps existing data dRAID layout to its non-dRAID equivalent', () => {
-    expect(
-      resolveParityLockedLayout(undefined, draid2Vdev, null),
-    ).toBe(CreateVdevLayout.Raidz2);
+  it('derives parity from existing data mirror width', () => {
+    const lock = resolveParityLock(undefined, mirror3Vdev, { layout: null, width: null });
+    // 3-way mirror tolerates 2 failures -> minParity 2
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(3);
   });
 
-  it('maps existing category dRAID layout to its non-dRAID equivalent', () => {
-    expect(
-      resolveParityLockedLayout(draid2Vdev, undefined, null),
-    ).toBe(CreateVdevLayout.Raidz2);
+  it('treats existing data dRAID as its raidz parity equivalent', () => {
+    const lock = resolveParityLock(undefined, draid2Vdev, { layout: null, width: null });
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(3);
   });
 
-  it('uses wizard data layout when no existing topology is present', () => {
-    expect(
-      resolveParityLockedLayout(undefined, undefined, CreateVdevLayout.Raidz2),
-    ).toBe(CreateVdevLayout.Raidz2);
+  it('locks to existing category dRAID as its non-dRAID equivalent', () => {
+    const lock = resolveParityLock(draid2Vdev, undefined, { layout: null, width: null });
+    expect(lock.allowedLayouts).toStrictEqual([CreateVdevLayout.Raidz2]);
+    expect(lock.minMirrorWidth).toBe(2);
   });
 
-  it('maps wizard dRAID layout to its non-dRAID equivalent', () => {
-    expect(
-      resolveParityLockedLayout(undefined, undefined, CreateVdevLayout.Draid3),
-    ).toBe(CreateVdevLayout.Raidz3);
+  it('uses wizard layout and width when no existing topology is present', () => {
+    const lock = resolveParityLock(undefined, undefined, { layout: CreateVdevLayout.Raidz2, width: 4 });
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(3);
   });
 
-  it('returns null when nothing is set', () => {
-    expect(resolveParityLockedLayout(undefined, undefined, null)).toBeNull();
-    expect(resolveParityLockedLayout([], [], null)).toBeNull();
+  it('derives parity from wizard mirror width', () => {
+    const lock = resolveParityLock(undefined, undefined, { layout: CreateVdevLayout.Mirror, width: 4 });
+    // 4-way mirror tolerates 3 failures -> minParity 3
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(4);
+  });
+
+  it('leaves the lock unconstrained when wizard mirror width is not yet set', () => {
+    const lock = resolveParityLock(undefined, undefined, { layout: CreateVdevLayout.Mirror, width: null });
+    expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
+    expect(lock.minMirrorWidth).toBe(2);
+  });
+
+  it('maps wizard dRAID layout to its raidz parity equivalent', () => {
+    const lock = resolveParityLock(undefined, undefined, { layout: CreateVdevLayout.Draid3, width: 5 });
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(4);
+  });
+
+  it('returns a fully permissive lock when nothing is set', () => {
+    const lock = resolveParityLock(undefined, undefined, { layout: null, width: null });
+    expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
+    expect(lock.minMirrorWidth).toBe(2);
   });
 });
 
