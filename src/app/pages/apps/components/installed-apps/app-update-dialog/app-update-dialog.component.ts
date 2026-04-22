@@ -13,19 +13,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { extractAppVersion, formatVersionWithRevision } from 'app/pages/apps/utils/version-formatting.utils';
+import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 
-interface Version {
-  latest_version: string;
-  latest_human_version: string;
-  available_versions_for_upgrade: {
-    version: string;
-    human_version: string;
-  }[] | null;
-}
+type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version' | 'latest_app_version' | 'available_versions_for_upgrade'>;
 
 @Component({
   selector: 'ix-app-update-dialog',
@@ -49,16 +42,17 @@ interface Version {
   ],
 })
 export class AppUpdateDialog {
-  dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
-  dialogService = inject(DialogService);
-  data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
+  private data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
 
-  dialogConfig: AppUpdateDialogConfig;
-  imagePlaceholder = appImagePlaceholder;
-  helptext = helptextApps;
-  versionOptions = new Map<string, Version>();
-  selectedVersionKey: string;
-  selectedVersion: Version | undefined;
+  protected dialogConfig: AppUpdateDialogConfig;
+  protected imagePlaceholder = appImagePlaceholder;
+  protected helptext = helptextApps;
+  protected versionOptions = new Map<string, Version>();
+  protected selectedVersionKey: string;
+  protected selectedVersion: Version | undefined;
+  protected latestAppVersion!: string;
+  protected hasAppVersionChange!: boolean;
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -68,6 +62,7 @@ export class AppUpdateDialog {
     this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {
       latest_version: this.dialogConfig.upgradeSummary.latest_version,
       latest_human_version: this.dialogConfig.upgradeSummary.latest_human_version,
+      latest_app_version: this.dialogConfig.upgradeSummary.latest_app_version,
       available_versions_for_upgrade: this.dialogConfig.upgradeSummary.available_versions_for_upgrade,
     });
 
@@ -77,6 +72,7 @@ export class AppUpdateDialog {
           this.versionOptions.set(availableVersion.version, {
             latest_version: availableVersion.version,
             latest_human_version: availableVersion.human_version,
+            latest_app_version: availableVersion.app_version,
             available_versions_for_upgrade: null,
           });
         }
@@ -85,10 +81,12 @@ export class AppUpdateDialog {
 
     this.selectedVersionKey = Array.from(this.versionOptions.keys())[0];
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
+    this.updateVersionInfo();
   }
 
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
+    this.updateVersionInfo();
   }
 
   originalOrder(): number {
@@ -99,35 +97,17 @@ export class AppUpdateDialog {
     return formatVersionWithRevision(libraryVersion, humanVersion);
   }
 
-  getLatestAppVersion(): string {
-    // Use latest_app_version if available, otherwise extract from latest_human_version
-    return this.dialogConfig.upgradeSummary.latest_app_version
-      || extractAppVersion(
-        this.dialogConfig.upgradeSummary.latest_human_version,
-        this.dialogConfig.upgradeSummary.latest_version,
-      );
-  }
+  private updateVersionInfo(): void {
+    this.latestAppVersion = resolveAppVersion({
+      appVersion: this.selectedVersion?.latest_app_version,
+      humanVersion: this.selectedVersion?.latest_human_version,
+      libraryVersion: this.selectedVersion?.latest_version ?? this.dialogConfig.upgradeSummary.latest_version,
+    });
 
-  hasAppVersionChange(): boolean {
-    // Use dialogConfig.upgradeSummary directly to avoid timing issues with selectedVersion
     const currentAppVersion = extractAppVersion(
       this.dialogConfig.appInfo.human_version,
       this.dialogConfig.appInfo.version,
     );
-    // Use the latest_app_version field from the API if available
-    const latestAppVersion = this.dialogConfig.upgradeSummary.latest_app_version;
-
-    // If backend provides latest_app_version, use it for comparison
-    // Otherwise, extract from latest_human_version as fallback
-    if (latestAppVersion !== undefined) {
-      return currentAppVersion !== latestAppVersion;
-    }
-
-    // Fallback: extract from latest_human_version
-    const extractedLatestAppVersion = extractAppVersion(
-      this.dialogConfig.upgradeSummary.latest_human_version,
-      this.dialogConfig.upgradeSummary.latest_version,
-    );
-    return currentAppVersion !== extractedLatestAppVersion;
+    this.hasAppVersionChange = currentAppVersion !== this.latestAppVersion;
   }
 }

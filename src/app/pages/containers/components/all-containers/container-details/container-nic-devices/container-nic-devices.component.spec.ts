@@ -16,47 +16,50 @@ import {
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
+const sharedImports = [
+  NgxSkeletonLoaderComponent,
+  MockComponent(AddNicMenuComponent),
+  MockComponent(DeviceActionsMenuComponent),
+];
+
+const defaultContainersStoreProvider = mockProvider(ContainersStore, {
+  selectedContainer: () => ({
+    default_network: 'truenasbr0',
+    status: { state: ContainerStatus.Stopped },
+  }),
+});
+
+const noPendingChangesProvider = mockApi([
+  mockCall('interface.has_pending_changes', false),
+]);
+
 describe('ContainerNicDevicesComponent', () => {
   let spectator: Spectator<ContainerNicDevicesComponent>;
   const devices: ContainerDevice[] = [
     {
       id: 1,
       dtype: ContainerDeviceType.Nic,
-      trust_guest_rx_filters: false,
       type: ContainerNicDeviceType.Virtio,
       nic_attach: 'br0',
-      mac: null,
     },
     {
       id: 2,
       dtype: ContainerDeviceType.Nic,
-      trust_guest_rx_filters: false,
       type: ContainerNicDeviceType.E1000,
       nic_attach: 'br1',
-      mac: null,
     },
-  ];
+  ] as ContainerDevice[];
 
   const createComponent = createComponentFactory({
     component: ContainerNicDevicesComponent,
-    imports: [
-      NgxSkeletonLoaderComponent,
-      MockComponent(AddNicMenuComponent),
-      MockComponent(DeviceActionsMenuComponent),
-    ],
+    imports: sharedImports,
     providers: [
       mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
         devices: () => devices,
       }),
-      mockProvider(ContainersStore, {
-        selectedContainer: () => ({
-          status: { state: ContainerStatus.Stopped },
-        }),
-      }),
-      mockApi([
-        mockCall('interface.has_pending_changes', false),
-      ]),
+      defaultContainersStoreProvider,
+      noPendingChangesProvider,
     ],
   });
 
@@ -67,9 +70,10 @@ describe('ContainerNicDevicesComponent', () => {
   it('displays NIC devices when available', () => {
     const deviceRows = spectator.queryAll('.device');
 
-    expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('br0 (Default Mac Address)');
-    expect(deviceRows[1]).toHaveText('br1 (Default Mac Address)');
+    expect(deviceRows).toHaveLength(3);
+    expect(deviceRows[0]).toHaveText('truenasbr0 (Default)');
+    expect(deviceRows[1]).toHaveText('br0 (Default Mac Address)');
+    expect(deviceRows[2]).toHaveText('br1 (Default Mac Address)');
   });
 
   it('renders a menu to delete or manage the device', () => {
@@ -82,5 +86,81 @@ describe('ContainerNicDevicesComponent', () => {
   it('shows the add NIC menu if no pending changes', () => {
     const addMenu = spectator.query(AddNicMenuComponent);
     expect(addMenu).toExist();
+  });
+
+  describe('when no NIC devices are configured', () => {
+    const createEmptyComponent = createComponentFactory({
+      component: ContainerNicDevicesComponent,
+      imports: sharedImports,
+      providers: [
+        mockProvider(ContainerDevicesStore, {
+          isLoading: () => false,
+          devices: (): ContainerDevice[] => [],
+        }),
+        defaultContainersStoreProvider,
+        noPendingChangesProvider,
+      ],
+    });
+
+    it('shows default bridge when no NIC devices are added', () => {
+      const emptySpectator = createEmptyComponent();
+      expect(emptySpectator.query('.default-device')).toHaveText('truenasbr0 (Default)');
+    });
+  });
+
+  describe('when default_network is null', () => {
+    const createNullNetworkComponent = createComponentFactory({
+      component: ContainerNicDevicesComponent,
+      imports: sharedImports,
+      providers: [
+        mockProvider(ContainerDevicesStore, {
+          isLoading: () => false,
+          devices: (): ContainerDevice[] => [],
+        }),
+        mockProvider(ContainersStore, {
+          selectedContainer: () => ({
+            default_network: null,
+            status: { state: ContainerStatus.Stopped },
+          }),
+        }),
+        noPendingChangesProvider,
+      ],
+    });
+
+    it('does not show default bridge row', () => {
+      const nullSpectator = createNullNetworkComponent();
+      expect(nullSpectator.query('.default-device')).not.toExist();
+    });
+
+    it('shows empty state message', () => {
+      const nullSpectator = createNullNetworkComponent();
+      expect(nullSpectator.query('.no-devices')).toHaveText('No NIC devices added.');
+    });
+  });
+
+  describe('when default bridge matches an existing NIC device', () => {
+    const createMatchingBridgeComponent = createComponentFactory({
+      component: ContainerNicDevicesComponent,
+      imports: sharedImports,
+      providers: [
+        mockProvider(ContainerDevicesStore, {
+          isLoading: () => false,
+          devices: (): ContainerDevice[] => [
+            {
+              id: 1,
+              dtype: ContainerDeviceType.Nic,
+              nic_attach: 'truenasbr0',
+            } as ContainerDevice,
+          ],
+        }),
+        defaultContainersStoreProvider,
+        noPendingChangesProvider,
+      ],
+    });
+
+    it('does not show default bridge row when a NIC device already uses the same bridge', () => {
+      const matchSpectator = createMatchingBridgeComponent();
+      expect(matchSpectator.query('.default-device')).not.toExist();
+    });
   });
 });

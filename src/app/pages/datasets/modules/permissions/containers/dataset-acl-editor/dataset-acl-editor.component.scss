@@ -2,6 +2,12 @@
   align-items: baseline;
   flex-wrap: wrap;
 
+  .title-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
   .header-title {
     margin-bottom: 0;
   }
@@ -9,6 +15,10 @@
   .dataset-path {
     display: flex;
     margin-left: 10px;
+  }
+
+  .cancel-button {
+    margin-left: auto;
   }
 
   .header-label {

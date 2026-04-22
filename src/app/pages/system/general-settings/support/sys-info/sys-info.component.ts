@@ -4,9 +4,11 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextSystemSupport } from 'app/helptext/system/support';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import {
   IxSlideToggleComponent,
@@ -22,6 +24,7 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
   imports: [
     MatButton,
     MatListModule,
+    MatTooltip,
     ReactiveFormsModule,
     IxSlideToggleComponent,
     RequiresRolesDirective,
@@ -33,10 +36,13 @@ export class SysInfoComponent {
   readonly licenseInfo = input<LicenseInfoInSupport>();
   readonly systemInfo = input.required<SystemInfoInSupport>();
   readonly productionControl = input<FormControl<boolean>>();
+  readonly isProactiveSupportAvailable = input<boolean>(false);
   readonly isProactiveSupportEnabled = input<boolean>(false);
 
   readonly editContacts = output();
 
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly productionToggleRoles = [Role.FullAdmin];
+  protected readonly manageProactiveRoles = [Role.SupportWrite];
   protected readonly getLabelForContractType = getLabelForContractType;
+  protected readonly helptext = helptextSystemSupport;
 }

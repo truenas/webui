@@ -10,6 +10,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertAction, SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { isRoutePlaceholder, routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
+import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -400,12 +401,7 @@ export class SmartAlertService {
         const menuPath = alert.relatedMenuPath;
         if (!menuPath) return;
 
-        const isCritical = [
-          AlertLevel.Critical,
-          AlertLevel.Alert,
-          AlertLevel.Emergency,
-          AlertLevel.Error,
-        ].includes(alert.level);
+        const isCritical = criticalLevels.includes(alert.level);
         const isWarning = [AlertLevel.Warning].includes(alert.level);
         const isInfo = [AlertLevel.Info, AlertLevel.Notice].includes(alert.level);
 

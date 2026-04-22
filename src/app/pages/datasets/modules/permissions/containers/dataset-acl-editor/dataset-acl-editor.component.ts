@@ -8,16 +8,20 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
+import { isEqual } from 'lodash-es';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { Acl } from 'app/interfaces/acl.interface';
+import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { AclEditorListComponent } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/datasets/modules/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { EditPosixAceComponent } from 'app/pages/datasets/modules/permissions/components/edit-posix-ace/edit-posix-ace.component';
@@ -65,7 +69,7 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
     CastPipe,
   ],
 })
-export class DatasetAclEditorComponent implements OnInit {
+export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate {
   private store = inject(DatasetAclEditorStore);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -73,12 +77,17 @@ export class DatasetAclEditorComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private formBuilder = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);
+  private unsavedChangesService = inject(UnsavedChangesService);
 
   datasetPath: string;
   isLoading: boolean;
   acl: Acl | null;
   selectedAceIndex: number;
   acesWithError: number[];
+
+  private initialAcl: (NfsAclItem | PosixAclItem)[] | null = null;
+  private initialOwnerValues: { owner: string; ownerGroup: string } | null = null;
+  private skipDeactivateCheck = false;
 
   ownerFormGroup = this.formBuilder.group({
     owner: ['', Validators.required],
@@ -127,10 +136,53 @@ export class DatasetAclEditorComponent implements OnInit {
             owner: state.stat.user,
             ownerGroup: state.stat.group,
           });
+
+          this.initialOwnerValues = {
+            owner: state.stat.user,
+            ownerGroup: state.stat.group,
+          };
+          this.initialAcl = structuredClone(state.acl.acl);
         }
 
         this.cdr.markForCheck();
       });
+
+    // saveSucceeded$ is a synchronous Subject, so dirty state is reset
+    // before the router guard runs during the navigation in makeSaveRequest.
+    this.store.saveSucceeded$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.resetDirtyState();
+      });
+  }
+
+  canDeactivate(): Observable<boolean> {
+    if (this.skipDeactivateCheck || !this.initialAcl || !this.initialOwnerValues) {
+      return of(true);
+    }
+
+    const currentOwner = {
+      owner: this.ownerFormGroup.controls.owner.value,
+      ownerGroup: this.ownerFormGroup.controls.ownerGroup.value,
+    };
+
+    const hasOwnerChanges = !isEqual(this.initialOwnerValues, currentOwner);
+    const hasAclChanges = !isEqual(this.initialAcl, this.acl?.acl);
+
+    return hasOwnerChanges || hasAclChanges
+      ? this.unsavedChangesService.showConfirmDialog()
+      : of(true);
+  }
+
+  onCancel(): void {
+    this.skipDeactivateCheck = true;
+    const returnUrl = this.store.state().returnUrl;
+    const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
+    this.router.navigate(returnRoute).then((success) => {
+      if (!success) {
+        this.skipDeactivateCheck = false;
+      }
+    });
   }
 
   onAddItemPressed(): void {
@@ -150,6 +202,7 @@ export class DatasetAclEditorComponent implements OnInit {
           return;
         }
 
+        this.resetDirtyState();
         const returnUrl = this.store.state().returnUrl;
         const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
         this.router.navigate(returnRoute);
@@ -172,6 +225,11 @@ export class DatasetAclEditorComponent implements OnInit {
         datasetPath: this.datasetPath,
       } as SelectPresetModalConfig,
     });
+  }
+
+  private resetDirtyState(): void {
+    this.initialAcl = null;
+    this.initialOwnerValues = null;
   }
 
   private onFirstLoad(): void {

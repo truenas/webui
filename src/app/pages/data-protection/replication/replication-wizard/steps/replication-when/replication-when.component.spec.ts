@@ -31,6 +31,7 @@ describe('ReplicationWhenComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    spectator.setInput('isSourceLocal', true);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
 
@@ -43,6 +44,8 @@ describe('ReplicationWhenComponent', () => {
     expect(spectator.component.getPayload()).toEqual({
       schedule_method: ScheduleMethod.Cron,
       schedule_picker: '0 0 * * *',
+      source_lifetime_value: 2,
+      source_lifetime_unit: LifetimeUnit.Week,
       retention_policy: RetentionPolicy.Custom,
       lifetime_value: 2,
       lifetime_unit: LifetimeUnit.Week,
@@ -52,7 +55,26 @@ describe('ReplicationWhenComponent', () => {
   it('returns summary when getSummary() is called', () => {
     expect(spectator.component.getSummary()).toEqual([
       { label: 'Replication Schedule', value: 'Run On a Schedule' },
+      { label: 'Source Snapshot Lifetime', value: '2 Week(s)' },
     ]);
+  });
+
+  it('excludes source lifetime fields from payload when Run Once is selected', async () => {
+    await form.fillForm({
+      'Replication Schedule': 'Run Once',
+    });
+
+    const payload = spectator.component.getPayload();
+    expect(payload.source_lifetime_value).toBeUndefined();
+    expect(payload.source_lifetime_unit).toBeUndefined();
+  });
+
+  it('excludes source lifetime fields from payload when source is not local', () => {
+    spectator.setInput('isSourceLocal', false);
+
+    const payload = spectator.component.getPayload();
+    expect(payload.source_lifetime_value).toBeUndefined();
+    expect(payload.source_lifetime_unit).toBeUndefined();
   });
 
   it('emits (save) when Save is selected', async () => {

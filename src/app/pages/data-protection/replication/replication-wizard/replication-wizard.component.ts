@@ -83,6 +83,7 @@ export class ReplicationWizardComponent {
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   isCustomRetentionVisible = true;
+  isSourceLocal = false;
 
   eligibleSnapshots = 0;
   existSnapshotTasks: number[] = [];
@@ -264,8 +265,8 @@ export class ReplicationWizardComponent {
         dataset,
         recursive: data.recursive,
         schedule: crontabToSchedule(data.schedule_picker),
-        lifetime_value: 2,
-        lifetime_unit: LifetimeUnit.Week,
+        lifetime_value: data.source_lifetime_value ?? 2,
+        lifetime_unit: data.source_lifetime_unit ?? LifetimeUnit.Week,
         naming_schema: data.naming_schema ? data.naming_schema : this.defaultNamingSchema,
         enabled: true,
       });

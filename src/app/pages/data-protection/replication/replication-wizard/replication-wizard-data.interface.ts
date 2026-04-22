@@ -35,6 +35,8 @@ export interface ReplicationWizardData {
   retention_policy: RetentionPolicy;
   lifetime_value: number;
   lifetime_unit: LifetimeUnit;
+  source_lifetime_value?: number;
+  source_lifetime_unit?: LifetimeUnit;
   periodic_snapshot_tasks?: number[];
   sudo: boolean;
 }

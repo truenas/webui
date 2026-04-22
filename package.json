@@ -134,7 +134,7 @@
     "d3": "~7.9.0",
     "date-fns": "~4.1.0",
     "date-fns-tz": "~3.2.0",
-    "dompurify": "~3.3.3",
+    "dompurify": "~3.4.0",
     "dygraphs": "~2.2.1",
     "email-validator": "~2.0.4",
     "fontfaceobserver": "^2.3.0",

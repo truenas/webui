@@ -1,7 +1,7 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { format } from 'date-fns';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -12,7 +12,7 @@ import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 const fakeLegendData = {
@@ -49,6 +49,7 @@ describe('ReportComponent', () => {
         getNetData: jest.fn(() => of(mockReportingData)),
       }),
       mockProvider(ThemeService, {
+        activeTheme$: new BehaviorSubject('ix-dark'),
         getColorPattern: jest.fn(() => mockThemeColors),
         currentTheme: jest.fn(() => ({ fg2: '#ffffff' })),
       }),
@@ -63,10 +64,6 @@ describe('ReportComponent', () => {
           {
             selector: selectTimezone,
             value: 'America/New_York',
-          },
-          {
-            selector: selectTheme,
-            value: 'ix-dark',
           },
         ],
       }),

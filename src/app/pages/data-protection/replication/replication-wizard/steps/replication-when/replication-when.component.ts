@@ -6,7 +6,7 @@ import { MatStepperPrevious } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { Role } from 'app/enums/role.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
@@ -49,6 +49,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   private destroyRef = inject(DestroyRef);
 
   readonly isCustomRetentionVisible = input(true);
+  readonly isSourceLocal = input(false);
   readonly isLoading = input(false);
 
   readonly save = output();
@@ -57,8 +58,10 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     schedule_method: [ScheduleMethod.Cron, [Validators.required]],
     schedule_picker: [CronPresetValue.Daily, [Validators.required]],
     readonly: [true],
+    source_lifetime_value: [2, [Validators.required, Validators.min(1)]],
+    source_lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
     retention_policy: [RetentionPolicy.Source, [Validators.required]],
-    lifetime_value: [2, [Validators.required]],
+    lifetime_value: [2, [Validators.required, Validators.min(1)]],
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
@@ -96,12 +99,17 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     if (changes.isCustomRetentionVisible && !changes.isCustomRetentionVisible.currentValue) {
       this.form.controls.retention_policy.setValue(RetentionPolicy.Source);
     }
+    if (changes.isSourceLocal) {
+      this.updateSourceLifetimeState();
+    }
   }
 
   ngOnInit(): void {
     this.form.controls.readonly.disable();
     this.form.controls.lifetime_value.disable();
     this.form.controls.lifetime_unit.disable();
+    this.form.controls.source_lifetime_value.disable();
+    this.form.controls.source_lifetime_unit.disable();
     this.form.controls.schedule_method.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((method) => {
       if (method === ScheduleMethod.Cron) {
         this.form.controls.schedule_picker.enable();
@@ -110,6 +118,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         this.form.controls.schedule_picker.disable();
         this.form.controls.readonly.enable();
       }
+      this.updateSourceLifetimeState();
     });
     this.form.controls.retention_policy.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((policy) => {
       if (policy === RetentionPolicy.Custom) {
@@ -120,6 +129,18 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         this.form.controls.lifetime_unit.disable();
       }
     });
+  }
+
+  private updateSourceLifetimeState(): void {
+    const showSourceLifetime = this.isSourceLocal()
+      && this.form.controls.schedule_method.value === ScheduleMethod.Cron;
+    if (showSourceLifetime) {
+      this.form.controls.source_lifetime_value.enable();
+      this.form.controls.source_lifetime_unit.enable();
+    } else {
+      this.form.controls.source_lifetime_value.disable();
+      this.form.controls.source_lifetime_unit.disable();
+    }
   }
 
   getSummary(): SummarySection {
@@ -136,6 +157,16 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         label: this.translate.instant(helptextReplicationWizard.scheduleMethodLabel),
         value: this.translate.instant('Run Once'),
       });
+    }
+
+    if (values.source_lifetime_value != null && values.source_lifetime_unit != null) {
+      const unitName = lifetimeUnitNames.get(values.source_lifetime_unit);
+      if (unitName) {
+        summary.push({
+          label: this.translate.instant(helptextReplicationWizard.sourceLifetimeLabel),
+          value: `${values.source_lifetime_value} ${this.translate.instant(unitName)}`,
+        });
+      }
     }
 
     return summary;

@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -31,6 +32,7 @@ describe('AddNicMenuComponent', () => {
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -53,7 +55,7 @@ describe('AddNicMenuComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({ props: { defaultBridge: null } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -112,7 +114,6 @@ describe('AddNicMenuComponent', () => {
       afterClosed: jest.fn(() => of({
         useDefault: true,
         type: ContainerNicDeviceType.E1000,
-        // Note: trust_guest_rx_filters should NOT be included for E1000
       })),
     }));
 
@@ -124,9 +125,84 @@ describe('AddNicMenuComponent', () => {
         dtype: ContainerDeviceType.Nic,
         type: ContainerNicDeviceType.E1000,
         nic_attach: 'truenasbr0',
-        // trust_guest_rx_filters should NOT be present for E1000
       } as ContainerDevice,
     }]);
+  });
+});
+
+describe('AddNicMenuComponent - Default Bridge Filtering', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('container.device.nic_attach_choices', {
+          BRIDGE: ['truenasbr0'],
+          MACVLAN: ['ens1'],
+        }),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: () => [] as ContainerDevice[],
+        isLoading: () => false,
+      }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({ props: { defaultBridge: 'truenasbr0' } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('excludes default bridge from available choices when no NICs are explicitly configured', async () => {
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+    await menu.open();
+
+    const menuItems = await menu.getItems();
+    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+
+    expect(itemTexts).not.toContain('truenasbr0');
+    expect(itemTexts).toContain('ens1');
+  });
+});
+
+describe('AddNicMenuComponent - No NICs Available', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('container.device.nic_attach_choices', {}),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: () => [] as ContainerDevice[],
+        isLoading: () => false,
+      }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent({ props: { defaultBridge: null } });
+  });
+
+  it('shows "No NIC devices available" when there are no NICs to add', () => {
+    expect(spectator.query(byText('No NIC devices available'))).toExist();
   });
 });
 
@@ -139,7 +215,6 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
     providers: [
       mockAuth(),
       mockApi([
-        // Mock API to return eth0 in both BRIDGE and MACVLAN groups
         mockCall('container.device.nic_attach_choices', {
           BRIDGE: ['eth0', 'truenasbr0'],
           MACVLAN: ['eth0', 'ens1'],
@@ -147,6 +222,7 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
       ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => ({ id: 123 }),
+        reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
         devices: () => [] as ContainerDevice[],
@@ -158,7 +234,7 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({ props: { defaultBridge: null } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -182,4 +258,3 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
     expect(eth0Index).toBeLessThan(macvlanIndex);
   });
 });
-

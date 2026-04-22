@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { UnsavedFormGuard } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
@@ -25,7 +26,7 @@ const groupQuotasData = {
 export const datasetRoutes: Routes = [
   {
     path: '',
-    data: { title: T('Datasets'), breadcrumb: null },
+    data: { title: T('Datasets'), breadcrumb: T('Datasets') },
     children: [
       {
         path: '',
@@ -37,11 +38,12 @@ export const datasetRoutes: Routes = [
         component: DatasetAclEditorComponent,
         data: { title: T('Edit ACL'), breadcrumb: null },
         pathMatch: 'full',
+        canDeactivate: [UnsavedFormGuard],
       },
       ...snapshotsRoutes,
       {
         path: ':datasetId',
-        data: { breadcrumb: T('Datasets') },
+        data: { breadcrumb: null },
         children: [
           {
             path: '',

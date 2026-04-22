@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -46,6 +46,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class AddNicMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
+  readonly defaultBridge = input.required<string | null>();
+
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -73,6 +75,14 @@ export class AddNicMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
     const existingNicNames = new Set(existingNics.map((device) => device.nic_attach));
+
+    // The default bridge is always implicitly used by the backend,
+    // so exclude it from the available choices to prevent adding a duplicate.
+    const defaultBridge = this.defaultBridge();
+    if (defaultBridge) {
+      existingNicNames.add(defaultBridge);
+    }
+
     const seenNics = new Set<string>();
 
     // Process grouped format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
@@ -157,6 +167,7 @@ export class AddNicMenuComponent {
       next: () => {
         this.snackbar.success(this.translate.instant('NIC Device was added'));
         this.devicesStore.reload();
+        this.containersStore.reload();
       },
     });
   }

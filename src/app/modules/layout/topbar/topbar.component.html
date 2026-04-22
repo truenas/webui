@@ -69,22 +69,29 @@
         <ix-jobs-indicator></ix-jobs-indicator>
 
         <!-- Alert toggle button -->
-        @let alertBadgeCount = alertBadgeCount$ | async;
         <button
           #alertIndicator
           matBadgeSize="small"
-          matBadgeColor="warn"
           mat-icon-button
           class="topbar-button-right"
           ixTest="alerts-indicator"
-          [matBadge]="alertBadgeCount"
-          [matBadgeHidden]="alertBadgeCount === 0"
+          [class.severity-critical]="alertSeverity() === 'critical'"
+          [class.severity-warning]="alertSeverity() === 'warning'"
+          [matBadge]="alertBadgeCount()"
+          [matBadgeHidden]="alertBadgeCount() === 0"
           [attr.aria-expanded]="isAlertPanelOpen$ | async"
-          [matTooltip]="tooltips.alerts | translate"
+          [attr.aria-label]="alertTooltip()"
+          [matTooltip]="alertTooltip()"
           [ixUiSearch]="searchableElements.elements.alerts"
           (click)="onAlertIndicatorPressed()"
         >
-          <tn-icon size="lg" name="bell" library="mdi"></tn-icon>
+          <tn-icon
+            size="lg"
+            name="bell"
+            library="mdi"
+            [class.alert-critical]="alertSeverity() === 'critical'"
+            [class.alert-warning]="alertSeverity() === 'warning'"
+          ></tn-icon>
         </button>
 
         <ix-user-menu></ix-user-menu>

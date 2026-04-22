@@ -9,7 +9,6 @@ import {
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -55,7 +54,6 @@ describe('ProactiveComponent', () => {
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideIn),
-      mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
     ],
   });
@@ -108,12 +106,11 @@ describe('ProactiveComponent', () => {
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
-  it('shows a warning when support is not available', async () => {
+  it('disables form when support is not available', async () => {
     spectator.inject(MockApiService).mockCall('support.is_available', false);
     spectator.component.ngOnInit();
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
-    expect(spectator.inject(DialogService).warn).toHaveBeenCalled();
-    expect(saveButton.isDisabled()).toBeTruthy();
+    expect(await saveButton.isDisabled()).toBeTruthy();
   });
 });

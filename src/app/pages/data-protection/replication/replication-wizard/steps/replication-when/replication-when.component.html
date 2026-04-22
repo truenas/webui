@@ -21,6 +21,25 @@
       [tooltip]="helptext.readonlyTooltip | translate"
     ></ix-checkbox>
   }
+  @if (form.controls.source_lifetime_value.enabled) {
+    <div class="lifetime">
+      <ix-input
+        class="value"
+        formControlName="source_lifetime_value"
+        type="number"
+        [label]="helptext.sourceLifetimeLabel | translate"
+        [tooltip]="helptext.sourceLifetimeTooltip | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-select
+        class="unit"
+        formControlName="source_lifetime_unit"
+        [label]="'Unit' | translate"
+        [options]="lifetimeUnitOptions$"
+        [required]="true"
+      ></ix-select>
+    </div>
+  }
   <ix-radio-group
     formControlName="retention_policy"
     [label]="helptext.retentionPolicyLabel | translate"

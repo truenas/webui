@@ -65,7 +65,7 @@
   outline-width: 0;
 }
 
-::ng-deep .topbar-button-right {
+:host ::ng-deep .topbar-button-right {
   &.mat-badge.mat-badge-small.mat-badge-overlap.mat-badge-after {
     .mat-badge-content {
       left: unset;
@@ -73,6 +73,19 @@
       right: 0;
       top: 0;
       z-index: 1;
+    }
+  }
+
+  /*
+   * When the bell icon is already colored red/orange, keep the badge neutral
+   * so the icon remains the primary severity indicator.
+   * !important is required to override Material's inline badge styles.
+   */
+  &.severity-critical,
+  &.severity-warning {
+    .mat-badge-content {
+      background: var(--bg2) !important;
+      color: var(--fg2) !important;
     }
   }
 }
@@ -102,6 +115,33 @@ ix-truenas-logo {
     color: var(--topbar-txt) !important;
   }
 
+  /*
+   * Alert-severity bell styles.
+   * !important overrides the broad `button tn-icon { color: var(--topbar-txt) !important }` rule above.
+   * Animation plays when severity class is first applied (null→warning, null→critical);
+   * it intentionally does NOT retrigger on count-only changes to avoid distraction
+   * while the user is already aware of active alerts.
+   * Note: the animation DOES retrigger on severity transitions (warning↔critical),
+   * e.g. when the last critical alert is dismissed and only warnings remain.
+   * This is acceptable since a severity change is a meaningful state shift.
+   */
+  tn-icon.alert-critical,
+  tn-icon.alert-warning {
+    transform-origin: top center;
+  }
+
+  tn-icon.alert-critical {
+    --alert-glow: var(--red);
+    animation: ring 2s ease-in-out 3;
+    color: var(--red) !important;
+  }
+
+  tn-icon.alert-warning {
+    --alert-glow: var(--orange);
+    animation: ring 2s ease-in-out 3;
+    color: var(--orange) !important;
+  }
+
   .mat-mdc-select-value {
     color: #fff;
     font-weight: 400;
@@ -109,5 +149,49 @@ ix-truenas-logo {
 
   .topbar-button-right {
     margin-left: 0.5rem !important;
+  }
+}
+
+@keyframes ring {
+  0%,
+  20%,
+  100% {
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+
+  2.5% {
+    transform: rotate(12deg);
+  }
+
+  5% {
+    transform: rotate(-10deg);
+  }
+
+  7.5% {
+    transform: rotate(8deg);
+  }
+
+  10% {
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 0 6px var(--alert-glow));
+  }
+
+  12.5% {
+    transform: rotate(3deg);
+  }
+
+  15% {
+    transform: rotate(-1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host ::ng-deep nav mat-toolbar {
+    tn-icon.alert-critical,
+    tn-icon.alert-warning {
+      animation: none;
+      filter: none;
+    }
   }
 }

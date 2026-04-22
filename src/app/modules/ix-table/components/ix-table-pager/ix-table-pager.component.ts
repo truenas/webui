@@ -1,10 +1,12 @@
-import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, model, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, model, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
+import { skip } from 'rxjs';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -23,8 +25,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
+export class IxTablePagerComponent<T> implements OnInit {
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
+  private syncing = false;
 
   readonly dataProvider = input.required<DataProvider<T>>();
   readonly pageSize = model(50);
@@ -51,12 +55,38 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
       pageNumber: this.currentPage(),
       pageSize: this.pageSize(),
     });
+    this.totalItems.set(this.dataProvider().totalRows);
+
+    // Skip the BehaviorSubject replay (which holds the value from setPagination above)
+    // to avoid an unnecessary initial sync.
+    this.dataProvider().currentPage$.pipe(
+      skip(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.syncWithDataProvider();
+    });
   }
 
-  ngAfterContentChecked(): void {
+  private syncWithDataProvider(): void {
+    if (this.syncing) {
+      return;
+    }
+
     this.totalItems.set(this.dataProvider().totalRows);
-    if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
-      this.goToPage(1);
+    const providerPage = this.dataProvider().pagination.pageNumber;
+    if (providerPage !== null && providerPage !== this.currentPage()) {
+      // Set directly instead of goToPage to avoid calling setPagination back on the provider.
+      this.currentPage.set(providerPage);
+    } else if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
+      // Use a guard flag to break the feedback loop
+      // (setPagination → updateCurrentPage → currentPage$.next → syncWithDataProvider again).
+      this.syncing = true;
+      this.currentPage.set(1);
+      this.dataProvider().setPagination({
+        pageNumber: 1,
+        pageSize: this.pageSize(),
+      });
+      this.syncing = false;
     }
     this.cdr.markForCheck();
   }

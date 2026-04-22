@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -28,6 +29,9 @@ describe('NetworkInterfacesEffects', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(TranslateService, {
+        get: jest.fn((key: string) => of(key)),
       }),
       mockProvider(Router, {
         url: '/storage',

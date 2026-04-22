@@ -164,7 +164,8 @@ export class SupportCardComponent implements OnInit {
   }
 
   openProactive(): void {
-    this.slideIn.open(ProactiveComponent, { wide: true });
+    this.slideIn.open(ProactiveComponent, { wide: true })
+      .onClose(() => this.checkProactiveSupportAvailability(), this.destroyRef);
   }
 
   private updateProductionStatus(newStatus: boolean): void {
@@ -228,11 +229,14 @@ export class SupportCardComponent implements OnInit {
       )
       .subscribe((isAvailable) => {
         this.isProactiveSupportAvailable.set(isAvailable);
-        this.cdr.markForCheck();
 
         if (isAvailable) {
           this.checkProactiveSupportEnabled();
+        } else {
+          this.isProactiveSupportEnabled.set(false);
         }
+
+        this.cdr.markForCheck();
       });
   }
 

@@ -25,8 +25,7 @@
               (click)="closeMenu()"
             >
               <tn-icon size="lg" [name]="item.icon"></tn-icon>
-              <span class="menu-text">
-                {{ item.name | translate }}
+              <span class="menu-text">{{ item.name | translate }}
                 @if (badgeCount > 0) {
                   <span
                     class="menu-badge-dot"
@@ -58,8 +57,7 @@
               (keydown.space)="$event.preventDefault(); toggleMenu(item.state, item.sub || [])"
               >
               <tn-icon size="lg" [name]="item.icon"></tn-icon>
-              <span class="menu-text">
-                {{ item.name | translate }}
+              <span class="menu-text">{{ item.name | translate }}
                 @if (badgeCount > 0) {
                   <span
                     class="menu-badge-dot"

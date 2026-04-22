@@ -64,6 +64,12 @@
             {{ app().metadata.app_version | orNotAvailable }}
           </div>
         </div>
+        <div class="details-item">
+          <div class="label" [matTooltip]="'TrueNAS Catalog Revision' | translate">{{ 'Revision' | translate }}:</div>
+          <div class="value">
+            {{ app().version | orNotAvailable }}
+          </div>
+        </div>
         <div class="details-item sources">
           <div class="label">{{ 'Source' | translate }}:</div>
           <div class="value">
