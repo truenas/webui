@@ -14,7 +14,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import { Observable, of } from 'rxjs';
+import { Observable, of, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -179,6 +179,14 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
   readonly externalLoading = input(false);
 
   /**
+   * Explicit edit-mode override. When set, takes precedence over the
+   * value inferred from editData/initialFormSnapshot. Use this for forms
+   * that asynchronously resolve their snapshot so the title doesn't
+   * flicker between add/edit during setup.
+   */
+  readonly isEditMode = input<boolean | null>(null);
+
+  /**
    * Internal loading state – set during form submission.
    */
   readonly isSubmitting = signal(false);
@@ -199,7 +207,13 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
     return this.initialFormSnapshot() ?? this.internalSnapshot();
   });
 
-  readonly isEdit = computed(() => this.editData() != null || this.snapshot() != null);
+  readonly isEdit = computed(() => {
+    const override = this.isEditMode();
+    if (override !== null) {
+      return override;
+    }
+    return this.editData() != null || this.snapshot() != null;
+  });
 
   /**
    * Resolved title: explicit title wins, otherwise picks addTitle or editTitle
@@ -238,32 +252,21 @@ export class IxFormComponent<T extends Record<string, unknown> = Record<string, 
     } = this.submitHandler()(event);
 
     this.isSubmitting.set(true);
-    let settled = false;
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    request$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
-        if (settled) {
-          return;
-        }
-        settled = true;
         this.snackbar.success(successMessage);
         this.isSubmitting.set(false);
         onSuccess?.(result);
         this.slideInRef?.close({ response: result ?? true });
       },
       error: (error: unknown) => {
-        if (settled) {
-          return;
-        }
-        settled = true;
         this.isSubmitting.set(false);
         if (!onError?.(error)) {
           this.errorHandler.handleValidationErrors(error, this.formGroup());
         }
       },
       complete: () => {
-        if (!settled) {
-          this.isSubmitting.set(false);
-        }
+        this.isSubmitting.set(false);
       },
     });
   }

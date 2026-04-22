@@ -489,4 +489,75 @@ describe('IxFormComponent', () => {
       expect(snapshotSpectator.component.ixForm().isEdit()).toBe(true);
     });
   });
+
+  describe('isEditMode override', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [initialFormSnapshot]="snapshot"
+          [isEditMode]="editMode"
+          [addTitle]="'Add X'"
+          [editTitle]="'Edit X'"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-edit-mode-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class EditModeHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+      snapshot: Record<string, unknown> | null = null;
+      editMode: boolean | null = true;
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: [''] });
+
+      handleSubmit = (): SubmitResult => ({
+        request$: of(undefined),
+        successMessage: 'Saved!' as never,
+      });
+    }
+
+    const createEditModeComponent = createComponentFactory({
+      component: EditModeHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(FormErrorHandlerService),
+        mockProvider(SnackbarService),
+        mockProvider(SlideIn, {
+          openSlideIns: jest.fn(() => 1),
+        }),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('reports edit mode before snapshot loads when isEditMode is true', () => {
+      const editSpectator = createEditModeComponent();
+      const ixForm = editSpectator.component.ixForm();
+      expect(ixForm.isEdit()).toBe(true);
+      expect(ixForm.resolvedTitle()).toBe('Edit X');
+    });
+
+    it('overrides inferred edit state when isEditMode is false', () => {
+      const editSpectator = createEditModeComponent({ detectChanges: false });
+      editSpectator.component.editMode = false;
+      editSpectator.component.snapshot = { name: 'existing' };
+      editSpectator.detectChanges();
+
+      const ixForm = editSpectator.component.ixForm();
+      expect(ixForm.isEdit()).toBe(false);
+      expect(ixForm.resolvedTitle()).toBe('Add X');
+    });
+  });
 });

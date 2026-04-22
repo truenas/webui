@@ -50,7 +50,7 @@ export class GroupFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.AccountWrite];
 
-  private editingGroup = this.slideInRef.getData();
+  protected editingGroup = this.slideInRef.getData();
 
   protected formSnapshot = signal<Record<string, unknown> | null>(null);
   protected initialLoading = signal(false);
@@ -127,6 +127,9 @@ export class GroupFormComponent implements OnInit {
   };
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    // Uses the full form value instead of event.changedValues because sudo_commands
+    // and sudo_commands_nopasswd are derived from their `_all` toggles; sending a
+    // partial update based on which individual field changed would drop that pairing.
     const values = this.form.getRawValue();
     const commonBody = {
       name: values.name,
