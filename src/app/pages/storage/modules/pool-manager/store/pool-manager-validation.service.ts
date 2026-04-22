@@ -332,7 +332,7 @@ export class PoolManagerValidationService {
       if (hasNoVdevs && this.isCategoryPartiallyConfigured(category)) {
         errors.push({
           text: this.translate.instant(messageTemplate, {
-            vdevType: this.translate.instant(vdevTypeLabels.get(vdevType)),
+            vdevType: this.translate.instant(vdevTypeLabels.get(vdevType) ?? vdevType),
           }),
           severity: PoolCreationSeverity.Error,
           step,
