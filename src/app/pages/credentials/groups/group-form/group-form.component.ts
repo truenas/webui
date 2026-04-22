@@ -53,6 +53,7 @@ export class GroupFormComponent implements OnInit {
   private editingGroup = this.slideInRef.getData();
 
   protected formSnapshot = signal<Record<string, unknown> | null>(null);
+  protected initialLoading = signal(false);
 
   form = this.fb.group({
     gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
@@ -108,6 +109,11 @@ export class GroupFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+    this.initialLoading.set(true);
+    this.privilegeOptions$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      complete: () => this.initialLoading.set(false),
+      error: () => this.initialLoading.set(false),
+    });
   }
 
   protected readonly privilegesProvider: ChipsProvider = (query: string) => {

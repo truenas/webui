@@ -45,9 +45,7 @@ export class KernelFormComponent {
     debugkernel: helptextSystemAdvanced.debugKernelTooltip,
   };
 
-  protected editData: KernelFormValues | null = this.slideInRef.getData()
-    ? { debugkernel: true }
-    : null;
+  protected editData: KernelFormValues = { debugkernel: !!this.slideInRef.getData() };
 
   protected handleSubmit = (event: FormSubmitEvent<KernelFormValues>): SubmitResult => ({
     request$: this.api.call('system.advanced.update', [event.allValues]),

@@ -101,6 +101,9 @@ export interface SubmitResult {
  *   ...
  * </ix-form>
  * ```
+ *
+ * Pick one of `editData` or `initialFormSnapshot` — when both are provided
+ * `initialFormSnapshot` wins and the editData auto-patch is skipped.
  */
 @Component({
   selector: 'ix-form',
@@ -118,7 +121,7 @@ export interface SubmitResult {
     TranslateModule,
   ],
 })
-export class IxFormComponent implements OnInit {
+export class IxFormComponent<T extends Record<string, unknown> = Record<string, unknown>> implements OnInit {
   /**
    * The reactive FormGroup this form manages.
    */
@@ -129,7 +132,7 @@ export class IxFormComponent implements OnInit {
    * When provided, the form is auto-patched with this data on init.
    * For complex forms that do their own patching, use initialFormSnapshot instead.
    */
-  readonly editData = input<object | null | undefined>(null);
+  readonly editData = input<Partial<T> | null | undefined>(null);
 
   /**
    * External initial snapshot for change tracking. Use this when the form
@@ -165,12 +168,8 @@ export class IxFormComponent implements OnInit {
    * Callback that receives the form submit event and returns the API
    * request and success message. The component handles the full lifecycle:
    * loading state → API call → snackbar + close / error handling.
-   *
-   * Consumers should type their callback with the specific FormSubmitEvent<T>
-   * generic for internal type safety.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly submitHandler = input.required<(event: FormSubmitEvent<any>) => SubmitResult>();
+  readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult>();
 
   /**
    * External loading state (e.g., during async setup). Combined with
@@ -189,45 +188,47 @@ export class IxFormComponent implements OnInit {
    */
   readonly isLoading = computed(() => this.isSubmitting() || this.externalLoading());
 
-  private internalSnapshot: Record<string, unknown> | null = null;
+  private readonly internalSnapshot = signal<Record<string, unknown> | null>(null);
 
   private slideInRef = inject(SlideInRef, { optional: true }) as SlideInRef<unknown, unknown> | null;
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
+  private readonly snapshot = computed<Record<string, unknown> | null>(() => {
+    return this.initialFormSnapshot() ?? this.internalSnapshot();
+  });
+
+  readonly isEdit = computed(() => this.editData() != null || this.snapshot() != null);
+
   /**
    * Resolved title: explicit title wins, otherwise picks addTitle or editTitle
    * based on mode.
    */
   readonly resolvedTitle = computed(() => {
-    return this.title() || (this.isEdit ? this.editTitle() : this.addTitle());
+    return this.title() || (this.isEdit() ? this.editTitle() : this.addTitle());
   });
-
-  private get snapshot(): Record<string, unknown> | null {
-    return this.initialFormSnapshot() ?? this.internalSnapshot;
-  }
-
-  get isEdit(): boolean {
-    return this.editData() != null || this.snapshot != null;
-  }
 
   ngOnInit(): void {
     if (this.slideInRef) {
       this.slideInRef.requireConfirmationWhen(() => of(this.formGroup().dirty));
     }
 
+    if (this.initialFormSnapshot() != null) {
+      return;
+    }
+
     const data = this.editData();
     if (data != null) {
       this.formGroup().patchValue(data as Record<string, unknown>);
-      this.internalSnapshot = this.formGroup().getRawValue() as Record<string, unknown>;
+      this.internalSnapshot.set(this.formGroup().getRawValue() as Record<string, unknown>);
     }
   }
 
   onFormSubmit(): void {
-    const allValues = this.formGroup().getRawValue() as Record<string, unknown>;
-    const event: FormSubmitEvent = {
-      isEdit: this.isEdit,
+    const allValues = this.formGroup().getRawValue() as T;
+    const event: FormSubmitEvent<T> = {
+      isEdit: this.isEdit(),
       allValues,
       changedValues: this.getChangedValues(allValues),
     };
@@ -237,38 +238,45 @@ export class IxFormComponent implements OnInit {
     } = this.submitHandler()(event);
 
     this.isSubmitting.set(true);
-    let emitted = false;
+    let settled = false;
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
-        emitted = true;
+        if (settled) {
+          return;
+        }
+        settled = true;
         this.snackbar.success(successMessage);
         this.isSubmitting.set(false);
         onSuccess?.(result);
         this.slideInRef?.close({ response: result ?? true });
       },
       error: (error: unknown) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
         this.isSubmitting.set(false);
         if (!onError?.(error)) {
           this.errorHandler.handleValidationErrors(error, this.formGroup());
         }
       },
       complete: () => {
-        if (!emitted) {
+        if (!settled) {
           this.isSubmitting.set(false);
         }
       },
     });
   }
 
-  private getChangedValues(current: Record<string, unknown>): Partial<Record<string, unknown>> {
-    const snapshot = this.snapshot;
+  private getChangedValues(current: T): Partial<T> {
+    const snapshot = this.snapshot();
     if (!snapshot) {
       return { ...current };
     }
 
-    const changed: Record<string, unknown> = {};
-    for (const key of Object.keys(current)) {
-      if (!(key in snapshot) || !isEqual(current[key], snapshot[key])) {
+    const changed: Partial<T> = {};
+    for (const key of Object.keys(current) as (keyof T)[]) {
+      if (!(key as string in snapshot) || !isEqual(current[key], snapshot[key as string])) {
         changed[key] = current[key];
       }
     }

@@ -1,12 +1,12 @@
 /* eslint-disable @angular-eslint/component-max-inline-declarations, max-classes-per-file */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { EMPTY, of, throwError } from 'rxjs';
+import { concat, EMPTY, of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -256,6 +256,66 @@ describe('IxFormComponent', () => {
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
         .toHaveBeenCalledWith(error, spectator.component.form);
     });
+
+    it('skips default error handling when onError returns true', async () => {
+      const error = new Error('Custom handled');
+      const onErrorSpy = jest.fn(() => true);
+      submitHandlerSpy.mockReturnValue({
+        request$: throwError(() => error),
+        successMessage: 'Saved!' as never,
+        onError: onErrorSpy,
+      });
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(onErrorSpy).toHaveBeenCalledWith(error);
+      expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).not.toHaveBeenCalled();
+    });
+
+    it('falls back to default error handling when onError returns false', async () => {
+      const error = new Error('Not handled');
+      const onErrorSpy = jest.fn(() => false);
+      submitHandlerSpy.mockReturnValue({
+        request$: throwError(() => error),
+        successMessage: 'Saved!' as never,
+        onError: onErrorSpy,
+      });
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(onErrorSpy).toHaveBeenCalledWith(error);
+      expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+        .toHaveBeenCalledWith(error, spectator.component.form);
+    });
+
+    it('does not fire success lifecycle if request errors after emitting', async () => {
+      const error = new Error('After emit');
+      const onSuccessSpy = jest.fn();
+      submitHandlerSpy.mockReturnValue({
+        request$: concat(of('first'), throwError(() => error)),
+        successMessage: 'Saved!' as never,
+        onSuccess: onSuccessSpy,
+      });
+
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      // next should settle the subscription, error afterwards should be ignored
+      expect(onSuccessSpy).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledTimes(1);
+      expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).not.toHaveBeenCalled();
+    });
   });
 
   describe('auto title and extra actions', () => {
@@ -292,6 +352,141 @@ describe('IxFormComponent', () => {
       const extraButton = autoTitleSpectator.query('button[ixExtraActions]');
       expect(extraButton).toBeTruthy();
       expect(extraButton).toHaveText('Advanced Options');
+    });
+
+    it('prefers explicit title over addTitle/editTitle', () => {
+      spectator = createComponent();
+      const ixForm = spectator.component.ixForm();
+      expect(ixForm.resolvedTitle()).toBe('Test Form');
+    });
+  });
+
+  describe('external loading', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [title]="'External'"
+          [externalLoading]="externalLoading()"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-external-loading-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class ExternalLoadingHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+      externalLoading = signal(false);
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({
+        name: [''],
+      });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createExternalLoadingComponent = createComponentFactory({
+      component: ExternalLoadingHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(FormErrorHandlerService),
+        mockProvider(SnackbarService),
+        mockProvider(SlideIn, {
+          openSlideIns: jest.fn(() => 1),
+        }),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('reflects externalLoading in isLoading and disables save', async () => {
+      const externalSpectator = createExternalLoadingComponent();
+      const loader2 = TestbedHarnessEnvironment.loader(externalSpectator.fixture);
+
+      const ixForm = externalSpectator.component.ixForm();
+      expect(ixForm.isLoading()).toBe(false);
+
+      externalSpectator.component.externalLoading.set(true);
+      externalSpectator.detectChanges();
+
+      expect(ixForm.isLoading()).toBe(true);
+
+      const saveButton = await loader2.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      externalSpectator.component.externalLoading.set(false);
+      externalSpectator.detectChanges();
+
+      expect(ixForm.isLoading()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('initialFormSnapshot precedence', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [editData]="editData"
+          [initialFormSnapshot]="snapshot"
+          [title]="'Snap'"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-snapshot-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class SnapshotHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+      editData = { name: 'FromEditData' };
+      snapshot: Record<string, unknown> = { name: 'FromSnapshot' };
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: [''] });
+
+      handleSubmit = (): SubmitResult => ({
+        request$: of(undefined),
+        successMessage: 'Saved!' as never,
+      });
+    }
+
+    const createSnapshotComponent = createComponentFactory({
+      component: SnapshotHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(FormErrorHandlerService),
+        mockProvider(SnackbarService),
+        mockProvider(SlideIn, {
+          openSlideIns: jest.fn(() => 1),
+        }),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('skips editData auto-patch when initialFormSnapshot is provided', () => {
+      const snapshotSpectator = createSnapshotComponent();
+      expect(snapshotSpectator.component.form.value).toEqual({ name: '' });
+      expect(snapshotSpectator.component.ixForm().isEdit()).toBe(true);
     });
   });
 });
