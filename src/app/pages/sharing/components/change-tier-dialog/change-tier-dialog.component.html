@@ -5,6 +5,15 @@
     <strong>{{ 'Dataset' | translate }}:</strong> {{ data.datasetName }}
   </div>
 
+  @if (totalShares() > 0) {
+    <tn-banner
+      class="share-usage-banner"
+      type="info"
+      [heading]="'Dataset is in use by shares' | translate"
+      [message]="shareSummaryMessage()"
+    ></tn-banner>
+  }
+
   <div class="tier-change">
     <div class="tier-column">
       <span class="tier-chip current">{{ currentTierLabel | translate }}</span>
