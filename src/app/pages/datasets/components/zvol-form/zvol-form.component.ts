@@ -354,6 +354,17 @@ export class ZvolFormComponent implements OnInit {
     event: FormSubmitEvent<ZvolFormData>,
     datasets: Dataset[],
   ): { payload: DatasetUpdate; canSubmit: boolean } {
+    // Payload mixes two sources on purpose:
+    //   - `event.changedValues` for the bulk of the keys (diff-based, so
+    //     untouched fields aren't sent).
+    //   - `this.form.controls.*` / `originalVolsize` / `originalReadonlyValue`
+    //     for the readonly/volsize interaction below, because the decision of
+    //     whether to include `volsize` depends on the *effective* readonly
+    //     value (which resolves `inherit` against the parent) and the
+    //     precision-preserved original volsize — neither of which survives
+    //     the diff cleanly.
+    // Refactors that move logic between the two must keep readonly and volsize
+    // reading from the live form, not from `changedValues`.
     const data: ZvolFormData = { ...event.changedValues };
 
     // Remove fields that should never be sent on edit

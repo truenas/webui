@@ -16,7 +16,9 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -88,6 +90,11 @@ export class GroupFormComponent implements OnInit {
   // refCount: false so late subscribers (e.g. the privileges-chip autocomplete
   // provider) can't re-execute the source and re-run the tap on a form whose
   // user-edited values would then overwrite the captured initial snapshot.
+  //
+  // The tap handles the `privileges` patch only; the snapshot is captured
+  // outside this pipe (see ngOnInit) so ordering doesn't depend on whether
+  // this observable resolves synchronously or asynchronously relative to
+  // setupForm()'s own patches.
   protected readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
     tap((privileges) => {
       this.privileges.set(privileges);
@@ -98,10 +105,6 @@ export class GroupFormComponent implements OnInit {
           initialPrivileges.map((privilege) => privilege.id),
         );
       }
-
-      if (this.editingGroup) {
-        this.formSnapshot.set(this.form.getRawValue() as Record<string, unknown>);
-      }
     }),
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
     shareReplay({ bufferSize: 1, refCount: false }),
@@ -111,6 +114,14 @@ export class GroupFormComponent implements OnInit {
     this.setupForm();
     this.initialLoading.set(true);
     this.privilegeOptions$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        // Snapshot after both setupForm() and the privilege tap have patched.
+        // Capturing here (rather than inside the tap) keeps the capture point
+        // deterministic even if privilege.query ever resolves synchronously.
+        if (this.editingGroup && this.formSnapshot() === null) {
+          this.formSnapshot.set(this.form.getRawValue() as Record<string, unknown>);
+        }
+      },
       complete: () => this.initialLoading.set(false),
       error: () => this.initialLoading.set(false),
     });

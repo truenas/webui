@@ -44,7 +44,7 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -758,7 +758,9 @@ export class CloudSyncFormComponent implements OnInit {
       });
   }
 
-  protected handleSubmit = (): SubmitResult => {
+  // Typed for consistency with the other migrated forms even though the body
+  // ignores the event — the transform done by getPayload() is non-diffable.
+  protected handleSubmit: (event: FormSubmitEvent<FormValue>) => SubmitResult = () => {
     // getPayload() heavily transforms the form (bwlimit, schedule, encryption,
     // attributes, etc.), so a key-by-key diff against the snapshot wouldn't
     // line up with the API shape. Send the full transformed payload instead.

@@ -68,8 +68,8 @@ export interface SubmitResult {
   /**
    * Callback invoked after the request succeeds and before the slide-in
    * closes. Runs synchronously between the snackbar and the close call,
-   * so store dispatches / navigations here will fire before the slide-in
-   * animates out. Receives the value emitted by request$.
+   * so store dispatches / router navigation here will fire before the
+   * slide-in animates out. Receives the value emitted by request$.
    */
   onSuccess?: (result: unknown) => void;
 
@@ -139,6 +139,12 @@ export interface SubmitResult {
  * `initialFormSnapshot` with an explicit `isEditMode` binding driven by the
  * source entity. Otherwise the title briefly shows "Add …" before the
  * snapshot settles, since inferred edit state sees a null snapshot on init.
+ *
+ * Must be rendered inside a slide-in: the embedded `<ix-modal-header>` injects
+ * `SlideIn` and `SlideInRef` non-optionally. Forms rendered on a standalone
+ * route or outside `SlideIn.open(...)` will fail at construction with an
+ * injector error. If a use case for that arises, `SlideIn`/`SlideInRef`
+ * injection in the header (and this component) would need to become optional.
  */
 @Component({
   selector: 'ix-form',

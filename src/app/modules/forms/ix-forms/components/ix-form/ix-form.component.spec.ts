@@ -20,6 +20,12 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from './ix-form.component';
 
 describe('IxFormComponent', () => {
+  // The host components below reference this via a closure inside handleSubmit
+  // (e.g. `(event) => submitHandlerSpy(event)`) rather than binding the spy
+  // directly. That indirection is load-bearing: the spy is reassigned in each
+  // `beforeEach`, and a direct binding (`handleSubmit = submitHandlerSpy`)
+  // would capture the outer reference once at class-field init time and never
+  // see later reassignments. Do not "simplify" by removing the lambda.
   let submitHandlerSpy: jest.Mock<SubmitResult, [FormSubmitEvent]>;
 
   @Component({
