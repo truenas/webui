@@ -759,6 +759,9 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   protected handleSubmit = (): SubmitResult => {
+    // getPayload() heavily transforms the form (bwlimit, schedule, encryption,
+    // attributes, etc.), so a key-by-key diff against the snapshot wouldn't
+    // line up with the API shape. Send the full transformed payload instead.
     const payload = this.getPayload();
     return {
       request$: this.editingTask

@@ -1,3 +1,4 @@
+// cspell:ignore ngneat cloudsync bwlimit
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';

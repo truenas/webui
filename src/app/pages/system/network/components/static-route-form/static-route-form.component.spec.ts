@@ -1,3 +1,4 @@
+// cspell:ignore staticroute ngneat
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -121,7 +122,7 @@ describe('StaticRouteFormComponent', () => {
       ]);
     });
 
-    it('sends only the field that changed when a single field is edited', async () => {
+    it('sends the full payload even when a single field is edited', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Description: 'Only description changed',
@@ -132,7 +133,11 @@ describe('StaticRouteFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('staticroute.update', [
         13,
-        { description: 'Only description changed' },
+        {
+          destination: '20.24.12.13/16',
+          gateway: '20.24.12.1',
+          description: 'Only description changed',
+        },
       ]);
     });
   });

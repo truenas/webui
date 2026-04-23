@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { concat, EMPTY, of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -16,6 +16,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from './ix-form.component';
 
 describe('IxFormComponent', () => {
@@ -117,7 +118,7 @@ describe('IxFormComponent', () => {
   beforeEach(() => {
     submitHandlerSpy = jest.fn<SubmitResult, [FormSubmitEvent]>(() => ({
       request$: of(undefined),
-      successMessage: 'Saved!' as never,
+      successMessage: 'Saved!' as TranslatedString,
     }));
   });
 
@@ -159,7 +160,7 @@ describe('IxFormComponent', () => {
       const apiResult = { id: 42, name: 'Created' };
       submitHandlerSpy.mockReturnValue({
         request$: of(apiResult),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
         onSuccess: onSuccessSpy,
       });
 
@@ -175,7 +176,7 @@ describe('IxFormComponent', () => {
     it('re-enables the save button when observable completes without emitting', async () => {
       submitHandlerSpy.mockReturnValue({
         request$: EMPTY,
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
       });
 
       spectator = createComponent();
@@ -195,7 +196,7 @@ describe('IxFormComponent', () => {
       const closeWithSpy = jest.fn(() => ({ navigateTo: '/items/42' }));
       submitHandlerSpy.mockReturnValue({
         request$: of(apiResult),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
         closeWith: closeWithSpy,
       });
 
@@ -247,6 +248,19 @@ describe('IxFormComponent', () => {
         expect.objectContaining({ changedValues: {} }),
       );
     });
+
+    it('does not flag disabled controls as changed when their value is unchanged', async () => {
+      // Snapshot is captured via getRawValue(), so disabling a control after
+      // the snapshot was captured should not produce an entry in changedValues.
+      spectator.component.form.controls.description.disable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ changedValues: {} }),
+      );
+    });
   });
 
   describe('dirty confirmation', () => {
@@ -256,12 +270,34 @@ describe('IxFormComponent', () => {
     });
   });
 
+  describe('submit guard', () => {
+    it('does not call submitHandler when ngSubmit fires while loading', () => {
+      spectator = createComponent();
+      const ixForm = spectator.component.ixForm();
+      ixForm.isSubmitting.set(true);
+
+      ixForm.onFormSubmit();
+
+      expect(submitHandlerSpy).not.toHaveBeenCalled();
+    });
+
+    it('does not call submitHandler when ngSubmit fires with an invalid form', () => {
+      spectator = createComponent();
+      spectator.component.form.controls.name.setErrors({ required: true });
+
+      const ixForm = spectator.component.ixForm();
+      ixForm.onFormSubmit();
+
+      expect(submitHandlerSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('error handling', () => {
     it('handles errors from submitHandler request', async () => {
       const error = new Error('Validation failed');
       submitHandlerSpy.mockReturnValue({
         request$: throwError(() => error),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
       });
 
       spectator = createComponent();
@@ -281,7 +317,7 @@ describe('IxFormComponent', () => {
       const onErrorSpy = jest.fn(() => true);
       submitHandlerSpy.mockReturnValue({
         request$: throwError(() => error),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
         onError: onErrorSpy,
       });
 
@@ -300,7 +336,7 @@ describe('IxFormComponent', () => {
       const onErrorSpy = jest.fn(() => false);
       submitHandlerSpy.mockReturnValue({
         request$: throwError(() => error),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
         onError: onErrorSpy,
       });
 
@@ -320,7 +356,7 @@ describe('IxFormComponent', () => {
       const onSuccessSpy = jest.fn();
       submitHandlerSpy.mockReturnValue({
         request$: concat(of('first'), throwError(() => error)),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
         onSuccess: onSuccessSpy,
       });
 
@@ -484,7 +520,7 @@ describe('IxFormComponent', () => {
 
       handleSubmit = (): SubmitResult => ({
         request$: of(undefined),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
       });
     }
 
@@ -543,7 +579,7 @@ describe('IxFormComponent', () => {
 
       handleSubmit = (): SubmitResult => ({
         request$: of(undefined),
-        successMessage: 'Saved!' as never,
+        successMessage: 'Saved!' as TranslatedString,
       });
     }
 

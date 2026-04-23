@@ -1,3 +1,4 @@
+// cspell:ignore ngneat ntpserver iburst minpoll maxpoll
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -111,7 +112,7 @@ describe('NtpServerFormComponent', () => {
       });
     });
 
-    it('sends only the changed fields on update when save is pressed', async () => {
+    it('sends the full payload on update when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Address: 'updated.mock.ntp.server',
@@ -125,7 +126,12 @@ describe('NtpServerFormComponent', () => {
         1,
         {
           address: 'updated.mock.ntp.server',
+          burst: false,
+          iburst: true,
+          prefer: false,
+          minpoll: 6,
           maxpoll: 14,
+          force: false,
         },
       ]);
     });

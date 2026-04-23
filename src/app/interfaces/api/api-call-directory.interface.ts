@@ -814,7 +814,7 @@ export interface ApiCallDirectory {
   'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
   'staticroute.delete': { params: [id: number]; response: boolean };
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
-  'staticroute.update': { params: [id: number, update: Partial<UpdateStaticRoute>]; response: StaticRoute };
+  'staticroute.update': { params: [id: number, update: UpdateStaticRoute]; response: StaticRoute };
 
   // Support
   'support.config': { params: void; response: SupportConfig };
@@ -851,7 +851,7 @@ export interface ApiCallDirectory {
   'system.ntpserver.create': { params: [CreateNtpServer]; response: NtpServer };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
-  'system.ntpserver.update': { params: [id: number, params: Partial<CreateNtpServer>]; response: NtpServer };
+  'system.ntpserver.update': { params: [id: number, params: CreateNtpServer]; response: NtpServer };
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };

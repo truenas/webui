@@ -76,15 +76,18 @@ export class GroupFormComponent implements OnInit {
 
   private readonly privileges = signal<Privilege[]>([]);
 
+  private readonly initialGroupRelatedPrivileges = computed(() => {
+    return this.privileges().filter((privilege) => {
+      return this.editingGroup?.gid
+        && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
+    });
+  });
+
   protected readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
     tap((privileges) => {
       this.privileges.set(privileges);
 
-      const initialPrivileges = privileges.filter((privilege) => {
-        return this.editingGroup?.gid
-          && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
-      });
-
+      const initialPrivileges = this.initialGroupRelatedPrivileges();
       if (initialPrivileges.length > 0) {
         this.form.controls.privileges.patchValue(
           initialPrivileges.map((privilege) => privilege.id),
@@ -98,13 +101,6 @@ export class GroupFormComponent implements OnInit {
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
-
-  private readonly initialGroupRelatedPrivileges = computed(() => {
-    return this.privileges().filter((privilege) => {
-      return this.editingGroup?.gid
-        && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
-    });
-  });
 
   ngOnInit(): void {
     this.setupForm();

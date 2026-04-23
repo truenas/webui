@@ -59,6 +59,11 @@ import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+// volsize values round-trip through the file-size formatter, so a re-saved
+// edit can drift by a few bytes. Treat anything within 0.1% of the original
+// as unchanged to avoid spurious payload churn.
+const volsizeUnchangedRelativeTolerance = 0.001;
+
 @Component({
   selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
@@ -406,10 +411,8 @@ export class ZvolFormComponent implements OnInit {
 
       const parsedVolsize = Number(data.volsize);
 
-      // Check if volsize was actually changed by comparing with original
-      // Account for small rounding differences from formatter (< 0.1% difference)
       const hasVolumeChanged = this.originalVolsize === null
-        || Math.abs(parsedVolsize - this.originalVolsize) / this.originalVolsize > 0.001;
+        || Math.abs(parsedVolsize - this.originalVolsize) / this.originalVolsize > volsizeUnchangedRelativeTolerance;
 
       if (hasVolumeChanged) {
         data.volsize = this.alignVolsizeToBlocksize(parsedVolsize, volblocksizeIntegerValue);

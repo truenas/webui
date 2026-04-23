@@ -42,8 +42,21 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
    * Keys from `allValues` that differ from the initial snapshot.
    * In create mode this equals `allValues`. Only keys present in the current
    * form value are considered — fields removed from the form structure
-   * after init won't appear here. If a submit depends on a group of fields
-   * moving together (e.g. paired toggles), prefer `allValues` over this.
+   * after init won't appear here. Conversely, controls `addControl`'d after
+   * the snapshot was captured are absent from the snapshot and therefore
+   * always treated as changed, even if their value matches the default.
+   *
+   * Comparison is a shallow per-top-level-key deep equality (lodash isEqual).
+   * Nested FormGroups compare correctly, but a FormArray with one mutated
+   * item appears as a single changed key whose value is the entire array —
+   * forms needing granular array diffs should build their own payload.
+   *
+   * Snapshot uses `getRawValue()`, so disabled controls are included on both
+   * sides; toggling a control's enabled state without changing its value
+   * does not produce an entry here.
+   *
+   * If a submit depends on a group of fields moving together (e.g. paired
+   * toggles), prefer `allValues` over this.
    */
   changedValues: Partial<T>;
 }
@@ -277,6 +290,12 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   }
 
   onFormSubmit(): void {
+    // Pressing Enter in an input fires ngSubmit even when the save button is
+    // disabled, so guard here to match the disabled-button behavior.
+    if (this.isLoading() || this.formGroup().invalid) {
+      return;
+    }
+
     const allValues = this.formGroup().getRawValue() as T;
     const event: FormSubmitEvent<T> = {
       isEdit: this.isEdit(),
