@@ -12,7 +12,11 @@
         ></ix-checkbox>
 
         @if (showEnabledWarning()) {
-          <ix-warning [message]="enabledWarning"></ix-warning>
+          <tn-banner
+            type="warning"
+            [heading]="enabledWarningHeading | translate"
+            [message]="enabledWarningMessage | translate"
+          ></tn-banner>
         }
         <ix-input
           formControlName="max_concurrent_jobs"
