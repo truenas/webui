@@ -361,6 +361,15 @@ describe('resolveParityLock', () => {
     expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
     expect(lock.minMirrorWidth).toBe(2);
   });
+
+  it('ignores an existing Stripe category (misconfigured pool) and falls through to data parity', () => {
+    const stripeVdev = [{ type: TopologyItemType.Disk, children: [] }] as VDevItem[];
+    const lock = resolveParityLock(stripeVdev, raidz2Vdev, { layout: null, width: null });
+    expect(lock.allowedLayouts).toStrictEqual([
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+    expect(lock.minMirrorWidth).toBe(3);
+  });
 });
 
 describe('parseDraidVdevName', () => {

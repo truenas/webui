@@ -314,11 +314,16 @@ export class PoolManagerValidationService {
 
   /**
    * Flags an optional category that the user has partially configured (picked
-   * a disk size) but that currently has no vdevs. The typical trigger is the
-   * data-parity lock changing the metadata/dedup layout, which invalidates a
-   * previously picked width and clears the category's vdevs. Without this,
-   * the Review step silently omits the category and the step header shows no
-   * error indicator even though the form inside the step is invalid.
+   * a disk size) but that currently has no vdevs. Runs in both flows:
+   *  - New pool: typical trigger is the data-parity lock changing the
+   *    metadata/dedup layout, which invalidates a previously picked width and
+   *    clears the category's vdevs.
+   *  - Add vdev to existing pool: user picks disk size / width for an optional
+   *    category (Log/Spare/Cache/Special/Dedup) and then clears it, leaving
+   *    state partially filled.
+   * Without this, the Review step silently omits the category and the step
+   * header shows no error indicator even though the form inside the step is
+   * invalid.
    */
   private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
     const messageTemplate = T('{vdevType} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.');
@@ -331,10 +336,9 @@ export class PoolManagerValidationService {
       }
       const hasNoVdevs = !category.vdevs?.length;
       if (hasNoVdevs && this.isCategoryPartiallyConfigured(category)) {
+        const vdevTypeLabel = this.translate.instant(vdevTypeLabels.get(vdevType) ?? vdevType);
         errors.push({
-          text: this.translate.instant(messageTemplate, {
-            vdevType: this.translate.instant(vdevTypeLabels.get(vdevType) ?? vdevType),
-          }),
+          text: this.translate.instant(messageTemplate, { vdevType: vdevTypeLabel }),
           severity: PoolCreationSeverity.Error,
           step,
         });
@@ -350,11 +354,14 @@ export class PoolManagerValidationService {
    * category has only one allowed layout, and resetTopologyCategory preloads
    * Stripe for Spare/Cache. A non-null layout therefore does not imply that
    * the user engaged with the category.
+   *
+   * We use `!= null` (matching both null and undefined) rather than `!== null`
+   * so partially-populated test fixtures — which cast `Partial<Category>` via
+   * `as` and only fill the fields under test — still register as "not touched"
+   * on unspecified fields. Production state (from the store's initialTopology)
+   * never leaves any of these fields undefined.
    */
   private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
-    // PoolManagerTopologyCategory types these fields as `T | null`, but we use
-    // `!= null` defensively so any future state that leaves a field undefined
-    // (partial fixtures, out-of-band patches) still reads as "not touched".
     return category.diskSize != null
       || category.diskType != null
       || category.width != null
