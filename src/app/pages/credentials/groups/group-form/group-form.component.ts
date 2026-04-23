@@ -26,6 +26,8 @@ import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/gro
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
 import { UserService } from 'app/services/user.service';
 
+type GroupFormValue = GroupFormComponent['form']['value'];
+
 @Component({
   selector: 'ix-group-form',
   templateUrl: './group-form.component.html',
@@ -124,7 +126,7 @@ export class GroupFormComponent implements OnInit {
     );
   };
 
-  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+  protected handleSubmit = (event: FormSubmitEvent<GroupFormValue>): SubmitResult => {
     // Uses the full form value instead of event.changedValues because sudo_commands
     // and sudo_commands_nopasswd are derived from their `_all` toggles; sending a
     // partial update based on which individual field changed would drop that pairing.

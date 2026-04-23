@@ -12,8 +12,8 @@ import { Role } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -95,6 +95,9 @@ describe('IxFormComponent', () => {
   let spectator: Spectator<TestHostComponent>;
   let loader: HarnessLoader;
 
+  // Shared across describe blocks, so spies must be reset per test — otherwise
+  // cross-test call counts leak and assertions like `toHaveBeenCalledTimes(1)`
+  // silently drift.
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
@@ -105,17 +108,14 @@ describe('IxFormComponent', () => {
     component: TestHostComponent,
     imports: [ReactiveFormsModule],
     providers: [
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SnackbarService),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
 
   beforeEach(() => {
+    jest.clearAllMocks();
     submitHandlerSpy = jest.fn<SubmitResult, [FormSubmitEvent]>(() => ({
       request$: of(undefined),
       successMessage: 'Saved!' as TranslatedString,
@@ -271,22 +271,23 @@ describe('IxFormComponent', () => {
   });
 
   describe('submit guard', () => {
-    it('does not call submitHandler when ngSubmit fires while loading', () => {
+    // The save button is disabled while loading/invalid, so we can't click it —
+    // pressing Enter in an input still fires the form's `submit` event, so
+    // exercise that path directly via the <form> element.
+    it('does not call submitHandler when submit fires while loading', () => {
       spectator = createComponent();
-      const ixForm = spectator.component.ixForm();
-      ixForm.isSubmitting.set(true);
+      spectator.component.ixForm().isSubmitting.set(true);
 
-      ixForm.onFormSubmit();
+      spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
 
       expect(submitHandlerSpy).not.toHaveBeenCalled();
     });
 
-    it('does not call submitHandler when ngSubmit fires with an invalid form', () => {
+    it('does not call submitHandler when submit fires with an invalid form', () => {
       spectator = createComponent();
       spectator.component.form.controls.name.setErrors({ required: true });
 
-      const ixForm = spectator.component.ixForm();
-      ixForm.onFormSubmit();
+      spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
 
       expect(submitHandlerSpy).not.toHaveBeenCalled();
     });
@@ -378,11 +379,7 @@ describe('IxFormComponent', () => {
       component: AutoTitleHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockProvider(FormErrorHandlerService),
-        mockProvider(SnackbarService),
-        mockProvider(SlideIn, {
-          openSlideIns: jest.fn(() => 1),
-        }),
+        ...ixFormTestingProviders(),
         mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
@@ -454,11 +451,7 @@ describe('IxFormComponent', () => {
       component: ExternalLoadingHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockProvider(FormErrorHandlerService),
-        mockProvider(SnackbarService),
-        mockProvider(SlideIn, {
-          openSlideIns: jest.fn(() => 1),
-        }),
+        ...ixFormTestingProviders(),
         mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
@@ -528,11 +521,7 @@ describe('IxFormComponent', () => {
       component: SnapshotHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockProvider(FormErrorHandlerService),
-        mockProvider(SnackbarService),
-        mockProvider(SlideIn, {
-          openSlideIns: jest.fn(() => 1),
-        }),
+        ...ixFormTestingProviders(),
         mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
@@ -587,11 +576,7 @@ describe('IxFormComponent', () => {
       component: EditModeHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockProvider(FormErrorHandlerService),
-        mockProvider(SnackbarService),
-        mockProvider(SlideIn, {
-          openSlideIns: jest.fn(() => 1),
-        }),
+        ...ixFormTestingProviders(),
         mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],

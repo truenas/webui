@@ -24,7 +24,7 @@
           color="primary"
           ixTest="save"
           [disabled]="formGroup().invalid || isLoading()"
-          [attr.aria-label]="isSubmitting() ? ('Saving' | translate) : null"
+          [attr.aria-busy]="isSubmitting() || null"
         >
           {{ (isSubmitting() ? 'Saving…' : 'Save') | translate }}
         </button>

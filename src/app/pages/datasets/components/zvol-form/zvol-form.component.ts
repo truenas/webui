@@ -103,11 +103,8 @@ export class ZvolFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant(helptextZvol.addTitle)
-      : this.translate.instant(helptextZvol.editTitle);
-  }
+  protected readonly addTitle = this.translate.instant(helptextZvol.addTitle);
+  protected readonly editTitle = this.translate.instant(helptextZvol.editTitle);
 
   protected parentOrZvolId: string;
   protected isNew = true;

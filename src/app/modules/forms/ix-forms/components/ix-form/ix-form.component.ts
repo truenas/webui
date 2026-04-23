@@ -176,6 +176,14 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * 1-to-1. For entities that need key renames or transforms (e.g. API
    * `group` → form `name`), skip this and use `initialFormSnapshot` with
    * your own setup logic.
+   *
+   * Controls that are already disabled when this runs are NOT patched by
+   * Angular's `patchValue` — the snapshot captured afterwards via
+   * `getRawValue()` will therefore hold the control's default rather than
+   * the value from `editData`. If such a control is later re-enabled, its
+   * original value is seen as "unchanged" and won't appear in the diff.
+   * If any control is disabled at init, use `initialFormSnapshot` and
+   * patch the form yourself (use `setValue` or reset before disabling).
    */
   readonly editData = input<Partial<T> | null | undefined>(null);
 
@@ -314,15 +322,20 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     } = this.submitHandler()(event);
 
     this.isSubmitting.set(true);
+    let handledSuccess = false;
     request$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
+        handledSuccess = true;
         this.snackbar.success(successMessage);
-        this.isSubmitting.set(false);
         onSuccess?.(result);
         const payload = closeWith ? closeWith(result) : result;
         // SlideInResponse treats `undefined` as a cancelled close, so coerce
         // to `true` when no caller-chosen payload is available.
         this.slideInRef?.close({ response: payload === undefined ? true : payload });
+        // Re-enable the button *after* close so a synchronous-complete
+        // observable doesn't briefly expose an enabled save button while the
+        // modal is animating out.
+        this.isSubmitting.set(false);
       },
       error: (error: unknown) => {
         this.isSubmitting.set(false);
@@ -330,10 +343,14 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
           this.errorHandler.handleValidationErrors(error, this.formGroup());
         }
       },
-      // Safety net for observables that complete without emitting (e.g. EMPTY) —
+      // Safety net for observables that complete without emitting (e.g. EMPTY):
       // neither next nor error would run, leaving the form stuck in submitting.
+      // Skip when `next` already ran — the reset there is intentionally ordered
+      // after the close call.
       complete: () => {
-        this.isSubmitting.set(false);
+        if (!handledSuccess) {
+          this.isSubmitting.set(false);
+        }
       },
     });
   }

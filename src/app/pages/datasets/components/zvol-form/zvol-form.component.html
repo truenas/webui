@@ -1,6 +1,8 @@
 <ix-form
   [formGroup]="form"
-  [title]="title"
+  [addTitle]="addTitle"
+  [editTitle]="editTitle"
+  [isEditMode]="!isNew"
   [requiredRoles]="requiredRoles"
   [externalLoading]="setupLoading()"
   [initialFormSnapshot]="formSnapshot()"
