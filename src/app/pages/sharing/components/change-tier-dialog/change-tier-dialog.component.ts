@@ -89,7 +89,7 @@ export class ChangeTierDialogComponent implements OnInit {
       ));
     }
     return this.translate.instant(
-      'This dataset is exposed by {summary}. The shares remain available during the migration.',
+      'This dataset is exposed by {summary}.',
       { summary: parts.join(', ') },
     );
   });

@@ -1,6 +1,7 @@
 :host {
   display: block;
-  min-width: 460px;
+  min-width: min(360px, 100%);
+  max-width: min(420px, 90vw);
 }
 
 .dataset-name {
