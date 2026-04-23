@@ -7,11 +7,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
 
@@ -43,11 +41,7 @@ describe('StaticRouteFormComponent', () => {
         mockCall('staticroute.create'),
         mockCall('staticroute.update'),
       ]),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SnackbarService),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -101,7 +95,7 @@ describe('StaticRouteFormComponent', () => {
       });
     });
 
-    it('sends only changed values on update when save is pressed', async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Destination: '15.24.12.13/16',

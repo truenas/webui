@@ -20,11 +20,9 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -154,11 +152,7 @@ describe('ZvolFormComponent', () => {
         }),
       ]),
       mockProvider(DialogService),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SnackbarService),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -323,11 +317,7 @@ describe('ZvolFormComponent', () => {
           }),
         ]),
         mockProvider(DialogService),
-        mockProvider(FormErrorHandlerService),
-        mockProvider(SnackbarService),
-        mockProvider(SlideIn, {
-          openSlideIns: jest.fn(() => 1),
-        }),
+        ...ixFormTestingProviders(),
         mockProvider(SlideInRef, {
           ...slideInRef,
           getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
@@ -499,11 +489,7 @@ describe('ZvolFormComponent', () => {
             close: jest.fn(),
           }),
           mockProvider(DialogService),
-          mockProvider(FormErrorHandlerService),
-          mockProvider(SnackbarService),
-          mockProvider(SlideIn, {
-            openSlideIns: jest.fn(() => 1),
-          }),
+          ...ixFormTestingProviders(),
           mockProvider(ErrorHandlerService, {
             withErrorHandler: () => tap(),
           }),

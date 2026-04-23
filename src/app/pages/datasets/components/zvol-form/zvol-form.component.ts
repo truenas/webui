@@ -384,7 +384,15 @@ export class ZvolFormComponent implements OnInit {
       delete data.volsize;
     }
 
-    // Handle special_small_block_size transformation
+    // Handle special_small_block_size transformation.
+    //
+    // Inherit is intentionally dropped from the payload rather than sent as
+    // 'INHERIT': the zvol UI has always stripped it on create, and the zvol
+    // update endpoint treats an omitted key as "leave inherited" on its side.
+    // If the server ever grows a distinction between "still inherit" and
+    // "no change", this branch must start sending `inherit` explicitly (as
+    // dataset-form already does) — otherwise explicit → inherit transitions
+    // would silently no-op.
     if ('special_small_block_size' in event.changedValues || 'special_small_block_size_custom' in event.changedValues) {
       const transformedValue = transformSpecialSmallBlockSizeForPayload(
         event.allValues.special_small_block_size as WithInherit<OnOff>,

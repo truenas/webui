@@ -14,10 +14,9 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 
@@ -76,8 +75,7 @@ describe('GroupFormComponent', () => {
         mockCall('group.get_next_gid', 1234),
       ]),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SnackbarService),
+      ...ixFormTestingProviders(),
       provideMockStore(),
       mockAuth(),
     ],

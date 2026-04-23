@@ -52,8 +52,8 @@ export class GroupFormComponent implements OnInit {
 
   protected editingGroup = this.slideInRef.getData();
 
-  protected formSnapshot = signal<Record<string, unknown> | null>(null);
-  protected initialLoading = signal(false);
+  protected readonly formSnapshot = signal<Record<string, unknown> | null>(null);
+  protected readonly initialLoading = signal(false);
 
   form = this.fb.group({
     gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
@@ -83,6 +83,9 @@ export class GroupFormComponent implements OnInit {
     });
   });
 
+  // refCount: false so late subscribers (e.g. the privileges-chip autocomplete
+  // provider) can't re-execute the source and re-run the tap on a form whose
+  // user-edited values would then overwrite the captured initial snapshot.
   protected readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
     tap((privileges) => {
       this.privileges.set(privileges);
@@ -99,7 +102,7 @@ export class GroupFormComponent implements OnInit {
       }
     }),
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay({ bufferSize: 1, refCount: false }),
   );
 
   ngOnInit(): void {

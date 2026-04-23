@@ -164,7 +164,13 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   /**
    * Initial entity data for edit mode. Pass undefined/null for create mode.
-   * When provided, the form is auto-patched via `patchValue` on init.
+   * When provided, the form is auto-patched via `patchValue` during this
+   * component's `ngOnInit`, which runs after the host component's own
+   * `ngOnInit`. Any `valueChanges` listeners the host set up at init will
+   * fire once as the patch lands — if that ordering matters (e.g. a
+   * listener that gates other controls based on the initial value),
+   * prefer `initialFormSnapshot` and patch the form yourself before
+   * handing the snapshot to this component.
    *
    * Only safe to use when the entity shape matches the form-control shape
    * 1-to-1. For entities that need key renames or transforms (e.g. API
