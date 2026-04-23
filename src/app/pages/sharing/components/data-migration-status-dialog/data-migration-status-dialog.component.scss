@@ -35,6 +35,13 @@ mat-progress-bar {
   margin-bottom: 16px;
 }
 
+.stats-placeholder {
+  color: var(--fg2);
+  font-size: 13px;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
 .stats-cards {
   display: flex;
   gap: 16px;

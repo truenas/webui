@@ -57,6 +57,12 @@
         <div class="stat-value">{{ job.stats.failures }}</div>
       </div>
     </div>
+  } @else if (isRunning) {
+    <mat-progress-bar mode="indeterminate" />
+
+    <div class="stats-placeholder">
+      {{ 'Gathering statistics…' | translate }}
+    </div>
   }
 </div>
 
