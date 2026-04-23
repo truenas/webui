@@ -55,6 +55,11 @@
   .cell-used-content span {
     white-space: nowrap;
   }
+
+  .tier-badge {
+    color: var(--primary);
+    flex-shrink: 0;
+  }
 }
 
 // TODO: Fragile (at least with css selectors)

@@ -3,6 +3,9 @@ import {
   input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
@@ -19,6 +22,8 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
     DatasetIconComponent,
     MatTooltip,
     FileSizePipe,
+    TnIconComponent,
+    TranslateModule,
     DatasetEncryptionCellComponent,
     DatasetRolesCellComponent,
   ],
@@ -28,4 +33,7 @@ export class DatasetNodeComponent {
   readonly isSystemDataset = input<boolean>(false);
 
   protected readonly label = computed(() => getDatasetLabel(this.dataset()));
+  protected readonly isPerformanceTier = computed(() => {
+    return this.dataset().tier?.tier_type === DatasetTier.Performance;
+  });
 }
