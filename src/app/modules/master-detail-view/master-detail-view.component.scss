@@ -19,6 +19,14 @@
       opacity: 0.25;
       pointer-events: none;
     }
+
+    .detail-content > * {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      min-height: 0;
+      width: 100%;
+    }
   }
 }
 
@@ -29,6 +37,13 @@
   @media (min-width: $breakpoint-md) {
     padding-right: 8px;
   }
+}
+
+.detail-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .header-container {
