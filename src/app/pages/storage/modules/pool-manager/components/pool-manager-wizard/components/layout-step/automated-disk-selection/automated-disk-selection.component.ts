@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, OnChanges, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -93,7 +91,14 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     );
   });
 
-  protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
+  /**
+   * Derived reactively from limitLayouts() so the async pipe binds to a stable
+   * Observable; imperative reassignment would force a re-subscription on every
+   * input change.
+   */
+  protected vdevLayoutOptions$ = toObservable(computed(() => (
+    vdevLayoutOptions.filter((option) => this.limitLayouts().includes(option.value))
+  )));
 
   constructor() {
     this.updateStoreOnChanges();
@@ -102,12 +107,27 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (hasDeepChanges(changes, 'limitLayouts')) {
-      this.updateLayoutOptionsFromLimitedLayouts(changes.limitLayouts.currentValue);
+      this.syncLayoutControlWithLimits(changes.limitLayouts.currentValue);
     }
   }
 
   protected get usesDraidLayout(): boolean {
     return !!this.layoutControl.value && isDraidLayout(this.layoutControl.value);
+  }
+
+  /**
+   * Returns the layout the control must be pinned to given `limitLayouts`, or
+   * null when the user is free to pick. Shared by reset handlers and the
+   * input-change sync so both sites stay in lockstep.
+   */
+  private forcedLayoutFor(limitLayouts: readonly CreateVdevLayout[]): CreateVdevLayout | null {
+    if (!limitLayouts.length) {
+      return null;
+    }
+    if (!this.canChangeLayout() || limitLayouts.length === 1) {
+      return limitLayouts[0];
+    }
+    return null;
   }
 
   private updateStoreOnChanges(): void {
@@ -146,23 +166,17 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
       filter((vdevType) => vdevType === this.type()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      const limitLayouts = this.limitLayouts();
-      const hasSingleChoice = limitLayouts.length === 1;
-      const shouldPreselect = !this.canChangeLayout() || hasSingleChoice;
-      this.layoutControl.setValue(shouldPreselect ? limitLayouts[0] : null);
+      this.layoutControl.setValue(this.forcedLayoutFor(this.limitLayouts()));
     });
   }
 
-  private updateLayoutOptionsFromLimitedLayouts(limitLayouts: readonly CreateVdevLayout[]): void {
-    const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
-    this.vdevLayoutOptions$ = of(allowedLayouts);
+  private syncLayoutControlWithLimits(limitLayouts: readonly CreateVdevLayout[]): void {
     if (!limitLayouts.length) {
       return;
     }
-    const cannotChangeLayout = this.canChangeLayout() === false;
-    const hasSingleChoice = limitLayouts.length === 1;
-    if (cannotChangeLayout || hasSingleChoice) {
-      setValueIfNotSame(this.layoutControl, limitLayouts[0]);
+    const forcedLayout = this.forcedLayoutFor(limitLayouts);
+    if (forcedLayout !== null) {
+      setValueIfNotSame(this.layoutControl, forcedLayout);
       return;
     }
     // Data layout can change after the user picked a special/dedup layout

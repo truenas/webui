@@ -277,8 +277,11 @@ export function resolveParityLock(
   existingData: VDevItem[] | undefined,
   wizardData: { layout: CreateVdevLayout | null; width: number | null } | undefined,
 ): ParityLock {
+  // A Stripe special/dedup vdev would be a misconfigured pool (no redundancy
+  // where it's required). Ignore it and fall through to data-parity so we
+  // don't "lock" a new vdev into a no-redundancy layout.
   const categoryLayout = existingVdevLayout(existingCategory);
-  if (categoryLayout !== null) {
+  if (categoryLayout !== null && categoryLayout !== CreateVdevLayout.Stripe) {
     return { allowedLayouts: [categoryLayout], minMirrorWidth: 2 };
   }
 
