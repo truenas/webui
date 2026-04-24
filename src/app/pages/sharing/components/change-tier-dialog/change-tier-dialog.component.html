@@ -21,10 +21,10 @@
         }
         @if (shareUsage().nfs) {
           <li>
-            <span class="service-name">{{ 'NFS Export' | translate }}:</span>
+            <span class="service-name">{{ 'NFS Share' | translate }}:</span>
             <ul class="service-shares">
               <li>
-                {{ '{count, plural, =1 {1 export} other {# exports}}' | translate: { count: shareUsage().nfs } }}
+                {{ '{count, plural, =1 {1 share} other {# shares}}' | translate: { count: shareUsage().nfs } }}
               </li>
             </ul>
           </li>

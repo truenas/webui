@@ -53,7 +53,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     expect(spectator.query('.share-usage')).toBeNull();
   });
 
-  it('lists SMB and WebShare share names, and summarizes NFS export count', async () => {
+  it('lists SMB and WebShare share names, and summarizes NFS share count', async () => {
     setShares({
       smb: [{ id: 1, name: 'SSDSMB' }, { id: 2, name: 'ssdsmb2' }],
       nfs: [{ id: 1 }, { id: 2 }, { id: 3 }],
@@ -67,19 +67,19 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     expect(block.textContent).toContain('SMB Share');
     expect(block.textContent).toContain('SSDSMB');
     expect(block.textContent).toContain('ssdsmb2');
-    expect(block.textContent).toContain('NFS Export');
-    expect(block.textContent).toContain('3 exports');
+    expect(block.textContent).toContain('NFS Share');
+    expect(block.textContent).toContain('3 shares');
     expect(block.textContent).toContain('WebShare');
     expect(block.textContent).toContain('projects');
   });
 
-  it('pluralizes a single NFS export as "1 export"', async () => {
+  it('pluralizes a single NFS share as "1 share"', async () => {
     setShares({ nfs: [{ id: 1 }] });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
     const block = spectator.query('.share-usage');
-    expect(block.textContent).toContain('1 export');
+    expect(block.textContent).toContain('1 share');
   });
 
   it('omits service headings with no shares', async () => {
@@ -89,7 +89,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
 
     const block = spectator.query('.share-usage');
     expect(block.textContent).toContain('SMB Share');
-    expect(block.textContent).not.toContain('NFS Export');
+    expect(block.textContent).not.toContain('NFS Share');
     expect(block.textContent).not.toContain('WebShare');
   });
 });
