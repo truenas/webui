@@ -7,8 +7,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnBannerComponent } from '@truenas/ui-components';
+import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -35,7 +34,6 @@ export interface ChangeTierDialogData {
     MatDialogActions,
     MatDialogClose,
     MatButton,
-    TnBannerComponent,
     TranslateModule,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -47,7 +45,6 @@ export class ChangeTierDialogComponent implements OnInit {
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
-  private translate = inject(TranslateService);
   private dialogRef = inject(MatDialogRef<ChangeTierDialogComponent>);
   private destroyRef = inject(DestroyRef);
   protected data = inject<ChangeTierDialogData>(MAT_DIALOG_DATA);
@@ -60,38 +57,15 @@ export class ChangeTierDialogComponent implements OnInit {
   protected performanceAvailable = signal<string | null>(null);
   protected estimatedRewriteSize = signal<string | null>(null);
   protected hasSnapshots = signal(false);
-  protected shareUsage = signal({ smb: 0, nfs: 0, webshare: 0 });
-
-  protected totalShares = computed(() => {
-    const usage = this.shareUsage();
-    return usage.smb + usage.nfs + usage.webshare;
+  protected shareUsage = signal<{ smb: string[]; nfs: number; webshare: string[] }>({
+    smb: [],
+    nfs: 0,
+    webshare: [],
   });
 
-  protected shareSummaryMessage = computed(() => {
+  protected hasAnyShares = computed(() => {
     const usage = this.shareUsage();
-    const parts: string[] = [];
-    if (usage.smb > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 SMB share} other {# SMB shares}}',
-        { count: usage.smb },
-      ));
-    }
-    if (usage.nfs > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 NFS export} other {# NFS exports}}',
-        { count: usage.nfs },
-      ));
-    }
-    if (usage.webshare > 0) {
-      parts.push(this.translate.instant(
-        '{count, plural, =1 {1 Webshare} other {# Webshares}}',
-        { count: usage.webshare },
-      ));
-    }
-    return this.translate.instant(
-      'This dataset is exposed by {summary}.',
-      { summary: parts.join(', ') },
-    );
+    return usage.smb.length + usage.nfs + usage.webshare.length > 0;
   });
 
   get newTier(): DatasetTier {
@@ -168,15 +142,15 @@ export class ChangeTierDialogComponent implements OnInit {
     const mountpoint = `/mnt/${this.data.datasetName}`;
 
     forkJoin([
-      this.api.call('sharing.smb.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
+      this.api.call('sharing.smb.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
       this.api.call('sharing.nfs.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
-      this.api.call('sharing.webshare.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
+      this.api.call('sharing.webshare.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
     ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ([smb, nfs, webshare]) => {
         this.shareUsage.set({
-          smb: smb.length,
+          smb: smb.map((share) => share.name),
           nfs: nfs.length,
-          webshare: webshare.length,
+          webshare: webshare.map((share) => share.name),
         });
       },
     });

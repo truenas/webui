@@ -8,9 +8,28 @@
   margin-bottom: 16px;
 }
 
-.share-usage-banner {
-  display: block;
+.share-usage {
   margin-bottom: 16px;
+
+  .services {
+    list-style-type: none;
+    margin: 8px 0 0;
+    padding: 0;
+
+    > li + li {
+      margin-top: 6px;
+    }
+
+    .service-name {
+      font-weight: bold;
+    }
+
+    .service-shares {
+      list-style-type: disc;
+      margin: 2px 0 0;
+      padding-left: 20px;
+    }
+  }
 }
 
 .tier-change {

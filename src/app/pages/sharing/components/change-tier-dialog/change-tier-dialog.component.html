@@ -5,13 +5,42 @@
     <strong>{{ 'Dataset' | translate }}:</strong> {{ data.datasetName }}
   </div>
 
-  @if (totalShares() > 0) {
-    <tn-banner
-      class="share-usage-banner"
-      type="info"
-      [heading]="'Dataset is in use by shares' | translate"
-      [message]="shareSummaryMessage()"
-    ></tn-banner>
+  @if (hasAnyShares()) {
+    <div class="share-usage">
+      {{ 'This dataset is exposed by the following shares:' | translate }}
+      <ul class="services">
+        @if (shareUsage().smb.length) {
+          <li>
+            <span class="service-name">{{ 'SMB Share' | translate }}:</span>
+            <ul class="service-shares">
+              @for (name of shareUsage().smb; track name) {
+                <li>{{ name }}</li>
+              }
+            </ul>
+          </li>
+        }
+        @if (shareUsage().nfs) {
+          <li>
+            <span class="service-name">{{ 'NFS Export' | translate }}:</span>
+            <ul class="service-shares">
+              <li>
+                {{ '{count, plural, =1 {1 export} other {# exports}}' | translate: { count: shareUsage().nfs } }}
+              </li>
+            </ul>
+          </li>
+        }
+        @if (shareUsage().webshare.length) {
+          <li>
+            <span class="service-name">{{ 'WebShare' | translate }}:</span>
+            <ul class="service-shares">
+              @for (name of shareUsage().webshare; track name) {
+                <li>{{ name }}</li>
+              }
+            </ul>
+          </li>
+        }
+      </ul>
+    </div>
   }
 
   <div class="tier-change">
