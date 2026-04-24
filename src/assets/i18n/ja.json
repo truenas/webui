@@ -1,8 +1,8 @@
 {
   "0": "0",
-  "No GPU devices available": "",
-  "No NIC devices available": "",
-  "No USB devices available": "",
+  "No GPU devices available": "利用可能な GPU デバイスがありません",
+  "No NIC devices available": "使用可能な NIC デバイスがありません",
+  "No USB devices available": "使用可能な USB デバイスがありません",
   " as of {dateTime}": " {dateTime} 現在",
   " bytes.": "バイト。",
   " Est. Usable Raw Capacity": "推定の使用可能な生容量",
