@@ -1,3 +1,11 @@
+@if (isPerformanceTier()) {
+  <tn-icon
+    library="mdi"
+    name="flash"
+    [tnTooltip]="'Performance tier' | translate"
+  ></tn-icon>
+}
+
 @if (isSystemDataset()) {
   <tn-icon
     name="tn-truenas-logo-mark"
