@@ -107,11 +107,26 @@ describe('PageAlertsComponent', () => {
     expect(messages[0]).toContain('Root account');
   });
 
+  it('shows a datasets alert on the exact /datasets route', async () => {
+    await setUrl('/datasets');
+
+    const messages = renderedMessages();
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toContain('locked dataset');
+  });
+
   it('does not show alerts for sibling menu paths', async () => {
     await setUrl('/datasets');
 
     const messages = renderedMessages();
     expect(messages.some((message) => message.includes('Storage pool'))).toBe(false);
+  });
+
+  it('does not show a datasets alert on an unrelated route', async () => {
+    await setUrl('/storage');
+
+    const messages = renderedMessages();
+    expect(messages.some((message) => message.includes('locked dataset'))).toBe(false);
   });
 
   it('excludes dismissed alerts', async () => {
