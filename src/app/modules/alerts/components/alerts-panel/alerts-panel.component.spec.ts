@@ -13,6 +13,11 @@ import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
+import {
+  alertsLoaded,
+  dismissAlertPressed,
+  reopenAlertPressed,
+} from 'app/modules/alerts/store/alert.actions';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
@@ -166,6 +171,49 @@ describe('AlertsPanelComponent', () => {
       duplicateCount: 1,
       category: SmartAlertCategory.System,
     });
+  });
+
+  // Regression for NAS-* (follow-up to NAS-137642): dismissing a single alert must
+  // still call alert.dismiss on the server. The reducer runs synchronously before
+  // the effect, flipping the alert to `dismissed: true` — so the effect has to
+  // read the pre-reducer snapshot (via pairwise) to find the alert. Without that,
+  // the API was never called and refreshing the page brought the alert back.
+  it('dismisses a single alert via the server when dismissAlertPressed is dispatched', () => {
+    spectator.inject(Store).dispatch(dismissAlertPressed({ id: '1' }));
+
+    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
+  });
+
+  it('dismisses all alerts sharing a key when dismissing one of duplicates', () => {
+    const store$ = spectator.inject(Store);
+    const duplicates = [
+      {
+        id: 'dup-a',
+        key: 'duplicate-key',
+        dismissed: false,
+        datetime: { $date: 1641811015 },
+        level: AlertLevel.Warning,
+      },
+      {
+        id: 'dup-b',
+        key: 'duplicate-key',
+        dismissed: false,
+        datetime: { $date: 1641811020 },
+        level: AlertLevel.Warning,
+      },
+    ] as Alert[];
+    store$.dispatch(alertsLoaded({ alerts: duplicates }));
+
+    store$.dispatch(dismissAlertPressed({ id: 'dup-a' }));
+
+    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['dup-a']);
+    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['dup-b']);
+  });
+
+  it('reopens a single alert via the server when reopenAlertPressed is dispatched', () => {
+    spectator.inject(Store).dispatch(reopenAlertPressed({ id: '3' }));
+
+    expect(api.call).toHaveBeenCalledWith('alert.restore', ['3']);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {

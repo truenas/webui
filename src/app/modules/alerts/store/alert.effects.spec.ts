@@ -15,8 +15,6 @@ import {
   alertRemoved,
   alertsLoaded,
   alertsNotLoaded,
-  dismissAlertPressed,
-  reopenAlertPressed,
 } from 'app/modules/alerts/store/alert.actions';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
@@ -31,7 +29,6 @@ describe('AlertEffects', () => {
   let actions$: Observable<unknown>;
   let apiService: ApiService;
   let translateService: TranslateService;
-  let errorHandlerService: ErrorHandlerService;
   let store$: MockStore;
   let testScheduler: TestScheduler;
 
@@ -89,7 +86,6 @@ describe('AlertEffects', () => {
     effects = TestBed.inject(AlertEffects);
     apiService = TestBed.inject(ApiService);
     translateService = TestBed.inject(TranslateService);
-    errorHandlerService = TestBed.inject(ErrorHandlerService);
     store$ = TestBed.inject(MockStore);
 
     testScheduler = new TestScheduler((actual, expected) => {
@@ -259,78 +255,7 @@ describe('AlertEffects', () => {
     });
   });
 
-  describe('dismissAlert$', () => {
-    it('calls API to dismiss alert', async () => {
-      store$.overrideSelector(selectUnreadAlerts, [mockAlert]);
-      jest.spyOn(apiService, 'call').mockReturnValue(of(null));
-
-      actions$ = of(dismissAlertPressed({ id: '1' }));
-
-      await new Promise<void>((resolve) => {
-        effects.dismissAlert$.subscribe(() => {
-          expect(apiService.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
-          resolve();
-        });
-      });
-    });
-
-    it('handles error and reverts dismissed state', async () => {
-      store$.overrideSelector(selectUnreadAlerts, [mockAlert]);
-      const error = new Error('Dismiss failed');
-      jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
-      const dispatchSpy = jest.spyOn(store$, 'dispatch');
-
-      actions$ = of(dismissAlertPressed({ id: '1' }));
-
-      await new Promise<void>((resolve) => {
-        effects.dismissAlert$.subscribe(() => {
-          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
-          expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: false } as Alert }),
-          );
-          resolve();
-        });
-      });
-    });
-  });
-
-  describe('reopenAlert$', () => {
-    it('calls API to restore alert', async () => {
-      const dismissedAlert = { ...mockAlert, dismissed: true } as Alert;
-      store$.overrideSelector(selectDismissedAlerts, [dismissedAlert]);
-      jest.spyOn(apiService, 'call').mockReturnValue(of(null));
-
-      actions$ = of(reopenAlertPressed({ id: '1' }));
-
-      await new Promise<void>((resolve) => {
-        effects.reopenAlert$.subscribe(() => {
-          expect(apiService.call).toHaveBeenCalledWith('alert.restore', ['1']);
-          resolve();
-        });
-      });
-    });
-
-    it('handles error and reverts reopened state', async () => {
-      const dismissedAlert = { ...mockAlert, dismissed: true } as Alert;
-      store$.overrideSelector(selectDismissedAlerts, [dismissedAlert]);
-      const error = new Error('Restore failed');
-      jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
-      const dispatchSpy = jest.spyOn(store$, 'dispatch');
-
-      actions$ = of(reopenAlertPressed({ id: '1' }));
-
-      await new Promise<void>((resolve) => {
-        effects.reopenAlert$.subscribe(() => {
-          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
-          expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: true } as Alert }),
-          );
-          resolve();
-        });
-      });
-    });
-  });
-
-  // Note: dismissAllAlerts$ and reopenAllAlerts$ use pairwise() operator which requires
-  // special Observable stream handling for testing. These effects are covered by integration tests.
+  // Note: dismissAlert$, reopenAlert$, dismissAllAlerts$ and reopenAllAlerts$ use pairwise()
+  // operator which requires special Observable stream handling for testing. These effects are
+  // covered by integration tests in alerts-panel.component.spec.ts.
 });
