@@ -7,7 +7,7 @@
 
   @if (hasAnyShares()) {
     <div class="share-usage">
-      {{ 'This dataset is exposed by the following shares:' | translate }}
+      {{ 'This dataset is used by the following shares:' | translate }}
       <ul class="services">
         @if (shareUsage().smb.length) {
           <li>
