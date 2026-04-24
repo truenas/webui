@@ -20,7 +20,8 @@ const esmPatterns = [
   '@ngrx',
   '@ngx-translate',
   'ng-mocks',
-  'ngx-translate-messageformat-compiler'
+  'ngx-translate-messageformat-compiler',
+  'uuid'
 ];
 
 module.exports = {

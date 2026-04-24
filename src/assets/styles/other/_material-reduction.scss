@@ -872,6 +872,8 @@ table {
 }
 
 mat-list-item {
+  --mat-list-list-item-label-text-line-height: 14px;
+
   height: inherit;
   min-height: 48px;
 
