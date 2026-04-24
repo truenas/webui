@@ -85,9 +85,11 @@ export class AlertEffects {
   // TODO: Action errors are not handled. Standardize on how to report on errors and show them.
   dismissAlert$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAlertPressed),
-    withLatestFrom(this.store$.select(selectUnreadAlerts)),
-    mergeMap(([{ id }, unreadAlerts]) => {
-      // Find the alert being dismissed
+    withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
+    mergeMap(([{ id }, [unreadAlerts]]) => {
+      // Use the pre-reducer snapshot: the reducer runs before this effect and
+      // has already flipped matching alerts to `dismissed: true`, so the current
+      // value of selectUnreadAlerts no longer includes them.
       const alert = unreadAlerts.find((a) => a.id === id);
       if (!alert) {
         return EMPTY;
@@ -112,9 +114,9 @@ export class AlertEffects {
 
   reopenAlert$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAlertPressed),
-    withLatestFrom(this.store$.select(selectDismissedAlerts)),
-    mergeMap(([{ id }, dismissedAlerts]) => {
-      // Find the alert being reopened
+    withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
+    mergeMap(([{ id }, [dismissedAlerts]]) => {
+      // See dismissAlert$ — reducer runs first, so we need the prior snapshot.
       const alert = dismissedAlerts.find((a) => a.id === id);
       if (!alert) {
         return EMPTY;
