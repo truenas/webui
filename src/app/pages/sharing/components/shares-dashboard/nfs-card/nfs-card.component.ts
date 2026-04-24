@@ -13,7 +13,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  BehaviorSubject, filter, of, switchMap,
+  BehaviorSubject, filter, of,
 } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -139,7 +139,7 @@ export class NfsCardComponent implements OnInit {
         {
           iconName: tnIconMarker('swap-horizontal', 'mdi'),
           tooltip: this.translate.instant('Change Storage Tier'),
-          hidden: (row) => of(!this.tierEnabled() || !row.tier),
+          hidden: (row) => of(!this.tierEnabled() || !row.tier || row.locked),
           onClick: (row) => this.openChangeTierDialog(row),
         },
         {

@@ -167,6 +167,17 @@ describe('DatasetDetailsCardComponent', () => {
       });
     });
 
+    it('hides the Change link when the dataset is locked', () => {
+      setupTest({
+        dataset: {
+          ...dataset,
+          locked: true,
+        } as DatasetDetails,
+      });
+
+      expect(spectator.query('.change-tier-link')).toBeNull();
+    });
+
     it('shows tier job status when a tier job is running', () => {
       setupTest({
         dataset: {

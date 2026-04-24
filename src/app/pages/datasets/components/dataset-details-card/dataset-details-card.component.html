@@ -103,9 +103,11 @@
             }
           }
         </div>
-        <a class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
-          {{ 'Change' | translate }}
-        </a>
+        @if (!dataset().locked) {
+          <a class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
+            {{ 'Change' | translate }}
+          </a>
+        }
       </div>
     }
     <div class="details-item">

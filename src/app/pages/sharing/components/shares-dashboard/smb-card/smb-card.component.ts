@@ -174,7 +174,7 @@ export class SmbCardComponent implements OnInit {
         {
           iconName: tnIconMarker('swap-horizontal', 'mdi'),
           tooltip: this.translate.instant('Change Storage Tier'),
-          hidden: (row) => of(!this.tierEnabled() || !row.tier),
+          hidden: (row) => of(!this.tierEnabled() || !row.tier || row.locked),
           onClick: (row) => this.openChangeTierDialog(row),
         },
         {
