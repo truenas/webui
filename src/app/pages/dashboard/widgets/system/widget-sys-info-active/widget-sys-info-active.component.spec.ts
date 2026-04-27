@@ -155,4 +155,23 @@ describe('WidgetSysInfoActiveComponent', () => {
   it('shows hostname near product image when system serial is present', () => {
     expect(spectator.query('.hostname')!.textContent!.trim()).toBe('test-hostname-a');
   });
+
+  it('hides Contract line when contract_type is null', async () => {
+    dashboardSystemInfo$.next({
+      isLoading: false,
+      error: null,
+      value: {
+        ...systemInfo,
+        license: {
+          ...systemInfo.license,
+          contract_type: null,
+        } as SystemLicense,
+      },
+    } as LoadingState<SystemInfo>);
+    spectator.detectChanges();
+
+    const matListItems = await loader.getAllHarnesses(MatListItemHarness);
+    const items = await parallel(() => matListItems.map((item) => item.getFullText()));
+    expect(items).toContain('Support License: Expires on 2025-01-01');
+  });
 });

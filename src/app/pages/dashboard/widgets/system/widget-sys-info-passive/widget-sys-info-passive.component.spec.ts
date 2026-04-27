@@ -167,6 +167,43 @@ describe('WidgetSysInfoPassiveComponent', () => {
     });
   });
 
+  describe('license has no contract_type', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            dashboardSystemInfo$: of({
+              isLoading: false,
+              error: null,
+              value: {
+                ...dashboardSystemInfo,
+                remote_info: {
+                  ...dashboardSystemInfo.remote_info,
+                  license: {
+                    ...dashboardSystemInfo.remote_info.license,
+                    contract_type: null,
+                  } as SystemLicense,
+                } as SystemInfo,
+              },
+            } as LoadingState<SystemInfo>),
+            updateAvailable$: of(true),
+            refreshInterval$,
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('hides Contract line when contract_type is null', async () => {
+      const matListItems = await loader.getAllHarnesses(MatListItemHarness);
+      const items = await parallel(() => matListItems.map((item) => item.getFullText()));
+      expect(items).toContain('Support License: Expires on 2025-01-01');
+    });
+  });
+
   describe('system info remote_info is not loaded - waiting for standby controller', () => {
     beforeEach(() => {
       spectator = createComponent({
