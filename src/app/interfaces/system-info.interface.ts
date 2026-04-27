@@ -54,6 +54,9 @@ export enum ContractType {
 }
 
 export function getLabelForContractType(contractType: ContractType): string {
+  if (!contractType) {
+    return '';
+  }
   const contractTypeToLabelsMap: Record<ContractType, string> = {
     [ContractType.Gold]: 'Gold',
     [ContractType.Legacy]: 'Legacy',
