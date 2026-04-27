@@ -293,6 +293,30 @@ describe('AlertEffects', () => {
         });
       });
     });
+
+    it('only reverts ids whose API call failed on partial failure', async () => {
+      const error = new Error('Dismiss failed');
+      jest.spyOn(apiService, 'call').mockImplementation((_method, params) => {
+        const [id] = params as [string];
+        return id === '2' ? throwError(() => error) : of(null);
+      });
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      actions$ = of(dismissAlertPressed({ ids: ['1', '2'] }));
+
+      await new Promise<void>((resolve) => {
+        effects.dismissAlert$.subscribe(() => {
+          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '2', dismissed: false } as Alert }),
+          );
+          expect(dispatchSpy).not.toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '1', dismissed: false } as Alert }),
+          );
+          resolve();
+        });
+      });
+    });
   });
 
   describe('reopenAlert$', () => {
@@ -324,6 +348,30 @@ describe('AlertEffects', () => {
           );
           expect(dispatchSpy).toHaveBeenCalledWith(
             alertChanged({ alert: { id: '2', dismissed: true } as Alert }),
+          );
+          resolve();
+        });
+      });
+    });
+
+    it('only reverts ids whose API call failed on partial failure', async () => {
+      const error = new Error('Restore failed');
+      jest.spyOn(apiService, 'call').mockImplementation((_method, params) => {
+        const [id] = params as [string];
+        return id === '2' ? throwError(() => error) : of(null);
+      });
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      actions$ = of(reopenAlertPressed({ ids: ['1', '2'] }));
+
+      await new Promise<void>((resolve) => {
+        effects.reopenAlert$.subscribe(() => {
+          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '2', dismissed: true } as Alert }),
+          );
+          expect(dispatchSpy).not.toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '1', dismissed: true } as Alert }),
           );
           resolve();
         });
