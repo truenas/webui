@@ -9,6 +9,7 @@ import { MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
+import { ActionRequiredAppsService } from 'app/pages/apps/services/action-required-apps.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 describe('NavigationComponent', () => {
@@ -69,6 +70,10 @@ describe('NavigationComponent', () => {
         getBadgeCountsSignal: jest.fn(() => signal(new Map())),
         getBadgeCountForPath: jest.fn(() => 0),
         hasCriticalAlerts: jest.fn(() => false),
+      }),
+      mockProvider(ActionRequiredAppsService, {
+        initialize: jest.fn(),
+        hasActionRequired: signal(false),
       }),
     ],
   });

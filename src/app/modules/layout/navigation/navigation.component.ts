@@ -14,7 +14,10 @@ import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.in
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ActionRequiredAppsService } from 'app/pages/apps/services/action-required-apps.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
+
+const appsMenuState = 'apps';
 
 @Component({
   selector: 'ix-navigation',
@@ -36,6 +39,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 export class NavigationComponent {
   private navService = inject(NavigationService);
   private alertNavBadgeService = inject(AlertNavBadgeService);
+  private actionRequiredAppsService = inject(ActionRequiredAppsService);
 
   protected readonly AlertBadgeType = AlertBadgeType;
   protected readonly MenuItemType = MenuItemType;
@@ -53,13 +57,20 @@ export class NavigationComponent {
   // Alert badge counts for all menu paths
   badgeCounts = this.alertNavBadgeService.getBadgeCountsSignal();
 
+  protected readonly hasAppsRequiringAction = this.actionRequiredAppsService.hasActionRequired;
+
   constructor() {
+    this.actionRequiredAppsService.initialize();
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       takeUntilDestroyed(),
     ).subscribe(() => {
       this.cdr.markForCheck();
     });
+  }
+
+  protected isAppsMenuItem(item: MenuItem): boolean {
+    return item.state === appsMenuState;
   }
 
   toggleMenu(state: string, sub: SubMenuItem[]): void {
