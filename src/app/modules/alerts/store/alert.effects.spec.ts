@@ -15,6 +15,8 @@ import {
   alertRemoved,
   alertsLoaded,
   alertsNotLoaded,
+  dismissAlertPressed,
+  reopenAlertPressed,
 } from 'app/modules/alerts/store/alert.actions';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
@@ -29,6 +31,7 @@ describe('AlertEffects', () => {
   let actions$: Observable<unknown>;
   let apiService: ApiService;
   let translateService: TranslateService;
+  let errorHandlerService: ErrorHandlerService;
   let store$: MockStore;
   let testScheduler: TestScheduler;
 
@@ -86,6 +89,7 @@ describe('AlertEffects', () => {
     effects = TestBed.inject(AlertEffects);
     apiService = TestBed.inject(ApiService);
     translateService = TestBed.inject(TranslateService);
+    errorHandlerService = TestBed.inject(ErrorHandlerService);
     store$ = TestBed.inject(MockStore);
 
     testScheduler = new TestScheduler((actual, expected) => {
@@ -255,7 +259,75 @@ describe('AlertEffects', () => {
     });
   });
 
-  // Note: dismissAlert$, reopenAlert$, dismissAllAlerts$ and reopenAllAlerts$ use pairwise()
-  // operator which requires special Observable stream handling for testing. These effects are
-  // covered by integration tests in alerts-panel.component.spec.ts.
+  describe('dismissAlert$', () => {
+    it('calls API once per id and is a no-op when ids is empty', async () => {
+      jest.spyOn(apiService, 'call').mockReturnValue(of(null));
+
+      actions$ = of(dismissAlertPressed({ ids: ['1', '2'] }));
+      await new Promise<void>((resolve) => {
+        effects.dismissAlert$.subscribe(() => {
+          expect(apiService.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
+          expect(apiService.call).toHaveBeenCalledWith('alert.dismiss', ['2']);
+          resolve();
+        });
+      });
+    });
+
+    it('shows error modal and re-dispatches alertChanged for each id on failure', async () => {
+      const error = new Error('Dismiss failed');
+      jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      actions$ = of(dismissAlertPressed({ ids: ['1', '2'] }));
+
+      await new Promise<void>((resolve) => {
+        effects.dismissAlert$.subscribe(() => {
+          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '1', dismissed: false } as Alert }),
+          );
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '2', dismissed: false } as Alert }),
+          );
+          resolve();
+        });
+      });
+    });
+  });
+
+  describe('reopenAlert$', () => {
+    it('calls API once per id and is a no-op when ids is empty', async () => {
+      jest.spyOn(apiService, 'call').mockReturnValue(of(null));
+
+      actions$ = of(reopenAlertPressed({ ids: ['1', '2'] }));
+      await new Promise<void>((resolve) => {
+        effects.reopenAlert$.subscribe(() => {
+          expect(apiService.call).toHaveBeenCalledWith('alert.restore', ['1']);
+          expect(apiService.call).toHaveBeenCalledWith('alert.restore', ['2']);
+          resolve();
+        });
+      });
+    });
+
+    it('shows error modal and re-dispatches alertChanged for each id on failure', async () => {
+      const error = new Error('Restore failed');
+      jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      actions$ = of(reopenAlertPressed({ ids: ['1', '2'] }));
+
+      await new Promise<void>((resolve) => {
+        effects.reopenAlert$.subscribe(() => {
+          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '1', dismissed: true } as Alert }),
+          );
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertChanged({ alert: { id: '2', dismissed: true } as Alert }),
+          );
+          resolve();
+        });
+      });
+    });
+  });
 });

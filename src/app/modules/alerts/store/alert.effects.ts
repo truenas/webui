@@ -85,26 +85,17 @@ export class AlertEffects {
   // TODO: Action errors are not handled. Standardize on how to report on errors and show them.
   dismissAlert$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAlertPressed),
-    withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
-    mergeMap(([{ id }, [unreadAlerts]]) => {
-      // Use the pre-reducer snapshot: the reducer runs before this effect and
-      // has already flipped matching alerts to `dismissed: true`, so the current
-      // value of selectUnreadAlerts no longer includes them.
-      const alert = unreadAlerts.find((a) => a.id === id);
-      if (!alert) {
+    mergeMap(({ ids }) => {
+      if (ids.length === 0) {
         return EMPTY;
       }
-
-      // Find all alerts with the same key (duplicate instances)
-      const alertsToDismiss = unreadAlerts.filter((a) => a.key === alert.key);
-      const dismissRequests = alertsToDismiss.map((a) => this.api.call('alert.dismiss', [a.id]));
+      const dismissRequests = ids.map((id) => this.api.call('alert.dismiss', [id]));
 
       return forkJoin(dismissRequests).pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          // Restore all alerts if dismiss fails
-          alertsToDismiss.forEach((a) => {
-            this.store$.dispatch(alertChanged({ alert: { id: a.id, dismissed: false } as Alert }));
+          ids.forEach((id) => {
+            this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
           });
           return of(EMPTY);
         }),
@@ -114,24 +105,17 @@ export class AlertEffects {
 
   reopenAlert$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAlertPressed),
-    withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
-    mergeMap(([{ id }, [dismissedAlerts]]) => {
-      // See dismissAlert$ — reducer runs first, so we need the prior snapshot.
-      const alert = dismissedAlerts.find((a) => a.id === id);
-      if (!alert) {
+    mergeMap(({ ids }) => {
+      if (ids.length === 0) {
         return EMPTY;
       }
-
-      // Find all alerts with the same key (duplicate instances)
-      const alertsToReopen = dismissedAlerts.filter((a) => a.key === alert.key);
-      const reopenRequests = alertsToReopen.map((a) => this.api.call('alert.restore', [a.id]));
+      const reopenRequests = ids.map((id) => this.api.call('alert.restore', [id]));
 
       return forkJoin(reopenRequests).pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          // Restore dismissed state if reopen fails
-          alertsToReopen.forEach((a) => {
-            this.store$.dispatch(alertChanged({ alert: { id: a.id, dismissed: true } as Alert }));
+          ids.forEach((id) => {
+            this.store$.dispatch(alertChanged({ alert: { id, dismissed: true } as Alert }));
           });
           return of(EMPTY);
         }),
