@@ -38,6 +38,15 @@
                   >
                     <tn-icon size="sm" [name]="getBadgeIcon(item)"></tn-icon>
                   </span>
+                } @else if (isAppsMenuItem(item) && hasAppsRequiringAction()) {
+                  <span
+                    class="menu-badge-dot warning"
+                    role="status"
+                    [matTooltip]="'One or more apps require action' | translate"
+                    [attr.aria-label]="'One or more apps require action' | translate"
+                  >
+                    <tn-icon size="sm" name="alert" library="mdi"></tn-icon>
+                  </span>
                 }
               </span>
             </a>
