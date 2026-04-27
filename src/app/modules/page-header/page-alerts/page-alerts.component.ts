@@ -219,9 +219,9 @@ export class PageAlertsComponent {
   /**
    * Dismiss an alert (and all its duplicates with the same key)
    */
-  protected onDismiss(alert: Alert): void {
-    // Dispatch single dismiss action - the reducer and effect handle dismissing all duplicates
-    this.store$.dispatch(dismissAlertPressed({ id: alert.id }));
+  protected onDismiss(alert: Alert & { allIds?: string[] }): void {
+    const ids = alert.allIds?.length ? alert.allIds : [alert.id];
+    this.store$.dispatch(dismissAlertPressed({ ids }));
   }
 
   /**

@@ -39,7 +39,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 /**
  * Extended alert with duplicate count information
  */
-type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
+type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number; allIds: string[] };
 
 @Component({
   selector: 'ix-alerts-panel',
@@ -166,21 +166,31 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   /**
-   * Adds duplicate count to each alert.
-   * Counts how many alerts share the same key (duplicate instances).
+   * Adds duplicate count and the list of sibling IDs (alerts sharing the same key) to each alert.
+   * Dispatchers use `allIds` so the dismiss/reopen actions carry every duplicate, avoiding any
+   * after-the-fact lookup against post-reducer store state.
    */
-  private addDuplicateCounts<T extends Alert>(alerts: T[]): (T & { duplicateCount: number })[] {
-    // Count alerts by key
-    const keyCounts = new Map<string, number>();
+  private addDuplicateCounts<T extends Alert>(
+    alerts: T[],
+  ): (T & { duplicateCount: number; allIds: string[] })[] {
+    const idsByKey = new Map<string, string[]>();
     alerts.forEach((alert) => {
-      keyCounts.set(alert.key, (keyCounts.get(alert.key) || 0) + 1);
+      const ids = idsByKey.get(alert.key);
+      if (ids) {
+        ids.push(alert.id);
+      } else {
+        idsByKey.set(alert.key, [alert.id]);
+      }
     });
 
-    // Add duplicate count to each alert
-    return alerts.map((alert) => ({
-      ...alert,
-      duplicateCount: keyCounts.get(alert.key) || 1,
-    }));
+    return alerts.map((alert) => {
+      const ids = idsByKey.get(alert.key) ?? [alert.id];
+      return {
+        ...alert,
+        duplicateCount: ids.length,
+        allIds: ids,
+      };
+    });
   }
 
   onPanelClosed(): void {
