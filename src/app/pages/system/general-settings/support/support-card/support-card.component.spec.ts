@@ -12,8 +12,9 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
+import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -34,6 +35,24 @@ const systemInfo = {
   system_product: 'N7',
   datetime: { $date: 1666376171107 },
 } as SystemInfo;
+
+function makeLicense(supportExpiresAt: string | null): License {
+  return {
+    id: 'test-license-id',
+    type: LicenseType.EnterpriseSingle,
+    contract_type: ContractType.Gold,
+    model: 'M40',
+    expires_at: supportExpiresAt,
+    features: [
+      { name: LicenseFeature.Apps, start_date: null, expires_at: null },
+      ...(supportExpiresAt
+        ? [{ name: LicenseFeature.Support, start_date: null, expires_at: supportExpiresAt }]
+        : []),
+    ],
+    serials: ['AA-00001'],
+    enclosures: {},
+  };
+}
 
 describe('SupportCardComponent', () => {
   let spectator: Spectator<SupportCardComponent>;
@@ -86,14 +105,7 @@ describe('SupportCardComponent', () => {
       const store$ = spectator.inject(MockStore);
       store$.overrideSelector(selectSystemInfo, {
         ...systemInfo,
-        license: {
-          features: [LicenseFeature.Jails],
-          contract_end: {
-            $type: 'date',
-            $value: '2027-09-29',
-          },
-          addhw_detail: [] as unknown[],
-        } as SystemLicense,
+        license: makeLicense('2027-09-29'),
       });
       store$.refreshState();
       spectator.detectChanges();
@@ -188,14 +200,7 @@ describe('SupportCardComponent', () => {
         store$.overrideSelector(selectSystemInfo, {
           ...systemInfo,
           datetime: { $date: 1767830400000 }, // 2026-01-08
-          license: {
-            features: [LicenseFeature.Jails],
-            contract_end: {
-              $type: 'date',
-              $value: '2026-01-11',
-            },
-            addhw_detail: [] as unknown[],
-          } as SystemLicense,
+          license: makeLicense('2026-01-11'),
         });
         store$.refreshState();
         spectator.detectChanges();
@@ -217,14 +222,7 @@ describe('SupportCardComponent', () => {
         store$.overrideSelector(selectSystemInfo, {
           ...systemInfo,
           datetime: { $date: 1767830400000 }, // 2026-01-08
-          license: {
-            features: [LicenseFeature.Jails],
-            contract_end: {
-              $type: 'date',
-              $value: '2026-02-01', // 24 days away
-            },
-            addhw_detail: [] as unknown[],
-          } as SystemLicense,
+          license: makeLicense('2026-02-01'), // 24 days away
         });
         store$.refreshState();
         spectator.detectChanges();
@@ -292,14 +290,7 @@ describe('SupportCardComponent', () => {
       const store$ = spectator.inject(MockStore);
       store$.overrideSelector(selectSystemInfo, {
         ...systemInfo,
-        license: {
-          features: [LicenseFeature.Jails],
-          contract_end: {
-            $type: 'date',
-            $value: '2027-09-29',
-          },
-          addhw_detail: [] as unknown[],
-        } as SystemLicense,
+        license: makeLicense('2027-09-29'),
       });
       store$.refreshState();
       spectator.detectChanges();
