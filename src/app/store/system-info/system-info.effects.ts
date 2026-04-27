@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
+import { ContractType, License } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -12,6 +13,28 @@ import {
   productTypeLoaded,
   systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
+
+const validContractTypes: ReadonlySet<string> = new Set(Object.values(ContractType));
+
+/**
+ * The middleware response casing for `contract_type` is not 100% certain at the
+ * time of writing — uppercasing here means downstream code can rely on the
+ * `ContractType` enum without scattering normalization through the UI. Unknown
+ * values fall through to `null`.
+ */
+function normalizeLicense(license: License | null): License | null {
+  if (!license) {
+    return null;
+  }
+
+  let contractType: ContractType | null = null;
+  if (license.contract_type) {
+    const upper = license.contract_type.toString().toUpperCase();
+    contractType = validContractTypes.has(upper) ? (upper as ContractType) : null;
+  }
+
+  return { ...license, contract_type: contractType };
+}
 
 @Injectable()
 export class SystemInfoEffects {
@@ -21,8 +44,13 @@ export class SystemInfoEffects {
   loadSystemInfo = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
-      return this.api.call('system.info').pipe(
-        map((systemInfo) => systemInfoLoaded({ systemInfo })),
+      return forkJoin({
+        systemInfo: this.api.call('system.info'),
+        license: this.api.call('truenas.license.info'),
+      }).pipe(
+        map(({ systemInfo, license }) => systemInfoLoaded({
+          systemInfo: { ...systemInfo, license: normalizeLicense(license) },
+        })),
         catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
           console.error(error);

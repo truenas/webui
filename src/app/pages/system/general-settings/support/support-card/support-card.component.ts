@@ -18,9 +18,10 @@ import { GiB } from 'app/constants/bytes.constant';
 import { oneDayMillis } from 'app/constants/time.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -110,10 +111,13 @@ export class SupportCardComponent implements OnInit {
 
       if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = { ...systemInfo.license };
-        this.parseLicenseInfo(this.licenseInfo);
+        this.licenseInfo = this.buildLicenseInfo(systemInfo.license);
         this.checkProactiveSupportAvailability();
         this.setupProductImage(systemInfo);
+      } else {
+        this.hasLicense = false;
+        this.licenseInfo = null;
+        this.isContractExpiringSoon.set(false);
       }
       this.cdr.markForCheck();
     });
@@ -127,32 +131,45 @@ export class SupportCardComponent implements OnInit {
     this.productImageSrc.set(productImageUrl);
   }
 
-  private parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
-    if (licenseInfo.features.length === 0) {
-      licenseInfo.featuresString = 'NONE';
-    } else {
-      licenseInfo.featuresString = licenseInfo.features.join(', ');
-    }
-    const expDateConverted = new Date(licenseInfo.contract_end.$value);
-    const userDateFormat = this.localeService.getPreferredDateFormat();
-    licenseInfo.expiration_date = format(expDateConverted, userDateFormat);
+  private buildLicenseInfo(license: License): LicenseInfoInSupport {
+    // Support contract dates live on the SUPPORT feature entry; fall back to the
+    // top-level expiration if the SUPPORT entry is absent.
+    const supportFeature = license.features.find((feature) => feature.name === LicenseFeature.Support);
+    const expirationIso = supportFeature?.expires_at ?? license.expires_at ?? null;
 
-    if (licenseInfo.addhw_detail.length === 0) {
-      licenseInfo.add_hardware = 'NONE';
-    } else {
-      licenseInfo.add_hardware = licenseInfo.addhw_detail.join(', ');
+    let expirationDate: string | null = null;
+    let daysLeftInContract: number | null = null;
+    if (expirationIso) {
+      const expDate = new Date(expirationIso);
+      expirationDate = format(expDate, this.localeService.getPreferredDateFormat());
+      const now = new Date(this.systemInfo.datetime.$date);
+      daysLeftInContract = Math.round((expDate.getTime() - now.getTime()) / oneDayMillis);
     }
-    const now = new Date(this.systemInfo.datetime.$date);
-    const then = expDateConverted;
-    licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
 
     this.isContractExpiringSoon.set(
-      licenseInfo.daysLeftinContract >= 0 && licenseInfo.daysLeftinContract <= this.expirationWarningDays,
+      daysLeftInContract !== null
+      && daysLeftInContract >= 0
+      && daysLeftInContract <= this.expirationWarningDays,
     );
-  }
 
-  private daysTillExpiration(now: Date, then: Date): number {
-    return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
+    const featureNames = license.features
+      .map((feature) => feature.name)
+      .filter((name) => name !== LicenseFeature.Support);
+    const featuresString = featureNames.length ? featureNames.join(', ') : 'NONE';
+
+    const additionalHardware = Object.entries(license.enclosures)
+      .map(([model, count]) => `${count}× ${model}`)
+      .join(', ') || null;
+
+    return {
+      contractType: license.contract_type,
+      model: license.model,
+      expirationDate,
+      daysLeftInContract,
+      featuresString,
+      additionalHardware,
+      serials: license.serials,
+    };
   }
 
   updateLicense(): void {

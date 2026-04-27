@@ -127,11 +127,13 @@
                       }
                     }}
                   </div>
-                  <div>
-                    {{
-                      'Expires on {date}' | translate: { date: systemInfo().license.contract_end.$value }
-                    }}
-                  </div>
+                  @if (systemInfo().license.expires_at) {
+                    <div>
+                      {{
+                        'Expires on {date}' | translate: { date: systemInfo().license.expires_at }
+                      }}
+                    </div>
+                  }
                 </div>
               </div>
             </mat-list-item>

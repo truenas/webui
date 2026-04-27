@@ -43,9 +43,14 @@ export const selectCopyrightHtml = createSelector(
   (productType) => getCopyrightHtml(productType || undefined),
 );
 
-export const selectLicenseFeatures = createSelector(
+export const selectLicense = createSelector(
   selectSystemInfoState,
-  (state) => state?.systemInfo?.license?.features,
+  (state) => state?.systemInfo?.license ?? null,
+);
+
+export const selectLicenseFeatures = createSelector(
+  selectLicense,
+  (license) => license?.features.map((feature) => feature.name),
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
