@@ -11,6 +11,7 @@ import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertAdded,
   alertChanged,
+  alertDismissedReverted,
   alertReceivedWhenPanelIsOpen,
   alertRemoved,
   alertsLoaded,
@@ -273,7 +274,7 @@ describe('AlertEffects', () => {
       });
     });
 
-    it('shows error modal and re-dispatches alertChanged for each id on failure', async () => {
+    it('shows error modal and re-dispatches alertDismissedReverted for each id on failure', async () => {
       const error = new Error('Dismiss failed');
       jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
@@ -284,10 +285,10 @@ describe('AlertEffects', () => {
         effects.dismissAlert$.subscribe(() => {
           expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: false } as Alert }),
+            alertDismissedReverted({ id: '1', dismissed: false }),
           );
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '2', dismissed: false } as Alert }),
+            alertDismissedReverted({ id: '2', dismissed: false }),
           );
           resolve();
         });
@@ -308,10 +309,10 @@ describe('AlertEffects', () => {
         effects.dismissAlert$.subscribe(() => {
           expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '2', dismissed: false } as Alert }),
+            alertDismissedReverted({ id: '2', dismissed: false }),
           );
           expect(dispatchSpy).not.toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: false } as Alert }),
+            alertDismissedReverted({ id: '1', dismissed: false }),
           );
           resolve();
         });
@@ -333,7 +334,7 @@ describe('AlertEffects', () => {
       });
     });
 
-    it('shows error modal and re-dispatches alertChanged for each id on failure', async () => {
+    it('shows error modal and re-dispatches alertDismissedReverted for each id on failure', async () => {
       const error = new Error('Restore failed');
       jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
@@ -344,10 +345,10 @@ describe('AlertEffects', () => {
         effects.reopenAlert$.subscribe(() => {
           expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: true } as Alert }),
+            alertDismissedReverted({ id: '1', dismissed: true }),
           );
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '2', dismissed: true } as Alert }),
+            alertDismissedReverted({ id: '2', dismissed: true }),
           );
           resolve();
         });
@@ -368,10 +369,10 @@ describe('AlertEffects', () => {
         effects.reopenAlert$.subscribe(() => {
           expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '2', dismissed: true } as Alert }),
+            alertDismissedReverted({ id: '2', dismissed: true }),
           );
           expect(dispatchSpy).not.toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: true } as Alert }),
+            alertDismissedReverted({ id: '1', dismissed: true }),
           );
           resolve();
         });

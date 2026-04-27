@@ -14,7 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertPanelOverlayContainer } from 'app/modules/alerts/components/alerts-panel/alert-panel-overlay-container.service';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
@@ -35,11 +35,6 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
-
-/**
- * Extended alert with duplicate count information
- */
-type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number; allIds: string[] };
 
 @Component({
   selector: 'ix-alerts-panel',
@@ -165,32 +160,28 @@ export class AlertsPanelComponent implements OnInit {
     this.checkHaStatus();
   }
 
-  /**
-   * Adds duplicate count and the list of sibling IDs (alerts sharing the same key) to each alert.
-   * Dispatchers use `allIds` so the dismiss/reopen actions carry every duplicate, avoiding any
-   * after-the-fact lookup against post-reducer store state.
-   */
+  // Dispatchers use `allIds` so the dismiss/reopen actions carry every duplicate,
+  // avoiding any after-the-fact lookup against post-reducer store state.
   private addDuplicateCounts<T extends Alert>(
     alerts: T[],
   ): (T & { duplicateCount: number; allIds: string[] })[] {
     const idsByKey = new Map<string, string[]>();
-    alerts.forEach((alert) => {
-      const ids = idsByKey.get(alert.key);
-      if (ids) {
-        ids.push(alert.id);
-      } else {
-        idsByKey.set(alert.key, [alert.id]);
+    const idsForAlert = alerts.map((alert) => {
+      const existing = idsByKey.get(alert.key);
+      if (existing) {
+        existing.push(alert.id);
+        return existing;
       }
+      const ids = [alert.id];
+      idsByKey.set(alert.key, ids);
+      return ids;
     });
 
-    return alerts.map((alert) => {
-      const ids = idsByKey.get(alert.key) ?? [alert.id];
-      return {
-        ...alert,
-        duplicateCount: ids.length,
-        allIds: ids,
-      };
-    });
+    return alerts.map((alert, index) => ({
+      ...alert,
+      duplicateCount: idsForAlert[index].length,
+      allIds: idsForAlert[index],
+    }));
   }
 
   onPanelClosed(): void {

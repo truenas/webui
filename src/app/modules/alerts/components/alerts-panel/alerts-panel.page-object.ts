@@ -12,13 +12,13 @@ export class AlertsPanelPageObject {
     return this.spectator.queryAll(AlertComponent);
   }
 
-  private getAlertData(alertComponent: AlertComponent): Alert & { duplicateCount?: number } | undefined {
+  getAlertData(alertComponent: AlertComponent): Alert & { duplicateCount?: number; allIds?: string[] } | undefined {
     // Handle both signal (function) and mock (property)
     // In real component: alert is a Signal
     // In MockComponent: alert is a plain property
     const alertProp = alertComponent.alert as
-      | Signal<Alert & { duplicateCount?: number }>
-      | Alert & { duplicateCount?: number };
+      | Signal<Alert & { duplicateCount?: number; allIds?: string[] }>
+      | Alert & { duplicateCount?: number; allIds?: string[] };
     if (typeof alertProp === 'function') {
       return alertProp();
     }
