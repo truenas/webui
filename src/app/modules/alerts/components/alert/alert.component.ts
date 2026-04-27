@@ -56,7 +56,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   private translate = inject(TranslateService);
   private smartAlertService = inject(SmartAlertService);
 
-  readonly alert = input.required<Alert & { duplicateCount?: number; allIds?: string[] }>();
+  readonly alert = input.required<Alert & { duplicateCount?: number; allIds: string[] }>();
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
 
@@ -158,16 +158,11 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   }
 
   onDismiss(): void {
-    this.store$.dispatch(dismissAlertPressed({ ids: this.targetAlertIds() }));
+    this.store$.dispatch(dismissAlertPressed({ ids: this.alert().allIds }));
   }
 
   onReopen(): void {
-    this.store$.dispatch(reopenAlertPressed({ ids: this.targetAlertIds() }));
-  }
-
-  private targetAlertIds(): string[] {
-    const { allIds, id } = this.alert();
-    return allIds?.length ? allIds : [id];
+    this.store$.dispatch(reopenAlertPressed({ ids: this.alert().allIds }));
   }
 
   onSmartActionClick(handler: (() => void) | undefined): void {
