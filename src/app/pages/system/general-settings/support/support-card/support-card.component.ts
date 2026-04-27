@@ -228,11 +228,14 @@ export class SupportCardComponent implements OnInit {
       )
       .subscribe((isAvailable) => {
         this.isProactiveSupportAvailable.set(isAvailable);
-        this.cdr.markForCheck();
 
         if (isAvailable) {
           this.checkProactiveSupportEnabled();
+        } else {
+          this.isProactiveSupportEnabled.set(false);
         }
+
+        this.cdr.markForCheck();
       });
   }
 

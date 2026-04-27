@@ -20,18 +20,28 @@
         }
       </span>
     </mat-list-item>
-    @if (isProactiveSupportEnabled()) {
+    @if (isProactiveSupportEnabled() || !isProactiveSupportAvailable()) {
       <mat-list-item class="proactive-status">
         <span class="label">{{ 'Proactive Support' | translate }}:</span>
-        <span class="value">{{ 'Enabled' | translate }}</span>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          class="edit-contacts-btn"
-          (click)="editContacts.emit()"
+        @if (isProactiveSupportEnabled()) {
+          <span class="value">{{ 'Enabled' | translate }}</span>
+        } @else {
+          <span class="value">{{ 'Not Available' | translate }}</span>
+        }
+        <span
+          class="edit-contacts-wrapper"
+          [matTooltip]="isProactiveSupportAvailable() ? '' : (helptext.proactive.unavailableMessage | translate)"
         >
-          {{ 'Manage' | translate }}
-        </button>
+          <button
+            *ixRequiresRoles="manageProactiveRoles"
+            mat-button
+            class="edit-contacts-btn"
+            [disabled]="!isProactiveSupportAvailable()"
+            (click)="editContacts.emit()"
+          >
+            {{ 'Manage' | translate }}
+          </button>
+        </span>
       </mat-list-item>
     }
     <mat-list-item class="model-row">
@@ -39,7 +49,7 @@
       <span class="value">{{ license.model || systemInfo().model }}</span>
       @if (productionControl()) {
         <ix-slide-toggle
-          *ixRequiresRoles="requiredRoles"
+          *ixRequiresRoles="productionToggleRoles"
           class="production-toggle"
           color="primary"
           [formControl]="productionControl()"
