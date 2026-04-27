@@ -3,10 +3,10 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, forkJoin, of,
+  EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
+  catchError, map, mergeMap, pairwise, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -89,16 +89,11 @@ export class AlertEffects {
       if (ids.length === 0) {
         return EMPTY;
       }
-      const dismissRequests = ids.map((id) => this.api.call('alert.dismiss', [id]));
 
-      return forkJoin(dismissRequests).pipe(
-        catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          ids.forEach((id) => {
-            this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
-          });
-          return of(EMPTY);
-        }),
+      // Per-id error handling: only revert the ids whose server call failed, so a
+      // partial failure doesn't roll back ids the backend has already dismissed.
+      return forkJoin(ids.map((id) => this.callPerIdResult('alert.dismiss', id))).pipe(
+        tap((results) => this.handlePartialFailures(results, false)),
       );
     }),
   ), { dispatch: false });
@@ -109,16 +104,9 @@ export class AlertEffects {
       if (ids.length === 0) {
         return EMPTY;
       }
-      const reopenRequests = ids.map((id) => this.api.call('alert.restore', [id]));
 
-      return forkJoin(reopenRequests).pipe(
-        catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          ids.forEach((id) => {
-            this.store$.dispatch(alertChanged({ alert: { id, dismissed: true } as Alert }));
-          });
-          return of(EMPTY);
-        }),
+      return forkJoin(ids.map((id) => this.callPerIdResult('alert.restore', id))).pipe(
+        tap((results) => this.handlePartialFailures(results, true)),
       );
     }),
   ), { dispatch: false });
@@ -175,4 +163,30 @@ export class AlertEffects {
       );
     }),
   ), { dispatch: false });
+
+  private callPerIdResult(
+    method: 'alert.dismiss' | 'alert.restore',
+    id: string,
+  ): Observable<{ id: string; error: unknown }> {
+    return this.api.call(method, [id]).pipe(
+      map(() => ({ id, error: null as unknown })),
+      catchError((error: unknown) => of({ id, error })),
+    );
+  }
+
+  private handlePartialFailures(
+    results: { id: string; error: unknown }[],
+    revertedDismissed: boolean,
+  ): void {
+    const failures = results.filter((result) => result.error !== null);
+    if (failures.length === 0) {
+      return;
+    }
+    this.errorHandler.showErrorModal(failures[0].error);
+    failures.forEach(({ id }) => {
+      this.store$.dispatch(
+        alertChanged({ alert: { id, dismissed: revertedDismissed } as Alert }),
+      );
+    });
+  }
 }
