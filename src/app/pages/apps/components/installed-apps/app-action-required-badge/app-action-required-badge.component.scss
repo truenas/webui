@@ -5,28 +5,21 @@
 
 .action-required-badge {
   align-items: center;
-  background: var(--alt-bg2);
-  border: 1px solid var(--orange);
-  border-radius: 12px;
+  background: transparent;
+  border: 0;
   color: var(--orange);
   cursor: pointer;
   display: inline-flex;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 500;
-  gap: 4px;
   line-height: 1;
-  padding: 3px 8px;
+  padding: 0;
 
   &:hover,
   &:focus-visible {
-    background: var(--orange);
-    color: var(--bg2);
     outline: none;
   }
 
   tn-icon {
-    height: 14px;
-    width: 14px;
+    height: 18px;
+    width: 18px;
   }
 }

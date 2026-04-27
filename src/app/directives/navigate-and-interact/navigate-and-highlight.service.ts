@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
+export interface WaitForElementOptions {
+  onFound?: (element: HTMLElement) => void;
+  block?: ScrollLogicalPosition;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -35,16 +40,21 @@ export class NavigateAndHighlightService {
    * Polls for an element by id and highlights it when found.
    * Retries up to 50 times at 100ms intervals (5 seconds total).
    */
-  waitForElement(hash: string, attemptCount = 0): void {
+  waitForElement(hash: string, options?: WaitForElementOptions): void {
+    this.pollForElement(hash, 0, options);
+  }
+
+  private pollForElement(hash: string, attemptCount: number, options?: WaitForElementOptions): void {
     const maxAttempts = 50; // 5 seconds total (50 * 100ms)
     const htmlElement = this.window.document.getElementById(hash);
 
     if (htmlElement) {
       this.pendingTimeoutId = null;
-      this.scrollIntoView(htmlElement);
+      this.scrollIntoView(htmlElement, options?.block);
+      options?.onFound?.(htmlElement);
     } else if (attemptCount < maxAttempts) {
       this.pendingTimeoutId = setTimeout(() => {
-        this.waitForElement(hash, attemptCount + 1);
+        this.pollForElement(hash, attemptCount + 1, options);
       }, 100);
     } else {
       this.pendingTimeoutId = null;
@@ -58,8 +68,8 @@ export class NavigateAndHighlightService {
     }
   }
 
-  scrollIntoView(htmlElement: HTMLElement): void {
-    htmlElement.scrollIntoView({ block: 'center' });
+  scrollIntoView(htmlElement: HTMLElement, block: ScrollLogicalPosition = 'center'): void {
+    htmlElement.scrollIntoView({ block });
     this.highlight(htmlElement);
   }
 

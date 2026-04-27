@@ -4,11 +4,10 @@
     class="action-required-badge"
     matTooltipPosition="above"
     [ixTest]="[app().name, 'action-required']"
-    [tnTooltip]="'Click to see required actions in the Notes card.' | translate"
+    [tnTooltip]="'Action Required. Click to see required actions in the Notes card.' | translate"
     [attr.aria-label]="'Action Required. Click to see required actions in the Notes card.' | translate"
-    (click)="scrollToNotes()"
+    (click)="highlightNotes()"
   >
     <tn-icon name="alert" library="mdi"></tn-icon>
-    <span>{{ 'Action Required' | translate }}</span>
   </button>
 }

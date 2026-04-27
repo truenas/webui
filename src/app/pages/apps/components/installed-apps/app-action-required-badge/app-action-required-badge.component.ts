@@ -4,9 +4,10 @@ import {
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { WINDOW } from 'app/helpers/window.helper';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { App } from 'app/interfaces/app.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { focusNotesEvent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 
 export const appNotesCardAnchorId = 'app-notes-card';
 
@@ -18,20 +19,18 @@ export const appNotesCardAnchorId = 'app-notes-card';
   imports: [TranslateModule, MatTooltipModule, TnIconComponent, TnTooltipDirective, TestDirective],
 })
 export class AppActionRequiredBadgeComponent {
-  private window = inject<Window>(WINDOW);
+  private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   readonly app = input.required<App>();
 
   protected readonly isVisible = computed(() => !!this.app()?.action_required);
 
-  protected scrollToNotes(): void {
-    // Defer so a containing row click that triggers app selection
-    // (and renders the Notes card) finishes before we scroll.
-    this.window.setTimeout(() => {
-      this.window.document.getElementById(appNotesCardAnchorId)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
+  protected highlightNotes(): void {
+    this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
+      block: 'start',
+      onFound: (element) => {
+        element.dispatchEvent(new CustomEvent(focusNotesEvent, { bubbles: true }));
+      },
     });
   }
 }
