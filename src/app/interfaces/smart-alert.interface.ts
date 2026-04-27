@@ -149,6 +149,16 @@ export interface EnhancedAlert {
 }
 
 /**
+ * Alert decorated with the count and ids of every alert sharing the same key.
+ * Dispatchers carry `allIds` so dismiss/reopen actions act on every duplicate
+ * without re-querying post-reducer state.
+ */
+export type AlertWithDuplicates = Alert & EnhancedAlert & {
+  duplicateCount: number;
+  allIds: string[];
+};
+
+/**
  * Creates an extractFragment function that extracts a specific field from an alert message.
  *
  * @param taskPrefix - The prefix to use for the extracted fragment (e.g., 'cloud-backup', 'rsync-task')
