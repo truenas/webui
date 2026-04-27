@@ -109,6 +109,14 @@ describe('AutomatedDiskSelection', () => {
     expect(await layoutSelect!.getValue()).toBe('');
   });
 
+  it('keeps the sole allowed layout selected after a reset when parity-locked', () => {
+    spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
+
+    resetStep$.next(VDevType.Data);
+
+    expect(spectator.component.layoutControl.value).toBe(CreateVdevLayout.Raidz2);
+  });
+
   it('updates layout in store when it is changed', async () => {
     await layoutSelect!.setValue('Mirror');
 
@@ -116,5 +124,44 @@ describe('AutomatedDiskSelection', () => {
       VDevType.Data,
       CreateVdevLayout.Mirror,
     );
+  });
+
+  it('does not show the data parity hint for data vdevs', () => {
+    expect(spectator.query('mat-hint')).toBeNull();
+  });
+
+  it('does not show the data parity hint for metadata vdevs when any layout is allowed', () => {
+    spectator.setInput('type', VDevType.Special);
+
+    expect(spectator.query('mat-hint')).toBeNull();
+  });
+
+  it('shows the single-layout hint for metadata vdevs when the layout is strict-locked', () => {
+    spectator.setInput('type', VDevType.Special);
+    spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
+
+    const hint = spectator.query('mat-hint');
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Locked to this layout');
+  });
+
+  it('shows the single-layout hint for dedup vdevs when the layout is strict-locked', () => {
+    spectator.setInput('type', VDevType.Dedup);
+    spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
+
+    const hint = spectator.query('mat-hint');
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('Locked to this layout');
+  });
+
+  it('shows the parity-level hint for metadata vdevs when multiple layouts match data parity', () => {
+    spectator.setInput('type', VDevType.Special);
+    spectator.setInput('limitLayouts', [
+      CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+    ]);
+
+    const hint = spectator.query('mat-hint');
+    expect(hint).not.toBeNull();
+    expect(hint!.textContent).toContain('tolerate at least as many drive failures');
   });
 });

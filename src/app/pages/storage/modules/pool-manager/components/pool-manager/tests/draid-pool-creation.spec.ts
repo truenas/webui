@@ -180,11 +180,6 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
             draid_spare_disks: 1,
           },
         ],
-        cache: [],
-        dedup: [],
-        spares: [],
-        log: [],
-        special: [],
       },
     }]);
   });

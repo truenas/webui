@@ -8,10 +8,11 @@
       [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
       [options]="vdevLayoutOptions$ | translateOptions"
       [required]="true"
+      [hint]="layoutRestrictionHint()"
     ></ix-select>
   </div>
 } @else {
-  @if (isDataVdev() || isMetadataVdev()) {
+  @if (isDataVdev()) {
     <ix-input
       [ixTestOverride]="['layout']"
       [keepLastPart]="true"
@@ -37,6 +38,7 @@
     [inventory]="inventory()"
     [type]="type()"
     [isStepActive]="isStepActive()"
+    [minMirrorWidth]="minMirrorWidth()"
   ></ix-normal-selection>
 }
 
