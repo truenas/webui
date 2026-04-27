@@ -73,38 +73,12 @@ export const alertReducer = createReducer(
   }),
   on(alertRemoved, (state, { id }) => adapter.removeOne(id, state)),
 
-  on(dismissAlertPressed, (state, { id }) => {
-    // Find the alert being dismissed
-    const alert = state.entities[id];
-    if (!alert) {
-      return state;
-    }
-
-    // Find all alerts with the same key and mark them as dismissed
-    const updates = Object.values(state.entities)
-      .filter((a): a is Alert => a !== undefined && a.key === alert.key)
-      .map((a) => ({
-        id: a.id,
-        changes: { dismissed: true },
-      }));
-
+  on(dismissAlertPressed, (state, { ids }) => {
+    const updates = ids.map((id) => ({ id, changes: { dismissed: true } }));
     return adapter.updateMany(updates, state);
   }),
-  on(reopenAlertPressed, (state, { id }) => {
-    // Find the alert being reopened
-    const alert = state.entities[id];
-    if (!alert) {
-      return state;
-    }
-
-    // Find all alerts with the same key and mark them as not dismissed
-    const updates = Object.values(state.entities)
-      .filter((a): a is Alert => a !== undefined && a.key === alert.key)
-      .map((a) => ({
-        id: a.id,
-        changes: { dismissed: false },
-      }));
-
+  on(reopenAlertPressed, (state, { ids }) => {
+    const updates = ids.map((id) => ({ id, changes: { dismissed: false } }));
     return adapter.updateMany(updates, state);
   }),
 
