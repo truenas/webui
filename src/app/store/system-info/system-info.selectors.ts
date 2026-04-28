@@ -49,11 +49,6 @@ export const selectLicense = createSelector(
   (systemInfo) => systemInfo?.license ?? null,
 );
 
-export const selectLicenseFeatures = createSelector(
-  selectLicense,
-  (license) => license?.features.map((feature) => feature.name),
-);
-
 /**
  * Selector factory: emits true when the license carries the given feature.
  * Used by `LicenseService.has*$` observables and any component that needs to
