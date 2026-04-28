@@ -247,8 +247,8 @@ describe('PoolManagerStore', () => {
         vdevsNumber: 1,
         width: 1,
         vdevs: [[disks[2]]],
-        draidDataDisks: 0,
-        draidSpareDisks: 0,
+        draidDataDisks: null,
+        draidSpareDisks: null,
       });
     });
 

@@ -2,6 +2,15 @@
 @import 'mixins/layout';
 @import 'mixins/cards';
 
+// Vertical flex chain applied from .detail-content down to the projected [detail]
+// root so that nested scroll containers inside the details panel can size correctly.
+@mixin detail-flex-column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
 :host {
   &::ng-deep {
     @include tree-node-with-details-container;
@@ -19,6 +28,12 @@
       opacity: 0.25;
       pointer-events: none;
     }
+
+    // Every consumer projects a single root element into [detail]; it must
+    // participate in the flex column chain so its inner scroll regions work.
+    .detail-content > * {
+      @include detail-flex-column;
+    }
   }
 }
 
@@ -29,6 +44,10 @@
   @media (min-width: $breakpoint-md) {
     padding-right: 8px;
   }
+}
+
+.detail-content {
+  @include detail-flex-column;
 }
 
 .header-container {

@@ -134,7 +134,7 @@
     "d3": "~7.9.0",
     "date-fns": "~4.1.0",
     "date-fns-tz": "~3.2.0",
-    "dompurify": "~3.4.0",
+    "dompurify": "~3.4.1",
     "dygraphs": "~2.2.1",
     "email-validator": "~2.0.4",
     "fontfaceobserver": "^2.3.0",
@@ -183,7 +183,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "~8.38.0",
     "utility-types": "~3.11.0",
-    "uuid": "~11.1.0",
+    "uuid": "~14.0.0",
     "vinyl": "~3.0.0",
     "zone.js": "~0.15.0"
   },

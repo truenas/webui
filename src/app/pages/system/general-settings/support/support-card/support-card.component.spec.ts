@@ -22,6 +22,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -48,7 +49,9 @@ describe('SupportCardComponent', () => {
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => SlideInResult.empty()),
+      }),
       mockProvider(LocaleService, {
         getPreferredDateFormat: jest.fn(() => 'yyyy-MM-dd'),
       }),
@@ -146,6 +149,20 @@ describe('SupportCardComponent', () => {
         await enableButton.click();
 
         expect(slideIn.open).toHaveBeenCalledWith(ProactiveComponent, { wide: true });
+      });
+
+      it('re-checks proactive support availability after the slide-in closes', async () => {
+        const slideIn = spectator.inject(SlideIn);
+        jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.cancel());
+
+        const api = spectator.inject(ApiService);
+        const apiCallSpy = jest.spyOn(api, 'call');
+        apiCallSpy.mockClear();
+
+        const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable' }));
+        await enableButton.click();
+
+        expect(apiCallSpy).toHaveBeenCalledWith('support.is_available');
       });
 
       it('hides proactive support banner when enabled', () => {

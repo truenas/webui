@@ -46,6 +46,8 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   readonly layout = input.required<CreateVdevLayout>();
   readonly isStepActive = input<boolean>();
   readonly inventory = input.required<DetailsDisk[]>();
+  /** Raised by parity-locked steps so special/dedup mirrors can't fall below the data vdev's redundancy. */
+  readonly minMirrorWidth = input<number>(2);
 
   form = this.formBuilder.group({
     width: [{ value: null as number | null, disabled: true }, Validators.required],
@@ -58,7 +60,11 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   private selectedDisks: DetailsDisk[] = [];
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (hasDeepChanges(changes, 'inventory') || hasDeepChanges(changes, 'layout')) {
+    if (
+      hasDeepChanges(changes, 'inventory')
+      || hasDeepChanges(changes, 'layout')
+      || hasDeepChanges(changes, 'minMirrorWidth')
+    ) {
       this.updateWidthOptions();
     }
   }
@@ -72,6 +78,19 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   protected isNumberOfVdevsLimitedToOne = computed(() => {
     return this.type() === VDevType.Spare || this.type() === VDevType.Cache || this.type() === VDevType.Log;
   });
+
+  /**
+   * Layout's intrinsic minimum width, raised to minMirrorWidth when the
+   * layout is Mirror. For other layouts the input is ignored — RAIDZ width
+   * is governed by its own parity, not by the data vdev's.
+   */
+  private effectiveMinWidth(): number {
+    const layoutMin = minDisksPerLayout[this.layout()];
+    if (this.layout() === CreateVdevLayout.Mirror) {
+      return Math.max(layoutMin, this.minMirrorWidth());
+    }
+    return layoutMin;
+  }
 
   protected onDisksSelected(disks: DetailsDisk[]): void {
     this.selectedDisks = disks;
@@ -126,7 +145,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     if (!availableDisks) {
       return;
     }
-    const minRequired = minDisksPerLayout[this.layout()];
+    const minRequired = this.effectiveMinWidth();
     let nextOptions: Option[] = [];
 
     if (availableDisks && minRequired && availableDisks >= minRequired) {

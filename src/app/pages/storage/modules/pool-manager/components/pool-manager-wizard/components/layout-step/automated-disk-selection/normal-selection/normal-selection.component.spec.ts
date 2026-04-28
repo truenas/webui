@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -89,22 +89,6 @@ describe('NormalSelectionComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         openManualSelectionDialog: jest.fn(),
-        getLayoutsForVdevType: jest.fn((vdevType: VDevType) => {
-          switch (vdevType) {
-            case VDevType.Cache:
-              return of([CreateVdevLayout.Stripe]);
-            case VDevType.Dedup:
-              return of([CreateVdevLayout.Mirror]);
-            case VDevType.Log:
-              return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-            case VDevType.Spare:
-              return of([CreateVdevLayout.Stripe]);
-            case VDevType.Special:
-              return of([CreateVdevLayout.Mirror]);
-            default:
-              return of(Object.values(CreateVdevLayout));
-          }
-        }),
         startOver$,
         resetStep$,
       }),
@@ -136,6 +120,22 @@ describe('NormalSelectionComponent', () => {
     await widthSelect.setValue('2');
 
     expect(await vdevsSelect.getOptionLabels()).toStrictEqual(['1', '2', '3']);
+  });
+
+  it('raises the mirror width floor when minMirrorWidth is set', async () => {
+    spectator.setInput('layout', CreateVdevLayout.Mirror);
+    spectator.setInput('minMirrorWidth', 3);
+    await sizeSelect.setValue('12 TiB (HDD)');
+
+    expect(await widthSelect.getOptionLabels()).toStrictEqual(['3', '4', '5', '6', '7']);
+  });
+
+  it('does not affect non-Mirror layouts when minMirrorWidth is set', async () => {
+    spectator.setInput('layout', CreateVdevLayout.Raidz1);
+    spectator.setInput('minMirrorWidth', 4);
+    await sizeSelect.setValue('12 TiB (HDD)');
+
+    expect(await widthSelect.getOptionLabels()).toStrictEqual(['3', '4', '5', '6', '7']);
   });
 
   it('updates width and vdev options when layout changes to Raidz1', async () => {

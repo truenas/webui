@@ -100,9 +100,10 @@ export class PageAlertsComponent {
       // Skip dismissed or alerts without menu path
       if (!alert.relatedMenuPath || alert.dismissed) continue;
 
-      // Check exact route match
+      // Match if current URL is at or below the alert's menu path.
+      // Dataset routes use /datasets/:datasetId, so ['datasets'] must still match /datasets/tank.
       const menuPath = alert.relatedMenuPath;
-      const isMatch = menuPath.length === pathSegments.length
+      const isMatch = menuPath.length <= pathSegments.length
         && menuPath.every((segment, index) => pathSegments[index] === segment);
 
       if (!isMatch) continue;

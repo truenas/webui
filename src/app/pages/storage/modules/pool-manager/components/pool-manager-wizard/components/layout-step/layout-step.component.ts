@@ -26,7 +26,9 @@ export class LayoutStepComponent implements OnInit {
   readonly description = input<string>();
 
   readonly canChangeLayout = input(false);
-  readonly limitLayouts = input<CreateVdevLayout[]>([]);
+  readonly limitLayouts = input<readonly CreateVdevLayout[]>([]);
+  /** Mirror width floor; propagated to NormalSelectionComponent so parity-locked steps disallow weaker mirrors. */
+  readonly minMirrorWidth = input<number>(2);
 
   readonly inventory = input<DetailsDisk[]>([]);
 

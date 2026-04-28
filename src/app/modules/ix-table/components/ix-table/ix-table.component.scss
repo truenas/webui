@@ -19,6 +19,6 @@ table {
   tr > td span.mat-mdc-tooltip-trigger,
   tr > td div.mat-mdc-tooltip-trigger span {
     @include line-clamp(2);
-    margin: 0 0 -5px;
+    margin: 0 0 -3px;
   }
 }
