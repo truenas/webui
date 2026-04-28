@@ -52,6 +52,7 @@ html .ix-dark {
   --mat-snack-bar-container-color: var(--bg2);
   --mat-slide-toggle-selected-hover-handle-color: var(--primary);
   --mdc-switch-selected-handle-color: var(--primary);
+  --mat-slide-toggle-selected-handle-color: var(--primary);
   --mdc-switch-selected-track-color: var(--primary);
   --mdc-switch-selected-hover-handle-color: var(--primary);
   --mdc-switch-selected-hover-track-color: var(--primary);
@@ -250,6 +251,7 @@ html .ix-dark {
       --mat-checkbox-unselected-icon-color: var(--primary);
       --mat-checkbox-unselected-icon-color: var(--primary);
       --mat-checkbox-unselected-pressed-icon-color: var(--primary);
+      --mat-pseudo-checkbox-full-selected-icon-color: var(--primary);
 
       &.mat-mdc-checkbox-disabled {
         --mat-checkbox-disabled-selected-checkmark-color: var(--fg2);
