@@ -18,7 +18,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { oneDayMillis } from 'app/constants/time.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { LicenseFeature, getLabelForLicenseFeature } from 'app/enums/license-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { License, SystemInfo } from 'app/interfaces/system-info.interface';
@@ -148,10 +148,11 @@ export class SupportCardComponent implements OnInit {
 
     const featureNames = license.features
       .map((feature) => feature.name)
-      .filter((name) => name !== LicenseFeature.Support);
+      .filter((name) => name !== LicenseFeature.Support)
+      .map((name) => getLabelForLicenseFeature(name));
 
     const additionalHardware = Object.entries(license.enclosures)
-      .map(([model, count]) => `${count}× ${model}`)
+      .map(([model, count]) => this.translate.instant('{count}× {model}', { count, model }))
       .join(', ') || null;
 
     return {
