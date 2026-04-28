@@ -8,4 +8,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class FormActionsComponent {
   readonly validating = input(false);
+  readonly full = input(false);
 }

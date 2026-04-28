@@ -9,15 +9,20 @@
   margin: 0;
 }
 
+.full.submit-button-wrapper {
+  width: 100%;
+  margin-top: 12px;
+
+  ::ng-deep .mdc-button {
+    width: 100%;
+    height: 54px;
+  }
+}
+
 .submit-button-wrapper {
   position: relative;
   display: inline-block;
   overflow: hidden;
-
-  ::ng-deep .mdc-button.full {
-    width: 100%;
-    height: 54px;
-  }
 
   &.validating::before {
     position: absolute;
