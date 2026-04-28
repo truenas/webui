@@ -3,7 +3,7 @@
 @if (!isLoading && dataSource.data.length === 0) {
   <ng-container [ngTemplateOutlet]="empty"></ng-container>
 } @else {
-  <div class="container">
+  <div class="container max-w-none">
     <div class="table-container">
       @if (!showMobileDetails) {
         <ix-fake-progress-bar

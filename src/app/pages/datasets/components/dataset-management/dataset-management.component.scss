@@ -21,6 +21,11 @@ ix-dataset-details-panel {
   width: 100%;
 }
 
+.details-container {
+  flex: 1 !important;
+  max-width: none !important;
+}
+
 .details-container.details-container-mobile {
   ix-dataset-details-panel {
     margin-top: -12px;
