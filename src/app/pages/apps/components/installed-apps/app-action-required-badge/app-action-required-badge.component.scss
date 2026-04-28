@@ -7,15 +7,15 @@
   align-items: center;
   background: transparent;
   border: 0;
+  border-radius: 4px;
   color: var(--orange);
   cursor: pointer;
   display: inline-flex;
   line-height: 1;
-  padding: 0;
+  padding: 2px;
 
-  &:hover,
-  &:focus-visible {
-    outline: none;
+  &:hover {
+    background: var(--hover-bg);
   }
 
   tn-icon {

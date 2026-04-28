@@ -7,6 +7,8 @@ import { MarkdownModule } from 'ngx-markdown';
 import { App } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
+export const appNotesCardAnchorId = 'app-notes-card';
+
 @Component({
   selector: 'ix-app-notes-card',
   templateUrl: './app-notes-card.component.html',
@@ -24,4 +26,6 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
 })
 export class AppNotesCardComponent {
   readonly app = input.required<App>();
+
+  protected readonly anchorId = appNotesCardAnchorId;
 }

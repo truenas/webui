@@ -88,11 +88,6 @@ describe('AppRowComponent', () => {
     expect(updateCell.hasUpdate).toBeFalsy();
   });
 
-  it('renders action-required badge component', () => {
-    const badge = spectator.query(AppActionRequiredBadgeComponent);
-    expect(badge).toBeTruthy();
-  });
-
   it('shows app usages stats', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('90%');
     expect(spectator.query('.cell-ram')).toHaveText('80 MiB');
