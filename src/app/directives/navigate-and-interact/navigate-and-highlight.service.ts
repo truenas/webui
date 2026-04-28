@@ -45,6 +45,7 @@ export class NavigateAndHighlightService {
    * Retries up to 50 times at 100ms intervals (5 seconds total).
    */
   waitForElement(hash: string, options?: WaitForElementOptions): void {
+    this.cancelPendingTimeout();
     this.pollForElement(hash, 0, options);
   }
 

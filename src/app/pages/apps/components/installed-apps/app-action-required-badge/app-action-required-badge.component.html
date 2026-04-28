@@ -1,12 +1,12 @@
-@if (isVisible()) {
+@if (app().action_required) {
   <button
     type="button"
     class="action-required-badge"
     tnTooltipPosition="above"
     [ixTest]="[app().name, 'action-required']"
-    [tnTooltip]="'Action Required. Click to see required actions in the Notes card.' | translate"
-    [attr.aria-label]="'Action Required. Click to see required actions in the Notes card.' | translate"
-    (click)="highlightNotes()"
+    [tnTooltip]="tooltipText | translate"
+    [attr.aria-label]="tooltipText | translate"
+    (click)="onClick($event)"
   >
     <tn-icon name="alert" library="mdi"></tn-icon>
   </button>

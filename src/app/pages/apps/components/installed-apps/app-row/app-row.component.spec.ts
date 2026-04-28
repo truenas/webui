@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -53,10 +54,11 @@ describe('AppRowComponent', () => {
       NetworkSpeedPipe,
     ],
     declarations: [
-      MockComponents(AppStateCellComponent, AppUpdateCellComponent, AppActionRequiredBadgeComponent),
+      MockComponents(AppStateCellComponent, AppUpdateCellComponent),
     ],
     providers: [
       mockAuth(),
+      mockProvider(NavigateAndHighlightService),
     ],
   });
 
@@ -86,6 +88,22 @@ describe('AppRowComponent', () => {
     const updateCell = spectator.query(AppUpdateCellComponent)!;
     expect(updateCell).toBeTruthy();
     expect(updateCell.hasUpdate).toBeFalsy();
+  });
+
+  it('passes the app to the action required badge', () => {
+    const badge = spectator.query(AppActionRequiredBadgeComponent)!;
+    expect(badge).toBeTruthy();
+    expect(badge.app()).toBe(app);
+  });
+
+  it('forwards viewDetailsRequested from the badge', () => {
+    const badge = spectator.query(AppActionRequiredBadgeComponent)!;
+    const emitSpy = jest.fn();
+    spectator.component.viewDetailsRequested.subscribe(emitSpy);
+
+    badge.viewDetailsRequested.emit();
+
+    expect(emitSpy).toHaveBeenCalledTimes(1);
   });
 
   it('shows app usages stats', () => {

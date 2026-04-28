@@ -48,4 +48,18 @@ describe('AppActionRequiredBadgeComponent', () => {
       { block: 'start', inset: true },
     );
   });
+
+  it('emits viewDetailsRequested and stops click propagation', () => {
+    setupTest({ name: 'app1', action_required: true });
+    const emitSpy = jest.fn();
+    spectator.component.viewDetailsRequested.subscribe(emitSpy);
+
+    const button = spectator.query('.action-required-badge') as HTMLButtonElement;
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
+    button.dispatchEvent(clickEvent);
+
+    expect(emitSpy).toHaveBeenCalledTimes(1);
+    expect(stopPropagationSpy).toHaveBeenCalled();
+  });
 });
