@@ -5,7 +5,6 @@ import {
   AppActionRequiredBadgeComponent,
   appNotesCardAnchorId,
 } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
-import { focusNotesEvent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 
 describe('AppActionRequiredBadgeComponent', () => {
   let spectator: Spectator<AppActionRequiredBadgeComponent>;
@@ -34,22 +33,14 @@ describe('AppActionRequiredBadgeComponent', () => {
     expect(spectator.query('.action-required-badge tn-icon')).toExist();
   });
 
-  it('asks NavigateAndHighlightService to highlight the Notes card and dispatches a focus-notes event', () => {
+  it('asks NavigateAndHighlightService to highlight the Notes card', () => {
     setupTest({ name: 'app1', action_required: true });
     const navigateAndHighlight = spectator.inject(NavigateAndHighlightService);
     spectator.click('.action-required-badge');
 
     expect(navigateAndHighlight.waitForElement).toHaveBeenCalledWith(
       appNotesCardAnchorId,
-      expect.objectContaining({ block: 'start', onFound: expect.any(Function) }),
+      { block: 'start' },
     );
-
-    const options = jest.mocked(navigateAndHighlight.waitForElement).mock.calls[0][1]!;
-    const element = document.createElement('div');
-    const dispatchSpy = jest.spyOn(element, 'dispatchEvent');
-    options.onFound!(element);
-
-    expect(dispatchSpy).toHaveBeenCalledWith(expect.any(CustomEvent));
-    expect(dispatchSpy.mock.calls[0][0].type).toBe(focusNotesEvent);
   });
 });

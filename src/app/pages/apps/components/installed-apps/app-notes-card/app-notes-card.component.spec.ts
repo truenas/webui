@@ -3,7 +3,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MarkdownModule } from 'ngx-markdown';
 import { App, ChartFormValue } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
-import { AppNotesCardComponent, focusNotesEvent } from './app-notes-card.component';
+import { AppNotesCardComponent } from './app-notes-card.component';
 
 describe('AppNotesCardComponent', () => {
   let spectator: Spectator<AppNotesCardComponent>;
@@ -83,14 +83,5 @@ describe('AppNotesCardComponent', () => {
     expect(paragraphs[0]).toHaveText('Thank you for installing MinIO App.');
     expect(paragraphs[1]).toHaveText('Documentation for this app can be found at https://docs.ixsystems.com.');
     expect(paragraphs[2]).toHaveText('If you find a bug in this app, please file an issue at https://jira.ixsystems.com');
-  });
-
-  it('expands the notes section when a focus-notes event is dispatched', () => {
-    const expandCollapse = spectator.query(CardExpandCollapseComponent)!;
-    const expandSpy = jest.spyOn(expandCollapse, 'expand');
-
-    spectator.element.dispatchEvent(new CustomEvent(focusNotesEvent, { bubbles: true }));
-
-    expect(expandSpy).toHaveBeenCalled();
   });
 });

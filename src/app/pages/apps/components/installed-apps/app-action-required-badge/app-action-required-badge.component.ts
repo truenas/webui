@@ -7,7 +7,6 @@ import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { App } from 'app/interfaces/app.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { focusNotesEvent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 
 export const appNotesCardAnchorId = 'app-notes-card';
 
@@ -28,9 +27,6 @@ export class AppActionRequiredBadgeComponent {
   protected highlightNotes(): void {
     this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
       block: 'start',
-      onFound: (element) => {
-        element.dispatchEvent(new CustomEvent(focusNotesEvent, { bubbles: true }));
-      },
     });
   }
 }

@@ -79,7 +79,7 @@ export class NavigateAndHighlightService {
     this.cleanupPreviousHighlight();
 
     targetElement.style.outline = '2px solid var(--primary)';
-    targetElement.style.outlineOffset = '2px';
+    targetElement.style.outlineOffset = '-2px';
     this.prevHighlightTarget = targetElement;
 
     this.prevSubscription = timer(2150).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
