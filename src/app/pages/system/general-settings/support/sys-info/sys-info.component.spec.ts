@@ -22,7 +22,7 @@ describe('SysInfoComponent', () => {
     model: 'M60',
     expirationDate: '2022-06-10',
     daysLeftInContract: -4,
-    featuresString: 'DEDUP, FIBRECHANNEL, VM',
+    featureNames: ['DEDUP', 'FIBRECHANNEL', 'VM'],
     additionalHardware: null,
     serials: ['abcdefgh12345678'],
   };
@@ -78,7 +78,7 @@ describe('SysInfoComponent', () => {
       'Model:': licenseInfo.model,
       'Licensed Serials:': licenseInfo.serials.join(' / '),
       'System Serial:': systemInfo.system_serial,
-      'Features:': licenseInfo.featuresString,
+      'Features:': licenseInfo.featureNames.join(', '),
       'Contract Type:': 'Gold',
       'Expiration Date:': `${licenseInfo.expirationDate} (EXPIRED)`,
     });

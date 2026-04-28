@@ -124,7 +124,15 @@ describe('SupportCardComponent', () => {
         const api = spectator.inject(ApiService);
         jest.spyOn(api, 'call').mockReturnValue(of(false));
 
-        spectator.component.ngOnInit();
+        // Re-emit systemInfo with a fresh reference so the subscription re-fires
+        // (NgRx select uses distinctUntilChanged on object identity).
+        const store$ = spectator.inject(MockStore);
+        store$.overrideSelector(selectSystemInfo, {
+          ...systemInfo,
+          license: makeLicense('2027-09-29'),
+        });
+        store$.refreshState();
+        spectator.detectChanges();
 
         expect(spectator.component.isProactiveSupportAvailable()).toBe(false);
       });
@@ -186,7 +194,13 @@ describe('SupportCardComponent', () => {
           return of(true);
         });
 
-        spectator.component.ngOnInit();
+        // Re-emit systemInfo with a fresh reference so the subscription re-fires.
+        const store$ = spectator.inject(MockStore);
+        store$.overrideSelector(selectSystemInfo, {
+          ...systemInfo,
+          license: makeLicense('2027-09-29'),
+        });
+        store$.refreshState();
         spectator.detectChanges();
 
         const banner = spectator.query('.support-banner.proactive');

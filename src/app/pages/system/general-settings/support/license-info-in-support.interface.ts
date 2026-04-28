@@ -15,8 +15,12 @@ export interface LicenseInfoInSupport {
   expirationDate: string | null;
   /** Days until contract end. Negative when expired. */
   daysLeftInContract: number | null;
-  /** Comma-joined feature list, or 'NONE'. SUPPORT is omitted (surfaced via contract type). */
-  featuresString: string;
+  /**
+   * Feature names with `Support` filtered out (it is surfaced via the contract
+   * type row instead). The template renders the comma-joined list or a
+   * translated `'NONE'` placeholder.
+   */
+  featureNames: string[];
   /** Comma-joined list of `count× model` pairs from `enclosures`, or null. */
   additionalHardware: string | null;
   /** All system serials from the license payload. */

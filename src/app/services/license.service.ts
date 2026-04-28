@@ -4,20 +4,15 @@ import { combineLatest, shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { License } from 'app/interfaces/system-info.interface';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
+  selectHasLicenseFeature,
   selectIsEnterprise,
-  selectLicense,
 } from 'app/store/system-info/system-info.selectors';
-
-function licenseHasFeature(license: License | null | undefined, feature: LicenseFeature): boolean {
-  return license?.features.some((entry) => entry.name === feature) ?? false;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -31,9 +26,7 @@ export class LicenseService {
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
   hasFibreChannel$ = combineLatest([
-    this.store$.select(selectLicense).pipe(
-      map((license) => licenseHasFeature(license, LicenseFeature.FibreChannel)),
-    ),
+    this.store$.select(selectHasLicenseFeature(LicenseFeature.FibreChannel)),
     this.api.call('fc.capable'),
   ]).pipe(
     map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
@@ -41,30 +34,28 @@ export class LicenseService {
   );
 
   hasVms$ = combineLatest([
-    this.store$.select(selectLicense),
+    this.store$.select(selectHasLicenseFeature(LicenseFeature.Vm)),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
-    map(([license, isEnterprise]) => !isEnterprise || licenseHasFeature(license, LicenseFeature.Vm)),
+    map(([hasVm, isEnterprise]) => !isEnterprise || hasVm),
   );
 
   hasApps$ = combineLatest([
-    this.store$.select(selectLicense),
+    this.store$.select(selectHasLicenseFeature(LicenseFeature.Apps)),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
-    map(([license, isEnterprise]) => !isEnterprise || licenseHasFeature(license, LicenseFeature.Apps)),
+    map(([hasApps, isEnterprise]) => !isEnterprise || hasApps),
   );
 
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
-  readonly hasSed$ = this.store$.select(selectLicense).pipe(
-    map((license) => licenseHasFeature(license, LicenseFeature.Sed)),
-  );
+  readonly hasSed$ = this.store$.select(selectHasLicenseFeature(LicenseFeature.Sed));
 
   readonly shouldShowContainers$ = combineLatest([
     this.store$.select(selectIsEnterprise),
-    this.store$.select(selectLicense),
+    this.store$.select(selectHasLicenseFeature(LicenseFeature.Apps)),
   ]).pipe(
-    map(([isEnterprise, license]) => !isEnterprise || licenseHasFeature(license, LicenseFeature.Apps)),
+    map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
   );
 
   /**

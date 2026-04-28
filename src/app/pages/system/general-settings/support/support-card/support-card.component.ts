@@ -111,7 +111,8 @@ export class SupportCardComponent implements OnInit {
 
       if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = this.buildLicenseInfo(systemInfo.license);
+        this.licenseInfo = this.buildLicenseInfo(systemInfo.license, systemInfo.datetime.$date);
+        this.isContractExpiringSoon.set(this.computeExpiringSoon(this.licenseInfo.daysLeftInContract));
         this.checkProactiveSupportAvailability();
         this.setupProductImage(systemInfo);
       } else {
@@ -131,7 +132,7 @@ export class SupportCardComponent implements OnInit {
     this.productImageSrc.set(productImageUrl);
   }
 
-  private buildLicenseInfo(license: License): LicenseInfoInSupport {
+  private buildLicenseInfo(license: License, nowMs: number): LicenseInfoInSupport {
     // Support contract dates live on the SUPPORT feature entry; fall back to the
     // top-level expiration if the SUPPORT entry is absent.
     const supportFeature = license.features.find((feature) => feature.name === LicenseFeature.Support);
@@ -142,20 +143,12 @@ export class SupportCardComponent implements OnInit {
     if (expirationIso) {
       const expDate = new Date(expirationIso);
       expirationDate = format(expDate, this.localeService.getPreferredDateFormat());
-      const now = new Date(this.systemInfo.datetime.$date);
-      daysLeftInContract = Math.round((expDate.getTime() - now.getTime()) / oneDayMillis);
+      daysLeftInContract = Math.round((expDate.getTime() - nowMs) / oneDayMillis);
     }
-
-    this.isContractExpiringSoon.set(
-      daysLeftInContract !== null
-      && daysLeftInContract >= 0
-      && daysLeftInContract <= this.expirationWarningDays,
-    );
 
     const featureNames = license.features
       .map((feature) => feature.name)
       .filter((name) => name !== LicenseFeature.Support);
-    const featuresString = featureNames.length ? featureNames.join(', ') : 'NONE';
 
     const additionalHardware = Object.entries(license.enclosures)
       .map(([model, count]) => `${count}× ${model}`)
@@ -166,10 +159,16 @@ export class SupportCardComponent implements OnInit {
       model: license.model,
       expirationDate,
       daysLeftInContract,
-      featuresString,
+      featureNames,
       additionalHardware,
       serials: license.serials,
     };
+  }
+
+  private computeExpiringSoon(daysLeft: number | null): boolean {
+    return daysLeft !== null
+      && daysLeft >= 0
+      && daysLeft <= this.expirationWarningDays;
   }
 
   updateLicense(): void {

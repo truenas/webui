@@ -1,4 +1,5 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
@@ -51,6 +52,18 @@ export const selectLicense = createSelector(
 export const selectLicenseFeatures = createSelector(
   selectLicense,
   (license) => license?.features.map((feature) => feature.name),
+);
+
+/**
+ * Selector factory: emits true when the license carries the given feature.
+ * Used by `LicenseService.has*$` observables and any component that needs to
+ * gate behavior on a specific license feature.
+ */
+export const selectHasLicenseFeature = (
+  feature: LicenseFeature,
+): MemoizedSelector<object, boolean> => createSelector(
+  selectLicense,
+  (license) => license?.features.some((entry) => entry.name === feature) ?? false,
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
