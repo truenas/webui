@@ -203,6 +203,8 @@ textarea.mat-input-element::placeholder {
 
 .mat-mdc-chip-set .mdc-evolution-chip-set__chips {
   max-width: 100%;
+  height: 46px;
+  border-radius: 100px;
 }
 
 .form-element .mat-mdc-form-field-suffix {

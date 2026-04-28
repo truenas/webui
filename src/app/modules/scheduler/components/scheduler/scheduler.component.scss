@@ -21,6 +21,10 @@
   border: solid 1.5px var(--lines);
   border-radius: 2px;
   position: relative;
+  border-radius: 100px;
+  height: 46px;
+  display: flex;
+  align-items: center;
 
   ::ng-deep {
     mat-select .mat-mdc-select-value {

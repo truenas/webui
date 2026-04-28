@@ -30,6 +30,7 @@
   font-size: 12px;
   padding: 2px 8px;
   position: relative;
+  border-radius: 100px;
 
   @include prevent-ios-autozoom;
 
@@ -71,4 +72,3 @@
 .input-container.disabled {
   background: var(--bg2);
 }
-
