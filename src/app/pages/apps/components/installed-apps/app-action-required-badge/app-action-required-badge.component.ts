@@ -21,6 +21,8 @@ export class AppActionRequiredBadgeComponent {
   readonly app = input.required<App>();
 
   protected onClick(): void {
+    // Click intentionally bubbles to the parent app-row, whose handler opens
+    // the details panel that mounts the notes card; the poll then highlights it.
     this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
       block: 'start',
       inset: true,

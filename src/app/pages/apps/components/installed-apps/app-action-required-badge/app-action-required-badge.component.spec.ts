@@ -23,23 +23,28 @@ describe('AppActionRequiredBadgeComponent', () => {
   }
 
   it('renders nothing when action_required is false', () => {
-    setupTest({ name: 'app1', action_required: false });
+    setupTest({ name: 'app1', action_required: false, notes: 'do something' });
+    expect(spectator.query('.action-required-badge')).toBeNull();
+  });
+
+  it('renders nothing when notes are empty even if action_required is true', () => {
+    setupTest({ name: 'app1', action_required: true, notes: '' });
     expect(spectator.query('.action-required-badge')).toBeNull();
   });
 
   it('does not call NavigateAndHighlightService when action_required is false', () => {
-    setupTest({ name: 'app1', action_required: false });
+    setupTest({ name: 'app1', action_required: false, notes: 'do something' });
     expect(spectator.inject(NavigateAndHighlightService).waitForElement).not.toHaveBeenCalled();
   });
 
-  it('renders an alert icon button when action_required is true', () => {
-    setupTest({ name: 'app1', action_required: true });
+  it('renders an alert icon button when action_required is true and notes are present', () => {
+    setupTest({ name: 'app1', action_required: true, notes: 'do something' });
     expect(spectator.query('.action-required-badge')).toExist();
     expect(spectator.query('.action-required-badge tn-icon')).toExist();
   });
 
   it('asks NavigateAndHighlightService to highlight the Notes card on click', () => {
-    setupTest({ name: 'app1', action_required: true });
+    setupTest({ name: 'app1', action_required: true, notes: 'do something' });
     const navigateAndHighlight = spectator.inject(NavigateAndHighlightService);
     spectator.click('.action-required-badge');
 
