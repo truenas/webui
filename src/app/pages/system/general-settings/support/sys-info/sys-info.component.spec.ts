@@ -85,6 +85,17 @@ describe('SysInfoComponent', () => {
     });
   });
 
+  it('hides Contract Type row when contract_type is null', () => {
+    spectator.setInput({
+      licenseInfo: { ...licenseInfo, contract_type: null } as LicenseInfoInSupport,
+      hasLicense: true,
+      isProactiveSupportAvailable: true,
+    });
+
+    const infoRows = getInfoRows();
+    expect(infoRows).not.toHaveProperty('Contract Type:');
+  });
+
   describe('Proactive support status', () => {
     beforeEach(() => {
       spectator.setInput({

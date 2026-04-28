@@ -1,10 +1,12 @@
 @let license = licenseInfo();
 @if (hasLicense() && license) {
   <mat-list>
-    <mat-list-item>
-      <span class="label">{{ 'Contract Type' | translate }}:</span>
-      <span class="value">{{ getLabelForContractType(license.contract_type) }}</span>
-    </mat-list-item>
+    @if (license.contract_type) {
+      <mat-list-item>
+        <span class="label">{{ 'Contract Type' | translate }}:</span>
+        <span class="value">{{ getLabelForContractType(license.contract_type) }}</span>
+      </mat-list-item>
+    }
     <mat-list-item>
       <span class="label">{{ 'Expiration Date' | translate }}:</span>
       <span class="value">
