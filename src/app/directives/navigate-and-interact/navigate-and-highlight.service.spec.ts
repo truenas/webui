@@ -7,7 +7,7 @@ import {
 import { MockProvider } from 'ng-mocks';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 
-describe('NavigateAndInteractService', () => {
+describe('NavigateAndHighlightService', () => {
   let spectator: SpectatorService<NavigateAndHighlightService>;
   const createComponent = createServiceFactory({
     service: NavigateAndHighlightService,

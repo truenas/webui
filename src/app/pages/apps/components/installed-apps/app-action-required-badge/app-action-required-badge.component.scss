@@ -17,6 +17,12 @@
     background: var(--hover-bg);
   }
 
+  &:focus-visible {
+    background: var(--hover-bg);
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+
   tn-icon {
     height: 18px;
     width: 18px;
