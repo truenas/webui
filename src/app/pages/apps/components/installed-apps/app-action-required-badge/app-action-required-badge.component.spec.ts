@@ -27,6 +27,11 @@ describe('AppActionRequiredBadgeComponent', () => {
     expect(spectator.query('.action-required-badge')).toBeNull();
   });
 
+  it('does not call NavigateAndHighlightService when action_required is false', () => {
+    setupTest({ name: 'app1', action_required: false });
+    expect(spectator.inject(NavigateAndHighlightService).waitForElement).not.toHaveBeenCalled();
+  });
+
   it('renders an alert icon button when action_required is true', () => {
     setupTest({ name: 'app1', action_required: true });
     expect(spectator.query('.action-required-badge')).toExist();

@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
@@ -14,7 +13,7 @@ import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/a
   templateUrl: './app-action-required-badge.component.html',
   styleUrls: ['./app-action-required-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule, MatTooltipModule, TnIconComponent, TnTooltipDirective, TestDirective],
+  imports: [TranslateModule, TnIconComponent, TnTooltipDirective, TestDirective],
 })
 export class AppActionRequiredBadgeComponent {
   private navigateAndHighlight = inject(NavigateAndHighlightService);
@@ -23,6 +22,8 @@ export class AppActionRequiredBadgeComponent {
 
   protected readonly isVisible = computed(() => this.app().action_required);
 
+  // Click intentionally bubbles to the parent row so it triggers viewDetails().
+  // The 5s polling in waitForElement covers the navigation delay before the Notes card mounts.
   protected highlightNotes(): void {
     this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
       block: 'start',

@@ -73,16 +73,16 @@ export class NavigateAndHighlightService {
 
   scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
     htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
-    this.highlight(htmlElement, options?.inset);
+    this.highlight(htmlElement, { inset: options?.inset });
   }
 
-  highlight(targetElement: HTMLElement, inset = false): void {
+  highlight(targetElement: HTMLElement, options?: { inset?: boolean }): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
 
     targetElement.style.outline = '2px solid var(--primary)';
-    targetElement.style.outlineOffset = inset ? '-2px' : '2px';
+    targetElement.style.outlineOffset = options?.inset ? '-2px' : '2px';
     this.prevHighlightTarget = targetElement;
 
     this.prevSubscription = timer(2150).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
