@@ -8,11 +8,13 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-radio-group
-          [label]="'Send Mail Method' | translate"
-          [formControl]="sendMethodControl"
-          [options]="sendMethodOptions$"
-        ></ix-radio-group>
+        <div class="hidden">
+          <ix-radio-group
+            [label]="'Send Mail Method' | translate"
+            [formControl]="sendMethodControl"
+            [options]="sendMethodOptions$"
+          ></ix-radio-group>
+        </div>
 
         <ix-input
           formControlName="fromemail"

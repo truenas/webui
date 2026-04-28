@@ -1,11 +1,12 @@
 <div
-  class="sticky top-0 z-20 bg-background bg-opacity-100 flex justify-center items-center h-20 pt-4"
+  class="sticky top-0 z-20 bg-background bg-opacity-100 flex justify-center items-center h-20 pt-4 relative"
   [class.has-many-components]="(componentsSize$ | async) > 1"
 >
   @if ((componentsSize$ | async) > 1 && !disableClose()) {
     <tn-icon-button
       name="chevron-left"
       library="mdi"
+      class="absolute left-4"
       id="ix-close-icon"
       tnTooltipPosition="left"
       [ixTest]="['close-slide-in']"
@@ -14,7 +15,7 @@
       (click)="close()"
     ></tn-icon-button>
   }
-  <h3 class="ix-form-title" [class.title-left-margin]="(componentsSize$ | async) === 1">
+  <h3 class="ix-form-title">
     {{ title() ? (title() | translate) : '' }}
     @if (requiredRoles().length && !(hasRequiredRoles | async)) {
       <ix-readonly-badge></ix-readonly-badge>
@@ -24,7 +25,7 @@
     <tn-icon-button
       name="close"
       library="mdi"
-      class="icon-margin-right"
+      class="absolute right-4"
       id="ix-close-icon"
       tnTooltipPosition="left"
       [ixTest]="['close-slide-in']"

@@ -4,10 +4,16 @@
 }
 
 .form-actions {
+  margin-top: 12px;
   padding-bottom: 12px;
+  height: 54px;
+  width: 100%;
+  display: flex;
+  gap: 10px;
 
   button {
-    margin-left: 10px;
+    height: 54px;
+    flex: 1;
   }
 }
 

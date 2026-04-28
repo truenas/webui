@@ -21,16 +21,18 @@
 .input-container {
   background: var(--bg1);
   border: solid 1.5px var(--lines);
-  border-radius: 2px;
+  border-radius: 100px;
   display: flex;
   flex-direction: row;
   font-size: 12px;
+  height: 46px;
   position: relative;
 
   @include prevent-ios-autozoom;
 
   input {
     min-height: 26px;
+    padding-left: 16px;
   }
 
   &:focus-within {
@@ -82,6 +84,13 @@
 
 .has-value {
   padding-right: 25px;
+}
+
+::ng-deep {
+  .mat-mdc-autocomplete-panel {
+    border-radius: 12px !important;
+    margin-top: 4px;
+  }
 }
 
 mat-option.combobox-mat-options {
