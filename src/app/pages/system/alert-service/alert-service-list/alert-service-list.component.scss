@@ -1,7 +1,14 @@
 mat-toolbar-row {
-  > div {
+  >div {
     display: flex;
     gap: 8px;
     justify-content: flex-end;
+  }
+}
+
+.alert-service-list {
+  ::ng-deep .mat-mdc-card-content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 }
