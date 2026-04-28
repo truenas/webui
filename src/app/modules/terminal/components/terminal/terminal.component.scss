@@ -4,16 +4,18 @@
 
 .terminal-wrapper {
   background: black;
+  border-radius: 12px;
   height: calc(100% - 105px);
   margin-left: 8px;
   margin-right: 8px;
+  overflow: hidden;
   padding: 10px 0 10px 10px;
   position: relative;
 }
 
 #terminal {
   height: 100%;
-  
+
   &.terminal-dimmed {
     opacity: 0.3;
     pointer-events: none;
@@ -62,4 +64,3 @@
     }
   }
 }
-

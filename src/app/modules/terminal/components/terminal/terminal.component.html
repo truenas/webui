@@ -6,42 +6,44 @@
   }
 </ix-page-header>
 
-<div class="terminal-wrapper">
-  @if (!shellConnected()) {
-    <div class="terminal-busy-overlay">
-      <div class="busy-content">
-        @if (isReconnecting()) {
-          <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
-        } @else {
-          @if (!hasAttemptedAutoReconnect) {
+<ix-page-content>
+  <div class="terminal-wrapper">
+    @if (!shellConnected()) {
+      <div class="terminal-busy-overlay">
+        <div class="busy-content">
+          @if (isReconnecting()) {
             <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
           } @else {
-            <p>
-              {{
-                "Connection lost. Click Reconnect to restore the session."
-                  | translate
-              }}
-            </p>
-            <button
-              mat-button
-              color="primary"
-              [disabled]="isReconnecting()"
-              (click)="reconnect()"
-            >
-              {{ "Reconnect" | translate }}
-            </button>
+            @if (!hasAttemptedAutoReconnect) {
+              <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
+            } @else {
+              <p>
+                {{
+                  "Connection lost. Click Reconnect to restore the session."
+                    | translate
+                }}
+              </p>
+              <button
+                mat-button
+                color="primary"
+                [disabled]="isReconnecting()"
+                (click)="reconnect()"
+              >
+                {{ "Reconnect" | translate }}
+              </button>
+            }
           }
-        }
+        </div>
       </div>
-    </div>
-  }
-  <div
-    #terminal
-    id="terminal"
-    [ngStyle]="{ 'font-size': fontSize + 'px' }"
-    [class.terminal-dimmed]="!shellConnected()"
-  ></div>
-</div>
+    }
+    <div
+      #terminal
+      id="terminal"
+      [ngStyle]="{ 'font-size': fontSize + 'px' }"
+      [class.terminal-dimmed]="!shellConnected()"
+    ></div>
+  </div>
+</ix-page-content>
 
 <ng-template #terminalLoading>
   <mat-progress-spinner

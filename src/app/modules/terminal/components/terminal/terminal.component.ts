@@ -15,6 +15,7 @@ import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TerminalFontSizeComponent } from 'app/modules/terminal/components/font-size/terminal-font-size.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
@@ -37,6 +38,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     NgTemplateOutlet,
     PageHeaderComponent,
     TerminalFontSizeComponent,
+    PageContentComponent,
   ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
