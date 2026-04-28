@@ -531,7 +531,7 @@ describe('OtherOptionsSectionComponent', () => {
       store$.overrideSelector(selectSystemInfo, {
         productType: ProductType.Enterprise,
         license: {
-          features: [LicenseFeature.Dedup],
+          features: [{ name: LicenseFeature.Dedup, start_date: null, expires_at: null }],
         },
       } as unknown as SystemInfo);
       store$.refreshState();

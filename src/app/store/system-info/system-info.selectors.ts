@@ -44,8 +44,8 @@ export const selectCopyrightHtml = createSelector(
 );
 
 export const selectLicense = createSelector(
-  selectSystemInfoState,
-  (state) => state?.systemInfo?.license ?? null,
+  selectSystemInfo,
+  (systemInfo) => systemInfo?.license ?? null,
 );
 
 export const selectLicenseFeatures = createSelector(
