@@ -37,16 +37,17 @@ const systemInfo = {
 } as SystemInfo;
 
 function makeLicense(supportExpiresAt: string | null): License {
+  const expiresAtDate = supportExpiresAt ? { $type: 'date' as const, $value: supportExpiresAt } : null;
   return {
     id: 'test-license-id',
     type: LicenseType.EnterpriseSingle,
     contract_type: ContractType.Gold,
     model: 'M40',
-    expires_at: supportExpiresAt,
+    expires_at: expiresAtDate,
     features: [
       { name: LicenseFeature.Apps, start_date: null, expires_at: null },
-      ...(supportExpiresAt
-        ? [{ name: LicenseFeature.Support, start_date: null, expires_at: supportExpiresAt }]
+      ...(expiresAtDate
+        ? [{ name: LicenseFeature.Support, start_date: null, expires_at: expiresAtDate }]
         : []),
     ],
     serials: ['AA-00001'],

@@ -10,7 +10,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { format } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -136,13 +136,15 @@ export class SupportCardComponent implements OnInit {
     // Support contract dates live on the SUPPORT feature entry; fall back to the
     // top-level expiration if the SUPPORT entry is absent.
     const supportFeature = license.features.find((feature) => feature.name === LicenseFeature.Support);
-    const expirationIso = supportFeature?.expires_at ?? license.expires_at ?? null;
+    const expirationIso = supportFeature?.expires_at?.$value ?? license.expires_at?.$value ?? null;
 
     let expirationDate: string | null = null;
     let daysLeftInContract: number | null = null;
     if (expirationIso) {
+      // expirationIso is a calendar date (YYYY-MM-DD) parsed as UTC midnight; format
+      // in UTC so the displayed date matches the API regardless of the user's zone.
       const expDate = new Date(expirationIso);
-      expirationDate = format(expDate, this.localeService.getPreferredDateFormat());
+      expirationDate = formatInTimeZone(expDate, 'UTC', this.localeService.getPreferredDateFormat());
       daysLeftInContract = Math.round((expDate.getTime() - nowMs) / oneDayMillis);
     }
 

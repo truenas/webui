@@ -35,7 +35,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       version: '25.10.0-MASTER-20250126-184805',
       license: {
         contract_type: ContractType.Gold,
-        expires_at: '2025-01-01',
+        expires_at: { $type: 'date', $value: '2025-01-01' },
       } as License,
       system_serial: 'AA-00002',
       hostname: 'test-hostname-b',

@@ -1,6 +1,6 @@
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 // TODO: Split mixed interface for system.info and webui.main.dashboard.sys_info
 export interface SystemInfo {
@@ -30,14 +30,14 @@ export interface SystemInfo {
 /**
  * Per-feature license entry.
  *
- * `start_date` and `expires_at` are ISO date strings (`YYYY-MM-DD`) or null.
- * The `Support` entry, when present, carries the contract dates surfaced on
+ * Dates are wrapped in the `ApiDate` envelope (`{ $type: 'date', $value: 'YYYY-MM-DD' }`)
+ * or null. The `Support` entry, when present, carries the contract dates surfaced on
  * the support card; other features may have null dates.
  */
 export interface LicenseFeatureInfo {
   name: LicenseFeature;
-  start_date: string | null;
-  expires_at: string | null;
+  start_date: ApiDate | null;
+  expires_at: ApiDate | null;
 }
 
 /**
@@ -52,7 +52,7 @@ export interface License {
   type: LicenseType;
   contract_type: ContractType | null;
   model: string | null;
-  expires_at: string | null;
+  expires_at: ApiDate | null;
   features: LicenseFeatureInfo[];
   serials: string[];
   enclosures: Record<string, number>;
