@@ -97,16 +97,24 @@ describe('SupportCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  describe('System with a license', () => {
-    beforeEach(() => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectSystemInfo, {
-        ...systemInfo,
-        license: makeLicense('2027-09-29'),
-      });
-      store$.refreshState();
-      spectator.detectChanges();
+  /**
+   * Push a fresh systemInfo through the store and let the support-card
+   * subscription re-fire (NgRx select uses identity-based distinctUntilChanged,
+   * so we always pass a new reference).
+   */
+  function emitSystemInfo(overrides: Partial<SystemInfo> = {}): void {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSystemInfo, {
+      ...systemInfo,
+      license: makeLicense('2027-09-29'),
+      ...overrides,
     });
+    store$.refreshState();
+    spectator.detectChanges();
+  }
+
+  describe('System with a license', () => {
+    beforeEach(() => emitSystemInfo());
 
     describe('Proactive support availability', () => {
       it('checks if proactive support is available when license is present', () => {
@@ -121,15 +129,7 @@ describe('SupportCardComponent', () => {
         const api = spectator.inject(ApiService);
         jest.spyOn(api, 'call').mockReturnValue(of(false));
 
-        // Re-emit systemInfo with a fresh reference so the subscription re-fires
-        // (NgRx select uses distinctUntilChanged on object identity).
-        const store$ = spectator.inject(MockStore);
-        store$.overrideSelector(selectSystemInfo, {
-          ...systemInfo,
-          license: makeLicense('2027-09-29'),
-        });
-        store$.refreshState();
-        spectator.detectChanges();
+        emitSystemInfo();
 
         expect(spectator.component.isProactiveSupportAvailable()).toBe(false);
       });
@@ -177,14 +177,7 @@ describe('SupportCardComponent', () => {
           return of(true);
         });
 
-        // Re-emit systemInfo with a fresh reference so the subscription re-fires.
-        const store$ = spectator.inject(MockStore);
-        store$.overrideSelector(selectSystemInfo, {
-          ...systemInfo,
-          license: makeLicense('2027-09-29'),
-        });
-        store$.refreshState();
-        spectator.detectChanges();
+        emitSystemInfo();
 
         const banner = spectator.query('.support-banner.proactive');
         expect(banner).not.toExist();
@@ -193,14 +186,10 @@ describe('SupportCardComponent', () => {
 
     describe('Contract expiration warning banner', () => {
       beforeEach(() => {
-        const store$ = spectator.inject(MockStore);
-        store$.overrideSelector(selectSystemInfo, {
-          ...systemInfo,
-          datetime: { $date: 1767830400000 }, // 2026-01-08
+        emitSystemInfo({
+          datetime: { $date: 1767830400000 } as SystemInfo['datetime'], // 2026-01-08
           license: makeLicense('2026-01-11'),
         });
-        store$.refreshState();
-        spectator.detectChanges();
       });
 
       it('shows warning banner when contract expires within 14 days', () => {
@@ -215,14 +204,10 @@ describe('SupportCardComponent', () => {
       });
 
       it('does not show warning banner when contract expires in more than 14 days', () => {
-        const store$ = spectator.inject(MockStore);
-        store$.overrideSelector(selectSystemInfo, {
-          ...systemInfo,
-          datetime: { $date: 1767830400000 }, // 2026-01-08
+        emitSystemInfo({
+          datetime: { $date: 1767830400000 } as SystemInfo['datetime'], // 2026-01-08
           license: makeLicense('2026-02-01'), // 24 days away
         });
-        store$.refreshState();
-        spectator.detectChanges();
 
         const banner = spectator.query('.support-banner.warning');
         expect(banner).not.toExist();
@@ -284,13 +269,7 @@ describe('SupportCardComponent', () => {
         return of(null);
       });
 
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectSystemInfo, {
-        ...systemInfo,
-        license: makeLicense('2027-09-29'),
-      });
-      store$.refreshState();
-      spectator.detectChanges();
+      emitSystemInfo();
     });
 
     it('shows upsell banner for support options', () => {

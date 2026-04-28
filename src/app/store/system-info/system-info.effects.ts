@@ -29,7 +29,7 @@ function normalizeLicense(license: License | null): License | null {
 
   let contractType: ContractType | null = null;
   if (license.contract_type) {
-    const upper = license.contract_type.toString().toUpperCase();
+    const upper = license.contract_type.toUpperCase();
     contractType = validContractTypes.has(upper) ? (upper as ContractType) : null;
   }
 
@@ -46,7 +46,14 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return forkJoin({
         systemInfo: this.api.call('system.info'),
-        license: this.api.call('truenas.license.info'),
+        // A license fetch failure must not take the dashboard down. Recover to
+        // null so `systemInfoLoaded` still fires with the rest of the payload.
+        license: this.api.call('truenas.license.info').pipe(
+          catchError((error: unknown) => {
+            console.error(error);
+            return of(null);
+          }),
+        ),
       }).pipe(
         map(({ systemInfo, license }) => systemInfoLoaded({
           systemInfo: { ...systemInfo, license: normalizeLicense(license) },

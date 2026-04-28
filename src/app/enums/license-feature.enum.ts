@@ -8,3 +8,15 @@ export enum LicenseFeature {
   Sed = 'SED',
   Support = 'SUPPORT',
 }
+
+export function getLabelForLicenseFeature(feature: LicenseFeature | string): string {
+  const labels: Record<LicenseFeature, string> = {
+    [LicenseFeature.Apps]: 'Apps',
+    [LicenseFeature.FibreChannel]: 'Fibre Channel',
+    [LicenseFeature.Dedup]: 'Deduplication',
+    [LicenseFeature.Vm]: 'Virtualization',
+    [LicenseFeature.Sed]: 'Self-Encrypting Drives',
+    [LicenseFeature.Support]: 'Support',
+  };
+  return labels[feature as LicenseFeature] ?? feature;
+}

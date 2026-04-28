@@ -14,6 +14,13 @@ import {
   selectIsEnterprise,
 } from 'app/store/system-info/system-info.selectors';
 
+// Hoist parameterized selector instances so consumers share memoization across
+// subscriptions (each call to `selectHasLicenseFeature` builds a new selector).
+const selectHasAppsFeature = selectHasLicenseFeature(LicenseFeature.Apps);
+const selectHasVmFeature = selectHasLicenseFeature(LicenseFeature.Vm);
+const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
+const selectHasFibreChannelFeature = selectHasLicenseFeature(LicenseFeature.FibreChannel);
+
 @Injectable({
   providedIn: 'root',
 })
@@ -26,7 +33,7 @@ export class LicenseService {
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
   hasFibreChannel$ = combineLatest([
-    this.store$.select(selectHasLicenseFeature(LicenseFeature.FibreChannel)),
+    this.store$.select(selectHasFibreChannelFeature),
     this.api.call('fc.capable'),
   ]).pipe(
     map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
@@ -34,14 +41,14 @@ export class LicenseService {
   );
 
   hasVms$ = combineLatest([
-    this.store$.select(selectHasLicenseFeature(LicenseFeature.Vm)),
+    this.store$.select(selectHasVmFeature),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
     map(([hasVm, isEnterprise]) => !isEnterprise || hasVm),
   );
 
   hasApps$ = combineLatest([
-    this.store$.select(selectHasLicenseFeature(LicenseFeature.Apps)),
+    this.store$.select(selectHasAppsFeature),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
     map(([hasApps, isEnterprise]) => !isEnterprise || hasApps),
@@ -49,11 +56,11 @@ export class LicenseService {
 
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
-  readonly hasSed$ = this.store$.select(selectHasLicenseFeature(LicenseFeature.Sed));
+  readonly hasSed$ = this.store$.select(selectHasSedFeature);
 
   readonly shouldShowContainers$ = combineLatest([
     this.store$.select(selectIsEnterprise),
-    this.store$.select(selectHasLicenseFeature(LicenseFeature.Apps)),
+    this.store$.select(selectHasAppsFeature),
   ]).pipe(
     map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
   );
