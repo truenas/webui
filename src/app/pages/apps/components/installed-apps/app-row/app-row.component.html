@@ -15,7 +15,10 @@
 
     <div class="app-name">{{ app().name }}</div>
 
-    <ix-app-action-required-badge [app]="app()"></ix-app-action-required-badge>
+    <ix-app-action-required-badge
+      [app]="app()"
+      (actionRequiredClicked)="actionRequiredClicked.emit()"
+    ></ix-app-action-required-badge>
   </div>
 </div>
 <div class="cell cell-status">
