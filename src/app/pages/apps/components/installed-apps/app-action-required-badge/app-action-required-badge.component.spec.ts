@@ -4,7 +4,7 @@ import { App } from 'app/interfaces/app.interface';
 import {
   AppActionRequiredBadgeComponent,
 } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
-import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
+import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 
 describe('AppActionRequiredBadgeComponent', () => {
   let spectator: Spectator<AppActionRequiredBadgeComponent>;
@@ -38,7 +38,7 @@ describe('AppActionRequiredBadgeComponent', () => {
     expect(spectator.query('.action-required-badge tn-icon')).toExist();
   });
 
-  it('asks NavigateAndHighlightService to highlight the Notes card', () => {
+  it('asks NavigateAndHighlightService to highlight the Notes card on click', () => {
     setupTest({ name: 'app1', action_required: true });
     const navigateAndHighlight = spectator.inject(NavigateAndHighlightService);
     spectator.click('.action-required-badge');
@@ -47,19 +47,5 @@ describe('AppActionRequiredBadgeComponent', () => {
       appNotesCardAnchorId,
       { block: 'start', inset: true },
     );
-  });
-
-  it('emits viewDetailsRequested and stops click propagation', () => {
-    setupTest({ name: 'app1', action_required: true });
-    const emitSpy = jest.fn();
-    spectator.component.viewDetailsRequested.subscribe(emitSpy);
-
-    const button = spectator.query('.action-required-badge') as HTMLButtonElement;
-    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
-    const stopPropagationSpy = jest.spyOn(clickEvent, 'stopPropagation');
-    button.dispatchEvent(clickEvent);
-
-    expect(emitSpy).toHaveBeenCalledTimes(1);
-    expect(stopPropagationSpy).toHaveBeenCalled();
   });
 });

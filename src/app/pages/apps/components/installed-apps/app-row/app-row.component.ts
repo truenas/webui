@@ -53,7 +53,6 @@ export class AppRowComponent {
   readonly restartApp = output();
   readonly clickStatus = output();
   readonly selectionChange = output();
-  readonly viewDetailsRequested = output();
 
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
