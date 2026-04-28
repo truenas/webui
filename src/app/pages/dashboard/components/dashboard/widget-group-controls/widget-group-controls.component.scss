@@ -24,4 +24,13 @@
       visibility: visible;
     }
   }
+
+  .edit-and-delete {
+    ::ng-deep {
+      .mat-mdc-icon-button {
+        width: 32px !important;
+        height: 32px !important;
+      }
+    }
+  }
 }

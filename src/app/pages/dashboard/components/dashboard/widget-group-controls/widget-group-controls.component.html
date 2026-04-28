@@ -28,7 +28,7 @@
     [ixTest]="['edit-group', 'widget' + index()]"
     (click)="edit.emit()"
   >
-    <tn-icon class="size-5!" name="pencil" library="mdi"></tn-icon>
+    <tn-icon class="size-5! text-foreground!" name="app-pencil" library="custom"></tn-icon>
   </button>
   <button
     mat-icon-button
@@ -36,9 +36,9 @@
     [ixTest]="['delete-group', 'widget' + index()]"
     (click)="delete.emit()"
   >
-    <tn-icon class="size-5!" name="delete" library="mdi"></tn-icon>
+    <tn-icon class="size-5! text-foreground!" name="app-delete" library="custom"></tn-icon>
   </button>
   <button cdkDragHandle mat-icon-button>
-    <tn-icon class="size-5!" name="drag-horizontal" library="mdi"></tn-icon>
+    <tn-icon class="size-5! text-foreground!" name="app-drag-horizontal" library="custom"></tn-icon>
   </button>
 </div>
