@@ -3,8 +3,8 @@ import { NavigateAndHighlightService } from 'app/directives/navigate-and-interac
 import { App } from 'app/interfaces/app.interface';
 import {
   AppActionRequiredBadgeComponent,
-  appNotesCardAnchorId,
 } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
+import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 
 describe('AppActionRequiredBadgeComponent', () => {
   let spectator: Spectator<AppActionRequiredBadgeComponent>;
@@ -40,7 +40,7 @@ describe('AppActionRequiredBadgeComponent', () => {
 
     expect(navigateAndHighlight.waitForElement).toHaveBeenCalledWith(
       appNotesCardAnchorId,
-      { block: 'start' },
+      { block: 'start', inset: true },
     );
   });
 });

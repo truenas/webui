@@ -5,8 +5,12 @@ import { Subscription, timer } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
 export interface WaitForElementOptions {
-  onFound?: (element: HTMLElement) => void;
   block?: ScrollLogicalPosition;
+  /**
+   * When true, draws the highlight outline inset (negative outline-offset)
+   * so it isn't clipped by the viewport edge or an overflow container.
+   */
+  inset?: boolean;
 }
 
 @Injectable({
@@ -50,8 +54,7 @@ export class NavigateAndHighlightService {
 
     if (htmlElement) {
       this.pendingTimeoutId = null;
-      this.scrollIntoView(htmlElement, options?.block);
-      options?.onFound?.(htmlElement);
+      this.scrollIntoView(htmlElement, options);
     } else if (attemptCount < maxAttempts) {
       this.pendingTimeoutId = setTimeout(() => {
         this.pollForElement(hash, attemptCount + 1, options);
@@ -68,18 +71,18 @@ export class NavigateAndHighlightService {
     }
   }
 
-  scrollIntoView(htmlElement: HTMLElement, block: ScrollLogicalPosition = 'center'): void {
-    htmlElement.scrollIntoView({ block });
-    this.highlight(htmlElement);
+  scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
+    htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
+    this.highlight(htmlElement, options?.inset);
   }
 
-  highlight(targetElement: HTMLElement): void {
+  highlight(targetElement: HTMLElement, inset = false): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
 
     targetElement.style.outline = '2px solid var(--primary)';
-    targetElement.style.outlineOffset = '-2px';
+    targetElement.style.outlineOffset = inset ? '-2px' : '2px';
     this.prevHighlightTarget = targetElement;
 
     this.prevSubscription = timer(2150).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {

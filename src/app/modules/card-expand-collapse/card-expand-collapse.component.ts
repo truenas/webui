@@ -64,12 +64,6 @@ export class CardExpandCollapseComponent implements OnChanges, AfterViewInit {
     this.section().nativeElement.style.maxHeight = this.isCollapsed() ? `${this.maxHeight()}px` : 'none';
   }
 
-  expand(): void {
-    this.setHeight();
-    this.isCollapsed.set(false);
-    this.section().nativeElement.style.maxHeight = 'none';
-  }
-
   private setHeight(): void {
     this.height.set(this.section().nativeElement.offsetHeight || this.maxHeight());
   }
