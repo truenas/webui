@@ -81,7 +81,6 @@ export class ServiceFtpComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingFtpWrite];
 
   protected isFormLoading = signal(false);
-  isAdvancedMode = false;
 
   kibParser = (value: string): number | null => this.iecFormatter.memorySizeParsing(value, 'KiB');
 
@@ -176,10 +175,6 @@ export class ServiceFtpComponent implements OnInit {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
-  }
-
-  onToggleAdvancedOptions(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
   }
 
   private loadConfig(): void {

@@ -14,8 +14,9 @@
     display: block;
   }
 
-  > * {
+  >* {
     width: 50%;
+    padding: 0 12px;
 
     @media (max-width: $breakpoint-tablet) {
       width: 100%;
