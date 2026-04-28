@@ -29,164 +29,101 @@
       </ix-fieldset>
 
       <ix-fieldset [title]="'Additional Options' | translate">
-        <ix-checkbox
-          formControlName="force_size"
-          [label]="helptext.forceSizeLabel | translate"
-          [tooltip]="helptext.forceSizeTooltip | translate"
-        ></ix-checkbox>
-
-        @if (form.controls.sparse.enabled) {
+        <div class="row">
           <ix-checkbox
-            formControlName="sparse"
-            [label]="helptext.sparseLabel | translate"
-            [tooltip]="helptext.sparseTooltip | translate"
+            formControlName="force_size"
+            [label]="helptext.forceSizeLabel | translate"
+            [tooltip]="helptext.forceSizeTooltip | translate"
           ></ix-checkbox>
-        }
 
-        <ix-details-table class="main-details">
-          <ix-details-item [label]="helptext.commentsLabel | translate">
-            <ix-editable>
-              <div view>{{ form.value.comments }}</div>
-              <div edit>
-                <ix-textarea
-                  formControlName="comments"
-                  [attr.aria-label]="helptext.commentsLabel | translate"
-                ></ix-textarea>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-          <ix-details-item
+          @if (form.controls.sparse.enabled) {
+            <ix-checkbox
+              formControlName="sparse"
+              [label]="helptext.sparseLabel | translate"
+              [tooltip]="helptext.sparseTooltip | translate"
+            ></ix-checkbox>
+          }
+        </div>
+
+        <ix-textarea
+          formControlName="comments"
+          [label]="helptext.commentsLabel | translate"
+        ></ix-textarea>
+
+        <div class="row">
+          <ix-select
+            formControlName="sync"
             [label]="helptext.syncLabel | translate"
             [tooltip]="helptext.syncTooltip | translate"
-          >
-            <ix-editable>
-              <div view>{{ getOptionLabel(syncOptions, form.controls.sync.value) }}</div>
-              <div edit>
-                <ix-select
-                  formControlName="sync"
-                  [options]="syncOptions$"
-                  [attr.aria-label]="helptext.syncLabel | translate"
-                  [required]="true"
-                ></ix-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-          <ix-details-item
+            [options]="syncOptions$"
+            [required]="true"
+          ></ix-select>
+
+          <ix-select
+            formControlName="compression"
             [label]="helptext.compressionLabel | translate"
             [tooltip]="helptext.compressionTooltip | translate"
-          >
-            <ix-editable>
-              <div view>{{ getOptionLabel(compressionOptions, form.controls.compression.value) }}</div>
-              <div edit>
-                <ix-select
-                  formControlName="compression"
-                  [options]="compressionOptions$"
-                  [attr.aria-label]="helptext.compressionLabel | translate"
-                  [required]="true"
-                ></ix-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-          <ix-details-item
+            [options]="compressionOptions$"
+            [required]="true"
+          ></ix-select>
+        </div>
+
+        <div class="row">
+          <ix-select
+            formControlName="deduplication"
             [label]="helptext.deduplicationLabel | translate"
             [tooltip]="helptext.deduplicationTooltip | translate"
-          >
-            <ix-editable>
-              <div view>{{ getOptionLabel(deduplicationOptions, form.controls.deduplication.value) }}</div>
-              <div edit>
-                <ix-select
-                  formControlName="deduplication"
-                  [options]="deduplicationOptions$"
-                  [attr.aria-label]="helptext.deduplicationLabel | translate"
-                  [required]="true"
-                ></ix-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-          <ix-details-item
+            [options]="deduplicationOptions$"
+            [required]="true"
+          ></ix-select>
+
+          <ix-select
+            formControlName="readonly"
             [label]="helptext.readonlyLabel | translate"
             [tooltip]="helptext.readonlyTooltip | translate"
-          >
-            <ix-editable>
-              <div view>{{ getOptionLabel(readonlyOptions, form.controls.readonly.value) }}</div>
-              <div edit>
-                <ix-select
-                  formControlName="readonly"
-                  [options]="readonlyOptions$"
-                  [attr.aria-label]="helptext.readonlyLabel | translate"
-                  [required]="true"
-                ></ix-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
+            [options]="readonlyOptions$"
+            [required]="true"
+          ></ix-select>
+        </div>
+
+        <div class="row">
           @if (form.controls.volblocksize.enabled) {
-            <ix-details-item
+            <ix-select
+              formControlName="volblocksize"
               [label]="helptext.volblocksizeLabel | translate"
               [tooltip]="helptext.volblocksizeTooltip | translate"
-            >
-              <ix-editable>
-                <div view>{{ getOptionLabel(volblocksizeOptions, form.controls.volblocksize.value) }}</div>
-                <div edit>
-                  <ix-select
-                    formControlName="volblocksize"
-                    [options]="volblocksizeOptions$"
-                    [attr.aria-label]="helptext.volblocksizeLabel | translate"
-                    [required]="true"
-                  ></ix-select>
-                </div>
-              </ix-editable>
-            </ix-details-item>
+              [options]="volblocksizeOptions$"
+              [required]="true"
+            ></ix-select>
           }
-          <ix-details-item
+
+          <ix-select
+            formControlName="snapdev"
             [label]="'Snapdev' | translate"
             [tooltip]="'Controls whether the volume snapshot devices under /dev/zvol/⟨pool⟩  are hidden or visible. The default value is hidden.' | translate"
-          >
-            <ix-editable>
-              <div view>{{ getOptionLabel(snapdevOptions, form.controls.snapdev.value) }}</div>
-              <div edit>
-                <ix-select
-                  formControlName="snapdev"
-                  [options]="snapdevOptions$"
-                  [attr.aria-label]="'Snapdev' | translate"
-                  [required]="true"
-                ></ix-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
+            [options]="snapdevOptions$"
+            [required]="true"
+          ></ix-select>
+        </div>
 
-          <ix-details-item
-            [label]="'Use Metadata (Special) VDEVs' | translate"
-            [tooltip]="helptext.useSpecialVdevsTooltip | translate"
-          >
-            <ix-editable>
-              <div view>
-                {{ getOptionLabel(specialSmallBlockSizeOptions, form.controls.special_small_block_size.value) }}
-                @if (form.value.special_small_block_size === OnOff.On && form.value.special_small_block_size_custom) {
-                  <span> ({{ form.value.special_small_block_size_custom | ixFileSize }})</span>
-                }
-              </div>
-              <div edit>
-                <ix-select
-                  formControlName="special_small_block_size"
-                  [attr.aria-label]="'Use Metadata (Special) VDEVs' | translate"
-                  [options]="specialSmallBlockSizeOptions$"
-                  [required]="true"
-                ></ix-select>
+        <ix-select
+          formControlName="special_small_block_size"
+          [label]="'Use Metadata (Special) VDEVs' | translate"
+          [tooltip]="helptext.useSpecialVdevsTooltip | translate"
+          [options]="specialSmallBlockSizeOptions$"
+          [required]="true"
+        ></ix-select>
 
-                @if (form.value.special_small_block_size === OnOff.On) {
-                  <ix-input
-                    formControlName="special_small_block_size_custom"
-                    [label]="'Threshold' | translate"
-                    [tooltip]="helptext.specialSmallBlocksCustomTooltip | translate"
-                    [required]="true"
-                    [parse]="formatter.memorySizeParsing"
-                    [format]="formatter.memorySizeFormatting"
-                  ></ix-input>
-                }
-              </div>
-            </ix-editable>
-          </ix-details-item>
-        </ix-details-table>
+        @if (form.value.special_small_block_size === OnOff.On) {
+          <ix-input
+            formControlName="special_small_block_size_custom"
+            [label]="'Threshold' | translate"
+            [tooltip]="helptext.specialSmallBlocksCustomTooltip | translate"
+            [required]="true"
+            [parse]="formatter.memorySizeParsing"
+            [format]="formatter.memorySizeFormatting"
+          ></ix-input>
+        }
       </ix-fieldset>
 
       @if (isNew) {
@@ -245,48 +182,27 @@
             ></ix-input>
           }
 
-          <ix-details-table class="encryption-details">
-            @if (form.controls.pbkdf2iters.enabled) {
-              <ix-details-item
-                [label]="helptext.encryption.pbkdf2itersLabel | translate"
-                [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
-              >
-                <ix-editable>
-                  <div view>{{ form.value.pbkdf2iters }}</div>
-                  <div edit>
-                    <ix-input
-                      formControlName="pbkdf2iters"
-                      type="number"
-                      [attr.aria-label]="helptext.encryption.pbkdf2itersLabel | translate"
-                      [required]="true"
-                    ></ix-input>
-                  </div>
-                </ix-editable>
-              </ix-details-item>
-            }
+        <div class="row">
+          @if (form.controls.pbkdf2iters.enabled) {
+            <ix-input
+              formControlName="pbkdf2iters"
+              type="number"
+              [label]="helptext.encryption.pbkdf2itersLabel | translate"
+              [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
+              [required]="true"
+            ></ix-input>
+          }
 
-            @if (form.controls.algorithm.enabled) {
-              <ix-details-item
-                [label]="helptext.encryption.algorithmLabel | translate"
-                [tooltip]="helptext.encryption.algorithmTooltip | translate"
-              >
-                <ix-editable>
-                  <div view>
-                    @let algorithmOptions = algorithmOptions$ | async;
-                    {{ algorithmOptions ? getOptionLabel(algorithmOptions, form.value.algorithm): form.value.algorithm }}
-                  </div>
-                  <div edit>
-                    <ix-select
-                      formControlName="algorithm"
-                      [attr.aria-label]="helptext.encryption.algorithmLabel | translate"
-                      [options]="algorithmOptions$"
-                      [required]="true"
-                    ></ix-select>
-                  </div>
-                </ix-editable>
-              </ix-details-item>
-            }
-          </ix-details-table>
+          @if (form.controls.algorithm.enabled) {
+            <ix-select
+              formControlName="algorithm"
+              [label]="helptext.encryption.algorithmLabel | translate"
+              [tooltip]="helptext.encryption.algorithmTooltip | translate"
+              [options]="algorithmOptions$"
+              [required]="true"
+            ></ix-select>
+          }
+        </div>
         </ix-fieldset>
       }
 
