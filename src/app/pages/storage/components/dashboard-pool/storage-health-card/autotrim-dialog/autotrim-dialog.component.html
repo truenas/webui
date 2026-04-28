@@ -10,6 +10,7 @@
   ></ix-checkbox>
 
   <ix-form-actions>
+    <button mat-button type="button" matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
     <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="save">
       {{ 'Save' | translate }}
     </button>
