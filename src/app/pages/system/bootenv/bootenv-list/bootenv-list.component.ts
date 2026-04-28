@@ -157,6 +157,7 @@ export class BootEnvironmentListComponent implements OnInit {
           tooltip: this.translate.instant('Activate'),
           hidden: (row) => of(!row.can_activate || row.activated),
           onClick: (row) => this.doActivate(row),
+          size: 'sm',
         },
         {
           iconName: tnIconMarker('bookmark-outline', 'mdi'),
@@ -164,6 +165,7 @@ export class BootEnvironmentListComponent implements OnInit {
           tooltip: this.translate.instant('Keep'),
           hidden: (row) => of(row.keep),
           onClick: (row) => this.toggleKeep(row),
+          size: 'md',
         },
         {
           iconName: tnIconMarker('bookmark', 'mdi'),
@@ -171,12 +173,14 @@ export class BootEnvironmentListComponent implements OnInit {
           tooltip: this.translate.instant('Unkeep'),
           hidden: (row) => of(!row.keep),
           onClick: (row) => this.toggleKeep(row),
+          size: 'sm',
         },
         {
           iconName: tnIconMarker('content-copy', 'mdi'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Clone'),
           onClick: (row) => this.doClone(row),
+          size: 'sm',
         },
         {
           iconName: tnIconMarker('delete', 'mdi'),
@@ -184,6 +188,7 @@ export class BootEnvironmentListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           hidden: (row) => of(row.active || row.activated),
           onClick: (row) => this.doDelete([row]),
+          size: 'sm',
         },
       ],
       cssClass: 'actions-column',

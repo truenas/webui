@@ -32,8 +32,8 @@ body .mat-mdc-icon-button {
     width: $icon-size;
 
     svg {
-      height: $icon-size;
-      width: $icon-size;
+      height: 100%;
+      width: 100%;
     }
   }
 
