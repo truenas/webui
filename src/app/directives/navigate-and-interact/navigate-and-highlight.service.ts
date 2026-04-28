@@ -40,6 +40,8 @@ export class NavigateAndHighlightService {
   /**
    * Polls for an element by id and highlights it when found.
    * Retries up to 50 times at 100ms intervals (5 seconds total).
+   * Cancels any in-flight poll started by a previous call so only the
+   * most recent target is highlighted.
    */
   waitForElement(hash: string, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
