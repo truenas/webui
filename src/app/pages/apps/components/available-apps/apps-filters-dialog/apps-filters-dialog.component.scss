@@ -1,0 +1,56 @@
+@import 'scss-imports/variables';
+
+.ix-form-container {
+  padding: 16px 24px 24px;
+
+  ix-fieldset:first-child ::ng-deep fieldset {
+    margin-top: 0;
+  }
+}
+
+.sort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .sort-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 0;
+
+    .label {
+      font-size: 14px;
+    }
+
+    ix-checkbox {
+      ::ng-deep {
+        mat-checkbox {
+          .mdc-form-field {
+            margin-right: 0;
+          }
+
+          .mdc-checkbox {
+            padding: 0;
+          }
+        }
+
+        .ix-errors {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+
+  button {
+    width: 100%;
+    height: 54px;
+  }
+}

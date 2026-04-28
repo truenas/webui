@@ -19,33 +19,9 @@
       (click)="changeFiltersVisible()"
     >
       {{ 'Filters' | translate }}
-      @if (showFilters) {
-        <tn-icon name="chevron-up" library="mdi"></tn-icon>
-      } @else {
-        <tn-icon name="chevron-down" library="mdi"></tn-icon>
-      }
+      <tn-icon name="filter" library="mdi"></tn-icon>
     </button>
   </div>
-  @if (showFilters) {
-    <div class="filters-container">
-      <div class="filters">
-        <ix-filter-select-list
-          class="sort"
-          [formControl]="form.controls.sort"
-          [label]="'Sort' | translate"
-          [options]="(sortOptions$ | async) || []"
-        ></ix-filter-select-list>
-        <div class="categories">
-          <ix-chips
-            [formControl]="form.controls.categories"
-            [label]="'Categories' | translate"
-            [autocompleteProvider]="categoriesProvider$"
-            [allowNewEntries]="false"
-          ></ix-chips>
-        </div>
-      </div>
-    </div>
-  }
 </div>
 
 <div class="header-numbers">
@@ -85,4 +61,3 @@
     </a>
   </div>
 </div>
-

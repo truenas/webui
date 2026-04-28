@@ -873,6 +873,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   align-items: center;
   display: flex;
   flex-wrap: wrap;
+  color: var(--fg1) !important;
 
   >span {
     align-items: center;

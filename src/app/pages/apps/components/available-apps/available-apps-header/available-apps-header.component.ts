@@ -1,31 +1,25 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, Injector, OnInit, ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  BehaviorSubject,
-  debounceTime, distinctUntilChanged, filter, map, Observable, of, take,
-} from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
+import { AppsFiltersDialogComponent } from 'app/pages/apps/components/available-apps/apps-filters-dialog/apps-filters-dialog.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -41,23 +35,25 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
     MatButton,
     MatAnchor,
-    IxChipsComponent,
+    MatDialogModule,
     TnIconComponent,
     TranslateModule,
     NgxSkeletonLoaderModule,
     AsyncPipe,
     TestDirective,
     RequiresRolesDirective,
-    FilterSelectListComponent,
     RouterLink,
   ],
 })
-export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
+export class AvailableAppsHeaderComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private viewContainerRef = inject(ViewContainerRef);
+  private injector = inject(Injector);
   protected applicationsStore = inject(AppsStore);
   protected appsFilterStore = inject(AppsFilterStore);
   protected installedAppsStore = inject(InstalledAppsStore);
@@ -66,31 +62,11 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
-  form = this.fb.group({
-    sort: [null as (AppsFiltersSort | null)],
-    categories: [[] as string[]],
-  });
-
   searchControl = this.fb.control('');
-  showFilters = false;
   availableApps$ = this.applicationsStore.availableApps$;
   areLoaded$ = new BehaviorSubject(false);
   installedApps$ = this.installedAppsStore.installedApps$;
   isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
-  appsCategories: string[] = [];
-  sortOptions$: Observable<Option[]> = of([
-    { label: this.translate.instant('Category'), value: null },
-    { label: this.translate.instant('App Name'), value: AppsFiltersSort.Title },
-    { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
-    { label: this.translate.instant('Popularity'), value: AppsFiltersSort.PopularityRank },
-  ]);
-
-  categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
-    map((categories) => {
-      this.appsCategories = [...categories];
-      return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
-    }),
-  );
 
   readonly AppExtraCategory = AppExtraCategory;
 
@@ -102,22 +78,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     ).subscribe((searchQuery) => {
       this.appsFilterStore.applySearchQuery(searchQuery || '');
     });
-    this.appsFilterStore.filterValues$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (filterValues) => {
-        if (filterValues.categories?.length) {
-          this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
-        }
-        if (filterValues.sort) {
-          this.form.controls.sort.setValue(filterValues.sort, { emitEvent: false });
-        }
-      },
-    });
-    this.isFilterApplied$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (isFilterApplied) => {
-        this.showFilters = this.showFilters || isFilterApplied;
-        this.cdr.markForCheck();
-      },
-    });
+
     this.appsFilterStore.searchQuery$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (searchQuery) => {
         this.searchControl.setValue(searchQuery);
@@ -128,16 +89,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.areLoaded$.next(true);
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.form.valueChanges.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.applyFilters();
     });
   }
 
@@ -162,13 +113,17 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   changeFiltersVisible(): void {
-    this.showFilters = !this.showFilters;
-  }
-
-  applyFilters(): void {
-    this.appsFilterStore.applyFilters({
-      sort: this.form.value.sort || null,
-      categories: this.form.value.categories || this.appsCategories,
+    this.appsFilterStore.filterValues$.pipe(take(1)).subscribe((filterValues) => {
+      this.matDialog.open(AppsFiltersDialogComponent, {
+        data: {
+          sort: filterValues?.sort || null,
+          categories: filterValues?.categories || [],
+          appsFilterStore: this.appsFilterStore,
+        },
+        width: '600px',
+        injector: this.injector,
+        viewContainerRef: this.viewContainerRef,
+      });
     });
   }
 

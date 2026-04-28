@@ -1,0 +1,39 @@
+<h2 matDialogTitle>{{ 'Filters' | translate }}</h2>
+
+<div class="ix-form-container">
+  <form [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset [title]="'Sort' | translate">
+      <div class="sort-options">
+        @for (option of sortOptions; track option.value) {
+          <div class="sort-option" (click)="setSort(option.value)">
+            <span class="label">{{ option.label }}</span>
+            <ix-checkbox
+              [ngModel]="form.value.sort === option.value"
+              [ngModelOptions]="{ standalone: true }"
+              (click)="$event.stopPropagation(); setSort(option.value)"
+            ></ix-checkbox>
+          </div>
+        }
+      </div>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Categories' | translate">
+      <ix-chips
+        formControlName="categories"
+        [autocompleteProvider]="categoriesProvider$"
+        [allowNewEntries]="false"
+      ></ix-chips>
+    </ix-fieldset>
+
+    <div class="form-actions">
+      <button
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="ok"
+      >
+        {{ 'Ok' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

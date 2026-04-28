@@ -31,6 +31,7 @@
   padding: 2px 8px;
   position: relative;
   border-radius: 100px;
+  height: 46px;
 
   @include prevent-ios-autozoom;
 
@@ -57,7 +58,7 @@
   &::ng-deep {
     span {
       overflow: hidden;
-      padding: 1px 0;
+      padding: 5px 0;
       white-space: normal;
       word-break: break-word;
     }
