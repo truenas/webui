@@ -173,5 +173,6 @@ describe('WidgetSysInfoActiveComponent', () => {
     const matListItems = await loader.getAllHarnesses(MatListItemHarness);
     const items = await parallel(() => matListItems.map((item) => item.getFullText()));
     expect(items).toContain('Support License: Expires on 2025-01-01');
+    expect(items.join(' ')).not.toContain('Contract');
   });
 });

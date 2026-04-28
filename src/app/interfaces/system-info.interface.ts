@@ -53,7 +53,10 @@ export enum ContractType {
   FreeNasMini = 'FREENASMINI',
 }
 
-export function getLabelForContractType(contractType: ContractType): string {
+export function getLabelForContractType(contractType: ContractType | null | undefined): string {
+  if (!contractType) {
+    return '';
+  }
   const contractTypeToLabelsMap: Record<ContractType, string> = {
     [ContractType.Gold]: 'Gold',
     [ContractType.Legacy]: 'Legacy',
