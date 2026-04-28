@@ -39,9 +39,8 @@
   }
   @if (!options.hideCancel && options.cancelText) {
     <button
-      mat-button
+      mat-button="outlined"
       name="cancel_button"
-      class="mat-mdc-button mat-button mat-accent cancel-button"
       ixTest="dialog-cancel"
       (click)="onCancel()"
     >

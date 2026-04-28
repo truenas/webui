@@ -44,7 +44,7 @@ export const cloudSyncTaskEmptyConfig = {
 
 export const cloudBackupTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: tnIconMarker('true-cloud', 'custom'),
+  icon: tnIconMarker('cloud-outline', 'mdi'),
   message: T('Back up to the decentralized network provided by Storj in partnership with TrueNAS.'),
   large: true,
 } as EmptyConfig;
