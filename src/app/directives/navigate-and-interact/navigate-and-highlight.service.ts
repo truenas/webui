@@ -23,7 +23,7 @@ export class NavigateAndHighlightService {
 
   private prevHighlightTarget: HTMLElement | null = null;
   private prevSubscription: Subscription | null = null;
-  private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
+  private listenerAbortController: AbortController | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   navigateAndHighlight(route: string[], hash?: string): void {
@@ -93,25 +93,22 @@ export class NavigateAndHighlightService {
       this.cleanupPreviousHighlight();
     });
 
-    targetElement.addEventListener(
+    // One controller covers both inner-click and click-outside listeners so they
+    // are torn down together by cleanupPreviousHighlight via abort().
+    this.listenerAbortController = new AbortController();
+    const { signal } = this.listenerAbortController;
+
+    targetElement.addEventListener('click', () => this.cleanupPreviousHighlight(), { signal });
+
+    this.window.document.addEventListener(
       'click',
-      () => {
-        this.cleanupPreviousHighlight();
+      (event: MouseEvent) => {
+        if (!targetElement.contains(event.target as Node)) {
+          this.cleanupPreviousHighlight();
+        }
       },
-      { once: true },
+      { capture: true, signal },
     );
-
-    this.addClickOutsideListener(targetElement);
-  }
-
-  private addClickOutsideListener(targetElement: HTMLElement): void {
-    this.clickOutsideListener = (event: MouseEvent) => {
-      if (!targetElement.contains(event.target as Node)) {
-        this.cleanupPreviousHighlight();
-      }
-    };
-
-    this.window.document.addEventListener('click', this.clickOutsideListener, true);
   }
 
   private cleanupPreviousHighlight(): void {
@@ -126,9 +123,9 @@ export class NavigateAndHighlightService {
       this.prevSubscription = null;
     }
 
-    if (this.clickOutsideListener) {
-      this.window.document.removeEventListener('click', this.clickOutsideListener, true);
-      this.clickOutsideListener = null;
+    if (this.listenerAbortController) {
+      this.listenerAbortController.abort();
+      this.listenerAbortController = null;
     }
 
     this.cancelPendingTimeout();
