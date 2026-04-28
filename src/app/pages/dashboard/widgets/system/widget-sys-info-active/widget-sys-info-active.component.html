@@ -127,10 +127,10 @@
                       }
                     }}
                   </div>
-                  @if (systemInfo().license.expires_at) {
+                  @if (licenseExpirationDate()) {
                     <div>
                       {{
-                        'Expires on {date}' | translate: { date: systemInfo().license.expires_at }
+                        'Expires on {date}' | translate: { date: licenseExpirationDate() }
                       }}
                     </div>
                   }

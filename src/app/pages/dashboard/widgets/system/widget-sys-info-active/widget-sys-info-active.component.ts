@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { format } from 'date-fns-tz';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
@@ -87,6 +88,14 @@ export class WidgetSysInfoActiveComponent {
     this.realElapsedSeconds();
     const [, timeValue] = this.localeService.getDateAndTime();
     return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
+  });
+
+  licenseExpirationDate = computed(() => {
+    const expiresAt = this.systemInfo()?.license?.expires_at;
+    if (!expiresAt) {
+      return null;
+    }
+    return format(new Date(expiresAt), this.localeService.getPreferredDateFormat());
   });
 
   isLoaded = computed(() => this.systemInfo());
