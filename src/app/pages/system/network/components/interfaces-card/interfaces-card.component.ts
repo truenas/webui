@@ -95,6 +95,7 @@ export class InterfacesCardComponent implements OnInit {
 
   columns = createTable<NetworkInterface>([
     textColumn({
+      title: this.translate.instant('Status'),
       propertyName: 'state',
     }),
     textColumn({

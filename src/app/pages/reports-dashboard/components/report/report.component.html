@@ -107,21 +107,6 @@
 
           <section #legendElement class="legend">
             @if (report() && data?.legend) {
-              <div class="legend-timestamp">
-                @if (data && legendData.xHTML && shouldShowLegendValue) {
-                  <h4>
-                    <strong>{{ 'Time' | translate }}:</strong>
-                    @if (legendData.xHTML) {
-                      <span class="date">
-                        <ix-date [date]="getDateFromString(legendData.xHTML)"></ix-date>
-                      </span>
-                    }
-                  </h4>
-                }
-              </div>
-            }
-
-            @if (report() && data?.legend) {
               <div class="legend-group-wrapper">
                 <table class="legend-table" [ixTest]="['reports-table', report().title]">
                   <!-- Table Header-->
@@ -175,6 +160,20 @@
                 <strong>{{ 'Total' | translate }}:</strong>
                 <span>{{ legendData.stackedTotalHTML | translate }}</span>
               </h4>
+            }
+             @if (report() && data?.legend) {
+              <div class="legend-timestamp">
+                @if (data && legendData.xHTML && shouldShowLegendValue) {
+                  <h4>
+                    <strong>{{ 'Time' | translate }}:</strong>
+                    @if (legendData.xHTML) {
+                      <span class="date">
+                        <ix-date [date]="getDateFromString(legendData.xHTML)"></ix-date>
+                      </span>
+                    }
+                  </h4>
+                }
+              </div>
             }
           </section>
         </mat-card-content>

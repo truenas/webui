@@ -3,14 +3,18 @@
 div.content {
   display: flex;
   flex-direction: row;
+  gap: 12px;
+  padding: 12px;
 
   .right-column {
     flex-basis: 35%;
   }
 
   .left-column {
+    display: flex;
+    flex-direction: column;
     flex-basis: 65%;
-    gap: 8px;
+    gap: 12px;
   }
 
   @media #{$media-lt-lg} {
@@ -27,7 +31,7 @@ div.right-column div.left-column {
   height: inherit;
 }
 
-mat-card > mat-card-actions.interface-pending-actions,
+mat-card>mat-card-actions.interface-pending-actions,
 div.disabled-notice {
   margin: 0;
   padding: 0 16px 16px;

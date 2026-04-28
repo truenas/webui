@@ -4,7 +4,7 @@
 .mat-mdc-card-content {
   flex-wrap: wrap;
   height: 100%;
-  margin: 0;
+  margin-top: 12px;
 }
 
 .toolbar {
@@ -32,11 +32,15 @@
 
 .card-content {
   display: flex;
+  gap: 8px;
 
   .chart-wrapper-outer {
+    border: 1px solid var(--lines);
+    border-radius: 8px;
     flex-grow: 1;
     max-width: calc(90vw - 550px);
     min-width: 50%;
+    padding: 16px;
 
     @media (max-width: $breakpoint-md) {
       max-width: 100%;
@@ -49,6 +53,9 @@
     flex: 1;
     flex-direction: column;
     flex-shrink: 0;
+    border: 1px solid var(--lines);
+    border-radius: 8px;
+    padding: 16px;
 
     @media (max-width: $breakpoint-md) {
       width: 100%;

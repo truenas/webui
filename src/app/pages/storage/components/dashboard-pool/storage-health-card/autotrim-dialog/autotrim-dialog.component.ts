@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle,
 } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -31,7 +31,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
