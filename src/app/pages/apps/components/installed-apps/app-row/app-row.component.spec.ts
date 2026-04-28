@@ -95,11 +95,12 @@ describe('AppRowComponent', () => {
   });
 
   it('forwards the badge actionRequiredClicked output through the row', () => {
-    const badge = spectator.query(AppActionRequiredBadgeComponent)!;
+    spectator.setInput('app', { ...app, action_required: true, notes: 'do something' } as App);
+
     const emitSpy = jest.fn();
     spectator.component.actionRequiredClicked.subscribe(emitSpy);
 
-    badge.actionRequiredClicked.emit();
+    spectator.click('.action-required-badge');
 
     expect(emitSpy).toHaveBeenCalledTimes(1);
   });

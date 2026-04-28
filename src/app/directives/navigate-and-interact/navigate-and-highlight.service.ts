@@ -27,6 +27,10 @@ export class NavigateAndHighlightService {
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   navigateAndHighlight(route: string[], hash?: string): void {
+    // Cancel any pending poll up front so it can't briefly highlight a stale
+    // target during the upcoming router transition.
+    this.cancelPendingTimeout();
+
     this.router.navigate(route, { fragment: hash }).then(() => {
       if (!hash) {
         return;
@@ -76,7 +80,7 @@ export class NavigateAndHighlightService {
     this.highlight(htmlElement, { inset: options?.inset });
   }
 
-  highlight(targetElement: HTMLElement, options?: { inset?: boolean }): void {
+  highlight(targetElement: HTMLElement, options?: WaitForElementOptions): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
