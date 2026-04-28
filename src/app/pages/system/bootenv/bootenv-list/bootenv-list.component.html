@@ -6,7 +6,7 @@
 
   <button
     *ixRequiresRoles="requiredRoles"
-    mat-button
+    matButton="outlined"
     ixTest="bootenv-stats"
     [ixUiSearch]="searchableElements.elements.stats"
     (click)="openBootenvStats()"
@@ -15,7 +15,7 @@
   </button>
 
   <button
-    mat-button
+    matButton="outlined"
     ixTest="bootenv-status"
     [routerLink]="['/', 'system', 'boot', 'status']"
   >
@@ -24,7 +24,7 @@
 
   <button
     *ixRequiresRoles="requiredRoles"
-    mat-button
+    matButton="outlined"
     ixTest="bootenv-scrub"
     [ixUiSearch]="searchableElements.elements.scrubBootPool"
     (click)="doScrub()"
