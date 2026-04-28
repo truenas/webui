@@ -1,19 +1,14 @@
-import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { App } from 'app/interfaces/app.interface';
 import {
   AppActionRequiredBadgeComponent,
 } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
-import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 
 describe('AppActionRequiredBadgeComponent', () => {
   let spectator: Spectator<AppActionRequiredBadgeComponent>;
 
   const createComponent = createComponentFactory({
     component: AppActionRequiredBadgeComponent,
-    providers: [
-      mockProvider(NavigateAndHighlightService),
-    ],
   });
 
   function setupTest(app: Partial<App>): void {
@@ -32,25 +27,22 @@ describe('AppActionRequiredBadgeComponent', () => {
     expect(spectator.query('.action-required-badge')).toBeNull();
   });
 
-  it('does not call NavigateAndHighlightService when action_required is false', () => {
-    setupTest({ name: 'app1', action_required: false, notes: 'do something' });
-    expect(spectator.inject(NavigateAndHighlightService).waitForElement).not.toHaveBeenCalled();
-  });
-
   it('renders an alert icon button when action_required is true and notes are present', () => {
     setupTest({ name: 'app1', action_required: true, notes: 'do something' });
     expect(spectator.query('.action-required-badge')).toExist();
     expect(spectator.query('.action-required-badge tn-icon')).toExist();
   });
 
-  it('asks NavigateAndHighlightService to highlight the Notes card on click', () => {
+  it('emits actionRequiredClicked and stops propagation on click', () => {
     setupTest({ name: 'app1', action_required: true, notes: 'do something' });
-    const navigateAndHighlight = spectator.inject(NavigateAndHighlightService);
-    spectator.click('.action-required-badge');
+    const emitSpy = jest.fn();
+    spectator.component.actionRequiredClicked.subscribe(emitSpy);
 
-    expect(navigateAndHighlight.waitForElement).toHaveBeenCalledWith(
-      appNotesCardAnchorId,
-      { block: 'start', inset: true },
-    );
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
+    spectator.query('.action-required-badge')!.dispatchEvent(event);
+
+    expect(emitSpy).toHaveBeenCalledTimes(1);
+    expect(stopPropagationSpy).toHaveBeenCalled();
   });
 });

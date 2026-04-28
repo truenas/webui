@@ -109,6 +109,7 @@
             (restartApp)="restart(app.name)"
             (clickStatus)="openStatusDialog(app.name)"
             (selectionChange)="selection.toggle(app.id)"
+            (actionRequiredClicked)="showActionRequired(app)"
             (click)="viewDetails(app)"
             (keydown.enter)="viewDetails(app)"
           ></ix-app-row>

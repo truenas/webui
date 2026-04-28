@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -58,7 +57,6 @@ describe('AppRowComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(NavigateAndHighlightService),
     ],
   });
 
@@ -94,6 +92,16 @@ describe('AppRowComponent', () => {
     const badge = spectator.query(AppActionRequiredBadgeComponent)!;
     expect(badge).toBeTruthy();
     expect(badge.app()).toBe(app);
+  });
+
+  it('forwards the badge actionRequiredClicked output through the row', () => {
+    const badge = spectator.query(AppActionRequiredBadgeComponent)!;
+    const emitSpy = jest.fn();
+    spectator.component.actionRequiredClicked.subscribe(emitSpy);
+
+    badge.actionRequiredClicked.emit();
+
+    expect(emitSpy).toHaveBeenCalledTimes(1);
   });
 
   it('shows app usages stats', () => {
