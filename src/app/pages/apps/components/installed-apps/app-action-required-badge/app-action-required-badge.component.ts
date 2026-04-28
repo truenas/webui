@@ -1,13 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, inject, input, output,
+  ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { App } from 'app/interfaces/app.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
+import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 
 @Component({
   selector: 'ix-app-action-required-badge',
@@ -21,13 +20,7 @@ export class AppActionRequiredBadgeComponent {
 
   readonly app = input.required<App>();
 
-  readonly viewDetailsRequested = output();
-
-  protected readonly tooltipText = T('Action required. Click to see required actions in the Notes card.');
-
-  protected onClick(event: MouseEvent): void {
-    event.stopPropagation();
-    this.viewDetailsRequested.emit();
+  protected onClick(): void {
     this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
       block: 'start',
       inset: true,

@@ -96,16 +96,6 @@ describe('AppRowComponent', () => {
     expect(badge.app()).toBe(app);
   });
 
-  it('forwards viewDetailsRequested from the badge', () => {
-    const badge = spectator.query(AppActionRequiredBadgeComponent)!;
-    const emitSpy = jest.fn();
-    spectator.component.viewDetailsRequested.subscribe(emitSpy);
-
-    badge.viewDetailsRequested.emit();
-
-    expect(emitSpy).toHaveBeenCalledTimes(1);
-  });
-
   it('shows app usages stats', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('90%');
     expect(spectator.query('.cell-ram')).toHaveText('80 MiB');

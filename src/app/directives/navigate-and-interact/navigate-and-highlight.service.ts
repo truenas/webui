@@ -27,9 +27,6 @@ export class NavigateAndHighlightService {
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   navigateAndHighlight(route: string[], hash?: string): void {
-    // Cancel any pending timeout from previous navigation
-    this.cancelPendingTimeout();
-
     this.router.navigate(route, { fragment: hash }).then(() => {
       if (!hash) {
         return;

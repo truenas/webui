@@ -6,8 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { App } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
-
-export const appNotesCardAnchorId = 'app-notes-card';
+import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 
 @Component({
   selector: 'ix-app-notes-card',
