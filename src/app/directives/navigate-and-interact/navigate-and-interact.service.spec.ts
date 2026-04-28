@@ -89,6 +89,11 @@ describe('NavigateAndInteractService', () => {
     expect(firstScrollSpy).not.toHaveBeenCalled();
     expect(secondScrollSpy).toHaveBeenCalledTimes(1);
 
+    // Run past further poll intervals to confirm the cancelled poll never fires.
+    tick(500);
+    expect(firstScrollSpy).not.toHaveBeenCalled();
+    expect(secondScrollSpy).toHaveBeenCalledTimes(1);
+
     document.body.removeChild(firstElement);
     document.body.removeChild(secondElement);
   }));

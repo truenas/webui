@@ -4,8 +4,8 @@
     class="action-required-badge"
     tnTooltipPosition="above"
     [ixTest]="[app().name, 'action-required']"
-    [tnTooltip]="'Action required. Click to see required actions in the Notes card.' | translate"
-    [attr.aria-label]="'Action required. Click to see required actions in the Notes card.' | translate"
+    [tnTooltip]="tooltipText | translate"
+    [attr.aria-label]="tooltipText | translate"
     (click)="onClick()"
   >
     <tn-icon name="alert" library="mdi" aria-hidden="true"></tn-icon>

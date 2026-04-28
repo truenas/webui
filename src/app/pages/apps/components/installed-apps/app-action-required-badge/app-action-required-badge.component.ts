@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
@@ -20,9 +21,11 @@ export class AppActionRequiredBadgeComponent {
 
   readonly app = input.required<App>();
 
+  protected readonly tooltipText = T('Action required. Click to see required actions in the Notes card.');
+
   protected onClick(): void {
-    // Click intentionally bubbles to the parent app-row, whose handler opens
-    // the details panel that mounts the notes card; the poll then highlights it.
+    // Click bubbles to the parent app-row, whose idempotent selection handler
+    // mounts the details panel containing the notes card; the poll then highlights it.
     this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
       block: 'start',
       inset: true,
