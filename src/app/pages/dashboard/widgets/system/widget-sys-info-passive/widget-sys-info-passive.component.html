@@ -119,7 +119,7 @@
                   @if (systemInfo()?.license?.contract_type) {
                     <div>
                       {{
-                        '{license} Contract,' | translate:
+                        '{license} Contract' | translate:
                         {
                           license: getLabelForContractType(systemInfo()?.license?.contract_type),
                         }
