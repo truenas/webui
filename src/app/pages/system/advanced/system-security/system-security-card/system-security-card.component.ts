@@ -8,6 +8,7 @@ import {
   Subject, shareReplay, startWith, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -16,6 +17,7 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { systemSecurityCardElements } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.elements';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 
 @Component({
@@ -34,9 +36,12 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
     MatList,
     MatListItem,
     TranslateModule,
+    UiSearchDirective,
   ],
 })
 export class SystemSecurityCardComponent {
+  protected readonly searchableElements = systemSecurityCardElements;
+
   private slideIn = inject(SlideIn);
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);

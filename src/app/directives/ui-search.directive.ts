@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Renderer2, OnInit, OnDestroy, input, inject } from '@angular/core';
-import { Timeout } from 'app/interfaces/timeout.interface';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -12,10 +12,18 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   readonly config = input.required<UiSearchableElement>({
     alias: 'ixUiSearch',
   });
+
+  /**
+   * When true, the highlight is drawn inside the element (negative
+   * outline-offset). Use for master-detail cards whose surrounding scroll
+   * container would clip an outset outline.
+   */
+  readonly inset = input(false, { alias: 'ixUiSearchInset' });
 
   get id(): string {
     return getSearchableElementId(this.config());
@@ -37,8 +45,6 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     return hierarchyItem;
   }
 
-  private highlightTimeout: Timeout | null = null;
-
   ngOnInit(): void {
     if (this.id) {
       this.renderer.setAttribute(this.elementRef.nativeElement, 'id', this.id);
@@ -52,65 +58,18 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   highlight(parentElement: UiSearchableElement): void {
-    this.tryHighlightAnchors(parentElement, 0);
+    this.tryHighlight(parentElement, 0);
   }
 
-  private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
-    if (this.elementRef.nativeElement) {
-      if (element.triggerAnchor) {
-        const triggerAnchorRef = document.getElementById(element.triggerAnchor);
-        if (triggerAnchorRef) {
-          setTimeout(() => triggerAnchorRef.click(), searchDelayConst);
-        }
+  private tryHighlight(element: UiSearchableElement, attemptCount: number): void {
+    if (!this.elementRef.nativeElement) {
+      if (attemptCount < 2) {
+        setTimeout(() => this.tryHighlight(element, attemptCount + 1), searchDelayConst * 3);
       }
-
-      setTimeout(() => {
-        const anchorRef = document.getElementById(this.elementRef.nativeElement.id) || this.elementRef.nativeElement;
-        this.highlightAndClickElement(anchorRef, !!element.triggerAnchor);
-      }, element.triggerAnchor ? searchDelayConst * 2 : searchDelayConst);
-
-      if (element.anchor && this.elementRef.nativeElement.id !== element.anchor) {
-        this.highlightElementAnchor(element.anchor);
-      }
-    } else if (attemptCount < 2) {
-      setTimeout(() => this.tryHighlightAnchors(element, attemptCount + 1), searchDelayConst * 3);
-    }
-  }
-
-  private highlightElementAnchor(elementAnchor: string): void {
-    setTimeout(() => {
-      const rootNode = this.elementRef.nativeElement.getRootNode() as HTMLElement;
-      const anchorRef: HTMLElement | null = rootNode?.querySelector(`#${elementAnchor}`);
-
-      if (anchorRef) {
-        this.highlightAndClickElement(anchorRef);
-      }
-    }, searchDelayConst * 1.5);
-  }
-
-  private highlightAndClickElement(anchorRef: HTMLElement, skipFocus = false): void {
-    if (!anchorRef) return;
-
-    this.renderer.addClass(anchorRef, 'search-element-highlighted');
-
-    const removeHighlightStyling = (): void => {
-      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
-      ['click', 'keydown'].forEach((event) => document.removeEventListener(event, removeHighlightStyling));
-    };
-
-    setTimeout(() => {
-      if (!skipFocus) {
-        anchorRef.focus();
-      }
-      anchorRef.scrollIntoView();
-      document.querySelector<HTMLElement>('.rightside-content-hold')?.scrollBy(0, -20);
-      ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
-    }, searchDelayConst);
-
-    if (this.highlightTimeout) {
-      clearTimeout(this.highlightTimeout);
+      return;
     }
 
-    this.highlightTimeout = setTimeout(() => removeHighlightStyling(), 4000);
+    const targetId = element.anchor && element.anchor !== this.id ? element.anchor : this.id;
+    this.navigateAndHighlight.waitForElement(targetId, { inset: this.inset() });
   }
 }

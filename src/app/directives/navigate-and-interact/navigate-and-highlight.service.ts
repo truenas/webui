@@ -3,12 +3,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { FocusService } from 'app/services/focus.service';
+
+export const highlightTargetClass = 'ix-highlight-target';
+export const highlightTargetInsetClass = 'ix-highlight-target-inset';
+
+const pollIntervalMs = 100;
+const maxPollAttempts = 50;
+const highlightDurationMs = 4000;
+const lateFocusDelayMs = 350;
 
 export interface WaitForElementOptions {
   block?: ScrollLogicalPosition;
   /**
-   * When true, draws the highlight outline inset (negative outline-offset)
-   * so it isn't clipped by the viewport edge or an overflow container.
+   * Draw the highlight outline inset (inside the element edge) instead of
+   * outset. Use for elements whose surrounding overflow:hidden parent would
+   * clip an outset outline — e.g. master-detail cards.
    */
   inset?: boolean;
 }
@@ -20,13 +30,16 @@ export class NavigateAndHighlightService {
   private readonly destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private window = inject<Window>(WINDOW);
+  private focusService = inject(FocusService);
 
   private prevHighlightTarget: HTMLElement | null = null;
+  private prevTabindexAdded = false;
   private prevSubscription: Subscription | null = null;
   private listenerAbortController: AbortController | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private lateFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  navigateAndHighlight(route: string[], hash?: string): void {
+  navigateAndHighlight(route: string[], hash?: string, options?: WaitForElementOptions): void {
     // Cancel any pending poll up front so it can't briefly highlight a stale
     // target during the upcoming router transition.
     this.cancelPendingTimeout();
@@ -36,16 +49,14 @@ export class NavigateAndHighlightService {
         return;
       }
 
-      // Wait for element with retries (for loading states)
-      this.waitForElement(hash);
+      this.waitForElement(hash, options);
     });
   }
 
   /**
-   * Polls for an element by id and highlights it when found.
-   * Retries up to 50 times at 100ms intervals (5 seconds total).
-   * Cancels any in-flight poll started by a previous call so only the
-   * most recent target is highlighted.
+   * Polls for an element by id and highlights + focuses it once it is in the
+   * DOM AND laid out (non-zero size). Waits up to 5s. A new call cancels the
+   * previous in-flight poll so only the most recent target is highlighted.
    */
   waitForElement(hash: string, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
@@ -53,48 +64,42 @@ export class NavigateAndHighlightService {
   }
 
   private pollForElement(hash: string, attemptCount: number, options?: WaitForElementOptions): void {
-    const maxAttempts = 50; // 5 seconds total (50 * 100ms)
     const htmlElement = this.window.document.getElementById(hash);
 
     if (htmlElement) {
       this.pendingTimeoutId = null;
       this.scrollIntoView(htmlElement, options);
-    } else if (attemptCount < maxAttempts) {
+    } else if (attemptCount < maxPollAttempts) {
       this.pendingTimeoutId = setTimeout(() => {
         this.pollForElement(hash, attemptCount + 1, options);
-      }, 100);
+      }, pollIntervalMs);
     } else {
-      this.pendingTimeoutId = null;
-    }
-  }
-
-  private cancelPendingTimeout(): void {
-    if (this.pendingTimeoutId !== null) {
-      clearTimeout(this.pendingTimeoutId);
       this.pendingTimeoutId = null;
     }
   }
 
   scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
     htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
-    this.highlight(htmlElement, { inset: options?.inset });
+    this.highlight(htmlElement, options?.inset);
   }
 
-  highlight(targetElement: HTMLElement, options?: WaitForElementOptions): void {
+  highlight(targetElement: HTMLElement, inset = false): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
 
-    targetElement.style.outline = '2px solid var(--primary)';
-    targetElement.style.outlineOffset = options?.inset ? '-2px' : '2px';
+    const className = inset ? highlightTargetInsetClass : highlightTargetClass;
+    targetElement.classList.add(className);
     this.prevHighlightTarget = targetElement;
 
-    this.prevSubscription = timer(2150).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.cleanupPreviousHighlight();
-    });
+    this.focusTarget(targetElement);
 
-    // One controller covers both inner-click and click-outside listeners so they
-    // are torn down together by cleanupPreviousHighlight via abort().
+    this.prevSubscription = timer(highlightDurationMs)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.cleanupPreviousHighlight());
+
+    // One controller covers all dismiss listeners so they tear down together
+    // via abort() in cleanupPreviousHighlight.
     this.listenerAbortController = new AbortController();
     const { signal } = this.listenerAbortController;
 
@@ -109,12 +114,50 @@ export class NavigateAndHighlightService {
       },
       { capture: true, signal },
     );
+
+    this.window.document.addEventListener(
+      'keydown',
+      () => this.cleanupPreviousHighlight(),
+      { capture: true, signal },
+    );
+  }
+
+  private focusTarget(target: HTMLElement): void {
+    this.prevTabindexAdded = this.focusService.focusWithFallback(target, { preventScroll: true });
+
+    // mat-menu, cdk overlays, and slide-ins auto-focus their own first item
+    // after open animations finish (~250-300ms). Reclaim focus once that has
+    // settled so the user lands on the searched-for item.
+    this.lateFocusTimeoutId = setTimeout(() => {
+      this.lateFocusTimeoutId = null;
+      if (this.prevHighlightTarget === target && this.window.document.activeElement !== target) {
+        target.focus({ preventScroll: true });
+      }
+    }, lateFocusDelayMs);
+  }
+
+  private cancelPendingTimeout(): void {
+    if (this.pendingTimeoutId !== null) {
+      clearTimeout(this.pendingTimeoutId);
+      this.pendingTimeoutId = null;
+    }
+  }
+
+  private cancelLateFocus(): void {
+    if (this.lateFocusTimeoutId !== null) {
+      clearTimeout(this.lateFocusTimeoutId);
+      this.lateFocusTimeoutId = null;
+    }
   }
 
   private cleanupPreviousHighlight(): void {
     if (this.prevHighlightTarget) {
-      this.prevHighlightTarget.style.outline = '';
-      this.prevHighlightTarget.style.outlineOffset = '';
+      this.prevHighlightTarget.classList.remove(highlightTargetClass);
+      this.prevHighlightTarget.classList.remove(highlightTargetInsetClass);
+      if (this.prevTabindexAdded) {
+        this.prevHighlightTarget.removeAttribute('tabindex');
+        this.prevTabindexAdded = false;
+      }
       this.prevHighlightTarget = null;
     }
 
@@ -129,5 +172,6 @@ export class NavigateAndHighlightService {
     }
 
     this.cancelPendingTimeout();
+    this.cancelLateFocus();
   }
 }

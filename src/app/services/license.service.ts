@@ -69,6 +69,29 @@ export class LicenseService {
     map((licenseFeatures) => licenseFeatures?.includes(LicenseFeature.Sed) ?? false),
   );
 
+  /**
+   * Mirrors `showSedCard` in `AdvancedSettingsComponent` — the SED card is
+   * rendered when either the system is licensed as Enterprise (which always
+   * exposes SED config) or a global SED password has already been set.
+   */
+  readonly hasSedFeature$ = combineLatest([
+    this.store$.select(selectIsEnterprise),
+    this.api.call('system.advanced.sed_global_password_is_set'),
+  ]).pipe(
+    map(([isEnterprise, hasGlobalEncryption]) => Boolean(isEnterprise) || Boolean(hasGlobalEncryption)),
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
+
+  /**
+   * Mirrors `isSystemLicensed` in `AdvancedSettingsComponent` — the System
+   * Security card (FIPS / STIG / password policy) is rendered only on
+   * systems where FIPS hardware support is available.
+   */
+  readonly hasSystemSecurityFeature$ = this.api.call('system.security.info.fips_available').pipe(
+    map(Boolean),
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
+
   readonly shouldShowContainers$ = combineLatest([
     this.store$.select(selectIsEnterprise),
     this.store$.select(selectLicenseFeatures),

@@ -11,7 +11,7 @@
   cursor: pointer;
   display: inline-flex;
   line-height: 1;
-  padding: 2px;
+  padding: 0;
 
   &:hover {
     background: var(--hover-bg);
@@ -24,7 +24,7 @@
   }
 
   tn-icon {
-    height: 18px;
-    width: 18px;
+    height: 16px;
+    width: 16px;
   }
 }

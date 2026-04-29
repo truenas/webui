@@ -15,8 +15,8 @@ describe('NavigateAndInteractDirective', () => {
     spectator = createDirective('<div ixNavigateAndHighlight [navigateRoute]="[\'/some-path\']" navigateHash="testHash"></div>');
   });
 
-  it('calls NavigateAndInteractService.navigateAndInteract when element is clicked', () => {
+  it('calls NavigateAndInteractService.navigateAndHighlight when element is clicked', () => {
     spectator.dispatchMouseEvent(spectator.element, 'click');
-    expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight).toHaveBeenCalledWith(['/some-path'], 'testHash');
+    expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight).toHaveBeenCalledWith(['/some-path'], 'testHash', { inset: false });
   });
 });

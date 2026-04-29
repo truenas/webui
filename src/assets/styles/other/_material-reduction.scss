@@ -805,18 +805,82 @@ body {
     outline: 1.5px solid var(--primary);
   }
 
-  .search-element-highlighted {
-    @include pulse-box-shadow();
-
-    background-color: var(--contrast-darkest) !important;
-    box-shadow: none;
-    outline: 0;
+  // Both variants paint the highlight via an absolutely-positioned ::after
+  // overlay so the visual is on top of the element's content (outline /
+  // box-shadow on the host gets hidden under child backgrounds in cards).
+  .ix-highlight-target,
+  .ix-highlight-target-inset {
+    // CSS multi-column layouts (master-detail .scroll-window uses `columns:`)
+    // can fragment a tall block across columns, splitting the card and the
+    // ::after overlay in half. Keep the highlight target atomic.
+    break-inside: avoid;
     overflow: visible;
+    position: relative !important;
+
+    // The service focuses the highlighted host (adding tabindex=-1 if it
+    // isn't natively focusable). Suppress the browser's default focus ring,
+    // the cdk-focused background-tint, AND any focus-driven color change so
+    // the only visual is our pulse — the ::after IS the focus indicator.
+    // Note: MDC list items pull their focus-state text colour from
+    // --mdc-list-list-item-focus-label-text-color which defaults to a dark
+    // value; reset it so the row keeps its normal foreground colour.
+    &:focus,
+    &:focus-visible,
+    &.cdk-focused,
+    &.cdk-keyboard-focused,
+    &.cdk-mouse-focused {
+      --mdc-list-list-item-focus-label-text-color: inherit;
+      --mdc-list-list-item-focus-state-layer-color: transparent;
+
+      background-color: inherit !important;
+      box-shadow: none !important;
+      color: inherit !important;
+      outline: none !important;
+
+      // Some hosts (e.g. mat-list-item) get a focused-state colour pushed
+      // down to their inner content via Material's MDC styling. Force every
+      // descendant back to "inherit" so the row's labels keep the surrounding
+      // text colour.
+      *,
+      *::before,
+      *::after {
+        color: inherit !important;
+      }
+    }
+
+    &::after {
+      border-radius: inherit;
+      bottom: 0;
+      content: '';
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 999;
+    }
+  }
+
+  // Default outset variant — outline + glow drawn OUTSIDE the element edge.
+  .ix-highlight-target::after {
+    animation: ix-highlight-pulse 1.5s infinite;
 
     @media (prefers-reduced-motion) {
-      &::after {
-        animation: none;
-      }
+      animation: none;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+  }
+
+  // Inset variant — solid border drawn at the element's edges, painted from
+  // inside via the ::after overlay. Use for elements whose surrounding
+  // overflow:hidden parent would clip an outset outline (master-detail cards).
+  .ix-highlight-target-inset::after {
+    animation: ix-highlight-pulse-inset 1.5s ease-in-out infinite;
+    border: 2px solid var(--primary);
+
+    @media (prefers-reduced-motion) {
+      animation: none;
     }
   }
 }
@@ -826,7 +890,8 @@ body .mat-calendar-next-button::after {
   margin: 10px;
 }
 
-.mat-mdc-menu-panel:has(.search-element-highlighted) {
+.mat-mdc-menu-panel:has(.ix-highlight-target),
+.mat-mdc-menu-panel:has(.ix-highlight-target-inset) {
   overflow: visible;
 
   .mat-mdc-menu-content {
@@ -904,7 +969,7 @@ div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
 }
 
 mat-tab-nav-panel {
-  .search-element-highlighted {
+  :is(.ix-highlight-target, .ix-highlight-target-inset) {
     &:not(button) {
       display: block;
     }

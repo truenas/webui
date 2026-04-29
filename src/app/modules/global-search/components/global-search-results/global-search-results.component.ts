@@ -87,10 +87,15 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     const route = element.anchorRouterLink || element.routerLink;
     if (route?.length) {
-      if (!route.includes('*')) {
-        this.router.navigate(route);
-      } else if (!this.router.url.startsWith(route.slice(0, -1).join('/'))) {
-        this.router.navigate(route.slice(0, -1));
+      const navigateTo = route.includes('*') ? route.slice(0, -1) : route;
+      const targetPath = navigateTo.join('/').replace(/\/+/g, '/');
+
+      // Skip navigation when we're already on the target page — even
+      // same-URL `router.navigate` calls fire `NavigationSkipped` events,
+      // which `<ix-master-detail-view>` interprets as "page changed" and
+      // collapses the details panel (the cards disappear).
+      if (!this.router.url.startsWith(targetPath)) {
+        this.router.navigate(navigateTo);
       }
     }
 

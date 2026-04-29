@@ -5,7 +5,19 @@ import {
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { MockProvider } from 'ng-mocks';
-import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import {
+  NavigateAndHighlightService,
+  highlightTargetClass,
+  highlightTargetInsetClass,
+} from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+
+function makeVisibleElement(id: string): HTMLElement {
+  const el = document.createElement('div');
+  el.id = id;
+  el.scrollIntoView = jest.fn();
+  document.body.appendChild(el);
+  return el;
+}
 
 describe('NavigateAndHighlightService', () => {
   let spectator: SpectatorService<NavigateAndHighlightService>;
@@ -22,79 +34,110 @@ describe('NavigateAndHighlightService', () => {
     spectator = createComponent();
   });
 
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
   it('should call router.navigate with correct parameters on click', () => {
     spectator.service.navigateAndHighlight(['/some-path'], 'testHash');
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/some-path'], { fragment: 'testHash' });
   });
 
   it('should scroll to and highlight the element with the given ID', fakeAsync(() => {
-    const scrollIntoViewMock = jest.fn();
-
-    const element = document.createElement('div');
-    element.id = 'testHash';
-    element.scrollIntoView = scrollIntoViewMock;
-    document.body.appendChild(element);
+    const element = makeVisibleElement('testHash');
 
     spectator.service.navigateAndHighlight(['/some-path'], 'testHash');
 
     tick(150);
 
-    expect(scrollIntoViewMock).toHaveBeenCalled();
+    expect(element.scrollIntoView).toHaveBeenCalled();
+    expect(element.classList.contains(highlightTargetClass)).toBe(true);
   }));
 
-  it('highlights element with outline and removes it on click', () => {
-    const element = document.createElement('div');
+  it('adds the highlight class and removes it on click', () => {
+    const element = makeVisibleElement('clicker');
     spectator.service.highlight(element);
 
-    expect(element.style.outline).toBe('2px solid var(--primary)');
+    expect(element.classList.contains(highlightTargetClass)).toBe(true);
 
     element.dispatchEvent(new MouseEvent('click'));
-    expect(element.style.outline).toBe('');
+    expect(element.classList.contains(highlightTargetClass)).toBe(false);
+  });
+
+  it('focuses a focusable target', () => {
+    const button = document.createElement('button');
+    button.id = 'focus-target';
+    document.body.appendChild(button);
+
+    spectator.service.highlight(button);
+
+    expect(document.activeElement).toBe(button);
+    // No tabindex was added — button is natively focusable.
+    expect(button.hasAttribute('tabindex')).toBe(false);
+  });
+
+  it('adds tabindex=-1 to non-focusable containers and removes it on cleanup', () => {
+    const card = document.createElement('div');
+    card.id = 'card';
+    document.body.appendChild(card);
+
+    spectator.service.highlight(card);
+
+    expect(card.getAttribute('tabindex')).toBe('-1');
+    expect(document.activeElement).toBe(card);
+
+    card.dispatchEvent(new MouseEvent('click'));
+
+    expect(card.hasAttribute('tabindex')).toBe(false);
   });
 
   it('cleans up previous highlight when another element is highlighted', () => {
-    const element1 = document.createElement('div');
+    const element1 = makeVisibleElement('first');
     spectator.service.highlight(element1);
 
-    expect(element1.style.outline).toBe('2px solid var(--primary)');
+    expect(element1.classList.contains(highlightTargetClass)).toBe(true);
 
-    const element2 = document.createElement('div');
+    const element2 = makeVisibleElement('second');
     spectator.service.highlight(element2);
 
-    expect(element1.style.outline).toBe('');
-    expect(element2.style.outline).toBe('2px solid var(--primary)');
+    expect(element1.classList.contains(highlightTargetClass)).toBe(false);
+    expect(element2.classList.contains(highlightTargetClass)).toBe(true);
+  });
+
+  it('uses the inset class when called with inset: true', () => {
+    const card = makeVisibleElement('inset-card');
+    spectator.service.highlight(card, true);
+
+    expect(card.classList.contains(highlightTargetInsetClass)).toBe(true);
+    expect(card.classList.contains(highlightTargetClass)).toBe(false);
   });
 
   it('cancels an in-flight poll when waitForElement is called again', fakeAsync(() => {
-    const firstScrollSpy = jest.fn();
-    const secondScrollSpy = jest.fn();
-
-    const firstElement = document.createElement('div');
-    firstElement.id = 'first-poll-target';
-    firstElement.scrollIntoView = firstScrollSpy;
-
-    const secondElement = document.createElement('div');
-    secondElement.id = 'second-poll-target';
-    secondElement.scrollIntoView = secondScrollSpy;
-
     spectator.service.waitForElement('first-poll-target');
-    // Second call before either element is in the DOM should cancel the first poll.
     spectator.service.waitForElement('second-poll-target');
 
-    document.body.appendChild(firstElement);
-    document.body.appendChild(secondElement);
+    const firstElement = makeVisibleElement('first-poll-target');
+    const secondElement = makeVisibleElement('second-poll-target');
 
     tick(150);
 
-    expect(firstScrollSpy).not.toHaveBeenCalled();
-    expect(secondScrollSpy).toHaveBeenCalledTimes(1);
+    expect(firstElement.scrollIntoView).not.toHaveBeenCalled();
+    expect(secondElement.scrollIntoView).toHaveBeenCalledTimes(1);
 
-    // Run past further poll intervals to confirm the cancelled poll never fires.
     tick(500);
-    expect(firstScrollSpy).not.toHaveBeenCalled();
-    expect(secondScrollSpy).toHaveBeenCalledTimes(1);
+    expect(firstElement.scrollIntoView).not.toHaveBeenCalled();
+    expect(secondElement.scrollIntoView).toHaveBeenCalledTimes(1);
+  }));
 
-    document.body.removeChild(firstElement);
-    document.body.removeChild(secondElement);
+  it('keeps polling until the element appears in the DOM', fakeAsync(() => {
+    spectator.service.waitForElement('late-poll-target');
+
+    // Not in DOM yet — first poll attempt finds nothing.
+    tick(150);
+
+    const target = makeVisibleElement('late-poll-target');
+
+    tick(150);
+    expect(target.scrollIntoView).toHaveBeenCalled();
   }));
 });

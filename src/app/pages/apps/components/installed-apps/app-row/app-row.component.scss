@@ -95,6 +95,7 @@
   .cell-name {
     align-items: stretch;
     font-weight: bold;
+    min-width: 0;
 
     .name {
       align-items: center;
@@ -102,11 +103,19 @@
       display: inline-flex;
       gap: 8px;
       margin: 1px;
+      min-width: 0;
       padding-right: 15px;
     }
 
     .app-name {
       @include line-clamp(2);
+
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    ix-app-action-required-badge {
+      flex-shrink: 0;
     }
   }
 
