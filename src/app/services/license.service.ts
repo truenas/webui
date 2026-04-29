@@ -17,7 +17,7 @@ import {
 // Hoist parameterized selector instances so consumers share memoization across
 // subscriptions (each call to `selectHasLicenseFeature` builds a new selector).
 const selectHasAppsFeature = selectHasLicenseFeature(LicenseFeature.Apps);
-const selectHasVmFeature = selectHasLicenseFeature(LicenseFeature.Vm);
+const selectHasVmsFeature = selectHasLicenseFeature(LicenseFeature.Vms);
 const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
 const selectHasFibreChannelFeature = selectHasLicenseFeature(LicenseFeature.FibreChannel);
 
@@ -41,10 +41,10 @@ export class LicenseService {
   );
 
   hasVms$ = combineLatest([
-    this.store$.select(selectHasVmFeature),
+    this.store$.select(selectHasVmsFeature),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
-    map(([hasVm, isEnterprise]) => !isEnterprise || hasVm),
+    map(([hasVms, isEnterprise]) => !isEnterprise || hasVms),
   );
 
   hasApps$ = combineLatest([
