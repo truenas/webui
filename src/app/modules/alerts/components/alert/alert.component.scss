@@ -16,7 +16,7 @@
     ix-missing-access-wrapper {
       display: inline-block;
 
-      .role-missing a + .role-missing-icon {
+      .role-missing a+.role-missing-icon {
         right: -15px;
       }
     }
@@ -26,7 +26,7 @@
 .alert-icon {
   cursor: default;
   flex: 0 0 auto;
-  padding-right: 4px;
+  padding-right: 8px;
 
   &.warn {
     color: var(--orange);
@@ -43,6 +43,11 @@
   &.error {
     color: var(--red);
   }
+}
+
+.alert-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .alert-message {
@@ -148,7 +153,7 @@
   display: flex;
   gap: 18px;
 
-  > a {
+  >a {
     cursor: pointer;
     text-decoration: underline;
   }

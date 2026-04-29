@@ -11,6 +11,7 @@
     ></tn-icon-button>
     <mat-menu #alertSettingsMenu="matMenu">
       <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
+        <tn-icon name="app-alert-settings" library="custom" [size]="'sm'"></tn-icon>
         {{ 'Alert Settings' | translate }}
       </a>
       <a
@@ -18,6 +19,7 @@
         ixTest="email-settings"
         (click)="openEmailForm()"
       >
+        <tn-icon name="app-email" library="custom" [size]="'sm'"></tn-icon>
         {{ 'Email' | translate }}
       </a>
     </mat-menu>

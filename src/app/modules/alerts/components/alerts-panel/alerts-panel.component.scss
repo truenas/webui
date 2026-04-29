@@ -1,9 +1,16 @@
 :host {
+  display: flex;
+  flex-direction: column;
   font-size: 0.875rem;
+  overflow-x: hidden;
+  width: 540px;
+  max-width: 540px;
 
   .alert {
     border-bottom: 1px solid var(--lines);
     height: unset;
+    width: 100%;
+    overflow-x: hidden;
 
     &.alert-last {
       border-bottom-style: none;
@@ -24,6 +31,8 @@
 
 .alert-list {
   margin-top: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .alerts-header {
@@ -42,10 +51,15 @@
 
 .severity-filters {
   display: flex;
-  flex-wrap: wrap;
+  overflow-x: auto;
   gap: 0;
   padding: 0 12px;
   border-bottom: 1px solid var(--lines);
+  scrollbar-width: none; // Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Edge
+  }
 
   .filter-button {
     align-items: center;
@@ -174,6 +188,8 @@
 
 .category-section {
   border-bottom: 1px solid var(--lines);
+  width: 100%;
+  overflow-x: hidden;
 
   .category-header {
     align-items: center;
@@ -194,6 +210,10 @@
       font-size: 0.8rem;
       font-weight: 600;
       margin: 0;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       text-transform: uppercase;
     }
 
@@ -210,10 +230,6 @@
       min-width: 16px;
       padding: 0 4px;
     }
-  }
-
-  .alert-list {
-    margin-top: 0;
   }
 }
 

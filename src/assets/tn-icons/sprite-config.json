@@ -1,7 +1,8 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=980261d06b",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=368da10e91",
   "icons": [
     "app-account_circle",
+    "app-alert-settings",
     "app-assignment",
     "app-book-multiple",
     "app-cloud-off",
@@ -32,6 +33,7 @@
     "app-desktop-virtual-machines-active",
     "app-dialpad",
     "app-drag-horizontal",
+    "app-email",
     "app-emoticon",
     "app-enclosure",
     "app-featured-photos",
