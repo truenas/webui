@@ -7,11 +7,15 @@
   align-items: center;
   display: flex;
   flex-direction: row;
-  padding: 8px 12px;
+  padding: 8px 0;
   place-content: center space-between;
 
   &.abortable .job-item-body {
     max-width: calc(100% - 48px);
+  }
+
+  ::ng-deep tn-icon {
+    color: var(--green);
   }
 
   .job-item-body {

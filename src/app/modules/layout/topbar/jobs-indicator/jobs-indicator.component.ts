@@ -69,6 +69,7 @@ export class JobsIndicatorComponent implements OnInit {
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,
+        autoFocus: false,
       });
 
       jobsPanelRef

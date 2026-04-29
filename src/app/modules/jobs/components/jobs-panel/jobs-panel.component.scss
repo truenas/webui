@@ -2,16 +2,18 @@ $component-header: 50px;
 
 :host {
   .mat-mdc-dialog-actions {
-    padding: 14px 24px;
+    padding: 12px 24px 12px 12px;
 
     button {
       display: flex;
-      margin: 0 auto;
+      flex: 1;
+      height: 46px;
+      background-color: var(--bg2) !important;
     }
   }
 
   mat-dialog-content {
-    padding-top: 0;
+    padding: 0 12px;
   }
 }
 
@@ -21,9 +23,9 @@ $component-header: 50px;
   border-bottom: 1px solid var(--lines);
   display: flex;
   height: $component-header;
-  margin-left: -24px;
-  margin-right: -24px;
-  padding: 12px 24px;
+  margin-left: -12px;
+  margin-right: -12px;
+  padding: 12px;
   place-content: stretch space-between;
   position: sticky;
   top: 0;
