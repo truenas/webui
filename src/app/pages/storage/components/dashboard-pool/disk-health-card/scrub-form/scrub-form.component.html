@@ -8,10 +8,14 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
+        <div class="flex justify-center">
+          <ix-checkbox
+            formControlName="enabled"
+            [label]="'Enabled' | translate"
+          ></ix-checkbox>
+        </div>
+
+        <h3 class="text-center text-base text-black!">{{ 'Select pool to import' | translate }}</h3>
 
         <ix-scheduler
           formControlName="schedule"
@@ -28,7 +32,7 @@
         ></ix-input>
       </ix-fieldset>
 
-      <ix-form-actions>
+      <ix-form-actions [full]="true">
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
