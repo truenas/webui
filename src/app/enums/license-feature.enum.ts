@@ -2,21 +2,27 @@ export enum LicenseFeature {
   // The middleware truenas.license.info endpoint normalizes legacy `JAILS` → `APPS`
   // before returning, so the UI only ever sees `APPS`.
   Apps = 'APPS',
-  FibreChannel = 'FIBRECHANNEL',
+  Containers = 'CONTAINERS',
   Dedup = 'DEDUP',
-  Vm = 'VM',
+  FibreChannel = 'FIBRECHANNEL',
+  Lts = 'LTS',
   Sed = 'SED',
   Support = 'SUPPORT',
+  Vms = 'VMS',
+  ZfsTier = 'ZFSTIER',
 }
 
 export function getLabelForLicenseFeature(feature: LicenseFeature | string): string {
   const labels: Record<LicenseFeature, string> = {
     [LicenseFeature.Apps]: 'Apps',
-    [LicenseFeature.FibreChannel]: 'Fibre Channel',
+    [LicenseFeature.Containers]: 'Containers',
     [LicenseFeature.Dedup]: 'Deduplication',
-    [LicenseFeature.Vm]: 'Virtualization',
+    [LicenseFeature.FibreChannel]: 'Fibre Channel',
+    [LicenseFeature.Lts]: 'Long-Term Support',
     [LicenseFeature.Sed]: 'Self-Encrypting Drives',
     [LicenseFeature.Support]: 'Support',
+    [LicenseFeature.Vms]: 'Virtual Machines',
+    [LicenseFeature.ZfsTier]: 'ZFS Tiering',
   };
   return labels[feature as LicenseFeature] ?? feature;
 }
