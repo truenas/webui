@@ -1,5 +1,9 @@
 @import 'scss-imports/variables';
 
+.item-search {
+  padding: 16px 0;
+}
+
 .table-header {
   align-items: flex-end;
   color: var(--fg1);
@@ -67,7 +71,7 @@ ix-app-row,
   width: 100%;
   z-index: 1;
 
-  > div {
+  >div {
     align-items: center;
     display: flex;
     font-weight: bold;

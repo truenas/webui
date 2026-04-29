@@ -11,6 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
@@ -37,6 +38,7 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
     AppDetailsPanelComponent,
     MasterDetailViewComponent,
     InstalledAppsListComponent,
+    PageContentComponent,
   ],
 })
 export class InstalledAppsComponent {
