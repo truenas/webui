@@ -30,7 +30,7 @@
     }
 
     <button
-      mat-button
+      matButton="outlined"
       class="add-button"
       ixTest="add-group"
       [disabled]="isLoading()"
@@ -48,7 +48,7 @@
       {{ 'Save' | translate }}
     </button>
     <button
-      mat-button
+      matButton="outlined"
       ixTest="cancel"
       [disabled]="isLoading()"
       (click)="onCancelConfigure()"
