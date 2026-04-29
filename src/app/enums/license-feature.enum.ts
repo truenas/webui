@@ -18,10 +18,10 @@ export function getLabelForLicenseFeature(feature: LicenseFeature | string): str
     [LicenseFeature.Containers]: 'Containers',
     [LicenseFeature.Dedup]: 'Deduplication',
     [LicenseFeature.FibreChannel]: 'Fibre Channel',
-    [LicenseFeature.Lts]: 'Long-Term Support',
+    [LicenseFeature.Lts]: 'LTS',
     [LicenseFeature.Sed]: 'Self-Encrypting Drives',
     [LicenseFeature.Support]: 'Support',
-    [LicenseFeature.Vms]: 'Virtual Machines',
+    [LicenseFeature.Vms]: 'VMs',
     [LicenseFeature.ZfsTier]: 'ZFS Tiering',
   };
   return labels[feature as LicenseFeature] ?? feature;
