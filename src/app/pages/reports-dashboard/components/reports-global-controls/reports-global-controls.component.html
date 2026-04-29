@@ -23,7 +23,7 @@
 
     @if (activeTab) {
       <button
-        matButton="outlined"
+        mat-button
         color="primary"
         class="menu-toggle"
         ixTest="category-menu"
@@ -89,7 +89,7 @@
       </ng-template>
     </mat-menu>
     <button
-      matButton="outlined"
+      mat-button
       ixTest="exporters-nav"
       [routerLink]="['/reportsdashboard','exporters']"
     >{{ 'Exporters' | translate }}</button>

@@ -33,7 +33,7 @@ export class DialogService {
     return this.matDialog.open(ConfirmDialog, {
       disableClose: options.disableClose || false,
       data: options,
-      autoFocus: true,
+      autoFocus: false,
     })
       .afterClosed();
   }

@@ -5,9 +5,9 @@
   ></ix-basic-search>
 
   <button
-    *ixRequiresRoles="requiredRoles"
-    matButton="outlined"
-    ixTest="bootenv-stats"
+      *ixRequiresRoles="requiredRoles"
+      mat-stroked-button
+      ixTest="bootenv-stats"
     [ixUiSearch]="searchableElements.elements.stats"
     (click)="openBootenvStats()"
   >

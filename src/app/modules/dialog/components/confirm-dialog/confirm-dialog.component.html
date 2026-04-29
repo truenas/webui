@@ -39,7 +39,7 @@
   }
   @if (!options.hideCancel && options.cancelText) {
     <button
-      mat-button="outlined"
+      mat-stroked-button
       name="cancel_button"
       ixTest="dialog-cancel"
       (click)="onCancel()"
@@ -53,8 +53,9 @@
       name="ok_button"
       class="mat-mdc-button mat-button mat-primary submit-button"
       ixTest="dialog-confirm"
+      cdkFocusInitial
       [disabled]="isDisabled()"
-      [color]="options.buttonColor || 'primary'"
+      [color]="'primary'"
       (click)="onSubmit()"
     >
       {{ options.buttonText }}
