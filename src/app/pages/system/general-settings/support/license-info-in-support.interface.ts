@@ -11,8 +11,12 @@ import { ContractType } from 'app/interfaces/system-info.interface';
 export interface LicenseInfoInSupport {
   contractType: ContractType | null;
   model: string | null;
-  /** Pre-formatted expiration date for display, or null when unavailable. */
-  expirationDate: string | null;
+  /**
+   * Pre-formatted expiration date string for display (already run through the
+   * user's preferred date format and the UTC-stable formatter). `null` when no
+   * expiration is set on either the SUPPORT feature or the top-level license.
+   */
+  expirationDateDisplay: string | null;
   /** Days until contract end. Negative when expired. */
   daysLeftInContract: number | null;
   /**

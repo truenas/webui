@@ -69,7 +69,7 @@ export enum ContractType {
   FreeNasMini = 'FREENASMINI',
 }
 
-export function getLabelForContractType(contractType: ContractType | null | undefined): string {
+export function getLabelForContractType(contractType: ContractType | string | null | undefined): string {
   if (!contractType) {
     return '';
   }
@@ -84,5 +84,7 @@ export function getLabelForContractType(contractType: ContractType | null | unde
     [ContractType.FreeNasMini]: 'Free NAS Mini',
     [ContractType.SilverInternational]: 'Silver International',
   };
-  return contractTypeToLabelsMap[contractType] || contractType;
+  // For values not in the known set (e.g. a future PLATINUM tier), fall back
+  // to the raw string so we surface something useful instead of an empty cell.
+  return contractTypeToLabelsMap[contractType as ContractType] ?? contractType;
 }

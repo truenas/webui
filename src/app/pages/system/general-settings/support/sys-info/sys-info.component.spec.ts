@@ -20,7 +20,7 @@ describe('SysInfoComponent', () => {
   const licenseInfo: LicenseInfoInSupport = {
     contractType: ContractType.Gold,
     model: 'M60',
-    expirationDate: '2022-06-10',
+    expirationDateDisplay: '2022-06-10',
     daysLeftInContract: -4,
     featureNames: ['DEDUP', 'FIBRECHANNEL', 'VM'],
     additionalHardware: null,
@@ -80,7 +80,7 @@ describe('SysInfoComponent', () => {
       'System Serial:': systemInfo.system_serial,
       'Features:': licenseInfo.featureNames.join(', '),
       'Contract Type:': 'Gold',
-      'Expiration Date:': `${licenseInfo.expirationDate} (EXPIRED)`,
+      'Expiration Date:': `${licenseInfo.expirationDateDisplay} (EXPIRED)`,
     });
   });
 

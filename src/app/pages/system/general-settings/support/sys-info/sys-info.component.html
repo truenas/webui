@@ -7,11 +7,11 @@
         <span class="value">{{ getLabelForContractType(license.contractType) }}</span>
       </mat-list-item>
     }
-    @if (license.expirationDate) {
+    @if (license.expirationDateDisplay) {
       <mat-list-item>
         <span class="label">{{ 'Expiration Date' | translate }}:</span>
         <span class="value">
-          {{ license.expirationDate }}
+          {{ license.expirationDateDisplay }}
           @if (license.daysLeftInContract !== null) {
             @if (license.daysLeftInContract > 0) {
               ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: license.daysLeftInContract } }})
