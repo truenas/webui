@@ -10,11 +10,16 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
+  selectHasLicenseFeature,
   selectIsEnterprise,
-  selectLicenseFeatures,
-  selectSystemInfo,
-  waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
+
+// Hoist parameterized selector instances so consumers share memoization across
+// subscriptions (each call to `selectHasLicenseFeature` builds a new selector).
+const selectHasAppsFeature = selectHasLicenseFeature(LicenseFeature.Apps);
+const selectHasVmsFeature = selectHasLicenseFeature(LicenseFeature.Vms);
+const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
+const selectHasFibreChannelFeature = selectHasLicenseFeature(LicenseFeature.FibreChannel);
 
 @Injectable({
   providedIn: 'root',
@@ -26,11 +31,9 @@ export class LicenseService {
 
   hasFailover$ = this.store$.select(selectIsHaLicensed);
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
+
   hasFibreChannel$ = combineLatest([
-    this.store$.pipe(
-      waitForSystemInfo,
-      map((systemInfo) => systemInfo.license?.features?.includes(LicenseFeature.FibreChannel)),
-    ),
+    this.store$.select(selectHasFibreChannelFeature),
     this.api.call('fc.capable'),
   ]).pipe(
     map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
@@ -38,43 +41,29 @@ export class LicenseService {
   );
 
   hasVms$ = combineLatest([
-    this.store$.select(selectSystemInfo),
+    this.store$.select(selectHasVmsFeature),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
-    map(([systemInfo, isEnterprise]) => {
-      if (!isEnterprise) {
-        return true;
-      }
-
-      return Boolean(systemInfo?.license?.features?.includes(LicenseFeature.Vm));
-    }),
+    map(([hasVms, isEnterprise]) => !isEnterprise || hasVms),
   );
 
   hasApps$ = combineLatest([
-    this.store$.select(selectSystemInfo),
+    this.store$.select(selectHasAppsFeature),
     this.store$.select(selectIsEnterprise),
   ]).pipe(
-    map(([systemInfo, isEnterprise]) => {
-      if (!isEnterprise) {
-        return true;
-      }
-
-      return Boolean(systemInfo?.license?.features?.includes(LicenseFeature.Jails));
-    }),
+    map(([hasApps, isEnterprise]) => !isEnterprise || hasApps),
   );
 
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
-  readonly hasSed$ = this.store$.select(selectLicenseFeatures).pipe(
-    map((licenseFeatures) => licenseFeatures?.includes(LicenseFeature.Sed) ?? false),
-  );
+  readonly hasSed$ = this.store$.select(selectHasSedFeature);
 
   readonly shouldShowContainers$ = combineLatest([
     this.store$.select(selectIsEnterprise),
-    this.store$.select(selectLicenseFeatures),
-  ]).pipe(map((
-    [isEnterprise, licenseFeatures],
-  ) => !isEnterprise || licenseFeatures?.includes(LicenseFeature.Jails)));
+    this.store$.select(selectHasAppsFeature),
+  ]).pipe(
+    map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
+  );
 
   /**
    * Check if the system is configured with TrueNAS Connect.
