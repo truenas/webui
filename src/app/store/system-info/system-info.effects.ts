@@ -14,26 +14,26 @@ import {
   systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
-const validContractTypes: ReadonlySet<string> = new Set(Object.values(ContractType));
+const knownContractTypes: ReadonlySet<string> = new Set(Object.values(ContractType));
 
 /**
- * The middleware response casing for `contract_type` is not 100% certain at the
- * time of writing — uppercasing here means downstream code can rely on the
- * `ContractType` enum without scattering normalization through the UI. Unknown
- * values fall through to `null`.
+ * Defensively uppercase `contract_type` so downstream `getLabelForContractType`
+ * lookups hit the `ContractType` enum keys regardless of how middleware emits
+ * the casing. Unknown values are passed through as the uppercased string and a
+ * warning is logged so they surface during testing — the label helper has its
+ * own raw-string fallback for display.
  */
 function normalizeLicense(license: License | null): License | null {
-  if (!license) {
-    return null;
+  if (!license?.contract_type) {
+    return license;
   }
 
-  let contractType: ContractType | null = null;
-  if (license.contract_type) {
-    const upper = license.contract_type.toUpperCase();
-    contractType = validContractTypes.has(upper) ? (upper as ContractType) : null;
+  const upper = license.contract_type.toUpperCase();
+  if (!knownContractTypes.has(upper)) {
+    console.warn(`Unknown license.contract_type "${license.contract_type}" — falling back to raw value.`);
   }
 
-  return { ...license, contract_type: contractType };
+  return { ...license, contract_type: upper as ContractType };
 }
 
 @Injectable()

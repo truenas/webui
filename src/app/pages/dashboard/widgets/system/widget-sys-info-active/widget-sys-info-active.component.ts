@@ -9,7 +9,6 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { formatInTimeZone } from 'date-fns-tz';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
 import { getLabelForContractType } from 'app/interfaces/system-info.interface';
@@ -22,6 +21,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
+import { formatLicenseExpiration } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -90,15 +90,9 @@ export class WidgetSysInfoActiveComponent {
     return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
 
-  licenseExpirationDate = computed(() => {
-    const expiresAt = this.systemInfo()?.license?.expires_at?.$value;
-    if (!expiresAt) {
-      return null;
-    }
-    // expires_at is a calendar date (YYYY-MM-DD) parsed as UTC midnight; format
-    // in UTC so the displayed date matches the API regardless of the user's zone.
-    return formatInTimeZone(new Date(expiresAt), 'UTC', this.localeService.getPreferredDateFormat());
-  });
+  licenseExpirationDate = computed(
+    () => formatLicenseExpiration(this.systemInfo()?.license?.expires_at, this.localeService),
+  );
 
   isLoaded = computed(() => this.systemInfo());
 

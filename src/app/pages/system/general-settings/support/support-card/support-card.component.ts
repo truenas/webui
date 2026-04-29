@@ -10,8 +10,6 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { formatInTimeZone } from 'date-fns-tz';
-import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -30,7 +28,10 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { getProductImageSrc } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import {
+  formatLicenseExpiration,
+  getProductImageSrc,
+} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -136,22 +137,17 @@ export class SupportCardComponent implements OnInit {
     // Support contract dates live on the SUPPORT feature entry; fall back to the
     // top-level expiration if the SUPPORT entry is absent.
     const supportFeature = license.features.find((feature) => feature.name === LicenseFeature.Support);
-    const expirationIso = supportFeature?.expires_at?.$value ?? license.expires_at?.$value ?? null;
+    const expiresAt = supportFeature?.expires_at ?? license.expires_at ?? null;
 
-    let expirationDate: string | null = null;
+    const expirationDateDisplay = formatLicenseExpiration(expiresAt, this.localeService);
     let daysLeftInContract: number | null = null;
-    if (expirationIso) {
-      // expirationIso is a calendar date (YYYY-MM-DD) parsed as UTC midnight; format
-      // in UTC so the displayed date matches the API regardless of the user's zone.
-      const expDate = new Date(expirationIso);
-      expirationDate = formatInTimeZone(expDate, 'UTC', this.localeService.getPreferredDateFormat());
-      daysLeftInContract = Math.round((expDate.getTime() - nowMs) / oneDayMillis);
+    if (expiresAt?.$value) {
+      daysLeftInContract = Math.round((new Date(expiresAt.$value).getTime() - nowMs) / oneDayMillis);
     }
 
     const featureNames = license.features
-      .map((feature) => feature.name)
-      .filter((name) => name !== LicenseFeature.Support)
-      .map((name) => getLabelForLicenseFeature(name));
+      .filter((feature) => feature.name !== LicenseFeature.Support)
+      .map((feature) => getLabelForLicenseFeature(feature.name));
 
     const additionalHardware = Object.entries(license.enclosures)
       .map(([model, count]) => this.translate.instant('{count}× {model}', { count, model }))
@@ -160,7 +156,7 @@ export class SupportCardComponent implements OnInit {
     return {
       contractType: license.contract_type,
       model: license.model,
-      expirationDate,
+      expirationDateDisplay,
       daysLeftInContract,
       featureNames,
       additionalHardware,
@@ -206,7 +202,7 @@ export class SupportCardComponent implements OnInit {
 
     request$.pipe(
       switchMap((result) => {
-        const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
+        const attachDebug = (typeof result === 'object' && result?.sendInitialDebug) || false;
 
         return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
           this.loader.withLoader(),
