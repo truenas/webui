@@ -26,7 +26,10 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
-import { formatLicenseExpiration } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import {
+  formatLicenseExpiration,
+  getLicenseExpiration,
+} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -102,7 +105,7 @@ export class WidgetSysInfoPassiveComponent {
   });
 
   licenseExpirationDate = computed(
-    () => formatLicenseExpiration(this.systemInfo()?.license?.expires_at, this.localeService),
+    () => formatLicenseExpiration(getLicenseExpiration(this.systemInfo()?.license), this.localeService),
   );
 
   isLoaded = computed(() => this.systemInfo());

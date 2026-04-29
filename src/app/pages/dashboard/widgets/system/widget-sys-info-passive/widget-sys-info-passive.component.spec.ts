@@ -125,7 +125,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
         'Platform: TRUENAS-M40-HA',
         'Edition: Enterprise',
         'Version: 25.10.0-MASTER-20250126-184805',
-        'Support License: Gold Contract,  Expires on 2025-01-01',
+        'Support License: Gold Contract  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Uptime: 1 minute 17 seconds as of 10:34',
       ]);
