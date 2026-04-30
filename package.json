@@ -6,7 +6,7 @@
   "type": "module",
   "homepage": "https://github.com/HarborNAS/webui/",
   "scripts": {
-    "buildng": "node ./setup-production-env.js && NODE_OPTIONS=--max-old-space-size=8192 yarn ng build",
+    "buildng": "node ./setup-production-env.js && NODE_OPTIONS=--max-old-space-size=8192 node ./node_modules/@angular/cli/bin/ng.js build",
     "build": "yarn run clean:dist && yarn tn-icons && yarn buildng && yarn tsx scripts/update-sw-version.ts",
     "build:prod": "yarn tn-icons && yarn buildng --configuration production --base-href /ui/ && yarn tsx scripts/update-sw-version.ts",
     "check-env": "cd $(git rev-parse --show-toplevel) && yarn run ui check-env",
@@ -19,7 +19,7 @@
     "lint": "tsx node_modules/@truenas/common-typescript/scripts/lint.ts",
     "lint:fix": "tsx node_modules/@truenas/common-typescript/scripts/lint.ts --fix",
     "tn-icons": "tsx scripts/generate-tn-icons.ts",
-    "ng": "ng",
+    "ng": "node ./node_modules/@angular/cli/bin/ng.js",
     "prepare": "husky",
     "reinstall": "rimraf yarn.lock; rimraf node_modules; yarn cache clean -f; yarn install",
     "start": "yarn run check-env && yarn tn-icons && node --max-old-space-size=8192 ./node_modules/@angular/cli/bin/ng serve --no-hmr --proxy-config proxy.config.json",
