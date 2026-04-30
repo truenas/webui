@@ -1,0 +1,17 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2.5" y="3" width="15" height="13.5" rx="3.5" fill="white"/>
+  <path d="M2.5 6.75C2.5 4.679 4.179 3 6.25 3H13.75C15.821 3 17.5 4.679 17.5 6.75V7.5H2.5V6.75Z" fill="url(#harbordesk_active_header)"/>
+  <circle cx="5.6" cy="5.35" r=".65" fill="#6715FF" fill-opacity=".9"/>
+  <circle cx="7.85" cy="5.35" r=".65" fill="#6715FF" fill-opacity=".55"/>
+  <rect x="5" y="10" width="4" height="3.25" rx="1" fill="#6715FF" fill-opacity=".9"/>
+  <rect x="10.8" y="10.1" width="4.2" height="1.1" rx=".55" fill="#6715FF" fill-opacity=".75"/>
+  <rect x="10.8" y="12.45" width="3" height="1.1" rx=".55" fill="#6715FF" fill-opacity=".52"/>
+  <defs>
+    <linearGradient id="harbordesk_active_header" x1="10" y1="7.5" x2="10" y2="3" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity=".4"/>
+      <stop offset=".22" stop-color="#CEB4FF" stop-opacity=".62"/>
+      <stop offset=".57" stop-color="#7125FF" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#6715FF"/>
+    </linearGradient>
+  </defs>
+</svg>

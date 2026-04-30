@@ -18,7 +18,7 @@
     "extract-ui-search-elements": "tsx scripts/ui-search/extract-ui-search-elements.ts",
     "lint": "tsx node_modules/@truenas/common-typescript/scripts/lint.ts",
     "lint:fix": "tsx node_modules/@truenas/common-typescript/scripts/lint.ts --fix",
-    "tn-icons": "truenas-icons generate --src ./src/app --output ./src/assets/tn-icons --url assets/tn-icons",
+    "tn-icons": "tsx scripts/generate-tn-icons.ts",
     "ng": "ng",
     "prepare": "husky",
     "reinstall": "rimraf yarn.lock; rimraf node_modules; yarn cache clean -f; yarn install",

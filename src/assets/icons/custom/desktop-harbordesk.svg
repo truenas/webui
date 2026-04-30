@@ -1,0 +1,21 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="10" width="44" height="38" rx="10" fill="#6715FF"/>
+  <path d="M8 20C8 14.477 12.477 10 18 10H42C47.523 10 52 14.477 52 20V23H8V20Z" fill="url(#harbordesk_header)"/>
+  <circle cx="18" cy="16.5" r="2" fill="white" fill-opacity=".85"/>
+  <circle cx="25" cy="16.5" r="2" fill="white" fill-opacity=".55"/>
+  <rect x="15" y="29" width="12" height="10" rx="3" fill="white" fill-opacity=".9"/>
+  <rect x="32" y="29" width="13" height="3" rx="1.5" fill="white" fill-opacity=".85"/>
+  <rect x="32" y="36" width="9" height="3" rx="1.5" fill="white" fill-opacity=".65"/>
+  <path d="M19 43H41" stroke="white" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  <path d="M43.5 10.25C48.057 10.958 51.5 14.986 51.5 19.768V22.5H49.5V20C49.5 17.153 48.324 14.965 46.296 13.629C44.292 12.309 41.408 12 37.5 12H22.5C18.592 12 15.708 12.309 13.704 13.629C11.676 14.965 10.5 17.153 10.5 20V22.5H8.5V19.768C8.5 14.986 11.943 10.958 16.5 10.25C18.266 10 20.396 10 23.066 10H36.934C39.604 10 41.734 10 43.5 10.25Z" fill="url(#harbordesk_gloss)"/>
+  <defs>
+    <linearGradient id="harbordesk_header" x1="30" y1="10" x2="30" y2="23" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E3E3E5" stop-opacity=".65"/>
+      <stop offset="1" stop-color="#BBBBC0" stop-opacity=".52"/>
+    </linearGradient>
+    <linearGradient id="harbordesk_gloss" x1="30" y1="10" x2="30" y2="22.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
