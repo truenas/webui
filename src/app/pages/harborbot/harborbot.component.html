@@ -1,0 +1,133 @@
+<ix-page-header [pageTitle]="'HarborBot' | translate"></ix-page-header>
+
+<section class="harborbot-page">
+  <form
+    class="search-bar"
+    [formGroup]="form"
+    (ngSubmit)="search()"
+  >
+    <mat-form-field appearance="outline" class="query-field">
+      <mat-label>{{ 'HarborBot' | translate }}</mat-label>
+      <input
+        matInput
+        formControlName="query"
+        [placeholder]="'找到和春天相关的照片' | translate"
+      />
+    </mat-form-field>
+
+    <mat-button-toggle-group
+      class="mode-toggle"
+      formControlName="filter"
+      aria-label="HarborBot result filter"
+    >
+      <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="images">{{ 'Images' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
+      <mat-button-toggle value="videos">{{ 'Videos' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="loading() || form.invalid"
+    >
+      {{ 'Search with HarborBot' | translate }}
+    </button>
+  </form>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  @if (error()) {
+    <div class="notice error">{{ error() }}</div>
+  }
+
+  @if (response(); as result) {
+    <div class="result-summary">
+      <strong>{{ result.total_matches }}</strong>
+      <span>{{ 'matches' | translate }}</span>
+      <span>{{ result.status }}</span>
+      @if (result.degraded) {
+        <span>{{ result.degraded_reason }}</span>
+      }
+    </div>
+
+    @if (result.warnings.length > 0 || result.blockers.length > 0) {
+      <div class="notice warning">
+        @for (warning of result.warnings; track warning) {
+          <span>{{ warning }}</span>
+        }
+        @for (blocker of result.blockers; track blocker) {
+          <span>{{ blocker }}</span>
+        }
+      </div>
+    }
+
+    @if (noResults()) {
+      <div class="empty-state">{{ emptyMessage(result) | translate }}</div>
+    }
+  }
+
+  <section class="waterfall" aria-live="polite">
+    @for (item of waterfallItems(); track resultTrackKey($index, item)) {
+      <mat-card
+        class="result-card"
+        [ngClass]="item.kind"
+        tabindex="0"
+        (click)="openPreview(item)"
+        (keydown.enter)="openPreview(item)"
+      >
+        @if (item.kind === 'image') {
+          <div class="image-frame">
+            <img
+              [src]="item.previewUrl"
+              [alt]="item.hit.title"
+              loading="lazy"
+            />
+          </div>
+        }
+
+        <mat-card-content>
+          <div class="card-topline">
+            <span>{{ kindLabel(item) | translate }}</span>
+            <span>{{ scoreLabel(item.hit) }}</span>
+          </div>
+          <h2>{{ item.hit.title }}</h2>
+          <p>{{ summary(item.hit) }}</p>
+
+          @if (matchedTerms(item.hit)) {
+            <div class="terms">{{ matchedTerms(item.hit) }}</div>
+          }
+
+          <details (click)="$event.stopPropagation()">
+            <summary>{{ 'Evidence' | translate }}</summary>
+            <dl>
+              <div>
+                <dt>{{ 'Source' | translate }}</dt>
+                <dd>{{ sourceKinds(item.hit) }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'Path' | translate }}</dt>
+                <dd>{{ item.hit.path }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'Content indexed' | translate }}</dt>
+                <dd>{{ item.hit.content_indexed ? 'true' : 'false' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'Content match' | translate }}</dt>
+                <dd>{{ item.hit.content_match_used ? 'true' : 'false' }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'Filename match' | translate }}</dt>
+                <dd>{{ item.hit.filename_match_used ? 'true' : 'false' }}</dd>
+              </div>
+            </dl>
+          </details>
+        </mat-card-content>
+      </mat-card>
+    }
+  </section>
+</section>

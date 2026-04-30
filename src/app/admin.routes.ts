@@ -56,6 +56,16 @@ export const adminRoutes: Routes = [
         data: { title: T('Applications'), breadcrumb: T('Applications') },
       },
       {
+        path: 'harbordesk',
+        loadChildren: () => import('app/pages/harbordesk/harbordesk.routes').then((module) => module.harbordeskRoutes),
+        data: { title: T('HarborDesk'), breadcrumb: T('HarborDesk') },
+      },
+      {
+        path: 'harborbot',
+        loadChildren: () => import('app/pages/harborbot/harborbot.routes').then((module) => module.harborbotRoutes),
+        data: { title: T('HarborBot'), breadcrumb: T('HarborBot') },
+      },
+      {
         path: 'sharing',
         loadChildren: () => import('./pages/sharing/sharing.routes').then((module) => module.sharingRoutes),
         data: { title: T('Shares'), breadcrumb: T('Shares') },
