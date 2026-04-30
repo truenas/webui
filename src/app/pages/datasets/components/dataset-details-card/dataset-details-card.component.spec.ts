@@ -162,7 +162,7 @@ describe('DatasetDetailsCardComponent', () => {
         data: {
           datasetName: 'pool/child',
           currentTier: DatasetTier.Regular,
-          shareName: '',
+          poolName: 'pool',
         },
       });
     });
@@ -178,7 +178,7 @@ describe('DatasetDetailsCardComponent', () => {
       expect(spectator.query('.change-tier-link')).toBeNull();
     });
 
-    it('shows tier job status when a tier job is running', () => {
+    it('shows tier job status icon when a tier job is running', () => {
       setupTest({
         dataset: {
           ...dataset,
@@ -191,8 +191,9 @@ describe('DatasetDetailsCardComponent', () => {
         } as DatasetDetails,
       });
 
-      const tierStatus = spectator.query('.job-status-badge');
-      expect(tierStatus).toHaveText('Migration running');
+      const icon = spectator.query('.job-status-icon');
+      expect(icon).toBeTruthy();
+      expect(icon).toHaveClass('spinning');
     });
 
     it('opens delete dataset dialog when Delete button is clicked', async () => {
