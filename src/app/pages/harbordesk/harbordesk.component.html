@@ -1,0 +1,1604 @@
+<ix-page-header></ix-page-header>
+
+<section class="harbordesk-page">
+  <div class="harbordesk-intro">
+    <div>
+      <p class="eyebrow">{{ 'Harbor AI Settings' | translate }}</p>
+      <h1>{{ 'HarborDesk' | translate }}</h1>
+      <p class="summary">
+        {{ 'Customer settings for Harbor AI services inside the HarborOS WebUI. IM credentials stay in HarborGate, HarborOS System Domain stays separate, and Home AIoT device management stays in the AIoT lane.' | translate }}
+      </p>
+      <p class="muted">
+        {{ 'Customer entry: /ui/harbordesk. HarborBeacon settings APIs are accessed through the same-origin /api/harbordesk/* path.' | translate }}
+      </p>
+    </div>
+    <div class="intro-actions">
+      <button
+        mat-button
+        type="button"
+        [disabled]="loading()"
+        (click)="refresh()"
+      >
+        {{ 'Refresh' | translate }}
+      </button>
+      <a
+        mat-button
+        color="primary"
+        routerLink="/desktop"
+      >
+        {{ 'Back to Desktop' | translate }}
+      </a>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  @if (loadError()) {
+    <div class="notice error">
+      {{ loadError() | translate }}
+    </div>
+  }
+
+  @if (actionError()) {
+    <div class="notice error">
+      {{ actionError() | translate }}
+    </div>
+  }
+
+  @if (actionMessage()) {
+    <div class="notice success">
+      {{ actionMessage() | translate }}
+    </div>
+  }
+
+  <nav
+    class="tab-strip"
+    [attr.aria-label]="'HarborDesk settings sections' | translate"
+  >
+    @for (tab of tabs; track tab.id) {
+      <button
+        type="button"
+        class="tab-button"
+        [attr.aria-current]="isTab(tab.id) ? 'page' : null"
+        [class.active]="isTab(tab.id)"
+        (click)="selectTab(tab.id)"
+      >
+        {{ tab.label | translate }}
+      </button>
+    }
+  </nav>
+  <p class="tab-description">{{ activeTabDetail() | translate }}</p>
+
+  @if (isTab('overview')) {
+    <section class="tab-panel">
+      <div class="metrics-grid">
+        @for (metric of metrics(); track metric.label) {
+          <div
+            class="metric"
+            [class.good]="metric.tone === 'good'"
+            [class.warn]="metric.tone === 'warn'"
+            [class.danger]="metric.tone === 'danger'"
+          >
+            <span>{{ metric.label | translate }}</span>
+            <strong>{{ metric.value | translate }}</strong>
+            <p>{{ metric.detail | translate }}</p>
+          </div>
+        }
+      </div>
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Settings Overview' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="overview-grid">
+            <div>
+              <span class="field-label">{{ 'HarborOS principal' | translate }}</span>
+              <strong>{{ state()?.current_principal_display_name || state()?.current_principal_user_id || ('Not projected' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Writable root' | translate }}</span>
+              <strong>{{ state()?.writable_root || ('Not projected' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Default scan CIDR' | translate }}</span>
+              <strong>{{ defaults().cidr || ('Not configured' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Default camera' | translate }}</span>
+              <strong>{{ defaultCamera()?.name || ('Not selected' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Model profile' | translate }}</span>
+              <strong>{{ hardware()?.recommended_model_profile || ('Not projected' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'RAG status' | translate }}</span>
+              <strong [ngClass]="toneClass(rag()?.status)">{{ rag()?.status || ('Unknown' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'HarborOS status' | translate }}</span>
+              <strong [ngClass]="toneClass(harborOs()?.status)">{{ harborOs()?.status || ('Unknown' | translate) }}</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Connector status' | translate }}</span>
+              <strong>{{ configuredConnectorCount() }}/2</strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Default outbound IM' | translate }}</span>
+              <strong>{{ defaultNotificationTarget()?.label || ('Not selected' | translate) }}</strong>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="action-grid">
+        <mat-card class="settings-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'Next Actions' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="action-list">
+              <button
+                mat-button
+                type="button"
+                (click)="selectTab('im')"
+              >
+                {{ 'Check IM connector setup' | translate }}
+              </button>
+              <button
+                mat-button
+                type="button"
+                (click)="selectTab('models')"
+              >
+                {{ 'Manage models and policies' | translate }}
+              </button>
+              <button
+                mat-button
+                type="button"
+                (click)="selectTab('devices')"
+              >
+                {{ 'Manage Connected Devices' | translate }}
+              </button>
+              <button
+                mat-button
+                type="button"
+                [disabled]="!defaultCamera() || isBusy()"
+                (click)="validateDefaultCamera()"
+              >
+                {{ 'Validate default camera' | translate }}
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="settings-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'API Health' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (endpointErrors()['state'] || endpointErrors()['gateway'] || endpointErrors()['models'] || endpointErrors()['hardware'] || endpointErrors()['rag'] || endpointErrors()['harborOs']) {
+              <div class="notice warn compact">
+                {{ 'Some settings panels are degraded. Open the affected tab for details.' | translate }}
+              </div>
+            } @else {
+              <p class="muted">{{ 'No blocking API errors are currently surfaced.' | translate }}</p>
+            }
+            <div class="mini-grid">
+              <span>/api/harbordesk/state</span>
+              <strong [ngClass]="endpointError('state') ? 'tone-danger' : 'tone-good'">{{ endpointError('state') ? ('Error' | translate) : ('OK' | translate) }}</strong>
+              <span>/api/harbordesk/models/*</span>
+              <strong [ngClass]="endpointError('models') ? 'tone-danger' : 'tone-good'">{{ endpointError('models') ? ('Error' | translate) : ('OK' | translate) }}</strong>
+              <span>/api/harbordesk/devices/*</span>
+              <strong [ngClass]="devices().length ? 'tone-good' : 'tone-warn'">{{ devices().length }}</strong>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Hardware Readiness' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (endpointError('hardware')) {
+            <div class="notice error">{{ endpointError('hardware') | translate }}</div>
+          }
+          @if (hardware(); as hardwareState) {
+            <p class="muted">{{ 'Recommended model profile' | translate }}: <strong>{{ hardwareState.recommended_model_profile }}</strong></p>
+            <div class="status-block-grid">
+              @for (block of hardwareBlocks(); track block.id) {
+                <article class="status-block" [ngClass]="toneClass(block.status)">
+                  <span>{{ block.label | translate }}</span>
+                  <strong>{{ block.status | translate }}</strong>
+                  <p>{{ block.summary }}</p>
+                  <p>{{ block.detail }}</p>
+                </article>
+              }
+            </div>
+            @if (hardwareState.blockers?.length) {
+              <div class="notice warn compact">
+                @for (blocker of hardwareState.blockers; track blocker) {
+                  <p>{{ blocker }}</p>
+                }
+              </div>
+            }
+          } @else {
+            <div class="empty-state">{{ 'Hardware readiness is not available.' | translate }}</div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+
+  @if (isTab('im')) {
+    <section class="tab-panel">
+      @if (endpointError('gateway')) {
+        <div class="notice error">{{ endpointError('gateway') | translate }}</div>
+      }
+      @if (endpointError('notificationTargets')) {
+        <div class="notice error">{{ endpointError('notificationTargets') | translate }}</div>
+      }
+
+      <div class="action-grid">
+        @for (connector of connectorCards(); track connector.id) {
+          <mat-card class="settings-card connector-card">
+            <mat-card-header>
+              <mat-card-title>{{ connector.label | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="connector-status">
+                <span
+                  class="pill"
+                  [class.good]="connector.tone === 'good'"
+                  [class.warn]="connector.tone === 'warn'"
+                  [class.danger]="connector.tone === 'danger'"
+                >
+                  {{ connector.status | translate }}
+                </span>
+                @if (connector.lastCheckedAt) {
+                  <span class="muted">{{ 'Last checked' | translate }}: {{ connector.lastCheckedAt }}</span>
+                }
+              </div>
+              <p>{{ connector.detail | translate }}</p>
+              <div class="button-row">
+                @if (connector.setupUrl) {
+                  <a
+                    mat-button
+                    color="primary"
+                    [href]="connector.setupUrl"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {{ 'Open setup' | translate }}
+                  </a>
+                }
+                @if (connector.manageUrl) {
+                  <a
+                    mat-button
+                    [href]="connector.manageUrl"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {{ 'Open manage' | translate }}
+                  </a>
+                }
+              </div>
+              <p class="muted">
+                {{ 'HarborDesk does not save IM secrets. Raw app secrets, bot tokens, and Feishu API keys must remain in HarborGate.' | translate }}
+              </p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Default outbound IM' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            {{ 'HarborBeacon uses this target when it proactively sends a message. HarborGate registers private IM targets after user conversations; HarborDesk only selects or removes the redacted target record.' | translate }}
+          </p>
+          @if (defaultNotificationTarget(); as defaultTarget) {
+            <div class="notice success compact">
+              {{ 'Current default' | translate }}:
+              <strong>{{ defaultTarget.label }}</strong>
+              <span class="muted"> - {{ defaultTarget.platform_hint || ('Unknown platform' | translate) }}</span>
+            </div>
+          } @else {
+            <div class="empty-state">
+              {{ 'No notification target is registered yet. Send HarborGate a private IM once, then refresh this page.' | translate }}
+            </div>
+          }
+
+          @if (notificationTargets().length > 0) {
+            <div class="target-list">
+              @for (target of notificationTargets(); track target.target_id) {
+                <article class="target-row">
+                  <div>
+                    <h2>{{ target.label }}</h2>
+                    <p class="muted">
+                      {{ target.platform_hint || ('Unknown platform' | translate) }}
+                      @if (target.last_seen_at) {
+                        <span> - {{ 'Last seen' | translate }}: {{ target.last_seen_at }}</span>
+                      }
+                    </p>
+                    <code>{{ 'Route key' | translate }}: {{ targetRoutePreview(target) | translate }}</code>
+                  </div>
+                  <div class="row-actions">
+                    @if (target.is_default) {
+                      <span class="pill good">{{ 'Default' | translate }}</span>
+                    }
+                    <button
+                      mat-button
+                      type="button"
+                      [disabled]="isBusy() || target.is_default"
+                      (click)="setDefaultNotificationTarget(target)"
+                    >
+                      {{ 'Set Default IM' | translate }}
+                    </button>
+                    <button
+                      mat-button
+                      type="button"
+                      [disabled]="isBusy()"
+                      (click)="removeNotificationTarget(target)"
+                    >
+                      {{ 'Remove target' | translate }}
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+
+  @if (isTab('models')) {
+    <section class="tab-panel models-tab">
+      @if (endpointError('models')) {
+        <div class="notice error">{{ endpointError('models') | translate }}</div>
+      }
+      @if (endpointError('knowledgeSettings')) {
+        <div class="notice error">{{ endpointError('knowledgeSettings') | translate }}</div>
+      }
+      @if (endpointError('knowledgeIndexStatus')) {
+        <div class="notice error">{{ endpointError('knowledgeIndexStatus') | translate }}</div>
+      }
+
+      <mat-card class="settings-card rag-validation-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Multimodal RAG validation' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="validation-status-grid">
+            @for (endpoint of ragValidationEndpointCards(); track endpoint.kind) {
+              <article class="validation-status-card" [ngClass]="toneClass(endpoint.status)">
+                <span class="field-label">{{ endpoint.label | translate }}</span>
+                <strong>{{ endpoint.status | translate }}</strong>
+                <p>{{ endpoint.modelName }}</p>
+                <small>{{ endpoint.baseUrl || ('No runtime URL' | translate) }}</small>
+              </article>
+            }
+            <article class="validation-status-card" [ngClass]="'tone-' + validationVlmDownloadTone(localVlmModelCard())">
+              <span class="field-label">{{ 'Local VLM' | translate }}</span>
+              <strong>{{ validationVlmStatus(localVlmModelCard()) | translate }}</strong>
+              @if (localVlmModelCard(); as vlmCard) {
+                <p>{{ vlmCard.displayName }}</p>
+                <small>{{ vlmCard.localPath || vlmCard.modelId }}</small>
+              } @else {
+                <p>{{ 'Manual download required' | translate }}</p>
+              }
+            </article>
+            <article class="validation-status-card" [ngClass]="'tone-' + ragValidationSourceSummary().tone">
+              <span class="field-label">{{ 'Source roots' | translate }}</span>
+              <strong>{{ ragValidationSourceSummary().enabled }}/{{ ragValidationSourceSummary().total }}</strong>
+              <p>{{ ragValidationSourceSummary().status | translate }}</p>
+              <small>{{ 'Existing' | translate }}: {{ ragValidationSourceSummary().existing }}</small>
+            </article>
+            <article class="validation-status-card" [ngClass]="'tone-' + (weixinConnector()?.tone ?? 'neutral')">
+              <span class="field-label">{{ 'Weixin' | translate }}</span>
+              <strong>{{ weixinConnector()?.status || ('Not configured' | translate) }}</strong>
+              <p>{{ weixinConnector()?.connected ? ('Connected' | translate) : weixinConnector()?.configured ? ('Configured' | translate) : ('Setup needed' | translate) }}</p>
+              @if (weixinConnector()?.lastCheckedAt) {
+                <small>{{ weixinConnector()?.lastCheckedAt }}</small>
+              }
+            </article>
+          </div>
+
+          <div class="validation-count-row">
+            @for (stat of ragValidationImageStats(); track stat.id) {
+              <article class="validation-count-card" [ngClass]="'tone-' + stat.tone">
+                <span class="field-label">{{ stat.label | translate }}</span>
+                <strong>{{ stat.value }}</strong>
+              </article>
+            }
+          </div>
+
+          <div class="validation-step-list">
+            <article class="validation-step">
+              <span class="step-index">1</span>
+              <div class="step-main">
+                <strong>{{ 'Confirm/download VLM' | translate }}</strong>
+                <span>{{ validationVlmStatus(localVlmModelCard()) | translate }}</span>
+              </div>
+              <div class="row-actions">
+                @if (localVlmModelCard(); as vlmCard) {
+                  <button
+                    mat-button
+                    color="primary"
+                    type="button"
+                    [disabled]="validationVlmActionDisabled(vlmCard)"
+                    (click)="handleModelCardAction(vlmCard)"
+                  >
+                    {{ validationVlmActionLabel(vlmCard) | translate }}
+                  </button>
+                  <button mat-button type="button" (click)="prepareManualVlmDownload()">
+                    {{ 'Manual options' | translate }}
+                  </button>
+                } @else {
+                  <button mat-button color="primary" type="button" [disabled]="isBusy()" (click)="prepareManualVlmDownload()">
+                    {{ 'Manual download' | translate }}
+                  </button>
+                }
+              </div>
+            </article>
+
+            <article class="validation-step">
+              <span class="step-index">2</span>
+              <div class="step-main">
+                <strong>{{ 'Configure/test VLM endpoint' | translate }}</strong>
+                <span>{{ vlmEndpointCard()?.status || ('Not configured' | translate) }}</span>
+              </div>
+              <div class="row-actions">
+                @if (vlmEndpointCard()?.endpoint; as vlmEndpoint) {
+                  <button mat-button type="button" (click)="editModelEndpoint(vlmEndpoint); openAdvancedModels(true)">
+                    {{ 'Edit VLM endpoint' | translate }}
+                  </button>
+                  <button
+                    mat-button
+                    color="primary"
+                    type="button"
+                    [disabled]="actionBusy('model-test:' + vlmEndpoint.model_endpoint_id)"
+                    (click)="testModelEndpoint(vlmEndpoint)"
+                  >
+                    {{ actionBusy('model-test:' + vlmEndpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
+                  </button>
+                } @else {
+                  <button mat-button color="primary" type="button" (click)="prepareEndpointFormForKind('vlm')">
+                    {{ 'Configure VLM endpoint' | translate }}
+                  </button>
+                }
+              </div>
+            </article>
+
+            <article class="validation-step">
+              <span class="step-index">3</span>
+              <div class="step-main">
+                <strong>{{ 'Add source root' | translate }}</strong>
+                <span>{{ ragValidationSourceSummary().enabled }}/{{ ragValidationSourceSummary().total }}</span>
+              </div>
+              <div class="row-actions">
+                <button mat-button color="primary" type="button" (click)="startKnowledgeSourceRoot()">
+                  {{ 'Add source root' | translate }}
+                </button>
+                <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(null)">
+                  {{ 'Browse files' | translate }}
+                </button>
+              </div>
+            </article>
+
+            <article class="validation-step">
+              <span class="step-index">4</span>
+              <div class="step-main">
+                <strong>{{ 'Run index' | translate }}</strong>
+                <span>{{ knowledgeIndexStatus()?.status || ('Not run' | translate) }}</span>
+              </div>
+              <div class="row-actions">
+                <button mat-button color="primary" type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
+                  {{ actionBusy('knowledge-index') ? ('Indexing...' | translate) : ('Run index' | translate) }}
+                </button>
+              </div>
+            </article>
+
+            <article class="validation-step">
+              <span class="step-index">5</span>
+              <div class="step-main">
+                <strong>{{ 'Inspect image content counts' | translate }}</strong>
+                <span>{{ knowledgeIndexStatus()?.content_indexed_image_count ?? 0 }} / {{ knowledgeIndexStatus()?.image_count ?? 0 }}</span>
+              </div>
+              <div class="row-actions">
+                <button mat-button type="button" (click)="inspectImageContentCounts()">
+                  {{ 'Inspect counts' | translate }}
+                </button>
+                <button mat-button type="button" [disabled]="loading()" (click)="refresh()">
+                  {{ 'Refresh' | translate }}
+                </button>
+              </div>
+            </article>
+
+            <article class="validation-step">
+              <span class="step-index">6</span>
+              <div class="step-main">
+                <strong>{{ 'Open Weixin setup/admin' | translate }}</strong>
+                <span>{{ weixinConnector()?.status || ('Not configured' | translate) }}</span>
+              </div>
+              <div class="row-actions">
+                <a mat-button color="primary" [href]="weixinSetupUrl()" target="_blank" rel="noopener">
+                  {{ 'Open setup' | translate }}
+                </a>
+                <a mat-button [href]="weixinManageUrl()" target="_blank" rel="noopener">
+                  {{ 'Open admin' | translate }}
+                </a>
+              </div>
+            </article>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="settings-card model-management-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Model Management' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="model-management-content">
+          <section class="model-section">
+            <div class="section-heading">
+              <h2>{{ 'Current in use' | translate }}</h2>
+              <button mat-button type="button" (click)="refresh()">{{ 'Refresh' | translate }}</button>
+            </div>
+            <div class="model-summary-grid">
+              @for (current of currentModelCards(); track current.kind) {
+                <article class="current-model-card">
+                  <div class="model-card-heading">
+                    <div>
+                      <span class="field-label">{{ current.label | translate }}</span>
+                      <h2>{{ current.modelName }}</h2>
+                    </div>
+                    <span
+                      class="pill"
+                      [class.good]="current.tone === 'good'"
+                      [class.warn]="current.tone === 'warn'"
+                      [class.danger]="current.tone === 'danger'"
+                    >
+                      {{ current.status | translate }}
+                    </span>
+                  </div>
+                  <p class="muted">{{ current.providerKey }} / {{ current.baseUrl || ('No runtime URL' | translate) }}</p>
+                  @if (current.localPath) {
+                    <p class="muted">{{ current.localPath }}</p>
+                  }
+                    <div class="button-row">
+                      @if (current.endpoint) {
+                      <button mat-button type="button" (click)="editModelEndpoint(current.endpoint); openAdvancedModels(true)">
+                        {{ 'Switch / edit' | translate }}
+                      </button>
+                      <button
+                        mat-button
+                        type="button"
+                        [disabled]="actionBusy('model-test:' + current.endpoint.model_endpoint_id)"
+                        (click)="testModelEndpoint(current.endpoint)"
+                      >
+                        {{ actionBusy('model-test:' + current.endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
+                      </button>
+                    } @else {
+                      <button mat-button type="button" (click)="prepareEndpointFormForKind(current.kind)">{{ 'Configure endpoint' | translate }}</button>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+
+          @if (downloadingModelCards().length) {
+            <section class="model-section">
+              <div class="section-heading">
+                <h2>{{ 'Downloading' | translate }}</h2>
+              </div>
+              <div class="model-card-grid">
+                @for (card of downloadingModelCards(); track card.key) {
+                  <article class="customer-model-card active-download">
+                    <div class="model-card-heading">
+                      <div>
+                        <h2>{{ card.displayName }}</h2>
+                        <p class="muted">{{ card.modelId }}</p>
+                      </div>
+                      <span class="pill" [ngClass]="toneClass(card.status)">{{ card.progressLabel || card.status }}</span>
+                    </div>
+                    <mat-progress-bar mode="determinate" [value]="card.downloadJob?.progress_percent || 0"></mat-progress-bar>
+                    <div class="model-meta-grid">
+                      <span>{{ 'Size' | translate }}: {{ card.bytesLabel }}</span>
+                      <span>{{ 'Speed' | translate }}: {{ card.speedLabel }}</span>
+                      <span>{{ 'Target' | translate }}: {{ card.localPath || ('Pending' | translate) }}</span>
+                    </div>
+                    @if (card.errorMessage) {
+                      <p class="muted error">{{ card.errorMessage }}</p>
+                    }
+                    <div class="button-row">
+                      @if (card.downloadJob && isCancelableJob(card.downloadJob)) {
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="isBusy()"
+                          (click)="cancelModelDownload(card.downloadJob)"
+                        >
+                          {{ 'Cancel' | translate }}
+                        </button>
+                      }
+                    </div>
+                  </article>
+                }
+              </div>
+            </section>
+          }
+
+          <section class="model-section">
+            <div class="section-heading">
+              <h2>{{ 'Installed' | translate }}</h2>
+            </div>
+            @if (installedModelCards().length === 0) {
+              <div class="empty-state">{{ 'No local models are installed yet.' | translate }}</div>
+            } @else {
+              <div class="model-card-grid">
+                @for (card of installedModelCards(); track card.key) {
+                  <article class="customer-model-card">
+                    <div class="model-card-heading">
+                      <div>
+                        <h2>{{ card.displayName }}</h2>
+                        <p class="muted">{{ card.modelId }} / {{ card.kind }}</p>
+                      </div>
+                      <span class="pill" [ngClass]="toneClass(card.status)">{{ card.status | translate }}</span>
+                    </div>
+                    <div class="model-meta-grid">
+                      <span>{{ 'Source' | translate }}: {{ card.source }}</span>
+                      <span>{{ 'Capabilities' | translate }}: {{ card.capabilities.join(', ') }}</span>
+                      <span>{{ 'Hardware' | translate }}: {{ card.hardware }}</span>
+                    </div>
+                    @if (card.localPath) {
+                      <p class="muted">{{ card.localPath }}</p>
+                      <p class="muted">{{ 'Manifest' | translate }}: snapshot_manifest.json</p>
+                    }
+                    <div class="button-row">
+                      <button
+                        mat-button
+                        color="primary"
+                        type="button"
+                        [disabled]="modelCardActionDisabled(card)"
+                        (click)="handleModelCardAction(card)"
+                      >
+                        {{ card.actionLabel | translate }}
+                      </button>
+                      @if (card.endpoint) {
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="actionBusy('model-test:' + card.endpoint.model_endpoint_id)"
+                          (click)="testModelEndpoint(card.endpoint)"
+                        >
+                          {{ actionBusy('model-test:' + card.endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
+                        </button>
+                      }
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+
+          <section class="model-section">
+            <div class="section-heading">
+              <h2>{{ 'Available to download' | translate }}</h2>
+            </div>
+            @if (availableModelCards().length === 0) {
+              <div class="empty-state">{{ 'No catalog models are available.' | translate }}</div>
+            } @else {
+              <div class="model-card-grid">
+                @for (card of availableModelCards(); track card.key) {
+                  <article class="customer-model-card">
+                    <div class="model-card-heading">
+                      <div>
+                        <h2>{{ card.displayName }}</h2>
+                        <p class="muted">{{ card.modelId }} / {{ card.kind }}</p>
+                      </div>
+                      <span class="pill" [ngClass]="toneClass(card.status)">{{ card.status | translate }}</span>
+                    </div>
+                    <div class="model-meta-grid">
+                      <span>{{ 'Source' | translate }}: {{ card.source }}</span>
+                      <span>{{ 'Capabilities' | translate }}: {{ card.capabilities.join(', ') }}</span>
+                      <span>{{ 'Size' | translate }}: {{ card.sizeHint }}</span>
+                      <span>{{ 'Hardware' | translate }}: {{ card.hardware }}</span>
+                    </div>
+                    @if (card.errorMessage) {
+                      <p class="muted error">{{ card.errorMessage }}</p>
+                    }
+                    <div class="button-row">
+                      <button
+                        mat-button
+                        color="primary"
+                        type="button"
+                        [disabled]="modelCardActionDisabled(card)"
+                        (click)="handleModelCardAction(card)"
+                      >
+                        {{ card.actionLabel | translate }}
+                      </button>
+                      <button mat-button type="button" (click)="selectModelCardForManualDownload(card)">
+                        {{ 'Manual options' | translate }}
+                      </button>
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="settings-card knowledge-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'RAG Index' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (knowledgeIndexStatus(); as indexState) {
+            <div class="overview-grid knowledge-overview">
+              <div>
+                <span class="field-label">{{ 'Index status' | translate }}</span>
+                <strong [ngClass]="toneClass(indexState.status)">{{ indexState.status | translate }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'Index writable' | translate }}</span>
+                <strong [ngClass]="indexState.index_root_writable ? 'tone-good' : 'tone-warn'">
+                  {{ indexState.index_root_writable ? ('Yes' | translate) : ('No' | translate) }}
+                </strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'Source roots' | translate }}</span>
+                <strong>{{ knowledgeSourceRoots().length }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'Indexed images' | translate }}</span>
+                <strong>{{ indexState.image_count ?? 0 }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'Content-indexed images' | translate }}</span>
+                <strong>{{ indexState.content_indexed_image_count ?? 0 }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'VLM image descriptions' | translate }}</span>
+                <strong>{{ indexState.vlm_indexed_image_count ?? 0 }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'VLM missing images' | translate }}</span>
+                <strong [ngClass]="(indexState.image_content_missing_count ?? 0) > 0 ? 'tone-warn' : 'tone-good'">
+                  {{ indexState.image_content_missing_count ?? 0 }}
+                </strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'Read-only picker' | translate }}</span>
+                <strong>{{ filesBrowse()?.readonly ? ('Open' | translate) : ('Closed' | translate) }}</strong>
+              </div>
+            </div>
+            @if (indexState.blockers?.length) {
+              <div class="notice warn compact">
+                @for (blocker of indexState.blockers; track blocker) {
+                  <p>{{ blocker }}</p>
+                }
+              </div>
+            }
+            @if (rag()?.warnings?.length) {
+              <div class="notice warn compact">
+                @for (warning of rag()?.warnings ?? []; track warning) {
+                  <p>{{ warning }}</p>
+                }
+              </div>
+            }
+          }
+
+          <form
+            class="form-grid knowledge-index-form"
+            [formGroup]="knowledgeIndexForm"
+            (ngSubmit)="saveKnowledgeSettings()"
+          >
+            <mat-form-field class="full-span">
+              <input matInput formControlName="indexRoot" [placeholder]="'Index root for manifest, chunks, embeddings, vectors, and reports' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="privacyLevel">
+                @for (option of knowledgePrivacyOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="resourceProfile">
+                @for (option of knowledgeResourceOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <div class="button-row full-span">
+              <button mat-button color="primary" type="submit" [disabled]="actionBusy('knowledge-settings')">
+                {{ 'Save knowledge settings' | translate }}
+              </button>
+              <button mat-button type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
+                {{ actionBusy('knowledge-index') ? ('Indexing...' | translate) : ('Run index' | translate) }}
+              </button>
+              <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(null)">
+                {{ 'Browse HarborOS files' | translate }}
+              </button>
+            </div>
+          </form>
+
+          <mat-divider></mat-divider>
+
+          <div class="knowledge-layout">
+            <section class="knowledge-section">
+              <div class="section-heading">
+                <h2>{{ 'Configured source roots' | translate }}</h2>
+              </div>
+              @if (knowledgeSourceRoots().length === 0) {
+                <div class="empty-state">{{ 'No source roots are configured.' | translate }}</div>
+              } @else {
+                <div class="table-list compact-table">
+                  @for (root of knowledgeSourceRoots(); track root.root_id + root.path) {
+                    <article class="table-row">
+                      <div>
+                        <h2>{{ root.label || root.root_id }}</h2>
+                        <p class="muted">{{ root.path }}</p>
+                        @if (root.last_indexed_at) {
+                          <p class="muted">{{ 'Last indexed' | translate }}: {{ root.last_indexed_at }}</p>
+                        }
+                      </div>
+                      <div class="row-actions">
+                        @if (knowledgeSourceStatus(root); as sourceStatus) {
+                          <span class="pill" [ngClass]="toneClass(sourceStatus.status)">{{ sourceStatus.status | translate }}</span>
+                        } @else {
+                          <span class="pill">{{ root.enabled ? ('enabled' | translate) : ('disabled' | translate) }}</span>
+                        }
+                        <button mat-button type="button" (click)="editKnowledgeSource(root)">
+                          {{ 'Edit' | translate }}
+                        </button>
+                        <button mat-button type="button" [disabled]="actionBusyPrefix('knowledge-source-remove')" (click)="removeKnowledgeSource(root)">
+                          {{ 'Remove' | translate }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </section>
+
+            <section class="knowledge-section">
+              <div class="section-heading">
+                <h2>{{ 'Source root editor' | translate }}</h2>
+              </div>
+              <form
+                class="form-grid knowledge-source-form"
+                [formGroup]="knowledgeSourceForm"
+                (ngSubmit)="saveKnowledgeSettings()"
+              >
+                <mat-form-field>
+                  <input matInput formControlName="rootId" [placeholder]="'Root id' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="label" [placeholder]="'Label' | translate" />
+                </mat-form-field>
+                <mat-form-field class="source-path-field">
+                  <input matInput formControlName="path" [placeholder]="'Source folder path' | translate" />
+                </mat-form-field>
+                <mat-checkbox formControlName="enabled">{{ 'Enabled' | translate }}</mat-checkbox>
+                <mat-form-field>
+                  <textarea matInput rows="3" formControlName="include" [placeholder]="'Include globs, one per line' | translate"></textarea>
+                </mat-form-field>
+                <mat-form-field>
+                  <textarea matInput rows="3" formControlName="exclude" [placeholder]="'Exclude globs, one per line' | translate"></textarea>
+                </mat-form-field>
+                <div class="button-row full-span">
+                  <button mat-button color="primary" type="submit" [disabled]="actionBusy('knowledge-settings')">
+                    {{ 'Save source root' | translate }}
+                  </button>
+                  <button mat-button type="button" (click)="clearKnowledgeSourceForm()">
+                    {{ 'Clear' | translate }}
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>
+
+          @if (filesBrowse(); as browse) {
+            <section class="file-browser">
+              <div class="section-heading browser-heading">
+                <div>
+                  <h2>{{ 'Read-only folder picker' | translate }}</h2>
+                  <p class="muted">{{ browse.path }}</p>
+                </div>
+                <div class="button-row">
+                  @if (browse.parent) {
+                    <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(browse.parent)">
+                      {{ 'Up' | translate }}
+                    </button>
+                  }
+                  <button mat-button type="button" (click)="useBrowsePathAsSource(browse.path)">
+                    {{ 'Use current as source' | translate }}
+                  </button>
+                  <button mat-button type="button" (click)="useBrowsePathAsIndex(browse.path)">
+                    {{ 'Use current as index' | translate }}
+                  </button>
+                </div>
+              </div>
+              <div class="table-list compact-table">
+                @for (entry of browse.entries; track entry.path) {
+                  @if (entry.is_dir) {
+                    <article class="table-row">
+                      <div>
+                        <h2>{{ entry.name }}</h2>
+                        <p class="muted">{{ entry.path }}</p>
+                      </div>
+                      <div class="row-actions">
+                        <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(entry.path)">
+                          {{ 'Open' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="useBrowsePathAsSource(entry.path)">
+                          {{ 'Use as source' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="useBrowsePathAsIndex(entry.path)">
+                          {{ 'Use as index' | translate }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                }
+              </div>
+            </section>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <details class="advanced-settings" [attr.open]="modelsAdvancedOpen() ? '' : null">
+        <summary>{{ 'Advanced settings' | translate }}</summary>
+        <div class="advanced-settings-body">
+          <mat-card class="settings-card endpoint-editor-card">
+            <mat-card-header>
+              <mat-card-title>{{ modelEndpointEditingId() ? ('Edit Endpoint' | translate) : ('Add Endpoint' | translate) }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <form
+                class="form-grid model-form"
+                [formGroup]="modelEndpointForm"
+                (ngSubmit)="saveModelEndpoint()"
+              >
+                <mat-form-field>
+                  <input matInput formControlName="modelEndpointId" [placeholder]="'Endpoint id' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-select formControlName="modelKind">
+                    <mat-option value="llm">llm</mat-option>
+                    <mat-option value="vlm">vlm</mat-option>
+                    <mat-option value="ocr">ocr</mat-option>
+                    <mat-option value="asr">asr</mat-option>
+                    <mat-option value="detector">detector</mat-option>
+                    <mat-option value="embedder">embedder</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-select formControlName="endpointKind">
+                    <mat-option value="local">local</mat-option>
+                    <mat-option value="sidecar">sidecar</mat-option>
+                    <mat-option value="cloud">cloud</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="providerKey" [placeholder]="'Provider key' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="modelName" [placeholder]="'Model name' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-select formControlName="status">
+                    <mat-option value="active">active</mat-option>
+                    <mat-option value="degraded">degraded</mat-option>
+                    <mat-option value="disabled">disabled</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="baseUrl" [placeholder]="'Base URL' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="healthzUrl" [placeholder]="'Health URL' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput type="password" formControlName="apiKey" autocomplete="new-password" [placeholder]="'API key' | translate" />
+                </mat-form-field>
+                <mat-form-field class="full-span">
+                  <textarea matInput rows="3" formControlName="capabilityTags" [placeholder]="'Capability tags, one per line' | translate"></textarea>
+                </mat-form-field>
+                <div class="button-row full-span">
+                  <button mat-button color="primary" type="submit" [disabled]="actionBusyPrefix('model-endpoint')">
+                    {{ modelEndpointEditingId() ? ('Save Endpoint' | translate) : ('Add Endpoint' | translate) }}
+                  </button>
+                  <button mat-button type="button" (click)="clearModelEndpointForm()">
+                    {{ 'Clear' | translate }}
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="settings-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'Model Endpoints' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (modelEndpoints().length === 0) {
+                <div class="empty-state">{{ 'No model endpoints are configured.' | translate }}</div>
+              } @else {
+                <div class="table-list">
+                  @for (endpoint of modelEndpoints(); track endpoint.model_endpoint_id) {
+                    <article class="table-row">
+                      <div>
+                        <h2>{{ endpoint.model_endpoint_id }}</h2>
+                        <p class="muted">{{ endpoint.provider_key }} / {{ endpoint.model_kind }} / {{ endpoint.endpoint_kind }} / {{ endpoint.model_name }}</p>
+                        @if (metadataString(endpoint, 'runtime_error')) {
+                          <p class="muted error">{{ metadataString(endpoint, 'runtime_error') }}</p>
+                        }
+                      </div>
+                      <div class="row-actions">
+                        <span
+                          class="pill"
+                          [class.good]="statusTone(endpoint.status) === 'good'"
+                          [class.warn]="statusTone(endpoint.status) === 'warn'"
+                          [class.danger]="statusTone(endpoint.status) === 'danger'"
+                        >
+                          {{ endpoint.status | translate }}
+                        </span>
+                        @if (metadataBoolean(endpoint, 'api_key_configured')) {
+                          <span class="pill good">{{ 'API key configured' | translate }}</span>
+                        }
+                        <button
+                          mat-button
+                          type="button"
+                          (click)="editModelEndpoint(endpoint)"
+                        >
+                          {{ 'Edit' | translate }}
+                        </button>
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="actionBusy('model-test:' + endpoint.model_endpoint_id)"
+                          (click)="testModelEndpoint(endpoint)"
+                        >
+                          {{ actionBusy('model-test:' + endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="settings-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'Route Policy' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (modelPolicies().length === 0) {
+                <div class="empty-state">{{ 'No route policies are projected.' | translate }}</div>
+              } @else {
+                <div class="policy-selector">
+                  @for (policy of modelPolicies(); track policy.route_policy_id) {
+                    <button
+                      mat-button
+                      type="button"
+                      [class.active]="policyForm.controls.routePolicyId.value === policy.route_policy_id"
+                      (click)="selectModelPolicy(policy)"
+                    >
+                      {{ policy.route_policy_id }}
+                    </button>
+                  }
+                </div>
+                <form
+                  class="form-grid"
+                  [formGroup]="policyForm"
+                  (ngSubmit)="saveModelPolicy()"
+                >
+                  <mat-form-field>
+                    <input matInput formControlName="routePolicyId" [placeholder]="'Policy id' | translate" readonly />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-select formControlName="localPreferred">
+                      <mat-option value="true">{{ 'Prefer local' | translate }}</mat-option>
+                      <mat-option value="false">{{ 'Allow remote first' | translate }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <input matInput formControlName="status" [placeholder]="'Status' | translate" />
+                  </mat-form-field>
+                  <mat-form-field class="full-span">
+                    <textarea matInput rows="4" formControlName="fallbackOrder" [placeholder]="'Fallback endpoint ids, one per line' | translate"></textarea>
+                  </mat-form-field>
+                  <button mat-button color="primary" type="submit" [disabled]="actionBusyPrefix('model-policy')">
+                    {{ 'Save Policy' | translate }}
+                  </button>
+                </form>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="settings-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'Multimodal RAG Readiness' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (endpointError('rag')) {
+                <div class="notice error">{{ endpointError('rag') | translate }}</div>
+              }
+              @if (rag(); as ragState) {
+                <div class="status-block-grid">
+                  @for (block of ragBlocks(); track block.id) {
+                    <article class="status-block" [ngClass]="toneClass(block.status)">
+                      <span>{{ block.label | translate }}</span>
+                      <strong>{{ block.status | translate }}</strong>
+                      <p>{{ block.summary }}</p>
+                      <p>{{ block.detail }}</p>
+                    </article>
+                  }
+                </div>
+                @if (ragState.blockers?.length) {
+                  <div class="notice warn compact">
+                    @for (blocker of ragState.blockers; track blocker) {
+                      <p>{{ blocker }}</p>
+                    }
+                  </div>
+                }
+                @if (ragState.warnings?.length) {
+                  <div class="notice warn compact">
+                    @for (warning of ragState.warnings; track warning) {
+                      <p>{{ warning }}</p>
+                    }
+                  </div>
+                }
+              } @else {
+                <div class="empty-state">{{ 'RAG readiness is not available.' | translate }}</div>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="settings-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'Manual model download' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <form
+                class="form-grid download-form"
+                [formGroup]="downloadForm"
+                (ngSubmit)="createModelDownload()"
+              >
+                <mat-form-field>
+                  <input matInput formControlName="modelId" [placeholder]="'Model id' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="displayName" [placeholder]="'Display name' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="providerKey" [placeholder]="'Provider key' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="targetPath" [placeholder]="'Target path' | translate" />
+                </mat-form-field>
+                <mat-form-field class="full-span">
+                  <input matInput formControlName="sourceUrl" [placeholder]="'Explicit source URL or file path' | translate" />
+                </mat-form-field>
+                <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                  {{ 'Start Download' | translate }}
+                </button>
+              </form>
+
+              @if (downloadJobs().length) {
+                <div class="table-list download-job-list">
+                  @for (job of downloadJobs(); track job.job_id) {
+                    <article class="table-row">
+                      <div>
+                        <h2>{{ job.display_name || job.model_id }}</h2>
+                        <p class="muted">{{ job.job_id }} / {{ job.target_path || ('No target path' | translate) }}</p>
+                        @if (job.message) {
+                          <p>{{ job.message }}</p>
+                        }
+                        @if (job.error_message) {
+                          <p class="muted error">{{ job.error_message }}</p>
+                        }
+                      </div>
+                      <div class="row-actions">
+                        <span class="pill" [ngClass]="toneClass(job.status)">{{ progressLabel(job) }}</span>
+                        <span class="muted">{{ formatBytes(job.bytes_downloaded) }} / {{ formatBytes(job.total_bytes) }}</span>
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="isBusy() || !isCancelableJob(job)"
+                          (click)="cancelModelDownload(job)"
+                        >
+                          {{ 'Cancel' | translate }}
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </details>
+    </section>
+  }
+
+  @if (isTab('devices')) {
+    <section class="tab-panel">
+      <div class="action-grid">
+        <mat-card class="settings-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'Discover Devices' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form class="form-grid" [formGroup]="scanForm" (ngSubmit)="scanDevices()">
+              <mat-form-field>
+                <input matInput formControlName="cidr" [placeholder]="'CIDR' | translate" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-select formControlName="protocol">
+                  @for (option of protocolOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                {{ 'Run Scan' | translate }}
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="settings-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'Manual Device' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form class="form-grid manual-form" [formGroup]="manualForm" (ngSubmit)="addManualDevice()">
+              <mat-form-field><input matInput formControlName="name" [placeholder]="'Name' | translate" /></mat-form-field>
+              <mat-form-field><input matInput formControlName="ip" [placeholder]="'IP address' | translate" /></mat-form-field>
+              <mat-form-field><input matInput formControlName="room" [placeholder]="'Room' | translate" /></mat-form-field>
+              <mat-form-field><input matInput formControlName="path" [placeholder]="'RTSP path' | translate" /></mat-form-field>
+              <mat-form-field><input matInput formControlName="snapshotUrl" [placeholder]="'Snapshot URL' | translate" /></mat-form-field>
+              <mat-form-field><input matInput formControlName="port" [placeholder]="'RTSP port' | translate" /></mat-form-field>
+              <mat-form-field><input matInput formControlName="username" autocomplete="username" [placeholder]="'Username' | translate" /></mat-form-field>
+              <mat-form-field><input matInput type="password" formControlName="password" autocomplete="new-password" [placeholder]="'Password' | translate" /></mat-form-field>
+              <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                {{ 'Add Device' | translate }}
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Defaults' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form class="form-grid defaults-form" [formGroup]="defaultsForm" (ngSubmit)="saveDefaults()">
+            <mat-form-field><input matInput formControlName="cidr" [placeholder]="'Default scan CIDR' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="discovery" [placeholder]="'Discovery mode' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="recording" [placeholder]="'Recording mode' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="capture" [placeholder]="'Capture mode' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="ai" [placeholder]="'AI mode' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="notificationChannel" [placeholder]="'Notification channel' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="rtspUsername" autocomplete="username" [placeholder]="'Default RTSP username' | translate" /></mat-form-field>
+            <mat-form-field><input matInput type="password" formControlName="rtspPassword" autocomplete="new-password" [placeholder]="'Default RTSP password' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="rtspPort" [placeholder]="'Default RTSP port' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="captureSubdirectory" [placeholder]="'Capture subdirectory' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="clipLengthSeconds" [placeholder]="'Clip length seconds' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="keyframeCount" [placeholder]="'Keyframe count' | translate" /></mat-form-field>
+            <mat-form-field><input matInput formControlName="keyframeIntervalSeconds" [placeholder]="'Keyframe interval seconds' | translate" /></mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="selectedCameraDeviceId">
+                <mat-option value="">{{ 'No default camera' | translate }}</mat-option>
+                @for (device of devices(); track device.device_id) {
+                  <mat-option [value]="device.device_id">{{ device.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="full-span">
+              <textarea matInput rows="3" formControlName="rtspPaths" [placeholder]="'Default RTSP paths, one per line' | translate"></textarea>
+            </mat-form-field>
+            <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+              {{ 'Save Defaults' | translate }}
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Connected Devices' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (devices().length === 0) {
+            <div class="empty-state">{{ 'No Home AIoT devices are registered yet.' | translate }}</div>
+          } @else {
+            <div class="device-list">
+              @for (device of devices(); track device.device_id) {
+                <article class="device-row" [class.selected]="selectedDevice()?.device_id === device.device_id">
+                  <div class="device-main">
+                    <div>
+                      <div class="device-title">
+                        <h2>{{ device.name }}</h2>
+                        @if (isDefaultCamera(device)) {
+                          <span class="pill good">{{ 'Default' | translate }}</span>
+                        }
+                        <span class="pill" [ngClass]="toneClass(device.status)">
+                          {{ device.status || ('Unknown' | translate) }}
+                        </span>
+                      </div>
+                      <p class="muted">{{ deviceMeta(device) }}</p>
+                    </div>
+                    <div class="device-actions">
+                      <button mat-button type="button" [disabled]="isBusy()" (click)="selectDevice(device.device_id)">
+                        {{ 'Select' | translate }}
+                      </button>
+                      <button mat-button type="button" [disabled]="isBusy() || isDefaultCamera(device)" (click)="setDefaultCamera(device)">
+                        {{ 'Set Default' | translate }}
+                      </button>
+                      <button mat-button type="button" [disabled]="isBusy()" (click)="validateDevice(device)">
+                        {{ 'Validate' | translate }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="evidence-grid">
+                    @if (credentialStatusFor(device); as credential) {
+                      <div class="evidence-item">
+                        <span>{{ 'Credentials' | translate }}</span>
+                        <strong>{{ credentialLabel(credential) | translate }}</strong>
+                        <p>{{ 'User' | translate }}: {{ credential.username || ('redacted' | translate) }}; {{ 'port' | translate }}: {{ credential.rtsp_port || ('default' | translate) }}; {{ 'paths' | translate }}: {{ credential.path_count || 0 }}</p>
+                      </div>
+                    } @else {
+                      <div class="evidence-item">
+                        <span>{{ 'Credentials' | translate }}</span>
+                        <strong>{{ 'Unknown' | translate }}</strong>
+                        <p>{{ 'No credential status projection returned.' | translate }}</p>
+                      </div>
+                    }
+
+                    <div class="evidence-item">
+                      <span>{{ 'RTSP' | translate }}</span>
+                      @if (evidenceResult(device, 'rtsp_check'); as rtsp) {
+                        <strong [ngClass]="toneClass(rtsp.status)">{{ evidenceLabel(rtsp) | translate }}</strong>
+                        <p>{{ evidenceDetail(rtsp) | translate }}</p>
+                      } @else {
+                        <strong>{{ 'Not checked' | translate }}</strong>
+                        <p>{{ 'No recent RTSP evidence.' | translate }}</p>
+                      }
+                      <button mat-button type="button" [disabled]="isBusy()" (click)="checkRtsp(device)">
+                        {{ 'Check RTSP' | translate }}
+                      </button>
+                    </div>
+
+                    <div class="evidence-item">
+                      <span>{{ 'Snapshot' | translate }}</span>
+                      @if (evidenceResult(device, 'snapshot'); as snapshot) {
+                        <strong [ngClass]="toneClass(snapshot.status)">{{ evidenceLabel(snapshot) | translate }}</strong>
+                        <p>{{ evidenceDetail(snapshot) | translate }}</p>
+                      } @else {
+                        <strong>{{ 'Not checked' | translate }}</strong>
+                        <p>{{ 'No recent snapshot evidence.' | translate }}</p>
+                      }
+                      <button mat-button type="button" [disabled]="isBusy()" (click)="createSnapshot(device)">
+                        {{ 'Snapshot' | translate }}
+                      </button>
+                    </div>
+
+                    <div class="evidence-item">
+                      <span>{{ 'Share Links' | translate }}</span>
+                      <strong>{{ activeShareLinksFor(device).length }}</strong>
+                      @if (activeShareLinksFor(device).length > 0) {
+                        @for (link of activeShareLinksFor(device); track link.share_link_id) {
+                          <div class="share-link-row">
+                            <span>{{ link.status | translate }}</span>
+                            <button mat-button type="button" [disabled]="isBusy() || !link.can_revoke" (click)="revokeShareLink(link)">
+                              {{ 'Revoke' | translate }}
+                            </button>
+                          </div>
+                        }
+                      } @else {
+                        <p>{{ 'No active share links.' | translate }}</p>
+                      }
+                      <button mat-button type="button" [disabled]="isBusy()" (click)="createShareLink(device)">
+                        {{ 'Create Link' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <div class="action-grid">
+        <mat-card class="settings-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'Selected Device Metadata' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (selectedDevice(); as device) {
+              <div class="selected-device-heading">
+                <div>
+                  <span class="field-label">{{ 'Device' | translate }}</span>
+                  <strong>{{ device.name }}</strong>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+              <form class="form-grid metadata-form" [formGroup]="metadataForm" (ngSubmit)="saveDeviceMetadata()">
+                <mat-form-field><input matInput formControlName="name" [placeholder]="'Name' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="room" [placeholder]="'Room' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="vendor" [placeholder]="'Vendor' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="model" [placeholder]="'Model' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="ipAddress" [placeholder]="'IP address' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="snapshotUrl" [placeholder]="'Snapshot URL' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="primaryStreamUrl" [placeholder]="'Primary stream URL' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="rtspPath" [placeholder]="'RTSP path' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="rtspPort" [placeholder]="'RTSP port' | translate" /></mat-form-field>
+                <mat-form-field>
+                  <mat-select formControlName="requiresAuth">
+                    <mat-option value="">{{ 'Auth unknown' | translate }}</mat-option>
+                    <mat-option value="true">{{ 'Requires auth' | translate }}</mat-option>
+                    <mat-option value="false">{{ 'No auth required' | translate }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                  {{ 'Save Metadata' | translate }}
+                </button>
+              </form>
+            } @else {
+              <div class="empty-state">{{ 'Select a device before editing metadata.' | translate }}</div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="settings-card">
+          <mat-card-header>
+            <mat-card-title>{{ 'Selected Device Credentials' | translate }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (selectedDevice(); as device) {
+              <div class="selected-device-heading">
+                <div>
+                  <span class="field-label">{{ 'Device' | translate }}</span>
+                  <strong>{{ device.name }}</strong>
+                </div>
+                @if (credentialStatusFor(device); as credential) {
+                  <span class="pill">{{ credentialLabel(credential) | translate }}</span>
+                }
+              </div>
+              <mat-divider></mat-divider>
+              <form class="form-grid credentials-form" [formGroup]="credentialsForm" (ngSubmit)="saveCredentials()">
+                <mat-form-field><input matInput formControlName="username" autocomplete="username" [placeholder]="'Username' | translate" /></mat-form-field>
+                <mat-form-field><input matInput type="password" formControlName="password" autocomplete="new-password" [placeholder]="'Password' | translate" /></mat-form-field>
+                <mat-form-field><input matInput formControlName="rtspPort" [placeholder]="'RTSP port' | translate" /></mat-form-field>
+                <mat-form-field class="full-span">
+                  <textarea matInput rows="4" formControlName="rtspPaths" [placeholder]="'RTSP paths, one per line' | translate"></textarea>
+                </mat-form-field>
+                <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                  {{ 'Save Credentials' | translate }}
+                </button>
+              </form>
+            } @else {
+              <div class="empty-state">{{ 'Select a device before configuring credentials.' | translate }}</div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+  }
+
+  @if (isTab('system')) {
+    <section class="tab-panel">
+      @if (endpointError('harborOs')) {
+        <div class="notice error">{{ endpointError('harborOs') | translate }}</div>
+      }
+      @if (endpointError('capabilityMap')) {
+        <div class="notice error">{{ endpointError('capabilityMap') | translate }}</div>
+      }
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'System Integration' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (harborOs(); as harborOsState) {
+            <div class="overview-grid">
+              <div>
+                <span class="field-label">{{ 'Status' | translate }}</span>
+                <strong [ngClass]="toneClass(harborOsState.status)">{{ harborOsState.status | translate }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'Version' | translate }}</span>
+                <strong>{{ harborOsState.version }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'WebUI URL' | translate }}</span>
+                <strong>{{ harborOsState.webui_url }}</strong>
+              </div>
+              <div>
+                <span class="field-label">{{ 'System Domain only' | translate }}</span>
+                <strong>{{ harborOsState.system_domain_only ? ('Yes' | translate) : ('No' | translate) }}</strong>
+              </div>
+            </div>
+            <div class="status-block-grid">
+              @for (block of harborOsBlocks(); track block.id) {
+                <article class="status-block" [ngClass]="toneClass(block.status)">
+                  <span>{{ block.label | translate }}</span>
+                  <strong>{{ block.status | translate }}</strong>
+                  <p>{{ block.detail }}</p>
+                </article>
+              }
+            </div>
+            @if (harborOsState.blockers?.length) {
+              <div class="notice warn compact">
+                @for (blocker of harborOsState.blockers; track blocker) {
+                  <p>{{ blocker }}</p>
+                }
+              </div>
+            }
+          } @else {
+            <div class="empty-state">{{ 'HarborOS status is not available.' | translate }}</div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="settings-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'IM Capability Map' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="capability-columns">
+            <section>
+              <h2>{{ 'Safe query' | translate }}</h2>
+              @for (item of capabilitiesByClass('safe_query'); track item.capability_id) {
+                <article class="capability-item tone-good">
+                  <strong>{{ item.label }}</strong>
+                  <p>{{ item.harboros_surface }} / {{ item.risk_level }}</p>
+                  <p>{{ item.notes }}</p>
+                </article>
+              }
+            </section>
+            <section>
+              <h2>{{ 'Approval required' | translate }}</h2>
+              @for (item of capabilitiesByClass('approval_required_action'); track item.capability_id) {
+                <article class="capability-item tone-warn">
+                  <strong>{{ item.label }}</strong>
+                  <p>{{ item.harboros_surface }} / {{ item.risk_level }}</p>
+                  <p>{{ item.notes }}</p>
+                </article>
+              }
+            </section>
+            <section>
+              <h2>{{ 'Unsupported high risk' | translate }}</h2>
+              @for (item of capabilitiesByClass('unsupported_high_risk'); track item.capability_id) {
+                <article class="capability-item tone-danger">
+                  <strong>{{ item.label }}</strong>
+                  <p>{{ item.harboros_surface }} / {{ item.risk_level }}</p>
+                  <p>{{ item.notes }}</p>
+                </article>
+              }
+            </section>
+          </div>
+          <p class="muted">
+            {{ 'Camera, RTSP, and AIoT device control stay in Connected Devices, not in the HarborOS System Domain.' | translate }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  }
+</section>

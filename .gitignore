@@ -112,3 +112,6 @@ src/app/testing-configs/*
 
 # Playwright MCP
 .playwright-mcp/
+
+# Local Harbor release artifacts
+/artifacts/*.tar.gz
