@@ -4,6 +4,8 @@
   --contrast-darkest: hsl(0, 0%, 5.7%); // default theme fallback
   --contrast-lighter: hsl(0, 0%, 20.7%); // default theme fallback
   --contrast-lightest: hsl(0, 0%, 25.7%); // default theme fallback
+  --scrollbar-thumb: rgba(127, 127, 127, 0.6);
+  --scrollbar-thumb-hover: rgba(127, 127, 127, 0.85);
   --light-theme-lines: var(--contrast-darkest);
   --dark-theme-lines: var(--contrast-lighter);
   --disabled-opacity: 0.5;
