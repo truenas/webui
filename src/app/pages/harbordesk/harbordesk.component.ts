@@ -2234,7 +2234,7 @@ export class HarborDeskComponent implements OnInit {
     const configured = Boolean(platform?.configured ?? platform?.enabled ?? fallback?.configured ?? (gateway?.platform === id && gateway.configured));
     const connected = Boolean(platform?.connected ?? fallback?.connected ?? (gateway?.platform === id && gateway.connected));
     const status = platform?.status ?? fallback?.status ?? (connected ? T('Connected') : configured ? T('Configured') : T('Not configured'));
-    const setupUrl = harborGateConnectorSetupUrl(id, platform, gateway);
+    const setupUrl = connected ? null : harborGateConnectorSetupUrl(id, platform, gateway);
     const manageUrl = harborGateConnectorManageUrl(id, platform, gateway);
     const detail = connected
       ? T('HarborGate reports this connector as connected.')

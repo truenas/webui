@@ -282,4 +282,19 @@ describe('HarborDeskApiService', () => {
       expect(source).not.toContain(forbidden);
     });
   });
+
+  it('does not keep the Weixin setup action visible after the connector is connected', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/app/pages/harbordesk/harbordesk.component.ts'),
+      'utf8',
+    );
+    const template = readFileSync(
+      join(process.cwd(), 'src/app/pages/harbordesk/harbordesk.component.html'),
+      'utf8',
+    );
+
+    expect(source).toContain('const setupUrl = connected ? null : harborGateConnectorSetupUrl');
+    expect(template).toContain('Open manage');
+    expect(template).toContain('color="primary"');
+  });
 });
