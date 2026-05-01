@@ -23,6 +23,10 @@ describe('MetadataWizardStepComponent', () => {
     { name: 'sdv', size: 12000138625024 },
   ] as DetailsDisk[];
 
+  const layoutsWithoutStripeOrDraid = [
+    CreateVdevLayout.Mirror, CreateVdevLayout.Raidz1, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
+  ];
+
   const makeFactory = ({
     pool = null,
     dataLayout = null,
@@ -68,11 +72,9 @@ describe('MetadataWizardStepComponent', () => {
       expect(layoutComponent.type).toStrictEqual(VDevType.Special);
     });
 
-    it('allows any layout that tolerates at least 1 drive failure', () => {
+    it('exposes Mirror, RAIDZ1, RAIDZ2 and RAIDZ3 with a 2-way Mirror floor', () => {
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([
-        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz1, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
-      ]);
+      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
       expect(layoutComponent.minMirrorWidth).toBe(2);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
@@ -81,11 +83,11 @@ describe('MetadataWizardStepComponent', () => {
   describe('when creating a new pool without a data layout chosen yet', () => {
     const createComponent = makeFactory();
 
-    it('allows any non-dRAID layout', () => {
+    it('hides Stripe and dRAID until data is set', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
       expect(layoutComponent.canChangeLayout).toBeTruthy();
-      expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
+      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
       expect(layoutComponent.minMirrorWidth).toBe(2);
     });
   });
@@ -93,13 +95,11 @@ describe('MetadataWizardStepComponent', () => {
   describe('when creating a new pool with a DRAID2 data layout', () => {
     const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Draid2, dataWidth: 4 });
 
-    it('matches dRAID2 parity: RAIDZ2, RAIDZ3, or a 3+-way mirror', () => {
+    it('still allows Mirror + RAIDZ1/2/3 (no parity gating, no dRAID exposure)', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([
-        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
-      ]);
-      expect(layoutComponent.minMirrorWidth).toBe(3);
+      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
@@ -107,13 +107,22 @@ describe('MetadataWizardStepComponent', () => {
   describe('when creating a new pool with a 3-way mirror data layout', () => {
     const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Mirror, dataWidth: 3 });
 
-    it('raises minMirrorWidth to match the data mirror width', () => {
+    it('keeps the Mirror floor at 2-way regardless of data mirror width', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([
-        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
-      ]);
-      expect(layoutComponent.minMirrorWidth).toBe(3);
+      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
+    });
+  });
+
+  describe('when creating a new pool with a Stripe data layout', () => {
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Stripe, dataWidth: 1 });
+
+    it('exposes Stripe alongside the redundant layouts', () => {
+      spectator = createComponent();
+      const layoutComponent = spectator.query(LayoutStepComponent)!;
+      expect(layoutComponent.limitLayouts).toStrictEqual([...nonDraidLayouts]);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
     });
   });
 
@@ -129,35 +138,16 @@ describe('MetadataWizardStepComponent', () => {
       } as Pool,
     });
 
-    it('matches existing data parity: RAIDZ2, RAIDZ3, or 3+-way mirror', () => {
+    it('exposes Mirror + RAIDZ1/2/3 regardless of existing data parity', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([
-        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
-      ]);
-      expect(layoutComponent.minMirrorWidth).toBe(3);
+      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
+      expect(layoutComponent.minMirrorWidth).toBe(2);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
   });
 
-  describe('when the lock changes with a stale store selection', () => {
-    const createComponent = makeFactory({
-      dataLayout: CreateVdevLayout.Raidz2,
-      dataWidth: 4,
-      specialLayout: CreateVdevLayout.Stripe,
-    });
-
-    it('applies the new parity lock even while the store selection is stale', () => {
-      spectator = createComponent();
-      const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([
-        CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
-      ]);
-      expect(layoutComponent.minMirrorWidth).toBe(3);
-    });
-  });
-
-  describe('when pool has existing special vdevs', () => {
+  describe('when pool has existing special vdevs of a different layout', () => {
     const createComponent = makeFactory({
       pool: {
         topology: {
@@ -170,10 +160,10 @@ describe('MetadataWizardStepComponent', () => {
       dataWidth: 3,
     });
 
-    it('strict-locks to the existing category layout (no parity-level fan-out)', () => {
+    it('does not lock to the existing category layout (mixing now warned, not blocked)', () => {
       spectator = createComponent();
       const layoutComponent = spectator.query(LayoutStepComponent)!;
-      expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror]);
+      expect(layoutComponent.limitLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
       expect(layoutComponent.minMirrorWidth).toBe(2);
       expect(layoutComponent.canChangeLayout).toBeTruthy();
     });
