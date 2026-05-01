@@ -2140,6 +2140,7 @@ export class HarborDeskComponent implements OnInit {
     const snapshotReady = devices.filter((device) => this.statusTone(this.evidenceResult(device, 'snapshot')?.status) === 'good').length;
     const activeEndpoints = this.modelEndpoints().filter((endpoint) => this.statusTone(endpoint.status) === 'good').length;
     const inference = this.inferenceHealth();
+    const gateway = this.gatewayStatus();
 
     return [
       {
@@ -2149,10 +2150,10 @@ export class HarborDeskComponent implements OnInit {
         tone: state ? 'good' : 'danger',
       },
       {
-        label: T('IM connectors'),
-        value: `${this.connectorCards().filter((card) => card.configured).length}/2`,
-        detail: T('IM credentials stay in HarborGate; HarborDesk only reads redacted setup status.'),
-        tone: this.connectorCards().some((card) => card.configured) ? 'good' : 'warn',
+        label: T('Gateway Runtime'),
+        value: gateway ? T('Connected') : T('Offline'),
+        detail: T('HarborGate adapters run inside harborgate.service and surface through /api/harbordesk/gateway/status.'),
+        tone: gateway ? 'good' : 'danger',
       },
       {
         label: T('Inference API'),

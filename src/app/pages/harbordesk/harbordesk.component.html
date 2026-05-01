@@ -191,6 +191,8 @@
               <strong [ngClass]="endpointError('state') ? 'tone-danger' : 'tone-good'">{{ endpointError('state') ? ('Error' | translate) : ('OK' | translate) }}</strong>
               <span>/api/harbordesk/inference/healthz</span>
               <strong [ngClass]="endpointError('inference') ? 'tone-danger' : inferenceHealthClass()">{{ endpointError('inference') ? ('Error' | translate) : (inferenceHealthValue() | translate) }}</strong>
+              <span>/api/harbordesk/gateway/status</span>
+              <strong [ngClass]="endpointError('gateway') ? 'tone-danger' : 'tone-good'">{{ endpointError('gateway') ? ('Error' | translate) : ('OK' | translate) }}</strong>
               <span>/api/harbordesk/models/*</span>
               <strong [ngClass]="endpointError('models') ? 'tone-danger' : 'tone-good'">{{ endpointError('models') ? ('Error' | translate) : ('OK' | translate) }}</strong>
               <span>/api/harbordesk/devices/*</span>
