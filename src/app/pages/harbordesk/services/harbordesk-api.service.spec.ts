@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { firstValueFrom } from 'rxjs';
 import { HarborDeskApiService } from './harbordesk-api.service';
 
@@ -87,6 +89,14 @@ describe('HarborDeskApiService', () => {
     expect(gatewayReq.request.method).toBe('GET');
     gatewayReq.flush({ channels: [] });
     await gatewayPromise;
+
+    const inferencePromise = firstValueFrom(spectator.service.getInferenceHealth());
+    const inferenceReq = httpMock.expectOne('/api/harbordesk/inference/healthz');
+    expect(inferenceReq.request.method).toBe('GET');
+    expect(inferenceReq.request.url).not.toContain(':4174');
+    expect(inferenceReq.request.url).not.toContain(':4176');
+    inferenceReq.flush({ status: 'ready', ready: true, backend: { kind: 'openai_proxy' } });
+    expect((await inferencePromise).ready).toBe(true);
 
     const targetsPromise = firstValueFrom(spectator.service.getNotificationTargets());
     const targetsReq = httpMock.expectOne('/api/harbordesk/admin/notification-targets');
@@ -253,5 +263,23 @@ describe('HarborDeskApiService', () => {
     expect(metadataReq.request.body.room).toBe('front door');
     metadataReq.flush({ devices: [] });
     await metadataPromise;
+  });
+
+  it('keeps Beacon calls on the HarborDesk same-origin proxy', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/app/pages/harbordesk/services/harbordesk-api.service.ts'),
+      'utf8',
+    );
+
+    const literalApiUrls = Array.from(source.matchAll(/['`]([^'`]*\/api\/[^'`]*)['`]/g))
+      .map((match) => match[1])
+      .filter((url) => !url.startsWith('app/'));
+
+    expect(literalApiUrls.length).toBeGreaterThan(0);
+    literalApiUrls.forEach((url) => expect(url).toContain('/api/harbordesk'));
+    expect(source).toContain('/api/harbordesk/inference/healthz');
+    [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
+      expect(source).not.toContain(forbidden);
+    });
   });
 });

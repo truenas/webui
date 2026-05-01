@@ -38,6 +38,7 @@ import {
   HarborOsStatusResponse,
   HardwareReadinessComponent,
   HardwareReadinessResponse,
+  InferenceHealthResponse,
   KnowledgeIndexRootStatus,
   KnowledgeIndexStatusResponse,
   KnowledgeSettings,
@@ -63,6 +64,7 @@ import { harborGateConnectorManageUrl, harborGateConnectorSetupUrl } from 'app/p
 interface HarborDeskPageData {
   state: EndpointResult<AdminStateResponse>;
   gatewayStatus: EndpointResult<GatewayStatusResponse>;
+  inferenceHealth: EndpointResult<InferenceHealthResponse>;
   notificationTargets: EndpointResult<NotificationTargetsResponse>;
   modelEndpoints: EndpointResult<ModelEndpointsResponse>;
   modelPolicies: EndpointResult<ModelPoliciesResponse>;
@@ -218,6 +220,7 @@ export class HarborDeskComponent implements OnInit {
   protected readonly actionInProgress = signal<string | null>(null);
   protected readonly state = signal<AdminStateResponse | null>(null);
   protected readonly gatewayStatus = signal<GatewayStatusResponse | null>(null);
+  protected readonly inferenceHealth = signal<InferenceHealthResponse | null>(null);
   protected readonly notificationTargetsResponse = signal<NotificationTargetsResponse | null>(null);
   protected readonly modelEndpointsResponse = signal<ModelEndpointsResponse | null>(null);
   protected readonly modelPoliciesResponse = signal<ModelPoliciesResponse | null>(null);
@@ -1187,6 +1190,19 @@ export class HarborDeskComponent implements OnInit {
     return this.endpointErrors()[key] ?? null;
   }
 
+  protected inferenceHealthValue(): string {
+    const health = this.inferenceHealth();
+    return health ? this.inferenceHealthLabel(health) : T('Unknown');
+  }
+
+  protected inferenceHealthClass(): string {
+    const health = this.inferenceHealth();
+    if (!health) {
+      return 'tone-neutral';
+    }
+    return `tone-${this.inferenceHealthTone(health)}`;
+  }
+
   protected metadataString(endpoint: ModelEndpointRecord, key: string): string {
     const value = endpoint.metadata?.[key];
     return typeof value === 'string' ? value : '';
@@ -1715,6 +1731,7 @@ export class HarborDeskComponent implements OnInit {
       switchMap((state) => forkJoin({
         state: of(state),
         gatewayStatus: this.result('gateway', this.harborDeskApi.getGatewayStatus()),
+        inferenceHealth: this.result('inference', this.harborDeskApi.getInferenceHealth()),
         notificationTargets: this.result('notification-targets', this.harborDeskApi.getNotificationTargets()),
         modelEndpoints: this.result('models', this.harborDeskApi.getModelEndpoints()),
         modelPolicies: this.result('model-policies', this.harborDeskApi.getModelPolicies()),
@@ -1744,6 +1761,7 @@ export class HarborDeskComponent implements OnInit {
           return {
             state: payload.state,
             gatewayStatus: payload.gatewayStatus,
+            inferenceHealth: payload.inferenceHealth,
             notificationTargets: payload.notificationTargets,
             modelEndpoints: payload.modelEndpoints,
             modelPolicies: payload.modelPolicies,
@@ -1790,6 +1808,7 @@ export class HarborDeskComponent implements OnInit {
   private applyPageData(pageData: HarborDeskPageData): void {
     this.state.set(pageData.state.data);
     this.gatewayStatus.set(pageData.gatewayStatus.data);
+    this.inferenceHealth.set(pageData.inferenceHealth.data);
     this.notificationTargetsResponse.set(pageData.notificationTargets.data);
     this.modelEndpointsResponse.set(pageData.modelEndpoints.data);
     this.modelPoliciesResponse.set(pageData.modelPolicies.data);
@@ -1808,6 +1827,7 @@ export class HarborDeskComponent implements OnInit {
       Object.entries({
         state: pageData.state.error,
         gateway: pageData.gatewayStatus.error,
+        inference: pageData.inferenceHealth.error,
         notificationTargets: pageData.notificationTargets.error,
         models: pageData.modelEndpoints.error,
         modelPolicies: pageData.modelPolicies.error,
@@ -1837,6 +1857,7 @@ export class HarborDeskComponent implements OnInit {
   private clearData(): void {
     this.state.set(null);
     this.gatewayStatus.set(null);
+    this.inferenceHealth.set(null);
     this.notificationTargetsResponse.set(null);
     this.modelEndpointsResponse.set(null);
     this.modelPoliciesResponse.set(null);
@@ -2118,6 +2139,7 @@ export class HarborDeskComponent implements OnInit {
     const rtspReady = devices.filter((device) => this.statusTone(this.evidenceResult(device, 'rtsp_check')?.status) === 'good').length;
     const snapshotReady = devices.filter((device) => this.statusTone(this.evidenceResult(device, 'snapshot')?.status) === 'good').length;
     const activeEndpoints = this.modelEndpoints().filter((endpoint) => this.statusTone(endpoint.status) === 'good').length;
+    const inference = this.inferenceHealth();
 
     return [
       {
@@ -2131,6 +2153,12 @@ export class HarborDeskComponent implements OnInit {
         value: `${this.connectorCards().filter((card) => card.configured).length}/2`,
         detail: T('IM credentials stay in HarborGate; HarborDesk only reads redacted setup status.'),
         tone: this.connectorCards().some((card) => card.configured) ? 'good' : 'warn',
+      },
+      {
+        label: T('Inference API'),
+        value: inference ? this.inferenceHealthLabel(inference) : T('Offline'),
+        detail: T('HarborBeacon exposes local inference through the unified API.'),
+        tone: inference ? this.inferenceHealthTone(inference) : 'danger',
       },
       {
         label: T('Models & RAG'),
@@ -2225,6 +2253,47 @@ export class HarborDeskComponent implements OnInit {
       lastCheckedAt: platform?.last_checked_at ?? fallback?.last_checked_at ?? gateway?.last_checked_at ?? null,
       tone: connected ? 'good' : configured ? 'warn' : 'neutral',
     };
+  }
+
+  private inferenceHealthLabel(health: InferenceHealthResponse): string {
+    const status = typeof health.status === 'string' && health.status.trim()
+      ? health.status
+      : health.ready === true
+        ? T('ready')
+        : T('unknown');
+    const backend = this.inferenceBackendLabel(health);
+    return backend ? `${status} (${backend})` : status;
+  }
+
+  private inferenceHealthTone(health: InferenceHealthResponse): HarborDeskStatusTone {
+    if (health.ready === true) {
+      return 'good';
+    }
+    if (health.ready === false) {
+      return 'warn';
+    }
+    return this.statusTone(health.status);
+  }
+
+  private inferenceBackendLabel(health: InferenceHealthResponse): string {
+    if (typeof health.backend_kind === 'string' && health.backend_kind.trim()) {
+      return health.backend_kind.trim();
+    }
+
+    const backend = health.backend;
+    if (!backend) {
+      return '';
+    }
+
+    const kind = backend['kind'];
+    const status = backend['status'];
+    if (typeof kind === 'string' && kind.trim()) {
+      return kind.trim();
+    }
+    if (typeof status === 'string' && status.trim()) {
+      return status.trim();
+    }
+    return '';
   }
 
   private buildHardwareBlocks(): StatusBlock[] {

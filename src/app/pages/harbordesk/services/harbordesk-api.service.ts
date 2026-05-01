@@ -19,6 +19,7 @@ import {
   HarborOsImCapabilityMapResponse,
   HarborOsStatusResponse,
   HardwareReadinessResponse,
+  InferenceHealthResponse,
   KnowledgeIndexRunResponse,
   KnowledgeIndexStatusResponse,
   KnowledgeSettings,
@@ -71,6 +72,10 @@ export class HarborDeskApiService {
 
   getGatewayStatus(): Observable<GatewayStatusResponse> {
     return this.http.get<GatewayStatusResponse>('/api/harbordesk/gateway/status');
+  }
+
+  getInferenceHealth(): Observable<InferenceHealthResponse> {
+    return this.http.get<InferenceHealthResponse>('/api/harbordesk/inference/healthz');
   }
 
   getNotificationTargets(): Observable<NotificationTargetsResponse> {

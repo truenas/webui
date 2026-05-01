@@ -16,14 +16,16 @@ git checkout -b feature/harbordesk-settings
 
 ## Development proxy
 
-The dev proxy reserves `/api/harbordesk/**` for the HarborBeacon admin API:
+The dev proxy reserves `/api/harbordesk/**` for the unified HarborBeacon API:
 
 ```text
 /api/harbordesk/state -> http://127.0.0.1:4174/api/state
+/api/harbordesk/inference/healthz -> http://127.0.0.1:4174/api/inference/healthz
 ```
 
-Run HarborBeacon `agent-hub-admin-api` on `127.0.0.1:4174` before testing
-HarborDesk. The normal HarborOS `/api/**` proxy remains separate.
+Run `harborbeacon.service` or the unified `harborbeacon-service` binary on
+`127.0.0.1:4174` before testing HarborDesk. The normal HarborOS `/api/**`
+proxy remains separate.
 
 ## Current slice
 
@@ -35,7 +37,10 @@ HarborDesk. The normal HarborOS `/api/**` proxy remains separate.
   camera selection, RTSP checks, snapshot checks, share-link create/revoke, and
   device credential configured/redacted status.
 - All HarborDesk backend calls use `/api/harbordesk/*` and are rewritten by the
-  dev proxy to the HarborBeacon `agent-hub-admin-api`.
+  dev proxy to the HarborBeacon single-port API.
+- Overview health reads include the HarborBeacon inference facade at
+  `/api/harbordesk/inference/healthz`; HarborDesk does not call model sidecar
+  ports directly.
 
 `/ui/harborbot` is the northbound user retrieval surface recovered from the
 2026-04-28 VM development line:

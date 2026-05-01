@@ -179,7 +179,7 @@
             <mat-card-title>{{ 'API Health' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            @if (endpointErrors()['state'] || endpointErrors()['gateway'] || endpointErrors()['models'] || endpointErrors()['hardware'] || endpointErrors()['rag'] || endpointErrors()['harborOs']) {
+            @if (endpointErrors()['state'] || endpointErrors()['gateway'] || endpointErrors()['inference'] || endpointErrors()['models'] || endpointErrors()['hardware'] || endpointErrors()['rag'] || endpointErrors()['harborOs']) {
               <div class="notice warn compact">
                 {{ 'Some settings panels are degraded. Open the affected tab for details.' | translate }}
               </div>
@@ -189,6 +189,8 @@
             <div class="mini-grid">
               <span>/api/harbordesk/state</span>
               <strong [ngClass]="endpointError('state') ? 'tone-danger' : 'tone-good'">{{ endpointError('state') ? ('Error' | translate) : ('OK' | translate) }}</strong>
+              <span>/api/harbordesk/inference/healthz</span>
+              <strong [ngClass]="endpointError('inference') ? 'tone-danger' : inferenceHealthClass()">{{ endpointError('inference') ? ('Error' | translate) : (inferenceHealthValue() | translate) }}</strong>
               <span>/api/harbordesk/models/*</span>
               <strong [ngClass]="endpointError('models') ? 'tone-danger' : 'tone-good'">{{ endpointError('models') ? ('Error' | translate) : ('OK' | translate) }}</strong>
               <span>/api/harbordesk/devices/*</span>

@@ -153,6 +153,15 @@ export interface GatewayStatusResponse {
   delivery_observability?: Record<string, unknown>;
 }
 
+export interface InferenceHealthResponse {
+  status?: string;
+  ready?: boolean;
+  service?: string;
+  backend_kind?: string;
+  backend?: Record<string, unknown> | null;
+  error?: string | null;
+}
+
 export interface AdminDefaults {
   cidr?: string;
   discovery?: string;

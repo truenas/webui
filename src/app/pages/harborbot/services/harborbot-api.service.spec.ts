@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { firstValueFrom } from 'rxjs';
 import { HarborBotApiService } from 'app/pages/harborbot/services/harborbot-api.service';
 
@@ -84,5 +86,19 @@ describe('HarborBotApiService', () => {
     expect(url).toBe('/api/harbordesk/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
     expect(url).not.toContain(':4174');
     expect(url).not.toContain(':8787');
+  });
+
+  it('stays retrieval-only and avoids direct service ports', () => {
+    const sources = [
+      'src/app/pages/harborbot/services/harborbot-api.service.ts',
+      'src/app/pages/harborbot/utils/harborbot-results.ts',
+      'src/app/pages/harborbot/harborbot.component.ts',
+    ].map((path) => readFileSync(join(process.cwd(), path), 'utf8')).join('\n');
+
+    expect(sources).toContain('/api/harbordesk/knowledge/search');
+    expect(sources).toContain('/api/harbordesk/knowledge/preview');
+    [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
+      expect(sources).not.toContain(forbidden);
+    });
   });
 });
