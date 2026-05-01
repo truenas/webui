@@ -11,6 +11,7 @@ import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertAdded,
   alertChanged,
+  alertDismissedReverted,
   alertReceivedWhenPanelIsOpen,
   alertRemoved,
   alertsLoaded,
@@ -260,33 +261,58 @@ describe('AlertEffects', () => {
   });
 
   describe('dismissAlert$', () => {
-    it('calls API to dismiss alert', async () => {
-      store$.overrideSelector(selectUnreadAlerts, [mockAlert]);
+    it('calls API once per id and is a no-op when ids is empty', async () => {
       jest.spyOn(apiService, 'call').mockReturnValue(of(null));
 
-      actions$ = of(dismissAlertPressed({ id: '1' }));
-
+      actions$ = of(dismissAlertPressed({ ids: ['1', '2'] }));
       await new Promise<void>((resolve) => {
         effects.dismissAlert$.subscribe(() => {
           expect(apiService.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
+          expect(apiService.call).toHaveBeenCalledWith('alert.dismiss', ['2']);
           resolve();
         });
       });
     });
 
-    it('handles error and reverts dismissed state', async () => {
-      store$.overrideSelector(selectUnreadAlerts, [mockAlert]);
+    it('shows error modal and re-dispatches alertDismissedReverted for each id on failure', async () => {
       const error = new Error('Dismiss failed');
       jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
-      actions$ = of(dismissAlertPressed({ id: '1' }));
+      actions$ = of(dismissAlertPressed({ ids: ['1', '2'] }));
 
       await new Promise<void>((resolve) => {
         effects.dismissAlert$.subscribe(() => {
           expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: false } as Alert }),
+            alertDismissedReverted({ id: '1', dismissed: false }),
+          );
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertDismissedReverted({ id: '2', dismissed: false }),
+          );
+          resolve();
+        });
+      });
+    });
+
+    it('only reverts ids whose API call failed on partial failure', async () => {
+      const error = new Error('Dismiss failed');
+      jest.spyOn(apiService, 'call').mockImplementation((_method, params) => {
+        const [id] = params as [string];
+        return id === '2' ? throwError(() => error) : of(null);
+      });
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      actions$ = of(dismissAlertPressed({ ids: ['1', '2'] }));
+
+      await new Promise<void>((resolve) => {
+        effects.dismissAlert$.subscribe(() => {
+          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertDismissedReverted({ id: '2', dismissed: false }),
+          );
+          expect(dispatchSpy).not.toHaveBeenCalledWith(
+            alertDismissedReverted({ id: '1', dismissed: false }),
           );
           resolve();
         });
@@ -295,42 +321,62 @@ describe('AlertEffects', () => {
   });
 
   describe('reopenAlert$', () => {
-    it('calls API to restore alert', async () => {
-      const dismissedAlert = { ...mockAlert, dismissed: true } as Alert;
-      store$.overrideSelector(selectDismissedAlerts, [dismissedAlert]);
+    it('calls API once per id and is a no-op when ids is empty', async () => {
       jest.spyOn(apiService, 'call').mockReturnValue(of(null));
 
-      actions$ = of(reopenAlertPressed({ id: '1' }));
-
+      actions$ = of(reopenAlertPressed({ ids: ['1', '2'] }));
       await new Promise<void>((resolve) => {
         effects.reopenAlert$.subscribe(() => {
           expect(apiService.call).toHaveBeenCalledWith('alert.restore', ['1']);
+          expect(apiService.call).toHaveBeenCalledWith('alert.restore', ['2']);
           resolve();
         });
       });
     });
 
-    it('handles error and reverts reopened state', async () => {
-      const dismissedAlert = { ...mockAlert, dismissed: true } as Alert;
-      store$.overrideSelector(selectDismissedAlerts, [dismissedAlert]);
+    it('shows error modal and re-dispatches alertDismissedReverted for each id on failure', async () => {
       const error = new Error('Restore failed');
       jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
-      actions$ = of(reopenAlertPressed({ id: '1' }));
+      actions$ = of(reopenAlertPressed({ ids: ['1', '2'] }));
 
       await new Promise<void>((resolve) => {
         effects.reopenAlert$.subscribe(() => {
           expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
           expect(dispatchSpy).toHaveBeenCalledWith(
-            alertChanged({ alert: { id: '1', dismissed: true } as Alert }),
+            alertDismissedReverted({ id: '1', dismissed: true }),
+          );
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertDismissedReverted({ id: '2', dismissed: true }),
+          );
+          resolve();
+        });
+      });
+    });
+
+    it('only reverts ids whose API call failed on partial failure', async () => {
+      const error = new Error('Restore failed');
+      jest.spyOn(apiService, 'call').mockImplementation((_method, params) => {
+        const [id] = params as [string];
+        return id === '2' ? throwError(() => error) : of(null);
+      });
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      actions$ = of(reopenAlertPressed({ ids: ['1', '2'] }));
+
+      await new Promise<void>((resolve) => {
+        effects.reopenAlert$.subscribe(() => {
+          expect(errorHandlerService.showErrorModal).toHaveBeenCalledWith(error);
+          expect(dispatchSpy).toHaveBeenCalledWith(
+            alertDismissedReverted({ id: '2', dismissed: true }),
+          );
+          expect(dispatchSpy).not.toHaveBeenCalledWith(
+            alertDismissedReverted({ id: '1', dismissed: true }),
           );
           resolve();
         });
       });
     });
   });
-
-  // Note: dismissAllAlerts$ and reopenAllAlerts$ use pairwise() operator which requires
-  // special Observable stream handling for testing. These effects are covered by integration tests.
 });

@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
 import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
@@ -118,7 +118,7 @@ export class PageAlertsComponent {
     }
 
     // For each group, keep the most recent alert and add system-wide duplicate count
-    const uniqueAlerts: (Alert & EnhancedAlert & { duplicateCount: number; allIds: string[] })[] = [];
+    const uniqueAlerts: AlertWithDuplicates[] = [];
 
     for (const [key, alertGroup] of alertsByKey) {
       // Find most recent alert using reduce
@@ -219,9 +219,8 @@ export class PageAlertsComponent {
   /**
    * Dismiss an alert (and all its duplicates with the same key)
    */
-  protected onDismiss(alert: Alert): void {
-    // Dispatch single dismiss action - the reducer and effect handle dismissing all duplicates
-    this.store$.dispatch(dismissAlertPressed({ id: alert.id }));
+  protected onDismiss(alert: Alert & { allIds: string[] }): void {
+    this.store$.dispatch(dismissAlertPressed({ ids: alert.allIds }));
   }
 
   /**

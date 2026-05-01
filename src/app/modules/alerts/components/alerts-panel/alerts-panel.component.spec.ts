@@ -13,6 +13,7 @@ import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
+import { alertsLoaded } from 'app/modules/alerts/store/alert.actions';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
@@ -139,11 +140,13 @@ describe('AlertsPanelComponent', () => {
     expect(unreadAlertComponents[0].alert).toEqual({
       ...unreadAlerts[1],
       duplicateCount: 1,
+      allIds: [unreadAlerts[1].id],
       category: SmartAlertCategory.System,
     });
     expect(unreadAlertComponents[1].alert).toEqual({
       ...unreadAlerts[0],
       duplicateCount: 1,
+      allIds: [unreadAlerts[0].id],
       category: SmartAlertCategory.System,
     });
   });
@@ -159,13 +162,48 @@ describe('AlertsPanelComponent', () => {
     expect(dismissedAlertComponents[0].alert).toEqual({
       ...dismissedAlerts[0],
       duplicateCount: 1,
+      allIds: [dismissedAlerts[0].id],
       category: SmartAlertCategory.System,
     });
     expect(dismissedAlertComponents[1].alert).toEqual({
       ...dismissedAlerts[1],
       duplicateCount: 1,
+      allIds: [dismissedAlerts[1].id],
       category: SmartAlertCategory.System,
     });
+  });
+
+  // Regression for NAS-140768: when duplicates share a key, the panel must pass every duplicate
+  // id (allIds) to the rendered alert so a dismiss click acts on the whole group. The dispatch
+  // -> server-call wiring is covered in alert.effects.spec.ts and alert.component.spec.ts.
+  it('passes allIds covering every duplicate sharing the same key to the rendered alert', () => {
+    const duplicates = [
+      {
+        id: 'dup-a',
+        key: 'duplicate-key',
+        dismissed: false,
+        datetime: { $date: 1641811015 },
+        level: AlertLevel.Warning,
+      },
+      {
+        id: 'dup-b',
+        key: 'duplicate-key',
+        dismissed: false,
+        datetime: { $date: 1641811020 },
+        level: AlertLevel.Warning,
+      },
+    ] as Alert[];
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: duplicates }));
+    spectator.detectChanges();
+
+    const renderedIds = alertPanel.unreadAlertComponents.map(
+      (component) => [...(alertPanel.getAlertData(component)?.allIds || [])].sort((a, b) => a.localeCompare(b)),
+    );
+
+    expect(renderedIds).toEqual([
+      ['dup-a', 'dup-b'],
+      ['dup-a', 'dup-b'],
+    ]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
