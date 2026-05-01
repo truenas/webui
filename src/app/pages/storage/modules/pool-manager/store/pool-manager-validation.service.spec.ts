@@ -3,7 +3,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
   AddVdevsStore,
@@ -741,6 +741,313 @@ describe('PoolManagerValidationService', () => {
         const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
         const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
         expect(incompleteErrors).toEqual([]);
+      });
+    });
+  });
+
+  describe('redundancy-mismatch warning (NAS-140839)', () => {
+    const sharedStoreMock = {
+      name$: of('Pool'),
+      nameErrors$: of(null),
+      enclosureSettings$: of({
+        limitToSingleEnclosure: null,
+        dispersalStrategy: DispersalStrategy.None,
+      }),
+      hasMultipleEnclosuresAfterFirstStep$: of(false),
+    };
+
+    describe('when special parity is lower than data parity (new pool)', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: {
+                layout: CreateVdevLayout.Raidz2,
+                width: 4,
+                vdevs: [[{ devname: 'sda' }]],
+              },
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Mirror,
+                width: 2,
+                vdevs: [[{ devname: 'sdb' }, { devname: 'sdc' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('emits a non-blocking metadata redundancy warning', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Warning,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.',
+        });
+      });
+    });
+
+    describe('when special parity matches data parity', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: {
+                layout: CreateVdevLayout.Raidz2,
+                width: 4,
+                vdevs: [[{ devname: 'sda' }]],
+              },
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Raidz2,
+                width: 4,
+                vdevs: [[{ devname: 'sdb' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not warn', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors.find((err) => err.text.includes('redundancy is lower'))).toBeUndefined();
+      });
+    });
+
+    describe('when adding dedup to a pool with higher-redundancy data', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Dedup]: {
+                layout: CreateVdevLayout.Mirror,
+                width: 2,
+                vdevs: [[{ devname: 'sdb' }, { devname: 'sdc' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, {
+            pool$: of({
+              name: 'pool',
+              topology: {
+                [VDevType.Data]: [
+                  { type: TopologyItemType.Raidz3, children: [{}, {}, {}, {}, {}] },
+                ],
+              },
+            } as Pool),
+          }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('emits a dedup redundancy warning', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Warning,
+          step: PoolCreationWizardStep.Dedup,
+          text: 'The dedup VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.',
+        });
+      });
+    });
+
+    describe('when both data and special are stripe', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: {
+                layout: CreateVdevLayout.Stripe,
+                width: 1,
+                vdevs: [[{ devname: 'sda' }]],
+              },
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Stripe,
+                width: 1,
+                vdevs: [[{ devname: 'sdb' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not double-warn (stripe warning handles the message)', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors.find((err) => err.text.includes('redundancy is lower'))).toBeUndefined();
+      });
+    });
+  });
+
+  describe('mixed-layout warning (NAS-140839)', () => {
+    const sharedStoreMock = {
+      name$: of('Pool'),
+      nameErrors$: of(null),
+      enclosureSettings$: of({
+        limitToSingleEnclosure: null,
+        dispersalStrategy: DispersalStrategy.None,
+      }),
+      hasMultipleEnclosuresAfterFirstStep$: of(false),
+    };
+
+    describe('when adding a special vdev with a layout different from existing pool special', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Raidz1,
+                width: 3,
+                vdevs: [[{ devname: 'sdb' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, {
+            pool$: of({
+              name: 'pool',
+              topology: {
+                [VDevType.Special]: [
+                  { type: TopologyItemType.Mirror, children: [{}, {}] },
+                ],
+              },
+            } as Pool),
+          }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('emits a non-blocking mixed-layout warning', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Warning,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Mixing layouts within the metadata class is not recommended.',
+        });
+      });
+    });
+
+    describe('when creating a new pool (no existing pool to mix against)', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: {
+                layout: CreateVdevLayout.Mirror,
+                width: 2,
+                vdevs: [[{ devname: 'sda' }]],
+              },
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Mirror,
+                width: 2,
+                vdevs: [[{ devname: 'sdb' }, { devname: 'sdc' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not warn', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
+      });
+    });
+
+    describe('when the new special layout matches the existing pool special layout', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Mirror,
+                width: 2,
+                vdevs: [[{ devname: 'sdb' }, { devname: 'sdc' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, {
+            pool$: of({
+              name: 'pool',
+              topology: {
+                [VDevType.Special]: [
+                  { type: TopologyItemType.Mirror, children: [{}, {}] },
+                ],
+              },
+            } as Pool),
+          }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not warn', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
       });
     });
   });

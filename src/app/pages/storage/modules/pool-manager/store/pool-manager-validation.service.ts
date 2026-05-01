@@ -27,7 +27,9 @@ import {
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import {
+  existingVdevLayout, isDraidLayout, layoutParity, resolveTopologyLayout,
+} from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
@@ -71,6 +73,8 @@ export class PoolManagerValidationService {
         } else {
           errors.push(...this.validateAddVdevs(topology));
         }
+        errors.push(...this.validateRedundancyMismatch(topology, existingPool));
+        errors.push(...this.validateMixedSpecialLayout(topology, existingPool));
         errors.push(...this.validateIncompleteCategories(topology));
 
         return uniqBy(errors, 'text')
@@ -396,5 +400,118 @@ export class PoolManagerValidationService {
     }
 
     return errors;
+  }
+
+  /**
+   * NAS-140839 / ER-72 — special and dedup vdevs may now be created with any
+   * non-stripe redundancy regardless of the data vdev's parity. When the
+   * special/dedup parity is lower than data parity, surface a non-blocking
+   * warning so the user is aware that losing the metadata vdev would still
+   * destroy the pool.
+   */
+  private validateRedundancyMismatch(
+    topology: PoolManagerTopology,
+    existingPool: Pool | null,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const dataParity = this.resolveDataParity(topology, existingPool);
+    if (dataParity === null) {
+      return errors;
+    }
+
+    const ruleByType = {
+      [VDevType.Special]: {
+        text: helptextPoolCreation.specialRedundancyMismatchWarning,
+        step: PoolCreationWizardStep.Metadata,
+      },
+      [VDevType.Dedup]: {
+        text: helptextPoolCreation.dedupRedundancyMismatchWarning,
+        step: PoolCreationWizardStep.Dedup,
+      },
+    } as const;
+
+    ([VDevType.Special, VDevType.Dedup] as const).forEach((vdevType) => {
+      const category = topology[vdevType];
+      if (!category?.vdevs.length || !category.layout) {
+        return;
+      }
+      // Stripe is handled by validateStripeVdevsWarning / validateAddVdevRedundancy
+      // with its own dedicated message; don't double-warn here.
+      if (category.layout === CreateVdevLayout.Stripe) {
+        return;
+      }
+      const categoryParity = layoutParity(category.layout, category.width ?? 2);
+      if (categoryParity < dataParity) {
+        errors.push({
+          text: this.translate.instant(ruleByType[vdevType].text),
+          severity: PoolCreationSeverity.Warning,
+          step: ruleByType[vdevType].step,
+        });
+      }
+    });
+
+    return errors;
+  }
+
+  /**
+   * NAS-140839 / ER-72 — adding a special/dedup vdev whose layout differs from
+   * the existing pool's special/dedup layout is allowed but warned about. The
+   * topology category carries a single layout, so mixing can only arise in the
+   * add-vdev flow against an already-populated pool category.
+   */
+  private validateMixedSpecialLayout(
+    topology: PoolManagerTopology,
+    existingPool: Pool | null,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    if (!existingPool) {
+      return errors;
+    }
+
+    const ruleByType = {
+      [VDevType.Special]: {
+        text: helptextPoolCreation.specialMixedLayoutWarning,
+        step: PoolCreationWizardStep.Metadata,
+      },
+      [VDevType.Dedup]: {
+        text: helptextPoolCreation.dedupMixedLayoutWarning,
+        step: PoolCreationWizardStep.Dedup,
+      },
+    } as const;
+
+    ([VDevType.Special, VDevType.Dedup] as const).forEach((vdevType) => {
+      const category = topology[vdevType];
+      if (!category?.vdevs.length || !category.layout) {
+        return;
+      }
+      const existingLayout = existingVdevLayout(existingPool.topology?.[vdevType]);
+      if (existingLayout !== null && existingLayout !== category.layout) {
+        errors.push({
+          text: this.translate.instant(ruleByType[vdevType].text),
+          severity: PoolCreationSeverity.Warning,
+          step: ruleByType[vdevType].step,
+        });
+      }
+    });
+
+    return errors;
+  }
+
+  private resolveDataParity(topology: PoolManagerTopology, existingPool: Pool | null): number | null {
+    const existingDataVdevs = existingPool?.topology?.[VDevType.Data];
+    if (existingDataVdevs?.length) {
+      const layout = resolveTopologyLayout(existingDataVdevs);
+      if (layout === null) {
+        return null;
+      }
+      const width = existingDataVdevs[0].children?.length ?? 2;
+      return layoutParity(layout, width);
+    }
+
+    const dataCategory = topology[VDevType.Data];
+    if (dataCategory?.layout) {
+      return layoutParity(dataCategory.layout, dataCategory.width ?? 2);
+    }
+    return null;
   }
 }
