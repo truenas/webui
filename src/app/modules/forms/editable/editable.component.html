@@ -9,9 +9,9 @@
     [class.disabled]="disabled()"
     (click)="open()"
   >
-    <span #triggerValue class="trigger-value" (cdkObserveContent)="checkVisibleValue()">
+    <div #triggerValue (cdkObserveContent)="checkVisibleValue()">
       <ng-content select="[view]"></ng-content>
-    </span>
+    </div>
 
     @if (isEmpty()) {
       {{ emptyValue() }}

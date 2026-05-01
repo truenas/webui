@@ -1,9 +1,11 @@
 .edit-trigger {
   all: unset;
+  align-items: center;
   background-color: var(--alt-bg1);
   color: var(--primary-txt);
+  column-gap: 2px;
   cursor: pointer;
-  display: inline;
+  display: inline-flex;
   font-size: 13px;
   padding: 0 5px;
   vertical-align: top;
@@ -33,19 +35,8 @@
     font-style: italic;
   }
 
-  .trigger-value {
-    display: inline;
-
-    // Force projected [view] content to render inline so the icon flows
-    // immediately after the last character of the value, even when the text wraps.
-    ::ng-deep > [view] {
-      display: inline;
-    }
-  }
-
   .edit-trigger-icon {
-    display: inline-block;
+    flex-shrink: 0;
     margin-left: 2px;
-    vertical-align: middle;
   }
 }
