@@ -12,18 +12,21 @@
 .submit-button-wrapper {
   position: relative;
   display: inline-block;
-  overflow: hidden;
 
-  &.validating::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: 30%;
-    height: 3px;
-    background: var(--primary);
-    content: '';
-    animation: loading-bar 1s ease-in-out infinite;
+  &.validating {
+    overflow: hidden;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      width: 30%;
+      height: 3px;
+      background: var(--primary);
+      content: '';
+      animation: loading-bar 1s ease-in-out infinite;
+    }
   }
 }
 
