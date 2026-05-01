@@ -1,9 +1,9 @@
 {
   "0": "0",
-  "How long snapshots created by the periodic snapshot task on the source system are kept before being deleted. Enter a number and choose a measure of time from the drop-down.": "",
-  "Not Available": "",
-  "Proactive support is not available on your license.": "",
-  "Source Snapshot Lifetime": "",
+  "How long snapshots created by the periodic snapshot task on the source system are kept before being deleted. Enter a number and choose a measure of time from the drop-down.": "Как долго хранятся снимки, созданные с помощью задачи периодического создания снимков в исходной системе, перед удалением. Введите число и выберите показатель времени из раскрывающегося списка.",
+  "Not Available": "Недоступно",
+  "Proactive support is not available on your license.": "Проактивная поддержка недоступна в вашей лицензии.",
+  "Source Snapshot Lifetime": "Срок жизни исходного снимка",
   " as of {dateTime}": " в {dateTime}",
   " bytes.": " байт(ов).",
   " Est. Usable Raw Capacity": " Оценка полезного сырого объёма",
