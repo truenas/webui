@@ -1,9 +1,9 @@
 {
   "0": "0",
-  "How long snapshots created by the periodic snapshot task on the source system are kept before being deleted. Enter a number and choose a measure of time from the drop-down.": "",
-  "Not Available": "",
-  "Proactive support is not available on your license.": "",
-  "Source Snapshot Lifetime": "",
+  "How long snapshots created by the periodic snapshot task on the source system are kept before being deleted. Enter a number and choose a measure of time from the drop-down.": "Canto tempo se conservan as instantáneas creadas pola tarefa de instantáneas periódicas no sistema de orixe antes de seren eliminadas. Introduce un número e elixe unha medida de tempo no menú despregable.",
+  "Not Available": "Non dispoñible",
+  "Proactive support is not available on your license.": "O soporte proactivo non está dispoñible na túa licenza.",
+  "Source Snapshot Lifetime": "Tempo de vida da instantánea de orixe",
   " as of {dateTime}": " a data de {dateTime}",
   " bytes.": " bytes.",
   " Est. Usable Raw Capacity": " Capacidade bruta utilizable estimada",
