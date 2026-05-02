@@ -202,6 +202,11 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     @include variable(color, --fg2, $fg2, !important);
   }
 
+  .mat-mdc-menu-panel {
+    border-radius: var(--mdc-dialog-container-shape);
+    overflow: hidden;
+  }
+
   .mat-mdc-option.mat-mdc-option-disabled {
     cursor: not-allowed;
     opacity: 0.5;
@@ -356,6 +361,11 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   .mat-mdc-dialog-container {
     border-radius: var(--mdc-dialog-container-shape);
     max-width: 800px;
+
+    .mdc-dialog__container {
+      border-radius: var(--mdc-dialog-container-shape);
+      overflow: hidden;
+    }
 
     :not(.mat-mdc-dialog-content) {
       >form {
