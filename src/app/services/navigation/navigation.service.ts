@@ -117,6 +117,22 @@ export class NavigationService {
       state: 'featured-photos/admin',
     },
     {
+      name: T('HarborDesk'),
+      type: MenuItemType.Link,
+      tooltip: T('HarborDesk'),
+      icon: tnIconMarker('app-desktop-harbordesk', 'custom'),
+      iconActive: tnIconMarker('app-desktop-harbordesk-active', 'custom'),
+      state: 'harbordesk',
+    },
+    {
+      name: T('HarborBot'),
+      type: MenuItemType.Link,
+      tooltip: T('HarborBot'),
+      icon: tnIconMarker('app-desktop-harborbot', 'custom'),
+      iconActive: tnIconMarker('app-desktop-harborbot-active', 'custom'),
+      state: 'harborbot',
+    },
+    {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),

@@ -5,6 +5,13 @@
         "changeOrigin": true,
         "logLevel": "debug"
     },
+    "/api/harbordesk/**": {
+        "target": "http://127.0.0.1:4174",
+        "secure": false,
+        "changeOrigin": true,
+        "pathRewrite": {"^/api/harbordesk" : "/api"},
+        "loglevel": "debug"
+    },
     "/api/**": {
         "target": "http://_REMOTE_",
         "secure": false,
