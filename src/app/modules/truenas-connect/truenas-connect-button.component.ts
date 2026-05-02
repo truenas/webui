@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -12,7 +11,6 @@ import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-t
 @Component({
   selector: 'ix-truenas-connect-button',
   imports: [
-    TnIconComponent,
     MatButtonModule,
     MatIconButton,
     MatTooltip,
