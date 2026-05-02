@@ -40,6 +40,12 @@
 
     button {
       flex-shrink: 0;
+      height: 42px;
+
+      &:hover {
+        background-color: var(--primary) !important;
+        color: #fff !important;
+      }
     }
   }
 }
