@@ -37,35 +37,35 @@ export const sharesEmptyConfig = {
 
 export const cloudSyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: tnIconMarker('cloud-outline', 'mdi'),
+  image: 'assets/icons/custom/cloud-outline.svg',
   message: T('Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.'),
   large: true,
 } as EmptyConfig;
 
 export const cloudBackupTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: tnIconMarker('cloud-outline', 'mdi'),
+  image: 'assets/icons/custom/cloud-outline.svg',
   message: T('Back up to the decentralized network provided by Storj in partnership with TrueNAS.'),
   large: true,
 } as EmptyConfig;
 
 export const snapshotTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: tnIconMarker('file-multiple-outline', 'mdi'),
+  image: 'assets/icons/custom/file-multiple-outline.svg',
   message: T('<p>Automatically create point-in-time snapshots of selected datasets at regular intervals.</p>\n<p>These snapshots help preserve data states for recovery, backup, and versioning purposes,\n ensuring minimal data loss in case of accidental deletion or corruption.</p>'),
   large: true,
 } as EmptyConfig;
 
 export const rsyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: tnIconMarker('desktop-classic', 'mdi'),
+  image: 'assets/icons/custom/desktop-classic.svg',
   message: T('Best if you\'re syncing with a generic system that lacks ZFS capabilities.'),
   large: true,
 } as EmptyConfig;
 
 export const replicationTaskEmptyConfig = {
   type: EmptyType.NoPageData,
-  icon: tnIconMarker('replication', 'custom'),
+  image: 'assets/icons/custom/replication.svg',
   message: T('Best if you\'re syncing with another TrueNAS or ZFS system — enables advanced features not available with other methods.'),
   large: true,
 } as EmptyConfig;

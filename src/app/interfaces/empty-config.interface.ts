@@ -8,6 +8,7 @@ export interface EmptyConfig {
   title: TranslatedString;
   message?: TranslatedString;
   icon?: string;
+  image?: string;
   button?: {
     label: TranslatedString;
     action: () => void;
