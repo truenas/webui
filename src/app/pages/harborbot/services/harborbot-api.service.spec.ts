@@ -88,15 +88,69 @@ describe('HarborBotApiService', () => {
     expect(url).not.toContain(':8787');
   });
 
-  it('stays retrieval-only and avoids direct service ports', () => {
+  it('reads camera DVR state from same-origin HarborDesk endpoints', async () => {
+    const statePromise = firstValueFrom(spectator.service.cameraState());
+    httpMock.expectOne('/api/harbordesk/state').flush({
+      defaults: { selected_camera_device_id: 'camera-main' },
+      devices: [{ device_id: 'camera-main', name: 'Front Door' }],
+    });
+    expect((await statePromise).devices[0].device_id).toBe('camera-main');
+
+    const statusPromise = firstValueFrom(spectator.service.dvrStatus());
+    httpMock.expectOne('/api/harbordesk/cameras/recordings/status').flush({
+      generated_at: '1',
+      statuses: [{ device_id: 'camera-main', status: 'recording' }],
+    });
+    expect((await statusPromise).statuses[0].status).toBe('recording');
+
+    const timelinePromise = firstValueFrom(spectator.service.dvrTimeline('camera-main'));
+    httpMock.expectOne('/api/harbordesk/cameras/recordings/timeline?device_id=camera-main').flush({
+      generated_at: '1',
+      recording_root: '/recordings',
+      segments: [{ device_id: 'camera-main', file_path: '/recordings/camera-main.mp4' }],
+    });
+    expect((await timelinePromise).segments[0].file_path).toContain('camera-main');
+
+    const filteredTimelinePromise = firstValueFrom(spectator.service.dvrTimeline('camera-main', '1714600000', '1714600300'));
+    httpMock.expectOne('/api/harbordesk/cameras/recordings/timeline?device_id=camera-main&from=1714600000&to=1714600300').flush({
+      generated_at: '1',
+      recording_root: '/recordings',
+      segments: [],
+    });
+    expect((await filteredTimelinePromise).segments).toEqual([]);
+
+    const startPromise = firstValueFrom(spectator.service.startDvrRecording('camera-main'));
+    httpMock.expectOne('/api/harbordesk/cameras/camera-main/recordings/start').flush({
+      generated_at: '2',
+      statuses: [{ device_id: 'camera-main', status: 'recording' }],
+    });
+    expect((await startPromise).statuses[0].status).toBe('recording');
+
+    const stopPromise = firstValueFrom(spectator.service.stopDvrRecording('camera-main'));
+    httpMock.expectOne('/api/harbordesk/cameras/camera-main/recordings/stop').flush({
+      generated_at: '3',
+      statuses: [{ device_id: 'camera-main', status: 'stopped' }],
+    });
+    expect((await stopPromise).statuses[0].status).toBe('stopped');
+
+    const snapshotPromise = firstValueFrom(spectator.service.createSnapshotTask('camera-main'));
+    httpMock.expectOne('/api/harbordesk/cameras/camera-main/snapshot').flush({ task_id: 'task-1' });
+    expect(await snapshotPromise).toEqual({ task_id: 'task-1' });
+  });
+
+  it('uses same-origin HarborDesk proxy paths and avoids direct service ports', () => {
     const sources = [
-      'src/app/pages/harborbot/services/harborbot-api.service.ts',
-      'src/app/pages/harborbot/utils/harborbot-results.ts',
+      'src/app/pages/harbor/shared/harbor-api.service.ts',
+      'src/app/pages/harbor/shared/harbor-results.ts',
       'src/app/pages/harborbot/harborbot.component.ts',
+      'src/app/pages/harborcam/harborcam.component.ts',
     ].map((path) => readFileSync(join(process.cwd(), path), 'utf8')).join('\n');
 
     expect(sources).toContain('/api/harbordesk/knowledge/search');
     expect(sources).toContain('/api/harbordesk/knowledge/preview');
+    expect(sources).toContain('/api/harbordesk/cameras/recordings/status');
+    expect(sources).toContain('/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/recordings/start');
+    expect(sources).toContain('/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/snapshot');
     [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
       expect(sources).not.toContain(forbidden);
     });

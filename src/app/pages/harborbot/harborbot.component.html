@@ -1,133 +1,191 @@
 <ix-page-header [pageTitle]="'HarborBot' | translate"></ix-page-header>
 
 <section class="harborbot-page">
-  <form
-    class="search-bar"
-    [formGroup]="form"
-    (ngSubmit)="search()"
-  >
-    <mat-form-field appearance="outline" class="query-field">
-      <mat-label>{{ 'HarborBot' | translate }}</mat-label>
-      <input
-        matInput
-        formControlName="query"
-        [placeholder]="'找到和春天相关的照片' | translate"
-      />
-    </mat-form-field>
+  <div class="harborbot-shell">
+    <main class="rag-workbench">
+      <section class="intro-panel">
+        <div>
+          <h2>{{ 'Multimodal RAG' | translate }}</h2>
+          <p>{{ 'Search NAS files, images, text, and indexed videos from one place.' | translate }}</p>
+        </div>
+      </section>
 
-    <mat-button-toggle-group
-      class="mode-toggle"
-      formControlName="filter"
-      aria-label="HarborBot result filter"
-    >
-      <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
-      <mat-button-toggle value="images">{{ 'Images' | translate }}</mat-button-toggle>
-      <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
-      <mat-button-toggle value="videos">{{ 'Videos' | translate }}</mat-button-toggle>
-    </mat-button-toggle-group>
-
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="loading() || form.invalid"
-    >
-      {{ 'Search with HarborBot' | translate }}
-    </button>
-  </form>
-
-  @if (loading()) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  }
-
-  @if (error()) {
-    <div class="notice error">{{ error() }}</div>
-  }
-
-  @if (response(); as result) {
-    <div class="result-summary">
-      <strong>{{ result.total_matches }}</strong>
-      <span>{{ 'matches' | translate }}</span>
-      <span>{{ result.status }}</span>
-      @if (result.degraded) {
-        <span>{{ result.degraded_reason }}</span>
-      }
-    </div>
-
-    @if (result.warnings.length > 0 || result.blockers.length > 0) {
-      <div class="notice warning">
-        @for (warning of result.warnings; track warning) {
-          <span>{{ warning }}</span>
-        }
-        @for (blocker of result.blockers; track blocker) {
-          <span>{{ blocker }}</span>
-        }
-      </div>
-    }
-
-    @if (noResults()) {
-      <div class="empty-state">{{ emptyMessage(result) | translate }}</div>
-    }
-  }
-
-  <section class="waterfall" aria-live="polite">
-    @for (item of waterfallItems(); track resultTrackKey($index, item)) {
-      <mat-card
-        class="result-card"
-        [ngClass]="item.kind"
-        tabindex="0"
-        (click)="openPreview(item)"
-        (keydown.enter)="openPreview(item)"
-      >
-        @if (item.kind === 'image') {
-          <div class="image-frame">
-            <img
-              [src]="item.previewUrl"
-              [alt]="item.hit.title"
-              loading="lazy"
-            />
-          </div>
-        }
-
-        <mat-card-content>
-          <div class="card-topline">
-            <span>{{ kindLabel(item) | translate }}</span>
-            <span>{{ scoreLabel(item.hit) }}</span>
-          </div>
-          <h2>{{ item.hit.title }}</h2>
-          <p>{{ summary(item.hit) }}</p>
-
-          @if (matchedTerms(item.hit)) {
-            <div class="terms">{{ matchedTerms(item.hit) }}</div>
+      @if (loading() || response() || error()) {
+        <section #searchResults class="results-workbench" data-testid="harborbot-search-results">
+          @if (response(); as result) {
+            <div class="results-header">
+              <div>
+                <h2>{{ 'Search evidence' | translate }}</h2>
+                <p>{{ form.controls.query.value }}</p>
+              </div>
+              <div class="result-summary">
+                <strong>{{ result.total_matches }}</strong>
+                <span>{{ 'matches' | translate }}</span>
+                <span>{{ result.status }}</span>
+                @if (result.degraded) {
+                  <span>{{ result.degraded_reason }}</span>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="results-header">
+              <div>
+                <h2>{{ 'Search evidence' | translate }}</h2>
+                <p>{{ form.controls.query.value }}</p>
+              </div>
+              <div class="result-summary">
+                <strong>{{ loading() ? ('Searching' | translate) : ('0' | translate) }}</strong>
+                <span>{{ loading() ? ('working' | translate) : ('error' | translate) }}</span>
+              </div>
+            </div>
           }
 
-          <details (click)="$event.stopPropagation()">
-            <summary>{{ 'Evidence' | translate }}</summary>
-            <dl>
-              <div>
-                <dt>{{ 'Source' | translate }}</dt>
-                <dd>{{ sourceKinds(item.hit) }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'Path' | translate }}</dt>
-                <dd>{{ item.hit.path }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'Content indexed' | translate }}</dt>
-                <dd>{{ item.hit.content_indexed ? 'true' : 'false' }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'Content match' | translate }}</dt>
-                <dd>{{ item.hit.content_match_used ? 'true' : 'false' }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'Filename match' | translate }}</dt>
-                <dd>{{ item.hit.filename_match_used ? 'true' : 'false' }}</dd>
-              </div>
-            </dl>
-          </details>
-        </mat-card-content>
-      </mat-card>
-    }
-  </section>
+          @if (loading()) {
+            <section class="results-skeleton" aria-live="polite">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card tall"></div>
+              <div class="skeleton-card"></div>
+            </section>
+          } @else if (response(); as result) {
+            @if (noResults()) {
+              <div class="empty-state">{{ emptyMessage(result) | translate }}</div>
+            } @else {
+              <section class="results-waterfall" aria-live="polite">
+                @for (item of waterfallItems(); track resultTrackKey($index, item)) {
+                  <mat-card class="result-card" [ngClass]="item.kind" tabindex="0" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
+                    @if (item.kind === 'image') {
+                      <div class="image-frame">
+                        <img [src]="item.previewUrl" [alt]="item.hit.title" loading="lazy" />
+                      </div>
+                    }
+                    @if (item.kind === 'video') {
+                      <div class="video-frame">
+                        <video [src]="videoPreviewUrl(item)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                        <span class="play-chip">{{ '播放' | translate }}</span>
+                      </div>
+                    }
+
+                    <mat-card-content>
+                      <div class="card-topline">
+                        <span>{{ kindLabel(item) | translate }}</span>
+                        <span>{{ scoreLabel(item.hit) }}</span>
+                      </div>
+                      <h2>{{ item.hit.title }}</h2>
+                      <p>{{ summary(item.hit) }}</p>
+
+                      @if (matchedTerms(item.hit)) {
+                        <div class="terms">{{ matchedTerms(item.hit) }}</div>
+                      }
+
+                      <details (click)="$event.stopPropagation()">
+                        <summary>{{ 'Evidence' | translate }}</summary>
+                        <dl>
+                          <div><dt>{{ 'Source' | translate }}</dt><dd>{{ sourceKinds(item.hit) }}</dd></div>
+                          <div><dt>{{ 'Path' | translate }}</dt><dd>{{ item.hit.path }}</dd></div>
+                          <div><dt>{{ 'Content indexed' | translate }}</dt><dd>{{ item.hit.content_indexed ? 'true' : 'false' }}</dd></div>
+                          <div><dt>{{ 'Content match' | translate }}</dt><dd>{{ item.hit.content_match_used ? 'true' : 'false' }}</dd></div>
+                          <div><dt>{{ 'Filename match' | translate }}</dt><dd>{{ item.hit.filename_match_used ? 'true' : 'false' }}</dd></div>
+                        </dl>
+                      </details>
+                    </mat-card-content>
+                  </mat-card>
+                }
+              </section>
+            }
+          } @else if (error()) {
+            <div class="empty-state error">{{ error() }}</div>
+          }
+        </section>
+      } @else {
+        <section class="empty-state start-state">
+          {{ 'Ask HarborBot to find evidence across your indexed media and documents.' | translate }}
+        </section>
+      }
+    </main>
+
+    <aside class="assistant-panel">
+      <div class="assistant-header">
+        <h2>{{ 'HarborBot' | translate }}</h2>
+        <span>{{ 'RAG search' | translate }}</span>
+      </div>
+
+      <form class="assistant-form" [formGroup]="form" (ngSubmit)="search()">
+        <div class="query-composer">
+          <textarea
+            class="query-input"
+            rows="5"
+            aria-label="HarborBot multimodal search query"
+            formControlName="query"
+            placeholder="试着问：找到和春天相关的照片"
+          ></textarea>
+          <div class="query-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
+              {{ 'Search with HarborBot' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="prompt-strip" aria-label="HarborBot question examples">
+          <span>试试</span>
+          @for (suggestion of promptSuggestions; track suggestion.query) {
+            <button type="button" class="suggestion-chip" (click)="usePromptSuggestion(suggestion)">
+              {{ suggestion.label }}
+            </button>
+          }
+        </div>
+
+        <div class="scope-note">本次搜索范围：{{ searchScopeLabel() }}</div>
+
+        <mat-button-toggle-group class="scope-toggle" formControlName="sourceScope" aria-label="HarborBot search source scope">
+          <mat-button-toggle value="all">全部</mat-button-toggle>
+          <mat-button-toggle value="nas_files">NAS 文件夹</mat-button-toggle>
+          <mat-button-toggle value="dvr_library">DVR 媒体库</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="HarborBot result filter">
+          <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="images">{{ 'Images' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="videos">{{ 'Videos' | translate }}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <div class="scope-fields">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'From' | translate }}</mat-label>
+            <input matInput type="datetime-local" formControlName="from" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'To' | translate }}</mat-label>
+            <input matInput type="datetime-local" formControlName="to" />
+          </mat-form-field>
+        </div>
+      </form>
+
+      @if (loading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+      @if (error()) {
+        <div class="notice error compact">{{ error() }}</div>
+      }
+      @if (response(); as result) {
+        @if (result.warnings.length > 0 || result.blockers.length > 0) {
+          <div class="notice warning compact">
+            @for (warning of result.warnings; track warning) {
+              <span>{{ warning }}</span>
+            }
+            @for (blocker of result.blockers; track blocker) {
+              <span>{{ blocker }}</span>
+            }
+          </div>
+        }
+
+        @if (embeddingUnavailable(result)) {
+          <div class="notice warning compact embedding-action">
+            <span>语义检索模型不可用。请到 HarborDesk 的“语义索引”节点安装或选择模型，然后重新索引知识库。</span>
+            <button mat-stroked-button type="button" (click)="openHarborDeskModels()">打开语义索引</button>
+          </div>
+        }
+      }
+    </aside>
+  </div>
 </section>

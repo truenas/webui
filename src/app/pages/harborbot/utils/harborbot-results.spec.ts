@@ -7,6 +7,7 @@ import {
   harborBotErrorMessage,
   harborBotHasNoResults,
   harborBotPreviewUrl,
+  harborBotSameOriginAdminUrl,
 } from 'app/pages/harborbot/utils/harborbot-results';
 
 describe('HarborBot result helpers', () => {
@@ -17,6 +18,10 @@ describe('HarborBot result helpers', () => {
       include_documents: true,
       include_images: true,
       include_videos: true,
+      source_scope: 'dvr_library',
+      camera_id: null,
+      from: null,
+      to: null,
     });
     expect(buildHarborBotSearchPayload('spring', 'images', 12)).toEqual({
       query: 'spring',
@@ -24,6 +29,7 @@ describe('HarborBot result helpers', () => {
       include_documents: false,
       include_images: true,
       include_videos: false,
+      source_scope: 'dvr_library',
     });
     expect(buildHarborBotSearchPayload('report', 'text')).toEqual({
       query: 'report',
@@ -31,6 +37,7 @@ describe('HarborBot result helpers', () => {
       include_documents: true,
       include_images: false,
       include_videos: false,
+      source_scope: 'dvr_library',
     });
     expect(buildHarborBotSearchPayload('clip', 'videos')).toEqual({
       query: 'clip',
@@ -38,6 +45,36 @@ describe('HarborBot result helpers', () => {
       include_documents: false,
       include_images: false,
       include_videos: true,
+      source_scope: 'dvr_library',
+      camera_id: null,
+      from: null,
+      to: null,
+    });
+    expect(buildHarborBotSearchPayload('pouring drink', 'videos', 12, {
+      cameraId: 'camera-main',
+      from: '1714600000',
+      to: '1714600300',
+    })).toEqual({
+      query: 'pouring drink',
+      limit: 12,
+      include_documents: false,
+      include_images: false,
+      include_videos: true,
+      source_scope: 'dvr_library',
+      camera_id: 'camera-main',
+      from: '1714600000',
+      to: '1714600300',
+    });
+    expect(buildHarborBotSearchPayload('nas docs', 'all', 6, { sourceScope: 'nas_files' })).toEqual({
+      query: 'nas docs',
+      limit: 6,
+      include_documents: true,
+      include_images: true,
+      include_videos: true,
+      source_scope: 'nas_files',
+      camera_id: null,
+      from: null,
+      to: null,
     });
   });
 
@@ -47,6 +84,12 @@ describe('HarborBot result helpers', () => {
     expect(url).toBe('/api/harbordesk/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
     expect(url).not.toContain(':4174');
     expect(url).not.toContain(':8787');
+    expect(harborBotSameOriginAdminUrl('http://192.168.3.82:4174/api/knowledge/preview?path=/recordings/a.mp4'))
+      .toBe('/api/harbordesk/knowledge/preview?path=/recordings/a.mp4');
+    expect(harborBotSameOriginAdminUrl('/api/cameras/camera-main/snapshot.jpg'))
+      .toBe('/api/harbordesk/cameras/camera-main/snapshot.jpg');
+    expect(harborBotSameOriginAdminUrl('http://127.0.0.1/ui/assets/harbor-fixtures/public-fixture-dvr.jpg'))
+      .toBe('/ui/assets/harbor-fixtures/public-fixture-dvr.jpg');
   });
 
   it('classifies and sorts waterfall items across image, text, and video hits', () => {
