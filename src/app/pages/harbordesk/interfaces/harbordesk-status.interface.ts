@@ -65,6 +65,79 @@ export interface CameraDevice {
   metadata?: Record<string, unknown>;
 }
 
+export interface DvrRecordingSettings {
+  recording_root: string;
+  media_library_root: string;
+  retention_days: number;
+  segment_seconds: number;
+  continuous_recording_enabled: boolean;
+  low_bitrate_stream_preferred: boolean;
+  continuous_bitrate_mbps: number;
+  high_res_event_clips_enabled: boolean;
+  high_res_event_clip_seconds: number;
+  continuous_stream_path_hint?: string | null;
+  high_res_stream_path_hint?: string | null;
+  disk_budget_gb: number;
+  keyframe_count: number;
+  keyframe_interval_seconds: number;
+  enabled_device_ids: string[];
+}
+
+export interface DvrRecordingStatus {
+  device_id: string;
+  status: string;
+  started_at?: string | null;
+  updated_at?: string | null;
+  stream_kind?: string;
+  last_segment_path?: string | null;
+  live_mjpeg_url?: string | null;
+  message?: string;
+}
+
+export interface DvrRecordingStatusResponse {
+  generated_at: string;
+  settings: DvrRecordingSettings;
+  capacity: {
+    camera_count: number;
+    enabled_camera_count: number;
+    retention_days: number;
+    bitrate_mbps: number;
+    estimated_bytes_per_camera: number;
+    estimated_bytes_enabled_total: number;
+    disk_budget_bytes?: number | null;
+    disk_budget_warning?: string | null;
+  };
+  root_exists: boolean;
+  root_writable: boolean;
+  statuses: DvrRecordingStatus[];
+}
+
+export interface DvrTimelineSegment {
+  device_id: string;
+  file_path: string;
+  sidecar_path?: string | null;
+  media_kind?: 'snapshot' | 'recording' | string;
+  stream_kind: string;
+  started_at: string;
+  created_at?: string;
+  ended_at: string;
+  duration_seconds: number;
+  duration_actual_seconds?: number | null;
+  retention_expires_at: string;
+  size_bytes: number;
+  replay_url?: string | null;
+  thumbnail_url?: string | null;
+  playable?: boolean;
+  indexed: boolean;
+}
+
+export interface DvrTimelineResponse {
+  generated_at: string;
+  recording_root: string;
+  media_library_root?: string;
+  segments: DvrTimelineSegment[];
+}
+
 export interface DeviceCredentialStatus {
   device_id: string;
   configured: boolean;

@@ -59,10 +59,19 @@
           @for (item of items(); track item.path) {
             <div
               class="folder-item"
+              (click)="navigateTo(item.path)"
               (dblclick)="onItemDoubleClick(item)"
             >
               <tn-icon name="folder" library="mdi" class="folder-icon"></tn-icon>
               <span class="folder-name">{{ item.name }}</span>
+              <button
+                mat-button
+                type="button"
+                [disabled]="!canSelectPath(item.path)"
+                (click)="$event.stopPropagation(); selectFolder(item.path)"
+              >
+                {{ data.itemSelectLabel || ('Select' | translate) }}
+              </button>
             </div>
           }
         }
@@ -70,7 +79,7 @@
 
       <!-- Current Selection -->
       <div class="current-selection">
-        <span class="label">{{ 'Destination:' | translate }}</span>
+        <span class="label">{{ data.currentSelectionLabel || ('Destination:' | translate) }}</span>
         <span class="path">{{ currentPath() }}</span>
       </div>
     </div>
@@ -83,9 +92,9 @@
     mat-flat-button 
     color="primary" 
     [disabled]="!canSelectCurrentFolder()"
-    [matTooltip]="!canSelectCurrentFolder() ? ('Select a folder inside a dataset or USB drive' | translate) : ''"
+    [matTooltip]="!canSelectCurrentFolder() ? (data.disabledSelectionTooltip || ('Select a folder inside a dataset or USB drive' | translate)) : ''"
     (click)="selectCurrentFolder()"
   >
-    {{ 'Move Here' | translate }}
+    {{ data.confirmLabel || ('Move Here' | translate) }}
   </button>
 </mat-dialog-actions>

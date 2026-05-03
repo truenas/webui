@@ -13,6 +13,9 @@ import {
   DeviceValidationRunRequest,
   DeviceValidationRunResponse,
   DiscoveryScanPayload,
+  DvrRecordingSettings,
+  DvrRecordingStatusResponse,
+  DvrTimelineResponse,
   FilesBrowseResponse,
   GatewayStatusResponse,
   HarborDeskBackendStatus,
@@ -220,6 +223,37 @@ export class HarborDeskApiService {
   getDeviceEvidence(deviceId: string): Observable<DeviceEvidenceResponse> {
     return this.http.get<DeviceEvidenceResponse>(
       `/api/harbordesk/devices/${encodeURIComponent(deviceId)}/evidence`,
+    );
+  }
+
+  getDvrRecordingSettings(): Observable<DvrRecordingSettings> {
+    return this.http.get<DvrRecordingSettings>('/api/harbordesk/cameras/recording-settings');
+  }
+
+  saveDvrRecordingSettings(payload: DvrRecordingSettings): Observable<DvrRecordingSettings> {
+    return this.http.put<DvrRecordingSettings>('/api/harbordesk/cameras/recording-settings', payload);
+  }
+
+  getDvrRecordingStatus(): Observable<DvrRecordingStatusResponse> {
+    return this.http.get<DvrRecordingStatusResponse>('/api/harbordesk/cameras/recordings/status');
+  }
+
+  getDvrTimeline(deviceId?: string | null): Observable<DvrTimelineResponse> {
+    const query = deviceId ? `?device_id=${encodeURIComponent(deviceId)}` : '';
+    return this.http.get<DvrTimelineResponse>(`/api/harbordesk/cameras/recordings/timeline${query}`);
+  }
+
+  startDvrRecording(deviceId: string): Observable<DvrRecordingStatusResponse> {
+    return this.http.post<DvrRecordingStatusResponse>(
+      `/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/recordings/start`,
+      {},
+    );
+  }
+
+  stopDvrRecording(deviceId: string): Observable<DvrRecordingStatusResponse> {
+    return this.http.post<DvrRecordingStatusResponse>(
+      `/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/recordings/stop`,
+      {},
     );
   }
 

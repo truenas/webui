@@ -60,6 +60,68 @@ describe('HarborDeskApiService', () => {
     await sharePromise;
   });
 
+  it('keeps camera DVR management APIs under /api/harbordesk', async () => {
+    const settings = {
+      recording_root: '/mnt/software/harborbeacon-agent-ci/camera-dvr',
+      media_library_root: '/mnt/software/harborbeacon-agent-ci/camera-dvr/library',
+      retention_days: 7,
+      segment_seconds: 60,
+      continuous_recording_enabled: true,
+      low_bitrate_stream_preferred: true,
+      continuous_bitrate_mbps: 2,
+      high_res_event_clips_enabled: false,
+      high_res_event_clip_seconds: 20,
+      continuous_stream_path_hint: null,
+      high_res_stream_path_hint: null,
+      disk_budget_gb: 64,
+      keyframe_count: 3,
+      keyframe_interval_seconds: 5,
+      enabled_device_ids: ['camera-main'],
+    };
+
+    const settingsPromise = firstValueFrom(spectator.service.getDvrRecordingSettings());
+    const settingsReq = httpMock.expectOne('/api/harbordesk/cameras/recording-settings');
+    expect(settingsReq.request.method).toBe('GET');
+    settingsReq.flush(settings);
+    expect((await settingsPromise).segment_seconds).toBe(60);
+
+    const savePromise = firstValueFrom(spectator.service.saveDvrRecordingSettings(settings));
+    const saveReq = httpMock.expectOne('/api/harbordesk/cameras/recording-settings');
+    expect(saveReq.request.method).toBe('PUT');
+    expect(saveReq.request.body.enabled_device_ids).toEqual(['camera-main']);
+    saveReq.flush(settings);
+    await savePromise;
+
+    const statusPromise = firstValueFrom(spectator.service.getDvrRecordingStatus());
+    const statusReq = httpMock.expectOne('/api/harbordesk/cameras/recordings/status');
+    expect(statusReq.request.method).toBe('GET');
+    statusReq.flush({ generated_at: '1', settings, capacity: {}, root_exists: true, root_writable: true, statuses: [] });
+    await statusPromise;
+
+    const timelinePromise = firstValueFrom(spectator.service.getDvrTimeline('camera-main'));
+    const timelineReq = httpMock.expectOne('/api/harbordesk/cameras/recordings/timeline?device_id=camera-main');
+    expect(timelineReq.request.method).toBe('GET');
+    timelineReq.flush({
+      generated_at: '1',
+      recording_root: settings.recording_root,
+      media_library_root: settings.media_library_root,
+      segments: [],
+    });
+    await timelinePromise;
+
+    const startPromise = firstValueFrom(spectator.service.startDvrRecording('camera-main'));
+    const startReq = httpMock.expectOne('/api/harbordesk/cameras/camera-main/recordings/start');
+    expect(startReq.request.method).toBe('POST');
+    startReq.flush({ generated_at: '1', settings, capacity: {}, root_exists: true, root_writable: true, statuses: [] });
+    await startPromise;
+
+    const stopPromise = firstValueFrom(spectator.service.stopDvrRecording('camera-main'));
+    const stopReq = httpMock.expectOne('/api/harbordesk/cameras/camera-main/recordings/stop');
+    expect(stopReq.request.method).toBe('POST');
+    stopReq.flush({ generated_at: '1', settings, capacity: {}, root_exists: true, root_writable: true, statuses: [] });
+    await stopPromise;
+  });
+
   it('does not send credential reads or secrets to HarborGate paths', async () => {
     const promise = firstValueFrom(spectator.service.saveDeviceCredentials('cam-1', {
       username: 'admin',

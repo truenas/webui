@@ -5,6 +5,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -17,6 +18,11 @@ import { Observable, forkJoin, of, timer } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
+  FolderPickerDialogComponent,
+  FolderPickerDialogData,
+  FolderPickerDialogResult,
+} from 'app/pages/file-manager/folder-picker-dialog/folder-picker-dialog.component';
+import {
   AdminDefaultsPayload,
   AdminStateResponse,
   CameraDevice,
@@ -24,6 +30,11 @@ import {
   DeviceCredentialsPayload,
   DeviceEvidenceResponse,
   DeviceEvidenceResult,
+  DvrRecordingSettings,
+  DvrRecordingStatus,
+  DvrRecordingStatusResponse,
+  DvrTimelineResponse,
+  DvrTimelineSegment,
   EndpointResult,
   FilesBrowseResponse,
   GatewayPlatformStatus,
@@ -74,6 +85,9 @@ interface HarborDeskPageData {
   rag: EndpointResult<RagReadinessResponse>;
   knowledgeSettings: EndpointResult<KnowledgeSettings>;
   knowledgeIndexStatus: EndpointResult<KnowledgeIndexStatusResponse>;
+  dvrSettings: EndpointResult<DvrRecordingSettings>;
+  dvrStatus: EndpointResult<DvrRecordingStatusResponse>;
+  dvrTimeline: EndpointResult<DvrTimelineResponse>;
   harborOs: EndpointResult<HarborOsStatusResponse>;
   capabilityMap: EndpointResult<HarborOsImCapabilityMapResponse>;
   shareLinks: EndpointResult<ShareLinkSummary[]>;
@@ -167,6 +181,52 @@ interface RagSourceRootSummary {
   tone: HarborDeskStatusTone;
 }
 
+type AiWorkflowNodeId = 'sources' | 'semantic' | 'vision' | 'chat' | 'apps';
+type AiSettingsTabId = 'sources' | 'models' | 'cloud-api';
+type CloudUsageMode = 'local_only' | 'local_first_cloud' | 'selected_capabilities';
+type CloudCapabilityId = 'semantic_router' | 'retrieval_answer';
+
+interface AiSettingsTab {
+  id: AiSettingsTabId;
+  label: string;
+  summary: string;
+  tone: HarborDeskStatusTone;
+}
+
+interface AiWorkflowSummary {
+  label: string;
+  detail: string;
+  tone: HarborDeskStatusTone;
+}
+
+interface AiWorkflowNode {
+  id: AiWorkflowNodeId;
+  label: string;
+  detail: string;
+  status: string;
+  summary: string;
+  modelName: string;
+  actionLabel: string;
+  tone: HarborDeskStatusTone;
+}
+
+interface AiModelCapability {
+  id: string;
+  label: string;
+  detail: string;
+  kind: string;
+  optional: boolean;
+  cloudCapability: CloudCapabilityId | null;
+}
+
+interface CloudProviderOption {
+  value: string;
+  label: string;
+  endpointId: string;
+  defaultBaseUrl: string;
+  defaultModelName: string;
+}
+
 @Component({
   selector: 'ix-harbordesk',
   templateUrl: './harbordesk.component.html',
@@ -199,11 +259,12 @@ export class HarborDeskComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private matDialog = inject(MatDialog);
 
   protected readonly tabs: HarborDeskTab[] = [
     { id: 'overview', label: T('Overview'), detail: T('Settings status digest') },
     { id: 'im', label: T('IM Connectors'), detail: T('Weixin and Feishu setup status') },
-    { id: 'models', label: T('Models & RAG'), detail: T('Endpoints, downloads, routing policy, and multimodal RAG') },
+    { id: 'models', label: T('AI 设置'), detail: T('配置数据源、模型和云端 API') },
     { id: 'devices', label: T('Connected Devices'), detail: T('Home device management') },
     { id: 'system', label: T('System Integration'), detail: T('HarborOS System Domain status and IM capability map') },
   ];
@@ -230,14 +291,27 @@ export class HarborDeskComponent implements OnInit {
   protected readonly rag = signal<RagReadinessResponse | null>(null);
   protected readonly knowledgeSettings = signal<KnowledgeSettings | null>(null);
   protected readonly knowledgeIndexStatus = signal<KnowledgeIndexStatusResponse | null>(null);
+  protected readonly dvrSettings = signal<DvrRecordingSettings | null>(null);
+  protected readonly dvrStatus = signal<DvrRecordingStatusResponse | null>(null);
+  protected readonly dvrTimeline = signal<DvrTimelineResponse | null>(null);
   protected readonly filesBrowse = signal<FilesBrowseResponse | null>(null);
+  protected readonly sourcePickerEditingRoot = signal<KnowledgeSourceRoot | null>(null);
   protected readonly harborOs = signal<HarborOsStatusResponse | null>(null);
   protected readonly capabilityMap = signal<HarborOsImCapabilityMapResponse | null>(null);
   protected readonly shareLinks = signal<ShareLinkSummary[]>([]);
   protected readonly evidenceByDevice = signal<Record<string, DeviceEvidenceResponse>>({});
   protected readonly selectedDeviceId = signal<string>('');
+  protected readonly activeAiSettingsTab = signal<AiSettingsTabId>('sources');
+  protected readonly activeAiWorkflowNode = signal<AiWorkflowNodeId>('sources');
   protected readonly modelEndpointEditingId = signal<string | null>(null);
   protected readonly modelsAdvancedOpen = signal(false);
+  protected readonly modelLibraryOpen = signal(false);
+  protected readonly modelLibraryKind = signal<string | null>(null);
+  protected readonly modelLibraryCapabilityId = signal<string | null>(null);
+  protected readonly modelChooserKind = signal<string | null>(null);
+  protected readonly modelChooserCapabilityId = signal<string | null>(null);
+  protected readonly manualModelDownloadKind = signal<string | null>(null);
+  protected readonly manualModelDownloadCapabilityId = signal<string | null>(null);
   private readonly downloadPollInProgress = signal(false);
 
   protected readonly protocolOptions: ProtocolOption[] = [
@@ -257,6 +331,42 @@ export class HarborDeskComponent implements OnInit {
     { label: T('Local GPU'), value: 'local_gpu' },
     { label: T('Sidecar GPU'), value: 'sidecar_gpu' },
     { label: T('Cloud allowed'), value: 'cloud_allowed' },
+  ];
+
+  protected readonly cloudProviderOptions: CloudProviderOption[] = [
+    {
+      value: 'siliconflow',
+      label: T('SiliconFlow'),
+      endpointId: 'llm-cloud-siliconflow',
+      defaultBaseUrl: 'https://api.siliconflow.cn/v1',
+      defaultModelName: 'deepseek-ai/DeepSeek-V4-Flash',
+    },
+    {
+      value: 'openrouter',
+      label: T('OpenRouter'),
+      endpointId: 'llm-cloud-openrouter',
+      defaultBaseUrl: 'https://openrouter.ai/api/v1',
+      defaultModelName: 'openai/gpt-4o-mini',
+    },
+    {
+      value: 'custom_openai_compatible',
+      label: T('自定义 OpenAI-compatible'),
+      endpointId: 'llm-cloud-openai-compatible-custom',
+      defaultBaseUrl: '',
+      defaultModelName: '',
+    },
+  ];
+
+  protected readonly cloudUsageOptions: ProtocolOption[] = [
+    { label: T('只用本地模型'), value: 'local_only' },
+    { label: T('本地优先，失败时允许云端'), value: 'local_first_cloud' },
+    { label: T('指定能力使用云端 API'), value: 'selected_capabilities' },
+  ];
+
+  protected readonly dvrSegmentOptions: ProtocolOption[] = [
+    { label: T('30 seconds'), value: '30' },
+    { label: T('1 minute'), value: '60' },
+    { label: T('5 minutes'), value: '300' },
   ];
 
   protected readonly scanForm = this.fb.group({
@@ -300,6 +410,24 @@ export class HarborDeskComponent implements OnInit {
     keyframeIntervalSeconds: ['5'],
   });
 
+  protected readonly dvrForm = this.fb.group({
+    recordingRoot: [''],
+    mediaLibraryRoot: [''],
+    retentionDays: ['7'],
+    segmentSeconds: ['60'],
+    continuousRecordingEnabled: [true],
+    lowBitrateStreamPreferred: [true],
+    continuousBitrateMbps: ['2'],
+    diskBudgetGb: ['64'],
+    continuousStreamPathHint: [''],
+    highResStreamPathHint: [''],
+    highResEventClipsEnabled: [false],
+    highResEventClipSeconds: ['20'],
+    keyframeCount: ['3'],
+    keyframeIntervalSeconds: ['5'],
+    enabledDeviceIds: [[] as string[]],
+  });
+
   protected readonly metadataForm = this.fb.group({
     name: [''],
     room: [''],
@@ -341,6 +469,16 @@ export class HarborDeskComponent implements OnInit {
     localPreferred: ['true'],
   });
 
+  protected readonly cloudApiForm = this.fb.group({
+    provider: ['siliconflow'],
+    baseUrl: ['https://api.siliconflow.cn/v1', Validators.required],
+    modelName: ['deepseek-ai/DeepSeek-V4-Flash', Validators.required],
+    apiKey: [''],
+    usageMode: ['local_only'],
+    allowQuestionUnderstanding: [true],
+    allowAnswer: [true],
+  });
+
   protected readonly knowledgeSourceForm = this.fb.group({
     rootId: [''],
     label: [''],
@@ -358,6 +496,7 @@ export class HarborDeskComponent implements OnInit {
 
   protected readonly devices = computed(() => this.state()?.devices ?? []);
   protected readonly defaults = computed(() => this.state()?.defaults ?? {});
+  protected readonly dvrTimelineSegments = computed(() => this.dvrTimeline()?.segments ?? []);
   protected readonly modelEndpoints = computed(() => this.modelEndpointsResponse()?.endpoints ?? []);
   protected readonly modelPolicies = computed(() => this.modelPoliciesResponse()?.route_policies ?? []);
   protected readonly catalogModels = computed(() => this.localCatalog()?.models ?? []);
@@ -367,6 +506,23 @@ export class HarborDeskComponent implements OnInit {
   protected readonly downloadingModelCards = computed(() => this.customerModelCards().filter((card) => card.section === 'downloading'));
   protected readonly installedModelCards = computed(() => this.customerModelCards().filter((card) => card.section === 'installed'));
   protected readonly availableModelCards = computed(() => this.customerModelCards().filter((card) => card.section === 'available'));
+  protected readonly visibleDownloadingModelCards = computed(() => this.filterModelLibraryCards(this.downloadingModelCards()));
+  protected readonly visibleInstalledModelCards = computed(() => this.filterModelLibraryCards(this.installedModelCards()));
+  protected readonly visibleAvailableModelCards = computed(() => this.filterModelLibraryCards(this.availableModelCards()));
+  protected readonly aiSettingsTabs = computed<AiSettingsTab[]>(() => this.buildAiSettingsTabs());
+  protected readonly aiModelCapabilities = computed<AiModelCapability[]>(() => this.buildAiModelCapabilities());
+  protected readonly aiWorkflowNodes = computed<AiWorkflowNode[]>(() => this.buildAiWorkflowNodes());
+  protected readonly aiWorkflowSummary = computed<AiWorkflowSummary>(() => this.buildAiWorkflowSummary());
+  protected readonly selectedAiWorkflowNode = computed(() => {
+    return this.aiWorkflowNodes().find((node) => node.id === this.activeAiWorkflowNode())
+      ?? this.aiWorkflowNodes()[0]
+      ?? null;
+  });
+  protected readonly selectedAiSettingsTab = computed(() => {
+    return this.aiSettingsTabs().find((tab) => tab.id === this.activeAiSettingsTab())
+      ?? this.aiSettingsTabs()[0]
+      ?? null;
+  });
   protected readonly ragValidationEndpointCards = computed<CurrentModelCard[]>(() => this.endpointCardsForValidation());
   protected readonly vlmEndpointCard = computed(() => this.currentModelCards().find((card) => card.kind === 'vlm') ?? null);
   protected readonly localVlmModelCard = computed<CustomerModelCard | null>(() => this.findLocalVlmModelCard());
@@ -410,6 +566,16 @@ export class HarborDeskComponent implements OnInit {
         if (tab) {
           this.activeTab.set(tab);
         }
+        const focusValue = params.get('focus') ?? params.get('node');
+        const settingsFocus = this.normalizeAiSettingsTab(focusValue);
+        if (settingsFocus) {
+          this.activeTab.set('models');
+          this.activeAiSettingsTab.set(settingsFocus);
+        }
+        const legacyFocus = this.normalizeAiWorkflowNode(focusValue);
+        if (legacyFocus) {
+          this.activeAiWorkflowNode.set(legacyFocus);
+        }
       });
 
     this.loadData();
@@ -434,6 +600,26 @@ export class HarborDeskComponent implements OnInit {
 
   protected isTab(tabId: HarborDeskTabId): boolean {
     return this.activeTab() === tabId;
+  }
+
+  protected selectAiSettingsTab(tabId: AiSettingsTabId): void {
+    this.activeAiSettingsTab.set(tabId);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: 'models', focus: tabId },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  protected selectAiWorkflowNode(nodeId: AiWorkflowNodeId): void {
+    this.activeAiWorkflowNode.set(nodeId);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: 'models', focus: nodeId },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   protected targetRoutePreview(target: NotificationTargetRecord): string {
@@ -523,6 +709,38 @@ export class HarborDeskComponent implements OnInit {
       T('Default AIoT settings were saved.'),
       () => this.defaultsForm.controls.rtspPassword.setValue(''),
     );
+  }
+
+  protected saveDvrSettings(): void {
+    this.runAction(
+      'dvr-settings',
+      this.harborDeskApi.saveDvrRecordingSettings(this.dvrSettingsPayload()),
+      T('DVR settings were saved.'),
+    );
+  }
+
+  protected startDvr(device: CameraDevice): void {
+    this.runAction(
+      `dvr-start:${device.device_id}`,
+      this.harborDeskApi.startDvrRecording(device.device_id),
+      T('DVR recording was started.'),
+      () => this.refreshDvrState(),
+    );
+  }
+
+  protected stopDvr(device: CameraDevice): void {
+    this.runAction(
+      `dvr-stop:${device.device_id}`,
+      this.harborDeskApi.stopDvrRecording(device.device_id),
+      T('DVR recording was stopped.'),
+      () => this.refreshDvrState(),
+    );
+  }
+
+  protected openDvrReplay(segment: DvrTimelineSegment): void {
+    const replayUrl = this.sameOriginAdminUrl(segment.replay_url)
+      ?? `/api/harbordesk/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`;
+    window.open(replayUrl, '_blank', 'noopener');
   }
 
   protected saveDeviceMetadata(): void {
@@ -682,7 +900,7 @@ export class HarborDeskComponent implements OnInit {
     this.runAction(
       `model-test:${endpoint.model_endpoint_id}`,
       this.harborDeskApi.testModelEndpoint(endpoint.model_endpoint_id),
-      T('Model endpoint health test completed.'),
+      T('模型连接测试完成。'),
     );
   }
 
@@ -966,7 +1184,68 @@ export class HarborDeskComponent implements OnInit {
     );
   }
 
+  protected applyCloudProviderDefaults(providerValue: string): void {
+    const provider = this.cloudProviderOption(providerValue);
+    this.cloudApiForm.patchValue({
+      baseUrl: provider.defaultBaseUrl,
+      modelName: provider.defaultModelName,
+      apiKey: '',
+    });
+    this.cloudApiForm.markAsDirty();
+  }
+
+  protected saveCloudApiSettings(): void {
+    if (this.cloudApiForm.invalid) {
+      this.cloudApiForm.markAllAsTouched();
+      this.actionError.set(T('Base URL and model name are required for cloud API settings.'));
+      return;
+    }
+
+    const value = this.cloudApiForm.getRawValue();
+    const provider = this.cloudProviderOption(value.provider);
+    const existing = this.cloudEndpointForProvider(provider.value);
+    const hasApiKey = value.apiKey.trim().length > 0 || this.metadataBoolean(existing, 'api_key_configured');
+    const endpointPayload = this.cloudEndpointPayload(provider, existing, hasApiKey);
+    const endpointRequest = existing
+      ? this.harborDeskApi.updateModelEndpoint(existing.model_endpoint_id, endpointPayload)
+      : this.harborDeskApi.createModelEndpoint(endpointPayload);
+
+    this.runAction(
+      'cloud-api-settings',
+      endpointRequest.pipe(
+        switchMap(() => this.harborDeskApi.saveModelPolicies({ route_policies: this.cloudPolicyPayload() })),
+      ),
+      T('云端 API 设置已保存。'),
+      () => {
+        this.cloudApiForm.controls.apiKey.setValue('');
+        this.cloudApiForm.markAsPristine();
+      },
+    );
+  }
+
+  protected testCloudApiSettings(): void {
+    const endpoint = this.cloudEndpointForProvider(this.cloudApiForm.controls.provider.value);
+    if (!endpoint || !this.metadataBoolean(endpoint, 'api_key_configured')) {
+      this.actionError.set(T('请先保存 API Key，再测试云端 API。'));
+      return;
+    }
+    this.testModelEndpoint(endpoint);
+  }
+
+  protected cloudApiConfiguredLabel(): string {
+    return this.cloudApiConfigured() ? T('已配置') : T('未配置');
+  }
+
+  protected cloudApiConfigured(): boolean {
+    const endpoint = this.cloudEndpointForProvider(this.cloudApiForm.controls.provider.value);
+    return this.metadataBoolean(endpoint, 'api_key_configured');
+  }
+
   protected editKnowledgeSource(root: KnowledgeSourceRoot): void {
+    this.openKnowledgeFolderPicker(root);
+  }
+
+  protected stageKnowledgeSource(root: KnowledgeSourceRoot): void {
     this.knowledgeSourceForm.patchValue({
       rootId: root.root_id,
       label: root.label,
@@ -975,6 +1254,7 @@ export class HarborDeskComponent implements OnInit {
       include: (root.include ?? []).join('\n'),
       exclude: (root.exclude ?? []).join('\n'),
     });
+    this.knowledgeSourceForm.markAsDirty();
   }
 
   protected clearKnowledgeSourceForm(): void {
@@ -989,12 +1269,39 @@ export class HarborDeskComponent implements OnInit {
   }
 
   protected saveKnowledgeSettings(): void {
-    this.runAction(
-      'knowledge-settings',
-      this.harborDeskApi.saveKnowledgeSettings(this.knowledgeSettingsPayload(true)),
-      T('Knowledge settings were saved.'),
-      () => this.clearKnowledgeSourceForm(),
-    );
+    const payload = this.knowledgeSettingsPayload(true);
+    this.runKnowledgeSettingsSave('knowledge-settings', payload, T('Knowledge settings were saved.'), true, T('正在保存数据设置...'));
+  }
+
+  protected saveKnowledgeSourceAndRunIndex(): void {
+    if (!this.knowledgeSourceForm.controls.path.value.trim()) {
+      this.actionError.set(T('Choose a folder before adding a data source.'));
+      return;
+    }
+
+    const payload = this.knowledgeSettingsPayload(true);
+    this.actionInProgress.set('knowledge-source-index');
+    this.actionError.set(null);
+    this.actionMessage.set(T('正在添加数据源并开始索引...'));
+
+    this.harborDeskApi.saveKnowledgeSettings(payload).pipe(
+      switchMap((settings) => {
+        this.knowledgeSettings.set(settings);
+        this.clearKnowledgeSourceForm();
+        return this.harborDeskApi.runKnowledgeIndex();
+      }),
+      switchMap(() => this.fetchKnowledgeIndexState()),
+      finalize(() => this.actionInProgress.set(null)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => this.actionMessage.set(T('Data source was added and indexing has started.')),
+      error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
+    });
+  }
+
+  protected saveKnowledgeAdvancedSettings(): void {
+    const payload = this.knowledgeSettingsPayload(false);
+    this.runKnowledgeSettingsSave('knowledge-settings', payload, T('Knowledge settings were saved.'), false, T('正在保存数据设置...'));
   }
 
   protected removeKnowledgeSource(root: KnowledgeSourceRoot): void {
@@ -1013,16 +1320,23 @@ export class HarborDeskComponent implements OnInit {
   }
 
   protected runKnowledgeIndex(): void {
-    this.runAction(
-      'knowledge-index',
-      this.harborDeskApi.runKnowledgeIndex(),
-      T('Knowledge index run completed.'),
-    );
+    this.actionInProgress.set('knowledge-index');
+    this.actionError.set(null);
+    this.actionMessage.set(T('正在开始索引...'));
+
+    this.harborDeskApi.runKnowledgeIndex().pipe(
+      switchMap(() => this.fetchKnowledgeIndexState()),
+      finalize(() => this.actionInProgress.set(null)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => this.actionMessage.set(T('Knowledge index run completed.')),
+      error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
+    });
   }
 
   protected startKnowledgeSourceRoot(): void {
     this.clearKnowledgeSourceForm();
-    this.scrollSelectorIntoView('.knowledge-source-form');
+    this.openKnowledgeFolderPicker();
   }
 
   protected inspectImageContentCounts(): void {
@@ -1043,6 +1357,80 @@ export class HarborDeskComponent implements OnInit {
     });
   }
 
+  protected openKnowledgeFolderPicker(root?: KnowledgeSourceRoot | null): void {
+    this.sourcePickerEditingRoot.set(root ?? null);
+    const currentPath = root?.path ?? this.knowledgeSourceForm.controls.path.value.trim();
+    const pickerPath = currentPath.startsWith('/mnt/') ? currentPath : '/mnt';
+    const data: FolderPickerDialogData = {
+      title: root ? T('编辑数据源') : T('添加数据源'),
+      currentPath: pickerPath,
+      excludePaths: this.knowledgeSourceRoots()
+        .filter((candidate) => candidate.root_id !== root?.root_id)
+        .map((candidate) => candidate.path),
+      confirmLabel: T('使用这个文件夹'),
+      currentSelectionLabel: T('当前选择'),
+      disabledSelectionTooltip: T('请选择 pool 或 USB 里的文件夹。'),
+      allowDatasetRootSelection: true,
+      itemSelectLabel: T('使用'),
+    };
+
+    try {
+      this.matDialog.open<FolderPickerDialogComponent, FolderPickerDialogData, FolderPickerDialogResult>(
+        FolderPickerDialogComponent,
+        {
+          data,
+          maxWidth: '95vw',
+          width: '760px',
+        },
+      ).afterClosed()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((result) => {
+          if (result?.path) {
+            this.saveKnowledgeSourceFromPath(result.path, root ?? null);
+          }
+        });
+    } catch {
+      this.browseKnowledgeFiles(pickerPath);
+    }
+  }
+
+  protected saveKnowledgeSourceFromPath(path: string, root?: KnowledgeSourceRoot | null): void {
+    const editingRoot = root === undefined ? this.sourcePickerEditingRoot() : root;
+    const trimmedPath = path.trim();
+    if (!trimmedPath) {
+      this.actionError.set(T('Choose a folder before adding a data source.'));
+      return;
+    }
+
+    const duplicate = this.knowledgeSourceRoots().find((candidate) => {
+      return candidate.path === trimmedPath && candidate.root_id !== editingRoot?.root_id;
+    });
+    if (duplicate) {
+      this.actionError.set(T('这个文件夹已经在数据源里。'));
+      return;
+    }
+
+    const existing = editingRoot ?? this.knowledgeSourceRoots().find((candidate) => candidate.path === trimmedPath) ?? null;
+    this.knowledgeSourceForm.patchValue({
+      rootId: existing?.root_id ?? '',
+      label: existing?.label ?? this.pathLabel(trimmedPath),
+      path: trimmedPath,
+      enabled: existing?.enabled ?? true,
+      include: (existing?.include ?? []).join('\n'),
+      exclude: (existing?.exclude ?? []).join('\n'),
+    });
+    this.knowledgeSourceForm.markAsDirty();
+
+    const payload = this.knowledgeSettingsPayload(true);
+    this.runKnowledgeSettingsSave(
+      'knowledge-settings',
+      payload,
+      existing ? T('Data source was updated.') : T('Data source was added.'),
+      true,
+      existing ? T('正在更新数据源...') : T('正在添加数据源...'),
+    );
+  }
+
   protected useBrowsePathAsSource(path: string): void {
     const existing = this.knowledgeSourceRoots().find((root) => root.path === path);
     this.knowledgeSourceForm.patchValue({
@@ -1056,9 +1444,240 @@ export class HarborDeskComponent implements OnInit {
     this.knowledgeSourceForm.markAsDirty();
   }
 
+  protected useDvrMediaLibraryAsSource(): void {
+    const libraryRoot = this.dvrSettings()?.media_library_root
+      || this.dvrSettings()?.recording_root
+      || '';
+    if (!libraryRoot) {
+      this.actionError.set(T('DVR media library path is not configured yet.'));
+      return;
+    }
+
+    const existing = this.knowledgeSourceRoots().find((root) => root.path === libraryRoot);
+    this.knowledgeSourceForm.patchValue({
+      rootId: existing?.root_id ?? 'dvr-media-library',
+      label: existing?.label ?? T('DVR 媒体库'),
+      path: libraryRoot,
+      enabled: existing?.enabled ?? true,
+      include: (existing?.include ?? []).join('\n'),
+      exclude: (existing?.exclude ?? []).join('\n'),
+    });
+    this.knowledgeSourceForm.markAsDirty();
+  }
+
+  protected pendingKnowledgeSourcePath(): string {
+    return this.knowledgeSourceForm.controls.path.value.trim();
+  }
+
   protected useBrowsePathAsIndex(path: string): void {
     this.knowledgeIndexForm.patchValue({ indexRoot: path });
     this.knowledgeIndexForm.markAsDirty();
+  }
+
+  protected workflowModelChoices(kind: string): CustomerModelCard[] {
+    return this.customerModelCards()
+      .filter((card) => card.section === 'installed' && this.modelCardMatchesWorkflowKind(card, kind))
+      .slice(0, 12);
+  }
+
+  protected workflowSelectedModelKey(kind: string): string {
+    const current = this.customerModelCards().find((card) => {
+      return card.action === 'current' && this.modelCardMatchesWorkflowKind(card, kind);
+    });
+    return current?.key ?? '';
+  }
+
+  protected workflowCurrentModelName(kind: string): string {
+    const current = this.currentModelCards().find((card) => card.kind === kind);
+    if (!current?.endpoint || current.modelName === T('Not configured')) {
+      return T('还没有选择模型');
+    }
+    return current.modelName;
+  }
+
+  protected workflowCurrentModelDetail(kind: string): string {
+    const current = this.currentModelCards().find((card) => card.kind === kind);
+    if (!current?.endpoint) {
+      return T('从下方选择已安装模型，或进入更多模型下载。');
+    }
+    if (current.localPath) {
+      return current.localPath;
+    }
+    return T('本地模型服务');
+  }
+
+  protected workflowCurrentEndpoint(kind: string): ModelEndpointRecord | null {
+    return this.currentModelCards().find((card) => card.kind === kind)?.endpoint ?? null;
+  }
+
+  protected workflowModelChooserOpen(kind: string): boolean {
+    return this.modelChooserKind() === kind;
+  }
+
+  protected modelCapabilityChooserOpen(capabilityId: string): boolean {
+    return this.modelChooserCapabilityId() === capabilityId;
+  }
+
+  protected workflowMoreModelsOpen(kind: string): boolean {
+    return this.modelLibraryOpen() && this.modelLibraryKind() === kind;
+  }
+
+  protected modelCapabilityMoreModelsOpen(capabilityId: string): boolean {
+    return this.modelLibraryOpen() && this.modelLibraryCapabilityId() === capabilityId;
+  }
+
+  protected workflowManualDownloadOpen(kind: string): boolean {
+    return this.manualModelDownloadKind() === kind;
+  }
+
+  protected modelCapabilityManualDownloadOpen(capabilityId: string): boolean {
+    return this.manualModelDownloadCapabilityId() === capabilityId;
+  }
+
+  protected workflowAvailableModelChoices(kind: string): CustomerModelCard[] {
+    return this.customerModelCards()
+      .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, kind))
+      .slice(0, 8);
+  }
+
+  protected workflowDownloadingModelChoices(kind: string): CustomerModelCard[] {
+    return this.customerModelCards()
+      .filter((card) => card.section === 'downloading' && this.modelCardMatchesWorkflowKind(card, kind))
+      .slice(0, 8);
+  }
+
+  protected toggleWorkflowModelChooser(kind: string): void {
+    this.modelChooserKind.set(this.modelChooserKind() === kind ? null : kind);
+    this.manualModelDownloadKind.set(null);
+  }
+
+  protected toggleModelCapabilityChooser(capability: AiModelCapability): void {
+    const nextOpen = this.modelChooserCapabilityId() === capability.id ? null : capability.id;
+    this.modelChooserCapabilityId.set(nextOpen);
+    this.modelChooserKind.set(nextOpen ? capability.kind : null);
+    this.manualModelDownloadCapabilityId.set(null);
+    this.manualModelDownloadKind.set(null);
+  }
+
+  protected selectWorkflowModel(cardKey: string): void {
+    const card = this.customerModelCards().find((candidate) => candidate.key === cardKey);
+    if (!card || card.action === 'current') {
+      return;
+    }
+    this.handleModelCardAction(card);
+  }
+
+  protected openWorkflowMoreModels(kind: string): void {
+    const label = this.workflowModelTypeLabel(kind);
+    const previousKind = this.modelLibraryKind();
+    const wasOpen = this.modelLibraryOpen();
+    this.actionMessage.set(`${T('选择或下载')} ${label}`);
+    this.actionError.set(null);
+    this.modelLibraryKind.set(kind);
+    this.modelLibraryOpen.set(previousKind !== kind || !wasOpen);
+    this.modelChooserKind.set(null);
+    this.manualModelDownloadKind.set(null);
+  }
+
+  protected openModelCapabilityMoreModels(capability: AiModelCapability): void {
+    const previousCapability = this.modelLibraryCapabilityId();
+    const wasOpen = this.modelLibraryOpen();
+    this.actionMessage.set(`${T('选择或下载')} ${capability.label}`);
+    this.actionError.set(null);
+    this.modelLibraryKind.set(capability.kind);
+    this.modelLibraryCapabilityId.set(capability.id);
+    this.modelLibraryOpen.set(previousCapability !== capability.id || !wasOpen);
+    this.modelChooserCapabilityId.set(null);
+    this.modelChooserKind.set(null);
+    this.manualModelDownloadCapabilityId.set(null);
+    this.manualModelDownloadKind.set(null);
+  }
+
+  protected prepareWorkflowManualDownload(kind: string): void {
+    this.modelLibraryKind.set(kind);
+    this.modelLibraryOpen.set(true);
+    this.manualModelDownloadKind.set(this.manualModelDownloadKind() === kind ? null : kind);
+    this.downloadForm.patchValue({
+      modelId: '',
+      displayName: '',
+      providerKey: 'huggingface',
+      targetPath: '',
+      sourceUrl: '',
+    });
+  }
+
+  protected prepareModelCapabilityManualDownload(capability: AiModelCapability): void {
+    this.modelLibraryKind.set(capability.kind);
+    this.modelLibraryCapabilityId.set(capability.id);
+    this.modelLibraryOpen.set(true);
+    const nextOpen = this.manualModelDownloadCapabilityId() === capability.id ? null : capability.id;
+    this.manualModelDownloadCapabilityId.set(nextOpen);
+    this.manualModelDownloadKind.set(nextOpen ? capability.kind : null);
+    this.downloadForm.patchValue({
+      modelId: '',
+      displayName: '',
+      providerKey: 'huggingface',
+      targetPath: '',
+      sourceUrl: '',
+    });
+  }
+
+  protected workflowModelTypeLabel(kind: string): string {
+    if (kind === 'embedder') {
+      return T('向量检索模型');
+    }
+    if (kind === 'vlm') {
+      return T('图片/视频模型');
+    }
+    if (kind === 'ocr') {
+      return T('文字识别模型');
+    }
+    if (kind === 'asr') {
+      return T('语音转文字模型');
+    }
+    return T('对话模型');
+  }
+
+  protected workflowPrimaryAction(node: AiWorkflowNode): void {
+    this.selectAiWorkflowNode(node.id);
+    switch (node.id) {
+      case 'sources':
+        this.startKnowledgeSourceRoot();
+        return;
+      case 'semantic':
+        if (node.tone === 'good') {
+          const endpoint = this.currentModelCards().find((card) => card.kind === 'embedder')?.endpoint;
+          if (endpoint) {
+            this.testModelEndpoint(endpoint);
+            return;
+          }
+        }
+        this.scrollSelectorIntoView('.semantic-node-config');
+        return;
+      case 'vision':
+        if (node.tone === 'good') {
+          const endpoint = this.currentModelCards().find((card) => card.kind === 'vlm')?.endpoint;
+          if (endpoint) {
+            this.testModelEndpoint(endpoint);
+            return;
+          }
+        }
+        this.scrollSelectorIntoView('.vision-node-config');
+        return;
+      case 'chat':
+        if (node.tone === 'good') {
+          const endpoint = this.currentModelCards().find((card) => card.kind === 'llm')?.endpoint;
+          if (endpoint) {
+            this.testModelEndpoint(endpoint);
+            return;
+          }
+        }
+        this.scrollSelectorIntoView('.chat-node-config');
+        return;
+      case 'apps':
+      default:
+        this.scrollSelectorIntoView('.workflow-apps');
+    }
   }
 
   protected knowledgeSourceStatus(root: KnowledgeSourceRoot): KnowledgeIndexRootStatus | null {
@@ -1078,6 +1697,43 @@ export class HarborDeskComponent implements OnInit {
 
   protected isDefaultCamera(device: CameraDevice): boolean {
     return this.defaults().selected_camera_device_id === device.device_id;
+  }
+
+  protected dvrEnabledFor(device: CameraDevice): boolean {
+    return this.dvrSettings()?.enabled_device_ids?.includes(device.device_id) ?? false;
+  }
+
+  protected dvrStatusFor(device: CameraDevice): DvrRecordingStatus | null {
+    return this.dvrStatus()?.statuses.find((status) => status.device_id === device.device_id) ?? null;
+  }
+
+  protected dvrTimelineFor(device: CameraDevice): DvrTimelineSegment[] {
+    return this.dvrTimelineSegments()
+      .filter((segment) => segment.device_id === device.device_id)
+      .slice(0, 4);
+  }
+
+  protected dvrSegmentCountFor(device: CameraDevice): number {
+    return this.dvrTimelineSegments().filter((segment) => segment.device_id === device.device_id).length;
+  }
+
+  protected dvrRecordingRootStatus(): string {
+    const status = this.dvrStatus();
+    if (!status) {
+      return T('Unknown');
+    }
+    if (!status.root_exists) {
+      return T('Missing');
+    }
+    return status.root_writable ? T('Writable') : T('Read-only');
+  }
+
+  protected formatUnix(value: string | number | undefined | null): string {
+    const seconds = Number(value ?? 0);
+    if (!Number.isFinite(seconds) || seconds <= 0) {
+      return T('n/a');
+    }
+    return new Date(seconds * 1000).toLocaleString();
   }
 
   protected credentialStatusFor(device: CameraDevice): DeviceCredentialStatus | null {
@@ -1203,13 +1859,13 @@ export class HarborDeskComponent implements OnInit {
     return `tone-${this.inferenceHealthTone(health)}`;
   }
 
-  protected metadataString(endpoint: ModelEndpointRecord, key: string): string {
-    const value = endpoint.metadata?.[key];
+  protected metadataString(endpoint: ModelEndpointRecord | null | undefined, key: string): string {
+    const value = endpoint?.metadata?.[key];
     return typeof value === 'string' ? value : '';
   }
 
-  protected metadataBoolean(endpoint: ModelEndpointRecord, key: string): boolean {
-    return endpoint.metadata?.[key] === true;
+  protected metadataBoolean(endpoint: ModelEndpointRecord | null | undefined, key: string): boolean {
+    return endpoint?.metadata?.[key] === true;
   }
 
   protected progressLabel(job: LocalModelDownloadJob): string {
@@ -1241,6 +1897,245 @@ export class HarborDeskComponent implements OnInit {
 
   protected isCancelableJob(job: LocalModelDownloadJob): boolean {
     return ['queued', 'running', 'downloading'].includes((job.status || '').toLowerCase());
+  }
+
+  private buildAiSettingsTabs(): AiSettingsTab[] {
+    const sourceSummary = this.ragValidationSourceSummary();
+    const indexState = this.knowledgeIndexStatus();
+    const modelRows = this.aiModelCapabilities();
+    const configuredRequiredModels = modelRows
+      .filter((row) => !row.optional)
+      .filter((row) => this.workflowCurrentEndpoint(row.kind));
+    const cloudMode = this.cloudApiForm.controls.usageMode.value as CloudUsageMode;
+
+    return [
+      {
+        id: 'sources',
+        label: T('数据源'),
+        summary: sourceSummary.enabled === 0
+          ? T('还没有数据源')
+          : this.statusTone(indexState?.status) === 'good'
+            ? T('已索引')
+            : T('需要索引'),
+        tone: sourceSummary.enabled > 0 && this.statusTone(indexState?.status) === 'good' ? 'good' : 'warn',
+      },
+      {
+        id: 'models',
+        label: T('模型'),
+        summary: `${configuredRequiredModels.length}/${modelRows.filter((row) => !row.optional).length} ${T('已配置')}`,
+        tone: configuredRequiredModels.length >= modelRows.filter((row) => !row.optional).length ? 'good' : 'warn',
+      },
+      {
+        id: 'cloud-api',
+        label: T('云端 API'),
+        summary: cloudMode === 'local_only' ? T('只用本地') : this.cloudApiConfiguredLabel(),
+        tone: cloudMode === 'local_only'
+          ? 'good'
+          : this.metadataBoolean(this.cloudEndpointForProvider(this.cloudApiForm.controls.provider.value), 'api_key_configured')
+            ? 'good'
+            : 'warn',
+      },
+    ];
+  }
+
+  private buildAiModelCapabilities(): AiModelCapability[] {
+    return [
+      {
+        id: 'question-understanding',
+        label: T('问题理解'),
+        detail: T('理解用户想做什么，并交给检索、问答、HarborCam 或 HarborOS 管理。'),
+        kind: 'llm',
+        optional: false,
+        cloudCapability: 'semantic_router',
+      },
+      {
+        id: 'vector-search',
+        label: T('向量检索'),
+        detail: T('生成 embedding，让文本、图片描述和视频描述可以被搜索。'),
+        kind: 'embedder',
+        optional: false,
+        cloudCapability: null,
+      },
+      {
+        id: 'answer',
+        label: T('对话回答'),
+        detail: T('根据上下文和检索证据生成回答与总结。'),
+        kind: 'llm',
+        optional: false,
+        cloudCapability: 'retrieval_answer',
+      },
+      {
+        id: 'vision',
+        label: T('图片/视频理解'),
+        detail: T('理解图片、截图、DVR 视频关键帧和视频证据。'),
+        kind: 'vlm',
+        optional: false,
+        cloudCapability: null,
+      },
+      {
+        id: 'ocr',
+        label: T('文字识别'),
+        detail: T('识别图片、扫描件和截图里的文字。'),
+        kind: 'ocr',
+        optional: true,
+        cloudCapability: null,
+      },
+      {
+        id: 'asr',
+        label: T('语音转文字'),
+        detail: T('从音频和视频中提取语音文字。'),
+        kind: 'asr',
+        optional: true,
+        cloudCapability: null,
+      },
+    ];
+  }
+
+  private buildAiWorkflowSummary(): AiWorkflowSummary {
+    if (
+      this.endpointError('models')
+      || this.endpointError('rag')
+      || this.endpointError('knowledgeSettings')
+      || this.endpointError('knowledgeIndexStatus')
+    ) {
+      return {
+        label: T('模型服务需要检查'),
+        detail: T('HarborDesk can still show saved settings, but one or more AI checks could not refresh.'),
+        tone: 'danger',
+      };
+    }
+
+    const semantic = this.workflowNodeForKind('semantic', 'embedder');
+    if (semantic.tone !== 'good') {
+      return {
+        label: T('需要安装向量检索模型'),
+        detail: T('HarborBot 搜索和 HarborCam 事件检索需要向量检索模型。'),
+        tone: 'warn',
+      };
+    }
+
+    const sourceSummary = this.ragValidationSourceSummary();
+    const indexState = this.knowledgeIndexStatus();
+    if (sourceSummary.enabled === 0 || this.statusTone(indexState?.status) !== 'good') {
+      return {
+        label: T('需要索引数据'),
+        detail: T('添加 NAS 文件夹并开始索引后，HarborOS 才能搜索这些内容。'),
+        tone: 'warn',
+      };
+    }
+
+    const vision = this.workflowNodeForKind('vision', 'vlm');
+    if (vision.tone !== 'good') {
+      return {
+        label: T('需要配置图片/视频模型'),
+        detail: T('Image and camera-event understanding will be limited until a vision model is selected and healthy.'),
+        tone: 'warn',
+      };
+    }
+
+    return {
+      label: T('全部可用'),
+      detail: T('HarborBot and HarborCam have the required model and index flow available.'),
+      tone: 'good',
+    };
+  }
+
+  private buildAiWorkflowNodes(): AiWorkflowNode[] {
+    const sourceSummary = this.ragValidationSourceSummary();
+    const indexState = this.knowledgeIndexStatus();
+    const sourceTone = sourceSummary.enabled === 0
+      ? 'warn'
+      : this.statusTone(indexState?.status) === 'danger'
+        ? 'danger'
+        : this.statusTone(indexState?.status) === 'good'
+          ? 'good'
+          : 'warn';
+    const sourceStatus = sourceSummary.enabled === 0
+      ? T('需要添加数据源')
+      : this.statusTone(indexState?.status) === 'good'
+        ? T('已索引')
+        : T('需要索引数据');
+
+    return [
+      {
+        id: 'sources',
+        label: T('数据来源'),
+        detail: T('Choose NAS folders and DVR media that HarborOS is allowed to index.'),
+        status: sourceStatus,
+        summary: `${sourceSummary.enabled}/${sourceSummary.total} ${T('enabled')}`,
+        modelName: this.knowledgeSettings()?.index_root || T('Index folder not set'),
+        actionLabel: T('管理数据来源'),
+        tone: sourceTone,
+      },
+      this.workflowNodeForKind('semantic', 'embedder'),
+      this.workflowNodeForKind('vision', 'vlm'),
+      this.workflowNodeForKind('chat', 'llm'),
+      {
+        id: 'apps',
+        label: T('HarborBot / HarborCam'),
+        detail: T('Use the configured AI workflow in search, chat, camera replay, and event search.'),
+        status: this.aiWorkflowSummary().label,
+        summary: T('用户入口'),
+        modelName: T('HarborBot search and HarborCam event review'),
+        actionLabel: T('查看状态'),
+        tone: this.aiWorkflowSummary().tone,
+      },
+    ];
+  }
+
+  private workflowNodeForKind(nodeId: AiWorkflowNodeId, kind: string): AiWorkflowNode {
+    const current = this.currentModelCards().find((card) => card.kind === kind);
+    const installedChoices = this.workflowModelChoices(kind);
+    const labelByNode: Record<string, string> = {
+      semantic: T('向量检索'),
+      vision: T('图片/视频理解'),
+      chat: T('对话回答'),
+    };
+    const detailByNode: Record<string, string> = {
+      semantic: T('Embedding model turns text, files, screenshots, and video evidence into searchable vectors.'),
+      vision: T('Vision model describes images and video frames for multimodal search.'),
+      chat: T('Language model writes answers and summaries after retrieval.'),
+    };
+    const configured = current && current.tone === 'good';
+    const hasInstalledChoice = installedChoices.length > 0;
+    const status = configured
+      ? T('可用')
+      : hasInstalledChoice
+        ? T('请选择模型')
+        : T('需要安装模型');
+
+    return {
+      id: nodeId,
+      label: labelByNode[nodeId] ?? this.modelKindLabel(kind),
+      detail: detailByNode[nodeId] ?? T('Select a local model for this step.'),
+      status,
+      summary: configured ? T('连接正常') : hasInstalledChoice ? T('有可选模型') : T('没有本地模型'),
+      modelName: current?.modelName && current.modelName !== T('Not configured')
+        ? current.modelName
+        : T('Not selected'),
+      actionLabel: configured ? T('测试一下') : T('选择模型'),
+      tone: configured ? 'good' : hasInstalledChoice ? 'warn' : 'danger',
+    };
+  }
+
+  private modelCardMatchesWorkflowKind(card: CustomerModelCard, kind: string): boolean {
+    if (kind === 'vlm') {
+      return this.isVlmModelCard(card);
+    }
+    const targetKinds = this.targetEndpointKinds(card.kind);
+    if (kind === 'embedder') {
+      return targetKinds.includes('embedder')
+        || card.capabilities.some((capability) => this.endpointKindAliases('embedder').some((alias) => capability.toLowerCase().includes(alias)));
+    }
+    return targetKinds.includes(kind);
+  }
+
+  private filterModelLibraryCards(cards: CustomerModelCard[]): CustomerModelCard[] {
+    const kind = this.modelLibraryKind();
+    if (!kind) {
+      return cards;
+    }
+    return cards.filter((card) => this.modelCardMatchesWorkflowKind(card, kind));
   }
 
   private endpointCardsForValidation(): CurrentModelCard[] {
@@ -1309,20 +2204,35 @@ export class HarborDeskComponent implements OnInit {
   }
 
   private buildCurrentModelCards(): CurrentModelCard[] {
-    return ['llm', 'vlm', 'embedder'].map((kind) => {
+    return ['llm', 'vlm', 'embedder', 'ocr', 'asr'].map((kind) => {
       const endpoint = this.currentEndpointByKind(kind);
+      const catalogModel = endpoint ? this.catalogModelForEndpoint(endpoint) : null;
+      const endpointModelName = endpoint?.model_name ?? '';
+      const localPath = endpoint
+        ? this.metadataString(endpoint, 'local_path') || (endpointModelName.startsWith('/') ? endpointModelName : '')
+        : '';
       return {
         kind,
         label: this.modelKindLabel(kind),
-        modelName: endpoint?.model_name ?? T('Not configured'),
+        modelName: catalogModel?.display_name || endpointModelName || T('Not configured'),
         providerKey: endpoint?.provider_key ?? T('n/a'),
         status: endpoint?.status ?? T('not-configured'),
         tone: endpoint ? this.statusTone(endpoint.status) : 'warn',
         baseUrl: endpoint ? this.metadataString(endpoint, 'base_url') : '',
-        localPath: endpoint ? this.metadataString(endpoint, 'local_path') : '',
+        localPath,
         endpoint,
       };
     });
+  }
+
+  private catalogModelForEndpoint(endpoint: ModelEndpointRecord): LocalModelCatalogItem | null {
+    const endpointModelName = endpoint.model_name ?? '';
+    const endpointLocalPath = this.metadataString(endpoint, 'local_path');
+    return this.catalogModels().find((model) => {
+      return model.model_id === endpointModelName
+        || Boolean(model.local_path && model.local_path === endpointModelName)
+        || Boolean(endpointLocalPath && model.local_path === endpointLocalPath);
+    }) ?? null;
   }
 
   private buildCustomerModelCards(): CustomerModelCard[] {
@@ -1530,11 +2440,15 @@ export class HarborDeskComponent implements OnInit {
   private modelKindLabel(kind: string): string {
     switch (kind) {
       case 'llm':
-        return T('LLM');
+        return T('对话回答');
       case 'vlm':
-        return T('VLM');
+        return T('图片/视频理解');
       case 'embedder':
-        return T('Embedder');
+        return T('向量检索');
+      case 'ocr':
+        return T('文字识别');
+      case 'asr':
+        return T('语音转文字');
       default:
         return kind;
     }
@@ -1601,6 +2515,10 @@ export class HarborDeskComponent implements OnInit {
         return ['embedder', 'embedding', 'embeddings'];
       case 'vlm':
         return ['vlm', 'vision'];
+      case 'ocr':
+        return ['ocr'];
+      case 'asr':
+        return ['asr'];
       default:
         return [normalized];
     }
@@ -1741,6 +2659,9 @@ export class HarborDeskComponent implements OnInit {
         rag: this.result('rag', this.harborDeskApi.getRagReadiness()),
         knowledgeSettings: this.result('knowledge-settings', this.harborDeskApi.getKnowledgeSettings()),
         knowledgeIndexStatus: this.result('knowledge-index-status', this.harborDeskApi.getKnowledgeIndexStatus()),
+        dvrSettings: this.result('dvr-settings', this.harborDeskApi.getDvrRecordingSettings()),
+        dvrStatus: this.result('dvr-status', this.harborDeskApi.getDvrRecordingStatus()),
+        dvrTimeline: this.result('dvr-timeline', this.harborDeskApi.getDvrTimeline()),
         harborOs: this.result('harboros', this.harborDeskApi.getHarborOsStatus()),
         capabilityMap: this.result('harboros-capabilities', this.harborDeskApi.getHarborOsImCapabilityMap()),
         shareLinks: this.result('share-links', this.harborDeskApi.getShareLinks()),
@@ -1771,6 +2692,9 @@ export class HarborDeskComponent implements OnInit {
             rag: payload.rag,
             knowledgeSettings: payload.knowledgeSettings,
             knowledgeIndexStatus: payload.knowledgeIndexStatus,
+            dvrSettings: payload.dvrSettings,
+            dvrStatus: payload.dvrStatus,
+            dvrTimeline: payload.dvrTimeline,
             harborOs: payload.harborOs,
             capabilityMap: payload.capabilityMap,
             shareLinks: payload.shareLinks,
@@ -1818,6 +2742,9 @@ export class HarborDeskComponent implements OnInit {
     this.rag.set(pageData.rag.data);
     this.knowledgeSettings.set(pageData.knowledgeSettings.data);
     this.knowledgeIndexStatus.set(pageData.knowledgeIndexStatus.data);
+    this.dvrSettings.set(pageData.dvrSettings.data);
+    this.dvrStatus.set(pageData.dvrStatus.data);
+    this.dvrTimeline.set(pageData.dvrTimeline.data);
     this.harborOs.set(pageData.harborOs.data);
     this.capabilityMap.set(pageData.capabilityMap.data);
     this.shareLinks.set(pageData.shareLinks.data ?? []);
@@ -1837,6 +2764,9 @@ export class HarborDeskComponent implements OnInit {
         rag: pageData.rag.error,
         knowledgeSettings: pageData.knowledgeSettings.error,
         knowledgeIndexStatus: pageData.knowledgeIndexStatus.error,
+        dvrSettings: pageData.dvrSettings.error,
+        dvrStatus: pageData.dvrStatus.error,
+        dvrTimeline: pageData.dvrTimeline.error,
         harborOs: pageData.harborOs.error,
         capabilityMap: pageData.capabilityMap.error,
         shareLinks: pageData.shareLinks.error,
@@ -1851,7 +2781,9 @@ export class HarborDeskComponent implements OnInit {
       this.ensureSelectedDevice(pageData.state.data.devices ?? [], pageData.state.data.defaults?.selected_camera_device_id ?? null);
     }
     this.patchKnowledgeForms(pageData.knowledgeSettings.data);
+    this.patchDvrForm(pageData.dvrSettings.data);
     this.ensureSelectedPolicy();
+    this.patchCloudApiForm();
   }
 
   private clearData(): void {
@@ -1867,6 +2799,9 @@ export class HarborDeskComponent implements OnInit {
     this.rag.set(null);
     this.knowledgeSettings.set(null);
     this.knowledgeIndexStatus.set(null);
+    this.dvrSettings.set(null);
+    this.dvrStatus.set(null);
+    this.dvrTimeline.set(null);
     this.filesBrowse.set(null);
     this.harborOs.set(null);
     this.capabilityMap.set(null);
@@ -1929,13 +2864,79 @@ export class HarborDeskComponent implements OnInit {
     }
 
     if (!this.knowledgeSourceForm.dirty) {
-      const root = settings.source_roots?.[0];
-      if (root) {
-        this.editKnowledgeSource(root);
-      } else {
-        this.clearKnowledgeSourceForm();
-      }
+      this.clearKnowledgeSourceForm();
     }
+  }
+
+  private patchDvrForm(settings: DvrRecordingSettings | null): void {
+    if (!settings || this.dvrForm.dirty) {
+      return;
+    }
+    this.dvrForm.patchValue({
+      recordingRoot: settings.recording_root ?? '',
+      mediaLibraryRoot: settings.media_library_root ?? '',
+      retentionDays: String(settings.retention_days ?? 7),
+      segmentSeconds: String(settings.segment_seconds ?? 60),
+      continuousRecordingEnabled: Boolean(settings.continuous_recording_enabled),
+      lowBitrateStreamPreferred: Boolean(settings.low_bitrate_stream_preferred),
+      continuousBitrateMbps: String(settings.continuous_bitrate_mbps ?? 2),
+      diskBudgetGb: String(settings.disk_budget_gb ?? 64),
+      continuousStreamPathHint: settings.continuous_stream_path_hint ?? '',
+      highResStreamPathHint: settings.high_res_stream_path_hint ?? '',
+      highResEventClipsEnabled: Boolean(settings.high_res_event_clips_enabled),
+      highResEventClipSeconds: String(settings.high_res_event_clip_seconds ?? 20),
+      keyframeCount: String(settings.keyframe_count ?? 3),
+      keyframeIntervalSeconds: String(settings.keyframe_interval_seconds ?? 5),
+      enabledDeviceIds: [...(settings.enabled_device_ids ?? [])],
+    });
+  }
+
+  private patchCloudApiForm(): void {
+    if (this.cloudApiForm.dirty) {
+      return;
+    }
+
+    const endpoint = this.preferredCloudEndpoint();
+    const providerValue = this.cloudProviderFromEndpoint(endpoint);
+    const provider = this.cloudProviderOption(providerValue);
+    const baseUrl = this.metadataString(endpoint, 'base_url') || provider.defaultBaseUrl;
+    const modelName = endpoint?.model_name || this.metadataString(endpoint, 'model') || provider.defaultModelName;
+    const cloudMode = this.cloudUsageModeFromPolicies();
+    const enabledCapabilities = this.cloudEnabledCapabilitiesFromPolicies();
+
+    this.cloudApiForm.patchValue({
+      provider: provider.value,
+      baseUrl,
+      modelName,
+      apiKey: '',
+      usageMode: cloudMode,
+      allowQuestionUnderstanding: enabledCapabilities.includes('semantic_router'),
+      allowAnswer: enabledCapabilities.includes('retrieval_answer'),
+    });
+    this.cloudApiForm.markAsPristine();
+  }
+
+  private refreshDvrState(): void {
+    forkJoin({
+      status: this.result('dvr-status', this.harborDeskApi.getDvrRecordingStatus()),
+      timeline: this.result('dvr-timeline', this.harborDeskApi.getDvrTimeline()),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(({ status, timeline }) => {
+      this.dvrStatus.set(status.data);
+      this.dvrTimeline.set(timeline.data);
+      const errors = { ...this.endpointErrors() };
+      for (const key of ['dvrStatus', 'dvrTimeline']) {
+        delete errors[key];
+      }
+      if (status.error) {
+        errors['dvrStatus'] = status.error;
+      }
+      if (timeline.error) {
+        errors['dvrTimeline'] = timeline.error;
+      }
+      this.endpointErrors.set(errors);
+    });
   }
 
   private ensureSelectedDevice(devices: CameraDevice[], defaultCameraId: string | null): void {
@@ -1995,6 +2996,76 @@ export class HarborDeskComponent implements OnInit {
     }
   }
 
+  private preferredCloudEndpoint(): ModelEndpointRecord | null {
+    return this.cloudEndpointForProvider('siliconflow')
+      ?? this.modelEndpoints().find((endpoint) => endpoint.endpoint_kind === 'cloud')
+      ?? null;
+  }
+
+  private cloudEndpointForProvider(providerValue: string): ModelEndpointRecord | null {
+    const provider = this.cloudProviderOption(providerValue);
+    return this.modelEndpoints().find((endpoint) => endpoint.model_endpoint_id === provider.endpointId)
+      ?? this.modelEndpoints().find((endpoint) => {
+        return endpoint.endpoint_kind === 'cloud'
+          && (this.metadataString(endpoint, 'provider') === provider.value
+            || this.metadataString(endpoint, 'provider_label').toLowerCase() === provider.label.toLowerCase());
+      })
+      ?? null;
+  }
+
+  private cloudProviderFromEndpoint(endpoint: ModelEndpointRecord | null): string {
+    if (!endpoint) {
+      return 'siliconflow';
+    }
+    const provider = this.metadataString(endpoint, 'provider').toLowerCase();
+    const endpointId = endpoint.model_endpoint_id.toLowerCase();
+    const label = this.metadataString(endpoint, 'provider_label').toLowerCase();
+    if (provider === 'openrouter' || endpointId.includes('openrouter') || label.includes('openrouter')) {
+      return 'openrouter';
+    }
+    if (provider === 'siliconflow' || endpointId.includes('siliconflow') || label.includes('siliconflow')) {
+      return 'siliconflow';
+    }
+    return 'custom_openai_compatible';
+  }
+
+  private cloudProviderOption(value: string): CloudProviderOption {
+    return this.cloudProviderOptions.find((option) => option.value === value)
+      ?? this.cloudProviderOptions[0];
+  }
+
+  private cloudUsageModeFromPolicies(): CloudUsageMode {
+    const semanticCloud = this.policyAllowsCloud('semantic.router');
+    const answerCloud = this.policyAllowsCloud('retrieval.answer');
+    if (!semanticCloud && !answerCloud) {
+      return 'local_only';
+    }
+    if (semanticCloud && answerCloud) {
+      return 'local_first_cloud';
+    }
+    return 'selected_capabilities';
+  }
+
+  private cloudEnabledCapabilitiesFromPolicies(): CloudCapabilityId[] {
+    const capabilities: CloudCapabilityId[] = [];
+    if (this.policyAllowsCloud('semantic.router')) {
+      capabilities.push('semantic_router');
+    }
+    if (this.policyAllowsCloud('retrieval.answer')) {
+      capabilities.push('retrieval_answer');
+    }
+    return capabilities;
+  }
+
+  private policyAllowsCloud(policyId: string): boolean {
+    const policy = this.modelPolicies().find((candidate) => candidate.route_policy_id === policyId);
+    if (!policy) {
+      return false;
+    }
+    return policy.privacy_level !== 'strict_local'
+      && policy.fallback_order.some((item) => item === 'cloud' || item.includes('cloud'));
+  }
+
   private credentialStatusByDeviceId(deviceId: string): DeviceCredentialStatus | null {
     return this.state()?.device_credential_statuses?.find((status) => status.device_id === deviceId) ?? null;
   }
@@ -2015,6 +3086,96 @@ export class HarborDeskComponent implements OnInit {
       },
       error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
     });
+  }
+
+  private runKnowledgeSettingsSave(
+    actionId: string,
+    payload: KnowledgeSettings,
+    successMessage: string,
+    clearSourceForm: boolean,
+    startMessage: string | null = null,
+  ): void {
+    this.actionInProgress.set(actionId);
+    this.actionError.set(null);
+    this.actionMessage.set(startMessage);
+
+    this.harborDeskApi.saveKnowledgeSettings(payload).pipe(
+      finalize(() => this.actionInProgress.set(null)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (settings) => {
+        this.knowledgeSettings.set(settings);
+        if (clearSourceForm) {
+          this.clearKnowledgeSourceForm();
+          this.sourcePickerEditingRoot.set(null);
+        }
+        this.actionMessage.set(successMessage);
+      },
+      error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
+    });
+  }
+
+  private fetchKnowledgeState(): Observable<unknown> {
+    return forkJoin({
+      settings: this.result('knowledge-settings-refresh', this.harborDeskApi.getKnowledgeSettings()),
+      indexStatus: this.result('knowledge-index-status-refresh', this.harborDeskApi.getKnowledgeIndexStatus()),
+      rag: this.result('rag-refresh', this.harborDeskApi.getRagReadiness()),
+    }).pipe(
+      map(({ settings, indexStatus, rag }): null => {
+        const errors = { ...this.endpointErrors() };
+        for (const key of ['knowledgeSettings', 'knowledgeIndexStatus', 'rag']) {
+          delete errors[key];
+        }
+        if (settings.data) {
+          this.knowledgeSettings.set(settings.data);
+        }
+        if (indexStatus.data) {
+          this.knowledgeIndexStatus.set(indexStatus.data);
+        }
+        if (rag.data) {
+          this.rag.set(rag.data);
+        }
+        if (settings.error) {
+          errors['knowledgeSettings'] = settings.error;
+        }
+        if (indexStatus.error) {
+          errors['knowledgeIndexStatus'] = indexStatus.error;
+        }
+        if (rag.error) {
+          errors['rag'] = rag.error;
+        }
+        this.endpointErrors.set(errors);
+        return null;
+      }),
+    );
+  }
+
+  private fetchKnowledgeIndexState(): Observable<unknown> {
+    return forkJoin({
+      indexStatus: this.result('knowledge-index-status-refresh', this.harborDeskApi.getKnowledgeIndexStatus()),
+      rag: this.result('rag-refresh', this.harborDeskApi.getRagReadiness()),
+    }).pipe(
+      map(({ indexStatus, rag }): null => {
+        const errors = { ...this.endpointErrors() };
+        for (const key of ['knowledgeIndexStatus', 'rag']) {
+          delete errors[key];
+        }
+        if (indexStatus.data) {
+          this.knowledgeIndexStatus.set(indexStatus.data);
+        }
+        if (rag.data) {
+          this.rag.set(rag.data);
+        }
+        if (indexStatus.error) {
+          errors['knowledgeIndexStatus'] = indexStatus.error;
+        }
+        if (rag.error) {
+          errors['rag'] = rag.error;
+        }
+        this.endpointErrors.set(errors);
+        return null;
+      }),
+    );
   }
 
   private credentialsPayload(): DeviceCredentialsPayload {
@@ -2049,6 +3210,34 @@ export class HarborDeskComponent implements OnInit {
     };
   }
 
+  private dvrSettingsPayload(): DvrRecordingSettings {
+    const value = this.dvrForm.getRawValue();
+    const current = this.dvrSettings();
+    return {
+      recording_root: value.recordingRoot.trim() || current?.recording_root || '',
+      media_library_root: value.mediaLibraryRoot.trim() || current?.media_library_root || '',
+      retention_days: this.parseOptionalNumber(value.retentionDays) ?? current?.retention_days ?? 7,
+      segment_seconds: this.parseOptionalNumber(value.segmentSeconds) ?? current?.segment_seconds ?? 60,
+      continuous_recording_enabled: value.continuousRecordingEnabled,
+      low_bitrate_stream_preferred: value.lowBitrateStreamPreferred,
+      continuous_bitrate_mbps: this.parseOptionalNumber(value.continuousBitrateMbps)
+        ?? current?.continuous_bitrate_mbps
+        ?? 2,
+      high_res_event_clips_enabled: value.highResEventClipsEnabled,
+      high_res_event_clip_seconds: this.parseOptionalNumber(value.highResEventClipSeconds)
+        ?? current?.high_res_event_clip_seconds
+        ?? 20,
+      continuous_stream_path_hint: this.emptyToNull(value.continuousStreamPathHint),
+      high_res_stream_path_hint: this.emptyToNull(value.highResStreamPathHint),
+      disk_budget_gb: this.parseOptionalNumber(value.diskBudgetGb) ?? current?.disk_budget_gb ?? 64,
+      keyframe_count: this.parseOptionalNumber(value.keyframeCount) ?? current?.keyframe_count ?? 3,
+      keyframe_interval_seconds: this.parseOptionalNumber(value.keyframeIntervalSeconds)
+        ?? current?.keyframe_interval_seconds
+        ?? 5,
+      enabled_device_ids: value.enabledDeviceIds,
+    };
+  }
+
   private modelEndpointPayload(): ModelEndpointPayload {
     const value = this.modelEndpointForm.getRawValue();
     const editing = this.modelEndpoints().find((endpoint) => endpoint.model_endpoint_id === this.modelEndpointEditingId());
@@ -2075,6 +3264,107 @@ export class HarborDeskComponent implements OnInit {
       status: value.status.trim() || 'active',
       metadata,
     };
+  }
+
+  private cloudEndpointPayload(
+    provider: CloudProviderOption,
+    existing: ModelEndpointRecord | null,
+    hasApiKey: boolean,
+  ): ModelEndpointPayload {
+    const value = this.cloudApiForm.getRawValue();
+    const metadata: Record<string, unknown> = {
+      ...(existing ? this.editableEndpointMetadata(existing) : {}),
+      provider: provider.value,
+      provider_label: provider.label,
+      base_url: value.baseUrl.trim(),
+      healthz_url: this.cloudProviderModelsUrl(value.baseUrl),
+      model: value.modelName.trim(),
+      api_key_configured: hasApiKey,
+      secret_redaction: 'endpoint_metadata',
+    };
+    if (value.apiKey.trim()) {
+      metadata['api_key'] = value.apiKey.trim();
+    }
+
+    return {
+      model_endpoint_id: existing?.model_endpoint_id ?? provider.endpointId,
+      workspace_id: existing?.workspace_id ?? 'home-1',
+      provider_account_id: existing?.provider_account_id ?? null,
+      model_kind: 'llm',
+      endpoint_kind: 'cloud',
+      provider_key: 'openai_compatible',
+      model_name: value.modelName.trim(),
+      capability_tags: ['chat', 'cloud_fallback', 'openai_compatible'],
+      cost_policy: existing?.cost_policy ?? { cost_hint: 'cloud_metered', provider: provider.value },
+      status: hasApiKey ? 'active' : 'disabled',
+      metadata,
+    };
+  }
+
+  private cloudPolicyPayload(): ModelRoutePolicyRecord[] {
+    const value = this.cloudApiForm.getRawValue();
+    const mode = value.usageMode as CloudUsageMode;
+    const selectedCapabilities: CloudCapabilityId[] = mode === 'local_first_cloud'
+      ? ['semantic_router', 'retrieval_answer']
+      : mode === 'selected_capabilities'
+        ? [
+            value.allowQuestionUnderstanding ? 'semantic_router' as const : null,
+            value.allowAnswer ? 'retrieval_answer' as const : null,
+          ].filter((item): item is CloudCapabilityId => item !== null)
+        : [];
+
+    const cloudPolicyIds = new Map<CloudCapabilityId, string>([
+      ['semantic_router', 'semantic.router'],
+      ['retrieval_answer', 'retrieval.answer'],
+    ]);
+    const existing = new Map(this.modelPolicies().map((policy) => [policy.route_policy_id, policy]));
+    const nextPolicies = [...this.modelPolicies()];
+
+    cloudPolicyIds.forEach((policyId, capability) => {
+      const existingPolicy = existing.get(policyId) ?? this.defaultCloudPolicy(policyId, capability);
+      const cloudAllowed = selectedCapabilities.includes(capability);
+      const nextPolicy: ModelRoutePolicyRecord = {
+        ...existingPolicy,
+        privacy_level: cloudAllowed ? 'allow_redacted_cloud' : 'strict_local',
+        local_preferred: true,
+        fallback_order: cloudAllowed ? ['local', 'sidecar', 'cloud'] : ['local', 'sidecar'],
+        status: 'active',
+        metadata: {
+          ...(existingPolicy.metadata ?? {}),
+          cloud_enabled_from_ui: cloudAllowed,
+        },
+      };
+      const existingIndex = nextPolicies.findIndex((policy) => policy.route_policy_id === policyId);
+      if (existingIndex >= 0) {
+        nextPolicies[existingIndex] = nextPolicy;
+      } else {
+        nextPolicies.push(nextPolicy);
+      }
+    });
+
+    return nextPolicies;
+  }
+
+  private defaultCloudPolicy(policyId: string, capability: CloudCapabilityId): ModelRoutePolicyRecord {
+    return {
+      route_policy_id: policyId,
+      workspace_id: 'home-1',
+      domain_scope: capability === 'semantic_router' ? 'semantic' : 'retrieval',
+      modality: 'text',
+      privacy_level: 'strict_local',
+      local_preferred: true,
+      max_cost_per_run: null,
+      fallback_order: ['local', 'sidecar'],
+      status: 'active',
+      metadata: {
+        capability: capability === 'semantic_router' ? 'router' : 'answer',
+      },
+    };
+  }
+
+  private cloudProviderModelsUrl(baseUrl: string): string {
+    const trimmed = baseUrl.trim().replace(/\/+$/, '');
+    return trimmed ? `${trimmed}/models` : '';
   }
 
   private knowledgeSettingsPayload(includeSourceForm: boolean): KnowledgeSettings {
@@ -2124,10 +3414,29 @@ export class HarborDeskComponent implements OnInit {
     }
   }
 
-  private pathLabel(path: string): string {
+  protected pathLabel(path: string): string {
     const normalized = path.trim().replace(/[\\/]+$/, '');
     const parts = normalized.split(/[\\/]+/).filter((part) => part.length > 0);
     return parts.at(-1) ?? normalized;
+  }
+
+  private sameOriginAdminUrl(url: string | null | undefined): string | null {
+    if (!url?.trim()) {
+      return null;
+    }
+    try {
+      const parsed = new URL(url, 'http://harbor.local');
+      const path = `${parsed.pathname}${parsed.search}`;
+      if (path.startsWith('/api/harbordesk/')) {
+        return path;
+      }
+      if (path.startsWith('/api/')) {
+        return `/api/harbordesk${path.slice(4)}`;
+      }
+      return path.startsWith('/') ? path : null;
+    } catch {
+      return url.startsWith('/') ? url : null;
+    }
   }
 
   private buildMetrics(): HarborDeskMetric[] {
@@ -2389,6 +3698,35 @@ export class HarborDeskComponent implements OnInit {
     return this.tabs.some((candidate) => candidate.id === tab) ? tab as HarborDeskTabId : null;
   }
 
+  private normalizeAiSettingsTab(value: string | null): AiSettingsTabId | null {
+    switch ((value ?? '').trim().toLowerCase()) {
+      case 'sources':
+      case 'data':
+      case 'data-sources':
+        return 'sources';
+      case 'models':
+      case 'model':
+      case 'semantic':
+      case 'semantic-index':
+      case 'embedding':
+      case 'embedder':
+      case 'vector':
+      case 'vision':
+      case 'video':
+      case 'vlm':
+      case 'chat':
+      case 'llm':
+        return 'models';
+      case 'cloud':
+      case 'cloud-api':
+      case 'api':
+      case 'api-key':
+        return 'cloud-api';
+      default:
+        return null;
+    }
+  }
+
   private emptyToNull(value: string): string | null {
     const trimmed = value.trim();
     return trimmed.length > 0 ? trimmed : null;
@@ -2413,6 +3751,33 @@ export class HarborDeskComponent implements OnInit {
       return false;
     }
     return null;
+  }
+
+  private normalizeAiWorkflowNode(value: string | null): AiWorkflowNodeId | null {
+    switch ((value ?? '').trim().toLowerCase()) {
+      case 'sources':
+      case 'data':
+      case 'data-sources':
+        return 'sources';
+      case 'semantic':
+      case 'semantic-index':
+      case 'embedding':
+      case 'embedder':
+        return 'semantic';
+      case 'vision':
+      case 'video':
+      case 'vlm':
+        return 'vision';
+      case 'chat':
+      case 'llm':
+        return 'chat';
+      case 'apps':
+      case 'harborbot':
+      case 'harborcam':
+        return 'apps';
+      default:
+        return null;
+    }
   }
 
   private parseLines(value: string): string[] {

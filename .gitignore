@@ -115,3 +115,5 @@ src/app/testing-configs/*
 
 # Local Harbor release artifacts
 /artifacts/*.tar.gz
+/artifacts/*.png
+/artifacts/*.jpg

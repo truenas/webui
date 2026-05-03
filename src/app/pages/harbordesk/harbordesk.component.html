@@ -153,7 +153,7 @@
                 type="button"
                 (click)="selectTab('models')"
               >
-                {{ 'Manage models and policies' | translate }}
+                {{ 'Configure AI workflow' | translate }}
               </button>
               <button
                 mat-button
@@ -176,7 +176,7 @@
 
         <mat-card class="settings-card">
           <mat-card-header>
-            <mat-card-title>{{ 'API Health' | translate }}</mat-card-title>
+          <mat-card-title>{{ '后台连接状态' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             @if (endpointErrors()['state'] || endpointErrors()['gateway'] || endpointErrors()['inference'] || endpointErrors()['models'] || endpointErrors()['hardware'] || endpointErrors()['rag'] || endpointErrors()['harborOs']) {
@@ -187,15 +187,15 @@
               <p class="muted">{{ 'No blocking API errors are currently surfaced.' | translate }}</p>
             }
             <div class="mini-grid">
-              <span>/api/harbordesk/state</span>
+              <span>{{ 'HarborDesk settings' | translate }}</span>
               <strong [ngClass]="endpointError('state') ? 'tone-danger' : 'tone-good'">{{ endpointError('state') ? ('Error' | translate) : ('OK' | translate) }}</strong>
-              <span>/api/harbordesk/inference/healthz</span>
+              <span>{{ 'Local model service' | translate }}</span>
               <strong [ngClass]="endpointError('inference') ? 'tone-danger' : inferenceHealthClass()">{{ endpointError('inference') ? ('Error' | translate) : (inferenceHealthValue() | translate) }}</strong>
-              <span>/api/harbordesk/gateway/status</span>
+              <span>{{ 'IM gateway' | translate }}</span>
               <strong [ngClass]="endpointError('gateway') ? 'tone-danger' : 'tone-good'">{{ endpointError('gateway') ? ('Error' | translate) : ('OK' | translate) }}</strong>
-              <span>/api/harbordesk/models/*</span>
+              <span>{{ 'Model library' | translate }}</span>
               <strong [ngClass]="endpointError('models') ? 'tone-danger' : 'tone-good'">{{ endpointError('models') ? ('Error' | translate) : ('OK' | translate) }}</strong>
-              <span>/api/harbordesk/devices/*</span>
+              <span>{{ 'Camera admin' | translate }}</span>
               <strong [ngClass]="devices().length ? 'tone-good' : 'tone-warn'">{{ devices().length }}</strong>
             </div>
           </mat-card-content>
@@ -375,594 +375,967 @@
         <div class="notice error">{{ endpointError('knowledgeIndexStatus') | translate }}</div>
       }
 
-      <mat-card class="settings-card rag-validation-card">
-        <mat-card-header>
-          <mat-card-title>{{ 'Multimodal RAG validation' | translate }}</mat-card-title>
-        </mat-card-header>
+      <mat-card class="settings-card ai-settings-card">
         <mat-card-content>
-          <div class="validation-status-grid">
-            @for (endpoint of ragValidationEndpointCards(); track endpoint.kind) {
-              <article class="validation-status-card" [ngClass]="toneClass(endpoint.status)">
-                <span class="field-label">{{ endpoint.label | translate }}</span>
-                <strong>{{ endpoint.status | translate }}</strong>
-                <p>{{ endpoint.modelName }}</p>
-                <small>{{ endpoint.baseUrl || ('No runtime URL' | translate) }}</small>
-              </article>
-            }
-            <article class="validation-status-card" [ngClass]="'tone-' + validationVlmDownloadTone(localVlmModelCard())">
-              <span class="field-label">{{ 'Local VLM' | translate }}</span>
-              <strong>{{ validationVlmStatus(localVlmModelCard()) | translate }}</strong>
-              @if (localVlmModelCard(); as vlmCard) {
-                <p>{{ vlmCard.displayName }}</p>
-                <small>{{ vlmCard.localPath || vlmCard.modelId }}</small>
-              } @else {
-                <p>{{ 'Manual download required' | translate }}</p>
-              }
-            </article>
-            <article class="validation-status-card" [ngClass]="'tone-' + ragValidationSourceSummary().tone">
-              <span class="field-label">{{ 'Source roots' | translate }}</span>
-              <strong>{{ ragValidationSourceSummary().enabled }}/{{ ragValidationSourceSummary().total }}</strong>
-              <p>{{ ragValidationSourceSummary().status | translate }}</p>
-              <small>{{ 'Existing' | translate }}: {{ ragValidationSourceSummary().existing }}</small>
-            </article>
-            <article class="validation-status-card" [ngClass]="'tone-' + (weixinConnector()?.tone ?? 'neutral')">
-              <span class="field-label">{{ 'Weixin' | translate }}</span>
-              <strong>{{ weixinConnector()?.status || ('Not configured' | translate) }}</strong>
-              <p>{{ weixinConnector()?.connected ? ('Connected' | translate) : weixinConnector()?.configured ? ('Configured' | translate) : ('Setup needed' | translate) }}</p>
-              @if (weixinConnector()?.lastCheckedAt) {
-                <small>{{ weixinConnector()?.lastCheckedAt }}</small>
-              }
-            </article>
-          </div>
-
-          <div class="validation-count-row">
-            @for (stat of ragValidationImageStats(); track stat.id) {
-              <article class="validation-count-card" [ngClass]="'tone-' + stat.tone">
-                <span class="field-label">{{ stat.label | translate }}</span>
-                <strong>{{ stat.value }}</strong>
-              </article>
-            }
-          </div>
-
-          <div class="validation-step-list">
-            <article class="validation-step">
-              <span class="step-index">1</span>
-              <div class="step-main">
-                <strong>{{ 'Confirm/download VLM' | translate }}</strong>
-                <span>{{ validationVlmStatus(localVlmModelCard()) | translate }}</span>
-              </div>
-              <div class="row-actions">
-                @if (localVlmModelCard(); as vlmCard) {
-                  <button
-                    mat-button
-                    color="primary"
-                    type="button"
-                    [disabled]="validationVlmActionDisabled(vlmCard)"
-                    (click)="handleModelCardAction(vlmCard)"
-                  >
-                    {{ validationVlmActionLabel(vlmCard) | translate }}
-                  </button>
-                  <button mat-button type="button" (click)="prepareManualVlmDownload()">
-                    {{ 'Manual options' | translate }}
-                  </button>
-                } @else {
-                  <button mat-button color="primary" type="button" [disabled]="isBusy()" (click)="prepareManualVlmDownload()">
-                    {{ 'Manual download' | translate }}
-                  </button>
-                }
-              </div>
-            </article>
-
-            <article class="validation-step">
-              <span class="step-index">2</span>
-              <div class="step-main">
-                <strong>{{ 'Configure/test VLM endpoint' | translate }}</strong>
-                <span>{{ vlmEndpointCard()?.status || ('Not configured' | translate) }}</span>
-              </div>
-              <div class="row-actions">
-                @if (vlmEndpointCard()?.endpoint; as vlmEndpoint) {
-                  <button mat-button type="button" (click)="editModelEndpoint(vlmEndpoint); openAdvancedModels(true)">
-                    {{ 'Edit VLM endpoint' | translate }}
-                  </button>
-                  <button
-                    mat-button
-                    color="primary"
-                    type="button"
-                    [disabled]="actionBusy('model-test:' + vlmEndpoint.model_endpoint_id)"
-                    (click)="testModelEndpoint(vlmEndpoint)"
-                  >
-                    {{ actionBusy('model-test:' + vlmEndpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
-                  </button>
-                } @else {
-                  <button mat-button color="primary" type="button" (click)="prepareEndpointFormForKind('vlm')">
-                    {{ 'Configure VLM endpoint' | translate }}
-                  </button>
-                }
-              </div>
-            </article>
-
-            <article class="validation-step">
-              <span class="step-index">3</span>
-              <div class="step-main">
-                <strong>{{ 'Add source root' | translate }}</strong>
-                <span>{{ ragValidationSourceSummary().enabled }}/{{ ragValidationSourceSummary().total }}</span>
-              </div>
-              <div class="row-actions">
-                <button mat-button color="primary" type="button" (click)="startKnowledgeSourceRoot()">
-                  {{ 'Add source root' | translate }}
-                </button>
-                <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(null)">
-                  {{ 'Browse files' | translate }}
-                </button>
-              </div>
-            </article>
-
-            <article class="validation-step">
-              <span class="step-index">4</span>
-              <div class="step-main">
-                <strong>{{ 'Run index' | translate }}</strong>
-                <span>{{ knowledgeIndexStatus()?.status || ('Not run' | translate) }}</span>
-              </div>
-              <div class="row-actions">
-                <button mat-button color="primary" type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
-                  {{ actionBusy('knowledge-index') ? ('Indexing...' | translate) : ('Run index' | translate) }}
-                </button>
-              </div>
-            </article>
-
-            <article class="validation-step">
-              <span class="step-index">5</span>
-              <div class="step-main">
-                <strong>{{ 'Inspect image content counts' | translate }}</strong>
-                <span>{{ knowledgeIndexStatus()?.content_indexed_image_count ?? 0 }} / {{ knowledgeIndexStatus()?.image_count ?? 0 }}</span>
-              </div>
-              <div class="row-actions">
-                <button mat-button type="button" (click)="inspectImageContentCounts()">
-                  {{ 'Inspect counts' | translate }}
-                </button>
-                <button mat-button type="button" [disabled]="loading()" (click)="refresh()">
-                  {{ 'Refresh' | translate }}
-                </button>
-              </div>
-            </article>
-
-            <article class="validation-step">
-              <span class="step-index">6</span>
-              <div class="step-main">
-                <strong>{{ 'Open Weixin setup/admin' | translate }}</strong>
-                <span>{{ weixinConnector()?.status || ('Not configured' | translate) }}</span>
-              </div>
-              <div class="row-actions">
-                <a mat-button color="primary" [href]="weixinSetupUrl()" target="_blank" rel="noopener">
-                  {{ 'Open setup' | translate }}
-                </a>
-                <a mat-button [href]="weixinManageUrl()" target="_blank" rel="noopener">
-                  {{ 'Open admin' | translate }}
-                </a>
-              </div>
-            </article>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="settings-card model-management-card">
-        <mat-card-header>
-          <mat-card-title>{{ 'Model Management' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="model-management-content">
-          <section class="model-section">
-            <div class="section-heading">
-              <h2>{{ 'Current in use' | translate }}</h2>
-              <button mat-button type="button" (click)="refresh()">{{ 'Refresh' | translate }}</button>
+          <section class="workflow-status" [ngClass]="'tone-' + aiWorkflowSummary().tone">
+            <div>
+              <span class="field-label">{{ 'AI 设置状态' | translate }}</span>
+              <strong>{{ aiWorkflowSummary().label | translate }}</strong>
+              <p>{{ aiWorkflowSummary().detail | translate }}</p>
             </div>
-            <div class="model-summary-grid">
-              @for (current of currentModelCards(); track current.kind) {
-                <article class="current-model-card">
-                  <div class="model-card-heading">
-                    <div>
-                      <span class="field-label">{{ current.label | translate }}</span>
-                      <h2>{{ current.modelName }}</h2>
-                    </div>
-                    <span
-                      class="pill"
-                      [class.good]="current.tone === 'good'"
-                      [class.warn]="current.tone === 'warn'"
-                      [class.danger]="current.tone === 'danger'"
-                    >
-                      {{ current.status | translate }}
-                    </span>
+            <button mat-button type="button" [disabled]="loading()" (click)="refresh()">
+              {{ 'Refresh' | translate }}
+            </button>
+          </section>
+
+          <section class="ai-settings-subtabs" [attr.aria-label]="'AI 设置' | translate">
+            @for (tab of aiSettingsTabs(); track tab.id) {
+              <button
+                type="button"
+                class="ai-settings-subtab"
+                [class.active]="activeAiSettingsTab() === tab.id"
+                [ngClass]="'tone-' + tab.tone"
+                (click)="selectAiSettingsTab(tab.id)"
+              >
+                <strong>{{ tab.label | translate }}</strong>
+                <span>{{ tab.summary | translate }}</span>
+              </button>
+            }
+          </section>
+
+          @if (activeAiSettingsTab() === 'sources') {
+            <section class="ai-settings-panel sources-settings-panel">
+              <section class="knowledge-section source-roots-card">
+                <div class="section-heading">
+                  <div>
+                    <h2>{{ '已添加的数据源' | translate }}</h2>
+                    <p class="muted">{{ 'HarborBot 和 HarborCam 会在这些文件夹里搜索。' | translate }}</p>
                   </div>
-                  <p class="muted">{{ current.providerKey }} / {{ current.baseUrl || ('No runtime URL' | translate) }}</p>
-                  @if (current.localPath) {
-                    <p class="muted">{{ current.localPath }}</p>
-                  }
-                    <div class="button-row">
-                      @if (current.endpoint) {
-                      <button mat-button type="button" (click)="editModelEndpoint(current.endpoint); openAdvancedModels(true)">
-                        {{ 'Switch / edit' | translate }}
-                      </button>
-                      <button
-                        mat-button
-                        type="button"
-                        [disabled]="actionBusy('model-test:' + current.endpoint.model_endpoint_id)"
-                        (click)="testModelEndpoint(current.endpoint)"
-                      >
-                        {{ actionBusy('model-test:' + current.endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
-                      </button>
-                    } @else {
-                      <button mat-button type="button" (click)="prepareEndpointFormForKind(current.kind)">{{ 'Configure endpoint' | translate }}</button>
+                  <button mat-button color="primary" type="button" [disabled]="actionBusy('knowledge-settings')" (click)="openKnowledgeFolderPicker()">
+                    {{ '添加数据源' | translate }}
+                  </button>
+                </div>
+                @if (knowledgeSourceRoots().length === 0) {
+                  <div class="empty-state">{{ '还没有添加文件夹。点击添加数据源选择一个 HarborOS 文件夹。' | translate }}</div>
+                } @else {
+                  <div class="table-list compact-table source-root-list">
+                    @for (root of knowledgeSourceRoots(); track root.root_id + root.path) {
+                      <article class="table-row">
+                        <div>
+                          <h2>{{ root.label || pathLabel(root.path) }}</h2>
+                          <p class="muted">{{ 'HarborOS 路径' | translate }}: {{ root.path }}</p>
+                          @if (root.last_indexed_at) {
+                            <p class="muted">{{ 'Last indexed' | translate }}: {{ root.last_indexed_at }}</p>
+                          }
+                        </div>
+                        <div class="row-actions">
+                          @if (knowledgeSourceStatus(root); as sourceStatus) {
+                            <span class="pill" [ngClass]="toneClass(sourceStatus.status)">{{ sourceStatus.status | translate }}</span>
+                          } @else {
+                            <span class="pill">{{ root.enabled ? ('enabled' | translate) : ('disabled' | translate) }}</span>
+                          }
+                          <button mat-button type="button" [disabled]="actionBusy('knowledge-settings')" (click)="editKnowledgeSource(root)">
+                            {{ '编辑' | translate }}
+                          </button>
+                          <button mat-button type="button" [disabled]="actionBusyPrefix('knowledge-source-remove')" (click)="removeKnowledgeSource(root)">
+                            {{ '删除' | translate }}
+                          </button>
+                        </div>
+                      </article>
                     }
                   </div>
+                }
+
+                @if (filesBrowse(); as browse) {
+                  <section class="file-browser fallback-browser compact-fallback-browser">
+                    <div class="section-heading browser-heading">
+                      <div>
+                        <h2>{{ '文件夹选择器' | translate }}</h2>
+                        <p class="muted">{{ browse.path }}</p>
+                      </div>
+                      @if (browse.parent) {
+                        <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(browse.parent)">
+                          {{ 'Up' | translate }}
+                        </button>
+                      }
+                    </div>
+                    <div class="table-list compact-table">
+                      @for (entry of browse.entries; track entry.path) {
+                        @if (entry.is_dir) {
+                          <article class="table-row">
+                            <div>
+                              <h2>{{ entry.name }}</h2>
+                              <p class="muted">{{ entry.path }}</p>
+                            </div>
+                            <div class="row-actions">
+                              <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(entry.path)">
+                                {{ 'Open' | translate }}
+                              </button>
+                              <button mat-button type="button" [disabled]="actionBusy('knowledge-settings')" (click)="saveKnowledgeSourceFromPath(entry.path)">
+                                {{ '使用' | translate }}
+                              </button>
+                            </div>
+                          </article>
+                        }
+                      }
+                    </div>
+                  </section>
+                }
+              </section>
+
+              <section class="knowledge-section index-status-card">
+                <div class="section-heading">
+                  <h2>{{ '索引状态' | translate }}</h2>
+                  <button mat-button color="primary" type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
+                    {{ actionBusy('knowledge-index') ? ('正在索引...' | translate) : ('开始索引' | translate) }}
+                  </button>
+                </div>
+                @if (knowledgeIndexStatus(); as indexState) {
+                  <div class="overview-grid compact-overview">
+                    <div>
+                      <span class="field-label">{{ '数据索引' | translate }}</span>
+                      <strong [ngClass]="toneClass(indexState.status)">{{ indexState.status | translate }}</strong>
+                    </div>
+                    <div>
+                      <span class="field-label">{{ '数据来源' | translate }}</span>
+                      <strong>{{ knowledgeSourceRoots().length }}</strong>
+                    </div>
+                    <div>
+                      <span class="field-label">{{ '图片内容' | translate }}</span>
+                      <strong>{{ indexState.content_indexed_image_count ?? 0 }}/{{ indexState.image_count ?? 0 }}</strong>
+                    </div>
+                    <div>
+                      <span class="field-label">{{ '视频/图片描述' | translate }}</span>
+                      <strong>{{ indexState.vlm_indexed_image_count ?? 0 }}</strong>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="empty-state">{{ '索引状态暂不可用。' | translate }}</div>
+                }
+              </section>
+            </section>
+          }
+
+          @if (activeAiSettingsTab() === 'models') {
+            <section class="ai-settings-panel model-capability-list">
+              @for (capability of aiModelCapabilities(); track capability.id) {
+                <article class="model-capability-row" [class.optional]="capability.optional">
+                  <div class="model-setting-line">
+                    <div>
+                      <span class="field-label">{{ capability.optional ? ('可选能力' | translate) : ('核心能力' | translate) }}</span>
+                      <strong>{{ capability.label | translate }}</strong>
+                      <p class="muted">{{ capability.detail | translate }}</p>
+                      <p class="muted">{{ workflowCurrentModelDetail(capability.kind) }}</p>
+                    </div>
+                    <span class="pill" [ngClass]="workflowCurrentEndpoint(capability.kind) ? 'tone-good' : 'tone-warn'">
+                      {{ workflowCurrentEndpoint(capability.kind) ? ('已选择' | translate) : ('还没有选择模型' | translate) }}
+                    </span>
+                    <div class="button-row">
+                      <button mat-button color="primary" type="button" (click)="toggleModelCapabilityChooser(capability)">
+                        {{ '选择模型' | translate }}
+                      </button>
+                      <button mat-button type="button" (click)="openModelCapabilityMoreModels(capability)">
+                        {{ '更多模型' | translate }}
+                      </button>
+                      @if (workflowCurrentEndpoint(capability.kind); as endpoint) {
+                        <button
+                          mat-button
+                          type="button"
+                          [disabled]="actionBusy('model-test:' + endpoint.model_endpoint_id)"
+                          (click)="testModelEndpoint(endpoint)"
+                        >
+                          {{ actionBusy('model-test:' + endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('测试一下' | translate) }}
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  @if (modelCapabilityChooserOpen(capability.id)) {
+                    <section class="inline-model-panel">
+                      @if (workflowModelChoices(capability.kind).length === 0) {
+                        <div class="empty-state inline-empty-action">
+                          <span>{{ '还没有已安装模型。' | translate }}</span>
+                          <button mat-button color="primary" type="button" (click)="openModelCapabilityMoreModels(capability)">
+                            {{ '更多模型' | translate }}
+                          </button>
+                        </div>
+                      } @else {
+                        @for (card of workflowModelChoices(capability.kind); track card.key) {
+                          <article class="model-option-row">
+                            <div>
+                              <strong>{{ card.displayName }}</strong>
+                              <p class="muted">{{ card.localPath || card.modelId }}</p>
+                            </div>
+                            <button
+                              mat-button
+                              type="button"
+                              [disabled]="modelCardActionDisabled(card)"
+                              (click)="handleModelCardAction(card)"
+                            >
+                              {{ card.actionLabel | translate }}
+                            </button>
+                          </article>
+                        }
+                      }
+                    </section>
+                  }
+
+                  @if (modelCapabilityMoreModelsOpen(capability.id)) {
+                    <section class="inline-model-panel">
+                      @if (workflowDownloadingModelChoices(capability.kind).length) {
+                        @for (card of workflowDownloadingModelChoices(capability.kind); track card.key) {
+                          <article class="model-option-row">
+                            <div>
+                              <strong>{{ card.displayName }}</strong>
+                              <p class="muted">{{ card.progressLabel || card.status }}</p>
+                            </div>
+                            <span class="pill" [ngClass]="toneClass(card.status)">{{ card.progressLabel || card.status }}</span>
+                          </article>
+                        }
+                      }
+                      @if (workflowAvailableModelChoices(capability.kind).length === 0) {
+                        <div class="empty-state inline-empty-action">
+                          <span>{{ '没有推荐下载项。' | translate }}</span>
+                          <button mat-button type="button" (click)="prepareModelCapabilityManualDownload(capability)">
+                            {{ '自由选择 Hugging Face 模型' | translate }}
+                          </button>
+                        </div>
+                      } @else {
+                        @for (card of workflowAvailableModelChoices(capability.kind); track card.key) {
+                          <article class="model-option-row">
+                            <div>
+                              <strong>{{ card.displayName }}</strong>
+                              <p class="muted">{{ card.modelId }} · {{ card.sizeHint || card.hardware }}</p>
+                            </div>
+                            <button
+                              mat-button
+                              color="primary"
+                              type="button"
+                              [disabled]="modelCardActionDisabled(card)"
+                              (click)="handleModelCardAction(card)"
+                            >
+                              {{ card.actionLabel | translate }}
+                            </button>
+                          </article>
+                        }
+                        <button mat-button type="button" (click)="prepareModelCapabilityManualDownload(capability)">
+                          {{ '自由选择 Hugging Face 模型' | translate }}
+                        </button>
+                      }
+                      @if (modelCapabilityManualDownloadOpen(capability.id)) {
+                        <form class="form-grid compact-download-form" [formGroup]="downloadForm" (ngSubmit)="createModelDownload()">
+                          <mat-form-field>
+                            <input matInput formControlName="modelId" [placeholder]="'Hugging Face 模型 ID' | translate" />
+                          </mat-form-field>
+                          <mat-form-field>
+                            <input matInput formControlName="displayName" [placeholder]="'显示名称' | translate" />
+                          </mat-form-field>
+                          <mat-form-field>
+                            <input matInput formControlName="sourceUrl" [placeholder]="'下载地址，可留空' | translate" />
+                          </mat-form-field>
+                          <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                            {{ '开始下载' | translate }}
+                          </button>
+                        </form>
+                      }
+                    </section>
+                  }
                 </article>
               }
-            </div>
-          </section>
-
-          @if (downloadingModelCards().length) {
-            <section class="model-section">
-              <div class="section-heading">
-                <h2>{{ 'Downloading' | translate }}</h2>
-              </div>
-              <div class="model-card-grid">
-                @for (card of downloadingModelCards(); track card.key) {
-                  <article class="customer-model-card active-download">
-                    <div class="model-card-heading">
-                      <div>
-                        <h2>{{ card.displayName }}</h2>
-                        <p class="muted">{{ card.modelId }}</p>
-                      </div>
-                      <span class="pill" [ngClass]="toneClass(card.status)">{{ card.progressLabel || card.status }}</span>
-                    </div>
-                    <mat-progress-bar mode="determinate" [value]="card.downloadJob?.progress_percent || 0"></mat-progress-bar>
-                    <div class="model-meta-grid">
-                      <span>{{ 'Size' | translate }}: {{ card.bytesLabel }}</span>
-                      <span>{{ 'Speed' | translate }}: {{ card.speedLabel }}</span>
-                      <span>{{ 'Target' | translate }}: {{ card.localPath || ('Pending' | translate) }}</span>
-                    </div>
-                    @if (card.errorMessage) {
-                      <p class="muted error">{{ card.errorMessage }}</p>
-                    }
-                    <div class="button-row">
-                      @if (card.downloadJob && isCancelableJob(card.downloadJob)) {
-                        <button
-                          mat-button
-                          type="button"
-                          [disabled]="isBusy()"
-                          (click)="cancelModelDownload(card.downloadJob)"
-                        >
-                          {{ 'Cancel' | translate }}
-                        </button>
-                      }
-                    </div>
-                  </article>
-                }
-              </div>
             </section>
           }
 
-          <section class="model-section">
-            <div class="section-heading">
-              <h2>{{ 'Installed' | translate }}</h2>
-            </div>
-            @if (installedModelCards().length === 0) {
-              <div class="empty-state">{{ 'No local models are installed yet.' | translate }}</div>
-            } @else {
-              <div class="model-card-grid">
-                @for (card of installedModelCards(); track card.key) {
-                  <article class="customer-model-card">
-                    <div class="model-card-heading">
-                      <div>
-                        <h2>{{ card.displayName }}</h2>
-                        <p class="muted">{{ card.modelId }} / {{ card.kind }}</p>
-                      </div>
-                      <span class="pill" [ngClass]="toneClass(card.status)">{{ card.status | translate }}</span>
-                    </div>
-                    <div class="model-meta-grid">
-                      <span>{{ 'Source' | translate }}: {{ card.source }}</span>
-                      <span>{{ 'Capabilities' | translate }}: {{ card.capabilities.join(', ') }}</span>
-                      <span>{{ 'Hardware' | translate }}: {{ card.hardware }}</span>
-                    </div>
-                    @if (card.localPath) {
-                      <p class="muted">{{ card.localPath }}</p>
-                      <p class="muted">{{ 'Manifest' | translate }}: snapshot_manifest.json</p>
+          @if (activeAiSettingsTab() === 'cloud-api') {
+            <section class="ai-settings-panel cloud-api-panel">
+              <form class="form-grid cloud-api-form" [formGroup]="cloudApiForm" (ngSubmit)="saveCloudApiSettings()">
+                <mat-form-field>
+                  <mat-select formControlName="provider" (selectionChange)="applyCloudProviderDefaults($event.value)">
+                    @for (provider of cloudProviderOptions; track provider.value) {
+                      <mat-option [value]="provider.value">{{ provider.label | translate }}</mat-option>
                     }
-                    <div class="button-row">
-                      <button
-                        mat-button
-                        color="primary"
-                        type="button"
-                        [disabled]="modelCardActionDisabled(card)"
-                        (click)="handleModelCardAction(card)"
-                      >
-                        {{ card.actionLabel | translate }}
-                      </button>
-                      @if (card.endpoint) {
-                        <button
-                          mat-button
-                          type="button"
-                          [disabled]="actionBusy('model-test:' + card.endpoint.model_endpoint_id)"
-                          (click)="testModelEndpoint(card.endpoint)"
-                        >
-                          {{ actionBusy('model-test:' + card.endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('Health Test' | translate) }}
-                        </button>
-                      }
-                    </div>
-                  </article>
-                }
-              </div>
-            }
-          </section>
-
-          <section class="model-section">
-            <div class="section-heading">
-              <h2>{{ 'Available to download' | translate }}</h2>
-            </div>
-            @if (availableModelCards().length === 0) {
-              <div class="empty-state">{{ 'No catalog models are available.' | translate }}</div>
-            } @else {
-              <div class="model-card-grid">
-                @for (card of availableModelCards(); track card.key) {
-                  <article class="customer-model-card">
-                    <div class="model-card-heading">
-                      <div>
-                        <h2>{{ card.displayName }}</h2>
-                        <p class="muted">{{ card.modelId }} / {{ card.kind }}</p>
-                      </div>
-                      <span class="pill" [ngClass]="toneClass(card.status)">{{ card.status | translate }}</span>
-                    </div>
-                    <div class="model-meta-grid">
-                      <span>{{ 'Source' | translate }}: {{ card.source }}</span>
-                      <span>{{ 'Capabilities' | translate }}: {{ card.capabilities.join(', ') }}</span>
-                      <span>{{ 'Size' | translate }}: {{ card.sizeHint }}</span>
-                      <span>{{ 'Hardware' | translate }}: {{ card.hardware }}</span>
-                    </div>
-                    @if (card.errorMessage) {
-                      <p class="muted error">{{ card.errorMessage }}</p>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="baseUrl" [placeholder]="'Base URL' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput formControlName="modelName" [placeholder]="'模型名称' | translate" />
+                </mat-form-field>
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="password"
+                    formControlName="apiKey"
+                    autocomplete="new-password"
+                    [placeholder]="cloudApiConfigured() ? ('已配置，留空保留' | translate) : ('API Key' | translate)"
+                  />
+                </mat-form-field>
+                <mat-form-field class="full-span">
+                  <mat-select formControlName="usageMode">
+                    @for (option of cloudUsageOptions; track option.value) {
+                      <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
                     }
-                    <div class="button-row">
-                      <button
-                        mat-button
-                        color="primary"
-                        type="button"
-                        [disabled]="modelCardActionDisabled(card)"
-                        (click)="handleModelCardAction(card)"
-                      >
-                        {{ card.actionLabel | translate }}
-                      </button>
-                      <button mat-button type="button" (click)="selectModelCardForManualDownload(card)">
-                        {{ 'Manual options' | translate }}
-                      </button>
-                    </div>
-                  </article>
-                }
-              </div>
-            }
-          </section>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="settings-card knowledge-card">
-        <mat-card-header>
-          <mat-card-title>{{ 'RAG Index' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          @if (knowledgeIndexStatus(); as indexState) {
-            <div class="overview-grid knowledge-overview">
-              <div>
-                <span class="field-label">{{ 'Index status' | translate }}</span>
-                <strong [ngClass]="toneClass(indexState.status)">{{ indexState.status | translate }}</strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'Index writable' | translate }}</span>
-                <strong [ngClass]="indexState.index_root_writable ? 'tone-good' : 'tone-warn'">
-                  {{ indexState.index_root_writable ? ('Yes' | translate) : ('No' | translate) }}
-                </strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'Source roots' | translate }}</span>
-                <strong>{{ knowledgeSourceRoots().length }}</strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'Indexed images' | translate }}</span>
-                <strong>{{ indexState.image_count ?? 0 }}</strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'Content-indexed images' | translate }}</span>
-                <strong>{{ indexState.content_indexed_image_count ?? 0 }}</strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'VLM image descriptions' | translate }}</span>
-                <strong>{{ indexState.vlm_indexed_image_count ?? 0 }}</strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'VLM missing images' | translate }}</span>
-                <strong [ngClass]="(indexState.image_content_missing_count ?? 0) > 0 ? 'tone-warn' : 'tone-good'">
-                  {{ indexState.image_content_missing_count ?? 0 }}
-                </strong>
-              </div>
-              <div>
-                <span class="field-label">{{ 'Read-only picker' | translate }}</span>
-                <strong>{{ filesBrowse()?.readonly ? ('Open' | translate) : ('Closed' | translate) }}</strong>
-              </div>
-            </div>
-            @if (indexState.blockers?.length) {
-              <div class="notice warn compact">
-                @for (blocker of indexState.blockers; track blocker) {
-                  <p>{{ blocker }}</p>
-                }
-              </div>
-            }
-            @if (rag()?.warnings?.length) {
-              <div class="notice warn compact">
-                @for (warning of rag()?.warnings ?? []; track warning) {
-                  <p>{{ warning }}</p>
-                }
-              </div>
-            }
-          }
-
-          <form
-            class="form-grid knowledge-index-form"
-            [formGroup]="knowledgeIndexForm"
-            (ngSubmit)="saveKnowledgeSettings()"
-          >
-            <mat-form-field class="full-span">
-              <input matInput formControlName="indexRoot" [placeholder]="'Index root for manifest, chunks, embeddings, vectors, and reports' | translate" />
-            </mat-form-field>
-            <mat-form-field>
-              <mat-select formControlName="privacyLevel">
-                @for (option of knowledgePrivacyOptions; track option.value) {
-                  <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field>
-              <mat-select formControlName="resourceProfile">
-                @for (option of knowledgeResourceOptions; track option.value) {
-                  <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-            <div class="button-row full-span">
-              <button mat-button color="primary" type="submit" [disabled]="actionBusy('knowledge-settings')">
-                {{ 'Save knowledge settings' | translate }}
-              </button>
-              <button mat-button type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
-                {{ actionBusy('knowledge-index') ? ('Indexing...' | translate) : ('Run index' | translate) }}
-              </button>
-              <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(null)">
-                {{ 'Browse HarborOS files' | translate }}
-              </button>
-            </div>
-          </form>
-
-          <mat-divider></mat-divider>
-
-          <div class="knowledge-layout">
-            <section class="knowledge-section">
-              <div class="section-heading">
-                <h2>{{ 'Configured source roots' | translate }}</h2>
-              </div>
-              @if (knowledgeSourceRoots().length === 0) {
-                <div class="empty-state">{{ 'No source roots are configured.' | translate }}</div>
-              } @else {
-                <div class="table-list compact-table">
-                  @for (root of knowledgeSourceRoots(); track root.root_id + root.path) {
-                    <article class="table-row">
-                      <div>
-                        <h2>{{ root.label || root.root_id }}</h2>
-                        <p class="muted">{{ root.path }}</p>
-                        @if (root.last_indexed_at) {
-                          <p class="muted">{{ 'Last indexed' | translate }}: {{ root.last_indexed_at }}</p>
-                        }
-                      </div>
-                      <div class="row-actions">
-                        @if (knowledgeSourceStatus(root); as sourceStatus) {
-                          <span class="pill" [ngClass]="toneClass(sourceStatus.status)">{{ sourceStatus.status | translate }}</span>
-                        } @else {
-                          <span class="pill">{{ root.enabled ? ('enabled' | translate) : ('disabled' | translate) }}</span>
-                        }
-                        <button mat-button type="button" (click)="editKnowledgeSource(root)">
-                          {{ 'Edit' | translate }}
-                        </button>
-                        <button mat-button type="button" [disabled]="actionBusyPrefix('knowledge-source-remove')" (click)="removeKnowledgeSource(root)">
-                          {{ 'Remove' | translate }}
-                        </button>
-                      </div>
-                    </article>
-                  }
-                </div>
-              }
-            </section>
-
-            <section class="knowledge-section">
-              <div class="section-heading">
-                <h2>{{ 'Source root editor' | translate }}</h2>
-              </div>
-              <form
-                class="form-grid knowledge-source-form"
-                [formGroup]="knowledgeSourceForm"
-                (ngSubmit)="saveKnowledgeSettings()"
-              >
-                <mat-form-field>
-                  <input matInput formControlName="rootId" [placeholder]="'Root id' | translate" />
+                  </mat-select>
                 </mat-form-field>
-                <mat-form-field>
-                  <input matInput formControlName="label" [placeholder]="'Label' | translate" />
-                </mat-form-field>
-                <mat-form-field class="source-path-field">
-                  <input matInput formControlName="path" [placeholder]="'Source folder path' | translate" />
-                </mat-form-field>
-                <mat-checkbox formControlName="enabled">{{ 'Enabled' | translate }}</mat-checkbox>
-                <mat-form-field>
-                  <textarea matInput rows="3" formControlName="include" [placeholder]="'Include globs, one per line' | translate"></textarea>
-                </mat-form-field>
-                <mat-form-field>
-                  <textarea matInput rows="3" formControlName="exclude" [placeholder]="'Exclude globs, one per line' | translate"></textarea>
-                </mat-form-field>
+
+                @if (cloudApiForm.controls.usageMode.value === 'selected_capabilities') {
+                  <section class="cloud-capability-box full-span">
+                    <span class="field-label">{{ '允许使用云端 API 的能力' | translate }}</span>
+                    <mat-checkbox formControlName="allowQuestionUnderstanding">{{ '问题理解' | translate }}</mat-checkbox>
+                    <mat-checkbox formControlName="allowAnswer">{{ '对话回答' | translate }}</mat-checkbox>
+                    <p class="muted">{{ '向量检索、图片/视频理解、文字识别和语音转文字保持本地。' | translate }}</p>
+                  </section>
+                }
+
                 <div class="button-row full-span">
-                  <button mat-button color="primary" type="submit" [disabled]="actionBusy('knowledge-settings')">
-                    {{ 'Save source root' | translate }}
+                  <span class="pill" [ngClass]="cloudApiConfigured() ? 'tone-good' : 'tone-warn'">
+                    {{ cloudApiConfiguredLabel() | translate }}
+                  </span>
+                  <button mat-button color="primary" type="submit" [disabled]="actionBusy('cloud-api-settings')">
+                    {{ '保存云端 API' | translate }}
                   </button>
-                  <button mat-button type="button" (click)="clearKnowledgeSourceForm()">
-                    {{ 'Clear' | translate }}
+                  <button mat-button type="button" [disabled]="actionBusyPrefix('model-test')" (click)="testCloudApiSettings()">
+                    {{ '测试连接' | translate }}
                   </button>
                 </div>
               </form>
             </section>
-          </div>
+          }
+        </mat-card-content>
+      </mat-card>
 
-          @if (filesBrowse(); as browse) {
-            <section class="file-browser">
-              <div class="section-heading browser-heading">
-                <div>
-                  <h2>{{ 'Read-only folder picker' | translate }}</h2>
-                  <p class="muted">{{ browse.path }}</p>
-                </div>
-                <div class="button-row">
-                  @if (browse.parent) {
-                    <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(browse.parent)">
-                      {{ 'Up' | translate }}
-                    </button>
-                  }
-                  <button mat-button type="button" (click)="useBrowsePathAsSource(browse.path)">
-                    {{ 'Use current as source' | translate }}
-                  </button>
-                  <button mat-button type="button" (click)="useBrowsePathAsIndex(browse.path)">
-                    {{ 'Use current as index' | translate }}
-                  </button>
-                </div>
-              </div>
-              <div class="table-list compact-table">
-                @for (entry of browse.entries; track entry.path) {
-                  @if (entry.is_dir) {
-                    <article class="table-row">
+      @if (false) {
+      <mat-card class="settings-card ai-workflow-card">
+        <mat-card-content>
+          <section class="workflow-status" [ngClass]="'tone-' + aiWorkflowSummary().tone">
+            <div>
+              <span class="field-label">{{ 'AI 能力状态' | translate }}</span>
+              <strong>{{ aiWorkflowSummary().label | translate }}</strong>
+              <p>{{ aiWorkflowSummary().detail | translate }}</p>
+            </div>
+            <button mat-button type="button" [disabled]="loading()" (click)="refresh()">
+              {{ 'Refresh' | translate }}
+            </button>
+          </section>
+
+          <section class="workflow-stepper" [attr.aria-label]="'AI workflow pipeline' | translate">
+            @for (node of aiWorkflowNodes(); track node.id; let index = $index) {
+              <button
+                type="button"
+                class="workflow-step"
+                [class.active]="activeAiWorkflowNode() === node.id"
+                [ngClass]="'tone-' + node.tone"
+                (click)="selectAiWorkflowNode(node.id)"
+              >
+                <span class="step-index">{{ index + 1 }}</span>
+                <span class="step-copy">
+                  <strong>{{ node.label | translate }}</strong>
+                  <small>{{ node.status | translate }} · {{ node.summary | translate }}</small>
+                </span>
+              </button>
+            }
+          </section>
+
+          @if (selectedAiWorkflowNode(); as node) {
+            <section class="workflow-node-panel">
+              @if (activeAiWorkflowNode() === 'sources') {
+                <section class="node-config source-node-config">
+                  <section class="knowledge-section source-roots-card">
+                    <div class="section-heading">
                       <div>
-                        <h2>{{ entry.name }}</h2>
-                        <p class="muted">{{ entry.path }}</p>
+                        <h2>{{ '数据来源' | translate }}</h2>
+                        <p class="muted">{{ '选择 HarborOS 上的文件夹，HarborBot 会在这些内容里搜索。' | translate }}</p>
                       </div>
-                      <div class="row-actions">
-                        <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(entry.path)">
-                          {{ 'Open' | translate }}
-                        </button>
-                        <button mat-button type="button" (click)="useBrowsePathAsSource(entry.path)">
-                          {{ 'Use as source' | translate }}
-                        </button>
-                        <button mat-button type="button" (click)="useBrowsePathAsIndex(entry.path)">
-                          {{ 'Use as index' | translate }}
-                        </button>
+                      <button mat-button color="primary" type="button" [disabled]="actionBusy('knowledge-settings')" (click)="openKnowledgeFolderPicker()">
+                        {{ '添加数据源' | translate }}
+                      </button>
+                    </div>
+                    @if (knowledgeSourceRoots().length === 0) {
+                      <div class="empty-state">{{ '还没有添加文件夹。点击添加数据源选择一个 HarborOS 文件夹。' | translate }}</div>
+                    } @else {
+                      <div class="table-list compact-table source-root-list">
+                        @for (root of knowledgeSourceRoots(); track root.root_id + root.path) {
+                          <article class="table-row">
+                            <div>
+                              <h2>{{ root.label || pathLabel(root.path) }}</h2>
+                              <p class="muted">{{ 'HarborOS 路径' | translate }}: {{ root.path }}</p>
+                              @if (root.last_indexed_at) {
+                                <p class="muted">{{ 'Last indexed' | translate }}: {{ root.last_indexed_at }}</p>
+                              }
+                            </div>
+                            <div class="row-actions">
+                              @if (knowledgeSourceStatus(root); as sourceStatus) {
+                                <span class="pill" [ngClass]="toneClass(sourceStatus.status)">{{ sourceStatus.status | translate }}</span>
+                              } @else {
+                                <span class="pill">{{ root.enabled ? ('enabled' | translate) : ('disabled' | translate) }}</span>
+                              }
+                              <button mat-button type="button" [disabled]="actionBusy('knowledge-settings')" (click)="editKnowledgeSource(root)">
+                                {{ 'Edit' | translate }}
+                              </button>
+                              <button mat-button type="button" [disabled]="actionBusyPrefix('knowledge-source-remove')" (click)="removeKnowledgeSource(root)">
+                                {{ 'Remove' | translate }}
+                              </button>
+                            </div>
+                          </article>
+                        }
                       </div>
-                    </article>
-                  }
-                }
-              </div>
+                    }
+
+                    @if (filesBrowse(); as browse) {
+                      <section class="file-browser fallback-browser compact-fallback-browser">
+                        <div class="section-heading browser-heading">
+                          <div>
+                            <h2>{{ '文件夹选择器' | translate }}</h2>
+                            <p class="muted">{{ browse.path }}</p>
+                          </div>
+                          <div class="button-row">
+                            @if (browse.parent) {
+                              <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(browse.parent)">
+                                {{ 'Up' | translate }}
+                              </button>
+                            }
+                          </div>
+                        </div>
+                        <div class="table-list compact-table">
+                          @for (entry of browse.entries; track entry.path) {
+                            @if (entry.is_dir) {
+                              <article class="table-row">
+                                <div>
+                                  <h2>{{ entry.name }}</h2>
+                                  <p class="muted">{{ entry.path }}</p>
+                                </div>
+                                <div class="row-actions">
+                                  <button mat-button type="button" [disabled]="actionBusy('files-browse')" (click)="browseKnowledgeFiles(entry.path)">
+                                    {{ 'Open' | translate }}
+                                  </button>
+                                  <button mat-button type="button" [disabled]="actionBusy('knowledge-settings')" (click)="saveKnowledgeSourceFromPath(entry.path)">
+                                    {{ '使用' | translate }}
+                                  </button>
+                                </div>
+                              </article>
+                            }
+                          }
+                        </div>
+                      </section>
+                    }
+                  </section>
+
+                  <section class="knowledge-section dvr-folder-card">
+                    <div class="section-heading">
+                      <h2>{{ 'DVR 文件夹位置' | translate }}</h2>
+                      <button mat-button type="button" (click)="selectTab('devices')">
+                        {{ '去 AIoT/DVR 设置' | translate }}
+                      </button>
+                    </div>
+                    @if (dvrSettings()?.media_library_root || dvrSettings()?.recording_root) {
+                      <p class="muted">{{ '摄像头快照和录像由 HarborCam 使用，位置在 AIoT/DVR 设置中管理。' | translate }}</p>
+                      <div class="path-summary">
+                        {{ 'HarborOS 路径' | translate }}: {{ dvrSettings()?.media_library_root || dvrSettings()?.recording_root }}
+                      </div>
+                    } @else {
+                      <div class="empty-state">{{ 'DVR 文件夹还没有配置。' | translate }}</div>
+                    }
+                  </section>
+
+                  <section class="knowledge-section index-status-card">
+                    <div class="section-heading">
+                      <h2>{{ '索引状态' | translate }}</h2>
+                      <button mat-button type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
+                        {{ actionBusy('knowledge-index') ? ('正在索引...' | translate) : ('开始索引' | translate) }}
+                      </button>
+                    </div>
+                    @if (knowledgeIndexStatus(); as indexState) {
+                      <div class="overview-grid compact-overview">
+                        <div>
+                          <span class="field-label">{{ '数据索引' | translate }}</span>
+                          <strong [ngClass]="toneClass(indexState.status)">{{ indexState.status | translate }}</strong>
+                        </div>
+                        <div>
+                          <span class="field-label">{{ '数据来源' | translate }}</span>
+                          <strong>{{ knowledgeSourceRoots().length }}</strong>
+                        </div>
+                        <div>
+                          <span class="field-label">{{ '图片内容' | translate }}</span>
+                          <strong>{{ indexState.content_indexed_image_count ?? 0 }}/{{ indexState.image_count ?? 0 }}</strong>
+                        </div>
+                        <div>
+                          <span class="field-label">{{ '视频/图片描述' | translate }}</span>
+                          <strong>{{ indexState.vlm_indexed_image_count ?? 0 }}</strong>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="empty-state">{{ '索引状态暂不可用。' | translate }}</div>
+                    }
+                  </section>
+
+                  <details class="inline-advanced source-advanced">
+                    <summary>{{ '高级选项' | translate }}</summary>
+                    <div class="advanced-inline-body">
+                      <form class="form-grid knowledge-index-form" [formGroup]="knowledgeIndexForm" (ngSubmit)="saveKnowledgeAdvancedSettings()">
+                        <mat-form-field class="full-span">
+                          <input matInput formControlName="indexRoot" [placeholder]="'搜索索引保存位置' | translate" />
+                        </mat-form-field>
+                        <mat-form-field>
+                          <mat-select formControlName="privacyLevel">
+                            @for (option of knowledgePrivacyOptions; track option.value) {
+                              <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                            }
+                          </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                          <mat-select formControlName="resourceProfile">
+                            @for (option of knowledgeResourceOptions; track option.value) {
+                              <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                            }
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="button-row full-span">
+                          <button mat-button color="primary" type="submit" [disabled]="actionBusy('knowledge-settings')">
+                            {{ '保存数据设置' | translate }}
+                          </button>
+                        </div>
+                      </form>
+
+                      <form class="form-grid knowledge-source-form" [formGroup]="knowledgeSourceForm" (ngSubmit)="saveKnowledgeSettings()">
+                        <mat-form-field>
+                          <input matInput formControlName="rootId" [placeholder]="'名称 ID' | translate" />
+                        </mat-form-field>
+                        <mat-form-field>
+                          <input matInput formControlName="label" [placeholder]="'显示名称' | translate" />
+                        </mat-form-field>
+                        <mat-form-field class="source-path-field">
+                          <input matInput formControlName="path" [placeholder]="'文件夹路径' | translate" />
+                        </mat-form-field>
+                        <mat-checkbox formControlName="enabled">{{ 'Enabled' | translate }}</mat-checkbox>
+                        <mat-form-field>
+                          <textarea matInput rows="3" formControlName="include" [placeholder]="'只包含这些文件，可留空' | translate"></textarea>
+                        </mat-form-field>
+                        <mat-form-field>
+                          <textarea matInput rows="3" formControlName="exclude" [placeholder]="'排除这些文件，可留空' | translate"></textarea>
+                        </mat-form-field>
+                        <div class="button-row full-span">
+                          <button mat-button color="primary" type="submit" [disabled]="actionBusy('knowledge-settings')">
+                            {{ '保存数据来源' | translate }}
+                          </button>
+                          <button mat-button type="button" (click)="clearKnowledgeSourceForm()">
+                            {{ 'Clear' | translate }}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </details>
+                </section>
+              }
+
+              @if (activeAiWorkflowNode() === 'semantic') {
+                <section class="node-config model-node-config semantic-node-config">
+                  <section class="workflow-model-plain">
+                    <div class="model-setting-line">
+                      <div>
+                        <span class="field-label">{{ '模型' | translate }}</span>
+                        <strong>{{ workflowCurrentModelName('embedder') }}</strong>
+                        <p class="muted">{{ workflowCurrentModelDetail('embedder') }}</p>
+                      </div>
+                      <span class="pill" [ngClass]="'tone-' + node.tone">{{ node.status | translate }}</span>
+                      <div class="button-row">
+                        <button mat-button color="primary" type="button" (click)="toggleWorkflowModelChooser('embedder')">
+                          {{ '选择模型' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="openWorkflowMoreModels('embedder')">
+                          {{ '更多' | translate }}
+                        </button>
+                        <button mat-button type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
+                          {{ actionBusy('knowledge-index') ? ('正在索引...' | translate) : ('重新索引' | translate) }}
+                        </button>
+                        @if (workflowCurrentEndpoint('embedder'); as endpoint) {
+                          <button
+                            mat-button
+                            type="button"
+                            [disabled]="actionBusy('model-test:' + endpoint.model_endpoint_id)"
+                            (click)="testModelEndpoint(endpoint)"
+                          >
+                            {{ actionBusy('model-test:' + endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('测试一下' | translate) }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    @if (workflowModelChooserOpen('embedder')) {
+                      <section class="inline-model-panel">
+                        @if (workflowModelChoices('embedder').length === 0) {
+                          <div class="empty-state inline-empty-action">
+                            <span>{{ '还没有已安装模型。' | translate }}</span>
+                            <button mat-button color="primary" type="button" (click)="openWorkflowMoreModels('embedder')">
+                              {{ '更多' | translate }}
+                            </button>
+                          </div>
+                        } @else {
+                          @for (card of workflowModelChoices('embedder'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.localPath || card.modelId }}</p>
+                              </div>
+                              <button
+                                mat-button
+                                type="button"
+                                [disabled]="modelCardActionDisabled(card)"
+                                (click)="handleModelCardAction(card)"
+                              >
+                                {{ card.actionLabel | translate }}
+                              </button>
+                            </article>
+                          }
+                        }
+                      </section>
+                    }
+
+                    @if (workflowMoreModelsOpen('embedder')) {
+                      <section class="inline-model-panel">
+                        @if (workflowDownloadingModelChoices('embedder').length) {
+                          @for (card of workflowDownloadingModelChoices('embedder'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.progressLabel || card.status }}</p>
+                              </div>
+                              <span class="pill" [ngClass]="toneClass(card.status)">{{ card.progressLabel || card.status }}</span>
+                            </article>
+                          }
+                        }
+                        @if (workflowAvailableModelChoices('embedder').length === 0) {
+                          <div class="empty-state">{{ '没有推荐下载项，可以自由输入 Hugging Face 模型。' | translate }}</div>
+                        } @else {
+                          @for (card of workflowAvailableModelChoices('embedder'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.modelId }} · {{ card.sizeHint || card.hardware }}</p>
+                              </div>
+                              <button
+                                mat-button
+                                color="primary"
+                                type="button"
+                                [disabled]="modelCardActionDisabled(card)"
+                                (click)="handleModelCardAction(card)"
+                              >
+                                {{ card.actionLabel | translate }}
+                              </button>
+                            </article>
+                          }
+                        }
+                        <button mat-button type="button" (click)="prepareWorkflowManualDownload('embedder')">
+                          {{ '自由选择 Hugging Face 模型' | translate }}
+                        </button>
+                        @if (workflowManualDownloadOpen('embedder')) {
+                          <form class="form-grid compact-download-form" [formGroup]="downloadForm" (ngSubmit)="createModelDownload()">
+                            <mat-form-field>
+                              <input matInput formControlName="modelId" [placeholder]="'Hugging Face 模型 ID' | translate" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput formControlName="displayName" [placeholder]="'显示名称' | translate" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput formControlName="sourceUrl" [placeholder]="'下载地址，可留空' | translate" />
+                            </mat-form-field>
+                            <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                              {{ '开始下载' | translate }}
+                            </button>
+                          </form>
+                        }
+                      </section>
+                    }
+                  </section>
+                </section>
+              }
+
+              @if (activeAiWorkflowNode() === 'vision') {
+                <section class="node-config model-node-config vision-node-config">
+                  <section class="workflow-model-plain">
+                    <div class="model-setting-line">
+                      <div>
+                        <span class="field-label">{{ '模型' | translate }}</span>
+                        <strong>{{ workflowCurrentModelName('vlm') }}</strong>
+                        <p class="muted">{{ workflowCurrentModelDetail('vlm') }}</p>
+                      </div>
+                      <span class="pill" [ngClass]="'tone-' + node.tone">{{ node.status | translate }}</span>
+                      <div class="button-row">
+                        <button mat-button color="primary" type="button" (click)="toggleWorkflowModelChooser('vlm')">
+                          {{ '选择模型' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="openWorkflowMoreModels('vlm')">
+                          {{ '更多' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="inspectImageContentCounts()">
+                          {{ '查看统计' | translate }}
+                        </button>
+                        @if (workflowCurrentEndpoint('vlm'); as endpoint) {
+                          <button
+                            mat-button
+                            type="button"
+                            [disabled]="actionBusy('model-test:' + endpoint.model_endpoint_id)"
+                            (click)="testModelEndpoint(endpoint)"
+                          >
+                            {{ actionBusy('model-test:' + endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('测试一下' | translate) }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    @if (workflowModelChooserOpen('vlm')) {
+                      <section class="inline-model-panel">
+                        @if (workflowModelChoices('vlm').length === 0) {
+                          <div class="empty-state inline-empty-action">
+                            <span>{{ '还没有已安装模型。' | translate }}</span>
+                            <button mat-button color="primary" type="button" (click)="openWorkflowMoreModels('vlm')">
+                              {{ '更多' | translate }}
+                            </button>
+                          </div>
+                        } @else {
+                          @for (card of workflowModelChoices('vlm'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.localPath || card.modelId }}</p>
+                              </div>
+                              <button
+                                mat-button
+                                type="button"
+                                [disabled]="modelCardActionDisabled(card)"
+                                (click)="handleModelCardAction(card)"
+                              >
+                                {{ card.actionLabel | translate }}
+                              </button>
+                            </article>
+                          }
+                        }
+                      </section>
+                    }
+
+                    @if (workflowMoreModelsOpen('vlm')) {
+                      <section class="inline-model-panel">
+                        @if (workflowDownloadingModelChoices('vlm').length) {
+                          @for (card of workflowDownloadingModelChoices('vlm'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.progressLabel || card.status }}</p>
+                              </div>
+                              <span class="pill" [ngClass]="toneClass(card.status)">{{ card.progressLabel || card.status }}</span>
+                            </article>
+                          }
+                        }
+                        @if (workflowAvailableModelChoices('vlm').length === 0) {
+                          <div class="empty-state">{{ '没有推荐下载项，可以自由输入 Hugging Face 模型。' | translate }}</div>
+                        } @else {
+                          @for (card of workflowAvailableModelChoices('vlm'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.modelId }} · {{ card.sizeHint || card.hardware }}</p>
+                              </div>
+                              <button
+                                mat-button
+                                color="primary"
+                                type="button"
+                                [disabled]="modelCardActionDisabled(card)"
+                                (click)="handleModelCardAction(card)"
+                              >
+                                {{ card.actionLabel | translate }}
+                              </button>
+                            </article>
+                          }
+                        }
+                        <button mat-button type="button" (click)="prepareWorkflowManualDownload('vlm')">
+                          {{ '自由选择 Hugging Face 模型' | translate }}
+                        </button>
+                        @if (workflowManualDownloadOpen('vlm')) {
+                          <form class="form-grid compact-download-form" [formGroup]="downloadForm" (ngSubmit)="createModelDownload()">
+                            <mat-form-field>
+                              <input matInput formControlName="modelId" [placeholder]="'Hugging Face 模型 ID' | translate" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput formControlName="displayName" [placeholder]="'显示名称' | translate" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput formControlName="sourceUrl" [placeholder]="'下载地址，可留空' | translate" />
+                            </mat-form-field>
+                            <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                              {{ '开始下载' | translate }}
+                            </button>
+                          </form>
+                        }
+                      </section>
+                    }
+                    <div class="simple-stat-row">
+                      @for (stat of ragValidationImageStats(); track stat.id) {
+                        <span [ngClass]="'tone-' + stat.tone">{{ stat.label | translate }}: <strong>{{ stat.value }}</strong></span>
+                      }
+                    </div>
+                  </section>
+                </section>
+              }
+
+              @if (activeAiWorkflowNode() === 'chat') {
+                <section class="node-config model-node-config chat-node-config">
+                  <section class="workflow-model-plain">
+                    <div class="model-setting-line">
+                      <div>
+                        <span class="field-label">{{ '模型' | translate }}</span>
+                        <strong>{{ workflowCurrentModelName('llm') }}</strong>
+                        <p class="muted">{{ workflowCurrentModelDetail('llm') }}</p>
+                      </div>
+                      <span class="pill" [ngClass]="'tone-' + node.tone">{{ node.status | translate }}</span>
+                      <div class="button-row">
+                        <button mat-button color="primary" type="button" (click)="toggleWorkflowModelChooser('llm')">
+                          {{ '选择模型' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="openWorkflowMoreModels('llm')">
+                          {{ '更多' | translate }}
+                        </button>
+                        @if (workflowCurrentEndpoint('llm'); as endpoint) {
+                          <button
+                            mat-button
+                            type="button"
+                            [disabled]="actionBusy('model-test:' + endpoint.model_endpoint_id)"
+                            (click)="testModelEndpoint(endpoint)"
+                          >
+                            {{ actionBusy('model-test:' + endpoint.model_endpoint_id) ? ('Testing...' | translate) : ('测试一下' | translate) }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    @if (workflowModelChooserOpen('llm')) {
+                      <section class="inline-model-panel">
+                        @if (workflowModelChoices('llm').length === 0) {
+                          <div class="empty-state inline-empty-action">
+                            <span>{{ '还没有已安装模型。' | translate }}</span>
+                            <button mat-button color="primary" type="button" (click)="openWorkflowMoreModels('llm')">
+                              {{ '更多' | translate }}
+                            </button>
+                          </div>
+                        } @else {
+                          @for (card of workflowModelChoices('llm'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.localPath || card.modelId }}</p>
+                              </div>
+                              <button
+                                mat-button
+                                type="button"
+                                [disabled]="modelCardActionDisabled(card)"
+                                (click)="handleModelCardAction(card)"
+                              >
+                                {{ card.actionLabel | translate }}
+                              </button>
+                            </article>
+                          }
+                        }
+                      </section>
+                    }
+
+                    @if (workflowMoreModelsOpen('llm')) {
+                      <section class="inline-model-panel">
+                        @if (workflowDownloadingModelChoices('llm').length) {
+                          @for (card of workflowDownloadingModelChoices('llm'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.progressLabel || card.status }}</p>
+                              </div>
+                              <span class="pill" [ngClass]="toneClass(card.status)">{{ card.progressLabel || card.status }}</span>
+                            </article>
+                          }
+                        }
+                        @if (workflowAvailableModelChoices('llm').length === 0) {
+                          <div class="empty-state">{{ '没有推荐下载项，可以自由输入 Hugging Face 模型。' | translate }}</div>
+                        } @else {
+                          @for (card of workflowAvailableModelChoices('llm'); track card.key) {
+                            <article class="model-option-row">
+                              <div>
+                                <strong>{{ card.displayName }}</strong>
+                                <p class="muted">{{ card.modelId }} · {{ card.sizeHint || card.hardware }}</p>
+                              </div>
+                              <button
+                                mat-button
+                                color="primary"
+                                type="button"
+                                [disabled]="modelCardActionDisabled(card)"
+                                (click)="handleModelCardAction(card)"
+                              >
+                                {{ card.actionLabel | translate }}
+                              </button>
+                            </article>
+                          }
+                        }
+                        <button mat-button type="button" (click)="prepareWorkflowManualDownload('llm')">
+                          {{ '自由选择 Hugging Face 模型' | translate }}
+                        </button>
+                        @if (workflowManualDownloadOpen('llm')) {
+                          <form class="form-grid compact-download-form" [formGroup]="downloadForm" (ngSubmit)="createModelDownload()">
+                            <mat-form-field>
+                              <input matInput formControlName="modelId" [placeholder]="'Hugging Face 模型 ID' | translate" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput formControlName="displayName" [placeholder]="'显示名称' | translate" />
+                            </mat-form-field>
+                            <mat-form-field>
+                              <input matInput formControlName="sourceUrl" [placeholder]="'下载地址，可留空' | translate" />
+                            </mat-form-field>
+                            <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+                              {{ '开始下载' | translate }}
+                            </button>
+                          </form>
+                        }
+                      </section>
+                    }
+                  </section>
+                </section>
+              }
+
+              @if (activeAiWorkflowNode() === 'apps') {
+                <section class="node-config workflow-apps">
+                  <section class="workflow-app-card">
+                    <div class="app-entry-list">
+                      <article>
+                        <div>
+                          <h2>{{ 'HarborBot' | translate }}</h2>
+                          <p>{{ '全域多模态搜索：NAS 文件、图片、文本和视频。' | translate }}</p>
+                        </div>
+                        <a mat-button color="primary" routerLink="/harborbot">{{ '打开' | translate }}</a>
+                      </article>
+                      <article>
+                        <div>
+                          <h2>{{ 'HarborCam' | translate }}</h2>
+                          <p>{{ '摄像头实况、回看和 DVR 事件检索。' | translate }}</p>
+                        </div>
+                        <a mat-button color="primary" routerLink="/harborcam">{{ '打开' | translate }}</a>
+                      </article>
+                    </div>
+                    <div class="app-status-line">
+                      <div>
+                        <span class="field-label">{{ '状态' | translate }}</span>
+                        <strong>{{ node.status | translate }}</strong>
+                      </div>
+                      <span class="pill" [ngClass]="'tone-' + node.tone">{{ node.status | translate }}</span>
+                    </div>
+                  </section>
+                </section>
+              }
             </section>
           }
         </mat-card-content>
       </mat-card>
 
-      <details class="advanced-settings" [attr.open]="modelsAdvancedOpen() ? '' : null">
+      <details
+        class="advanced-settings"
+        [attr.open]="modelsAdvancedOpen() ? '' : null"
+        (toggle)="modelsAdvancedOpen.set($any($event.target).open)"
+      >
         <summary>{{ 'Advanced settings' | translate }}</summary>
+        @if (modelsAdvancedOpen()) {
         <div class="advanced-settings-body">
           <mat-card class="settings-card endpoint-editor-card">
             <mat-card-header>
@@ -1234,7 +1607,9 @@
             </mat-card-content>
           </mat-card>
         </div>
+        }
       </details>
+      }
     </section>
   }
 
@@ -1320,6 +1695,146 @@
               {{ 'Save Defaults' | translate }}
             </button>
           </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="settings-card dvr-card">
+        <mat-card-header>
+          <mat-card-title>{{ 'Local Camera DVR' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (endpointError('dvrSettings') || endpointError('dvrStatus') || endpointError('dvrTimeline')) {
+            <div class="notice error compact">
+              <p>{{ endpointError('dvrSettings') || endpointError('dvrStatus') || endpointError('dvrTimeline') }}</p>
+            </div>
+          }
+
+          <div class="dvr-summary-grid">
+            <div>
+              <span class="field-label">{{ 'Media library root' | translate }}</span>
+              <strong>
+                {{ dvrStatus()?.settings?.media_library_root || dvrSettings()?.media_library_root || ('Not configured' | translate) }}
+              </strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Library status' | translate }}</span>
+              <strong [ngClass]="dvrStatus()?.root_writable ? 'tone-good' : 'tone-warn'">
+                {{ dvrRecordingRootStatus() | translate }}
+              </strong>
+            </div>
+            <div>
+              <span class="field-label">{{ 'Stored video' | translate }}</span>
+              <strong>{{ formatBytes(dvrStatus()?.capacity?.estimated_bytes_enabled_total) }}</strong>
+            </div>
+          </div>
+
+          <form class="form-grid dvr-form" [formGroup]="dvrForm" (ngSubmit)="saveDvrSettings()">
+            <mat-form-field class="full-span">
+              <input matInput formControlName="recordingRoot" [placeholder]="'DVR base root' | translate" />
+            </mat-form-field>
+            <mat-form-field class="full-span">
+              <input matInput formControlName="mediaLibraryRoot" [placeholder]="'DVR media library root' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="retentionDays" [placeholder]="'Retention days' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="segmentSeconds">
+                @for (option of dvrSegmentOptions; track option.value) {
+                  <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="continuousBitrateMbps" [placeholder]="'Bitrate Mbps' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="diskBudgetGb" [placeholder]="'Disk budget GB' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="keyframeCount" [placeholder]="'Keyframe count' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="keyframeIntervalSeconds" [placeholder]="'Keyframe interval seconds' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="continuousStreamPathHint" [placeholder]="'Low bitrate stream path' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="highResStreamPathHint" [placeholder]="'High resolution stream path' | translate" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="highResEventClipSeconds" [placeholder]="'Event clip seconds' | translate" />
+            </mat-form-field>
+            <mat-form-field class="full-span">
+              <mat-select formControlName="enabledDeviceIds" multiple>
+                @for (device of devices(); track device.device_id) {
+                  <mat-option [value]="device.device_id">{{ device.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <div class="checkbox-row full-span">
+              <mat-checkbox formControlName="continuousRecordingEnabled">{{ 'Continuous recording' | translate }}</mat-checkbox>
+              <mat-checkbox formControlName="lowBitrateStreamPreferred">{{ 'Prefer low bitrate' | translate }}</mat-checkbox>
+              <mat-checkbox formControlName="highResEventClipsEnabled">{{ 'High resolution event clips' | translate }}</mat-checkbox>
+            </div>
+            <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+              {{ 'Save DVR Settings' | translate }}
+            </button>
+          </form>
+
+          @if (devices().length === 0) {
+            <div class="empty-state">{{ 'No cameras are available for DVR.' | translate }}</div>
+          } @else {
+            <div class="dvr-device-list">
+              @for (device of devices(); track device.device_id) {
+                <article class="dvr-device-row">
+                  <div>
+                    <div class="device-title">
+                      <h2>{{ device.name }}</h2>
+                      @if (dvrEnabledFor(device)) {
+                        <span class="pill good">{{ 'DVR enabled' | translate }}</span>
+                      }
+                      @if (dvrStatusFor(device); as dvrStatus) {
+                        <span class="pill" [ngClass]="toneClass(dvrStatus.status)">{{ dvrStatus.status | translate }}</span>
+                      }
+                    </div>
+                    <p class="muted">
+                      {{ 'Media items' | translate }}: {{ dvrSegmentCountFor(device) }};
+                      {{ 'last update' | translate }}: {{ formatUnix(dvrStatusFor(device)?.updated_at) }}
+                    </p>
+                  </div>
+                  <div class="row-actions">
+                    <button mat-button type="button" [disabled]="isBusy()" (click)="startDvr(device)">
+                      {{ 'Start' | translate }}
+                    </button>
+                    <button mat-button type="button" [disabled]="isBusy()" (click)="stopDvr(device)">
+                      {{ 'Stop' | translate }}
+                    </button>
+                  </div>
+                  @if (dvrTimelineFor(device).length > 0) {
+                    <div class="dvr-timeline-list">
+                      @for (segment of dvrTimelineFor(device); track segment.file_path) {
+                        <button
+                          type="button"
+                          class="timeline-row"
+                          [disabled]="segment.playable === false"
+                          (click)="openDvrReplay(segment)"
+                        >
+                          <strong>{{ formatUnix(segment.created_at || segment.started_at) }}</strong>
+                          <span>
+                            {{ (segment.media_kind || 'recording') | translate }} /
+                            {{ segment.stream_kind }} /
+                            {{ formatBytes(segment.size_bytes) }}
+                          </span>
+                        </button>
+                      }
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          }
         </mat-card-content>
       </mat-card>
 

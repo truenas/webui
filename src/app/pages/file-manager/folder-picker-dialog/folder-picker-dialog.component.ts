@@ -21,6 +21,11 @@ export interface FolderPickerDialogData {
   title: string;
   currentPath?: string;
   excludePaths?: string[];
+  confirmLabel?: string;
+  currentSelectionLabel?: string;
+  disabledSelectionTooltip?: string;
+  allowDatasetRootSelection?: boolean;
+  itemSelectLabel?: string;
 }
 
 export interface FolderPickerDialogResult {
@@ -167,6 +172,12 @@ export class FolderPickerDialogComponent implements OnInit {
     }
   }
 
+  selectFolder(path: string): void {
+    if (this.canSelectPath(path)) {
+      this.dialogRef.close({ path });
+    }
+  }
+
   goUp(): void {
     const path = this.currentPath();
     if (path === '/mnt') return;
@@ -202,30 +213,30 @@ export class FolderPickerDialogComponent implements OnInit {
      * Cannot be /mnt or the pool root itself.
      */
   canSelectCurrentFolder(): boolean {
-    const path = this.currentPath();
+    return this.canSelectPath(this.currentPath());
+  }
 
-    // Don't allow /mnt itself
+  canSelectPath(path: string): boolean {
     if (path === '/mnt') {
       return false;
     }
 
-    // Don't allow /mnt/.usb (USB container directory)
     if (path === '/mnt/.usb') {
       return false;
     }
 
-    // Check path depth - need at least /mnt/pool/folder (3 segments)
     const segments = path.split('/').filter(Boolean);
 
-    // For USB drives at /mnt/.usb/drivename, we need 3 segments minimum
-    // For datasets at /mnt/poolname/datasetname, we also need 3 segments minimum
-    // But USB mount roots should be allowed (e.g. /mnt/.usb/usbname)
     if (segments.length < 2) {
       return false;
     }
 
-    // If it's exactly /mnt/poolname (a pool root), don't allow
-    if (segments.length === 2 && segments[0] === 'mnt' && !segments[1].startsWith('.')) {
+    if (
+      segments.length === 2
+      && segments[0] === 'mnt'
+      && !segments[1].startsWith('.')
+      && !this.data.allowDatasetRootSelection
+    ) {
       return false;
     }
 
