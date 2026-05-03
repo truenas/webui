@@ -66,6 +66,11 @@ export const adminRoutes: Routes = [
         data: { title: T('HarborBot'), breadcrumb: T('HarborBot') },
       },
       {
+        path: 'harborcam',
+        loadChildren: () => import('app/pages/harborcam/harborcam.routes').then((module) => module.harborcamRoutes),
+        data: { title: T('HarborCam'), breadcrumb: T('HarborCam') },
+      },
+      {
         path: 'sharing',
         loadChildren: () => import('./pages/sharing/sharing.routes').then((module) => module.sharingRoutes),
         data: { title: T('Shares'), breadcrumb: T('Shares') },

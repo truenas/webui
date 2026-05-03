@@ -133,6 +133,14 @@ export class NavigationService {
       state: 'harborbot',
     },
     {
+      name: T('HarborCam'),
+      type: MenuItemType.Link,
+      tooltip: T('HarborCam'),
+      icon: tnIconMarker('app-featured-photos', 'custom'),
+      iconActive: tnIconMarker('app-featured-photos-active', 'custom'),
+      state: 'harborcam',
+    },
+    {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),

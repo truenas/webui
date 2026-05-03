@@ -1,0 +1,410 @@
+<ix-page-header [pageTitle]="'HarborCam' | translate"></ix-page-header>
+
+<section class="harborcam-page">
+  <mat-tab-group
+    class="harborcam-tabs"
+    animationDuration="120ms"
+    [selectedIndex]="selectedTabIndex()"
+    (selectedIndexChange)="selectedTabIndex.set($event)"
+  >
+    <mat-tab label="实况">
+      <section class="live-tab">
+        <section class="dvr-compact">
+          <div class="workbench-header">
+            <div>
+              <h2>{{ 'Camera DVR' | translate }}</h2>
+              <p>{{ selectedCameraLabel() }}</p>
+            </div>
+            <button mat-stroked-button type="button" [disabled]="cameraLoading()" (click)="refreshCameraDvr()">
+              {{ cameraLoading() ? ('Refreshing' | translate) : ('Refresh cameras' | translate) }}
+            </button>
+          </div>
+
+          @if (cameraError()) {
+            <div class="notice warning compact">{{ cameraError() }}</div>
+          }
+
+          @if (cameras().length > 0) {
+            <div class="camera-pills">
+              @for (camera of cameras(); track camera.device_id) {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [class.selected]="camera.device_id === selectedCameraId()"
+                  (click)="selectCamera(camera.device_id)"
+                >
+                  {{ camera.name || camera.device_id }}
+                </button>
+              }
+            </div>
+
+            <div class="dvr-preview-row">
+              <div class="live-stack">
+                <div
+                  class="live-panel"
+                  [class.recording]="isRecording()"
+                  [class.starting]="recordIntent() === 'starting'"
+                  [class.finalizing]="recordIntent() === 'finalizing'"
+                >
+                  @if (showRecordingIndicator()) {
+                    <div class="recording-badge" aria-label="Recording">
+                      <span></span>
+                      {{ recordBadgeLabel() }}
+                    </div>
+                  }
+                  @if (liveFeedback()) {
+                    <div class="live-feedback">{{ liveFeedback() }}</div>
+                  }
+                  @if (selectedLiveUrl(); as liveUrl) {
+                    <img
+                      #liveImage
+                      [src]="liveUrl"
+                      [alt]="selectedCamera()?.name || selectedCameraId() || 'camera'"
+                      (load)="handleLiveLoad($event)"
+                      (error)="handleLiveError()"
+                    />
+                  }
+                </div>
+
+                @if (recentTimelineItems().length > 0) {
+                  <section class="recent-media-strip" data-testid="harborcam-recent-media-strip">
+                    <div class="strip-header">
+                      <div>
+                        <h3>{{ 'Recent media' | translate }}</h3>
+                        <p>{{ latestMediaLabel() }}</p>
+                      </div>
+                    </div>
+
+                    <div class="recent-strip-track">
+                      @for (segment of recentTimelineItems(); track timelineTrackKey($index, segment)) {
+                        <button
+                          type="button"
+                          class="recent-media-card"
+                          [class.snapshot]="mediaKind(segment) === 'snapshot'"
+                          [class.pending]="isOptimisticMediaItem(segment)"
+                          [class.archive-failed]="isArchiveFailed(segment)"
+                          [disabled]="!canOpenMediaItem(segment)"
+                          (click)="openReplay(segment)"
+                        >
+                          <span class="media-thumb compact">
+                            @if (mediaKind(segment) === 'snapshot') {
+                              <img [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" loading="lazy" />
+                            } @else {
+                              <video [src]="mediaVideoPreviewUrl(segment)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                            }
+                          </span>
+                          <span>
+                            <strong>{{ mediaKindLabel(segment) | translate }}</strong>
+                            <small>{{ formatUnix(segment.created_at || segment.started_at) }}</small>
+                          </span>
+                        </button>
+                      }
+                    </div>
+                  </section>
+                }
+              </div>
+
+              <aside class="dvr-sidecar">
+                <div class="status-strip">
+                  <span>{{ selectedDvrStatus()?.status || 'stopped' }}</span>
+                  <span>{{ timelineItems().length }} items</span>
+                </div>
+
+                <div class="dvr-controls">
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    type="button"
+                    (click)="captureSnapshot()"
+                    [disabled]="actionBusy() === 'record' || actionBusy() === 'snapshot'"
+                  >
+                    {{ actionBusy() === 'snapshot' ? ('Capturing' | translate) : ('Snapshot' | translate) }}
+                  </button>
+                  @if (isRecording() || recordIntent() === 'finalizing') {
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      (click)="stopRecording()"
+                      [disabled]="actionBusy() === 'record' || recordIntent() === 'finalizing'"
+                    >
+                      {{ recordIntent() === 'finalizing' ? ('Finalizing' | translate) : ('Stop recording' | translate) }}
+                    </button>
+                  } @else {
+                    <button mat-stroked-button type="button" (click)="startRecording()" [disabled]="actionBusy() === 'record'">
+                      {{ recordIntent() === 'starting' ? ('Starting' | translate) : ('Record' | translate) }}
+                    </button>
+                  }
+                </div>
+
+                <details class="ptz-panel" [class.disabled]="!canPtz()">
+                  <summary>
+                    <span>{{ 'PTZ' | translate }}</span>
+                    <span>{{ canPtz() ? ('available' | translate) : ('unavailable' | translate) }}</span>
+                  </summary>
+                  <div class="ptz-pad">
+                    <span></span>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('up')">{{ 'Up' | translate }}</button>
+                    <span></span>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('left')">{{ 'Left' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('stop')">{{ 'Stop' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('right')">{{ 'Right' | translate }}</button>
+                    <span></span>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('down')">{{ 'Down' | translate }}</button>
+                    <span></span>
+                  </div>
+                </details>
+
+                @if (actionError()) {
+                  <div class="notice error compact">{{ actionError() }}</div>
+                }
+                @if (actionMessage()) {
+                  <div class="notice compact">{{ actionMessage() }}</div>
+                }
+              </aside>
+            </div>
+          } @else {
+            <div class="empty-state">{{ 'No cameras are available from HarborBeacon yet.' | translate }}</div>
+          }
+        </section>
+      </section>
+    </mat-tab>
+
+    <mat-tab label="回看">
+      <section class="playback-tab">
+        @if (selectedMediaItem(); as mediaItem) {
+          <section #mediaViewer class="media-viewer" data-testid="harborcam-media-viewer">
+            <header>
+              <div>
+                <h3>{{ mediaKindLabel(mediaItem) | translate }}</h3>
+                <p>{{ formatUnix(mediaItem.created_at || mediaItem.started_at) }}</p>
+              </div>
+              <button mat-stroked-button type="button" (click)="closeMediaPreview()">{{ 'Close' | translate }}</button>
+            </header>
+
+            @if (mediaKind(mediaItem) === 'snapshot') {
+              <img [src]="mediaPlaybackUrl(mediaItem)" [alt]="selectedCameraLabel() + ' snapshot'" />
+            } @else {
+              <video [src]="mediaPlaybackUrl(mediaItem)" controls autoplay playsinline preload="auto"></video>
+            }
+          </section>
+        }
+
+        <main class="camera-workbench">
+          <section class="results-workbench media-library-workbench" data-testid="harborcam-media-library">
+            <div class="results-header">
+              <div>
+                <h2>{{ 'DVR Media Library' | translate }}</h2>
+                <p>{{ selectedCameraLabel() }}</p>
+              </div>
+              <div class="result-summary">
+                <strong>{{ timelineItems().length }}</strong>
+                <span>{{ 'items' | translate }}</span>
+              </div>
+            </div>
+
+            @if (timelineItems().length > 0) {
+              <div class="recent-grid">
+                @for (segment of timelineItems(); track timelineTrackKey($index, segment)) {
+                  <button
+                    type="button"
+                    class="recording-card"
+                    [class.snapshot]="mediaKind(segment) === 'snapshot'"
+                    [class.pending]="isOptimisticMediaItem(segment)"
+                    [class.archive-failed]="isArchiveFailed(segment)"
+                    [class.unplayable]="!canOpenMediaItem(segment)"
+                    (click)="openReplay(segment)"
+                    [disabled]="!canOpenMediaItem(segment)"
+                  >
+                    <span class="media-thumb">
+                      @if (mediaKind(segment) === 'snapshot') {
+                        <img [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" loading="lazy" />
+                      } @else {
+                        <video [src]="mediaVideoPreviewUrl(segment)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                      }
+                    </span>
+                    <span class="card-topline">
+                      <span>{{ mediaKindLabel(segment) | translate }}</span>
+                      <span>{{ bytesLabel(segment.size_bytes) }}</span>
+                    </span>
+                    <strong>{{ formatUnix(segment.created_at || segment.started_at) }}</strong>
+                    <span>{{ segment.stream_kind }} / {{ mediaDurationLabel(segment) }}</span>
+                    <span>{{ mediaStatusLabel(segment) | translate }}</span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">{{ 'No local DVR segments are visible yet.' | translate }}</div>
+            }
+          </section>
+
+          @if (loading() || response() || error()) {
+            <section #searchResults class="results-workbench search-results-workbench" data-testid="harborcam-search-results">
+              @if (response(); as result) {
+                <div class="results-header">
+                  <div>
+                    <h2>{{ 'Search evidence' | translate }}</h2>
+                    <p>{{ form.controls.query.value }}</p>
+                  </div>
+                  <div class="result-summary">
+                    <strong>{{ result.total_matches }}</strong>
+                    <span>{{ 'matches' | translate }}</span>
+                    <span>{{ result.status }}</span>
+                    @if (result.degraded) {
+                      <span>{{ result.degraded_reason }}</span>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="results-header">
+                  <div>
+                    <h2>{{ 'Search evidence' | translate }}</h2>
+                    <p>{{ form.controls.query.value }}</p>
+                  </div>
+                  <div class="result-summary">
+                    <strong>{{ loading() ? ('Searching' | translate) : ('0' | translate) }}</strong>
+                    <span>{{ loading() ? ('working' | translate) : ('error' | translate) }}</span>
+                  </div>
+                </div>
+              }
+
+              @if (loading()) {
+                <section class="results-skeleton" aria-live="polite">
+                  <div class="skeleton-card"></div>
+                  <div class="skeleton-card tall"></div>
+                  <div class="skeleton-card"></div>
+                </section>
+              } @else if (response(); as result) {
+                @if (noResults()) {
+                  <div class="empty-state">{{ emptyMessage(result) | translate }}</div>
+                } @else {
+                  <section class="results-waterfall" aria-live="polite">
+                    @for (item of waterfallItems(); track resultTrackKey($index, item)) {
+                      <mat-card class="result-card" [ngClass]="item.kind" tabindex="0" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
+                        @if (item.kind === 'image') {
+                          <div class="image-frame">
+                            <img [src]="item.previewUrl" [alt]="item.hit.title" loading="lazy" />
+                          </div>
+                        }
+                        @if (item.kind === 'video') {
+                          <div class="video-frame">
+                            <video [src]="videoPreviewUrl(item)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                            <span class="play-chip">{{ '播放' | translate }}</span>
+                          </div>
+                        }
+
+                        <mat-card-content>
+                          <div class="card-topline">
+                            <span>{{ kindLabel(item) | translate }}</span>
+                            <span>{{ scoreLabel(item.hit) }}</span>
+                          </div>
+                          <h2>{{ item.hit.title }}</h2>
+                          <p>{{ summary(item.hit) }}</p>
+
+                          @if (matchedTerms(item.hit)) {
+                            <div class="terms">{{ matchedTerms(item.hit) }}</div>
+                          }
+
+                          <details (click)="$event.stopPropagation()">
+                            <summary>{{ 'Evidence' | translate }}</summary>
+                            <dl>
+                              <div><dt>{{ 'Source' | translate }}</dt><dd>{{ sourceKinds(item.hit) }}</dd></div>
+                              <div><dt>{{ 'Path' | translate }}</dt><dd>{{ item.hit.path }}</dd></div>
+                              <div><dt>{{ 'Content indexed' | translate }}</dt><dd>{{ item.hit.content_indexed ? 'true' : 'false' }}</dd></div>
+                              <div><dt>{{ 'Content match' | translate }}</dt><dd>{{ item.hit.content_match_used ? 'true' : 'false' }}</dd></div>
+                              <div><dt>{{ 'Filename match' | translate }}</dt><dd>{{ item.hit.filename_match_used ? 'true' : 'false' }}</dd></div>
+                            </dl>
+                          </details>
+                        </mat-card-content>
+                      </mat-card>
+                    }
+                  </section>
+                }
+              } @else if (error()) {
+                <div class="empty-state error">{{ error() }}</div>
+              }
+            </section>
+          }
+        </main>
+
+        <aside class="assistant-panel">
+          <div class="assistant-header">
+            <h2>{{ 'HarborCam' | translate }}</h2>
+            <span>{{ 'Event search' | translate }}</span>
+          </div>
+
+          <form class="assistant-form" [formGroup]="form" (ngSubmit)="search()">
+            <div class="query-composer">
+              <textarea
+                class="query-input"
+                rows="5"
+                aria-label="HarborCam event search query"
+                formControlName="query"
+                placeholder="试着问：谁在倒啤酒？"
+              ></textarea>
+              <div class="query-actions">
+                <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
+                  {{ 'Search camera events' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="prompt-strip" aria-label="HarborCam question examples">
+              <span>试试</span>
+              @for (suggestion of promptSuggestions; track suggestion.query) {
+                <button type="button" class="suggestion-chip" (click)="usePromptSuggestion(suggestion)">
+                  {{ suggestion.label }}
+                </button>
+              }
+            </div>
+
+            <div class="scope-note">本次搜索范围：{{ searchScopeLabel() }}</div>
+
+            <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="HarborCam result filter">
+              <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="images">{{ 'Images' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="videos">{{ 'Videos' | translate }}</mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <div class="scope-fields">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'From' | translate }}</mat-label>
+                <input matInput type="datetime-local" formControlName="from" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'To' | translate }}</mat-label>
+                <input matInput type="datetime-local" formControlName="to" />
+              </mat-form-field>
+            </div>
+          </form>
+
+          @if (loading()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          }
+          @if (error()) {
+            <div class="notice error compact">{{ error() }}</div>
+          }
+          @if (response(); as result) {
+            @if (result.warnings.length > 0 || result.blockers.length > 0) {
+              <div class="notice warning compact">
+                @for (warning of result.warnings; track warning) {
+                  <span>{{ warning }}</span>
+                }
+                @for (blocker of result.blockers; track blocker) {
+                  <span>{{ blocker }}</span>
+                }
+              </div>
+            }
+
+            @if (embeddingUnavailable(result)) {
+              <div class="notice warning compact embedding-action">
+                <span>语义检索模型不可用。请到 HarborDesk 的“语义索引”节点安装或选择模型，然后重新索引知识库。</span>
+                <button mat-stroked-button type="button" (click)="openHarborDeskModels()">打开语义索引</button>
+              </div>
+            }
+          }
+        </aside>
+      </section>
+    </mat-tab>
+  </mat-tab-group>
+</section>
