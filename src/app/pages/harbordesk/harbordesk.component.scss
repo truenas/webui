@@ -373,11 +373,16 @@ $hd-space-5: 20px;
 
 .scan-form {
   align-items: center;
-  grid-template-columns: minmax(260px, 2fr) minmax(150px, .8fr) minmax(160px, auto);
+  grid-template-columns: minmax(240px, 2fr) minmax(140px, .8fr) minmax(120px, .6fr) minmax(150px, auto);
 }
 
 .scan-cidr-field {
   grid-column: auto;
+}
+
+.confirm-delete-button {
+  border: 1px solid #b45309;
+  color: #92400e;
 }
 
 .simple-dvr-form {

@@ -138,7 +138,7 @@ interface StatusBlock {
 }
 
 type CustomerModelSection = 'downloading' | 'installed' | 'available';
-type CustomerModelAction = 'download' | 'downloading' | 'set-current' | 'current' | 'retry';
+type CustomerModelAction = 'download' | 'downloading' | 'set-current' | 'current' | 'retry' | 'configure-cloud' | 'manual-source';
 
 interface CurrentModelCard {
   kind: string;
@@ -163,6 +163,9 @@ interface CustomerModelCard {
   capabilities: string[];
   sizeHint: string;
   hardware: string;
+  hardwareFit: string;
+  fitReason: string;
+  recommendationGroup: string;
   status: string;
   tone: HarborDeskStatusTone;
   localPath: string | null;
@@ -408,6 +411,7 @@ export class HarborDeskComponent implements OnInit {
   protected readonly shareLinks = signal<ShareLinkSummary[]>([]);
   protected readonly evidenceByDevice = signal<Record<string, DeviceEvidenceResponse>>({});
   protected readonly selectedDeviceId = signal<string>('');
+  protected readonly pendingDeleteDeviceId = signal<string | null>(null);
   protected readonly activeAiSettingsTab = signal<AiSettingsTabId>('sources');
   protected readonly modelEndpointEditingId = signal<string | null>(null);
   protected readonly modelsAdvancedOpen = signal(false);
@@ -476,6 +480,7 @@ export class HarborDeskComponent implements OnInit {
   protected readonly scanForm = this.fb.group({
     cidr: [''],
     protocol: ['rtsp'],
+    rtspPort: ['554'],
   });
 
   protected readonly manualForm = this.fb.group({
@@ -829,10 +834,9 @@ export class HarborDeskComponent implements OnInit {
   }
 
   protected removeDevice(device: CameraDevice): void {
-    const label = [this.deviceRoomLabel(device), this.deviceNameLabel(device)]
-      .filter((value) => value.trim().length > 0)
-      .join(' / ');
-    if (!window.confirm(`${T('确定要删除这个摄像头吗？')}\n${label}`)) {
+    if (this.pendingDeleteDeviceId() !== device.device_id) {
+      this.pendingDeleteDeviceId.set(device.device_id);
+      this.actionMessage.set(T('再次确认后会删除摄像头和该设备的凭据。'));
       return;
     }
 
@@ -840,7 +844,12 @@ export class HarborDeskComponent implements OnInit {
       `device-remove:${device.device_id}`,
       this.harborDeskApi.deleteDevice(device.device_id),
       T('摄像头已删除。'),
+      () => this.pendingDeleteDeviceId.set(null),
     );
+  }
+
+  protected cancelDeviceDelete(): void {
+    this.pendingDeleteDeviceId.set(null);
   }
 
   protected scanDevices(): void {
@@ -850,6 +859,7 @@ export class HarborDeskComponent implements OnInit {
       this.harborDeskApi.scanDevices({
         cidr: this.emptyToNull(value.cidr),
         protocol: this.emptyToNull(value.protocol),
+        rtsp_port: this.parseOptionalNumber(value.rtspPort),
       }),
       T('Discovery scan requested. Refreshing device state.'),
     );
@@ -1184,6 +1194,12 @@ export class HarborDeskComponent implements OnInit {
       case 'set-current':
         this.useInstalledModel(card);
         return;
+      case 'configure-cloud':
+        this.openCloudModelSettings(card.endpoint ?? null);
+        return;
+      case 'manual-source':
+        this.selectModelCardForManualDownload(card);
+        return;
       case 'downloading':
       case 'current':
       default:
@@ -1193,6 +1209,35 @@ export class HarborDeskComponent implements OnInit {
 
   protected modelCardActionDisabled(card: CustomerModelCard): boolean {
     return this.isBusy() || card.action === 'downloading' || card.action === 'current';
+  }
+
+  protected modelRecommendationLabel(card: CustomerModelCard): string {
+    switch (card.recommendationGroup) {
+      case 'lightweight_local':
+        return T('轻量本地');
+      case 'installed_not_recommended':
+        return T('已安装但不推荐当前硬件');
+      case 'cloud_backup':
+        return T('云端备用');
+      case 'high_end_experimental':
+        return T('高配/实验');
+      case 'current_recommended':
+      default:
+        return T('当前机器推荐');
+    }
+  }
+
+  protected modelHardwareFitLabel(card: CustomerModelCard): string {
+    switch (card.hardwareFit) {
+      case 'recommended':
+        return T('推荐');
+      case 'not_recommended':
+        return T('不推荐当前硬件运行');
+      case 'needs_config':
+        return T('需要配置');
+      default:
+        return T('可用');
+    }
   }
 
   protected openAdvancedModels(scrollToEditor = false): void {
@@ -1524,6 +1569,18 @@ export class HarborDeskComponent implements OnInit {
     this.testModelEndpoint(endpoint);
   }
 
+  protected openCloudModelSettings(endpoint: ModelEndpointRecord | null): void {
+    this.selectAiSettingsTab('cloud-api');
+    const providerValue = this.cloudProviderFromEndpoint(endpoint);
+    const provider = this.cloudProviderOption(providerValue);
+    this.cloudApiForm.patchValue({
+      provider: provider.value,
+      baseUrl: this.metadataString(endpoint, 'base_url') || provider.defaultBaseUrl,
+      modelName: endpoint?.model_name || this.metadataString(endpoint, 'model') || provider.defaultModelName,
+    });
+    this.actionMessage.set(T('FlashV4 是云端备用模型；配置 API Key 后才会启用。'));
+  }
+
   protected cloudApiConfiguredLabel(): string {
     return this.cloudApiConfigured() ? T('已配置') : T('未配置');
   }
@@ -1806,13 +1863,35 @@ export class HarborDeskComponent implements OnInit {
 
   protected workflowModelChoices(kind: string): CustomerModelCard[] {
     const capability = this.workflowCapabilityForKind(kind);
-    if (capability?.installed_models?.length) {
-      return capability.installed_models
+    if (capability) {
+      const matchKind = capability.model_kind || kind;
+      const installed = (capability.installed_models ?? [])
         .map((model) => this.modelCapabilityChoiceCard(capability.capability_id, model, 'installed'))
-        .slice(0, 12);
+        .slice(0, 6);
+      const catalogInstalled = this.customerModelCards()
+        .filter((card) => card.section === 'installed' && this.modelCardMatchesWorkflowKind(card, matchKind))
+        .slice(0, 6);
+      const available = (capability.installable_models ?? [])
+        .map((model) => this.modelCapabilityChoiceCard(capability.capability_id, model, 'available'))
+        .slice(0, installed.length ? 4 : 8);
+      const catalogAvailable = this.customerModelCards()
+        .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, matchKind))
+        .slice(0, installed.length || catalogInstalled.length ? 4 : 8);
+      return this.uniqueModelCards([
+        ...installed,
+        ...catalogInstalled,
+        ...available,
+        ...catalogAvailable,
+        ...this.workflowCloudModelChoices(capability.capability_id),
+      ]).slice(0, 12);
     }
-    return this.customerModelCards()
+    const installed = this.customerModelCards()
       .filter((card) => card.section === 'installed' && this.modelCardMatchesWorkflowKind(card, kind))
+      .slice(0, 6);
+    const available = this.customerModelCards()
+      .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, kind))
+      .slice(0, 6);
+    return this.uniqueModelCards([...installed, ...available, ...this.workflowCloudModelChoices(kind)])
       .slice(0, 12);
   }
 
@@ -1891,14 +1970,45 @@ export class HarborDeskComponent implements OnInit {
   protected workflowAvailableModelChoices(kind: string): CustomerModelCard[] {
     const capability = this.workflowCapabilityForKind(kind);
     if (capability) {
-      return capability.installable_models
+      const matchKind = capability.model_kind || kind;
+      const capabilityChoices = capability.installable_models
         .map((model) => this.modelCapabilityChoiceCard(capability.capability_id, model, 'available'))
         .slice(0, 8);
+      const catalogChoices = this.customerModelCards()
+        .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, matchKind))
+        .filter((card) => this.modelCardIsInstallable(card) || card.action === 'configure-cloud' || card.action === 'manual-source')
+        .slice(0, 8);
+      return this.uniqueModelCards([...capabilityChoices, ...catalogChoices]).slice(0, 10);
     }
     return this.customerModelCards()
       .filter((card) => card.section === 'available' && this.modelCardMatchesWorkflowKind(card, kind))
       .filter((card) => this.modelCardIsInstallable(card))
       .slice(0, 8);
+  }
+
+  protected workflowCloudModelChoices(kind: string): CustomerModelCard[] {
+    const capability = this.workflowCapabilityForKind(kind);
+    const endpointKind = capability?.model_kind ?? kind;
+    const targetKinds = this.targetEndpointKinds(endpointKind);
+    if (!targetKinds.some((targetKind) => targetKind === 'llm')) {
+      return [];
+    }
+    return this.modelEndpoints()
+      .filter((endpoint) => endpoint.endpoint_kind === 'cloud' && this.endpointKindMatches(endpoint, 'llm'))
+      .map((endpoint) => this.cloudEndpointModelCard(capability?.capability_id ?? kind, endpoint))
+      .slice(0, 4);
+  }
+
+  private uniqueModelCards(cards: CustomerModelCard[]): CustomerModelCard[] {
+    const seen = new Set<string>();
+    return cards.filter((card) => {
+      const key = `${card.section}:${card.modelId}:${card.endpoint?.model_endpoint_id ?? ''}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
   }
 
   protected workflowDownloadingModelChoices(kind: string): CustomerModelCard[] {
@@ -2336,13 +2446,10 @@ export class HarborDeskComponent implements OnInit {
     const capability = this.workflowCapabilityForKind(capabilityId);
     const runtimeActive = this.capabilityRuntimeMatchesModel(capability, model.model_id, model.local_path ?? catalogModel?.local_path ?? null);
     const selected = capability?.selected_model_id === model.model_id;
-    const isCurrent = selected || runtimeActive;
+    const isCurrent = runtimeActive;
     const action: CustomerModelAction = section === 'installed'
       ? (isCurrent ? 'current' : 'set-current')
       : this.isFailedStatus(model.status) ? 'retry' : 'download';
-    const runtimeGuidance = section === 'installed' && selected && !runtimeActive
-      ? T('已选择，但需要配置/启动兼容运行时后生效。')
-      : null;
     return {
       key: `${capabilityId}:${section}:${model.model_id}`,
       modelId: model.model_id,
@@ -2354,6 +2461,9 @@ export class HarborDeskComponent implements OnInit {
       capabilities: model.expected_capabilities ?? catalogModel?.expected_capabilities ?? [capabilityId],
       sizeHint: model.download_size_hint ?? catalogModel?.download_size_hint ?? '',
       hardware: catalogModel?.recommended_hardware ?? '',
+      hardwareFit: model.hardware_fit ?? catalogModel?.hardware_fit ?? 'compatible',
+      fitReason: model.fit_reason ?? catalogModel?.fit_reason ?? '',
+      recommendationGroup: model.recommendation_group ?? catalogModel?.recommendation_group ?? (section === 'installed' ? 'installed' : 'current_recommended'),
       status: model.status || (section === 'installed' ? 'ready' : 'needs-config'),
       tone: section === 'installed' ? 'good' : this.statusTone(model.status),
       localPath: model.local_path ?? catalogModel?.local_path ?? null,
@@ -2363,7 +2473,7 @@ export class HarborDeskComponent implements OnInit {
       actionLabel: action === 'current'
         ? T('已选择')
         : action === 'set-current'
-          ? T('选择')
+          ? (selected ? T('重新启动') : T('选择'))
           : action === 'retry'
             ? T('重新下载')
             : T('下载'),
@@ -2371,7 +2481,7 @@ export class HarborDeskComponent implements OnInit {
       bytesLabel: null,
       speedLabel: null,
       errorMessage: null,
-      runtimeGuidance,
+      runtimeGuidance: null,
       evidence: [],
       section,
       catalogModel,
@@ -2384,6 +2494,7 @@ export class HarborDeskComponent implements OnInit {
   ): CustomerModelCard {
     const catalogModel = this.catalogModels().find((item) => item.model_id === job.model_id) ?? null;
     const failed = this.isFailedJob(job);
+    const needsManualSource = failed && catalogModel?.manual_only === true && catalogModel?.installable !== true;
     return {
       key: `${capabilityId}:download:${job.job_id}`,
       modelId: job.model_id,
@@ -2395,13 +2506,16 @@ export class HarborDeskComponent implements OnInit {
       capabilities: catalogModel?.expected_capabilities ?? [capabilityId],
       sizeHint: catalogModel?.download_size_hint ?? '',
       hardware: catalogModel?.recommended_hardware ?? '',
+      hardwareFit: catalogModel?.hardware_fit ?? 'compatible',
+      fitReason: catalogModel?.fit_reason ?? '',
+      recommendationGroup: catalogModel?.recommendation_group ?? 'current_recommended',
       status: job.status,
       tone: failed ? 'danger' : 'warn',
       localPath: job.target_path ?? null,
       downloadJob: job,
       endpoint: null,
-      action: failed ? 'retry' : 'downloading',
-      actionLabel: failed ? T('重新下载') : T('下载中'),
+      action: needsManualSource ? 'manual-source' : failed ? 'retry' : 'downloading',
+      actionLabel: needsManualSource ? T('填写下载地址') : failed ? T('重新下载') : T('下载中'),
       progressLabel: this.progressLabel(job),
       bytesLabel: this.downloadBytesLabel(job),
       speedLabel: this.downloadSpeedLabel(job),
@@ -2413,6 +2527,42 @@ export class HarborDeskComponent implements OnInit {
     };
   }
 
+  private cloudEndpointModelCard(capabilityId: string, endpoint: ModelEndpointRecord): CustomerModelCard {
+    const configured = this.metadataBoolean(endpoint, 'api_key_configured');
+    const provider = this.metadataString(endpoint, 'provider_label') || endpoint.provider_key || T('云端');
+    const displayName = endpoint.model_name || this.metadataString(endpoint, 'model') || endpoint.model_endpoint_id;
+    return {
+      key: `${capabilityId}:cloud:${endpoint.model_endpoint_id}`,
+      modelId: displayName,
+      capabilityId,
+      displayName,
+      providerKey: endpoint.provider_key || 'openai_compatible',
+      kind: endpoint.model_kind || 'llm',
+      source: provider,
+      capabilities: endpoint.capability_tags ?? ['chat', 'cloud_fallback'],
+      sizeHint: T('云端备用'),
+      hardware: provider,
+      hardwareFit: configured && endpoint.status === 'active' ? 'compatible' : 'needs_config',
+      fitReason: configured ? T('可作为受控云端备用模型。') : T('未配置 API Key，暂不可运行。'),
+      recommendationGroup: 'cloud_backup',
+      status: endpoint.status,
+      tone: configured && endpoint.status === 'active' ? 'good' : 'warn',
+      localPath: null,
+      downloadJob: null,
+      endpoint,
+      action: 'configure-cloud',
+      actionLabel: configured && endpoint.status === 'active' ? T('管理云端备用') : T('配置 API Key'),
+      progressLabel: null,
+      bytesLabel: null,
+      speedLabel: null,
+      errorMessage: configured ? null : T('FlashV4 没有丢失；当前云端端点未配置 API Key。'),
+      runtimeGuidance: null,
+      evidence: [],
+      section: 'available',
+      catalogModel: null,
+    };
+  }
+
   private modelCapabilityHasVisibleChoices(kind: string): boolean {
     const capability = this.workflowCapabilityForKind(kind);
     if (capability) {
@@ -2420,7 +2570,8 @@ export class HarborDeskComponent implements OnInit {
         capability.current_model
           || capability.installed_models?.length
           || capability.installable_models?.length
-          || capability.download_jobs?.length,
+          || capability.download_jobs?.length
+          || this.workflowModelChoices(capability.capability_id).length,
       );
     }
     return Boolean(this.workflowCurrentEndpoint(kind))
@@ -2562,8 +2713,8 @@ export class HarborDeskComponent implements OnInit {
 
   private modelSelectionSuccessMessage(card: CustomerModelCard): string {
     return this.modelCardRuntimeIsActive(card)
-      ? T('模型选择已保存。')
-      : T('模型选择已保存。需要配置或启动兼容运行时后才会生效。');
+      ? T('模型已选择并正在运行。')
+      : T('模型启动已发起，正在刷新运行状态。');
   }
 
   private modelCardRuntimeIsActive(card: CustomerModelCard): boolean {
@@ -2764,6 +2915,9 @@ export class HarborDeskComponent implements OnInit {
       capabilities: this.modelCapabilities(model),
       sizeHint: model.download_size_hint || this.formatBytes(model.size_bytes),
       hardware: model.recommended_hardware || T('No hardware hint'),
+      hardwareFit: model.hardware_fit ?? 'compatible',
+      fitReason: model.fit_reason ?? '',
+      recommendationGroup: model.recommendation_group ?? (installed ? 'installed' : 'current_recommended'),
       status,
       tone: current ? 'good' : this.statusTone(status),
       localPath: model.local_path ?? latestJob?.target_path ?? null,
@@ -2856,6 +3010,10 @@ export class HarborDeskComponent implements OnInit {
         return T('当前模型');
       case 'retry':
         return T('重新下载');
+      case 'manual-source':
+        return T('填写下载地址');
+      case 'configure-cloud':
+        return T('配置 API Key');
       case 'download':
       default:
         return T('下载');
@@ -2876,6 +3034,23 @@ export class HarborDeskComponent implements OnInit {
   private hardwareCompatibilityRank(card: CustomerModelCard): number {
     if (card.section !== 'available') {
       return 0;
+    }
+    switch (card.recommendationGroup) {
+      case 'current_recommended':
+        return 0;
+      case 'lightweight_local':
+        return 1;
+      case 'cloud_backup':
+        return 2;
+      case 'installed_not_recommended':
+        return 3;
+      case 'high_end_experimental':
+        return 4;
+      default:
+        break;
+    }
+    if (card.hardwareFit === 'not_recommended') {
+      return 4;
     }
     const hint = card.hardware.toLowerCase();
     if (!hint || hint.includes('unknown')) {
@@ -3286,8 +3461,9 @@ export class HarborDeskComponent implements OnInit {
 
     if (!this.scanForm.dirty) {
       this.scanForm.patchValue({
-        cidr: defaults.cidr ?? '',
+        cidr: this.normalizedScanCidr(defaults.cidr ?? ''),
         protocol: defaults.discovery ?? 'rtsp',
+        rtspPort: String(defaults.rtsp_port ?? 554),
       });
     }
 
@@ -3670,6 +3846,19 @@ export class HarborDeskComponent implements OnInit {
       rtsp_port: this.parseOptionalNumber(value.rtspPort),
       rtsp_paths: this.parseLines(value.rtspPaths),
     };
+  }
+
+  private normalizedScanCidr(value: string): string {
+    const trimmed = value.trim();
+    const match = trimmed.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.\d{1,3}\/(\d+)$/);
+    if (!match) {
+      return trimmed;
+    }
+    const prefix = Number(match[4]);
+    if (prefix <= 32) {
+      return trimmed;
+    }
+    return `${match[1]}.${match[2]}.${match[3]}.0/24`;
   }
 
   private defaultsPayload(): AdminDefaultsPayload {

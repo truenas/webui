@@ -483,7 +483,7 @@ describe('HarborDeskComponent', () => {
     expect(panel).toHaveText('选择');
   });
 
-  it('guides the user when a selected local model is not loaded by the runtime yet', () => {
+  it('treats choosing an installed model as a runtime start request', () => {
     const installedModel = {
       model_id: 'Qwen/Qwen3.5-4B',
       display_name: 'Qwen3.5 4B',
@@ -532,7 +532,241 @@ describe('HarborDeskComponent', () => {
     spectator.detectChanges();
 
     expect(api.selectModelCapability).toHaveBeenCalledWith('embedder', 'Qwen/Qwen3.5-4B');
-    expect(spectator.element.textContent).toContain('需要配置或启动兼容运行时后才会生效');
+    expect(spectator.element.textContent).toContain('模型启动已发起');
+    expect(spectator.element.textContent).not.toContain('需要配置或启动兼容运行时后才会生效');
+  });
+
+  it('groups installed 4B as not recommended and keeps FlashV4 visible as cloud backup', () => {
+    api.getHardwareReadiness = jest.fn(() => of({
+      status: 'ready',
+      cpu: { status: 'ready', summary: 'ready', detail: 'ready', evidence: [] },
+      memory: { status: 'ready', summary: '11.7 GiB', detail: 'ready', evidence: [] },
+      gpu: { status: 'warn', summary: 'No confirmed GPU memory', detail: 'ready', evidence: [] },
+      npu: { status: 'warn', summary: 'No NPU', detail: 'ready', evidence: [] },
+      memory_mb: 11980,
+      gpu_vram_total_mb: null,
+      hardware_class: 'tiny_cpu',
+      recommended_model_profile: 'lightweight-local-models',
+    }));
+    api.getModelEndpoints = jest.fn(() => of({
+      endpoints: [
+        modelEndpoint('llm-local', 'llm', '/models/chat.gguf'),
+        {
+          model_endpoint_id: 'llm-cloud-siliconflow',
+          model_kind: 'llm',
+          endpoint_kind: 'cloud',
+          provider_key: 'openai_compatible',
+          model_name: 'deepseek-ai/DeepSeek-V4-Flash',
+          capability_tags: ['chat'],
+          cost_policy: {},
+          status: 'disabled',
+          metadata: {
+            provider: 'siliconflow',
+            provider_label: 'SiliconFlow',
+            base_url: 'https://api.siliconflow.cn/v1',
+            api_key_configured: false,
+          },
+        },
+      ],
+    }));
+    api.getLocalModelCatalog = jest.fn(() => of({
+      models: [
+        qwenCatalogModel({
+          model_kind: 'llm',
+          installed: true,
+          status: 'ready',
+          local_path: '/mnt/software/harborbeacon-agent-ci/model-store/qwen-qwen3.5-4b',
+          expected_capabilities: ['chat'],
+          hardware_fit: 'not_recommended',
+          fit_reason: '4B model is installed, but current hardware has no confirmed 16GB+ usable GPU memory.',
+          recommendation_group: 'installed_not_recommended',
+        }),
+        {
+          model_id: 'qwen2.5-1.5b-instruct',
+          display_name: 'Qwen2.5 1.5B Instruct',
+          provider_key: 'qwen',
+          model_kind: 'llm',
+          source_kind: 'huggingface',
+          status: 'available',
+          installable: true,
+          manual_only: false,
+          repo_id: 'Qwen/Qwen2.5-1.5B-Instruct',
+          revision: 'main',
+          file_policy: 'runtime_snapshot',
+          expected_capabilities: ['chat'],
+          recommended_hardware: 'CPU',
+          download_size_hint: '2 GiB',
+          hardware_fit: 'recommended',
+          fit_reason: 'Lightweight local profile fits the current machine.',
+          recommendation_group: 'lightweight_local',
+        },
+      ],
+      download_jobs: [],
+    }));
+
+    spectator = createComponent();
+    spectator.click(spectator.queryAll('.ai-settings-subtab')[1]);
+    spectator.detectChanges();
+
+    const component = spectator.component as unknown as {
+      workflowModelChoices: (kind: string) => Array<{ displayName: string; actionLabel: string; errorMessage: string | null }>;
+      modelRecommendationLabel: (card: unknown) => string;
+      modelHardwareFitLabel: (card: unknown) => string;
+    };
+    const choices = component.workflowModelChoices('semantic_router');
+    const qwen4b = choices.find((card) => card.displayName === 'Qwen3.5 4B');
+    const qwen25 = choices.find((card) => card.displayName === 'Qwen2.5 1.5B Instruct');
+    const flash = choices.find((card) => card.displayName === 'deepseek-ai/DeepSeek-V4-Flash');
+
+    expect(qwen4b).toBeTruthy();
+    expect(component.modelRecommendationLabel(qwen4b)).toBe('已安装但不推荐当前硬件');
+    expect(component.modelHardwareFitLabel(qwen4b)).toBe('不推荐当前硬件运行');
+    expect(qwen25).toBeTruthy();
+    expect(component.modelRecommendationLabel(qwen25)).toBe('轻量本地');
+    expect(flash).toBeTruthy();
+    expect(component.modelRecommendationLabel(flash)).toBe('云端备用');
+    expect(flash?.actionLabel).toBe('配置 API Key');
+    expect(flash?.errorMessage).toContain('FlashV4 没有丢失');
+  });
+
+  it('starts BGE M3 from Hugging Face metadata instead of asking for a manual URL', () => {
+    api.getModelCapabilities = jest.fn(() => of(modelCapabilitiesWithEmbedder({
+      status: 'needs_model',
+      current_model: null,
+      runtime_ready: false,
+    })));
+    api.getLocalModelCatalog = jest.fn(() => of({
+      models: [
+        {
+          model_id: 'bge-m3',
+          display_name: 'BGE M3 Embedding',
+          provider_key: 'bge',
+          model_kind: 'embedder',
+          source_kind: 'huggingface',
+          status: 'available',
+          installable: true,
+          manual_only: false,
+          repo_id: 'BAAI/bge-m3',
+          revision: 'main',
+          file_policy: 'runtime_snapshot',
+          expected_capabilities: ['embedding'],
+          recommended_hardware: 'CPU',
+          download_size_hint: '1-2 GB',
+          hardware_fit: 'recommended',
+          fit_reason: 'Lightweight local profile fits the current machine.',
+          recommendation_group: 'lightweight_local',
+        },
+      ],
+      download_jobs: [],
+    }));
+
+    spectator = createComponent();
+    spectator.click(spectator.queryAll('.ai-settings-subtab')[1]);
+    spectator.detectChanges();
+
+    const component = spectator.component as unknown as {
+      workflowAvailableModelChoices: (kind: string) => Array<unknown>;
+      handleModelCardAction: (card: unknown) => void;
+    };
+    const bge = component.workflowAvailableModelChoices('embedder')[0];
+    component.handleModelCardAction(bge);
+
+    expect(api.createLocalModelDownload).toHaveBeenCalledWith(expect.objectContaining({
+      model_id: 'bge-m3',
+      metadata: expect.objectContaining({
+        repo_id: 'BAAI/bge-m3',
+        source_kind: 'huggingface',
+        file_policy: 'runtime_snapshot',
+      }),
+    }));
+  });
+
+  it('normalizes scan CIDR defaults and sends RTSP port separately', () => {
+    api.getState = jest.fn(() => of({
+      devices: [],
+      defaults: {
+        cidr: '192.168.3.0/554',
+        discovery: 'RTSP',
+        rtsp_port: 554,
+      },
+      writable_root: '/var/lib/harbor',
+    }));
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      selectTab: (tab: 'settings') => void;
+      selectSettingsSection: (section: 'camera') => void;
+      scanForm: { controls: { cidr: { value: string }; rtspPort: { value: string } } };
+      scanDevices: () => void;
+    };
+    component.selectTab('settings');
+    component.selectSettingsSection('camera');
+    spectator.detectChanges();
+
+    expect(component.scanForm.controls.cidr.value).toBe('192.168.3.0/24');
+    expect(component.scanForm.controls.rtspPort.value).toBe('554');
+
+    component.scanDevices();
+    expect(api.scanDevices).toHaveBeenCalledWith({
+      cidr: '192.168.3.0/24',
+      protocol: 'RTSP',
+      rtsp_port: 554,
+    });
+  });
+
+  it('requires a second click before deleting a camera and uses readable confirmation controls', () => {
+    const device = {
+      device_id: 'cam-tp1',
+      name: 'TP1',
+      room: '客厅',
+      ip_address: '192.168.3.231',
+      status: 'ready',
+      vendor: 'TP-Link',
+      model: 'Tapo',
+      discovery_source: 'manual',
+    };
+    api.getState = jest.fn(() => of({
+      devices: [device],
+      defaults: {
+        selected_camera_device_id: null,
+        cidr: '192.168.3.0/24',
+        rtsp_port: 554,
+      },
+      writable_root: '/var/lib/harbor',
+    }));
+    api.deleteDevice = jest.fn(() => of({
+      devices: [],
+      defaults: {
+        selected_camera_device_id: null,
+        rtsp_username: 'admin',
+        rtsp_password: '',
+      },
+      writable_root: '/var/lib/harbor',
+    }));
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      selectTab: (tab: 'settings') => void;
+      selectSettingsSection: (section: 'camera') => void;
+    };
+    component.selectTab('settings');
+    component.selectSettingsSection('camera');
+    spectator.detectChanges();
+
+    const deleteButton = spectator.queryAll<HTMLButtonElement>('.device-actions button')
+      .find((button) => button.textContent?.includes('删除'));
+    expect(deleteButton).toBeTruthy();
+    spectator.click(deleteButton);
+    spectator.detectChanges();
+
+    expect(api.deleteDevice).not.toHaveBeenCalled();
+    const confirmButton = spectator.query<HTMLButtonElement>('.confirm-delete-button');
+    expect(confirmButton).toHaveText('确认删除');
+    expect(confirmButton?.getAttribute('color')).toBeNull();
+    expect(spectator.element.textContent).toContain('取消');
+
+    spectator.click(confirmButton);
+    expect(api.deleteDevice).toHaveBeenCalledWith('cam-tp1');
   });
 
   it('shows cloud API settings only in the cloud subtab', () => {
@@ -603,6 +837,9 @@ function harborDeskApiMock(): Partial<Record<keyof HarborDeskApiService, jest.Mo
   const statusComponent = { status: 'ready', summary: 'ready', detail: 'ready', evidence: [] };
   return {
     getState: jest.fn(() => of({ devices: [], defaults: {}, writable_root: '/var/lib/harbor' })),
+    scanDevices: jest.fn((payload) => of(payload)),
+    deleteDevice: jest.fn(() => of({ devices: [], defaults: {}, writable_root: '/var/lib/harbor' })),
+    getDeviceEvidence: jest.fn(() => of({ results: [] })),
     getGatewayStatus: jest.fn(() => of({ status: 'ready', channels: [] })),
     getInferenceHealth: jest.fn(() => of({ status: 'ready', ready: true })),
     getNotificationTargets: jest.fn(() => of({ targets: [] })),

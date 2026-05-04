@@ -294,6 +294,7 @@ export interface AdminStateResponse {
 export interface DiscoveryScanPayload {
   cidr?: string | null;
   protocol?: string | null;
+  rtsp_port?: number | null;
 }
 
 export interface ManualDevicePayload {
@@ -520,6 +521,9 @@ export interface LocalModelCatalogItem {
   installed?: boolean;
   size_bytes?: number | null;
   download_size_hint: string;
+  hardware_fit?: string;
+  fit_reason?: string;
+  recommendation_group?: string;
   acceptance_note?: string;
   evidence?: string[];
   metadata?: Record<string, unknown>;
@@ -584,6 +588,9 @@ export interface ModelCapabilityInstallableModel {
   local_path?: string | null;
   download_job_id?: string | null;
   download_size_hint?: string;
+  hardware_fit?: string;
+  fit_reason?: string;
+  recommendation_group?: string;
   source_kind?: string;
   repo_id?: string | null;
   file_policy?: string;
@@ -635,6 +642,10 @@ export interface HardwareReadinessResponse {
   memory: HardwareReadinessComponent;
   gpu: HardwareReadinessComponent;
   npu: HardwareReadinessComponent;
+  memory_mb?: number | null;
+  gpu_vram_total_mb?: number | null;
+  gpu_vram_free_mb?: number | null;
+  hardware_class?: string;
   recommended_model_profile: string;
   blockers?: string[];
   evidence?: string[];

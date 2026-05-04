@@ -317,6 +317,25 @@
                 </div>
               </section>
             }
+            @if (hardware(); as hardwareProfile) {
+              <section class="ai-settings-panel model-store-panel">
+                <div class="model-store-line">
+                  <div>
+                    <span class="field-label">{{ '本机能力与模型推荐' | translate }}</span>
+                    <strong>{{ hardwareProfile.hardware_class || hardwareProfile.recommended_model_profile }}</strong>
+                    <p class="muted">
+                      {{ hardwareProfile.memory.summary | translate }}
+                      @if (hardwareProfile.gpu_vram_total_mb) {
+                        · GPU {{ hardwareProfile.gpu_vram_total_mb }} MiB
+                      }
+                    </p>
+                  </div>
+                  <span class="pill" [ngClass]="toneClass(hardwareProfile.status)">
+                    {{ hardwareProfile.recommended_model_profile | translate }}
+                  </span>
+                </div>
+              </section>
+            }
 
             <section class="ai-settings-panel model-capability-list">
               <div class="model-capability-header">
@@ -375,6 +394,10 @@
                             <div>
                               <strong>{{ card.displayName }}</strong>
                               <p class="muted">{{ card.localPath || card.modelId }}</p>
+                              <p class="muted">{{ modelRecommendationLabel(card) | translate }} · {{ modelHardwareFitLabel(card) | translate }}</p>
+                              @if (card.fitReason) {
+                                <p class="muted warn">{{ card.fitReason | translate }}</p>
+                              }
                               @if (card.runtimeGuidance) {
                                 <p class="muted warn">{{ card.runtimeGuidance | translate }}</p>
                               }
@@ -434,6 +457,10 @@
                             <div>
                               <strong>{{ card.displayName }}</strong>
                               <p class="muted">{{ card.modelId }} · {{ card.sizeHint || card.hardware }}</p>
+                              <p class="muted">{{ modelRecommendationLabel(card) | translate }} · {{ modelHardwareFitLabel(card) | translate }}</p>
+                              @if (card.fitReason) {
+                                <p class="muted warn">{{ card.fitReason | translate }}</p>
+                              }
                               @if (card.errorMessage) {
                                 <p class="muted error">{{ card.errorMessage }}</p>
                               }
@@ -861,9 +888,18 @@
                       <button mat-button type="button" [disabled]="isBusy() || isDefaultCamera(device)" (click)="setDefaultCamera(device)">
                         {{ '设为默认' | translate }}
                       </button>
-                      <button mat-button color="warn" type="button" [disabled]="isBusy()" (click)="removeDevice(device)">
-                        {{ '删除' | translate }}
-                      </button>
+                      @if (pendingDeleteDeviceId() === device.device_id) {
+                        <button mat-button type="button" class="confirm-delete-button" [disabled]="isBusy()" (click)="removeDevice(device)">
+                          {{ '确认删除' | translate }}
+                        </button>
+                        <button mat-button type="button" [disabled]="isBusy()" (click)="cancelDeviceDelete()">
+                          {{ '取消' | translate }}
+                        </button>
+                      } @else {
+                        <button mat-button type="button" [disabled]="isBusy()" (click)="removeDevice(device)">
+                          {{ '删除' | translate }}
+                        </button>
+                      }
                     </div>
                   </div>
                 </article>
@@ -893,6 +929,10 @@
                     <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
                   }
                 </mat-select>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>{{ 'RTSP 端口' | translate }}</mat-label>
+                <input matInput formControlName="rtspPort" placeholder="554" />
               </mat-form-field>
               <button mat-button color="primary" type="submit" [disabled]="isBusy()">
                 {{ '开始扫描' | translate }}
