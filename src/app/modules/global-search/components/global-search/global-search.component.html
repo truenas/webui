@@ -20,9 +20,14 @@
     />
 
     @if (searchControl.value) {
-      <span class="reset-icon reset-input" (click)="resetInput()">
+      <button
+        type="button"
+        class="reset-icon reset-input"
+        [attr.aria-label]="'Clear search' | translate"
+        (click)="resetInput()"
+      >
         <tn-icon name="close-circle" library="mdi"></tn-icon>
-      </span>
+      </button>
     }
   </div>
 

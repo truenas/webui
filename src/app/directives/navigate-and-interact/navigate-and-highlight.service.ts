@@ -2,14 +2,16 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
+import {
+  elementMaxPollAttempts,
+  elementPollIntervalMs,
+} from 'app/directives/navigate-and-interact/poll-constants';
 import { WINDOW } from 'app/helpers/window.helper';
 import { FocusService } from 'app/services/focus.service';
 
 export const highlightTargetClass = 'ix-highlight-target';
 export const highlightTargetInsetClass = 'ix-highlight-target-inset';
 
-const pollIntervalMs = 100;
-const maxPollAttempts = 50;
 const highlightDurationMs = 4000;
 const lateFocusDelayMs = 350;
 
@@ -45,8 +47,8 @@ export class NavigateAndHighlightService {
   private listenerAbortController: AbortController | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private lateFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  // Increments on every navigateAndHighlight / waitForElement /
-  // highlightResolved call. Two invariants depend on it:
+  // Bumped exactly once per public entry (navigateAndHighlight /
+  // waitForElement / highlightResolved). Two invariants depend on it:
   //   1. The router promise's .then() in navigateAndHighlight captures the
   //      token at call time and bails if a newer call has bumped it —
   //      otherwise a stale router resolution would start a fresh poll for
@@ -55,6 +57,8 @@ export class NavigateAndHighlightService {
   //      UiSearchDirective) bump the token so any in-flight navigateAndHighlight
   //      whose router promise hasn't resolved yet gets cancelled before it
   //      can start polling for an outdated target.
+  // Internal callers (e.g. navigateAndHighlight → pollForElement) MUST go
+  // through the private path to avoid re-bumping mid-flight.
   private currentNavigationToken = 0;
 
   navigateAndHighlight(route: string[], hash?: string, options?: WaitForElementOptions): void {
@@ -66,7 +70,7 @@ export class NavigateAndHighlightService {
         return;
       }
 
-      this.waitForElement(hash, options);
+      this.pollForElement(hash, 0, options);
     });
   }
 
@@ -99,10 +103,10 @@ export class NavigateAndHighlightService {
     if (htmlElement) {
       this.pendingTimeoutId = null;
       this.scrollIntoView(htmlElement, options);
-    } else if (attemptCount < maxPollAttempts) {
+    } else if (attemptCount < elementMaxPollAttempts) {
       this.pendingTimeoutId = setTimeout(() => {
         this.pollForElement(hash, attemptCount + 1, options);
-      }, pollIntervalMs);
+      }, elementPollIntervalMs);
     } else {
       this.pendingTimeoutId = null;
     }
@@ -110,15 +114,15 @@ export class NavigateAndHighlightService {
 
   scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
     htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
-    this.highlight(htmlElement, options?.inset);
+    this.highlight(htmlElement, { inset: options?.inset });
   }
 
-  highlight(targetElement: HTMLElement, inset = false): void {
+  highlight(targetElement: HTMLElement, options?: { inset?: boolean }): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
 
-    const className = inset ? highlightTargetInsetClass : highlightTargetClass;
+    const className = options?.inset ? highlightTargetInsetClass : highlightTargetClass;
     targetElement.classList.add(className);
     this.prevHighlightTarget = targetElement;
 

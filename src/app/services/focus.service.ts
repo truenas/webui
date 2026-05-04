@@ -15,7 +15,6 @@ const focusableSelectorString = focusableSelectors.join(', ');
 export class FocusService {
   private document = inject<Document>(DOCUMENT);
 
-
   private lastFocusedElement: HTMLElement | null = null;
 
   captureCurrentFocus(): void {

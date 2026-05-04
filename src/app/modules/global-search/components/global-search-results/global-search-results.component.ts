@@ -87,17 +87,21 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     const route = element.anchorRouterLink || element.routerLink;
     if (route?.length) {
-      const navigateTo = route.includes('*') ? route.slice(0, -1) : route;
+      const hasWildcard = route[route.length - 1] === '*';
+      const navigateTo = hasWildcard ? route.slice(0, -1) : route;
       const targetPath = navigateTo.join('/');
 
-      // Skip navigation when we're already on the target page — even
-      // same-URL `router.navigate` calls fire `NavigationSkipped` events,
-      // which `<ix-master-detail-view>` interprets as "page changed" and
-      // collapses the details panel (the cards disappear).
-      // Compare with an explicit segment boundary so e.g. `/datasets/poolA`
-      // is NOT considered a prefix of the user's current `/datasets/poolAB`.
+      // Skip navigation when we're already on the target page — even same-URL
+      // `router.navigate` calls fire `NavigationSkipped` events that
+      // master-detail views interpret as "page changed".
+      // Prefix-startsWith only applies when the route opts in with a trailing
+      // `*` (master-detail descendants like `/datasets/<pool>`). Without it
+      // we'd treat sibling pages such as `/credentials/users/api-keys` as a
+      // descendant of `/credentials/users` and skip the navigation the user
+      // actually asked for.
       const currentPath = this.router.url.split('?')[0].split('#')[0];
-      const onTargetPath = currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+      const onTargetPath = currentPath === targetPath
+        || (hasWildcard && currentPath.startsWith(`${targetPath}/`));
       if (!onTargetPath) {
         this.router.navigate(navigateTo);
       }
@@ -133,14 +137,23 @@ export class GlobalSearchResultsComponent implements OnChanges {
   removeRecentSearch(event: Event, result: UiSearchableElement): void {
     event.stopPropagation();
 
-    const existingResults = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    const existingResults = this.readRecentSearches();
     const updatedResults = existingResults.filter((item) => !isEqual(item.hierarchy, result.hierarchy));
     localStorage.setItem('recentSearches', JSON.stringify(updatedResults));
     this.recentSearchRemoved.emit();
   }
 
+  private readRecentSearches(): UiSearchableElement[] {
+    try {
+      const parsed: unknown = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]');
+      return Array.isArray(parsed) ? parsed as UiSearchableElement[] : [];
+    } catch {
+      return [];
+    }
+  }
+
   private saveSearchResult(result: UiSearchableElement): void {
-    const existingResults = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    const existingResults = this.readRecentSearches();
     const existingIndex = findIndex(existingResults, (item) => isEqual(item.hierarchy, result.hierarchy));
 
     if (existingIndex !== -1) existingResults.splice(existingIndex, 1);

@@ -135,7 +135,7 @@ describe('NavigateAndHighlightService', () => {
 
   it('uses the inset class when called with inset: true', () => {
     const card = makeVisibleElement('inset-card');
-    spectator.service.highlight(card, true);
+    spectator.service.highlight(card, { inset: true });
 
     expect(card.classList.contains(highlightTargetInsetClass)).toBe(true);
     expect(card.classList.contains(highlightTargetClass)).toBe(false);

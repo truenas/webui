@@ -1,11 +1,12 @@
 import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import {
+  elementMaxPollAttempts,
+  elementPollIntervalMs,
+} from 'app/directives/navigate-and-interact/poll-constants';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-
-const selectionPollIntervalMs = 100;
-const selectionMaxPollAttempts = 50; // ~5s
 
 @Injectable({
   providedIn: 'root',
@@ -111,7 +112,7 @@ export class UiSearchDirectivesService {
       nextTriggerFired = true;
     }
 
-    if (attempt >= selectionMaxPollAttempts) {
+    if (attempt >= elementMaxPollAttempts) {
       if (this.pendingHighlightElement === config) {
         this.setPendingUiHighlightElement(null);
       }
@@ -120,7 +121,7 @@ export class UiSearchDirectivesService {
 
     this.pendingTimeoutId = setTimeout(
       () => this.pollForSelection(config, attempt + 1, nextTriggerFired),
-      selectionPollIntervalMs,
+      elementPollIntervalMs,
     );
   }
 

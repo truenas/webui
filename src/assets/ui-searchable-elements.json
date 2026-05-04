@@ -4301,7 +4301,8 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "add-zvol",
@@ -4324,7 +4325,8 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "add-dataset",
@@ -4343,7 +4345,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "details",
@@ -4362,7 +4365,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "space-management",
@@ -4381,7 +4385,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "encryption",
@@ -4400,7 +4405,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "data-protection",
@@ -4419,7 +4425,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "roles",
@@ -4439,7 +4446,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "permissions",
@@ -4458,7 +4466,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/",
@@ -4482,7 +4491,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/",
@@ -4508,7 +4518,8 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "take-snapshot",
@@ -4527,7 +4538,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/datasets/snapshots",
@@ -4549,7 +4561,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/data-protection/snapshot",

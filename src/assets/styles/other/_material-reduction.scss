@@ -828,18 +828,23 @@ body {
     // Note: MDC list items pull their focus-state text colour from
     // --mdc-list-list-item-focus-label-text-color which defaults to a dark
     // value; reset it so the row keeps its normal foreground colour.
-    &:focus,
-    &:focus-visible,
-    &.cdk-focused,
-    &.cdk-keyboard-focused,
-    &.cdk-mouse-focused {
-      --mdc-list-list-item-focus-label-text-color: inherit;
-      --mdc-list-list-item-focus-state-layer-color: transparent;
+    // `<tr>` is excluded because the highlight is painted via outline +
+    // box-shadow ON THE HOST for table rows (the ::after overlay isn't
+    // reliable on `<tr>`); zeroing those out here would erase the pulse.
+    &:not(tr) {
+      &:focus,
+      &:focus-visible,
+      &.cdk-focused,
+      &.cdk-keyboard-focused,
+      &.cdk-mouse-focused {
+        --mdc-list-list-item-focus-label-text-color: inherit;
+        --mdc-list-list-item-focus-state-layer-color: transparent;
 
-      background-color: inherit !important;
-      box-shadow: none !important;
-      color: inherit !important;
-      outline: none !important;
+        background-color: inherit !important;
+        box-shadow: none !important;
+        color: inherit !important;
+        outline: none !important;
+      }
     }
 
     // mat-list-item pushes its focused-state colour down to inner spans via
@@ -893,6 +898,28 @@ body {
 
     @media (prefers-reduced-motion) {
       animation: none;
+    }
+  }
+
+  // `<tr>` does not establish a reliable containing block for an absolutely
+  // positioned ::after — the `top/right/bottom/left: 0` overlay escapes the
+  // row's box and stretches across the table's positioned ancestor, visibly
+  // distorting the page. Paint the pulse directly on the row (skip the
+  // ::after overlay) and always use the outset variant — `border-collapse`
+  // makes a `border` on `<tr>` unreliable, and tables don't have the
+  // overflow-hidden parents that motivated the inset variant.
+  tr.ix-highlight-target,
+  tr.ix-highlight-target-inset {
+    animation: ix-highlight-pulse 1.5s infinite;
+
+    &::after {
+      content: none;
+    }
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
     }
   }
 }
