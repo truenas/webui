@@ -56,9 +56,14 @@ export const adminRoutes: Routes = [
         data: { title: T('Applications'), breadcrumb: T('Applications') },
       },
       {
+        path: 'harbor-assistant',
+        loadChildren: () => import('app/pages/harbordesk/harbordesk.routes').then((module) => module.harbordeskRoutes),
+        data: { title: T('Harbor Assistant'), breadcrumb: T('Harbor Assistant') },
+      },
+      {
         path: 'harbordesk',
         loadChildren: () => import('app/pages/harbordesk/harbordesk.routes').then((module) => module.harbordeskRoutes),
-        data: { title: T('HarborDesk'), breadcrumb: T('HarborDesk') },
+        data: { title: T('Harbor Assistant'), breadcrumb: T('Harbor Assistant') },
       },
       {
         path: 'harborbot',

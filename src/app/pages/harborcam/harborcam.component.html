@@ -1,5 +1,3 @@
-<ix-page-header [pageTitle]="'HarborCam' | translate"></ix-page-header>
-
 <section class="harborcam-page">
   <mat-tab-group
     class="harborcam-tabs"
@@ -12,21 +10,20 @@
         <section class="dvr-compact">
           <div class="workbench-header">
             <div>
-              <h2>{{ 'Camera DVR' | translate }}</h2>
-              <p>{{ selectedCameraLabel() }}</p>
+              <h2>{{ selectedCameraLabel() }}</h2>
             </div>
             <button mat-stroked-button type="button" [disabled]="cameraLoading()" (click)="refreshCameraDvr()">
-              {{ cameraLoading() ? ('Refreshing' | translate) : ('Refresh cameras' | translate) }}
+              {{ cameraLoading() ? ('刷新中' | translate) : ('刷新摄像头' | translate) }}
             </button>
           </div>
 
           @if (cameraError()) {
-            <div class="notice warning compact">{{ cameraError() }}</div>
+            <div class="notice warning compact">{{ cameraStatusNotice() }}</div>
           }
 
-          @if (cameras().length > 0) {
+          @if (liveCameras().length > 0) {
             <div class="camera-pills">
-              @for (camera of cameras(); track camera.device_id) {
+              @for (camera of liveCameras(); track camera.device_id) {
                 <button
                   mat-stroked-button
                   type="button"
@@ -63,6 +60,18 @@
                       (load)="handleLiveLoad($event)"
                       (error)="handleLiveError()"
                     />
+                  } @else if (livePreviewErrorMessage(); as previewError) {
+                    <div class="live-empty-state">
+                      <strong>{{ previewError }}</strong>
+                      <div>
+                        <button mat-stroked-button type="button" (click)="retryLivePreview()">
+                          {{ '重试' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="openCameraSettings()">
+                          {{ '摄像头设置' | translate }}
+                        </button>
+                      </div>
+                    </div>
                   }
                 </div>
 
@@ -70,7 +79,7 @@
                   <section class="recent-media-strip" data-testid="harborcam-recent-media-strip">
                     <div class="strip-header">
                       <div>
-                        <h3>{{ 'Recent media' | translate }}</h3>
+                        <h3>{{ '最近媒体' | translate }}</h3>
                         <p>{{ latestMediaLabel() }}</p>
                       </div>
                     </div>
@@ -95,7 +104,7 @@
                           </span>
                           <span>
                             <strong>{{ mediaKindLabel(segment) | translate }}</strong>
-                            <small>{{ formatUnix(segment.created_at || segment.started_at) }}</small>
+                            <small>{{ displayMediaTime(segment) }}</small>
                           </span>
                         </button>
                       }
@@ -106,8 +115,8 @@
 
               <aside class="dvr-sidecar">
                 <div class="status-strip">
-                  <span>{{ selectedDvrStatus()?.status || 'stopped' }}</span>
-                  <span>{{ timelineItems().length }} items</span>
+                  <span>{{ recordingStatusLabel() | translate }}</span>
+                  <span>{{ timelineItems().length }} {{ '项' | translate }}</span>
                 </div>
 
                 <div class="dvr-controls">
@@ -118,7 +127,7 @@
                     (click)="captureSnapshot()"
                     [disabled]="actionBusy() === 'record' || actionBusy() === 'snapshot'"
                   >
-                    {{ actionBusy() === 'snapshot' ? ('Capturing' | translate) : ('Snapshot' | translate) }}
+                    {{ actionBusy() === 'snapshot' ? ('截图中' | translate) : ('快照' | translate) }}
                   </button>
                   @if (isRecording() || recordIntent() === 'finalizing') {
                     <button
@@ -127,29 +136,29 @@
                       (click)="stopRecording()"
                       [disabled]="actionBusy() === 'record' || recordIntent() === 'finalizing'"
                     >
-                      {{ recordIntent() === 'finalizing' ? ('Finalizing' | translate) : ('Stop recording' | translate) }}
+                      {{ recordIntent() === 'finalizing' ? ('整理中' | translate) : ('停止录制' | translate) }}
                     </button>
                   } @else {
                     <button mat-stroked-button type="button" (click)="startRecording()" [disabled]="actionBusy() === 'record'">
-                      {{ recordIntent() === 'starting' ? ('Starting' | translate) : ('Record' | translate) }}
+                      {{ recordIntent() === 'starting' ? ('启动中' | translate) : ('录制' | translate) }}
                     </button>
                   }
                 </div>
 
                 <details class="ptz-panel" [class.disabled]="!canPtz()">
                   <summary>
-                    <span>{{ 'PTZ' | translate }}</span>
-                    <span>{{ canPtz() ? ('available' | translate) : ('unavailable' | translate) }}</span>
+                    <span>{{ '云台' | translate }}</span>
+                    <span>{{ canPtz() ? ('可用' | translate) : ('不可用' | translate) }}</span>
                   </summary>
                   <div class="ptz-pad">
                     <span></span>
-                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('up')">{{ 'Up' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('up')">{{ '上' | translate }}</button>
                     <span></span>
-                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('left')">{{ 'Left' | translate }}</button>
-                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('stop')">{{ 'Stop' | translate }}</button>
-                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('right')">{{ 'Right' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('left')">{{ '左' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('stop')">{{ '停止' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('right')">{{ '右' | translate }}</button>
                     <span></span>
-                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('down')">{{ 'Down' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('down')">{{ '下' | translate }}</button>
                     <span></span>
                   </div>
                 </details>
@@ -163,7 +172,7 @@
               </aside>
             </div>
           } @else {
-            <div class="empty-state">{{ 'No cameras are available from HarborBeacon yet.' | translate }}</div>
+            <div class="empty-state">{{ '还没有可用摄像头。' | translate }}</div>
           }
         </section>
       </section>
@@ -176,9 +185,12 @@
             <header>
               <div>
                 <h3>{{ mediaKindLabel(mediaItem) | translate }}</h3>
-                <p>{{ formatUnix(mediaItem.created_at || mediaItem.started_at) }}</p>
+                <p>{{ displayMediaTime(mediaItem) }}</p>
               </div>
-              <button mat-stroked-button type="button" (click)="closeMediaPreview()">{{ 'Close' | translate }}</button>
+              <div class="viewer-actions">
+                <button mat-stroked-button type="button" (click)="fullscreenMediaViewer()">{{ '全屏' | translate }}</button>
+                <button mat-stroked-button type="button" (click)="closeMediaPreview()">{{ '关闭' | translate }}</button>
+              </div>
             </header>
 
             @if (mediaKind(mediaItem) === 'snapshot') {
@@ -193,12 +205,12 @@
           <section class="results-workbench media-library-workbench" data-testid="harborcam-media-library">
             <div class="results-header">
               <div>
-                <h2>{{ 'DVR Media Library' | translate }}</h2>
+                <h2>{{ '录像与快照' | translate }}</h2>
                 <p>{{ selectedCameraLabel() }}</p>
               </div>
               <div class="result-summary">
                 <strong>{{ timelineItems().length }}</strong>
-                <span>{{ 'items' | translate }}</span>
+                <span>{{ '项' | translate }}</span>
               </div>
             </div>
 
@@ -226,14 +238,14 @@
                       <span>{{ mediaKindLabel(segment) | translate }}</span>
                       <span>{{ bytesLabel(segment.size_bytes) }}</span>
                     </span>
-                    <strong>{{ formatUnix(segment.created_at || segment.started_at) }}</strong>
+                    <strong>{{ displayMediaTime(segment) }}</strong>
                     <span>{{ segment.stream_kind }} / {{ mediaDurationLabel(segment) }}</span>
                     <span>{{ mediaStatusLabel(segment) | translate }}</span>
                   </button>
                 }
               </div>
             } @else {
-              <div class="empty-state">{{ 'No local DVR segments are visible yet.' | translate }}</div>
+              <div class="empty-state">{{ '还没有录像或快照。' | translate }}</div>
             }
           </section>
 
@@ -242,27 +254,27 @@
               @if (response(); as result) {
                 <div class="results-header">
                   <div>
-                    <h2>{{ 'Search evidence' | translate }}</h2>
+                    <h2>{{ '搜索结果' | translate }}</h2>
                     <p>{{ form.controls.query.value }}</p>
                   </div>
                   <div class="result-summary">
                     <strong>{{ result.total_matches }}</strong>
-                    <span>{{ 'matches' | translate }}</span>
-                    <span>{{ result.status }}</span>
+                    <span>{{ '条结果' | translate }}</span>
+                    <span>{{ searchStatusLabel(result) | translate }}</span>
                     @if (result.degraded) {
-                      <span>{{ result.degraded_reason }}</span>
+                      <span>{{ userFacingSearchNotice(result.degraded_reason || '') }}</span>
                     }
                   </div>
                 </div>
               } @else {
                 <div class="results-header">
                   <div>
-                    <h2>{{ 'Search evidence' | translate }}</h2>
+                    <h2>{{ '搜索结果' | translate }}</h2>
                     <p>{{ form.controls.query.value }}</p>
                   </div>
                   <div class="result-summary">
-                    <strong>{{ loading() ? ('Searching' | translate) : ('0' | translate) }}</strong>
-                    <span>{{ loading() ? ('working' | translate) : ('error' | translate) }}</span>
+                    <strong>{{ loading() ? ('搜索中' | translate) : ('0' | translate) }}</strong>
+                    <span>{{ loading() ? ('正在查找' | translate) : ('出错' | translate) }}</span>
                   </div>
                 </div>
               }
@@ -275,7 +287,18 @@
                 </section>
               } @else if (response(); as result) {
                 @if (noResults()) {
-                  <div class="empty-state">{{ emptyMessage(result) | translate }}</div>
+                  <div class="empty-state filter-empty-state">
+                    <span>{{ emptyMessage(result) | translate }}</span>
+                    @if (availableResultFilters(result).length > 0) {
+                      <div class="empty-actions">
+                        @for (filter of availableResultFilters(result); track filter) {
+                          <button mat-stroked-button type="button" (click)="switchFilter(filter)">
+                            {{ filterLabel(filter) | translate }}
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
                 } @else {
                   <section class="results-waterfall" aria-live="polite">
                     @for (item of waterfallItems(); track resultTrackKey($index, item)) {
@@ -295,25 +318,9 @@
                         <mat-card-content>
                           <div class="card-topline">
                             <span>{{ kindLabel(item) | translate }}</span>
-                            <span>{{ scoreLabel(item.hit) }}</span>
                           </div>
                           <h2>{{ item.hit.title }}</h2>
                           <p>{{ summary(item.hit) }}</p>
-
-                          @if (matchedTerms(item.hit)) {
-                            <div class="terms">{{ matchedTerms(item.hit) }}</div>
-                          }
-
-                          <details (click)="$event.stopPropagation()">
-                            <summary>{{ 'Evidence' | translate }}</summary>
-                            <dl>
-                              <div><dt>{{ 'Source' | translate }}</dt><dd>{{ sourceKinds(item.hit) }}</dd></div>
-                              <div><dt>{{ 'Path' | translate }}</dt><dd>{{ item.hit.path }}</dd></div>
-                              <div><dt>{{ 'Content indexed' | translate }}</dt><dd>{{ item.hit.content_indexed ? 'true' : 'false' }}</dd></div>
-                              <div><dt>{{ 'Content match' | translate }}</dt><dd>{{ item.hit.content_match_used ? 'true' : 'false' }}</dd></div>
-                              <div><dt>{{ 'Filename match' | translate }}</dt><dd>{{ item.hit.filename_match_used ? 'true' : 'false' }}</dd></div>
-                            </dl>
-                          </details>
                         </mat-card-content>
                       </mat-card>
                     }
@@ -328,8 +335,7 @@
 
         <aside class="assistant-panel">
           <div class="assistant-header">
-            <h2>{{ 'HarborCam' | translate }}</h2>
-            <span>{{ 'Event search' | translate }}</span>
+            <h2>{{ '事件搜索' | translate }}</h2>
           </div>
 
           <form class="assistant-form" [formGroup]="form" (ngSubmit)="search()">
@@ -337,18 +343,18 @@
               <textarea
                 class="query-input"
                 rows="5"
-                aria-label="HarborCam event search query"
+                aria-label="Camera event search query"
                 formControlName="query"
                 placeholder="试着问：谁在倒啤酒？"
               ></textarea>
               <div class="query-actions">
                 <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
-                  {{ 'Search camera events' | translate }}
+                  {{ '搜索录像' | translate }}
                 </button>
               </div>
             </div>
 
-            <div class="prompt-strip" aria-label="HarborCam question examples">
+            <div class="prompt-strip" aria-label="Camera event question examples">
               <span>试试</span>
               @for (suggestion of promptSuggestions; track suggestion.query) {
                 <button type="button" class="suggestion-chip" (click)="usePromptSuggestion(suggestion)">
@@ -359,22 +365,23 @@
 
             <div class="scope-note">本次搜索范围：{{ searchScopeLabel() }}</div>
 
-            <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="HarborCam result filter">
-              <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
-              <mat-button-toggle value="images">{{ 'Images' | translate }}</mat-button-toggle>
-              <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
-              <mat-button-toggle value="videos">{{ 'Videos' | translate }}</mat-button-toggle>
+            <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="Camera event result filter">
+              <mat-button-toggle value="all">{{ '全部' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="images">{{ '图片' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="text">{{ '文字' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="videos">{{ '视频' | translate }}</mat-button-toggle>
             </mat-button-toggle-group>
 
-            <div class="scope-fields">
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'From' | translate }}</mat-label>
-                <input matInput type="datetime-local" formControlName="from" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'To' | translate }}</mat-label>
-                <input matInput type="datetime-local" formControlName="to" />
-              </mat-form-field>
+            <div class="scope-fields time-range-summary">
+              <span class="scope-fields-label">{{ '时间范围' | translate }}</span>
+              <button mat-stroked-button type="button" class="time-range-button" (click)="openTimeRangeDialog()">
+                {{ timeRangeLabel() }}
+              </button>
+              @if (hasTimeRange()) {
+                <button mat-button type="button" (click)="clearTimeRange()">
+                  {{ '清除' | translate }}
+                </button>
+              }
             </div>
           </form>
 
@@ -388,18 +395,18 @@
             @if (result.warnings.length > 0 || result.blockers.length > 0) {
               <div class="notice warning compact">
                 @for (warning of result.warnings; track warning) {
-                  <span>{{ warning }}</span>
+                  <span>{{ userFacingSearchNotice(warning) }}</span>
                 }
                 @for (blocker of result.blockers; track blocker) {
-                  <span>{{ blocker }}</span>
+                  <span>{{ userFacingSearchNotice(blocker) }}</span>
                 }
               </div>
             }
 
             @if (embeddingUnavailable(result)) {
               <div class="notice warning compact embedding-action">
-                <span>语义检索模型不可用。请到 HarborDesk 的“语义索引”节点安装或选择模型，然后重新索引知识库。</span>
-                <button mat-stroked-button type="button" (click)="openHarborDeskModels()">打开语义索引</button>
+                <span>向量检索模型不可用。请到 Harbor Assistant 的“设置 / AI 设置 / 模型”选择或安装模型，然后重新索引知识库。</span>
+                <button mat-stroked-button type="button" (click)="openHarborDeskModels()">打开模型设置</button>
               </div>
             }
           }

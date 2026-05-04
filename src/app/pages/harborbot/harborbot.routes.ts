@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { HarborBotComponent } from 'app/pages/harborbot/harborbot.component';
+import { HarborAssistantRedirectComponent } from 'app/pages/harbor-assistant/harbor-assistant-redirect.component';
 
 export const harborbotRoutes: Routes = [
   {
     path: '',
-    component: HarborBotComponent,
-    data: { title: T('HarborBot'), breadcrumb: T('HarborBot') },
+    component: HarborAssistantRedirectComponent,
+    data: { title: T('Harbor Assistant'), breadcrumb: T('Harbor Assistant'), assistantTab: 'search' },
   },
 ];

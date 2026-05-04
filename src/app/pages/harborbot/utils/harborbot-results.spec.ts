@@ -119,7 +119,7 @@ describe('HarborBot result helpers', () => {
     expect(harborBotHasNoResults(null)).toBe(false);
     expect(harborBotErrorMessage({ error: { error: 'blocked by preview guard' } })).toBe('blocked by preview guard');
     expect(harborBotErrorMessage({ message: 'network failed' })).toBe('network failed');
-    expect(harborBotErrorMessage(null)).toBe('HarborBot search failed.');
+    expect(harborBotErrorMessage(null)).toBe('搜索失败。');
   });
 });
 

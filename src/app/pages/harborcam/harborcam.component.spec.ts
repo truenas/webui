@@ -1,7 +1,7 @@
 import { fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HarborCamComponent } from 'app/pages/harborcam/harborcam.component';
 import {
@@ -96,6 +96,16 @@ describe('HarborCamComponent', () => {
     discardPeriodicTasks();
   }));
 
+  it('does not expose raw camera state parsing errors', fakeAsync(() => {
+    api.cameraState = jest.fn(() => throwError(() => new Error('failed to parse admin console state: EOF while parsing a value')));
+    spectator = createComponent();
+    spectator.detectChanges();
+
+    expect(spectator.element.textContent).toContain('摄像头设置暂时没有刷新完整');
+    expect(spectator.element.textContent).not.toContain('failed to parse admin console');
+    discardPeriodicTasks();
+  }));
+
   it('does not refresh the main live image immediately after snapshot', fakeAsync(() => {
     spectator = createComponent();
     const componentState = spectator.component as unknown as {
@@ -116,7 +126,7 @@ describe('HarborCamComponent', () => {
     spectator.detectChanges();
 
     expect(api.createSnapshotTask).toHaveBeenCalledWith('cam-1');
-    expect(spectator.query('.live-feedback')).toHaveText('Captured');
+    expect(spectator.query('.live-feedback')).toHaveText('已截图');
     expect(spectator.queryAll('.recent-media-card.snapshot.pending').length).toBe(1);
     expect(spectator.component.timelineItems()[0].file_path).toContain('ui://harborcam/snapshot:cam-1');
     tick(3000);
@@ -226,6 +236,94 @@ describe('HarborCamComponent', () => {
     expect(spectator.query('mat-tab-group')).toExist();
     expect(spectator.fixture.nativeElement.textContent).toContain('实况');
     expect(spectator.fixture.nativeElement.textContent).toContain('回看');
+    expect(spectator.fixture.nativeElement.textContent).not.toContain('HarborCam');
+    discardPeriodicTasks();
+  }));
+
+  it('uses the camera room as the live title and keeps the camera name in the selector', fakeAsync(() => {
+    api.cameraState = jest.fn(() => of(cameraState({
+      cameraName: 'TP1',
+      room: '客厅',
+    })));
+    spectator = createComponent();
+    spectator.detectChanges();
+
+    expect(spectator.query('.workbench-header h2')).toHaveText('客厅');
+    expect(spectator.query('.camera-pills')).toHaveText('TP1');
+    discardPeriodicTasks();
+  }));
+
+  it('keeps public DVR fixtures out of the live camera selector', fakeAsync(() => {
+    api.cameraState = jest.fn(() => of(cameraState({ includeFixture: true })));
+    spectator = createComponent();
+    spectator.detectChanges();
+
+    expect(spectator.query('.camera-pills')).toHaveText('Camera 192.168.3.231');
+    expect(spectator.query('.camera-pills')).not.toHaveText('Public DVR Fixture');
+    discardPeriodicTasks();
+  }));
+
+  it('sorts finalized recordings by the visible finalize time when available', fakeAsync(() => {
+    spectator = createComponent();
+    const componentState = spectator.component as unknown as {
+      dvrTimeline: { set: (items: unknown[]) => void };
+      optimisticMediaItems: { set: (items: unknown[]) => void };
+      timelineItems: () => Array<{ file_path: string }>;
+    };
+
+    componentState.optimisticMediaItems.set([
+      {
+        device_id: 'cam-1',
+        file_path: 'ui://recording',
+        media_kind: 'recording',
+        stream_kind: 'recording',
+        started_at: '200',
+        created_at: '200',
+        ended_at: '200',
+        duration_seconds: 0,
+        retention_expires_at: '',
+        size_bytes: 0,
+        playable: false,
+        indexed: false,
+        local_status: 'finalizing',
+        optimistic_key: 'recording:cam-1:200',
+        local_display_at: '200',
+      },
+    ]);
+    componentState.dvrTimeline.set([
+      {
+        device_id: 'cam-1',
+        file_path: '/library/snapshot.jpg',
+        media_kind: 'snapshot',
+        stream_kind: 'snapshot',
+        started_at: '150',
+        created_at: '150',
+        ended_at: '150',
+        duration_seconds: 0,
+        retention_expires_at: '',
+        size_bytes: 100,
+        playable: true,
+        indexed: false,
+      },
+      {
+        device_id: 'cam-1',
+        file_path: '/library/recording.mp4',
+        media_kind: 'recording',
+        stream_kind: 'substream',
+        started_at: '120',
+        created_at: '120',
+        ended_at: '200',
+        duration_seconds: 80,
+        retention_expires_at: '',
+        size_bytes: 1000,
+        playable: true,
+        indexed: true,
+        local_display_at: '200',
+      },
+    ]);
+
+    expect(componentState.timelineItems()[0].file_path).toBe('ui://recording');
+    expect(componentState.timelineItems()[1].file_path).toBe('/library/recording.mp4');
     discardPeriodicTasks();
   }));
 
@@ -237,7 +335,7 @@ describe('HarborCamComponent', () => {
     spectator.component.startRecording();
     spectator.detectChanges();
 
-    expect(spectator.query('.recording-badge')).toHaveText('STARTING');
+    expect(spectator.query('.recording-badge')).toHaveText('启动中');
 
     api.dvrStatus = jest.fn(() => of(dvrStatus('recording')));
     startSubject.next(dvrStatus('recording'));
@@ -259,13 +357,13 @@ describe('HarborCamComponent', () => {
     spectator.component.stopRecording();
     spectator.detectChanges();
 
-    expect(spectator.query('.recording-badge')).toHaveText('FINALIZING');
+    expect(spectator.query('.recording-badge')).toHaveText('整理中');
     expect(spectator.queryAll('.recent-media-card.pending').length).toBeGreaterThan(0);
 
     stopSubject.next(dvrStatus('stopped'));
     stopSubject.complete();
     spectator.detectChanges();
-    expect(spectator.query('.recording-badge')).toHaveText('FINALIZING');
+    expect(spectator.query('.recording-badge')).toHaveText('整理中');
     tick(3000);
     discardPeriodicTasks();
   }));
@@ -293,15 +391,19 @@ describe('HarborCamComponent', () => {
 });
 
 function cameraState(options: {
+  cameraName?: string;
+  room?: string | null;
   snapshotUrl?: string | null;
   snapshotCapability?: boolean;
+  includeFixture?: boolean;
 } = {}): HarborBotCameraStateResponse {
   return {
     defaults: { selected_camera_device_id: 'cam-1' },
     devices: [
       {
         device_id: 'cam-1',
-        name: 'Camera 192.168.3.231',
+        name: options.cameraName ?? 'Camera 192.168.3.231',
+        room: options.room,
         snapshot_url: options.snapshotUrl === undefined ? '/api/cameras/cam-1/snapshot.jpg' : options.snapshotUrl,
         capabilities: {
           snapshot: options.snapshotCapability ?? true,
@@ -309,6 +411,16 @@ function cameraState(options: {
           ptz: false,
         },
       },
+      ...(options.includeFixture ? [{
+        device_id: 'public-fixture-dvr',
+        name: 'Public DVR Fixture (not live camera)',
+        snapshot_url: '/ui/assets/fixture.jpg',
+        capabilities: {
+          snapshot: false,
+          stream: false,
+          ptz: false,
+        },
+      }] : []),
     ],
   };
 }

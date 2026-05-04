@@ -94,7 +94,7 @@ export function harborBotHasNoResults(response: HarborBotSearchResponse | null):
 }
 
 export function harborBotErrorMessage(error: unknown): string {
-  const fallback = 'HarborBot search failed.';
+  const fallback = '搜索失败。';
   if (!error || typeof error !== 'object') {
     return fallback;
   }

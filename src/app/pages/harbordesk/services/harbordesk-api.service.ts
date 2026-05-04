@@ -30,7 +30,9 @@ import {
   LocalModelDownloadJobResponse,
   LocalModelDownloadsResponse,
   ManualDevicePayload,
+  ModelCapabilitiesResponse,
   ModelDownloadRequest,
+  ModelStoreStatusResponse,
   ModelEndpointPayload,
   ModelEndpointsResponse,
   ModelEndpointTestResult,
@@ -136,6 +138,21 @@ export class HarborDeskApiService {
     return this.http.get<ModelEndpointsResponse>('/api/harbordesk/models/endpoints');
   }
 
+  getModelCapabilities(): Observable<ModelCapabilitiesResponse> {
+    return this.http.get<ModelCapabilitiesResponse>('/api/harbordesk/models/capabilities');
+  }
+
+  updateModelStore(path: string): Observable<ModelStoreStatusResponse> {
+    return this.http.put<ModelStoreStatusResponse>('/api/harbordesk/models/store', { path });
+  }
+
+  selectModelCapability(capabilityId: string, modelId: string): Observable<ModelCapabilitiesResponse> {
+    return this.http.post<ModelCapabilitiesResponse>(
+      `/api/harbordesk/models/capabilities/${encodeURIComponent(capabilityId)}/selection`,
+      { model_id: modelId },
+    );
+  }
+
   createModelEndpoint(payload: ModelEndpointPayload): Observable<ModelEndpointsResponse> {
     return this.http.post<ModelEndpointsResponse>('/api/harbordesk/models/endpoints', payload);
   }
@@ -199,6 +216,12 @@ export class HarborDeskApiService {
     return this.http.patch<AdminStateResponse>(
       `/api/harbordesk/devices/${encodeURIComponent(deviceId)}`,
       payload,
+    );
+  }
+
+  deleteDevice(deviceId: string): Observable<AdminStateResponse> {
+    return this.http.delete<AdminStateResponse>(
+      `/api/harbordesk/devices/${encodeURIComponent(deviceId)}`,
     );
   }
 

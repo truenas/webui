@@ -8,7 +8,7 @@
   height: calc(100vh - 180px);
   min-width: 0;
   overflow: hidden;
-  padding: 0 24px 40px;
+  padding: 0;
 }
 
 .harborbot-shell {
@@ -545,16 +545,34 @@
   outline: 0;
 }
 
+.search-history-strip {
+  border-top: 1px solid var(--lines);
+  padding-top: 8px;
+}
+
+.history-clear {
+  background: transparent;
+  border: 0;
+  color: var(--fg2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  min-height: 30px;
+  padding: 4px 2px;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--fg1);
+    outline: 0;
+    text-decoration: underline;
+  }
+}
+
 .scope-note {
   color: var(--fg2);
   font-size: 12px;
   line-height: 1.35;
   overflow-wrap: anywhere;
-}
-
-.scope-fields mat-form-field {
-  min-width: 0;
-  width: 100%;
 }
 
 .mode-toggle,
@@ -573,14 +591,60 @@
 .scope-fields {
   display: grid;
   gap: 8px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
+}
+
+.time-range-summary {
+  align-items: stretch;
+}
+
+.time-range-button {
+  justify-content: flex-start;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+  text-align: left;
+  width: 100%;
+}
+
+.scope-fields-label {
+  color: var(--fg2);
+  font-size: 12px;
+  grid-column: 1 / -1;
+  line-height: 1.2;
 }
 
 .notice,
 .empty-state,
 .result-summary {
   padding: 12px 14px;
+}
+
+.filter-empty-state {
+  display: grid;
+  gap: 10px;
+}
+
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.start-state {
+  align-content: start;
+  display: grid;
+  gap: 6px;
+
+  strong {
+    color: var(--fg1);
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  span {
+    color: var(--fg2);
+  }
 }
 
 .notice.compact {
@@ -769,44 +833,6 @@ p {
   color: var(--fg2);
   font-size: 13px;
   line-height: 1.45;
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.terms {
-  color: var(--fg2);
-  font-size: 12px;
-  margin-top: 10px;
-  overflow-wrap: anywhere;
-}
-
-details {
-  color: var(--fg2);
-  font-size: 12px;
-  margin-top: 12px;
-}
-
-summary {
-  cursor: pointer;
-}
-
-dl {
-  display: grid;
-  gap: 8px;
-  margin: 10px 0 0;
-}
-
-dl div {
-  display: grid;
-  gap: 2px;
-}
-
-dt {
-  color: var(--fg1);
-  font-weight: 600;
-}
-
-dd {
   margin: 0;
   overflow-wrap: anywhere;
 }

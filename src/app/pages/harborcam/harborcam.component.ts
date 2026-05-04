@@ -1,18 +1,16 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin, of, timer } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   HarborBotResultFilter,
   HarborBotCameraDevice,
@@ -31,6 +29,10 @@ import {
   harborBotHasNoResults,
   harborBotSameOriginAdminUrl,
 } from 'app/pages/harbor/shared/harbor-results';
+import {
+  HarborTimeRangeDialogComponent,
+  HarborTimeRangeValue,
+} from 'app/pages/harbor/shared/harbor-time-range-dialog.component';
 
 interface HarborBotPromptSuggestion {
   label: string;
@@ -47,6 +49,7 @@ interface HarborBotMediaItem extends HarborBotDvrTimelineSegment {
   local_preview_url?: string;
   local_status?: HarborBotLocalMediaStatus;
   optimistic_key?: string;
+  local_display_at?: string;
 }
 
 @Component({
@@ -55,7 +58,6 @@ interface HarborBotMediaItem extends HarborBotDvrTimelineSegment {
   styleUrl: './harborcam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PageHeaderComponent,
     ReactiveFormsModule,
     TranslateModule,
     NgClass,
@@ -64,9 +66,6 @@ interface HarborBotMediaItem extends HarborBotDvrTimelineSegment {
     MatButtonToggleGroup,
     MatCard,
     MatCardContent,
-    MatFormField,
-    MatInput,
-    MatLabel,
     MatProgressBar,
     MatTab,
     MatTabGroup,
@@ -76,6 +75,7 @@ export class HarborCamComponent implements OnInit {
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly api = inject(HarborApiService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
   @ViewChild('liveImage') private liveImage?: ElementRef<HTMLImageElement>;
   @ViewChild('mediaViewer') private mediaViewer?: ElementRef<HTMLElement>;
   @ViewChild('searchResults') private searchResults?: ElementRef<HTMLElement>;
@@ -143,6 +143,7 @@ export class HarborCamComponent implements OnInit {
   protected readonly selectedTabIndex = signal(0);
   protected readonly liveFeedback = signal<string | null>(null);
   protected readonly recordIntent = signal<HarborBotRecordIntent | null>(null);
+  protected readonly liveCameras = computed(() => this.cameras().filter((camera) => !this.isFixtureCamera(camera)));
   private cameraRefreshRetryQueued = false;
   private actionMessageToken = 0;
   private liveFeedbackToken = 0;
@@ -228,10 +229,19 @@ export class HarborCamComponent implements OnInit {
     }).subscribe({
       next: ({ state, dvr }) => {
         const devices = state.devices ?? [];
-        const selected = this.selectedCameraId()
-          || state.defaults?.selected_camera_device_id
-          || devices[0]?.device_id
-          || null;
+        const liveDevices = devices.filter((device) => !this.isFixtureCamera(device));
+        const currentSelection = this.selectedCameraId();
+        const defaultSelection = state.defaults?.selected_camera_device_id ?? null;
+        const defaultIsLive = liveDevices.some((device) => device.device_id === defaultSelection);
+        const currentIsLive = liveDevices.some((device) => device.device_id === currentSelection);
+        const fallbackSelection = liveDevices[0]?.device_id
+          ?? devices.find((device) => device.device_id !== this.fixtureCameraId)?.device_id
+          ?? null;
+        const selected = currentSelection && currentIsLive
+          ? currentSelection
+          : defaultIsLive
+            ? defaultSelection
+            : fallbackSelection;
         this.cameras.set(devices);
         this.selectedCameraId.set(selected);
         this.dvrStatuses.set(dvr.statuses ?? []);
@@ -269,7 +279,32 @@ export class HarborCamComponent implements OnInit {
   }
 
   noResults(): boolean {
-    return harborBotHasNoResults(this.response());
+    return this.waterfallItems().length === 0;
+  }
+
+  hasAnyResult(result: HarborBotSearchResponse | null = this.response()): boolean {
+    return !harborBotHasNoResults(result);
+  }
+
+  availableResultFilters(result: HarborBotSearchResponse): HarborBotResultFilter[] {
+    const filters: HarborBotResultFilter[] = [];
+    if (result.images.length > 0) {
+      filters.push('images');
+    }
+    if (result.documents.length > 0) {
+      filters.push('text');
+    }
+    if (result.videos.length > 0) {
+      filters.push('videos');
+    }
+    if (filters.length > 1) {
+      filters.unshift('all');
+    }
+    return filters.filter((filter) => filter !== this.form.controls.filter.value);
+  }
+
+  switchFilter(filter: HarborBotResultFilter): void {
+    this.form.controls.filter.setValue(filter);
   }
 
   hasSearchResponse(): boolean {
@@ -286,7 +321,7 @@ export class HarborCamComponent implements OnInit {
   }
 
   openHarborDeskModels(): void {
-    window.open('/ui/harbordesk?tab=models&focus=semantic-index', '_blank', 'noopener');
+    window.open('/ui/harbor-assistant?tab=settings&section=ai&focus=semantic-index', '_blank', 'noopener');
   }
 
   selectedCameraIsFixture(): boolean {
@@ -303,6 +338,43 @@ export class HarborCamComponent implements OnInit {
       default:
         return '全部知识源';
     }
+  }
+
+  timeRangeLabel(): string {
+    const from = this.formatLocalDateTimeLabel(this.form.controls.from.value);
+    const to = this.formatLocalDateTimeLabel(this.form.controls.to.value);
+    if (!from && !to) {
+      return '全部时间';
+    }
+    return `${from || '不限'} - ${to || '不限'}`;
+  }
+
+  hasTimeRange(): boolean {
+    return Boolean(this.form.controls.from.value || this.form.controls.to.value);
+  }
+
+  openTimeRangeDialog(): void {
+    this.dialog.open<HarborTimeRangeDialogComponent, HarborTimeRangeValue, HarborTimeRangeValue | null>(
+      HarborTimeRangeDialogComponent,
+      {
+        width: '560px',
+        data: {
+          from: this.form.controls.from.value,
+          to: this.form.controls.to.value,
+        },
+      },
+    ).afterClosed().subscribe((value) => {
+      if (!value) {
+        return;
+      }
+      this.form.patchValue(value);
+      this.form.markAsDirty();
+    });
+  }
+
+  clearTimeRange(): void {
+    this.form.patchValue({ from: '', to: '' });
+    this.form.markAsDirty();
   }
 
   openPreview(item: HarborBotWaterfallItem): void {
@@ -328,7 +400,7 @@ export class HarborCamComponent implements OnInit {
   openLatestReplay(): void {
     const segment = this.timelineItems().find((item) => this.mediaKind(item) === 'recording' && this.canOpenMediaItem(item));
     if (!segment) {
-      this.actionError.set('No local DVR segments are visible yet.');
+      this.actionError.set('还没有可回放录像。');
       return;
     }
     this.openReplay(segment);
@@ -346,7 +418,7 @@ export class HarborCamComponent implements OnInit {
     const optimisticKey = localPreviewUrl
       ? this.prependOptimisticSnapshot(deviceId, localPreviewUrl)
       : null;
-    this.showLiveFeedback(localPreviewUrl ? 'Captured' : 'Capturing');
+    this.showLiveFeedback(localPreviewUrl ? '已截图' : '截图中');
 
     if (this.shouldUseLivePreviewAsSnapshot()) {
       this.showActionMessage('该摄像头未暴露单帧快照接口，先显示当前实时预览画面。');
@@ -382,7 +454,7 @@ export class HarborCamComponent implements OnInit {
     this.actionBusy.set('record');
     this.recordIntent.set('starting');
     this.actionError.set(null);
-    this.showActionMessage('Starting recording...', 1800);
+    this.showActionMessage('正在开始录制...', 1800);
     this.api.startDvrRecording(deviceId).pipe(
       finalize(() => {
         if (this.actionBusy() === 'record') {
@@ -393,7 +465,7 @@ export class HarborCamComponent implements OnInit {
       next: (response) => {
         this.dvrStatuses.set(response.statuses ?? []);
         this.recordIntent.set(null);
-        this.showActionMessage('Recording started.');
+        this.showActionMessage('已开始录制。');
         this.refreshCameraDvr();
       },
       error: (error: unknown) => {
@@ -411,7 +483,7 @@ export class HarborCamComponent implements OnInit {
     this.actionBusy.set('record');
     this.recordIntent.set('finalizing');
     this.actionError.set(null);
-    this.showActionMessage('Finalizing recording...', 2200);
+    this.showActionMessage('正在整理录像...', 2200);
     this.prependOptimisticRecording(deviceId);
     this.api.stopDvrRecording(deviceId).pipe(
       finalize(() => {
@@ -422,7 +494,7 @@ export class HarborCamComponent implements OnInit {
     ).subscribe({
       next: (response) => {
         this.dvrStatuses.set(response.statuses ?? []);
-        this.showActionMessage('Recording stopped. 正在整理可回放片段...');
+        this.showActionMessage('录制已停止，正在整理可回放片段...');
         this.refreshCameraDvr();
         timer(1200).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
           this.refreshCameraDvr();
@@ -441,10 +513,10 @@ export class HarborCamComponent implements OnInit {
 
   ptzAction(direction: string): void {
     if (!this.canPtz()) {
-      this.showActionMessage('PTZ is unavailable for this camera.');
+      this.showActionMessage('当前摄像头不可云台控制。');
       return;
     }
-    this.showActionMessage(`PTZ ${direction} is not exposed by the HarborBot API yet.`);
+    this.showActionMessage(`云台 ${direction} 暂不可用。`);
   }
 
   selectedCamera(): HarborBotCameraDevice | undefined {
@@ -455,9 +527,27 @@ export class HarborCamComponent implements OnInit {
     return this.dvrStatuses().find((status) => status.device_id === this.selectedCameraId());
   }
 
+  recordingStatusLabel(): string {
+    const status = this.selectedDvrStatus()?.status ?? 'stopped';
+    if (this.recordIntent() === 'starting' || status === 'starting') {
+      return '启动中';
+    }
+    if (this.recordIntent() === 'finalizing' || status === 'stopping' || status === 'finalizing') {
+      return '整理中';
+    }
+    if (status === 'recording') {
+      return '录制中';
+    }
+    return '已停止';
+  }
+
   selectedCameraLabel(): string {
     const camera = this.selectedCamera();
-    return camera?.name || this.selectedCameraId() || 'Camera';
+    return camera?.room || camera?.name || this.selectedCameraId() || 'Camera';
+  }
+
+  cameraStatusNotice(): string {
+    return '摄像头设置暂时没有刷新完整，请稍后点击刷新摄像头。';
   }
 
   canPtz(): boolean {
@@ -474,10 +564,10 @@ export class HarborCamComponent implements OnInit {
 
   recordBadgeLabel(): string {
     if (this.recordIntent() === 'starting') {
-      return 'STARTING';
+      return '启动中';
     }
     if (this.recordIntent() === 'finalizing') {
-      return 'FINALIZING';
+      return '整理中';
     }
     return 'REC';
   }
@@ -490,6 +580,9 @@ export class HarborCamComponent implements OnInit {
     const lastGoodFrame = this.lastGoodLiveFrameUrl();
     if (lastGoodFrame && this.liveSnapshotErrorToken() === this.liveSnapshotToken()) {
       return lastGoodFrame;
+    }
+    if (this.liveSnapshotErrorToken() === this.liveSnapshotToken()) {
+      return null;
     }
     const cameraSnapshotUrl = this.selectedCameraSnapshotUrl();
     if (cameraSnapshotUrl?.startsWith('/ui/assets/')) {
@@ -506,22 +599,39 @@ export class HarborCamComponent implements OnInit {
     return null;
   }
 
+  livePreviewErrorMessage(): string | null {
+    if (!this.selectedCameraId()) {
+      return '请选择摄像头。';
+    }
+    if (this.liveSnapshotErrorToken() === this.liveSnapshotToken()) {
+      return '实时画面暂不可用。请重试，或到摄像头设置检查地址和账号。';
+    }
+    if (!this.selectedLiveUrl()) {
+      return '当前摄像头没有可用的实时预览地址。';
+    }
+    return null;
+  }
+
+  retryLivePreview(): void {
+    this.liveMjpegFailed.set(false);
+    this.liveSnapshotErrorToken.set(null);
+    this.liveSnapshotToken.set(Date.now());
+  }
+
+  openCameraSettings(): void {
+    window.open('/ui/harbor-assistant?tab=settings&section=camera', '_blank', 'noopener');
+  }
+
   selectedSnapshotUrl(): string | null {
     const deviceId = this.selectedCameraId();
     if (!deviceId) {
       return null;
     }
     const cameraSnapshotUrl = this.selectedCameraSnapshotUrl();
-    if (cameraSnapshotUrl) {
+    if (cameraSnapshotUrl?.startsWith('/ui/assets/')) {
       return this.withRefreshToken(cameraSnapshotUrl);
     }
-    if (this.selectedCamera()?.capabilities?.snapshot) {
-      return this.withRefreshToken(`/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/snapshot.jpg`);
-    }
-    if (this.selectedCamera()?.capabilities?.stream || this.selectedDvrStatus()?.live_mjpeg_url) {
-      return this.withRefreshToken(`/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/snapshot.jpg`);
-    }
-    return null;
+    return this.withRefreshToken(`/api/harbordesk/cameras/${encodeURIComponent(deviceId)}/snapshot.jpg`);
   }
 
   handleLiveError(): void {
@@ -545,8 +655,7 @@ export class HarborCamComponent implements OnInit {
     const deviceId = this.selectedCameraId();
     const segments = [...this.optimisticMediaItems(), ...this.dvrTimeline()];
     return this.uniqueMediaItems(deviceId ? segments.filter((segment) => segment.device_id === deviceId) : segments)
-      .sort((left, right) => this.mediaTimestamp(right) - this.mediaTimestamp(left))
-      .slice(0, 12);
+      .sort((left, right) => this.mediaTimestamp(right) - this.mediaTimestamp(left));
   }
 
   recentTimelineItems(): HarborBotMediaItem[] {
@@ -556,9 +665,9 @@ export class HarborCamComponent implements OnInit {
   latestMediaLabel(): string {
     const latest = this.timelineItems()[0];
     if (!latest) {
-      return 'No recent media';
+      return '暂无媒体';
     }
-    return this.formatUnix(latest.created_at || latest.started_at);
+    return this.displayMediaTime(latest);
   }
 
   toggleMediaLibrary(): void {
@@ -613,6 +722,10 @@ export class HarborCamComponent implements OnInit {
     return this.canOpenMediaItem(segment) ? '可播放' : '不可播放';
   }
 
+  displayMediaTime(segment: HarborBotMediaItem): string {
+    return this.formatUnix(this.mediaDisplayValue(segment));
+  }
+
   isOptimisticMediaItem(segment: HarborBotMediaItem): boolean {
     return Boolean(segment.optimistic_key);
   }
@@ -650,12 +763,12 @@ export class HarborCamComponent implements OnInit {
 
   kindLabel(item: HarborBotWaterfallItem): string {
     if (item.kind === 'image') {
-      return 'Image';
+      return '图片';
     }
     if (item.kind === 'video') {
-      return 'Video';
+      return '视频';
     }
-    return 'Text';
+    return '文字';
   }
 
   scoreLabel(hit: HarborBotSearchHit): string {
@@ -693,7 +806,49 @@ export class HarborCamComponent implements OnInit {
   }
 
   emptyMessage(result: HarborBotSearchResponse): string {
-    return result.empty_guidance || result.empty_reason || 'No results found.';
+    const query = this.form.controls.query.value.trim();
+    if (this.form.controls.filter.value === 'images' && query.includes('春天')) {
+      return '当前图片筛选没有相关结果。可以切到全部查看其它线索，或先添加并索引包含春天照片的文件夹。';
+    }
+    if (this.hasAnyResult(result)) {
+      return '当前筛选没有结果，可以切换到有结果的类型查看。';
+    }
+    return result.empty_guidance || result.empty_reason || '没有找到结果。可以换个说法，或到设置里确认 DVR 媒体库已索引。';
+  }
+
+  filterLabel(filter: HarborBotResultFilter): string {
+    switch (filter) {
+      case 'images':
+        return '图片';
+      case 'text':
+        return '文字';
+      case 'videos':
+        return '视频';
+      case 'all':
+      default:
+        return '全部';
+    }
+  }
+
+  searchStatusLabel(result: HarborBotSearchResponse): string {
+    if (result.degraded) {
+      return '已降级';
+    }
+    return result.status === 'ok' ? '完成' : result.status;
+  }
+
+  userFacingSearchNotice(message: string): string {
+    const normalized = message.toLowerCase();
+    if (normalized.includes('embedding') || normalized.includes('/v1/embeddings')) {
+      return '向量检索模型不可用，已临时使用本地词法检索。';
+    }
+    return message;
+  }
+
+  fullscreenMediaViewer(): void {
+    const media = this.mediaViewer?.nativeElement.querySelector('video, img') as HTMLElement | null;
+    const target = media ?? this.mediaViewer?.nativeElement;
+    void target?.requestFullscreen?.();
   }
 
   private localDateTimeToUnixSeconds(value: string): string | null {
@@ -706,6 +861,14 @@ export class HarborCamComponent implements OnInit {
       return null;
     }
     return Math.floor(timestamp / 1000).toString();
+  }
+
+  private formatLocalDateTimeLabel(value: string): string {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+    if (!match) {
+      return '';
+    }
+    return `${match[1]}/${match[2]}/${match[3]} ${match[4]}:${match[5]}`;
   }
 
   private withRefreshToken(url: string): string {
@@ -769,8 +932,9 @@ export class HarborCamComponent implements OnInit {
   }
 
   private prependTimelineItem(item: HarborBotDvrTimelineSegment): void {
+    const normalized = this.normalizeTimelineItem(item);
     const existing = this.dvrTimeline().filter((segment) => segment.file_path !== item.file_path);
-    this.dvrTimeline.set([item, ...existing].sort((left, right) => this.mediaTimestamp(right) - this.mediaTimestamp(left)));
+    this.dvrTimeline.set([normalized, ...existing].sort((left, right) => this.mediaTimestamp(right) - this.mediaTimestamp(left)));
   }
 
   private prependOptimisticSnapshot(deviceId: string, previewUrl: string): string {
@@ -794,6 +958,7 @@ export class HarborCamComponent implements OnInit {
       local_preview_url: previewUrl,
       local_status: 'archiving',
       optimistic_key: optimisticKey,
+      local_display_at: String(createdAt),
     };
     this.optimisticMediaItems.set([item, ...this.optimisticMediaItems()]);
     return optimisticKey;
@@ -819,18 +984,23 @@ export class HarborCamComponent implements OnInit {
       indexed: false,
       local_status: 'finalizing',
       optimistic_key: optimisticKey,
+      local_display_at: String(createdAt),
     };
     this.optimisticMediaItems.set([item, ...this.optimisticMediaItems()]);
     return optimisticKey;
   }
 
   private replaceOptimisticMediaItem(optimisticKey: string | null, item: HarborBotDvrTimelineSegment): void {
+    const optimisticItem = optimisticKey
+      ? this.optimisticMediaItems().find((segment) => segment.optimistic_key === optimisticKey)
+      : null;
+    const normalizedItem = this.normalizeTimelineItem(item, optimisticItem?.local_display_at);
     if (optimisticKey) {
       this.optimisticMediaItems.set(
         this.optimisticMediaItems().filter((segment) => segment.optimistic_key !== optimisticKey),
       );
     }
-    this.prependTimelineItem(item);
+    this.prependTimelineItem(normalizedItem);
   }
 
   private markOptimisticArchiveFailed(optimisticKey: string | null): void {
@@ -890,7 +1060,31 @@ export class HarborCamComponent implements OnInit {
   }
 
   private mediaTimestamp(segment: HarborBotMediaItem): number {
-    return Number(segment.created_at || segment.started_at || 0);
+    return Number(this.mediaDisplayValue(segment) || 0);
+  }
+
+  private mediaDisplayValue(segment: HarborBotMediaItem): string | number | undefined | null {
+    if (segment.local_display_at) {
+      return segment.local_display_at;
+    }
+    if (this.mediaKind(segment) === 'recording') {
+      return segment.ended_at || segment.created_at || segment.started_at;
+    }
+    return segment.created_at || segment.started_at || segment.ended_at;
+  }
+
+  private normalizeTimelineItem(item: HarborBotDvrTimelineSegment, displayAt?: string | null): HarborBotMediaItem {
+    const mediaKind = item.media_kind || 'recording';
+    if (displayAt && mediaKind === 'recording') {
+      return { ...item, local_display_at: displayAt };
+    }
+    return { ...item };
+  }
+
+  private isFixtureCamera(camera: HarborBotCameraDevice | null | undefined): boolean {
+    const id = (camera?.device_id ?? '').toLowerCase();
+    const name = (camera?.name ?? '').toLowerCase();
+    return id === this.fixtureCameraId || name.includes('fixture') || name.includes('not live camera');
   }
 
   private shouldUseLivePreviewAsSnapshot(): boolean {
@@ -913,7 +1107,7 @@ export class HarborCamComponent implements OnInit {
       finalize(() => this.cameraLoading.set(false)),
     ).subscribe({
       next: (timeline) => {
-        const segments = timeline.segments ?? [];
+        const segments = this.normalizeTimelineSegmentsForDisplay(deviceId, timeline.segments ?? []);
         this.dvrTimeline.set(segments);
         this.pruneFinalizingRecordings(deviceId, segments);
         this.cameraError.set(refreshErrors.length > 0 ? refreshErrors[0] : null);
@@ -946,6 +1140,24 @@ export class HarborCamComponent implements OnInit {
     };
   }
 
+  private normalizeTimelineSegmentsForDisplay(deviceId: string, segments: HarborBotDvrTimelineSegment[]): HarborBotMediaItem[] {
+    const pendingRecordings = this.optimisticMediaItems().filter((segment) => {
+      return segment.device_id === deviceId
+        && this.mediaKind(segment) === 'recording'
+        && segment.local_status === 'finalizing';
+    });
+
+    return segments.map((segment) => {
+      if ((segment.media_kind || 'recording') !== 'recording') {
+        return this.normalizeTimelineItem(segment);
+      }
+      const pending = pendingRecordings.find((item) => {
+        return Math.abs(Number(segment.ended_at || segment.created_at || segment.started_at || 0) - this.mediaTimestamp(item)) <= 30;
+      });
+      return this.normalizeTimelineItem(segment, pending?.local_display_at);
+    });
+  }
+
   private matchPromptSuggestion(query: string): HarborBotPromptSuggestion | undefined {
     const normalizedQuery = this.normalizePrompt(query);
     if (!normalizedQuery) {
@@ -969,7 +1181,7 @@ export class HarborCamComponent implements OnInit {
 
   private cameraRefreshErrorMessage(message: string): string {
     if (this.isTransientAdminStateError(message)) {
-      return 'HarborDesk 状态正在刷新，HarborBot 会自动重试；如果持续出现，请到 HarborDesk 保存一次配置。';
+      return 'Harbor Assistant 状态正在刷新，系统会自动重试；如果持续出现，请到设置里保存一次配置。';
     }
     return message;
   }

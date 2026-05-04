@@ -6,6 +6,6 @@ export const harbordeskRoutes: Routes = [
   {
     path: '',
     component: HarborDeskComponent,
-    data: { title: T('HarborDesk'), breadcrumb: T('HarborDesk') },
+    data: { title: T('Harbor Assistant'), breadcrumb: T('Harbor Assistant') },
   },
 ];

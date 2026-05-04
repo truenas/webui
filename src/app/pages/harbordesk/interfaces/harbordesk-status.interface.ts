@@ -14,7 +14,7 @@ export interface HarborDeskMetric {
   tone: HarborDeskStatusTone;
 }
 
-export type HarborDeskTabId = 'overview' | 'im' | 'models' | 'devices' | 'system';
+export type HarborDeskTabId = 'search' | 'camera' | 'messages' | 'settings';
 
 export interface HarborDeskTab {
   id: HarborDeskTabId;
@@ -507,8 +507,12 @@ export interface LocalModelCatalogItem {
   provider_key: string;
   model_kind: string;
   source_kind?: string;
+  installable?: boolean;
+  manual_only?: boolean;
   repo_id?: string;
   revision?: string;
+  file_policy?: string;
+  default_hf_endpoint?: string | null;
   expected_capabilities?: string[];
   recommended_hardware: string;
   status: string;
@@ -539,9 +543,11 @@ export interface LocalModelDownloadJobResponse {
 
 export interface ModelDownloadRequest {
   model_id: string;
+  capability_id?: string | null;
   display_name?: string | null;
   provider_key?: string | null;
   target_path?: string | null;
+  hf_endpoint?: string | null;
   metadata?: Record<string, unknown>;
 }
 
@@ -550,6 +556,76 @@ export interface HardwareReadinessComponent {
   summary: string;
   detail: string;
   evidence?: string[];
+}
+
+export type ModelCapabilityStatusValue =
+  | 'ready'
+  | 'needs_model'
+  | 'downloading'
+  | 'installed_not_running'
+  | 'degraded'
+  | 'unsupported'
+  | string;
+
+export interface ModelCapabilityCurrentModel {
+  model_endpoint_id: string;
+  model_name: string;
+  provider_key: string;
+  status: string;
+}
+
+export interface ModelCapabilityInstallableModel {
+  model_id: string;
+  display_name: string;
+  provider_key: string;
+  model_kind: string;
+  status: string;
+  installed?: boolean;
+  local_path?: string | null;
+  download_job_id?: string | null;
+  download_size_hint?: string;
+  source_kind?: string;
+  repo_id?: string | null;
+  file_policy?: string;
+  default_hf_endpoint?: string | null;
+  expected_capabilities?: string[];
+}
+
+export interface ModelCapabilityStatus {
+  capability_id: string;
+  label: string;
+  model_kind: string;
+  status: ModelCapabilityStatusValue;
+  selected_model_id?: string | null;
+  runtime_model_id?: string | null;
+  current_model?: ModelCapabilityCurrentModel | null;
+  installed_models?: ModelCapabilityInstallableModel[];
+  installable_models: ModelCapabilityInstallableModel[];
+  download_jobs: LocalModelDownloadJob[];
+  next_action: string;
+  runtime_ready?: boolean;
+  source_of_truth?: string;
+  evidence?: string[];
+}
+
+export interface ModelStoreStatusResponse {
+  path: string;
+  status: string;
+  writable: boolean;
+  runtime_readable: boolean;
+  next_action: string;
+  blockers?: string[];
+  warnings?: string[];
+}
+
+export interface ModelCapabilitiesResponse {
+  generated_at: string;
+  checked_at: string;
+  status: string;
+  model_store?: ModelStoreStatusResponse;
+  capabilities: ModelCapabilityStatus[];
+  blockers?: string[];
+  warnings?: string[];
 }
 
 export interface HardwareReadinessResponse {

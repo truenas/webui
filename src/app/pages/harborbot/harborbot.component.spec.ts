@@ -28,6 +28,7 @@ describe('HarborBotComponent', () => {
   beforeEach(() => {
     scrollIntoViewSpy = jest.fn();
     (Element.prototype as unknown as { scrollIntoView: jest.Mock }).scrollIntoView = scrollIntoViewSpy;
+    localStorage.clear();
     api = {
       search: jest.fn(() => of(searchResponse())),
       previewUrl: jest.fn((path: string) => `/api/harbordesk/knowledge/preview?path=${encodeURIComponent(path)}`),
@@ -41,7 +42,10 @@ describe('HarborBotComponent', () => {
     expect(spectator.query('.rag-workbench')).toExist();
     expect(spectator.query('.live-panel')).not.toExist();
     expect(spectator.query('[data-testid="harborbot-media-library"]')).not.toExist();
-    expect(spectator.query('textarea[aria-label="HarborBot multimodal search query"]')).toExist();
+    expect(spectator.query('textarea[aria-label="Assistant search query"]')).toExist();
+    expect(spectator.element.textContent).not.toContain('Multimodal RAG');
+    expect(spectator.element.textContent).not.toContain('HarborBot');
+    expect(spectator.element.textContent).not.toContain('RAG search');
   });
 
   it('defaults HarborBot search to all knowledge sources', fakeAsync(() => {
@@ -81,7 +85,67 @@ describe('HarborBotComponent', () => {
     tick();
     spectator.detectChanges();
 
-    expect(spectator.query('.embedding-action')).toHaveText('语义索引');
+    expect(spectator.query('.embedding-action')).toHaveText('向量检索模型不可用');
+    expect(spectator.query('.embedding-action')).toHaveText('打开模型设置');
+  }));
+
+  it('shows a user-facing filter hint instead of debug evidence when the current type has no results', fakeAsync(() => {
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      form: {
+        controls: {
+          query: { setValue: (value: string) => void };
+          filter: { setValue: (value: string) => void };
+        };
+      };
+      search: () => void;
+    };
+
+    component.form.controls.query.setValue('找到和春天相关的照片');
+    component.form.controls.filter.setValue('images');
+    component.search();
+    tick();
+    spectator.detectChanges();
+
+    expect(spectator.query('.filter-empty-state')).toHaveText('当前图片筛选没有相关结果');
+    expect(spectator.query('.filter-empty-state')).toHaveText('添加并索引包含春天照片的文件夹');
+    expect(spectator.element.textContent).not.toContain('Evidence');
+    expect(spectator.element.textContent).not.toContain('Content match');
+  }));
+
+  it('stores only recent search terms and reuses them without changing filters', fakeAsync(() => {
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      form: {
+        controls: {
+          query: { value: string; setValue: (value: string) => void };
+          filter: { value: string; setValue: (value: string) => void };
+          sourceScope: { value: string; setValue: (value: string) => void };
+          from: { value: string; setValue: (value: string) => void };
+        };
+      };
+      search: () => void;
+      useSearchHistoryTerm: (term: string) => void;
+    };
+
+    component.form.controls.query.setValue('谁在倒啤酒');
+    component.form.controls.filter.setValue('videos');
+    component.form.controls.sourceScope.setValue('dvr_library');
+    component.form.controls.from.setValue('2026-05-04T10:00');
+    component.search();
+    tick();
+    spectator.detectChanges();
+
+    expect(JSON.parse(localStorage.getItem('harborAssistant.searchTerms.v1') ?? '[]')).toEqual(['谁在倒啤酒']);
+    expect(spectator.query('.search-history-strip')).toHaveText('谁在倒啤酒');
+
+    component.useSearchHistoryTerm('最近有哪些录像');
+    spectator.detectChanges();
+
+    expect(component.form.controls.query.value).toBe('最近有哪些录像');
+    expect(component.form.controls.filter.value).toBe('videos');
+    expect(component.form.controls.sourceScope.value).toBe('dvr_library');
+    expect(component.form.controls.from.value).toBe('2026-05-04T10:00');
   }));
 });
 

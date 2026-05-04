@@ -117,3 +117,4 @@ src/app/testing-configs/*
 /artifacts/*.tar.gz
 /artifacts/*.png
 /artifacts/*.jpg
+/artifacts/**

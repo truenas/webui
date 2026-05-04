@@ -201,6 +201,12 @@ describe('HarborDeskApiService', () => {
     listReq.flush({ endpoints: [] });
     await listPromise;
 
+    const capabilitiesPromise = firstValueFrom(spectator.service.getModelCapabilities());
+    const capabilitiesReq = httpMock.expectOne('/api/harbordesk/models/capabilities');
+    expect(capabilitiesReq.request.method).toBe('GET');
+    capabilitiesReq.flush({ generated_at: '1', checked_at: '1', status: 'ready', capabilities: [] });
+    expect((await capabilitiesPromise).capabilities).toEqual([]);
+
     const patchPromise = firstValueFrom(spectator.service.updateModelEndpoint(endpointId, {
       status: 'disabled',
       metadata: { api_key_configured: true },
@@ -325,6 +331,12 @@ describe('HarborDeskApiService', () => {
     expect(metadataReq.request.body.room).toBe('front door');
     metadataReq.flush({ devices: [] });
     await metadataPromise;
+
+    const deletePromise = firstValueFrom(spectator.service.deleteDevice('cam 1'));
+    const deleteReq = httpMock.expectOne('/api/harbordesk/devices/cam%201');
+    expect(deleteReq.request.method).toBe('DELETE');
+    deleteReq.flush({ devices: [] });
+    await deletePromise;
   });
 
   it('keeps Beacon calls on the HarborDesk same-origin proxy', () => {
@@ -356,7 +368,8 @@ describe('HarborDeskApiService', () => {
     );
 
     expect(source).toContain('const setupUrl = connected ? null : harborGateConnectorSetupUrl');
-    expect(template).toContain('Open manage');
+    expect(template).toContain('重新绑定');
+    expect(template).toContain('管理');
     expect(template).toContain('color="primary"');
   });
 });
