@@ -89,7 +89,12 @@ export class GlobalSearchResultsComponent implements OnChanges {
     if (route?.length) {
       const hasWildcard = route[route.length - 1] === '*';
       const navigateTo = hasWildcard ? route.slice(0, -1) : route;
-      const targetPath = navigateTo.join('/');
+
+      // Normalise via the router so relative segments (e.g. ['credentials',
+      // 'kmip']) compare correctly against `router.url`, which always emits
+      // an absolute path.
+      const targetPath = this.router.serializeUrl(this.router.createUrlTree(navigateTo))
+        .split('?')[0].split('#')[0];
 
       // Skip navigation when we're already on the target page — even same-URL
       // `router.navigate` calls fire `NavigationSkipped` events that

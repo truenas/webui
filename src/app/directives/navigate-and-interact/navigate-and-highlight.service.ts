@@ -112,7 +112,7 @@ export class NavigateAndHighlightService {
   }
 
   scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
-    htmlElement.scrollIntoView({ block: 'center' });
+    htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
     this.highlight(htmlElement, { inset: options?.inset });
   }
 

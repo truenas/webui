@@ -141,6 +141,16 @@ describe('NavigateAndHighlightService', () => {
     expect(card.classList.contains(highlightTargetClass)).toBe(false);
   });
 
+  it('forwards the block option to scrollIntoView (defaulting to center)', () => {
+    const target = makeVisibleElement('block-target');
+
+    spectator.service.scrollIntoView(target);
+    expect(target.scrollIntoView).toHaveBeenCalledWith({ block: 'center' });
+
+    spectator.service.scrollIntoView(target, { block: 'start' });
+    expect(target.scrollIntoView).toHaveBeenLastCalledWith({ block: 'start' });
+  });
+
   it('cancels an in-flight poll when waitForElement is called again', fakeAsync(() => {
     spectator.service.waitForElement('first-poll-target');
     spectator.service.waitForElement('second-poll-target');
