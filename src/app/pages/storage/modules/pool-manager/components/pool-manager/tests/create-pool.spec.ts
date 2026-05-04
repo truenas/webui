@@ -225,7 +225,7 @@ describe('PoolManagerComponent – create pool', () => {
     expect(await reviewView.getErrors()).toEqual([
       'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
       'A stripe dedup VDEV is highly discouraged and will result in data loss if it fails',
-      'A stripe special VDEV is highly discouraged and will result in data loss if it fails',
+      'A stripe metadata VDEV is highly discouraged and will result in data loss if it fails',
     ]);
     const router = spectator.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation();

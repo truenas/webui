@@ -92,15 +92,15 @@ describe('TierConfigFormComponent', () => {
     spectator = createComponent();
     spectator.detectChanges();
 
-    expect(spectator.query('ix-warning')).not.toExist();
+    expect(spectator.query('tn-banner')).not.toExist();
 
     const form = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(IxFormHarness);
     await form.fillForm({ Enabled: true });
 
-    expect(spectator.query('ix-warning')).toExist();
+    expect(spectator.query('tn-banner')).toExist();
   });
 
   it('does not show warning when tiering is already enabled', () => {
-    expect(spectator.query('ix-warning')).not.toExist();
+    expect(spectator.query('tn-banner')).not.toExist();
   });
 });

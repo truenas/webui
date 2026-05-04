@@ -99,6 +99,8 @@ describe('PoolsDashboardStore', () => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: rootDatasets });
+          case 'zpool.query':
+            return cold('-a|', { a: [] });
           case 'pool.scrub.query':
             return cold('-a|', { a: scrubs });
           case 'disk.query':

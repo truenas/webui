@@ -219,7 +219,7 @@ describe('PoolUsageCardComponent', () => {
 
     const regularStatItems = tierRows[1].querySelectorAll('.stat-item');
     expect(regularStatItems).toHaveLength(2);
-    expect(regularStatItems[0]).toHaveText('2.65 GiB used');
-    expect(regularStatItems[1]).toHaveText('858.01 MiB available');
+    expect(regularStatItems[0]).toHaveText('3.15 GiB used');
+    expect(regularStatItems[1]).toHaveText('2.34 GiB available');
   });
 });
