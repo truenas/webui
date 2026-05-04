@@ -23,7 +23,6 @@ const lateFocusDelayMs = 350;
 const dismissKeys = new Set(['Escape', 'Tab']);
 
 export interface WaitForElementOptions {
-  block?: ScrollLogicalPosition;
   /**
    * Draw the highlight outline inset (inside the element edge) instead of
    * outset. Use for elements whose surrounding overflow:hidden parent would
@@ -113,7 +112,7 @@ export class NavigateAndHighlightService {
   }
 
   scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
-    htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
+    htmlElement.scrollIntoView({ block: 'center' });
     this.highlight(htmlElement, { inset: options?.inset });
   }
 
@@ -210,6 +209,14 @@ export class NavigateAndHighlightService {
         Object.defineProperty(event, 'keyCode', { value: 40 }); // DOWN_ARROW
         Object.defineProperty(event, 'which', { value: 40 });
         menuPanel.dispatchEvent(event);
+      }
+      // Sanity check: if Material renamed the menu classes, re-ordered items,
+      // or the keymanager stopped honouring synthetic events, the loop above
+      // can leave focus on the wrong row. Force focus to `target` so the
+      // user at least lands on the searched-for item even when the
+      // keymanager is out of sync.
+      if (this.window.document.activeElement !== target) {
+        target.focus({ preventScroll: true });
       }
       this.prevTabindexAdded = false;
       return;

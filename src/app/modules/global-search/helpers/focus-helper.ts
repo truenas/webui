@@ -7,7 +7,7 @@ export function getFocusableSearchBoxElements(document: Document): HTMLElement[]
   if (!container) return [];
 
   return Array.from(container.querySelectorAll<HTMLElement>(searchBoxFocusableSelector))
-    .filter((element) => !(element as HTMLButtonElement).disabled && element.tabIndex >= 0)
+    .filter((element) => !element.matches(':disabled') && element.tabIndex >= 0)
     .toSorted((a, b) => a.tabIndex - b.tabIndex);
 }
 

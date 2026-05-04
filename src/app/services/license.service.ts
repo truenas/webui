@@ -66,10 +66,12 @@ export class LicenseService {
    * exposes SED config) or a global SED password has already been set.
    *
    * Short-circuits on Enterprise so we don't burn a backend call for the
-   * password-set check when the answer is already true. `catchError` keeps a
-   * transient API failure from poisoning the cached result for the whole
-   * session — falling back to `false` just hides the SED entries from search
-   * rather than tearing down the search filter chain.
+   * password-set check when the answer is already true. `catchError` falls
+   * back to `false` so a transient API failure hides SED entries rather than
+   * tearing down the search filter chain. `refCount: true` ensures the
+   * fallback isn't permanently cached: the next subscribe after the chain
+   * goes idle re-runs `defer` and gets a fresh answer once the backend is
+   * healthy again.
    */
   readonly hasSedFeature$ = defer(() => this.store$.select(selectIsEnterprise).pipe(
     first(),
@@ -80,20 +82,22 @@ export class LicenseService {
     )),
   )).pipe(
     catchError(() => of(false)),
-    shareReplay({ bufferSize: 1, refCount: false }),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   /**
-   * Mirrors `isSystemLicensed` in `AdvancedSettingsComponent`: true when
-   * FIPS hardware support is reported by the backend. Gates visibility of
-   * the System Security card (FIPS / STIG / password policy). `catchError`
-   * keeps a transient backend failure from caching an error and dropping
-   * every System Security search result for the rest of the session.
+   * Gates visibility of the System Security card (FIPS / STIG / password
+   * policy). True when the backend reports FIPS hardware support — that's
+   * the same condition `AdvancedSettingsComponent.isSystemLicensed` uses to
+   * render the card. `catchError` falls back to `false` so a transient
+   * `fips_available` failure hides the System Security entries rather than
+   * crashing the search filter chain. `refCount: true` ensures the fallback
+   * isn't permanently cached.
    */
-  readonly hasFipsHardware$ = defer(() => this.api.call('system.security.info.fips_available')).pipe(
+  readonly hasSystemSecurity$ = defer(() => this.api.call('system.security.info.fips_available')).pipe(
     map(Boolean),
     catchError(() => of(false)),
-    shareReplay({ bufferSize: 1, refCount: false }),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   readonly shouldShowContainers$ = combineLatest([

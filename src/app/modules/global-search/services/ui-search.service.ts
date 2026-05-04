@@ -50,7 +50,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
           this.license.hasKmip$,
           this.license.hasFibreChannel$,
           this.license.hasSedFeature$,
-          this.license.hasFipsHardware$,
+          this.license.hasSystemSecurity$,
         ]).pipe(
           first(),
           filter(([

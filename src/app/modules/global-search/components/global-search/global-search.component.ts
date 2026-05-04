@@ -120,8 +120,11 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault();
 
         if (this.isSearchInputFocused) {
-          moveToNextFocusableElement(this.document);
-          (this.document.activeElement as HTMLElement)?.click();
+          // Submit the first result, not the next focusable. The reset
+          // button now sits in tab order between the input and the result
+          // list, so falling through to `moveToNextFocusableElement` would
+          // land on the reset button and clear the field on Enter.
+          this.submitFirstResult();
         }
         break;
       default:
@@ -175,6 +178,12 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private focusInputElement(): void {
     this.searchInput().nativeElement?.focus();
+  }
+
+  private submitFirstResult(): void {
+    const firstResult = this.searchBoxWrapper().nativeElement
+      .querySelector<HTMLElement>('.search-result');
+    firstResult?.click();
   }
 
   private getSystemVersion(): void {

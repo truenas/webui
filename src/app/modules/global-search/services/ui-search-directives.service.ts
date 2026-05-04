@@ -88,11 +88,13 @@ export class UiSearchDirectivesService {
       if (targetElement && targetElement.offsetParent !== null) {
         // Self-trigger entry (e.g. "Settings Menu" — the trigger button is
         // its own anchor): also click to expand its dropdown so the user
-        // sees its contents.
+        // sees its contents. Skip the click if the menu is already open
+        // (aria-expanded="true") — clicking would toggle it closed.
         if (
           !triggerFired
           && config.triggerAnchor
           && config.triggerAnchor === directive.id
+          && targetElement.getAttribute('aria-expanded') !== 'true'
         ) {
           this.fireTrigger(config.triggerAnchor);
         }
