@@ -1,4 +1,5 @@
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 // TODO: Split mixed interface for system.info and webui.main.dashboard.sys_info
@@ -10,7 +11,7 @@ export interface SystemInfo {
   datetime: ApiTimestamp;
   ecc_memory: boolean;
   hostname: string;
-  license: SystemLicense;
+  license: License | null;
   loadavg: [number, number, number];
   model: string;
   physical_cores: number;
@@ -26,20 +27,35 @@ export interface SystemInfo {
   remote_info: SystemInfo | null;
 }
 
-export interface SystemLicense {
-  addhw: unknown[];
-  addhw_detail: unknown[];
-  contract_end: ApiDate;
-  contract_start: ApiDate;
-  contract_type: ContractType;
-  customer_name: string;
-  expired: boolean;
-  features: LicenseFeature[];
-  legacy_contract_hardware: unknown;
-  legacy_contract_software: unknown;
-  model: string;
-  system_serial: string;
-  system_serial_ha: string;
+/**
+ * Per-feature license entry.
+ *
+ * Dates are wrapped in the `ApiDate` envelope (`{ $type: 'date', $value: 'YYYY-MM-DD' }`)
+ * or null. The `Support` entry, when present, carries the contract dates surfaced on
+ * the support card; other features may have null dates.
+ */
+export interface LicenseFeatureInfo {
+  name: LicenseFeature;
+  start_date: ApiDate | null;
+  expires_at: ApiDate | null;
+}
+
+/**
+ * Normalized license payload returned by `truenas.license.info`.
+ *
+ * Middleware always returns this shape (legacy on-disk licenses are
+ * pre-normalized; their `id` is prefixed with `legacy_`). The UI does not
+ * need to handle the historical `system.license` shape.
+ */
+export interface License {
+  id: string;
+  type: LicenseType;
+  contract_type: ContractType | null;
+  model: string | null;
+  expires_at: ApiDate | null;
+  features: LicenseFeatureInfo[];
+  serials: string[];
+  enclosures: Record<string, number>;
 }
 
 export enum ContractType {
@@ -53,7 +69,11 @@ export enum ContractType {
   FreeNasMini = 'FREENASMINI',
 }
 
-export function getLabelForContractType(contractType: ContractType): string {
+export function getLabelForContractType(contractType: ContractType | string | null | undefined): string {
+  if (!contractType) {
+    return '';
+  }
+
   const contractTypeToLabelsMap: Record<ContractType, string> = {
     [ContractType.Gold]: 'Gold',
     [ContractType.Legacy]: 'Legacy',
@@ -64,5 +84,7 @@ export function getLabelForContractType(contractType: ContractType): string {
     [ContractType.FreeNasMini]: 'Free NAS Mini',
     [ContractType.SilverInternational]: 'Silver International',
   };
-  return contractTypeToLabelsMap[contractType] || contractType;
+  // For values not in the known set (e.g. a future PLATINUM tier), fall back
+  // to the raw string so we surface something useful instead of an empty cell.
+  return contractTypeToLabelsMap[contractType as ContractType] ?? contractType;
 }

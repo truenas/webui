@@ -14,7 +14,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertPanelOverlayContainer } from 'app/modules/alerts/components/alerts-panel/alert-panel-overlay-container.service';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
@@ -35,11 +35,6 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
-
-/**
- * Extended alert with duplicate count information
- */
-type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
 
 @Component({
   selector: 'ix-alerts-panel',
@@ -165,21 +160,27 @@ export class AlertsPanelComponent implements OnInit {
     this.checkHaStatus();
   }
 
-  /**
-   * Adds duplicate count to each alert.
-   * Counts how many alerts share the same key (duplicate instances).
-   */
-  private addDuplicateCounts<T extends Alert>(alerts: T[]): (T & { duplicateCount: number })[] {
-    // Count alerts by key
-    const keyCounts = new Map<string, number>();
-    alerts.forEach((alert) => {
-      keyCounts.set(alert.key, (keyCounts.get(alert.key) || 0) + 1);
+  // Dispatchers use `allIds` so the dismiss/reopen actions carry every duplicate,
+  // avoiding any after-the-fact lookup against post-reducer store state.
+  private addDuplicateCounts<T extends Alert>(
+    alerts: T[],
+  ): (T & { duplicateCount: number; allIds: string[] })[] {
+    const idsByKey = new Map<string, string[]>();
+    const idsForAlert = alerts.map((alert) => {
+      const existing = idsByKey.get(alert.key);
+      if (existing) {
+        existing.push(alert.id);
+        return existing;
+      }
+      const ids = [alert.id];
+      idsByKey.set(alert.key, ids);
+      return ids;
     });
 
-    // Add duplicate count to each alert
-    return alerts.map((alert) => ({
+    return alerts.map((alert, index) => ({
       ...alert,
-      duplicateCount: keyCounts.get(alert.key) || 1,
+      duplicateCount: idsForAlert[index].length,
+      allIds: idsForAlert[index],
     }));
   }
 

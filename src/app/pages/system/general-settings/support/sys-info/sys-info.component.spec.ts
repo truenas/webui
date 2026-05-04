@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ContractType } from 'app/interfaces/system-info.interface';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
@@ -16,15 +17,14 @@ describe('SysInfoComponent', () => {
     memory: '5 GiB',
     system_serial: 'ffbb355c',
   };
-  const licenseInfo = {
-    customer_name: 'TrueNAS',
-    features: ['DEDUP', 'FIBRECHANNEL', 'VM'],
+  const licenseInfo: LicenseInfoInSupport = {
+    contractType: ContractType.Gold,
     model: 'M60',
-    contract_type: 'GOLD',
-    expiration_date: '2022-06-10',
-    daysLeftinContract: -4,
-    add_hardware: 'NONE',
-    system_serial: 'abcdefgh12345678',
+    expirationDateDisplay: '2022-06-10',
+    daysLeftInContract: -4,
+    featureNames: ['DEDUP', 'FIBRECHANNEL', 'VM'],
+    additionalHardware: null,
+    serials: ['abcdefgh12345678'],
   };
   let spectator: Spectator<SysInfoComponent>;
   let loader: HarnessLoader;
@@ -67,7 +67,7 @@ describe('SysInfoComponent', () => {
 
   it('shows a block with license info', () => {
     spectator.setInput({
-      licenseInfo: licenseInfo as LicenseInfoInSupport,
+      licenseInfo,
       hasLicense: true,
       isProactiveSupportAvailable: true,
     });
@@ -76,19 +76,18 @@ describe('SysInfoComponent', () => {
 
     expect(infoRows).toEqual({
       'Model:': licenseInfo.model,
-      'Licensed Serials:': licenseInfo.system_serial,
+      'Licensed Serials:': licenseInfo.serials.join(' / '),
       'System Serial:': systemInfo.system_serial,
-      'Features:': licenseInfo.features.join(', '),
+      'Features:': licenseInfo.featureNames.join(', '),
       'Contract Type:': 'Gold',
-      'Expiration Date:': `${licenseInfo.expiration_date} (EXPIRED)`,
-      'Additional Hardware:': licenseInfo.add_hardware,
+      'Expiration Date:': `${licenseInfo.expirationDateDisplay} (EXPIRED)`,
     });
   });
 
   describe('Proactive support status', () => {
     beforeEach(() => {
       spectator.setInput({
-        licenseInfo: licenseInfo as LicenseInfoInSupport,
+        licenseInfo,
         hasLicense: true,
         isProactiveSupportAvailable: true,
         isProactiveSupportEnabled: true,
@@ -126,7 +125,7 @@ describe('SysInfoComponent', () => {
   describe('Proactive support not available', () => {
     beforeEach(() => {
       spectator.setInput({
-        licenseInfo: licenseInfo as LicenseInfoInSupport,
+        licenseInfo,
         hasLicense: true,
         isProactiveSupportAvailable: false,
         isProactiveSupportEnabled: false,
@@ -146,7 +145,7 @@ describe('SysInfoComponent', () => {
     it('shows production toggle in Model row when productionControl is provided', () => {
       const productionControl = new FormControl(false);
       spectator.setInput({
-        licenseInfo: licenseInfo as LicenseInfoInSupport,
+        licenseInfo,
         hasLicense: true,
         isProactiveSupportAvailable: true,
         productionControl,

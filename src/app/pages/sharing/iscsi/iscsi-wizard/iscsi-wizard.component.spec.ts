@@ -122,7 +122,7 @@ describe('IscsiWizardComponent', () => {
             value: {
               version: 'TrueNAS-SCALE-22.12',
               license: {
-                features: [LicenseFeature.FibreChannel],
+                features: [{ name: LicenseFeature.FibreChannel, start_date: null, expires_at: null }],
               },
             } as SystemInfo,
           },

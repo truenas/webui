@@ -3,9 +3,9 @@ import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertAdded,
   alertChanged,
+  alertDismissedReverted,
   alertPanelClosed,
   alertRemoved,
-  alertsDismissedChanged,
   alertsLoaded,
   alertsNotLoaded,
   dismissAlertPressed,
@@ -111,26 +111,20 @@ describe('alertReducer', () => {
       expect(state.entities['3']).toBeUndefined();
     });
 
-    it('preserves dismissed state for locally dismissed alerts', () => {
-      // Start with alerts where some are dismissed locally
+    it('reflects server dismissed state without local merging', () => {
       const localAlerts = [
-        { ...mockAlert, dismissed: true }, // Dismissed locally
+        { ...mockAlert, dismissed: true },
         { ...mockAlert2, dismissed: false },
       ] as unknown as Alert[];
-
       const initialState = adapter.setAll(localAlerts, alertsInitialState);
 
-      // Server returns the same alerts but with dismissed: false (not synced yet)
       const serverAlerts = [
         { ...mockAlert, dismissed: false },
         { ...mockAlert2, dismissed: false },
       ] as unknown as Alert[];
-
       const state = alertReducer(initialState, alertsLoaded({ alerts: serverAlerts }));
 
-      // Alert 1 should still be dismissed (preserved from local state)
-      expect(state.entities['1']?.dismissed).toBe(true);
-      // Alert 2 should remain not dismissed
+      expect(state.entities['1']?.dismissed).toBe(false);
       expect(state.entities['2']?.dismissed).toBe(false);
     });
   });
@@ -173,21 +167,12 @@ describe('alertReducer', () => {
     });
   });
 
-  describe('alertsDismissedChanged', () => {
-    it('marks all alerts as dismissed', () => {
+  describe('alertDismissedReverted', () => {
+    it('reverts a single id to the supplied dismissed value', () => {
       const initialState = adapter.setAll(mockAlerts, alertsInitialState);
-      const state = alertReducer(initialState, alertsDismissedChanged({ dismissed: true }));
+      const state = alertReducer(initialState, alertDismissedReverted({ id: '1', dismissed: true }));
 
       expect(state.entities['1']?.dismissed).toBe(true);
-      expect(state.entities['2']?.dismissed).toBe(true);
-    });
-
-    it('marks all alerts as not dismissed', () => {
-      const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
-      const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
-      const state = alertReducer(initialState, alertsDismissedChanged({ dismissed: false }));
-
-      expect(state.entities['1']?.dismissed).toBe(false);
       expect(state.entities['2']?.dismissed).toBe(false);
     });
   });
@@ -203,99 +188,40 @@ describe('alertReducer', () => {
   });
 
   describe('dismissAlertPressed', () => {
-    it('marks specific alert as dismissed when it has a unique key', () => {
+    it('marks every id in the payload as dismissed', () => {
       const initialState = adapter.setAll(mockAlerts, alertsInitialState);
-      const state = alertReducer(initialState, dismissAlertPressed({ id: '1' }));
+      const state = alertReducer(initialState, dismissAlertPressed({ ids: ['1'] }));
 
       expect(state.entities['1']?.dismissed).toBe(true);
       expect(state.entities['2']?.dismissed).toBe(false);
     });
 
-    it('marks all alerts with the same key as dismissed', () => {
-      const duplicateAlerts = [
-        {
-          id: '1',
-          key: 'duplicate-key',
-          level: AlertLevel.Critical,
-          dismissed: false,
-          datetime: { $date: 2000 },
-          klass: 'alert1',
-        },
-        {
-          id: '2',
-          key: 'duplicate-key',
-          level: AlertLevel.Critical,
-          dismissed: false,
-          datetime: { $date: 1000 },
-          klass: 'alert1',
-        },
-        {
-          id: '3',
-          key: 'other-key',
-          level: AlertLevel.Warning,
-          dismissed: false,
-          datetime: { $date: 1500 },
-          klass: 'alert2',
-        },
-      ] as unknown as Alert[];
+    it('marks every id in a multi-id payload as dismissed', () => {
+      const initialState = adapter.setAll(mockAlerts, alertsInitialState);
+      const state = alertReducer(initialState, dismissAlertPressed({ ids: ['1', '2'] }));
 
-      const initialState = adapter.setAll(duplicateAlerts, alertsInitialState);
-      const state = alertReducer(initialState, dismissAlertPressed({ id: '1' }));
-
-      // Both alerts with 'duplicate-key' should be dismissed
       expect(state.entities['1']?.dismissed).toBe(true);
       expect(state.entities['2']?.dismissed).toBe(true);
-      // Alert with different key should not be affected
-      expect(state.entities['3']?.dismissed).toBe(false);
     });
   });
 
   describe('reopenAlertPressed', () => {
-    it('marks specific alert as not dismissed when it has a unique key', () => {
+    it('marks every id in the payload as not dismissed', () => {
       const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
       const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
-      const state = alertReducer(initialState, reopenAlertPressed({ id: '1' }));
+      const state = alertReducer(initialState, reopenAlertPressed({ ids: ['1'] }));
 
       expect(state.entities['1']?.dismissed).toBe(false);
       expect(state.entities['2']?.dismissed).toBe(true);
     });
 
-    it('marks all alerts with the same key as not dismissed', () => {
-      const duplicateAlerts = [
-        {
-          id: '1',
-          key: 'duplicate-key',
-          level: AlertLevel.Critical,
-          dismissed: true,
-          datetime: { $date: 2000 },
-          klass: 'alert1',
-        },
-        {
-          id: '2',
-          key: 'duplicate-key',
-          level: AlertLevel.Critical,
-          dismissed: true,
-          datetime: { $date: 1000 },
-          klass: 'alert1',
-        },
-        {
-          id: '3',
-          key: 'other-key',
-          level: AlertLevel.Warning,
-          dismissed: true,
-          datetime: { $date: 1500 },
-          klass: 'alert2',
-        },
-      ] as unknown as Alert[];
+    it('marks every id in a multi-id payload as not dismissed', () => {
+      const dismissedAlerts = mockAlerts.map((a) => ({ ...a, dismissed: true })) as unknown as Alert[];
+      const initialState = adapter.setAll(dismissedAlerts, alertsInitialState);
+      const state = alertReducer(initialState, reopenAlertPressed({ ids: ['1', '2'] }));
 
-      const initialState = adapter.setAll(duplicateAlerts, alertsInitialState);
-      const state = alertReducer(initialState, reopenAlertPressed({ id: '1' }));
-
-      // Both alerts with 'duplicate-key' should be reopened
       expect(state.entities['1']?.dismissed).toBe(false);
       expect(state.entities['2']?.dismissed).toBe(false);
-      // Alert with different key should not be affected
-      expect(state.entities['3']?.dismissed).toBe(true);
     });
   });
 

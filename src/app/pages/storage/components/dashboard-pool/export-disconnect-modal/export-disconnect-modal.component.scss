@@ -2,11 +2,8 @@
 
 :host {
   display: block;
-  width: 650px;
-
-  @media (max-width: $breakpoint-tablet) {
-    width: inherit;
-  }
+  max-width: 800px;
+  width: 100%;
 
   &::ng-deep {
     .mat-expanded .mat-expansion-panel-header span.mat-expansion-indicator {
@@ -19,7 +16,10 @@
   }
 }
 
+// Override global .mat-mdc-dialog-content { max-height: 50vh } so the pool name
+// input below the warning panels stays reachable without aggressive scrolling.
 .export-disconnect-modal-content {
+  max-height: 83vh !important;
   overflow: auto !important;
 }
 

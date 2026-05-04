@@ -255,7 +255,7 @@ import {
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
   UpdateConfig,
@@ -847,7 +847,6 @@ export interface ApiCallDirectory {
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
-  'system.license_update': { params: [license: string]; response: void };
   'system.ntpserver.create': { params: [CreateNtpServer]; response: NtpServer };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
@@ -878,6 +877,11 @@ export interface ApiCallDirectory {
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
   'truenas.is_ix_hardware': { params: void; response: boolean };
+  'truenas.license.info': { params: void; response: License | null };
+  'truenas.license.upload': {
+    params: [license: string, options?: { ha_propagate?: boolean }];
+    response: void;
+  };
   'truenas.managed_by_truecommand': { params: void; response: boolean };
 
   // Tunable

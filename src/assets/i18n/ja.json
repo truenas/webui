@@ -1,9 +1,9 @@
 {
   "0": "0",
-  "How long snapshots created by the periodic snapshot task on the source system are kept before being deleted. Enter a number and choose a measure of time from the drop-down.": "",
-  "Not Available": "",
-  "Proactive support is not available on your license.": "",
-  "Source Snapshot Lifetime": "",
+  "How long snapshots created by the periodic snapshot task on the source system are kept before being deleted. Enter a number and choose a measure of time from the drop-down.": "ソースシステム上の定期スナップショットタスクによって作成されたスナップショットが削除されるまで保持される期間。数値を入力し、ドロップダウンから時間の単位を選択します。",
+  "Not Available": "利用不可",
+  "Proactive support is not available on your license.": "お使いのライセンスではプロアクティブサポートを利用できません。",
+  "Source Snapshot Lifetime": "ソーススナップショットの有効期間",
   " as of {dateTime}": " {dateTime} 現在",
   " bytes.": "バイト。",
   " Est. Usable Raw Capacity": "推定の使用可能な生容量",
