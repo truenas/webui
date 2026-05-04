@@ -4,7 +4,7 @@
   class="search-box-wrapper"
   [class.sidenav-collapsed]="sidenavService.isMenuCollapsed"
   [class.sidenav-mobile]="sidenavService.isMobile()"
-  [cdkTrapFocusAutoCapture]="true"
+  [cdkTrapFocusAutoCapture]="autoRestoreFocus"
 >
   <div class="search-box">
     <tn-icon name="magnify" library="mdi" class="search-icon"></tn-icon>

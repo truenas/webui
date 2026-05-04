@@ -130,6 +130,28 @@ export class NavigateAndHighlightService {
     this.window.document.addEventListener(
       'keydown',
       (event: KeyboardEvent) => {
+        // mat-menu has no first-class Enter handling — it relies on the
+        // browser's default Enter→click. Empirically this can fail to reach
+        // the focused item in some menu/keymanager states, so we hijack
+        // Enter at the capture phase for any focused item inside the same
+        // menu panel as the highlight target (or the target itself), and
+        // click it explicitly. Outside of menus, this still covers the
+        // original highlight target.
+        if (event.key === 'Enter') {
+          const focused = this.window.document.activeElement;
+          const targetMenuPanel = targetElement.closest('.mat-mdc-menu-panel');
+          const focusedIsTarget = focused === targetElement;
+          const focusedIsInSameMenu = focused instanceof HTMLElement
+            && targetMenuPanel
+            && targetMenuPanel.contains(focused)
+            && focused.classList.contains('mat-mdc-menu-item');
+          if (focusedIsTarget || focusedIsInSameMenu) {
+            event.stopPropagation();
+            event.preventDefault();
+            (focused as HTMLElement).click();
+            return;
+          }
+        }
         if (dismissKeys.has(event.key)) {
           this.cleanupPreviousHighlight();
         }
@@ -139,11 +161,42 @@ export class NavigateAndHighlightService {
   }
 
   private focusTarget(target: HTMLElement): void {
+    // mat-menu has its own FocusKeyManager that tracks `_activeItem`
+    // independently of the actual focused DOM element. If we just focus
+    // `target` programmatically, KeyManager's _activeItem stays as the menu's
+    // first item — so subsequent arrow keys / Enter act on the wrong row.
+    // Walk the KeyManager forward via synthetic ArrowDown events until its
+    // _activeItem matches our target (each ArrowDown advances _activeItem AND
+    // focuses the new item, so when the loop ends focus is on `target` AND
+    // the keymanager is in sync).
+    const menuPanel = target.closest<HTMLElement>('.mat-mdc-menu-panel');
+    if (menuPanel) {
+      const items = Array.from(menuPanel.querySelectorAll<HTMLElement>('.mat-mdc-menu-item'));
+      const targetIndex = items.indexOf(target);
+      for (let i = 0; i < targetIndex; i++) {
+        // Angular CDK's FocusKeyManager still reads `event.keyCode` (deprecated
+        // but live in the lib). The KeyboardEvent constructor ignores keyCode,
+        // so we patch it after construction — otherwise the synthetic event is
+        // a no-op for the manager and _activeItem stays at the menu's first
+        // item, leaving the user's keyboard nav broken after the highlight.
+        const event = new KeyboardEvent('keydown', {
+          key: 'ArrowDown',
+          bubbles: true,
+          cancelable: true,
+        });
+        Object.defineProperty(event, 'keyCode', { value: 40 }); // DOWN_ARROW
+        Object.defineProperty(event, 'which', { value: 40 });
+        menuPanel.dispatchEvent(event);
+      }
+      this.prevTabindexAdded = false;
+      return;
+    }
+
     this.prevTabindexAdded = this.focusService.focusWithFallback(target, { preventScroll: true });
 
-    // mat-menu, cdk overlays, and slide-ins auto-focus their own first item
-    // after open animations finish (~250-300ms). Reclaim focus once that has
-    // settled so the user lands on the searched-for item.
+    // cdk overlays and slide-ins auto-focus their own first item after open
+    // animations finish (~250-300ms). Reclaim focus once that has settled so
+    // the user lands on the searched-for item.
     this.lateFocusTimeoutId = setTimeout(() => {
       this.lateFocusTimeoutId = null;
       if (this.prevHighlightTarget === target && this.window.document.activeElement !== target) {

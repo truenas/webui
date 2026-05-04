@@ -814,7 +814,11 @@ body {
     // can fragment a tall block across columns, splitting the card and the
     // ::after overlay in half. Keep the highlight target atomic.
     break-inside: avoid;
-    overflow: visible;
+    // `!important` is needed because some hosts (e.g. `.details-item a` from
+    // shared card mixins) set `overflow: hidden` with equal-or-higher
+    // specificity, which clips the ::after pulse outline so the user only
+    // sees a color flash on the link with no animated border.
+    overflow: visible !important;
     position: relative !important;
 
     // The service focuses the highlighted host (adding tabindex=-1 if it

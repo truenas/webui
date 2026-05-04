@@ -9,7 +9,6 @@ import { TnIconComponent } from '@truenas/ui-components';
 import {
   debounceTime, filter, switchMap, tap,
 } from 'rxjs';
-import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -27,9 +26,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-
-const selectionPollIntervalMs = 100;
-const selectionMaxPollAttempts = 50; // ~5s
 
 @Component({
   selector: 'ix-global-search',
@@ -68,7 +64,12 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   systemVersion: string;
   detachOverlay: () => void; // passed from global-search-trigger
 
-  private pendingSelectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  // CdkTrapFocus restores focus to the previously-focused element on destroy
+  // (the topbar search trigger button). When dismissal is user-driven, that's
+  // correct. When the overlay auto-closes after a selection, the highlight
+  // service already moved focus to the chosen target — restoring would steal
+  // it back. Flip this off in handleSearchSelection so detach skips restore.
+  protected autoRestoreFocus = true;
 
   get isSearchInputFocused(): boolean {
     return this.document.activeElement === this.searchInput()?.nativeElement;
@@ -87,7 +88,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchBoxWrapper().nativeElement.removeEventListener('focusout', this.handleFocusOut);
-    this.cancelPendingSelectionWait();
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -143,7 +143,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
-    this.cancelPendingSelectionWait();
     this.slideIn.closeAll();
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();
@@ -195,79 +194,14 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleSearchSelection(config: UiSearchableElement): void {
-    // Cancel any in-flight wait from a previous search so it can't race with
-    // this new selection.
-    this.cancelPendingSelectionWait();
-
-    this.searchDirectives.setPendingUiHighlightElement(config);
-    this.pollForSelection(config, 0, false);
-  }
-
-  private pollForSelection(config: UiSearchableElement, attempt: number, triggerFired: boolean): void {
-    const directive = this.searchDirectives.get(config);
-    let nextTriggerFired = triggerFired;
-
-    // Apply the highlight only when the directive is registered AND its host
-    // element is actually in the live DOM (mat-menu items in a closed menu
-    // can have their directive registered with a detached host).
-    if (directive) {
-      const targetId = config.anchor && config.anchor !== directive.id ? config.anchor : directive.id;
-      if (this.document.getElementById(targetId)) {
-        // Self-trigger entry (e.g. "Settings Menu" — the trigger button is
-        // its own anchor): also click to expand its dropdown so the user
-        // sees its contents.
-        if (
-          !triggerFired
-          && config.triggerAnchor
-          && config.triggerAnchor === directive.id
-        ) {
-          this.fireTrigger(config.triggerAnchor);
-        }
-        this.applyHighlight(directive, config);
-        return;
-      }
-    }
-
-    // Fire the parent trigger ONCE per selection — only if we have one, the
-    // trigger is in the DOM (page is loaded), and we haven't already fired.
-    if (
-      !triggerFired
-      && config.triggerAnchor
-      && this.document.getElementById(config.triggerAnchor)
-    ) {
-      this.fireTrigger(config.triggerAnchor);
-      nextTriggerFired = true;
-    }
-
-    if (attempt >= selectionMaxPollAttempts) {
-      if (this.searchDirectives.pendingUiHighlightElement === config) {
-        this.searchDirectives.setPendingUiHighlightElement(null);
-      }
-      return;
-    }
-
-    this.pendingSelectionTimeoutId = setTimeout(
-      () => this.pollForSelection(config, attempt + 1, nextTriggerFired),
-      selectionPollIntervalMs,
-    );
-  }
-
-  private cancelPendingSelectionWait(): void {
-    if (this.pendingSelectionTimeoutId !== null) {
-      clearTimeout(this.pendingSelectionTimeoutId);
-      this.pendingSelectionTimeoutId = null;
-    }
-  }
-
-  private fireTrigger(triggerAnchor: string): void {
-    this.document.getElementById(triggerAnchor)?.click();
-  }
-
-  private applyHighlight(directive: UiSearchDirective, config: UiSearchableElement): void {
+    // Run component-side cleanup eagerly while we still exist; the actual
+    // polling + highlight lives on UiSearchDirectivesService so it can
+    // outlive this component (overlay auto-detaches ~150ms after selection,
+    // mat-menu auto-focus can detach it sooner via focusout).
+    this.autoRestoreFocus = false;
     this.resetInput();
-    this.searchDirectives.setPendingUiHighlightElement(null);
-    directive.highlight(config);
     this.closeAllBackdrops();
+    this.searchDirectives.requestHighlight(config);
   }
 
   private handleTabOutFromGlobalSearch(event: KeyboardEvent): boolean {
@@ -291,7 +225,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private tabOutFromGlobalSearch(direction: 'next' | 'previous'): void {
-    this.cancelPendingSelectionWait();
     this.detachOverlay();
 
     setTimeout(() => {
@@ -324,7 +257,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleFocusOut = (event: FocusEvent): void => {
     const relatedTarget = event.relatedTarget as HTMLElement;
     if (relatedTarget && !this.searchBoxWrapper().nativeElement.contains(relatedTarget)) {
-      this.cancelPendingSelectionWait();
       this.detachOverlay();
     }
   };
