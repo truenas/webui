@@ -5,11 +5,20 @@ describe('Focus Helper', () => {
   let mockContainer: Partial<HTMLElement>;
   let mockElements: Partial<HTMLElement>[];
 
+  function createMockElement(props: { disabled: boolean; tabIndex: number }): Partial<HTMLElement> {
+    return {
+      disabled: props.disabled,
+      tabIndex: props.tabIndex,
+      focus: jest.fn(),
+      matches: jest.fn((selector: string) => selector === ':disabled' && props.disabled),
+    } as Partial<HTMLElement>;
+  }
+
   beforeEach(() => {
     mockElements = [
-      { disabled: false, tabIndex: 0, focus: jest.fn() } as Partial<HTMLElement>,
-      { disabled: false, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>,
-      { disabled: false, tabIndex: 2, focus: jest.fn() } as Partial<HTMLElement>,
+      createMockElement({ disabled: false, tabIndex: 0 }),
+      createMockElement({ disabled: false, tabIndex: 1 }),
+      createMockElement({ disabled: false, tabIndex: 2 }),
     ];
 
     mockContainer = {
@@ -59,7 +68,7 @@ describe('Focus Helper', () => {
     });
 
     it('should filter out disabled elements', () => {
-      mockElements[1] = { disabled: true, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>;
+      mockElements[1] = createMockElement({ disabled: true, tabIndex: 1 });
       mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
       Object.defineProperty(mockDocument, 'activeElement', {
         value: mockElements[0] as HTMLElement,
@@ -73,7 +82,7 @@ describe('Focus Helper', () => {
     });
 
     it('should filter out elements with negative tabIndex', () => {
-      mockElements[1] = { disabled: false, tabIndex: -1, focus: jest.fn() } as Partial<HTMLElement>;
+      mockElements[1] = createMockElement({ disabled: false, tabIndex: -1 });
       mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
       Object.defineProperty(mockDocument, 'activeElement', {
         value: mockElements[0] as HTMLElement,
@@ -88,9 +97,9 @@ describe('Focus Helper', () => {
 
     it('should sort elements by tabIndex', () => {
       const unsortedElements = [
-        { disabled: false, tabIndex: 2, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 0, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>,
+        createMockElement({ disabled: false, tabIndex: 2 }),
+        createMockElement({ disabled: false, tabIndex: 0 }),
+        createMockElement({ disabled: false, tabIndex: 1 }),
       ];
       mockContainer.querySelectorAll = jest.fn().mockReturnValue(unsortedElements);
       Object.defineProperty(mockDocument, 'activeElement', {
@@ -137,7 +146,7 @@ describe('Focus Helper', () => {
     });
 
     it('should filter out disabled elements', () => {
-      mockElements[1] = { disabled: true, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>;
+      mockElements[1] = createMockElement({ disabled: true, tabIndex: 1 });
       mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
       Object.defineProperty(mockDocument, 'activeElement', {
         value: mockElements[2] as HTMLElement,
@@ -151,7 +160,7 @@ describe('Focus Helper', () => {
     });
 
     it('should filter out elements with negative tabIndex', () => {
-      mockElements[1] = { disabled: false, tabIndex: -1, focus: jest.fn() } as Partial<HTMLElement>;
+      mockElements[1] = createMockElement({ disabled: false, tabIndex: -1 });
       mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
       Object.defineProperty(mockDocument, 'activeElement', {
         value: mockElements[2] as HTMLElement,
@@ -166,9 +175,9 @@ describe('Focus Helper', () => {
 
     it('should sort elements by tabIndex', () => {
       const unsortedElements = [
-        { disabled: false, tabIndex: 2, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 0, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>,
+        createMockElement({ disabled: false, tabIndex: 2 }),
+        createMockElement({ disabled: false, tabIndex: 0 }),
+        createMockElement({ disabled: false, tabIndex: 1 }),
       ];
       mockContainer.querySelectorAll = jest.fn().mockReturnValue(unsortedElements);
       Object.defineProperty(mockDocument, 'activeElement', {
