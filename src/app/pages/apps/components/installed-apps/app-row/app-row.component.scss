@@ -45,6 +45,7 @@
   }
 
   .app-logo {
+    margin-right: 8px;
     max-height: 35px;
     max-width: 35px;
     min-width: 35px;
@@ -95,27 +96,17 @@
   .cell-name {
     align-items: stretch;
     font-weight: bold;
-    min-width: 0;
 
     .name {
       align-items: center;
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
-      gap: 8px;
       margin: 1px;
-      min-width: 0;
       padding-right: 15px;
     }
 
     .app-name {
       @include line-clamp(2);
-
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    ix-app-action-required-badge {
-      flex-shrink: 0;
     }
   }
 
