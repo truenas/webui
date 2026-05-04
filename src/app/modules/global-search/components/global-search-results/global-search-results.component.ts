@@ -88,7 +88,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
     const route = element.anchorRouterLink || element.routerLink;
     if (route?.length) {
       const navigateTo = route.includes('*') ? route.slice(0, -1) : route;
-      const targetPath = navigateTo.join('/').replace(/\/+/g, '/');
+      const targetPath = navigateTo.join('/');
 
       // Skip navigation when we're already on the target page — even
       // same-URL `router.navigate` calls fire `NavigationSkipped` events,

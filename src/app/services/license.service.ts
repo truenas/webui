@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, shareReplay } from 'rxjs';
+import { combineLatest, defer, shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -63,20 +63,20 @@ export class LicenseService {
    * rendered when either the system is licensed as Enterprise (which always
    * exposes SED config) or a global SED password has already been set.
    */
-  readonly hasSedFeature$ = combineLatest([
+  readonly hasSedFeature$ = defer(() => combineLatest([
     this.store$.select(selectIsEnterprise),
     this.api.call('system.advanced.sed_global_password_is_set'),
-  ]).pipe(
+  ])).pipe(
     map(([isEnterprise, hasGlobalEncryption]) => Boolean(isEnterprise) || Boolean(hasGlobalEncryption)),
     shareReplay({ bufferSize: 1, refCount: false }),
   );
 
   /**
-   * Mirrors `isSystemLicensed` in `AdvancedSettingsComponent` — the System
-   * Security card (FIPS / STIG / password policy) is rendered only on
-   * systems where FIPS hardware support is available.
+   * Mirrors `isSystemLicensed` in `AdvancedSettingsComponent`: true when
+   * FIPS hardware support is reported by the backend. Gates visibility of
+   * the System Security card (FIPS / STIG / password policy).
    */
-  readonly hasSystemSecurityFeature$ = this.api.call('system.security.info.fips_available').pipe(
+  readonly hasFipsHardware$ = defer(() => this.api.call('system.security.info.fips_available')).pipe(
     map(Boolean),
     shareReplay({ bufferSize: 1, refCount: false }),
   );

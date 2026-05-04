@@ -87,6 +87,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchBoxWrapper().nativeElement.removeEventListener('focusout', this.handleFocusOut);
+    this.cancelPendingSelectionWait();
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -142,6 +143,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
+    this.cancelPendingSelectionWait();
     this.slideIn.closeAll();
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();
@@ -289,6 +291,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private tabOutFromGlobalSearch(direction: 'next' | 'previous'): void {
+    this.cancelPendingSelectionWait();
     this.detachOverlay();
 
     setTimeout(() => {
@@ -321,6 +324,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleFocusOut = (event: FocusEvent): void => {
     const relatedTarget = event.relatedTarget as HTMLElement;
     if (relatedTarget && !this.searchBoxWrapper().nativeElement.contains(relatedTarget)) {
+      this.cancelPendingSelectionWait();
       this.detachOverlay();
     }
   };

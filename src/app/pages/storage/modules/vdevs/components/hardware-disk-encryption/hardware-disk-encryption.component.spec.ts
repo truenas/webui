@@ -102,7 +102,7 @@ describe('HardwareDiskEncryptionComponent', () => {
       const manageGlobalSedPassword = spectator.query(byText('Manage Global SED Password'))!;
       spectator.click(manageGlobalSedPassword);
       expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight)
-        .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card');
+        .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card', { inset: false });
     });
   });
 });

@@ -13,6 +13,13 @@ const maxPollAttempts = 50;
 const highlightDurationMs = 4000;
 const lateFocusDelayMs = 350;
 
+// Keys that signal "I'm done with this highlight" — Escape (explicit dismiss)
+// and Tab (leaving the element). Arrow keys, character input, and modifier-
+// only presses must NOT dismiss, otherwise the first keystroke a keyboard
+// user makes after landing on the target instantly removes the highlight that
+// helped them locate it.
+const dismissKeys = new Set(['Escape', 'Tab']);
+
 export interface WaitForElementOptions {
   block?: ScrollLogicalPosition;
   /**
@@ -38,14 +45,18 @@ export class NavigateAndHighlightService {
   private listenerAbortController: AbortController | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private lateFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  // Increments on every navigateAndHighlight/waitForElement call. The router
+  // promise's .then() captures the token at call time and bails if a newer
+  // call has bumped it — otherwise a stale router resolution starts a fresh
+  // poll for the previous hash.
+  private currentNavigationToken = 0;
 
   navigateAndHighlight(route: string[], hash?: string, options?: WaitForElementOptions): void {
-    // Cancel any pending poll up front so it can't briefly highlight a stale
-    // target during the upcoming router transition.
     this.cancelPendingTimeout();
+    const token = ++this.currentNavigationToken;
 
     this.router.navigate(route, { fragment: hash }).then(() => {
-      if (!hash) {
+      if (token !== this.currentNavigationToken || !hash) {
         return;
       }
 
@@ -60,6 +71,7 @@ export class NavigateAndHighlightService {
    */
   waitForElement(hash: string, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
+    this.currentNavigationToken++;
     this.pollForElement(hash, 0, options);
   }
 
@@ -117,7 +129,11 @@ export class NavigateAndHighlightService {
 
     this.window.document.addEventListener(
       'keydown',
-      () => this.cleanupPreviousHighlight(),
+      (event: KeyboardEvent) => {
+        if (dismissKeys.has(event.key)) {
+          this.cleanupPreviousHighlight();
+        }
+      },
       { capture: true, signal },
     );
   }

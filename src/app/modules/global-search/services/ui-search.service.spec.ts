@@ -34,7 +34,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasFibreChannel$: of(true),
             hasKmip$: of(true),
             hasSedFeature$: of(true),
-            hasSystemSecurityFeature$: of(true),
+            hasFipsHardware$: of(true),
           }),
         ],
       });
@@ -80,7 +80,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasFibreChannel$: of(true),
             hasKmip$: of(true),
             hasSedFeature$: of(true),
-            hasSystemSecurityFeature$: of(true),
+            hasFipsHardware$: of(true),
           }),
         ],
       });
@@ -116,7 +116,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
             hasFibreChannel$: of(true),
             hasKmip$: of(true),
             hasSedFeature$: of(true),
-            hasSystemSecurityFeature$: of(true),
+            hasFipsHardware$: of(true),
           }),
         ],
       });

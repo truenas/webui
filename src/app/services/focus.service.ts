@@ -5,7 +5,7 @@ export const focusableSelectors = [
   'select:not([disabled])', 'textarea:not([disabled])',
   'button:not([disabled])', 'iframe', 'object', 'embed',
   '[contenteditable]', '[tabindex]:not([tabindex="-1"])',
-];
+] as const;
 
 const focusableSelectorString = focusableSelectors.join(', ');
 

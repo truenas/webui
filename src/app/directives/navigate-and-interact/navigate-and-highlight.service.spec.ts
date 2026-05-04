@@ -104,6 +104,35 @@ describe('NavigateAndHighlightService', () => {
     expect(element2.classList.contains(highlightTargetClass)).toBe(true);
   });
 
+  it.each([
+    'Escape',
+    'Tab',
+  ])('removes the highlight on %s keydown', (key) => {
+    const card = makeVisibleElement('dismiss-target');
+    spectator.service.highlight(card);
+
+    expect(card.classList.contains(highlightTargetClass)).toBe(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key }));
+
+    expect(card.classList.contains(highlightTargetClass)).toBe(false);
+  });
+
+  it.each([
+    'ArrowDown',
+    'ArrowUp',
+    'a',
+    'Shift',
+    'Control',
+  ])('keeps the highlight on %s keydown', (key) => {
+    const card = makeVisibleElement('keep-target');
+    spectator.service.highlight(card);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key }));
+
+    expect(card.classList.contains(highlightTargetClass)).toBe(true);
+  });
+
   it('uses the inset class when called with inset: true', () => {
     const card = makeVisibleElement('inset-card');
     spectator.service.highlight(card, true);

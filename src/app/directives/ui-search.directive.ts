@@ -1,6 +1,5 @@
 import { Directive, ElementRef, Renderer2, OnInit, OnDestroy, input, inject } from '@angular/core';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
-import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -57,18 +56,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     this.searchDirectives.unregister(this);
   }
 
-  highlight(parentElement: UiSearchableElement): void {
-    this.tryHighlight(parentElement, 0);
-  }
-
-  private tryHighlight(element: UiSearchableElement, attemptCount: number): void {
-    if (!this.elementRef.nativeElement) {
-      if (attemptCount < 2) {
-        setTimeout(() => this.tryHighlight(element, attemptCount + 1), searchDelayConst * 3);
-      }
-      return;
-    }
-
+  highlight(element: UiSearchableElement): void {
     const targetId = element.anchor && element.anchor !== this.id ? element.anchor : this.id;
     this.navigateAndHighlight.waitForElement(targetId, { inset: this.inset() });
   }
