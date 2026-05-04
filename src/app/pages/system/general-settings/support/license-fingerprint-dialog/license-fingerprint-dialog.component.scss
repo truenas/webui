@@ -1,0 +1,37 @@
+.dialog-content {
+  min-width: 480px;
+}
+
+.hint {
+  color: var(--fg2);
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+
+.loading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.fingerprint-decoded {
+  background: var(--alt-bg2);
+  border-radius: 4px;
+  font-size: 13px;
+  margin: 0;
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.dialog-actions {
+  align-items: center;
+  display: flex;
+}
+
+.spacer {
+  flex: 1;
+}
