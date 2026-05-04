@@ -17,6 +17,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppActionRequiredBadgeComponent } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 
@@ -35,6 +36,7 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
     NetworkSpeedPipe,
     FileSizePipe,
     AppUpdateCellComponent,
+    AppActionRequiredBadgeComponent,
     RequiresRolesDirective,
     MatIconButton,
     TnIconComponent,
@@ -51,6 +53,7 @@ export class AppRowComponent {
   readonly restartApp = output();
   readonly clickStatus = output();
   readonly selectionChange = output();
+  readonly actionRequiredClicked = output();
 
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];

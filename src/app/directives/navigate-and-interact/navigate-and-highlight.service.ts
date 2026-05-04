@@ -23,10 +23,10 @@ const lateFocusDelayMs = 350;
 const dismissKeys = new Set(['Escape', 'Tab']);
 
 export interface WaitForElementOptions {
+  block?: ScrollLogicalPosition;
   /**
-   * Draw the highlight outline inset (inside the element edge) instead of
-   * outset. Use for elements whose surrounding overflow:hidden parent would
-   * clip an outset outline — e.g. master-detail cards.
+   * When true, draws the highlight outline inset (negative outline-offset)
+   * so it isn't clipped by the viewport edge or an overflow container.
    */
   inset?: boolean;
 }

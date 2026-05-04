@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { App } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
+import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 
 @Component({
   selector: 'ix-app-notes-card',
@@ -24,4 +25,6 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
 })
 export class AppNotesCardComponent {
   readonly app = input.required<App>();
+
+  protected readonly anchorId = appNotesCardAnchorId;
 }
