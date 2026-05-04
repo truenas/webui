@@ -222,11 +222,11 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     const firstElement = sorted[0];
     const lastElement = sorted[sorted.length - 1];
 
-    if (event.shiftKey && document.activeElement === firstElement) {
+    if (event.shiftKey && this.document.activeElement === firstElement) {
       this.tabOutFromGlobalSearch('previous');
       return true;
     }
-    if (!event.shiftKey && document.activeElement === lastElement) {
+    if (!event.shiftKey && this.document.activeElement === lastElement) {
       this.tabOutFromGlobalSearch('next');
       return true;
     }

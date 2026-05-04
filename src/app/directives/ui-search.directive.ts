@@ -17,13 +17,6 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     alias: 'ixUiSearch',
   });
 
-  /**
-   * When true, the highlight is drawn inside the element (negative
-   * outline-offset). Use for master-detail cards whose surrounding scroll
-   * container would clip an outset outline.
-   */
-  readonly inset = input(false, { alias: 'ixUiSearchInset' });
-
   get id(): string {
     return getSearchableElementId(this.config());
   }
@@ -63,11 +56,12 @@ export class UiSearchDirective implements OnInit, OnDestroy {
    * skip the redundant element poll.
    */
   highlight(element: UiSearchableElement, resolvedTarget?: HTMLElement): void {
+    const inset = element.inset ?? this.config().inset ?? false;
     if (resolvedTarget) {
-      this.navigateAndHighlight.highlightResolved(resolvedTarget, { inset: this.inset() });
+      this.navigateAndHighlight.highlightResolved(resolvedTarget, { inset });
       return;
     }
     const targetId = element.anchor && element.anchor !== this.id ? element.anchor : this.id;
-    this.navigateAndHighlight.waitForElement(targetId, { inset: this.inset() });
+    this.navigateAndHighlight.waitForElement(targetId, { inset });
   }
 }

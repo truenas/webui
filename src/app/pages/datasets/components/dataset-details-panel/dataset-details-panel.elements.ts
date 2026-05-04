@@ -17,26 +17,32 @@ export const datasetDetailsPanelElements = {
     datasetDetailsCard: {
       hierarchy: [T('Details')],
       synonyms: [T('Dataset Information')],
+      inset: true,
     },
     datasetCapacityCard: {
       hierarchy: [T('Space Management')],
       synonyms: [T('Dataset Capacity Management')],
+      inset: true,
     },
     datasetDataProtectionCard: {
       hierarchy: [T('Data Protection')],
       synonyms: [T('Dataset Data Protection')],
+      inset: true,
     },
     datasetZfsEncryptionCard: {
       hierarchy: [T('Encryption')],
       synonyms: [T('Dataset Encryption')],
+      inset: true,
     },
     datasetRolesCard: {
       hierarchy: [T('Roles')],
       synonyms: [T('Dataset Roles')],
+      inset: true,
     },
     datasetPermissionsCard: {
       hierarchy: [T('Permissions')],
       synonyms: [T('Dataset Permissions'), T('ACL')],
+      inset: true,
     },
   },
 } satisfies UiSearchableElement;

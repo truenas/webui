@@ -206,6 +206,44 @@ describe('NavigateAndHighlightService', () => {
     expect(late.scrollIntoView).not.toHaveBeenCalled();
   }));
 
+  it('dispatches synthetic ArrowDown events to sync the mat-menu KeyManager with the target item', () => {
+    // Smoke test for the focus-target dance against mat-mdc-menu-panel —
+    // the gnarliest piece of the highlight code. A KeyManager would normally
+    // be wired up by Material; here we just observe that one ArrowDown
+    // keydown is fired per step from the first item to the target.
+    const menuPanel = document.createElement('div');
+    menuPanel.classList.add('mat-mdc-menu-panel');
+    document.body.appendChild(menuPanel);
+
+    const items = ['first', 'second', 'third', 'fourth'].map((id) => {
+      const item = document.createElement('button');
+      item.id = id;
+      item.classList.add('mat-mdc-menu-item');
+      menuPanel.appendChild(item);
+      return item;
+    });
+
+    const dispatched: KeyboardEvent[] = [];
+    menuPanel.addEventListener('keydown', (event) => {
+      if (event instanceof KeyboardEvent) dispatched.push(event);
+    });
+
+    // Highlighting the third item should fire two ArrowDown events (advance
+    // _activeItem from index 0 → 2). keyCode/which must be patched so the
+    // CDK FocusKeyManager actually sees them.
+    spectator.service.highlight(items[2]);
+
+    expect(dispatched).toHaveLength(2);
+    expect(dispatched[0].key).toBe('ArrowDown');
+    // CDK FocusKeyManager still reads the deprecated `keyCode` field, so
+    // assert it survived the patch — that's the bug a future CDK upgrade
+    // would expose.
+    // eslint-disable-next-line sonarjs/deprecation
+    expect(dispatched[0].keyCode).toBe(40);
+    // eslint-disable-next-line sonarjs/deprecation
+    expect(dispatched[1].keyCode).toBe(40);
+  });
+
   it('does NOT hijack Enter when the highlighted target is not inside a mat-menu', () => {
     const button = document.createElement('button');
     button.id = 'plain-button';

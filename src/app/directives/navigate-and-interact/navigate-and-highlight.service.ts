@@ -19,8 +19,9 @@ const lateFocusDelayMs = 350;
 // and Tab (leaving the element). Arrow keys, character input, and modifier-
 // only presses must NOT dismiss, otherwise the first keystroke a keyboard
 // user makes after landing on the target instantly removes the highlight that
-// helped them locate it.
-const dismissKeys = new Set(['Escape', 'Tab']);
+// helped them locate it. Frozen with `as const` so future code can't mutate
+// the dismiss set at runtime.
+const dismissKeys: ReadonlySet<string> = new Set(['Escape', 'Tab'] as const);
 
 export interface WaitForElementOptions {
   block?: ScrollLogicalPosition;
@@ -41,6 +42,10 @@ export class NavigateAndHighlightService {
   private focusService = inject(FocusService);
 
   private prevHighlightTarget: HTMLElement | null = null;
+  // Tracks whether the non-menu `focusTarget` branch added a synthetic
+  // `tabindex="-1"` to a non-natively-focusable host (so cleanup knows
+  // whether to remove it). The mat-menu branch never adds a tabindex, so it
+  // explicitly leaves this `false` — see `focusTarget` for the contract.
   private prevTabindexAdded = false;
   private prevSubscription: Subscription | null = null;
   private listenerAbortController: AbortController | null = null;
@@ -136,15 +141,14 @@ export class NavigateAndHighlightService {
     this.listenerAbortController = new AbortController();
     const { signal } = this.listenerAbortController;
 
-    targetElement.addEventListener('click', () => this.cleanupPreviousHighlight(), { signal });
-
+    // Single document-level capture-phase listener covers both "click on the
+    // target" (signals the user has acted on the highlight) and "click
+    // outside" (user has moved on). One listener avoids double-firing
+    // cleanupPreviousHighlight, which matters if cleanup ever grows
+    // side-effecting work (analytics, dispatch).
     this.window.document.addEventListener(
       'click',
-      (event: MouseEvent) => {
-        if (!targetElement.contains(event.target as Node)) {
-          this.cleanupPreviousHighlight();
-        }
-      },
+      () => this.cleanupPreviousHighlight(),
       { capture: true, signal },
     );
 
@@ -201,6 +205,9 @@ export class NavigateAndHighlightService {
         // so we patch it after construction — otherwise the synthetic event is
         // a no-op for the manager and _activeItem stays at the menu's first
         // item, leaving the user's keyboard nav broken after the highlight.
+        // TODO: Revisit when @angular/cdk drops keyCode in favour of `key`
+        // (tracked >=22.x). Once CDK reads `event.key`, the keyCode/which
+        // patches below can be removed.
         const event = new KeyboardEvent('keydown', {
           key: 'ArrowDown',
           bubbles: true,
@@ -218,6 +225,8 @@ export class NavigateAndHighlightService {
       if (this.window.document.activeElement !== target) {
         target.focus({ preventScroll: true });
       }
+      // The menu path never injects a tabindex (mat-menu items are already
+      // focusable). Make the contract explicit so cleanup is a no-op.
       this.prevTabindexAdded = false;
       return;
     }

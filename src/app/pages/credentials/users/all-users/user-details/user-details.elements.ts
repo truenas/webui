@@ -12,14 +12,17 @@ export const userDetailsElements = {
     profile: {
       hierarchy: [T('Profile')],
       anchor: 'profile',
+      inset: true,
     },
     accessCard: {
       hierarchy: [T('Access Card')],
       anchor: 'access-card',
+      inset: true,
     },
     passwordCard: {
       hierarchy: [T('Password Card')],
       anchor: 'password-card',
+      inset: true,
     },
   },
 } satisfies UiSearchableElement;

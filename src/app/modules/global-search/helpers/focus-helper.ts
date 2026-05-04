@@ -6,8 +6,12 @@ export function getFocusableSearchBoxElements(document: Document): HTMLElement[]
   const container = document.querySelector('.search-box-wrapper');
   if (!container) return [];
 
+  // The selectors in `focusableSelectors` already exclude disabled form
+  // controls via `:not([disabled])`, so a runtime `:disabled` check would be
+  // redundant — only `tabIndex >= 0` needs to be re-validated here (a
+  // matched element can still be `tabindex="-1"` and that's not focusable).
   return Array.from(container.querySelectorAll<HTMLElement>(searchBoxFocusableSelector))
-    .filter((element) => !element.matches(':disabled') && element.tabIndex >= 0)
+    .filter((element) => element.tabIndex >= 0)
     .toSorted((a, b) => a.tabIndex - b.tabIndex);
 }
 

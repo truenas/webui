@@ -90,9 +90,13 @@ export class GlobalSearchResultsComponent implements OnChanges {
       const hasWildcard = route[route.length - 1] === '*';
       const navigateTo = hasWildcard ? route.slice(0, -1) : route;
 
-      // Normalise via the router so relative segments (e.g. ['credentials',
-      // 'kmip']) compare correctly against `router.url`, which always emits
-      // an absolute path.
+      // Convention: `anchorRouterLink` / `routerLink` always start with `/`
+      // (verified across all `*.elements.ts` files). We resolve via the
+      // router so the segments serialise to the same absolute string format
+      // as `router.url`, making the equality / startsWith comparisons below
+      // exact. `createUrlTree` without `relativeTo` resolves from
+      // `routerState.snapshot.root`, so even if a non-absolute route ever
+      // sneaks in it serialises from root rather than the active route.
       const targetPath = this.router.serializeUrl(this.router.createUrlTree(navigateTo))
         .split('?')[0].split('#')[0];
 

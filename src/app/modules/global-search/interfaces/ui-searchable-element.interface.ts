@@ -21,6 +21,14 @@ interface UiSearchableElementBase {
   elements?: Record<string, UiSearchableElement>;
   manualRenderElements?: Record<string, UiSearchableElement>;
   visibleTokens?: GlobalSearchVisibleToken[];
+  /**
+   * When true, the highlight on this element is drawn inset (negative
+   * outline-offset) so it isn't clipped by an `overflow: hidden` ancestor
+   * (e.g. master-detail cards inside a scroll container). Belongs on the
+   * config rather than the host directive so the same logical element looks
+   * consistent across every place it renders.
+   */
+  inset?: boolean;
 }
 
 export type UiSearchableElementWithHierarchy = UiSearchableElementBase & {

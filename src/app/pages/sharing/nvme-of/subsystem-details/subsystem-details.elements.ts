@@ -5,9 +5,9 @@ export const subsystemDetailsElements = {
   hierarchy: [T('Shares'), T('NVMe-oF')],
   anchorRouterLink: ['/sharing', 'nvme-of'],
   elements: {
-    detailsCard: { hierarchy: [T('Details')] },
-    namespacesCard: { hierarchy: [T('Namespaces')] },
-    portsCard: { hierarchy: [T('Ports')] },
-    hostsCard: { hierarchy: [T('Associated Hosts')] },
+    detailsCard: { hierarchy: [T('Details')], inset: true },
+    namespacesCard: { hierarchy: [T('Namespaces')], inset: true },
+    portsCard: { hierarchy: [T('Ports')], inset: true },
+    hostsCard: { hierarchy: [T('Associated Hosts')], inset: true },
   },
 } satisfies UiSearchableElement;

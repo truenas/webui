@@ -75,7 +75,6 @@ describe('AdvancedSettingsComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('system.security.info.fips_available', true),
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockAuth(),
@@ -87,6 +86,7 @@ describe('AdvancedSettingsComponent', () => {
       }),
       mockProvider(LicenseService, {
         hasFailover$: of(true),
+        hasSystemSecurity$: of(true),
       }),
     ],
   });

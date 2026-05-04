@@ -46,43 +46,37 @@
   <div class="scroll-window">
     <ix-dataset-details-card
       [ixUiSearch]="searchableElements.elements.datasetDetailsCard"
-      [ixUiSearchInset]="true"
       [dataset]="dataset()"
     ></ix-dataset-details-card>
     @if (isCapacityAllowed()) {
       <ix-dataset-capacity-management-card
         [ixUiSearch]="searchableElements.elements.datasetCapacityCard"
-        [ixUiSearchInset]="true"
-        [dataset]="dataset()"
+          [dataset]="dataset()"
       ></ix-dataset-capacity-management-card>
     }
     @if (isEncryptionAllowed()) {
       <ix-zfs-encryption-card
         [dataset]="dataset()"
         [ixUiSearch]="searchableElements.elements.datasetZfsEncryptionCard"
-        [ixUiSearchInset]="true"
-        [parentDataset]="selectedParentDataset$ | async"
+          [parentDataset]="selectedParentDataset$ | async"
       ></ix-zfs-encryption-card>
     }
     <ix-data-protection-card
       [dataset]="dataset()"
       [ixUiSearch]="searchableElements.elements.datasetDataProtectionCard"
-      [ixUiSearchInset]="true"
     ></ix-data-protection-card>
     @if (hasRoles()) {
       <ix-usage-card
         [dataset]="dataset()"
         [hasChildrenWithShares]="hasChildrenWithShares()"
         [ixUiSearch]="searchableElements.elements.datasetRolesCard"
-        [ixUiSearchInset]="true"
-        [systemDataset]="systemDataset()"
+          [systemDataset]="systemDataset()"
       ></ix-usage-card>
     }
     @if (hasPermissions()) {
       <ix-permissions-card
         [ixUiSearch]="searchableElements.elements.datasetPermissionsCard"
-        [ixUiSearchInset]="true"
-        [dataset]="dataset()"
+          [dataset]="dataset()"
       ></ix-permissions-card>
     }
   </div>
