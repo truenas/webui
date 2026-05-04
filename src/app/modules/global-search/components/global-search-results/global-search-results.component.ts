@@ -94,7 +94,11 @@ export class GlobalSearchResultsComponent implements OnChanges {
       // same-URL `router.navigate` calls fire `NavigationSkipped` events,
       // which `<ix-master-detail-view>` interprets as "page changed" and
       // collapses the details panel (the cards disappear).
-      if (!this.router.url.startsWith(targetPath)) {
+      // Compare with an explicit segment boundary so e.g. `/datasets/poolA`
+      // is NOT considered a prefix of the user's current `/datasets/poolAB`.
+      const currentPath = this.router.url.split('?')[0].split('#')[0];
+      const onTargetPath = currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
+      if (!onTargetPath) {
         this.router.navigate(navigateTo);
       }
     }

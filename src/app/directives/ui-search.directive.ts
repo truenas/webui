@@ -56,7 +56,17 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     this.searchDirectives.unregister(this);
   }
 
-  highlight(element: UiSearchableElement): void {
+  /**
+   * Apply the search highlight to this directive's target. If the caller has
+   * already resolved the live DOM element (UiSearchDirectivesService does
+   * this as part of its visibility check), pass it as `resolvedTarget` to
+   * skip the redundant element poll.
+   */
+  highlight(element: UiSearchableElement, resolvedTarget?: HTMLElement): void {
+    if (resolvedTarget) {
+      this.navigateAndHighlight.highlightResolved(resolvedTarget, { inset: this.inset() });
+      return;
+    }
     const targetId = element.anchor && element.anchor !== this.id ? element.anchor : this.id;
     this.navigateAndHighlight.waitForElement(targetId, { inset: this.inset() });
   }

@@ -95,7 +95,7 @@ export class UiSearchDirectivesService {
         ) {
           this.fireTrigger(config.triggerAnchor);
         }
-        this.applyHighlight(directive, config);
+        this.applyHighlight(directive, config, targetElement);
         return;
       }
     }
@@ -128,9 +128,16 @@ export class UiSearchDirectivesService {
     this.document.getElementById(triggerAnchor)?.click();
   }
 
-  private applyHighlight(directive: UiSearchDirective, config: UiSearchableElement): void {
+  private applyHighlight(
+    directive: UiSearchDirective,
+    config: UiSearchableElement,
+    targetElement: HTMLElement,
+  ): void {
     this.pendingTimeoutId = null;
     this.setPendingUiHighlightElement(null);
-    directive.highlight(config);
+    // Hand the already-resolved target to the directive so the highlight
+    // service skips its own poll — we just verified the element is in the
+    // DOM and visible, no need to look it up again.
+    directive.highlight(config, targetElement);
   }
 }

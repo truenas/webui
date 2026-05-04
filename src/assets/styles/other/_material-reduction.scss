@@ -840,15 +840,23 @@ body {
       box-shadow: none !important;
       color: inherit !important;
       outline: none !important;
+    }
 
-      // Some hosts (e.g. mat-list-item) get a focused-state colour pushed
-      // down to their inner content via Material's MDC styling. Force every
-      // descendant back to "inherit" so the row's labels keep the surrounding
-      // text colour.
-      *,
-      *::before,
-      *::after {
-        color: inherit !important;
+    // mat-list-item pushes its focused-state colour down to inner spans via
+    // MDC styling, so the host-level `color: inherit` above isn't enough.
+    // Scope the descendant override to list items only — applying it to every
+    // highlighted host would stomp on legitimate child colours elsewhere.
+    &.mat-mdc-list-item {
+      &:focus,
+      &:focus-visible,
+      &.cdk-focused,
+      &.cdk-keyboard-focused,
+      &.cdk-mouse-focused {
+        *,
+        *::before,
+        *::after {
+          color: inherit !important;
+        }
       }
     }
 

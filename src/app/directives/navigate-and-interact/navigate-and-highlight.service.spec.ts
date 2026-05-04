@@ -169,4 +169,47 @@ describe('NavigateAndHighlightService', () => {
     tick(150);
     expect(target.scrollIntoView).toHaveBeenCalled();
   }));
+
+  it('highlightResolved scrolls and highlights the given element without polling', () => {
+    const target = makeVisibleElement('resolved-target');
+
+    spectator.service.highlightResolved(target);
+
+    expect(target.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(target.classList.contains(highlightTargetClass)).toBe(true);
+  });
+
+  it('highlightResolved cancels an in-flight poll started by waitForElement', fakeAsync(() => {
+    // Kick off a poll for an element that isn't in the DOM yet.
+    spectator.service.waitForElement('pending-target');
+
+    const resolved = makeVisibleElement('resolved-target');
+    spectator.service.highlightResolved(resolved, { inset: true });
+
+    expect(resolved.scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(resolved.classList.contains(highlightTargetInsetClass)).toBe(true);
+
+    // Even if the originally-awaited element appears later, the cancelled
+    // poll must not re-highlight it.
+    const late = makeVisibleElement('pending-target');
+    tick(5000);
+    expect(late.scrollIntoView).not.toHaveBeenCalled();
+  }));
+
+  it('does NOT hijack Enter when the highlighted target is not inside a mat-menu', () => {
+    const button = document.createElement('button');
+    button.id = 'plain-button';
+    button.click = jest.fn();
+    document.body.appendChild(button);
+
+    spectator.service.highlight(button);
+
+    const event = new KeyboardEvent('keydown', { key: 'Enter', cancelable: true });
+    document.dispatchEvent(event);
+
+    // The capture-phase handler must NOT invoke .click() on a focused
+    // non-menu host — that's left to the browser's native Enter behaviour.
+    expect(button.click).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
+  });
 });

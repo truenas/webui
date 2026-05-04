@@ -45,10 +45,16 @@ export class NavigateAndHighlightService {
   private listenerAbortController: AbortController | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private lateFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  // Increments on every navigateAndHighlight/waitForElement call. The router
-  // promise's .then() captures the token at call time and bails if a newer
-  // call has bumped it — otherwise a stale router resolution starts a fresh
-  // poll for the previous hash.
+  // Increments on every navigateAndHighlight / waitForElement /
+  // highlightResolved call. Two invariants depend on it:
+  //   1. The router promise's .then() in navigateAndHighlight captures the
+  //      token at call time and bails if a newer call has bumped it —
+  //      otherwise a stale router resolution would start a fresh poll for
+  //      the previous hash.
+  //   2. Direct callers of waitForElement / highlightResolved (e.g.
+  //      UiSearchDirective) bump the token so any in-flight navigateAndHighlight
+  //      whose router promise hasn't resolved yet gets cancelled before it
+  //      can start polling for an outdated target.
   private currentNavigationToken = 0;
 
   navigateAndHighlight(route: string[], hash?: string, options?: WaitForElementOptions): void {
@@ -73,6 +79,18 @@ export class NavigateAndHighlightService {
     this.cancelPendingTimeout();
     this.currentNavigationToken++;
     this.pollForElement(hash, 0, options);
+  }
+
+  /**
+   * Highlight an already-resolved DOM element, skipping the poll. Use when the
+   * caller has independently verified the element is in the DOM and visible
+   * (e.g. UiSearchDirectivesService's directive-level visibility check) — this
+   * avoids re-polling for an element we already have.
+   */
+  highlightResolved(target: HTMLElement, options?: WaitForElementOptions): void {
+    this.cancelPendingTimeout();
+    this.currentNavigationToken++;
+    this.scrollIntoView(target, options);
   }
 
   private pollForElement(hash: string, attemptCount: number, options?: WaitForElementOptions): void {
@@ -130,26 +148,27 @@ export class NavigateAndHighlightService {
     this.window.document.addEventListener(
       'keydown',
       (event: KeyboardEvent) => {
-        // mat-menu has no first-class Enter handling — it relies on the
-        // browser's default Enter→click. Empirically this can fail to reach
-        // the focused item in some menu/keymanager states, so we hijack
-        // Enter at the capture phase for any focused item inside the same
-        // menu panel as the highlight target (or the target itself), and
-        // click it explicitly. Outside of menus, this still covers the
-        // original highlight target.
+        // mat-menu items rely on the browser's default Enter→click. Inside a
+        // menu, that default can fail to reach the focused row in some
+        // menu/keymanager states, so we hijack Enter at the capture phase
+        // for the focused item inside the same menu panel as the highlight
+        // target and click it explicitly. Outside of menus, the browser's
+        // native Enter handling on focusable elements is sufficient and we
+        // must NOT pre-empt it (would double-fire or stomp on bespoke
+        // Enter handlers on the host). Verified against @angular/cdk 21.x.
         if (event.key === 'Enter') {
-          const focused = this.window.document.activeElement;
           const targetMenuPanel = targetElement.closest('.mat-mdc-menu-panel');
-          const focusedIsTarget = focused === targetElement;
-          const focusedIsInSameMenu = focused instanceof HTMLElement
-            && targetMenuPanel
-            && targetMenuPanel.contains(focused)
-            && focused.classList.contains('mat-mdc-menu-item');
-          if (focusedIsTarget || focusedIsInSameMenu) {
-            event.stopPropagation();
-            event.preventDefault();
-            (focused as HTMLElement).click();
-            return;
+          if (targetMenuPanel) {
+            const focused = this.window.document.activeElement;
+            const focusedIsInSameMenu = focused instanceof HTMLElement
+              && targetMenuPanel.contains(focused)
+              && focused.classList.contains('mat-mdc-menu-item');
+            if (focusedIsInSameMenu) {
+              event.stopPropagation();
+              event.preventDefault();
+              (focused as HTMLElement).click();
+              return;
+            }
           }
         }
         if (dismissKeys.has(event.key)) {
@@ -168,7 +187,7 @@ export class NavigateAndHighlightService {
     // Walk the KeyManager forward via synthetic ArrowDown events until its
     // _activeItem matches our target (each ArrowDown advances _activeItem AND
     // focuses the new item, so when the loop ends focus is on `target` AND
-    // the keymanager is in sync).
+    // the keymanager is in sync). Verified against @angular/cdk 21.x.
     const menuPanel = target.closest<HTMLElement>('.mat-mdc-menu-panel');
     if (menuPanel) {
       const items = Array.from(menuPanel.querySelectorAll<HTMLElement>('.mat-mdc-menu-item'));
