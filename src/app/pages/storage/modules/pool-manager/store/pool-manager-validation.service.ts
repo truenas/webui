@@ -64,13 +64,21 @@ const allocClassRules: Record<AllocClassVdev, AllocClassRule> = {
 };
 
 /**
- * Mirror parity = width - 1, so width must be set before parity can be
- * compared. Other layouts (Stripe, RAIDZN, dRAIDN) have layout-determined
- * parity and can be compared eagerly. Returning false defers the warning
- * until the user picks a width.
+ * Layout parity (drive failures the layout can survive) for the given width,
+ * or null when parity cannot yet be determined. Currently only Mirror without
+ * a chosen width yields null — Stripe, RAIDZN and dRAIDN are layout-determined
+ * and parity for them is independent of width. Sharing this between the data
+ * resolver and the per-category check keeps both deferring on identical
+ * conditions.
  */
-function isMirrorParityKnown(layout: CreateVdevLayout, width: number | null | undefined): boolean {
-  return layout !== CreateVdevLayout.Mirror || width != null;
+function parityFromLayoutWidth(
+  layout: CreateVdevLayout,
+  width: number | null | undefined,
+): number | null {
+  if (layout === CreateVdevLayout.Mirror && width == null) {
+    return null;
+  }
+  return layoutParity(layout, width ?? 0);
 }
 
 @Injectable()
@@ -446,7 +454,10 @@ export class PoolManagerValidationService {
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
     const dataParity = this.resolveDataParity(topology, existingPool);
-    if (dataParity === null) {
+    // dataParity === 0 means data is Stripe; nothing can be lower than 0, so
+    // skipping the loop is equivalent to running it but makes the intent
+    // explicit (and avoids implying Stripe data ever produces a mismatch).
+    if (dataParity === null || dataParity <= 0) {
       return errors;
     }
 
@@ -460,10 +471,10 @@ export class PoolManagerValidationService {
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
-      if (!isMirrorParityKnown(category.layout, category.width)) {
+      const categoryParity = parityFromLayoutWidth(category.layout, category.width);
+      if (categoryParity === null) {
         return;
       }
-      const categoryParity = layoutParity(category.layout, category.width ?? 2);
       if (categoryParity < dataParity) {
         const rule = allocClassRules[vdevType];
         errors.push({
@@ -497,8 +508,11 @@ export class PoolManagerValidationService {
       if (!category?.vdevs.length || !category.layout) {
         return;
       }
-      // Stripe is handled by validateAddVdevRedundancy with its own dedicated
-      // single-point-of-failure message; don't double-warn here.
+      // Asymmetric skip: only suppress when the *new* category is Stripe —
+      // that case already gets validateAddVdevRedundancy's dedicated SPOF
+      // message and we don't want to double-warn. If the existing pool's
+      // class is Stripe and the new vdev is non-stripe, mixing within an
+      // existing Stripe class is itself a real concern, so we still warn.
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
@@ -525,18 +539,20 @@ export class PoolManagerValidationService {
       }
       // Existing pool vdevs always carry a children list; the fallback only
       // guards against malformed payloads and is irrelevant for non-Mirror
-      // layouts where parity is layout-determined.
+      // layouts where parity is layout-determined. Note that a malformed
+      // payload could mask a backend bug as a 2-disk Mirror (parity 1).
       const width = existingDataVdevs[0].children?.length ?? 2;
       return layoutParity(layout, width);
     }
 
+    // Existing pool with an empty data array (or no existing pool) falls
+    // through to the wizard category. In add-vdev mode the wizard's data
+    // category is unset, so we return null and the mismatch warning is
+    // suppressed until parity can actually be resolved.
     const dataCategory = topology[VDevType.Data];
     if (!dataCategory?.layout) {
       return null;
     }
-    if (!isMirrorParityKnown(dataCategory.layout, dataCategory.width)) {
-      return null;
-    }
-    return layoutParity(dataCategory.layout, dataCategory.width ?? 2);
+    return parityFromLayoutWidth(dataCategory.layout, dataCategory.width);
   }
 }
