@@ -48,7 +48,6 @@ export class PoolManagerValidationService {
   protected translate = inject(TranslateService);
   private addVdevsStore = inject(AddVdevsStore);
 
-
   exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedSelectedDisksWarning);
 
   readonly poolCreationErrors$ = combineLatest([
@@ -440,6 +439,11 @@ export class PoolManagerValidationService {
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
+      // Mirror parity depends on width. Until the user has chosen one, defer
+      // the warning rather than fixing parity at the unconstrained floor of 2.
+      if (category.layout === CreateVdevLayout.Mirror && category.width == null) {
+        return;
+      }
       const categoryParity = layoutParity(category.layout, category.width ?? 2);
       if (categoryParity < dataParity) {
         errors.push({
@@ -484,6 +488,11 @@ export class PoolManagerValidationService {
       if (!category?.vdevs.length || !category.layout) {
         return;
       }
+      // Stripe is handled by validateAddVdevRedundancy with its own dedicated
+      // single-point-of-failure message; don't double-warn here.
+      if (category.layout === CreateVdevLayout.Stripe) {
+        return;
+      }
       const existingLayout = existingVdevLayout(existingPool.topology?.[vdevType]);
       if (existingLayout !== null && existingLayout !== category.layout) {
         errors.push({
@@ -504,14 +513,22 @@ export class PoolManagerValidationService {
       if (layout === null) {
         return null;
       }
+      // Existing pool vdevs always carry a children list; the fallback only
+      // guards against malformed payloads and is irrelevant for non-Mirror
+      // layouts where parity is layout-determined.
       const width = existingDataVdevs[0].children?.length ?? 2;
       return layoutParity(layout, width);
     }
 
     const dataCategory = topology[VDevType.Data];
-    if (dataCategory?.layout) {
-      return layoutParity(dataCategory.layout, dataCategory.width ?? 2);
+    if (!dataCategory?.layout) {
+      return null;
     }
-    return null;
+    // Mirror parity depends on width; if the user hasn't picked one yet,
+    // defer parity resolution rather than locking it to the width-2 floor.
+    if (dataCategory.layout === CreateVdevLayout.Mirror && dataCategory.width == null) {
+      return null;
+    }
+    return layoutParity(dataCategory.layout, dataCategory.width ?? 2);
   }
 }
