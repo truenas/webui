@@ -77,9 +77,10 @@ export class SysInfoComponent {
   protected copyFingerprint(): void {
     this.loadFingerprint().subscribe({
       next: (raw) => {
-        navigator.clipboard.writeText(raw).then(() => {
-          this.snackbar.success(this.translate.instant('Copied to clipboard'));
-        });
+        navigator.clipboard.writeText(raw).then(
+          () => this.snackbar.success(this.translate.instant('Copied to clipboard')),
+          () => this.snackbar.error(this.translate.instant('Failed to copy to clipboard')),
+        );
       },
     });
   }
