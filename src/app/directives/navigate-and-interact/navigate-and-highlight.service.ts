@@ -74,7 +74,7 @@ export class NavigateAndHighlightService {
         return;
       }
 
-      this.pollForElement(hash, 0, options);
+      this.pollForElement(hash, 0, options, token);
     });
   }
 
@@ -85,8 +85,8 @@ export class NavigateAndHighlightService {
    */
   waitForElement(hash: string, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
-    this.currentNavigationToken++;
-    this.pollForElement(hash, 0, options);
+    const token = ++this.currentNavigationToken;
+    this.pollForElement(hash, 0, options, token);
   }
 
   /**
@@ -98,10 +98,30 @@ export class NavigateAndHighlightService {
   highlightResolved(target: HTMLElement, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
     this.currentNavigationToken++;
+    // Defensive guard: the contract is that the caller has already verified
+    // visibility, but a future caller passing a detached node would otherwise
+    // get a silent no-op highlight with the 4-second timer running on a node
+    // that isn't on screen.
+    if (!target.isConnected) return;
     this.scrollIntoView(target, options);
   }
 
-  private pollForElement(hash: string, attemptCount: number, options?: WaitForElementOptions): void {
+  private pollForElement(
+    hash: string,
+    attemptCount: number,
+    options: WaitForElementOptions | undefined,
+    token: number,
+  ): void {
+    // Bail if a newer public entry has bumped the token while we were waiting
+    // for the next iteration. Mirrors the cancellation contract that
+    // `cancelPendingTimeout` already enforces for in-flight setTimeout
+    // callbacks; the token check covers the (theoretical) gap where the
+    // callback has been dequeued but the recursive call hasn't yet returned.
+    if (token !== this.currentNavigationToken) {
+      this.pendingTimeoutId = null;
+      return;
+    }
+
     const htmlElement = this.window.document.getElementById(hash);
 
     if (htmlElement) {
@@ -109,7 +129,7 @@ export class NavigateAndHighlightService {
       this.scrollIntoView(htmlElement, options);
     } else if (attemptCount < elementMaxPollAttempts) {
       this.pendingTimeoutId = setTimeout(() => {
-        this.pollForElement(hash, attemptCount + 1, options);
+        this.pollForElement(hash, attemptCount + 1, options, token);
       }, elementPollIntervalMs);
     } else {
       this.pendingTimeoutId = null;

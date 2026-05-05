@@ -56,7 +56,12 @@ export class UiSearchDirective implements OnInit, OnDestroy {
    * skip the redundant element poll.
    */
   highlight(element: UiSearchableElement, resolvedTarget?: HTMLElement): void {
-    const inset = element.inset ?? this.config().inset ?? false;
+    // Both `element` and `this.config()` come from the same `*.elements.ts`
+    // source — the JSON-extracted entry that drives both the search index and
+    // the directive input. The previous `?? this.config().inset` fallback
+    // was unreachable in practice, so the inset flag is read directly from
+    // the search-result element.
+    const inset = element.inset ?? false;
     if (resolvedTarget) {
       this.navigateAndHighlight.highlightResolved(resolvedTarget, { inset });
       return;

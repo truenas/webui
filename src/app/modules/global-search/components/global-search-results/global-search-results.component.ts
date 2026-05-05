@@ -148,7 +148,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     const existingResults = this.readRecentSearches();
     const updatedResults = existingResults.filter((item) => !isEqual(item.hierarchy, result.hierarchy));
-    localStorage.setItem('recentSearches', JSON.stringify(updatedResults));
+    this.window.localStorage.setItem('recentSearches', JSON.stringify(updatedResults));
     this.recentSearchRemoved.emit();
   }
 
@@ -169,7 +169,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     existingResults.unshift(result);
 
-    localStorage.setItem('recentSearches', JSON.stringify(
+    this.window.localStorage.setItem('recentSearches', JSON.stringify(
       existingResults
         .slice(0, this.globalSearchSectionsProvider.recentSearchesMaximumToSave)
         .map((item) => ({ ...item, section: GlobalSearchSection.RecentSearches })),

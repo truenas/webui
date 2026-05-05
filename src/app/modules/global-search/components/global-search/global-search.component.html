@@ -35,7 +35,7 @@
     [searchTerm]="searchControl.value"
     [results]="searchResults"
     [isLoading]="isLoading"
-    [isSearchInputFocused]="isSearchInputFocused"
+    [isSearchInputFocused]="isSearchInputFocused()"
     (keydown)="handleKeyDown($event)"
     (recentSearchRemoved)="setInitialSearchResults()"
   ></ix-global-search-results>

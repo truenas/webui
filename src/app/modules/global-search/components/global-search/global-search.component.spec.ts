@@ -150,7 +150,7 @@ describe('GlobalSearchComponent', () => {
     const inputElement = spectator.query<HTMLInputElement>('.search-input');
 
     'Filtered'.split('').forEach((symbol) => {
-      if (spectator.component.isSearchInputFocused) {
+      if (spectator.component.isSearchInputFocused()) {
         spectator.component.searchControl.setValue(spectator.component.searchControl.value + symbol);
       }
       spectator.dispatchKeyboardEvent(inputElement!, 'keydown', symbol);

@@ -1,5 +1,5 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, ElementRef, ChangeDetectorRef, AfterViewInit, OnDestroy, Signal, viewChild, DOCUMENT, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, ElementRef, ChangeDetectorRef, AfterViewInit, OnDestroy, Signal, signal, viewChild, DOCUMENT, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
@@ -71,9 +71,11 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   // it back. Flip this off in handleSearchSelection so detach skips restore.
   protected autoRestoreFocus = true;
 
-  get isSearchInputFocused(): boolean {
-    return this.document.activeElement === this.searchInput()?.nativeElement;
-  }
+  // Tracked as a signal updated by focus/blur listeners on the input. Reading
+  // `document.activeElement` from a getter wouldn't trigger CD when focus
+  // changes — the template binding would only update when something else
+  // marked the view dirty.
+  readonly isSearchInputFocused = signal(false);
 
   ngOnInit(): void {
     this.getSystemVersion();
@@ -84,10 +86,16 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.searchBoxWrapper().nativeElement.addEventListener('focusout', this.handleFocusOut);
+    const input = this.searchInput().nativeElement;
+    input.addEventListener('focus', this.handleSearchInputFocus);
+    input.addEventListener('blur', this.handleSearchInputBlur);
   }
 
   ngOnDestroy(): void {
     this.searchBoxWrapper().nativeElement.removeEventListener('focusout', this.handleFocusOut);
+    const input = this.searchInput().nativeElement;
+    input.removeEventListener('focus', this.handleSearchInputFocus);
+    input.removeEventListener('blur', this.handleSearchInputBlur);
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -104,7 +112,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (!event.shiftKey) {
-          if (this.isSearchInputFocused) moveToNextFocusableElement(this.document);
+          if (this.isSearchInputFocused()) moveToNextFocusableElement(this.document);
           moveToNextFocusableElement(this.document);
         }
 
@@ -119,7 +127,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'Enter':
         event.preventDefault();
 
-        if (this.isSearchInputFocused) {
+        if (this.isSearchInputFocused()) {
           // Submit the first result, not the next focusable. The reset
           // button now sits in tab order between the input and the result
           // list, so falling through to `moveToNextFocusableElement` would
@@ -128,7 +136,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         break;
       default:
-        if (event.key.length === 1 && !event.metaKey && !this.isSearchInputFocused) {
+        if (event.key.length === 1 && !event.metaKey && !this.isSearchInputFocused()) {
           event.preventDefault();
           this.searchControl.setValue(this.searchControl.value + event.key);
           this.focusInputElement();
@@ -268,5 +276,13 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     if (relatedTarget && !this.searchBoxWrapper().nativeElement.contains(relatedTarget)) {
       this.detachOverlay();
     }
+  };
+
+  private handleSearchInputFocus = (): void => {
+    this.isSearchInputFocused.set(true);
+  };
+
+  private handleSearchInputBlur = (): void => {
+    this.isSearchInputFocused.set(false);
   };
 }

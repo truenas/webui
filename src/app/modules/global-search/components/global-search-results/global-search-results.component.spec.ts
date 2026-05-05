@@ -242,8 +242,9 @@ describe('GlobalSearchResultsComponent', () => {
 
   it('should remove element from recent searches and update local storage', () => {
     const mockResults: UiSearchableElement[] = [mockedRecentSearchesElement];
+    const window = spectator.inject<Window>(WINDOW);
+    (window.localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(mockResults));
 
-    localStorage.setItem('recentSearches', JSON.stringify(mockResults));
     spectator.setInput('results', mockResults);
     spectator.detectChanges();
 
@@ -252,8 +253,7 @@ describe('GlobalSearchResultsComponent', () => {
 
     spectator.click(removeIcon);
 
-    const updatedResults = JSON.parse(localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
-    expect(updatedResults).toHaveLength(0);
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('recentSearches', JSON.stringify([]));
     expect(recentSearchRemovedSpy).toHaveBeenCalled();
   });
 });

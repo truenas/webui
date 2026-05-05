@@ -14,7 +14,12 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export class UiSearchDirectivesService {
   private document = inject<Document>(DOCUMENT);
 
-  private directives = new Set<UiSearchDirective>();
+  // Keyed by `directive.id` for O(1) lookup. Element ids come from
+  // `getSearchableElementId(config)` over the static `*.elements.ts` data, so
+  // a directive's id is effectively immutable for its lifetime — caching the
+  // key at register time is safe and avoids re-scanning the registry on every
+  // poll iteration (~5000 lookups per failed selection poll otherwise).
+  private directives = new Map<string, UiSearchDirective>();
   pendingHighlightElement: UiSearchableElement | null = null;
   directiveAdded$ = new BehaviorSubject<UiSearchDirective | null>(null);
 
@@ -35,13 +40,7 @@ export class UiSearchDirectivesService {
   }
 
   get(element: UiSearchableElement): UiSearchDirective | null {
-    const elementId = getSearchableElementId(element);
-    for (const directive of this.directives.values()) {
-      if (directive.id === elementId) {
-        return directive;
-      }
-    }
-    return null;
+    return this.directives.get(getSearchableElementId(element)) ?? null;
   }
 
   setPendingUiHighlightElement(element: UiSearchableElement | null): void {
@@ -49,12 +48,17 @@ export class UiSearchDirectivesService {
   }
 
   register(directive: UiSearchDirective): void {
-    this.directives.add(directive);
+    this.directives.set(directive.id, directive);
     this.directiveAdded$.next(directive);
   }
 
   unregister(directive: UiSearchDirective): void {
-    this.directives.delete(directive);
+    // Only delete if the registered directive at this id is still the one
+    // unregistering — otherwise a re-registered directive that took over the
+    // id would be wiped by a stale unregister call.
+    if (this.directives.get(directive.id) === directive) {
+      this.directives.delete(directive.id);
+    }
   }
 
   requestHighlight(config: UiSearchableElement): void {
