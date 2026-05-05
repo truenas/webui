@@ -30,12 +30,10 @@ describe('MetadataWizardStepComponent', () => {
   const makeFactory = ({
     pool = null,
     dataLayout = null,
-    dataWidth = null,
     specialLayout = null,
   }: {
     pool?: Partial<Pool> | null;
     dataLayout?: CreateVdevLayout | null;
-    dataWidth?: number | null;
     specialLayout?: CreateVdevLayout | null;
   } = {}): SpectatorFactory<MetadataWizardStepComponent> => createComponentFactory({
     component: MetadataWizardStepComponent,
@@ -50,7 +48,7 @@ describe('MetadataWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         topology$: of({
-          [VDevType.Data]: { layout: dataLayout, width: dataWidth },
+          [VDevType.Data]: { layout: dataLayout },
           [VDevType.Special]: { layout: specialLayout },
         } as PoolManagerTopology),
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
@@ -59,7 +57,7 @@ describe('MetadataWizardStepComponent', () => {
   });
 
   describe('when creating a new pool with a RAIDZ1 data layout', () => {
-    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Raidz1, dataWidth: 3 });
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Raidz1 });
 
     beforeEach(() => {
       spectator = createComponent();
@@ -93,7 +91,7 @@ describe('MetadataWizardStepComponent', () => {
   });
 
   describe('when creating a new pool with a DRAID2 data layout', () => {
-    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Draid2, dataWidth: 4 });
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Draid2 });
 
     it('still allows Mirror + RAIDZ1/2/3 (no parity gating, no dRAID exposure)', () => {
       spectator = createComponent();
@@ -105,7 +103,7 @@ describe('MetadataWizardStepComponent', () => {
   });
 
   describe('when creating a new pool with a 3-way mirror data layout', () => {
-    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Mirror, dataWidth: 3 });
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Mirror });
 
     it('keeps the Mirror floor at 2-way regardless of data mirror width', () => {
       spectator = createComponent();
@@ -116,7 +114,7 @@ describe('MetadataWizardStepComponent', () => {
   });
 
   describe('when creating a new pool with a Stripe data layout', () => {
-    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Stripe, dataWidth: 1 });
+    const createComponent = makeFactory({ dataLayout: CreateVdevLayout.Stripe });
 
     it('exposes Stripe alongside the redundant layouts', () => {
       spectator = createComponent();
@@ -157,7 +155,6 @@ describe('MetadataWizardStepComponent', () => {
         },
       } as Pool,
       dataLayout: CreateVdevLayout.Raidz1,
-      dataWidth: 3,
     });
 
     it('does not lock to the existing category layout (mixing now warned, not blocked)', () => {
