@@ -3156,6 +3156,7 @@
     "routerLink": null,
     "anchor": "details",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -3174,6 +3175,7 @@
     "routerLink": null,
     "anchor": "namespaces",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -3192,6 +3194,7 @@
     "routerLink": null,
     "anchor": "ports",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -3210,6 +3213,7 @@
     "routerLink": null,
     "anchor": "associated-hosts",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4351,6 +4355,7 @@
     "routerLink": null,
     "anchor": "details",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4371,6 +4376,7 @@
     "routerLink": null,
     "anchor": "space-management",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4391,6 +4397,7 @@
     "routerLink": null,
     "anchor": "encryption",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4411,6 +4418,7 @@
     "routerLink": null,
     "anchor": "data-protection",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4431,6 +4439,7 @@
     "routerLink": null,
     "anchor": "roles",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4452,6 +4461,7 @@
     "routerLink": null,
     "anchor": "permissions",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4963,6 +4973,7 @@
     "routerLink": null,
     "anchor": "profile",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4980,6 +4991,7 @@
     "routerLink": null,
     "anchor": "access-card",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4997,6 +5009,7 @@
     "routerLink": null,
     "anchor": "password-card",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5586,6 +5599,7 @@
     "routerLink": null,
     "anchor": "general-info",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5604,6 +5618,7 @@
     "routerLink": null,
     "anchor": "usb-devices",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5622,6 +5637,7 @@
     "routerLink": null,
     "anchor": "gpu-devices",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5640,6 +5656,7 @@
     "routerLink": null,
     "anchor": "disks",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5658,6 +5675,7 @@
     "routerLink": null,
     "anchor": "nic",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5676,6 +5694,7 @@
     "routerLink": null,
     "anchor": "tools",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
