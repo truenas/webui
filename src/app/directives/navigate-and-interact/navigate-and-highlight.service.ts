@@ -122,6 +122,11 @@ export class NavigateAndHighlightService {
    */
   highlightResolved(target: HTMLElement, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
+    // The bump is symmetric with `navigateAndHighlight` / `waitForElement`
+    // even though there's no async path inside this method to thread the
+    // token through — keep it that way so adding an async step later (e.g.
+    // awaiting an animation) doesn't silently break the cancellation
+    // contract documented on `currentNavigationToken`.
     this.currentNavigationToken++;
     // Defensive guard: the contract is that the caller has already verified
     // visibility, but a future caller passing a detached node would otherwise
@@ -177,10 +182,10 @@ export class NavigateAndHighlightService {
 
   scrollIntoView(htmlElement: HTMLElement, options?: WaitForElementOptions): void {
     htmlElement.scrollIntoView({ block: options?.block ?? 'center' });
-    this.highlight(htmlElement, { inset: options?.inset });
+    this.highlight(htmlElement, options);
   }
 
-  highlight(targetElement: HTMLElement, options?: { inset?: boolean }): void {
+  highlight(targetElement: HTMLElement, options?: WaitForElementOptions): void {
     if (!targetElement) return;
 
     this.cleanupPreviousHighlight();
