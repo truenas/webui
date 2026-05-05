@@ -71,6 +71,7 @@ export interface App {
   active_workloads: AppActiveWorkloads;
   state: AppState;
   upgrade_available: boolean;
+  action_required: boolean;
   latest_version: string;
   /**
    * Latest upstream app version available. Provided by backend for version comparison.

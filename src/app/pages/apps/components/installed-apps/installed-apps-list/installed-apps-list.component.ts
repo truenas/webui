@@ -18,6 +18,7 @@ import {
   combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -40,6 +41,7 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
+import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/installed-apps.constants';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
@@ -99,6 +101,7 @@ export class InstalledAppsListComponent implements OnInit {
   private appsStats = inject(AppsStatsService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
+  private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly toggleShowMobileDetails = output<boolean>();
@@ -179,6 +182,14 @@ export class InstalledAppsListComponent implements OnInit {
     // This prevents router scroll behavior from resetting the scroll position
     this.location.replaceState(`/apps/installed/${app.metadata.train}/${app.id}`);
     this.selectAppForDetails(app.id);
+  }
+
+  protected showActionRequired(app: App): void {
+    this.viewDetails(app);
+    this.navigateAndHighlight.waitForElement(appNotesCardAnchorId, {
+      block: 'start',
+      inset: true,
+    });
   }
 
   protected onListFiltered(query: string): void {
