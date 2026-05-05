@@ -79,7 +79,12 @@ export class NavigateAndHighlightService {
     // BEFORE calling router.navigate(), so the NavigationStart fires while
     // pendingTimeoutId is still null — the cancel is a no-op for them, and
     // polling kicks off later from the router promise's `.then()`.
-    this.router.events.pipe(
+    //
+    // Optional chain: many existing tests `mockProvider(Router, { navigate })`
+    // without supplying `events`. The real router always has it; treating a
+    // missing `events` as a no-op keeps those tests working without forcing
+    // every consumer's spec to grow a Subject for the events stream.
+    this.router.events?.pipe(
       filter((event): event is NavigationStart => event instanceof NavigationStart),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.cancelPendingTimeout());
