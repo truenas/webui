@@ -192,6 +192,41 @@ describe('UiSearchDirectivesService', () => {
         { anchor: 'settings-menu', triggerAnchor: 'settings-menu' },
         target,
       );
+
+      // Subsequent poll iterations must NOT re-fire the trigger — that would
+      // toggle the menu closed (and reopen it, etc.). Letting the timers
+      // advance ensures the no-op path holds even if a future change adds
+      // late-arriving directives.
+      tick(500);
+      expect(target.click).toHaveBeenCalledTimes(1);
+    }));
+
+    it('does not fire a self-trigger click after the parent triggerAnchor branch already fired it', fakeAsync(() => {
+      // Repro for the double-click race: directive registers AFTER iteration 0,
+      // so iteration 0 takes the parent-trigger path (line 117) and iteration 1
+      // would otherwise hit the self-trigger branch in applyHighlight.
+      const trigger = makeVisibleElement('settings-menu');
+      trigger.click = jest.fn();
+
+      spectator.service.requestHighlight({
+        anchor: 'settings-menu',
+        triggerAnchor: 'settings-menu',
+      });
+
+      // Iteration 0: directive not registered, parent triggerAnchor path fires.
+      expect(trigger.click).toHaveBeenCalledTimes(1);
+
+      // Now register the directive so iteration 1 will resolve. applyHighlight
+      // must NOT click the trigger a second time.
+      const directive = fakeDirective('settings-menu');
+      spectator.service.register(directive);
+      tick(150);
+
+      expect(directive.highlight).toHaveBeenCalledWith(
+        { anchor: 'settings-menu', triggerAnchor: 'settings-menu' },
+        trigger,
+      );
+      expect(trigger.click).toHaveBeenCalledTimes(1);
     }));
 
     it('cancels an in-flight poll when requestHighlight is called again', fakeAsync(() => {

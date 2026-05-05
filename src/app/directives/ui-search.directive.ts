@@ -17,8 +17,14 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     alias: 'ixUiSearch',
   });
 
+  // Snapshot at init time so register/unregister always agree on the same key
+  // even if `config()` were ever to change. Today `config` is `input.required`
+  // and never reassigned, but caching makes the contract explicit and prevents
+  // a registry leak if that assumption ever breaks.
+  private cachedId = '';
+
   get id(): string {
-    return getSearchableElementId(this.config());
+    return this.cachedId || getSearchableElementId(this.config());
   }
 
   get ariaLabel(): string {
@@ -38,8 +44,9 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.id) {
-      this.renderer.setAttribute(this.elementRef.nativeElement, 'id', this.id);
+    this.cachedId = getSearchableElementId(this.config());
+    if (this.cachedId) {
+      this.renderer.setAttribute(this.elementRef.nativeElement, 'id', this.cachedId);
       this.renderer.setAttribute(this.elementRef.nativeElement, 'aria-label', this.ariaLabel);
     }
     this.searchDirectives.register(this);

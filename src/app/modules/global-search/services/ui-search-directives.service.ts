@@ -1,5 +1,6 @@
 import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import {
   elementMaxPollAttempts,
   elementPollIntervalMs,
@@ -13,6 +14,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 })
 export class UiSearchDirectivesService {
   private document = inject<Document>(DOCUMENT);
+  private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   // Keyed by `directive.id` for O(1) lookup. Element ids come from
   // `getSearchableElementId(config)` over the static `*.elements.ts` data, so
@@ -20,7 +22,7 @@ export class UiSearchDirectivesService {
   // key at register time is safe and avoids re-scanning the registry on every
   // poll iteration (~5000 lookups per failed selection poll otherwise).
   private directives = new Map<string, UiSearchDirective>();
-  pendingHighlightElement: UiSearchableElement | null = null;
+  pendingUiHighlightElement: UiSearchableElement | null = null;
   directiveAdded$ = new BehaviorSubject<UiSearchDirective | null>(null);
 
   // Selection-poll state lives here (not on the search component) because the
@@ -29,11 +31,6 @@ export class UiSearchDirectivesService {
   // the timer to a root-providedIn service lets the highlight finish even
   // after the search UI tears down.
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
-  // TODO: Refactor out and just access property directly?
-  get pendingUiHighlightElement(): UiSearchableElement | null {
-    return this.pendingHighlightElement;
-  }
 
   size(): number {
     return this.directives.size;
@@ -44,7 +41,7 @@ export class UiSearchDirectivesService {
   }
 
   setPendingUiHighlightElement(element: UiSearchableElement | null): void {
-    this.pendingHighlightElement = element;
+    this.pendingUiHighlightElement = element;
   }
 
   register(directive: UiSearchDirective): void {
@@ -63,6 +60,12 @@ export class UiSearchDirectivesService {
 
   requestHighlight(config: UiSearchableElement): void {
     this.cancelPendingHighlight();
+    // Pre-empt any in-flight poll on the highlight service too — e.g. a
+    // master-detail back link that called `navigateAndHighlight()` and is
+    // still waiting for its target. Without this, the older poll could
+    // resolve mid-selection and steal focus / repaint a stale highlight on
+    // top of the new one.
+    this.navigateAndHighlight.cancelPendingHighlight();
     this.setPendingUiHighlightElement(config);
     this.pollForSelection(config, 0, false);
   }
@@ -90,19 +93,7 @@ export class UiSearchDirectivesService {
       const targetId = config.anchor && config.anchor !== directive.id ? config.anchor : directive.id;
       const targetElement = this.document.getElementById(targetId);
       if (targetElement && targetElement.offsetParent !== null) {
-        // Self-trigger entry (e.g. "Settings Menu" — the trigger button is
-        // its own anchor): also click to expand its dropdown so the user
-        // sees its contents. Skip the click if the menu is already open
-        // (aria-expanded="true") — clicking would toggle it closed.
-        if (
-          !triggerFired
-          && config.triggerAnchor
-          && config.triggerAnchor === directive.id
-          && targetElement.getAttribute('aria-expanded') !== 'true'
-        ) {
-          this.fireTrigger(config.triggerAnchor);
-        }
-        this.applyHighlight(directive, config, targetElement);
+        this.applyHighlight(directive, config, targetElement, triggerFired);
         return;
       }
     }
@@ -119,7 +110,7 @@ export class UiSearchDirectivesService {
     }
 
     if (attempt >= elementMaxPollAttempts) {
-      if (this.pendingHighlightElement === config) {
+      if (this.pendingUiHighlightElement === config) {
         this.setPendingUiHighlightElement(null);
       }
       return;
@@ -139,9 +130,26 @@ export class UiSearchDirectivesService {
     directive: UiSearchDirective,
     config: UiSearchableElement,
     targetElement: HTMLElement,
+    triggerFired: boolean,
   ): void {
     this.pendingTimeoutId = null;
     this.setPendingUiHighlightElement(null);
+    // Self-trigger entry (e.g. "Settings Menu" — the trigger button is its
+    // own anchor): click to expand its dropdown so the user sees its
+    // contents. Skip when the parent poll already fired it via the
+    // triggerAnchor branch — otherwise the dropdown opens twice (once when
+    // the trigger fires, once here), which can look like a flicker if CDK
+    // hasn't synced `aria-expanded` yet between the two clicks.
+    // The `aria-expanded !== 'true'` check is a secondary guard for the
+    // already-open case (the dropdown was open before the search ran).
+    if (
+      !triggerFired
+      && config.triggerAnchor
+      && config.triggerAnchor === directive.id
+      && targetElement.getAttribute('aria-expanded') !== 'true'
+    ) {
+      this.fireTrigger(config.triggerAnchor);
+    }
     // Hand the already-resolved target to the directive so the highlight
     // service skips its own poll — we just verified the element is in the
     // DOM and visible, no need to look it up again.

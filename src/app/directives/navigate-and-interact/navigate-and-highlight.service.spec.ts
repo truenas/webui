@@ -1,10 +1,11 @@
 import { fakeAsync, tick } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { NavigationStart, Router } from '@angular/router';
 import {
   createServiceFactory,
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { MockProvider } from 'ng-mocks';
+import { Subject } from 'rxjs';
 import {
   NavigateAndHighlightService,
   highlightTargetClass,
@@ -21,17 +22,22 @@ function makeVisibleElement(id: string): HTMLElement {
 
 describe('NavigateAndHighlightService', () => {
   let spectator: SpectatorService<NavigateAndHighlightService>;
+  let routerEvents$: Subject<unknown>;
   const createComponent = createServiceFactory({
     service: NavigateAndHighlightService,
-    providers: [
-      MockProvider(Router, {
-        navigate: jest.fn(() => Promise.resolve(true)),
-      }),
-    ],
+    providers: [],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    routerEvents$ = new Subject();
+    spectator = createComponent({
+      providers: [
+        MockProvider(Router, {
+          navigate: jest.fn(() => Promise.resolve(true)),
+          events: routerEvents$,
+        }),
+      ],
+    });
   });
 
   afterEach(() => {
@@ -166,6 +172,20 @@ describe('NavigateAndHighlightService', () => {
     tick(500);
     expect(firstElement.scrollIntoView).not.toHaveBeenCalled();
     expect(secondElement.scrollIntoView).toHaveBeenCalledTimes(1);
+  }));
+
+  it('cancels an in-flight poll when the router fires NavigationStart', fakeAsync(() => {
+    spectator.service.waitForElement('mid-flight-target');
+
+    // Simulate the user navigating away mid-poll.
+    routerEvents$.next(new NavigationStart(1, '/elsewhere'));
+
+    // Even when the awaited element appears later, the poll must not resume —
+    // otherwise we'd highlight an element on a page the user no longer cares
+    // about (or worse, an element with the same id on the new page).
+    const late = makeVisibleElement('mid-flight-target');
+    tick(5000);
+    expect(late.scrollIntoView).not.toHaveBeenCalled();
   }));
 
   it('keeps polling until the element appears in the DOM', fakeAsync(() => {

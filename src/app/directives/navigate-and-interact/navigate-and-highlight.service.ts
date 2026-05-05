@@ -1,7 +1,7 @@
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-import { Subscription, timer } from 'rxjs';
+import { NavigationStart, Router } from '@angular/router';
+import { Subscription, filter, timer } from 'rxjs';
 import {
   elementMaxPollAttempts,
   elementPollIntervalMs,
@@ -28,6 +28,12 @@ export interface WaitForElementOptions {
   /**
    * When true, draws the highlight outline inset (negative outline-offset)
    * so it isn't clipped by the viewport edge or an overflow container.
+   *
+   * Caveat: `<tr>` rows are special-cased in `_material-reduction.scss` and
+   * always render an outset pulse regardless of this flag — outlines on
+   * table rows interact poorly with `border-collapse`. If a future caller
+   * sets `inset: true` on a row and expects an inset outline, update the
+   * CSS (or move the decision into this service) before relying on it.
    */
   inset?: boolean;
 }
@@ -64,6 +70,20 @@ export class NavigateAndHighlightService {
   // Internal callers (e.g. navigateAndHighlight → pollForElement) MUST go
   // through the private path to avoid re-bumping mid-flight.
   private currentNavigationToken = 0;
+
+  constructor() {
+    // Cancel any pending poll on route changes the user (or any other code
+    // path) initiates. Otherwise a poll started for page A can resolve on
+    // page B and highlight whatever element happens to share the id.
+    // navigateAndHighlight's own navigations are safe: they bump the token
+    // BEFORE calling router.navigate(), so the NavigationStart fires while
+    // pendingTimeoutId is still null — the cancel is a no-op for them, and
+    // polling kicks off later from the router promise's `.then()`.
+    this.router.events.pipe(
+      filter((event): event is NavigationStart => event instanceof NavigationStart),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.cancelPendingTimeout());
+  }
 
   navigateAndHighlight(route: string[], hash?: string, options?: WaitForElementOptions): void {
     this.cancelPendingTimeout();
@@ -104,6 +124,20 @@ export class NavigateAndHighlightService {
     // that isn't on screen.
     if (!target.isConnected) return;
     this.scrollIntoView(target, options);
+  }
+
+  /**
+   * Public cancellation entry. Bumps the navigation token and clears any
+   * pending poll timeout without starting new work — used by other services
+   * (e.g. UiSearchDirectivesService.requestHighlight) so a fresh selection
+   * can pre-empt an in-flight poll initiated elsewhere before scheduling its
+   * own. Does NOT tear down an already-painted highlight; the next
+   * `highlightResolved`/`waitForElement` call will do that via
+   * `cleanupPreviousHighlight`.
+   */
+  cancelPendingHighlight(): void {
+    this.cancelPendingTimeout();
+    this.currentNavigationToken++;
   }
 
   private pollForElement(
