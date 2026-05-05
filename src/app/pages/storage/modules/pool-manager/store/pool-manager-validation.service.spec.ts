@@ -1010,6 +1010,97 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
+    describe('when adding a dedup vdev with a layout different from existing pool dedup', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Dedup]: {
+                layout: CreateVdevLayout.Raidz1,
+                width: 3,
+                vdevs: [[{ devname: 'sdb' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, {
+            pool$: of({
+              name: 'pool',
+              topology: {
+                [VDevType.Dedup]: [
+                  { type: TopologyItemType.Mirror, children: [{}, {}] },
+                ],
+              },
+            } as Pool),
+          }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('emits a non-blocking dedup mixed-layout warning', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Warning,
+          step: PoolCreationWizardStep.Dedup,
+          text: 'Mixing layouts within the dedup class is not recommended.',
+        });
+      });
+    });
+
+    describe('when adding a stripe special vdev on top of an existing mirror special', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Stripe,
+                width: 1,
+                vdevs: [[{ devname: 'sdb' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, {
+            pool$: of({
+              name: 'pool',
+              topology: {
+                [VDevType.Special]: [
+                  { type: TopologyItemType.Mirror, children: [{}, {}] },
+                ],
+              },
+            } as Pool),
+          }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('only surfaces the stripe single-point-of-failure warning, not the mixed-layout one', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.ErrorWarning,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Adding a stripe metadata VDEV introduces a single point of failure to your pool.',
+        });
+      });
+    });
+
     describe('when the new special layout matches the existing pool special layout', () => {
       let spectator: SpectatorService<PoolManagerValidationService>;
       const createService = createServiceFactory({
