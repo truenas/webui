@@ -208,6 +208,14 @@ export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(Create
   .filter((layout) => !draidCreateLayouts.includes(layout));
 
 /**
+ * Stable references for the two outcomes of {@link resolveParityLock} so that
+ * callers can compare allowedLayouts by reference (parityLock$'s
+ * distinctUntilChanged) without walking the array on every emission.
+ */
+const layoutsWithoutStripe: readonly CreateVdevLayout[] = nonDraidLayouts
+  .filter((layout) => layout !== CreateVdevLayout.Stripe);
+
+/**
  * Constraint on the Layout + Width controls for a special/dedup vdev.
  * After NAS-140839 the lock is intentionally permissive: any non-dRAID layout
  * is allowed regardless of the data vdev's redundancy, with Stripe gated only
@@ -248,15 +256,13 @@ export function layoutParity(layout: CreateVdevLayout, width: number): number {
  */
 export function resolveParityLock(
   existingData: VDevItem[] | undefined,
-  wizardData: { layout: CreateVdevLayout | null; width: number | null } | undefined,
+  wizardData: { layout: CreateVdevLayout | null } | undefined,
 ): ParityLock {
   const dataLayout = resolveTopologyLayout(existingData) ?? wizardData?.layout ?? null;
   const allowStripe = dataLayout === CreateVdevLayout.Stripe;
 
-  const allowedLayouts = nonDraidLayouts.filter((layout) => allowStripe || layout !== CreateVdevLayout.Stripe);
-
   return {
-    allowedLayouts,
+    allowedLayouts: allowStripe ? nonDraidLayouts : layoutsWithoutStripe,
     minMirrorWidth: 2,
   };
 }
@@ -273,12 +279,11 @@ export function parityLock$(
   return combineLatest([pool$, topology$]).pipe(
     map(([pool, topology]) => resolveParityLock(
       pool?.topology[VDevType.Data],
-      { layout: topology[VDevType.Data].layout, width: topology[VDevType.Data].width },
+      { layout: topology[VDevType.Data].layout },
     )),
     distinctUntilChanged((a, b) => (
       a.minMirrorWidth === b.minMirrorWidth
-      && a.allowedLayouts.length === b.allowedLayouts.length
-      && a.allowedLayouts.every((layout, i) => layout === b.allowedLayouts[i])
+      && a.allowedLayouts === b.allowedLayouts
     )),
   );
 }
