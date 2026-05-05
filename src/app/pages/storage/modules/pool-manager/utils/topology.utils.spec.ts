@@ -252,58 +252,58 @@ describe('resolveParityLock', () => {
   ];
 
   it('returns Mirror + RAIDZ1/2/3 (no Stripe, no dRAID) when data is non-stripe', () => {
-    const lock = resolveParityLock(raidz2Vdev, { layout: null, width: null });
+    const lock = resolveParityLock(raidz2Vdev, { layout: null });
     expect(lock.allowedLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
     expect(lock.minMirrorWidth).toBe(2);
   });
 
   it('keeps Mirror always at 2-way regardless of data mirror width', () => {
     const mirror4Vdev = [{ type: TopologyItemType.Mirror, children: [{}, {}, {}, {}] }] as VDevItem[];
-    const lock = resolveParityLock(mirror4Vdev, { layout: null, width: null });
+    const lock = resolveParityLock(mirror4Vdev, { layout: null });
     expect(lock.allowedLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
     expect(lock.minMirrorWidth).toBe(2);
   });
 
   it('allows RAIDZ1 even when data is RAIDZ3', () => {
     const raidz3Vdev = [{ type: TopologyItemType.Raidz3, children: [{}, {}, {}, {}, {}] }] as VDevItem[];
-    const lock = resolveParityLock(raidz3Vdev, { layout: null, width: null });
+    const lock = resolveParityLock(raidz3Vdev, { layout: null });
     expect(lock.allowedLayouts).toContain(CreateVdevLayout.Raidz1);
     expect(lock.allowedLayouts).toContain(CreateVdevLayout.Mirror);
     expect(lock.minMirrorWidth).toBe(2);
   });
 
   it('falls back to wizard data layout when no existing data is present', () => {
-    const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Raidz2, width: 4 });
+    const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Raidz2 });
     expect(lock.allowedLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
     expect(lock.minMirrorWidth).toBe(2);
   });
 
   it('still hides dRAID layouts even when wizard data is dRAID', () => {
-    const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Draid3, width: 10 });
+    const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Draid3 });
     expect(lock.allowedLayouts).not.toContain(CreateVdevLayout.Draid1);
     expect(lock.allowedLayouts).not.toContain(CreateVdevLayout.Draid2);
     expect(lock.allowedLayouts).not.toContain(CreateVdevLayout.Draid3);
   });
 
   it('hides Stripe when neither existing nor wizard data is Stripe', () => {
-    const lock = resolveParityLock(mirror2Vdev, { layout: null, width: null });
+    const lock = resolveParityLock(mirror2Vdev, { layout: null });
     expect(lock.allowedLayouts).not.toContain(CreateVdevLayout.Stripe);
   });
 
   it('hides Stripe when nothing is set yet', () => {
-    const lock = resolveParityLock(undefined, { layout: null, width: null });
+    const lock = resolveParityLock(undefined, { layout: null });
     expect(lock.allowedLayouts).toStrictEqual(layoutsWithoutStripeOrDraid);
     expect(lock.minMirrorWidth).toBe(2);
   });
 
   it('exposes Stripe only when existing data is Stripe', () => {
-    const lock = resolveParityLock(stripeVdev, { layout: null, width: null });
+    const lock = resolveParityLock(stripeVdev, { layout: null });
     expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
     expect(lock.minMirrorWidth).toBe(2);
   });
 
   it('exposes Stripe when wizard data is Stripe and no pool exists yet', () => {
-    const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Stripe, width: 1 });
+    const lock = resolveParityLock(undefined, { layout: CreateVdevLayout.Stripe });
     expect(lock.allowedLayouts).toStrictEqual([...nonDraidLayouts]);
     expect(lock.minMirrorWidth).toBe(2);
   });

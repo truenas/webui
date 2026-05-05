@@ -41,6 +41,38 @@ const incompleteCategoryRules: { vdevType: VDevType; step: PoolCreationWizardSte
   { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup },
 ];
 
+type AllocClassVdev = VDevType.Special | VDevType.Dedup;
+const allocClassVdevs: readonly AllocClassVdev[] = [VDevType.Special, VDevType.Dedup];
+
+interface AllocClassRule {
+  step: PoolCreationWizardStep;
+  redundancyMismatchText: string;
+  mixedLayoutText: string;
+}
+
+const allocClassRules: Record<AllocClassVdev, AllocClassRule> = {
+  [VDevType.Special]: {
+    step: PoolCreationWizardStep.Metadata,
+    redundancyMismatchText: helptextPoolCreation.specialRedundancyMismatchWarning,
+    mixedLayoutText: helptextPoolCreation.specialMixedLayoutWarning,
+  },
+  [VDevType.Dedup]: {
+    step: PoolCreationWizardStep.Dedup,
+    redundancyMismatchText: helptextPoolCreation.dedupRedundancyMismatchWarning,
+    mixedLayoutText: helptextPoolCreation.dedupMixedLayoutWarning,
+  },
+};
+
+/**
+ * Mirror parity = width - 1, so width must be set before parity can be
+ * compared. Other layouts (Stripe, RAIDZN, dRAIDN) have layout-determined
+ * parity and can be compared eagerly. Returning false defers the warning
+ * until the user picks a width.
+ */
+function isMirrorParityKnown(layout: CreateVdevLayout, width: number | null | undefined): boolean {
+  return layout !== CreateVdevLayout.Mirror || width != null;
+}
+
 @Injectable()
 export class PoolManagerValidationService {
   protected store = inject(PoolManagerStore);
@@ -73,7 +105,7 @@ export class PoolManagerValidationService {
           errors.push(...this.validateAddVdevs(topology));
         }
         errors.push(...this.validateRedundancyMismatch(topology, existingPool));
-        errors.push(...this.validateMixedSpecialLayout(topology, existingPool));
+        errors.push(...this.validateMixedAllocClassLayout(topology, existingPool));
         errors.push(...this.validateIncompleteCategories(topology));
 
         return uniqBy(errors, 'text')
@@ -418,18 +450,7 @@ export class PoolManagerValidationService {
       return errors;
     }
 
-    const ruleByType = {
-      [VDevType.Special]: {
-        text: helptextPoolCreation.specialRedundancyMismatchWarning,
-        step: PoolCreationWizardStep.Metadata,
-      },
-      [VDevType.Dedup]: {
-        text: helptextPoolCreation.dedupRedundancyMismatchWarning,
-        step: PoolCreationWizardStep.Dedup,
-      },
-    } as const;
-
-    ([VDevType.Special, VDevType.Dedup] as const).forEach((vdevType) => {
+    allocClassVdevs.forEach((vdevType) => {
       const category = topology[vdevType];
       if (!category?.vdevs.length || !category.layout) {
         return;
@@ -439,17 +460,16 @@ export class PoolManagerValidationService {
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
-      // Mirror parity depends on width. Until the user has chosen one, defer
-      // the warning rather than fixing parity at the unconstrained floor of 2.
-      if (category.layout === CreateVdevLayout.Mirror && category.width == null) {
+      if (!isMirrorParityKnown(category.layout, category.width)) {
         return;
       }
       const categoryParity = layoutParity(category.layout, category.width ?? 2);
       if (categoryParity < dataParity) {
+        const rule = allocClassRules[vdevType];
         errors.push({
-          text: this.translate.instant(ruleByType[vdevType].text),
+          text: this.translate.instant(rule.redundancyMismatchText),
           severity: PoolCreationSeverity.Warning,
-          step: ruleByType[vdevType].step,
+          step: rule.step,
         });
       }
     });
@@ -463,7 +483,7 @@ export class PoolManagerValidationService {
    * topology category carries a single layout, so mixing can only arise in the
    * add-vdev flow against an already-populated pool category.
    */
-  private validateMixedSpecialLayout(
+  private validateMixedAllocClassLayout(
     topology: PoolManagerTopology,
     existingPool: Pool | null,
   ): PoolCreationError[] {
@@ -472,18 +492,7 @@ export class PoolManagerValidationService {
       return errors;
     }
 
-    const ruleByType = {
-      [VDevType.Special]: {
-        text: helptextPoolCreation.specialMixedLayoutWarning,
-        step: PoolCreationWizardStep.Metadata,
-      },
-      [VDevType.Dedup]: {
-        text: helptextPoolCreation.dedupMixedLayoutWarning,
-        step: PoolCreationWizardStep.Dedup,
-      },
-    } as const;
-
-    ([VDevType.Special, VDevType.Dedup] as const).forEach((vdevType) => {
+    allocClassVdevs.forEach((vdevType) => {
       const category = topology[vdevType];
       if (!category?.vdevs.length || !category.layout) {
         return;
@@ -495,10 +504,11 @@ export class PoolManagerValidationService {
       }
       const existingLayout = existingVdevLayout(existingPool.topology?.[vdevType]);
       if (existingLayout !== null && existingLayout !== category.layout) {
+        const rule = allocClassRules[vdevType];
         errors.push({
-          text: this.translate.instant(ruleByType[vdevType].text),
+          text: this.translate.instant(rule.mixedLayoutText),
           severity: PoolCreationSeverity.Warning,
-          step: ruleByType[vdevType].step,
+          step: rule.step,
         });
       }
     });
@@ -524,9 +534,7 @@ export class PoolManagerValidationService {
     if (!dataCategory?.layout) {
       return null;
     }
-    // Mirror parity depends on width; if the user hasn't picked one yet,
-    // defer parity resolution rather than locking it to the width-2 floor.
-    if (dataCategory.layout === CreateVdevLayout.Mirror && dataCategory.width == null) {
+    if (!isMirrorParityKnown(dataCategory.layout, dataCategory.width)) {
       return null;
     }
     return layoutParity(dataCategory.layout, dataCategory.width ?? 2);

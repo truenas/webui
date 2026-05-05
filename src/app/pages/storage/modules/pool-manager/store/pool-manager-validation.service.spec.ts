@@ -1141,5 +1141,46 @@ describe('PoolManagerValidationService', () => {
         expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
       });
     });
+
+    describe('when adding the first special vdev to a pool with no existing special class', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Mirror,
+                width: 2,
+                vdevs: [[{ devname: 'sdb' }, { devname: 'sdc' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, {
+            pool$: of({
+              name: 'pool',
+              topology: {
+                [VDevType.Data]: [
+                  { type: TopologyItemType.Raidz2, children: [{}, {}, {}, {}] },
+                ],
+              },
+            } as Pool),
+          }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not emit a mixed-layout warning when the existing pool has no special class', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
+      });
+    });
   });
 });
