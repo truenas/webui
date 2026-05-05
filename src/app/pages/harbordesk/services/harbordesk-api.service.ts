@@ -10,6 +10,7 @@ import {
   DeviceCredentialsPayload,
   DeviceEvidenceResponse,
   DeviceMetadataPatchPayload,
+  DiscoveryScanResponse,
   DeviceValidationRunRequest,
   DeviceValidationRunResponse,
   DiscoveryScanPayload,
@@ -198,8 +199,8 @@ export class HarborDeskApiService {
     );
   }
 
-  scanDevices(payload: DiscoveryScanPayload): Observable<unknown> {
-    return this.http.post<unknown>('/api/harbordesk/discovery/scan', payload);
+  scanDevices(payload: DiscoveryScanPayload): Observable<DiscoveryScanResponse> {
+    return this.http.post<DiscoveryScanResponse>('/api/harbordesk/discovery/scan', payload);
   }
 
   addManualDevice(payload: ManualDevicePayload): Observable<unknown> {

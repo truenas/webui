@@ -295,6 +295,30 @@ export interface DiscoveryScanPayload {
   cidr?: string | null;
   protocol?: string | null;
   rtsp_port?: number | null;
+  rtsp_username?: string | null;
+  rtsp_password?: string | null;
+}
+
+export interface DiscoveryScanResultItem {
+  candidate_id: string;
+  device_id?: string | null;
+  name: string;
+  room: string;
+  ip: string;
+  port: number;
+  protocol: string;
+  note: string;
+  reachable: boolean;
+  registered: boolean;
+  requires_auth?: boolean;
+  vendor?: string | null;
+  model?: string | null;
+  rtsp_paths?: string[];
+}
+
+export interface DiscoveryScanResponse extends AdminStateResponse {
+  results?: DiscoveryScanResultItem[];
+  scanned_hosts?: number;
 }
 
 export interface ManualDevicePayload {

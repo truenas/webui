@@ -38,6 +38,8 @@ import {
   DeviceCredentialsPayload,
   DeviceEvidenceResponse,
   DeviceEvidenceResult,
+  DiscoveryScanResponse,
+  DiscoveryScanResultItem,
   DvrRecordingSettings,
   DvrRecordingStatus,
   DvrRecordingStatusResponse,
@@ -412,6 +414,7 @@ export class HarborDeskComponent implements OnInit {
   protected readonly evidenceByDevice = signal<Record<string, DeviceEvidenceResponse>>({});
   protected readonly selectedDeviceId = signal<string>('');
   protected readonly pendingDeleteDeviceId = signal<string | null>(null);
+  protected readonly scanResults = signal<DiscoveryScanResultItem[]>([]);
   protected readonly activeAiSettingsTab = signal<AiSettingsTabId>('sources');
   protected readonly modelEndpointEditingId = signal<string | null>(null);
   protected readonly modelsAdvancedOpen = signal(false);
@@ -481,6 +484,8 @@ export class HarborDeskComponent implements OnInit {
     cidr: [''],
     protocol: ['rtsp'],
     rtspPort: ['554'],
+    username: [''],
+    password: [''],
   });
 
   protected readonly manualForm = this.fb.group({
@@ -854,15 +859,38 @@ export class HarborDeskComponent implements OnInit {
 
   protected scanDevices(): void {
     const value = this.scanForm.getRawValue();
-    this.runAction(
-      'scan',
-      this.harborDeskApi.scanDevices({
+    this.actionInProgress.set('scan');
+    this.actionError.set(null);
+    this.actionMessage.set(null);
+
+    this.harborDeskApi.scanDevices({
         cidr: this.emptyToNull(value.cidr),
         protocol: this.emptyToNull(value.protocol),
         rtsp_port: this.parseOptionalNumber(value.rtspPort),
-      }),
-      T('Discovery scan requested. Refreshing device state.'),
-    );
+        rtsp_username: this.emptyToNull(value.username),
+        rtsp_password: this.emptyToNull(value.password),
+      }).pipe(
+        finalize(() => this.actionInProgress.set(null)),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe({
+        next: (response) => this.handleScanResponse(response),
+        error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
+      });
+  }
+
+  protected prepareManualFromScan(result: DiscoveryScanResultItem): void {
+    const scanValue = this.scanForm.getRawValue();
+    this.manualForm.patchValue({
+      name: result.name || `Camera ${result.ip}`,
+      room: result.room === T('待确认') || result.room === T('待识别') ? '' : result.room,
+      ip: result.ip,
+      path: result.rtsp_paths?.[0] ?? '',
+      snapshotUrl: '',
+      username: scanValue.username.trim(),
+      password: '',
+      port: String(result.port || scanValue.rtspPort || '554'),
+    });
+    this.actionMessage.set(T('已把扫描结果填入“手动添加”，请输入摄像头密码后添加。'));
   }
 
   protected addManualDevice(): void {
@@ -3464,6 +3492,8 @@ export class HarborDeskComponent implements OnInit {
         cidr: this.normalizedScanCidr(defaults.cidr ?? ''),
         protocol: defaults.discovery ?? 'rtsp',
         rtspPort: String(defaults.rtsp_port ?? 554),
+        username: defaults.rtsp_username ?? '',
+        password: '',
       });
     }
 
@@ -3746,6 +3776,30 @@ export class HarborDeskComponent implements OnInit {
       },
       error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
     });
+  }
+
+  private handleScanResponse(response: DiscoveryScanResponse): void {
+    const results = response.results ?? [];
+    this.scanResults.set(results);
+    this.scanForm.controls.password.setValue('');
+    this.actionMessage.set(this.scanResponseMessage(response));
+    this.loadData();
+  }
+
+  private scanResponseMessage(response: DiscoveryScanResponse): string {
+    const results = response.results ?? [];
+    const needsPassword = results.filter((result) => result.requires_auth && !result.registered);
+    if (needsPassword.length > 0) {
+      return T('发现需要密码的摄像头。请输入用户名/密码后重新扫描，或用“手动添加”接入。');
+    }
+    const registered = results.filter((result) => result.registered).length;
+    if (registered > 0) {
+      return T('扫描完成，已接入可验证的摄像头。');
+    }
+    const scannedHosts = response.scanned_hosts ?? 0;
+    return scannedHosts > 0
+      ? T('扫描完成，未发现可直接接入的摄像头。')
+      : T('扫描请求已完成。');
   }
 
   private runKnowledgeSettingsSave(

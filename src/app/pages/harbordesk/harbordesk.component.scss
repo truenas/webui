@@ -373,16 +373,57 @@ $hd-space-5: 20px;
 
 .scan-form {
   align-items: center;
-  grid-template-columns: minmax(240px, 2fr) minmax(140px, .8fr) minmax(120px, .6fr) minmax(150px, auto);
+  grid-template-columns:
+    minmax(220px, 1.5fr)
+    minmax(120px, .7fr)
+    minmax(110px, .55fr)
+    minmax(130px, .75fr)
+    minmax(150px, .9fr)
+    minmax(150px, auto);
 }
 
 .scan-cidr-field {
   grid-column: auto;
 }
 
+.delete-button,
 .confirm-delete-button {
-  border: 1px solid #b45309;
-  color: #92400e;
+  --mdc-text-button-label-text-color: #4b5563;
+  --mat-text-button-state-layer-color: #4b5563;
+  background: #f3f4f6 !important;
+  border: 1px solid #d1d5db;
+  color: #4b5563 !important;
+}
+
+.confirm-delete-button {
+  --mdc-text-button-label-text-color: #92400e;
+  --mat-text-button-state-layer-color: #92400e;
+  background: #fff7ed !important;
+  border-color: #d97706;
+  color: #92400e !important;
+}
+
+.scan-result-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.scan-result-row {
+  align-items: center;
+  border: 1px solid $hd-border-subtle;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 10px 12px;
+
+  &.needs-password {
+    border-color: #d97706;
+  }
+
+  p {
+    margin-top: 4px;
+  }
 }
 
 .simple-dvr-form {

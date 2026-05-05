@@ -696,7 +696,7 @@ describe('HarborDeskComponent', () => {
     const component = spectator.component as unknown as {
       selectTab: (tab: 'settings') => void;
       selectSettingsSection: (section: 'camera') => void;
-      scanForm: { controls: { cidr: { value: string }; rtspPort: { value: string } } };
+      scanForm: { controls: { cidr: { value: string }; rtspPort: { value: string }; username: { value: string }; password: { value: string } } };
       scanDevices: () => void;
     };
     component.selectTab('settings');
@@ -705,13 +705,60 @@ describe('HarborDeskComponent', () => {
 
     expect(component.scanForm.controls.cidr.value).toBe('192.168.3.0/24');
     expect(component.scanForm.controls.rtspPort.value).toBe('554');
+    expect(component.scanForm.controls.password.value).toBe('');
 
     component.scanDevices();
     expect(api.scanDevices).toHaveBeenCalledWith({
       cidr: '192.168.3.0/24',
       protocol: 'RTSP',
       rtsp_port: 554,
+      rtsp_username: null,
+      rtsp_password: null,
     });
+  });
+
+  it('shows password-required scan results instead of silently adding a protected camera', () => {
+    api.scanDevices = jest.fn(() => of({
+      scanned_hosts: 1,
+      devices: [],
+      defaults: {
+        cidr: '192.168.3.0/24',
+        discovery: 'RTSP',
+        rtsp_port: 554,
+        rtsp_username: 'admin',
+      },
+      results: [{
+        candidate_id: 'rtsp-192-168-3-231',
+        device_id: null,
+        name: 'Camera 192.168.3.231',
+        room: '待识别',
+        ip: '192.168.3.231',
+        port: 554,
+        protocol: 'RTSP / 需密码',
+        note: '摄像头需要密码。',
+        reachable: false,
+        registered: false,
+        requires_auth: true,
+        rtsp_paths: ['/stream1'],
+      }],
+    }));
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      selectTab: (tab: 'settings') => void;
+      selectSettingsSection: (section: 'camera') => void;
+      scanDevices: () => void;
+    };
+    component.selectTab('settings');
+    component.selectSettingsSection('camera');
+    spectator.detectChanges();
+
+    component.scanDevices();
+    spectator.detectChanges();
+
+    expect(spectator.element.textContent).toContain('发现需要密码的摄像头');
+    expect(spectator.element.textContent).toContain('填写密码接入');
+    expect(spectator.element.textContent).toContain('RTSP / 需密码');
   });
 
   it('requires a second click before deleting a camera and uses readable confirmation controls', () => {
@@ -756,6 +803,8 @@ describe('HarborDeskComponent', () => {
     const deleteButton = spectator.queryAll<HTMLButtonElement>('.device-actions button')
       .find((button) => button.textContent?.includes('删除'));
     expect(deleteButton).toBeTruthy();
+    expect(deleteButton?.classList.contains('delete-button')).toBe(true);
+    expect(deleteButton?.getAttribute('color')).toBeNull();
     spectator.click(deleteButton);
     spectator.detectChanges();
 

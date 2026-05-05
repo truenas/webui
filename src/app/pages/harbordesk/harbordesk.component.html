@@ -896,7 +896,7 @@
                           {{ '取消' | translate }}
                         </button>
                       } @else {
-                        <button mat-button type="button" [disabled]="isBusy()" (click)="removeDevice(device)">
+                        <button mat-button type="button" class="delete-button" [disabled]="isBusy()" (click)="removeDevice(device)">
                           {{ '删除' | translate }}
                         </button>
                       }
@@ -934,11 +934,37 @@
                 <mat-label>{{ 'RTSP 端口' | translate }}</mat-label>
                 <input matInput formControlName="rtspPort" placeholder="554" />
               </mat-form-field>
+              <mat-form-field>
+                <mat-label>{{ '用户名' | translate }}</mat-label>
+                <input matInput formControlName="username" autocomplete="username" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>{{ '密码' | translate }}</mat-label>
+                <input matInput type="password" formControlName="password" autocomplete="new-password" />
+              </mat-form-field>
               <button mat-button color="primary" type="submit" [disabled]="isBusy()">
                 {{ '开始扫描' | translate }}
               </button>
             </form>
-            <p class="muted">{{ '扫描到摄像头后，会出现在上方摄像头列表；点击“编辑名称”可以设置位置（客厅、卧室）和名称（TP1）。' | translate }}</p>
+            <p class="muted">{{ '有密码的摄像头需要先填写用户名和密码；未提供密码时，只会显示“需密码”，不会自动接入。' | translate }}</p>
+            @if (scanResults().length) {
+              <div class="scan-result-list">
+                @for (result of scanResults(); track result.candidate_id) {
+                  <article class="scan-result-row" [class.needs-password]="result.requires_auth && !result.registered">
+                    <div>
+                      <strong>{{ result.name }}</strong>
+                      <p class="muted">{{ result.ip }}:{{ result.port }} · {{ result.protocol | translate }}</p>
+                      <p class="muted">{{ result.note | translate }}</p>
+                    </div>
+                    @if (result.requires_auth && !result.registered) {
+                      <button mat-button type="button" (click)="prepareManualFromScan(result)">
+                        {{ '填写密码接入' | translate }}
+                      </button>
+                    }
+                  </article>
+                }
+              </div>
+            }
           </mat-card-content>
         </mat-card>
 
