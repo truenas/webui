@@ -209,6 +209,25 @@ describe('DeviceFormComponent', () => {
           vm: 45,
         }]);
       });
+
+      it('enables Save when only Device Order is changed', async () => {
+        await form.fillForm({
+          'Device Order': 10,
+        });
+
+        expect(await saveButton.isDisabled()).toBe(false);
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.update', [5, {
+          attributes: {
+            path: '/mnt/bassein/cdrom',
+            dtype: VmDeviceType.Cdrom,
+          },
+          order: 10,
+          vm: 45,
+        }]);
+      });
     });
   });
 
