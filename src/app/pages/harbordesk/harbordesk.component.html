@@ -951,15 +951,66 @@
               <div class="scan-result-list">
                 @for (result of scanResults(); track result.candidate_id) {
                   <article class="scan-result-row" [class.needs-password]="result.requires_auth && !result.registered">
-                    <div>
+                    <div class="scan-result-main">
                       <strong>{{ result.name }}</strong>
                       <p class="muted">{{ result.ip }}:{{ result.port }} · {{ result.protocol | translate }}</p>
                       <p class="muted">{{ result.note | translate }}</p>
                     </div>
                     @if (result.requires_auth && !result.registered) {
-                      <button mat-button type="button" (click)="prepareManualFromScan(result)">
-                        {{ '填写密码接入' | translate }}
-                      </button>
+                      <div class="scan-result-actions">
+                        @if (!isScanCredentialOpen(result)) {
+                          <button mat-button type="button" (click)="prepareManualFromScan(result)">
+                            {{ '填写密码接入' | translate }}
+                          </button>
+                        }
+                      </div>
+                      @if (isScanCredentialOpen(result)) {
+                        <form class="scan-credential-form" [formGroup]="scanCredentialForm" (ngSubmit)="connectScanResult(result)">
+                          <mat-form-field>
+                            <mat-label>{{ '用户名' | translate }}</mat-label>
+                            <input matInput formControlName="username" autocomplete="username" />
+                          </mat-form-field>
+                          <mat-form-field>
+                            <mat-label>{{ '密码' | translate }}</mat-label>
+                            <input
+                              matInput
+                              [type]="scanCredentialPasswordVisible() ? 'text' : 'password'"
+                              formControlName="password"
+                              autocomplete="new-password"
+                            />
+                            <button
+                              mat-icon-button
+                              matSuffix
+                              class="password-visibility-button"
+                              type="button"
+                              [attr.aria-label]="(scanCredentialPasswordVisible() ? '隐藏密码' : '显示密码') | translate"
+                              [attr.title]="(scanCredentialPasswordVisible() ? '隐藏密码' : '显示密码') | translate"
+                              (click)="toggleScanCredentialPasswordVisible()"
+                            >
+                              <tn-icon
+                                library="mdi"
+                                [name]="scanCredentialPasswordVisible() ? 'eye-off' : 'eye'"
+                                customSize="18px"
+                              ></tn-icon>
+                            </button>
+                          </mat-form-field>
+                          <button mat-button color="primary" type="submit" [disabled]="actionInProgress() !== null || scanCredentialForm.invalid">
+                            @if (actionBusy('scan-connect:' + result.candidate_id)) {
+                              {{ '正在接入' | translate }}
+                            } @else {
+                              {{ '接入摄像头' | translate }}
+                            }
+                          </button>
+                          <button mat-button type="button" [disabled]="actionInProgress() !== null" (click)="cancelScanCredential()">
+                            {{ '取消' | translate }}
+                          </button>
+                          @if (scanCredentialError()) {
+                            <p class="scan-credential-error">
+                              {{ scanCredentialError() | translate }}
+                            </p>
+                          }
+                        </form>
+                      }
                     }
                   </article>
                 }

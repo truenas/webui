@@ -2,7 +2,7 @@ import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HarborDeskComponent } from 'app/pages/harbordesk/harbordesk.component';
 import { HarborDeskApiService } from 'app/pages/harbordesk/services/harbordesk-api.service';
@@ -759,6 +759,147 @@ describe('HarborDeskComponent', () => {
     expect(spectator.element.textContent).toContain('发现需要密码的摄像头');
     expect(spectator.element.textContent).toContain('填写密码接入');
     expect(spectator.element.textContent).toContain('RTSP / 需密码');
+  });
+
+  it('lets a password-required scan result be connected inline with credentials', () => {
+    api.scanDevices = jest.fn(() => of({
+      scanned_hosts: 1,
+      devices: [],
+      defaults: {
+        cidr: '192.168.3.0/24',
+        discovery: 'RTSP',
+        rtsp_port: 554,
+        rtsp_username: 'admin',
+      },
+      results: [{
+        candidate_id: 'rtsp-192-168-3-231',
+        device_id: null,
+        name: 'Camera 192.168.3.231',
+        room: '待识别',
+        ip: '192.168.3.231',
+        port: 554,
+        protocol: 'RTSP / 需密码',
+        note: '摄像头需要密码。',
+        reachable: false,
+        registered: false,
+        requires_auth: true,
+        rtsp_paths: ['/stream1'],
+      }],
+    }));
+    api.addManualDevice = jest.fn(() => of({ devices: [], defaults: {}, writable_root: '/var/lib/harbor' }));
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      selectTab: (tab: 'settings') => void;
+      selectSettingsSection: (section: 'camera') => void;
+      scanDevices: () => void;
+      scanResults: () => Array<{
+        candidate_id: string;
+        name: string;
+        room: string;
+        ip: string;
+        port: number;
+        rtsp_paths?: string[];
+      }>;
+      prepareManualFromScan: (result: unknown) => void;
+      scanCredentialForm: { patchValue: (value: { username: string; password: string }) => void };
+      toggleScanCredentialPasswordVisible: () => void;
+      connectScanResult: (result: unknown) => void;
+    };
+    component.selectTab('settings');
+    component.selectSettingsSection('camera');
+    spectator.detectChanges();
+
+    component.scanDevices();
+    spectator.detectChanges();
+    const result = component.scanResults()[0];
+    component.prepareManualFromScan(result);
+    spectator.detectChanges();
+
+    expect(spectator.query('.scan-credential-form')).toHaveText('用户名');
+    expect(spectator.query('.scan-credential-form')).toHaveText('密码');
+    expect(spectator.query('.scan-credential-form')).toHaveText('接入摄像头');
+    expect(spectator.query('.password-visibility-button')).toExist();
+
+    const passwordInput = spectator.query<HTMLInputElement>('.scan-credential-form input[formcontrolname="password"]');
+    expect(passwordInput?.type).toBe('password');
+    component.toggleScanCredentialPasswordVisible();
+    spectator.detectChanges();
+    expect(spectator.query<HTMLInputElement>('.scan-credential-form input[formcontrolname="password"]')?.type).toBe('text');
+
+    component.scanCredentialForm.patchValue({ username: 'admin', password: 'secret' });
+    component.connectScanResult(result);
+
+    expect(api.addManualDevice).toHaveBeenCalledWith({
+      name: 'Camera 192.168.3.231',
+      room: null,
+      ip: '192.168.3.231',
+      path: '/stream1',
+      snapshot_url: null,
+      username: 'admin',
+      password: 'secret',
+      port: 554,
+    });
+  });
+
+  it('keeps scan credential failures visible on the scan result row', () => {
+    api.scanDevices = jest.fn(() => of({
+      scanned_hosts: 1,
+      devices: [],
+      defaults: {
+        cidr: '192.168.3.0/24',
+        discovery: 'RTSP',
+        rtsp_port: 554,
+        rtsp_username: 'admin',
+      },
+      results: [{
+        candidate_id: 'rtsp-192-168-3-231',
+        device_id: null,
+        name: 'Camera 192.168.3.231',
+        room: '待识别',
+        ip: '192.168.3.231',
+        port: 554,
+        protocol: 'RTSP / 需密码',
+        note: '摄像头需要密码。',
+        reachable: false,
+        registered: false,
+        requires_auth: true,
+        rtsp_paths: ['/stream1'],
+      }],
+    }));
+    api.addManualDevice = jest.fn(() => throwError(() => ({ error: { error: 'RTSP authentication failed' } })));
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      selectTab: (tab: 'settings') => void;
+      selectSettingsSection: (section: 'camera') => void;
+      scanDevices: () => void;
+      scanResults: () => Array<{
+        candidate_id: string;
+        name: string;
+        room: string;
+        ip: string;
+        port: number;
+        rtsp_paths?: string[];
+      }>;
+      prepareManualFromScan: (result: unknown) => void;
+      scanCredentialForm: { patchValue: (value: { username: string; password: string }) => void };
+      connectScanResult: (result: unknown) => void;
+    };
+    component.selectTab('settings');
+    component.selectSettingsSection('camera');
+    spectator.detectChanges();
+
+    component.scanDevices();
+    spectator.detectChanges();
+    const result = component.scanResults()[0];
+    component.prepareManualFromScan(result);
+    component.scanCredentialForm.patchValue({ username: 'admin', password: 'bad-secret' });
+    component.connectScanResult(result);
+    spectator.detectChanges();
+
+    expect(spectator.query('.scan-credential-form')).toHaveText('RTSP authentication failed');
+    expect(spectator.query('.scan-credential-form')).toHaveText('接入摄像头');
   });
 
   it('requires a second click before deleting a camera and uses readable confirmation controls', () => {

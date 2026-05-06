@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, injec
 import { NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatCheckbox } from '@angular/material/checkbox';
 import {
@@ -14,12 +14,13 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnIconComponent } from '@truenas/ui-components';
 import { Observable, forkJoin, of, timer } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -334,6 +335,7 @@ class CameraNameDialogComponent {
   imports: [
     MatAnchor,
     MatButton,
+    MatIconButton,
     MatCard,
     MatCardContent,
     MatCardHeader,
@@ -343,6 +345,7 @@ class CameraNameDialogComponent {
     MatFormField,
     MatInput,
     MatLabel,
+    MatSuffix,
     MatOption,
     MatSelect,
     NgClass,
@@ -351,6 +354,7 @@ class CameraNameDialogComponent {
     PageHeaderComponent,
     ReactiveFormsModule,
     RouterLink,
+    TnIconComponent,
     TranslateModule,
   ],
 })
@@ -415,6 +419,9 @@ export class HarborDeskComponent implements OnInit {
   protected readonly selectedDeviceId = signal<string>('');
   protected readonly pendingDeleteDeviceId = signal<string | null>(null);
   protected readonly scanResults = signal<DiscoveryScanResultItem[]>([]);
+  protected readonly scanCredentialCandidateId = signal<string | null>(null);
+  protected readonly scanCredentialError = signal<string | null>(null);
+  protected readonly scanCredentialPasswordVisible = signal(false);
   protected readonly activeAiSettingsTab = signal<AiSettingsTabId>('sources');
   protected readonly modelEndpointEditingId = signal<string | null>(null);
   protected readonly modelsAdvancedOpen = signal(false);
@@ -486,6 +493,11 @@ export class HarborDeskComponent implements OnInit {
     rtspPort: ['554'],
     username: [''],
     password: [''],
+  });
+
+  protected readonly scanCredentialForm = this.fb.group({
+    username: [''],
+    password: ['', Validators.required],
   });
 
   protected readonly manualForm = this.fb.group({
@@ -647,7 +659,7 @@ export class HarborDeskComponent implements OnInit {
     const selectedDeviceId = this.selectedDeviceId();
     return this.devices().find((device) => device.device_id === selectedDeviceId) ?? this.devices()[0] ?? null;
   });
-  protected readonly isBusy = computed(() => this.loading() || this.actionInProgress() !== null);
+  protected readonly isBusy = computed(() => this.actionInProgress() !== null);
   protected readonly metrics = computed<HarborDeskMetric[]>(() => this.buildMetrics());
   protected readonly connectorCards = computed<ConnectorCard[]>(() => this.buildConnectorCards());
   protected readonly weixinConnector = computed(() => this.connectorCards().find((card) => card.id === 'weixin') ?? null);
@@ -880,6 +892,8 @@ export class HarborDeskComponent implements OnInit {
 
   protected prepareManualFromScan(result: DiscoveryScanResultItem): void {
     const scanValue = this.scanForm.getRawValue();
+    this.scanCredentialError.set(null);
+    this.scanCredentialPasswordVisible.set(false);
     this.manualForm.patchValue({
       name: result.name || `Camera ${result.ip}`,
       room: result.room === T('待确认') || result.room === T('待识别') ? '' : result.room,
@@ -890,7 +904,77 @@ export class HarborDeskComponent implements OnInit {
       password: '',
       port: String(result.port || scanValue.rtspPort || '554'),
     });
-    this.actionMessage.set(T('已把扫描结果填入“手动添加”，请输入摄像头密码后添加。'));
+    this.scanCredentialCandidateId.set(result.candidate_id);
+    this.scanCredentialForm.reset({
+      username: scanValue.username.trim() || this.defaults().rtsp_username || '',
+      password: '',
+    });
+    this.actionMessage.set(T('请输入摄像头密码后接入。'));
+  }
+
+  protected isScanCredentialOpen(result: DiscoveryScanResultItem): boolean {
+    return this.scanCredentialCandidateId() === result.candidate_id;
+  }
+
+  protected cancelScanCredential(): void {
+    this.scanCredentialCandidateId.set(null);
+    this.scanCredentialError.set(null);
+    this.scanCredentialPasswordVisible.set(false);
+    this.scanCredentialForm.reset({
+      username: this.scanForm.controls.username.value.trim() || this.defaults().rtsp_username || '',
+      password: '',
+    });
+  }
+
+  protected toggleScanCredentialPasswordVisible(): void {
+    this.scanCredentialPasswordVisible.set(!this.scanCredentialPasswordVisible());
+  }
+
+  protected connectScanResult(result: DiscoveryScanResultItem): void {
+    if (this.scanCredentialForm.invalid) {
+      this.scanCredentialForm.markAllAsTouched();
+      this.scanCredentialError.set(T('请输入摄像头密码。'));
+      return;
+    }
+
+    const value = this.scanCredentialForm.getRawValue();
+    const scanValue = this.scanForm.getRawValue();
+    const actionId = `scan-connect:${result.candidate_id}`;
+    this.actionInProgress.set(actionId);
+    this.actionError.set(null);
+    this.scanCredentialError.set(null);
+    this.actionMessage.set(T('正在接入摄像头。'));
+
+    this.harborDeskApi.addManualDevice({
+      name: result.name || `Camera ${result.ip}`,
+      room: this.scanResultRoom(result),
+      ip: result.ip,
+      path: this.emptyToNull(result.rtsp_paths?.[0] ?? ''),
+      snapshot_url: null,
+      username: this.emptyToNull(value.username),
+      password: this.emptyToNull(value.password),
+      port: result.port || this.parseOptionalNumber(scanValue.rtspPort),
+    }).pipe(
+      finalize(() => this.actionInProgress.set(null)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => {
+        this.scanCredentialCandidateId.set(null);
+        this.scanCredentialPasswordVisible.set(false);
+        this.scanCredentialForm.reset({
+          username: value.username.trim(),
+          password: '',
+        });
+        this.actionMessage.set(T('摄像头已接入。'));
+        this.refreshCameraState();
+      },
+      error: (error: unknown) => {
+        const message = this.getErrorMessage(error);
+        this.scanCredentialError.set(message);
+        this.actionError.set(message);
+        this.actionMessage.set(null);
+      },
+    });
   }
 
   protected addManualDevice(): void {
@@ -3305,7 +3389,10 @@ export class HarborDeskComponent implements OnInit {
       finalize(() => this.loading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (pageData) => this.applyPageData(pageData),
+      next: (pageData) => {
+        this.applyPageData(pageData);
+        this.refreshDeferredStatus();
+      },
       error: (error: unknown) => {
         this.loadError.set(this.getErrorMessage(error));
         this.clearData();
@@ -3323,10 +3410,10 @@ export class HarborDeskComponent implements OnInit {
         modelEndpoints: this.result('models', this.harborDeskApi.getModelEndpoints()),
         modelCapabilities: this.result('model-capabilities', this.harborDeskApi.getModelCapabilities()),
         modelPolicies: this.result('model-policies', this.harborDeskApi.getModelPolicies()),
-        localCatalog: this.result('local-catalog', this.harborDeskApi.getLocalModelCatalog()),
+        localCatalog: of<EndpointResult<LocalModelCatalogResponse>>({ data: this.localCatalog(), error: null }),
         localDownloads: this.result('local-downloads', this.harborDeskApi.getLocalModelDownloads()),
-        hardware: this.result('hardware', this.harborDeskApi.getHardwareReadiness()),
-        rag: this.result('rag', this.harborDeskApi.getRagReadiness()),
+        hardware: of<EndpointResult<HardwareReadinessResponse>>({ data: this.hardware(), error: null }),
+        rag: of<EndpointResult<RagReadinessResponse>>({ data: this.rag(), error: null }),
         knowledgeSettings: this.result('knowledge-settings', this.harborDeskApi.getKnowledgeSettings()),
         knowledgeIndexStatus: this.result('knowledge-index-status', this.harborDeskApi.getKnowledgeIndexStatus()),
         dvrSettings: this.result('dvr-settings', this.harborDeskApi.getDvrRecordingSettings()),
@@ -3388,6 +3475,54 @@ export class HarborDeskComponent implements OnInit {
         catchError((error: unknown) => of<DeviceEvidenceEntry>([device.device_id, null, this.getErrorMessage(error)])),
       )),
     );
+  }
+
+  private refreshDeferredStatus(): void {
+    forkJoin({
+      localCatalog: this.result('local-catalog', this.harborDeskApi.getLocalModelCatalog()),
+      hardware: this.result('hardware', this.harborDeskApi.getHardwareReadiness()),
+      rag: this.result('rag', this.harborDeskApi.getRagReadiness()),
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((payload) => {
+      this.localCatalog.set(payload.localCatalog.data ?? this.localCatalog());
+      this.hardware.set(payload.hardware.data ?? this.hardware());
+      this.rag.set(payload.rag.data ?? this.rag());
+      this.mergeEndpointErrors({
+        localCatalog: payload.localCatalog.error,
+        hardware: payload.hardware.error,
+        rag: payload.rag.error,
+      });
+    });
+  }
+
+  private refreshCameraState(): void {
+    this.harborDeskApi.getState().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (state) => {
+        this.state.set(state);
+        this.patchDefaultForms(state);
+        this.ensureSelectedDevice(state.devices ?? [], state.defaults?.selected_camera_device_id ?? null);
+      },
+      error: (error: unknown) => {
+        this.mergeEndpointErrors({
+          state: `state: ${this.getErrorMessage(error)}`,
+        });
+      },
+    });
+  }
+
+  private mergeEndpointErrors(errors: Record<string, string | null>): void {
+    const next = { ...this.endpointErrors() };
+    Object.entries(errors).forEach(([key, error]) => {
+      if (error) {
+        next[key] = error;
+      } else {
+        delete next[key];
+      }
+    });
+    this.endpointErrors.set(next);
   }
 
   private result<T>(key: string, request: Observable<T>): Observable<EndpointResult<T>> {
@@ -3781,9 +3916,22 @@ export class HarborDeskComponent implements OnInit {
   private handleScanResponse(response: DiscoveryScanResponse): void {
     const results = response.results ?? [];
     this.scanResults.set(results);
+    this.scanCredentialCandidateId.set(null);
+    this.scanCredentialError.set(null);
+    this.scanCredentialPasswordVisible.set(false);
+    this.scanCredentialForm.controls.password.setValue('');
     this.scanForm.controls.password.setValue('');
     this.actionMessage.set(this.scanResponseMessage(response));
-    this.loadData();
+    if (results.some((result) => result.registered)) {
+      this.refreshCameraState();
+    }
+  }
+
+  private scanResultRoom(result: DiscoveryScanResultItem): string | null {
+    if (result.room === T('待确认') || result.room === T('待识别')) {
+      return null;
+    }
+    return this.emptyToNull(result.room);
   }
 
   private scanResponseMessage(response: DiscoveryScanResponse): string {
@@ -4555,9 +4703,12 @@ export class HarborDeskComponent implements OnInit {
 
   private getErrorMessage(error: unknown): string {
     if (typeof error === 'object' && error !== null && 'error' in error) {
-      const payload = (error as { error?: { message?: unknown } | string }).error;
+      const payload = (error as { error?: { error?: unknown; message?: unknown } | string }).error;
       if (typeof payload === 'string' && payload.trim()) {
         return payload;
+      }
+      if (payload && typeof payload === 'object' && typeof payload.error === 'string' && payload.error.trim()) {
+        return payload.error;
       }
       if (payload && typeof payload === 'object' && typeof payload.message === 'string' && payload.message.trim()) {
         return payload.message;

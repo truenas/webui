@@ -413,6 +413,7 @@ $hd-space-5: 20px;
   align-items: center;
   border: 1px solid $hd-border-subtle;
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: space-between;
   padding: 10px 12px;
@@ -423,6 +424,49 @@ $hd-space-5: 20px;
 
   p {
     margin-top: 4px;
+  }
+}
+
+.scan-result-main {
+  flex: 1 1 360px;
+  min-width: min(360px, 100%);
+}
+
+.scan-result-actions {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.scan-credential-form {
+  align-items: center;
+  border-top: 1px solid $hd-border-subtle;
+  display: grid;
+  flex: 1 0 100%;
+  gap: 10px;
+  grid-template-columns: minmax(160px, 1fr) minmax(180px, 1fr) auto auto;
+  padding-top: 10px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.password-visibility-button {
+  color: #4b5563;
+  height: 36px;
+  width: 36px;
+}
+
+.scan-credential-error {
+  color: #92400e;
+  grid-column: 1 / -1;
+  margin: -2px 0 0;
+}
+
+@media (max-width: 720px) {
+  .scan-credential-form {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
