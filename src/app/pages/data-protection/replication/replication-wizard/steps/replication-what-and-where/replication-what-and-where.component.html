@@ -33,10 +33,8 @@
           [rootNodes]="sourceDatasetsRootNodes"
           [nodeProvider]="sourceNodeProvider"
         >
-          @if (!isRemoteSource) {
-            <ix-explorer-create-dataset
-              [datasetProperties]="createDatasetProps"
-            ></ix-explorer-create-dataset>
+          @if (isSourceLocal) {
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
           }
         </ix-explorer>
       }
@@ -108,10 +106,8 @@
           [rootNodes]="targetDatasetsRootNodes"
           [nodeProvider]="targetNodeProvider"
         >
-          @if (!isRemoteTarget) {
-            <ix-explorer-create-dataset
-              [datasetProperties]="createDatasetProps"
-            ></ix-explorer-create-dataset>
+          @if (isTargetLocal) {
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
           }
         </ix-explorer>
       }

@@ -4,12 +4,10 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
-import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snapshot-naming-option.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -62,10 +60,6 @@ export class SourceSectionComponent implements OnChanges {
   readonly direction = input<Direction>();
   readonly nodeProvider = input<TreeNodeProvider>();
   readonly isLocal = input(false);
-
-  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   form = this.formBuilder.group({
     source_datasets: [[] as string | string[], Validators.required],

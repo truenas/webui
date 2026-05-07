@@ -11,7 +11,7 @@ import { TnBannerComponent } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetPreset, DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -24,7 +24,6 @@ import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions, nicChoicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import {
   VmDevice, VmDeviceUpdate, VmDiskDevice,
@@ -284,10 +283,6 @@ export class DeviceFormComponent implements OnInit {
   private annotatedZvolOptions: AnnotatedZvolOption[] = [];
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
-
-  readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   readonly deviceTypeOptions = mapToOptions(vmDeviceTypeLabels, this.translate);
   readonly deviceTypes$ = new BehaviorSubject(this.deviceTypeOptions);

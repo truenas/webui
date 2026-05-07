@@ -6,14 +6,12 @@ import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
-import { DatasetPreset } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
 import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode, readonlyModeNames } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy, retentionPolicyNames } from 'app/enums/retention-policy.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -51,10 +49,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   readonly allowsCustomRetentionPolicy = input(false);
   readonly nodeProvider = input<TreeNodeProvider>();
   readonly isLocal = input(false);
-
-  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   form = this.formBuilder.nonNullable.group({
     target_dataset: [null as string | null, Validators.required],

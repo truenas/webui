@@ -29,9 +29,7 @@
                 [nodeProvider]="fileNodeProvider"
                 [tooltip]="helptext.cd_path_tooltip | translate"
               >
-                <ix-explorer-create-dataset
-                  [datasetProperties]="createDatasetProps"
-                ></ix-explorer-create-dataset>
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
               </ix-explorer>
             }
             @case (VmDeviceType.Disk) {
@@ -142,9 +140,7 @@
                 [nodeProvider]="fileNodeProvider"
                 [tooltip]="helptext.raw_file_path_tooltip | translate"
               >
-                <ix-explorer-create-dataset
-                  [datasetProperties]="createDatasetProps"
-                ></ix-explorer-create-dataset>
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
               </ix-explorer>
 
               <ix-select

@@ -10,7 +10,7 @@ import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
-import { DatasetPreset, DatasetSource } from 'app/enums/dataset.enum';
+import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -19,7 +19,6 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -97,10 +96,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   protected sourceNodeProvider: TreeNodeProvider;
   protected targetNodeProvider: TreeNodeProvider;
   protected DatasetSource = DatasetSource;
-
-  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   protected targetDatasetsRootNodes: ExplorerNodeData[] = [];
   protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];
@@ -182,6 +177,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get isRemoteTarget(): boolean {
     return this.form.value.target_dataset_from === DatasetSource.Remote;
+  }
+
+  get isSourceLocal(): boolean {
+    return !this.isRemoteSource;
+  }
+
+  get isTargetLocal(): boolean {
+    return !this.isRemoteTarget;
   }
 
   get schemaOrRegexLabel(): string {

@@ -7,13 +7,11 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
@@ -147,10 +145,6 @@ export class RsyncTaskFormComponent implements OnInit {
   ]);
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-
-  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   private editingTask: RsyncTask | undefined;
 

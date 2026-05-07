@@ -93,11 +93,13 @@ describe('ExplorerCreateDatasetComponent', () => {
       },
     });
 
-    jest.spyOn(fakeControl.control, 'setValue');
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
+    // Seed the form to trigger the component's valueChanges subscription.
     fakeControl.control.setValue('/mnt/test');
+
+    // Spy after the seed so setup mutations don't inflate the call count.
+    jest.spyOn(fakeControl.control, 'setValue');
   });
 
   it('opens CreateDatasetDialog when Create Dataset button is pressed', async () => {
