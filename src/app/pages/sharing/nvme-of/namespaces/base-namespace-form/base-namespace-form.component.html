@@ -39,7 +39,11 @@
               [label]="'Parent Directory' | translate"
               [rootNodes]="datasetsRootNode"
               [nodeProvider]="directoryProvider"
-            ></ix-explorer>
+            >
+              <ix-explorer-create-dataset
+                [datasetProperties]="createDatasetProps"
+              ></ix-explorer-create-dataset>
+            </ix-explorer>
 
             <ix-input
               formControlName="filename"

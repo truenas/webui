@@ -32,7 +32,13 @@
           [required]="true"
           [rootNodes]="sourceDatasetsRootNodes"
           [nodeProvider]="sourceNodeProvider"
-        ></ix-explorer>
+        >
+          @if (!isRemoteSource) {
+            <ix-explorer-create-dataset
+              [datasetProperties]="createDatasetProps"
+            ></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
       }
 
       @if (form.controls.recursive.enabled) {
@@ -101,7 +107,13 @@
           [required]="true"
           [rootNodes]="targetDatasetsRootNodes"
           [nodeProvider]="targetNodeProvider"
-        ></ix-explorer>
+        >
+          @if (!isRemoteTarget) {
+            <ix-explorer-create-dataset
+              [datasetProperties]="createDatasetProps"
+            ></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
       }
       @if (form.controls.encryption.enabled) {
         <ix-checkbox

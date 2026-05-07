@@ -8,8 +8,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -17,6 +19,9 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
@@ -69,6 +74,7 @@ const typeOptions: Option[] = [
     IxFieldsetComponent,
     IxButtonGroupComponent,
     IxInputComponent,
+    ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,
     RequiresRolesDirective,
   ],
@@ -94,6 +100,10 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   protected readonly datasetsRootNode = [datasetsRootNode];
   protected readonly directoryProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   protected readonly fileProvider = this.filesystemService.getFilesystemNodeProvider();
+
+  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
 
   protected isNew = computed(() => !this.namespace());
 

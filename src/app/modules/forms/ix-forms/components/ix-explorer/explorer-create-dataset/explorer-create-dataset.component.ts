@@ -39,16 +39,28 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
 
   private isExplorerDisabled = computed(() => this.explorer.isDisabled());
   private hasValidParent = computed(() => !!this.parent());
-  private isPathMatchingSelection = computed(() => {
+  private isMultiSelect = computed(() => Array.isArray(this.explorerValue()));
+  private isSingleSelectionPresent = computed(() => {
     const currentValue = this.explorerValue();
-    const selectedPath = Array.isArray(currentValue) ? currentValue[0] : currentValue;
-    return this.explorer.lastSelectedNode()?.data.path === selectedPath;
+    if (Array.isArray(currentValue)) {
+      // The explorer clears lastSelectedNode when the most recently clicked node is
+      // deselected, so we can't rely on it in multi-select mode. Selections in the
+      // form value can only come from tree-node clicks or paths that resolved to a
+      // tree node, so accept the first value as the parent when exactly one is left.
+      return currentValue.length === 1;
+    }
+    return !!currentValue && this.explorer.lastSelectedNode()?.data.path === currentValue;
   });
 
-  protected isButtonDisabled = computed(() => this.isExplorerDisabled()
-    || !this.hasValidParent()
-    || !this.isPathMatchingSelection()
-    || !this.explorer.lastSelectedNode()?.data.isMountpoint);
+  protected isButtonDisabled = computed(() => {
+    if (this.isExplorerDisabled() || !this.hasValidParent() || !this.isSingleSelectionPresent()) {
+      return true;
+    }
+    if (this.isMultiSelect()) {
+      return false;
+    }
+    return !this.explorer.lastSelectedNode()?.data.isMountpoint;
+  });
 
   protected explorerValue = signal<string | string[]>('');
 

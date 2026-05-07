@@ -31,6 +31,7 @@ export class DatasetService {
                 hasChildren: false,
                 path: filesystem,
                 type: ExplorerNodeType.Directory,
+                isMountpoint: true,
                 children: [],
               });
               return;
@@ -48,6 +49,7 @@ export class DatasetService {
               hasChildren: false,
               type: ExplorerNodeType.Directory,
               path: filesystem,
+              isMountpoint: true,
             });
             parent.hasChildren = true;
           });

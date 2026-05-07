@@ -11,7 +11,7 @@ import { TnBannerComponent } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetPreset, DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -24,6 +24,7 @@ import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions, nicChoicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import {
   VmDevice, VmDeviceUpdate, VmDiskDevice,
@@ -34,6 +35,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -71,6 +73,7 @@ const specifyCustom = T('Specify custom');
     IxFieldsetComponent,
     IxSelectComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxComboboxComponent,
     IxInputComponent,
     IxRadioGroupComponent,
@@ -281,6 +284,10 @@ export class DeviceFormComponent implements OnInit {
   private annotatedZvolOptions: AnnotatedZvolOption[] = [];
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+
+  readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
 
   readonly deviceTypeOptions = mapToOptions(vmDeviceTypeLabels, this.translate);
   readonly deviceTypes$ = new BehaviorSubject(this.deviceTypeOptions);

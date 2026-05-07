@@ -4,13 +4,16 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snapshot-naming-option.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -38,6 +41,7 @@ import { TaskService } from 'app/services/task.service';
     IxFieldsetComponent,
     ReactiveFormsModule,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxCheckboxComponent,
     IxChipsComponent,
     IxSelectComponent,
@@ -57,6 +61,11 @@ export class SourceSectionComponent implements OnChanges {
   readonly replication = input<ReplicationTask>();
   readonly direction = input<Direction>();
   readonly nodeProvider = input<TreeNodeProvider>();
+  readonly isLocal = input(false);
+
+  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
 
   form = this.formBuilder.group({
     source_datasets: [[] as string | string[], Validators.required],

@@ -10,7 +10,7 @@ import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
-import { DatasetSource } from 'app/enums/dataset.enum';
+import { DatasetPreset, DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -19,6 +19,7 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -29,6 +30,7 @@ import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -62,6 +64,7 @@ import { ReplicationService } from 'app/services/replication.service';
     IxSelectComponent,
     SshCredentialsSelectComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxCheckboxComponent,
     IxRadioGroupComponent,
     IxInputComponent,
@@ -94,6 +97,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   protected sourceNodeProvider: TreeNodeProvider;
   protected targetNodeProvider: TreeNodeProvider;
   protected DatasetSource = DatasetSource;
+
+  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
 
   protected targetDatasetsRootNodes: ExplorerNodeData[] = [];
   protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];

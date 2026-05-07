@@ -129,4 +129,34 @@ describe('ExplorerCreateDatasetComponent', () => {
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
     expect(await createButton.isDisabled()).toBeTruthy();
   });
+
+  describe('multi-select mode', () => {
+    it('enables Create Dataset button when exactly one item is selected, even after lastSelectedNode is cleared', async () => {
+      // The explorer clears lastSelectedNode when the most recently clicked node is deselected
+      // (e.g. user picked A then B, then unchecks B). The form value still has [A], so the
+      // button must be enabled.
+      fakeExplorer.lastSelectedNode.set(null);
+      fakeControl.control.setValue(['/mnt/test']);
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createButton.isDisabled()).toBeFalsy();
+    });
+
+    it('disables Create Dataset button when multiple items are selected', async () => {
+      fakeControl.control.setValue(['/mnt/test', '/mnt/other']);
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createButton.isDisabled()).toBeTruthy();
+    });
+
+    it('disables Create Dataset button when no items are selected', async () => {
+      fakeControl.control.setValue([]);
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createButton.isDisabled()).toBeTruthy();
+    });
+  });
 });

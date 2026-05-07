@@ -10,12 +10,15 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
   ContainerFilesystemDevice,
 } from 'app/interfaces/container.interface';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -43,6 +46,7 @@ interface ContainerFilesystemDeviceFormOptions {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -70,6 +74,10 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
 
   readonly fileProvider = this.filesystem.getFilesystemNodeProvider();
+
+  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', [Validators.required, poolPathValidator()]],

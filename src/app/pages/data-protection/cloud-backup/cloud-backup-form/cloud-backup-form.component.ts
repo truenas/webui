@@ -13,17 +13,20 @@ import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -58,6 +61,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     CloudCredentialsSelectComponent,
     IxSelectComponent,
     IxInputComponent,
@@ -144,6 +148,10 @@ export class CloudBackupFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   directoriesNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
+
+  protected readonly createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
 
   readonly newOption = newOption;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
