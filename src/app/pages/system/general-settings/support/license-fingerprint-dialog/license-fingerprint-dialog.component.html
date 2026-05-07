@@ -1,10 +1,10 @@
-<h1 matDialogTitle>{{ 'License Fingerprint' | translate }}</h1>
+<h1 matDialogTitle>{{ 'System Thumbprint' | translate }}</h1>
 
 <div mat-dialog-content class="dialog-content">
   @if (isLoading()) {
     <div class="loading">
       <mat-spinner [diameter]="36"></mat-spinner>
-      <span>{{ 'Loading fingerprint…' | translate }}</span>
+      <span>{{ 'Loading thumbprint…' | translate }}</span>
     </div>
   } @else if (fingerprintDecoded()) {
     <p class="hint">
@@ -20,7 +20,7 @@
     type="button"
     ixTest="copy-fingerprint"
     [disabled]="isLoading() || !fingerprintRaw()"
-    [matTooltip]="'Copy raw fingerprint to clipboard' | translate"
+    [matTooltip]="'Copy raw thumbprint to clipboard' | translate"
     (click)="copyToClipboard()"
   >
     <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>

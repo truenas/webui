@@ -121,14 +121,14 @@
   }
 
   <mat-list-item class="fingerprint-row">
-    <span class="label">{{ 'License Fingerprint' | translate }}:</span>
+    <span class="label">{{ 'System Thumbprint' | translate }}:</span>
     <span class="value fingerprint-actions">
       <button
         mat-icon-button
         type="button"
         ixTest="view-fingerprint"
-        [attr.aria-label]="'View License Fingerprint' | translate"
-        [matTooltip]="'View Fingerprint' | translate"
+        [attr.aria-label]="'View System Thumbprint' | translate"
+        [matTooltip]="'View Thumbprint' | translate"
         (click)="openFingerprintDialog()"
       >
         <tn-icon name="eye" library="mdi" size="md"></tn-icon>
@@ -137,7 +137,7 @@
         mat-icon-button
         type="button"
         ixTest="copy-fingerprint"
-        [attr.aria-label]="'Copy License Fingerprint' | translate"
+        [attr.aria-label]="'Copy System Thumbprint' | translate"
         [disabled]="isFingerprintBusy()"
         [matTooltip]="'Copy to Clipboard' | translate"
         (click)="copyFingerprint()"
