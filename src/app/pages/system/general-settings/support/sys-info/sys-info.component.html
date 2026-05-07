@@ -1,6 +1,6 @@
 @let license = licenseInfo();
-@if (hasLicense() && license) {
-  <mat-list>
+<mat-list>
+  @if (hasLicense() && license) {
     @if (license.contractType) {
       <mat-list-item>
         <span class="label">{{ 'Contract Type' | translate }}:</span>
@@ -91,9 +91,7 @@
         <span class="value">{{ license.additionalHardware }}</span>
       </mat-list-item>
     }
-  </mat-list>
-} @else {
-  <mat-list>
+  } @else {
     <mat-list-item>
       <span class="label">{{ 'OS Version' | translate }}:</span>
       <span class="value">{{ systemInfo().version }}</span>
@@ -120,5 +118,32 @@
         <span class="value">{{ systemInfo().system_serial }}</span>
       </mat-list-item>
     }
-  </mat-list>
-}
+  }
+
+  <mat-list-item class="fingerprint-row">
+    <span class="label">{{ 'System Thumbprint' | translate }}:</span>
+    <span class="value fingerprint-actions">
+      <button
+        mat-icon-button
+        type="button"
+        ixTest="view-fingerprint"
+        [attr.aria-label]="'View System Thumbprint' | translate"
+        [matTooltip]="'View Thumbprint' | translate"
+        (click)="openFingerprintDialog()"
+      >
+        <tn-icon name="eye" library="mdi" size="md"></tn-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        ixTest="copy-fingerprint"
+        [attr.aria-label]="'Copy System Thumbprint' | translate"
+        [disabled]="isFingerprintBusy()"
+        [matTooltip]="'Copy to Clipboard' | translate"
+        (click)="copyFingerprint()"
+      >
+        <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
+      </button>
+    </span>
+  </mat-list-item>
+</mat-list>

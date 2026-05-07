@@ -58,6 +58,16 @@ export interface License {
   enclosures: Record<string, number>;
 }
 
+/**
+ * Decoded shape of `truenas.license.fingerprint`.
+ *
+ * Middleware returns the fingerprint as a base64-encoded JSON object. The
+ * payload is intentionally a flat key/value map so middleware can add or
+ * remove fields without coupled UI changes — the support card displays it
+ * as pretty-printed JSON.
+ */
+export type LicenseFingerprint = Record<string, string | number | null>;
+
 export enum ContractType {
   Gold = 'GOLD',
   SilverInternational = 'SILVERINTERNATIONAL',

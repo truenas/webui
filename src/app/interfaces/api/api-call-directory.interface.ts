@@ -877,6 +877,7 @@ export interface ApiCallDirectory {
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
   'truenas.is_ix_hardware': { params: void; response: boolean };
+  'truenas.license.fingerprint': { params: void; response: string };
   'truenas.license.info': { params: void; response: License | null };
   'truenas.license.upload': {
     params: [license: string, options?: { ha_propagate?: boolean }];

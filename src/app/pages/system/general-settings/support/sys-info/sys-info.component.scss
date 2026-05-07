@@ -15,3 +15,13 @@
     margin-left: auto;
   }
 }
+
+.fingerprint-row {
+  align-items: center;
+
+  .fingerprint-actions {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+  }
+}
