@@ -9,6 +9,8 @@ export interface WebShareConfig {
 export interface WebShareConfigUpdate {
   search?: boolean;
   passkey?: WebSharePasskey;
+  bindip?: string[];
+  groups?: number[];
 }
 
 export interface WebShare {

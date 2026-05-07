@@ -2,6 +2,8 @@ import { Role } from 'app/enums/role.enum';
 
 export const directIdMapping = 'DIRECT' as const;
 
+export type UsernsIdmap = number | null | typeof directIdMapping;
+
 export interface User {
   id: number;
   uid: number;
@@ -29,7 +31,7 @@ export interface User {
   id_type_both: boolean;
   roles: Role[];
   api_keys: number[];
-  userns_idmap: number | null | typeof directIdMapping;
+  userns_idmap: UsernsIdmap;
   password_history: unknown[] | null;
   password_change_required: boolean;
   password_age: number | null;
@@ -74,7 +76,7 @@ export interface UserUpdate {
   groups?: number[];
   group_create?: boolean;
   home_create?: boolean;
-  userns_idmap?: number | null | typeof directIdMapping;
+  userns_idmap?: UsernsIdmap;
 }
 
 export interface SetPasswordParams {

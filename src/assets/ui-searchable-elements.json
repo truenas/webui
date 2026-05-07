@@ -2682,6 +2682,7 @@
       "New Share"
     ],
     "requiredRoles": [
+      "SHARING_WEBSHARE_WRITE",
       "SHARING_WRITE"
     ],
     "visibleTokens": [],

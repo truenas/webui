@@ -45,7 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ServiceWebshareComponent implements OnInit {
-  protected readonly requiredRoles = [Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);

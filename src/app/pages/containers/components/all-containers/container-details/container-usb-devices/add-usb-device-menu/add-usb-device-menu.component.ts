@@ -37,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AddUsbDeviceMenuComponent {
-  protected readonly requiredRoles = [Role.ContainerWrite];
+  protected readonly requiredRoles = [Role.ContainerDeviceWrite];
 
   private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
