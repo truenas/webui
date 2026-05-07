@@ -7,11 +7,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+
+export const genericCreateDatasetProps: Omit<DatasetCreate, 'name'> = {
+  share_type: DatasetPreset.Generic,
+};
 
 @Component({
   selector: 'ix-explorer-create-dataset',
@@ -33,7 +38,7 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
   private ngControl = inject(NgControl);
   private destroyRef = inject(DestroyRef);
 
-  readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>({});
+  readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>(genericCreateDatasetProps);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -74,13 +79,18 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
     });
   }
 
-  private parent = computed(() => {
+  private parentPath = computed(() => {
     const value = this.explorerValue();
-    const selected = Array.isArray(value) ? value[0] : value;
+    return Array.isArray(value) ? value[0] : value;
+  });
+
+  private parent = computed(() => {
+    const selected = this.parentPath();
     return selected ? selected.replace(/^(\/mnt\/?)/, '') : null;
   });
 
   protected onCreateDataset(): void {
+    const parentPath = this.parentPath();
     this.matDialog.open(CreateDatasetDialog, {
       data: {
         parentId: this.parent(),
@@ -93,8 +103,20 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
       const node = this.explorer.lastSelectedNode();
       if (node) {
         this.explorer.refreshNode(node);
+      } else if (parentPath) {
+        this.explorer.refreshNodeByPath(parentPath);
       }
-      this.ngControl?.control?.setValue(dataset.mountpoint);
+
+      const control = this.ngControl?.control;
+      const currentValue = control?.value;
+      if (Array.isArray(currentValue)) {
+        const updatedValue = currentValue.map(
+          (path) => (path === parentPath ? dataset.mountpoint : path),
+        );
+        control?.setValue(updatedValue);
+      } else {
+        control?.setValue(dataset.mountpoint);
+      }
     });
   }
 }

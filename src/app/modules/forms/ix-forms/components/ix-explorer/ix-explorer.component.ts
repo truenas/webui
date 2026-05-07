@@ -261,6 +261,13 @@ export class IxExplorerComponent implements ControlValueAccessor {
     node.expand();
   }
 
+  refreshNodeByPath(path: string): void {
+    const node = this.tree().treeModel.getNodeById(path) as TreeNode<ExplorerNodeData> | undefined;
+    if (node) {
+      this.refreshNode(node);
+    }
+  }
+
   /**
    * Provides typing in templates
    */

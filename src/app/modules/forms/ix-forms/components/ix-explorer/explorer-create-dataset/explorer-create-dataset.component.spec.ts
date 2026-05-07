@@ -44,6 +44,7 @@ describe('ExplorerCreateDatasetComponent', () => {
     }) as TreeNode<ExplorerNodeData>),
 
     refreshNode: jest.fn(),
+    refreshNodeByPath: jest.fn(),
   } as unknown as IxExplorerComponent;
 
   const fakeControl = {
@@ -79,6 +80,13 @@ describe('ExplorerCreateDatasetComponent', () => {
   const datasetProps = { comments: 'test' };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
+    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
+      isMountpoint: true,
+      path: '/mnt/test',
+    }) as TreeNode<ExplorerNodeData>);
+
     spectator = createComponent({
       props: {
         datasetProperties: datasetProps,
@@ -94,7 +102,7 @@ describe('ExplorerCreateDatasetComponent', () => {
 
   it('opens CreateDatasetDialog when Create Dataset button is pressed', async () => {
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBeFalsy();
+    expect(await createButton.isDisabled()).toBe(false);
 
     await createButton.click();
 
@@ -115,7 +123,7 @@ describe('ExplorerCreateDatasetComponent', () => {
     spectator.detectChanges();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBeTruthy();
+    expect(await createButton.isDisabled()).toBe(true);
   });
 
   it('disables Create Dataset button when no mountpoint is selected', async () => {
@@ -127,7 +135,7 @@ describe('ExplorerCreateDatasetComponent', () => {
     spectator.detectChanges();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBeTruthy();
+    expect(await createButton.isDisabled()).toBe(true);
   });
 
   describe('multi-select mode', () => {
@@ -140,7 +148,7 @@ describe('ExplorerCreateDatasetComponent', () => {
       spectator.detectChanges();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createButton.isDisabled()).toBeFalsy();
+      expect(await createButton.isDisabled()).toBe(false);
     });
 
     it('disables Create Dataset button when multiple items are selected', async () => {
@@ -148,7 +156,7 @@ describe('ExplorerCreateDatasetComponent', () => {
       spectator.detectChanges();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createButton.isDisabled()).toBeTruthy();
+      expect(await createButton.isDisabled()).toBe(true);
     });
 
     it('disables Create Dataset button when no items are selected', async () => {
@@ -156,7 +164,35 @@ describe('ExplorerCreateDatasetComponent', () => {
       spectator.detectChanges();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createButton.isDisabled()).toBeTruthy();
+      expect(await createButton.isDisabled()).toBe(true);
+    });
+
+    it('opens dialog with parentId derived from array form value, refreshes the parent node, and replaces it in the array', async () => {
+      // In multi-select mode the explorer clears lastSelectedNode after deselect. Verify the
+      // parentId is still derived from the form value, the parent tree node is refreshed by
+      // path, and setValue replaces the parent path with the new dataset's mountpoint without
+      // clobbering the array.
+      fakeExplorer.lastSelectedNode.set(null);
+      fakeControl.control.setValue(['/mnt/test']);
+      spectator.detectChanges();
+
+      spectator.inject<MatDialog>(MatDialog).open = jest.fn(() => ({
+        afterClosed: () => of({ mountpoint: '/mnt/test/new' }),
+      })) as unknown as MatDialog['open'];
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      await createButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
+        data: {
+          parentId: 'test',
+          dataset: datasetProps,
+        },
+      });
+
+      expect(fakeExplorer.refreshNodeByPath).toHaveBeenCalledWith('/mnt/test');
+      expect(fakeExplorer.refreshNode).not.toHaveBeenCalled();
+      expect(fakeControl.control.setValue).toHaveBeenCalledWith(['/mnt/test/new']);
     });
   });
 });
