@@ -138,6 +138,21 @@ describe('ExplorerCreateDatasetComponent', () => {
     expect(await createButton.isDisabled()).toBe(true);
   });
 
+  it('disables Create Dataset button when selected path is outside /mnt/ (e.g. zvol device path)', async () => {
+    // Reproduces the rejected "Parent dataset /dev/zvol/<pool> not found" case: the file
+    // node provider can mark zvol device paths as mountpoints, but pool.dataset.create
+    // only accepts real dataset names ("tank", "tank/foo"), not device paths.
+    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
+      isMountpoint: true,
+      path: '/dev/zvol/dozer',
+    }) as TreeNode<ExplorerNodeData>);
+    fakeControl.control.setValue('/dev/zvol/dozer');
+    spectator.detectChanges();
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+    expect(await createButton.isDisabled()).toBeTruthy();
+  });
+
   describe('multi-select mode', () => {
     it('enables Create Dataset button when exactly one item is selected, even after lastSelectedNode is cleared', async () => {
       // The explorer clears lastSelectedNode when the most recently clicked node is deselected

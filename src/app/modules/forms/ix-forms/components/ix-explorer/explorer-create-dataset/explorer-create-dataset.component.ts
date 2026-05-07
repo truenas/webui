@@ -43,7 +43,14 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   private isExplorerDisabled = computed(() => this.explorer.isDisabled());
-  private hasValidParent = computed(() => !!this.parent());
+  private hasValidParent = computed(() => {
+    const parent = this.parent();
+    // After stripping the /mnt/ prefix, a real dataset path is either bare ("tank") or
+    // nested ("tank/foo"). A leading slash means the selection isn't under /mnt/ (e.g.
+    // /dev/zvol/<pool>) and pool.dataset.create would reject it.
+    return !!parent && !parent.startsWith('/');
+  });
+
   private isMultiSelect = computed(() => Array.isArray(this.explorerValue()));
   private isSingleSelectionPresent = computed(() => {
     const currentValue = this.explorerValue();
