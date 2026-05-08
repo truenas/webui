@@ -1,23 +1,29 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnIconComponent,
+  TnTooltipDirective,
+  type TnCardAction,
+  type TnCardHeaderStatus,
+  type TnMenuItem,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
@@ -36,8 +42,9 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
@@ -52,15 +59,11 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./nvme-of-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TestDirective,
     TnIconComponent,
-    ServiceStateButtonComponent,
-    RequiresRolesDirective,
-    MatButton,
-    MatTooltip,
-    ServiceExtraActionsComponent,
+    TnTooltipDirective,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -87,6 +90,8 @@ export class NvmeOfCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
+  private actionsMenu = inject(ServiceActionsMenuService);
 
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
@@ -94,6 +99,46 @@ export class NvmeOfCardComponent implements OnInit {
   protected readonly cardMenuPath = ['sharing', 'nvme-of'];
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));
+  private service = toSignal(this.service$);
+  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
+
+  protected serviceStatus = computed<TnCardHeaderStatus | undefined>(() => {
+    const svc = this.service();
+    if (!svc) {
+      return undefined;
+    }
+    const label = this.translate.instant(this.titleCase(svc.state));
+    switch (svc.state) {
+      case ServiceStatus.Running:
+        return { label, type: 'success' };
+      case ServiceStatus.Stopped:
+        return { label, type: 'neutral' };
+      default:
+        return { label, type: 'warning' };
+    }
+  });
+
+  protected addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAddRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      handler: () => this.openForm(),
+    };
+  });
+
+  protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
+    const svc = this.service();
+    if (!svc) {
+      return undefined;
+    }
+    return this.actionsMenu.buildMenuItems(svc, this.hasAddRole());
+  });
+
+  private titleCase(value: string): string {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
+  }
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
 
