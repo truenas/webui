@@ -849,26 +849,26 @@ export const smartAlertRegistry: SmartAlertConfig = {
     // Failover
     [AlertClassName.FailoverSyncFailed]: {
       category: SmartAlertCategory.System,
-      relatedMenuPath: ['system', 'failover'],
+      relatedMenuPath: ['system', 'advanced'],
       actions: [{
         label: T('Go to Failover Settings'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('sync', 'mdi'),
-        route: ['/system', 'failover'],
-        fragment: 'failover',
+        route: ['/system', 'advanced'],
+        fragment: 'failover-card',
         primary: true,
       }],
     },
 
     [AlertClassName.FailoverKeysSyncFailed]: {
       category: SmartAlertCategory.System,
-      relatedMenuPath: ['system', 'failover'],
+      relatedMenuPath: ['system', 'advanced'],
       actions: [{
         label: T('Go to Failover Settings'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('sync', 'mdi'),
-        route: ['/system', 'failover'],
-        fragment: 'failover',
+        route: ['/system', 'advanced'],
+        fragment: 'failover-card',
         primary: true,
       }],
     },
@@ -876,60 +876,60 @@ export const smartAlertRegistry: SmartAlertConfig = {
     // JBOF
     [AlertClassName.JbofRedfishComm]: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'jbof'],
+      relatedMenuPath: ['system', 'viewenclosure', 'jbof'],
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('expansion-card', 'mdi'),
-        route: ['/system', 'jbof'],
+        route: ['/system', 'viewenclosure', 'jbof'],
         primary: true,
       }],
     },
 
     [AlertClassName.JbofElementCritical]: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'jbof'],
+      relatedMenuPath: ['system', 'viewenclosure', 'jbof'],
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('expansion-card', 'mdi'),
-        route: ['/system', 'jbof'],
+        route: ['/system', 'viewenclosure', 'jbof'],
         primary: true,
       }],
     },
 
     [AlertClassName.JbofElementWarning]: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'jbof'],
+      relatedMenuPath: ['system', 'viewenclosure', 'jbof'],
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('expansion-card', 'mdi'),
-        route: ['/system', 'jbof'],
+        route: ['/system', 'viewenclosure', 'jbof'],
         primary: true,
       }],
     },
 
     [AlertClassName.JbofTearDownFailure]: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'jbof'],
+      relatedMenuPath: ['system', 'viewenclosure', 'jbof'],
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('expansion-card', 'mdi'),
-        route: ['/system', 'jbof'],
+        route: ['/system', 'viewenclosure', 'jbof'],
         primary: true,
       }],
     },
 
     [AlertClassName.JbofInvalidData]: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'jbof'],
+      relatedMenuPath: ['system', 'viewenclosure', 'jbof'],
       actions: [{
         label: T('Go to JBOF'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('expansion-card', 'mdi'),
-        route: ['/system', 'jbof'],
+        route: ['/system', 'viewenclosure', 'jbof'],
         primary: true,
       }],
     },
@@ -1283,24 +1283,24 @@ export const smartAlertRegistry: SmartAlertConfig = {
     // Snapshots
     [AlertClassName.SnapshotTotalCount]: {
       category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['datasets'],
+      relatedMenuPath: ['datasets', 'snapshots'],
       actions: [{
         label: T('Go to Snapshots'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('camera', 'mdi'),
-        route: ['/datasets'],
+        route: ['/datasets', 'snapshots'],
         primary: true,
       }],
     },
 
     [AlertClassName.SnapshotCount]: {
       category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['datasets'],
+      relatedMenuPath: ['datasets', 'snapshots'],
       actions: [{
         label: T('Go to Snapshots'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('camera', 'mdi'),
-        route: ['/datasets'],
+        route: ['/datasets', 'snapshots'],
         primary: true,
       }],
     },
@@ -1308,24 +1308,24 @@ export const smartAlertRegistry: SmartAlertConfig = {
     // API Keys
     ApiKeyRevoked: {
       category: SmartAlertCategory.Security,
-      relatedMenuPath: ['credentials', 'users'],
+      relatedMenuPath: ['credentials', 'users', 'api-keys'],
       actions: [{
         label: T('Go to API keys'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('key', 'mdi'),
-        route: ['/credentials', 'users'],
+        route: ['/credentials', 'users', 'api-keys'],
         primary: true,
       }],
     },
 
     APIFailedLogin: {
       category: SmartAlertCategory.Security,
-      relatedMenuPath: ['credentials', 'users'],
+      relatedMenuPath: ['credentials', 'users', 'api-keys'],
       actions: [{
         label: T('Go to API keys'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('key', 'mdi'),
-        route: ['/credentials', 'users'],
+        route: ['/credentials', 'users', 'api-keys'],
         primary: true,
       }],
     },
@@ -1426,10 +1426,10 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       actions: [{
-        label: T('Go to Data Protection'),
+        label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('security', 'material'),
-        route: ['/data-protection'],
+        icon: tnIconMarker('dns', 'material'),
+        route: ['/storage'],
         primary: true,
       }],
     },
@@ -1438,10 +1438,10 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
       actions: [{
-        label: T('Go to Data Protection'),
+        label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('security', 'material'),
-        route: ['/data-protection'],
+        icon: tnIconMarker('dns', 'material'),
+        route: ['/storage'],
         primary: true,
       }],
     },
