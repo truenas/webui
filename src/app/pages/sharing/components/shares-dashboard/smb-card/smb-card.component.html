@@ -61,4 +61,14 @@
   @if (configOpen()) {
     <ix-service-smb (closed)="onConfigClosed()"></ix-service-smb>
   }
+  @if (configForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [ixTest]="['smb-config', 'save']"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
 </tn-side-panel>

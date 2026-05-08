@@ -1,14 +1,16 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, DestroyRef, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, DestroyRef, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
   TnIconComponent,
+  TnSidePanelActionDirective,
   TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
@@ -67,9 +69,11 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./smb-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
     TnSidePanelComponent,
+    TnSidePanelActionDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -136,6 +140,7 @@ export class SmbCardComponent implements OnInit {
   });
 
   protected configOpen = signal(false);
+  protected configForm = viewChild(ServiceSmbComponent);
 
   protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
     const svc = this.service();

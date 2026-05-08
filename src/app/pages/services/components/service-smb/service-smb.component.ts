@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
@@ -86,7 +86,7 @@ export class ServiceSmbComponent implements OnInit {
   // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
   readonly closed = output<boolean>();
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
@@ -174,7 +174,16 @@ export class ServiceSmbComponent implements OnInit {
     stateful_failover: [false, []],
   });
 
-  protected readonly requiredRoles = [Role.SharingSmbWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite];
+
+  private formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
+
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.netbiosnameTooltip,
@@ -282,6 +291,11 @@ export class ServiceSmbComponent implements OnInit {
     } else {
       this.closed.emit(saved);
     }
+  }
+
+  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
+  submit(): void {
+    this.onSubmit();
   }
 
   protected onSubmit(): void {
