@@ -180,7 +180,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Restart System'),
           type: SmartAlertActionType.Navigate,
           icon: tnIconMarker('restart', 'mdi'),
-          route: ['/system', 'general'],
+          route: ['/system-tasks', 'restart'],
         },
       ],
     },
@@ -552,7 +552,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       contextualHelp: T('Snapshot failures may indicate storage issues or misconfigured retention policies. Snapshot tasks run automatically on schedule and cannot be manually triggered.'),
       actions: [
         {
-          label: T('View Snapshots'),
+          label: T('View Snapshot Tasks'),
           type: SmartAlertActionType.Navigate,
           icon: tnIconMarker('camera', 'mdi'),
           route: ['/data-protection', 'snapshot'],
@@ -641,7 +641,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('cog', 'mdi'),
         route: ['/apps', 'installed'],
-        fragment: 'installed',
         primary: true,
       }],
     },
