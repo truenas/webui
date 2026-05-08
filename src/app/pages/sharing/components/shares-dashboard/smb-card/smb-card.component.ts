@@ -9,6 +9,7 @@ import {
   TnCardComponent,
   TnCardHeaderDirective,
   TnIconComponent,
+  TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
   type TnCardHeaderStatus,
@@ -47,6 +48,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -67,6 +69,7 @@ import { selectService } from 'app/store/services/services.selectors';
   imports: [
     TnCardComponent,
     TnCardHeaderDirective,
+    TnSidePanelComponent,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -80,6 +83,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     EmptyComponent,
     CardAlertBadgeComponent,
+    ServiceSmbComponent,
   ],
 })
 export class SmbCardComponent implements OnInit {
@@ -131,13 +135,29 @@ export class SmbCardComponent implements OnInit {
     };
   });
 
+  protected configOpen = signal(false);
+
   protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
     const svc = this.service();
     if (!svc) {
       return undefined;
     }
-    return this.actionsMenu.buildMenuItems(svc, this.hasAddRole());
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasAddRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
   });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
 
   private titleCase(value: string): string {
     return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';

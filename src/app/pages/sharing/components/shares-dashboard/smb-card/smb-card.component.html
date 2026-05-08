@@ -53,3 +53,12 @@
     [routerLink]="['/sharing', 'smb']"
   ></ix-table-pager-show-more>
 </tn-card>
+
+<tn-side-panel
+  [title]="'SMB' | translate"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-service-smb (closed)="onConfigClosed()"></ix-service-smb>
+  }
+</tn-side-panel>

@@ -36,43 +36,63 @@ export class ServiceActionsMenuService {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
+  /**
+   * Convenience: build the full default menu (toggle, config, sessions, logs).
+   * Cards that need to substitute one of the items (e.g. open the config in
+   * a host-controlled tn-side-panel rather than the legacy slide-in) should
+   * compose from the granular builders below instead.
+   */
   buildMenuItems(service: Service, hasControlRole: boolean): TnMenuItem[] {
-    const items: TnMenuItem[] = [];
+    return [
+      this.buildToggleItem(service, hasControlRole),
+      this.buildConfigItem(service),
+      this.buildSessionsItem(service),
+      this.buildLogsItem(service),
+    ].filter((item): item is TnMenuItem => item !== null);
+  }
 
-    if (hasControlRole) {
-      const stateLabel = service.state === ServiceStatus.Running
-        ? this.translate.instant('Turn Off Service')
-        : this.translate.instant('Turn On Service');
-      items.push({
-        id: 'service-state-toggle',
-        label: stateLabel,
-        action: () => this.changeServiceState(service),
-      });
+  buildToggleItem(service: Service, hasControlRole: boolean): TnMenuItem | null {
+    if (!hasControlRole) {
+      return null;
     }
+    const stateLabel = service.state === ServiceStatus.Running
+      ? this.translate.instant('Turn Off Service')
+      : this.translate.instant('Turn On Service');
+    return {
+      id: 'service-state-toggle',
+      label: stateLabel,
+      action: () => this.changeServiceState(service),
+    };
+  }
 
-    items.push({
+  buildConfigItem(service: Service): TnMenuItem {
+    return {
       id: 'service-config',
       label: this.translate.instant('Config Service'),
       action: () => this.configureService(service),
-    });
+    };
+  }
 
-    if ([ServiceName.Nfs, ServiceName.Cifs].includes(service.service)) {
-      items.push({
-        id: 'service-sessions',
-        label: this.translate.instant('{name} Sessions', { name: serviceNames.get(service.service) }),
-        action: () => this.viewSessions(service.service),
-      });
+  buildSessionsItem(service: Service): TnMenuItem | null {
+    if (![ServiceName.Nfs, ServiceName.Cifs].includes(service.service)) {
+      return null;
     }
+    return {
+      id: 'service-sessions',
+      label: this.translate.instant('{name} Sessions', { name: serviceNames.get(service.service) }),
+      action: () => this.viewSessions(service.service),
+    };
+  }
 
-    if (service.service === ServiceName.Cifs) {
-      items.push({
-        id: 'service-logs',
-        label: this.translate.instant('Audit Logs'),
-        action: () => this.viewLogs(),
-      });
+  buildLogsItem(service: Service): TnMenuItem | null {
+    if (service.service !== ServiceName.Cifs) {
+      return null;
     }
-
-    return items;
+    return {
+      id: 'service-logs',
+      label: this.translate.instant('Audit Logs'),
+      action: () => this.viewLogs(),
+    };
   }
 
   private changeServiceState(service: Service): void {

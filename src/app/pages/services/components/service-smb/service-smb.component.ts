@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, output, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -81,7 +81,10 @@ export class ServiceSmbComponent implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
+  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
+  readonly closed = output<boolean>();
 
   protected isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
@@ -116,7 +119,7 @@ export class ServiceSmbComponent implements OnInit {
    * incompatible shares, and SMB1 status.
    */
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
 
@@ -273,6 +276,14 @@ export class ServiceSmbComponent implements OnInit {
     this.openTruenasConnectModal();
   }
 
+  private close(saved: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: saved });
+    } else {
+      this.closed.emit(saved);
+    }
+  }
+
   protected onSubmit(): void {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();
     const values: SmbConfigUpdate = {
@@ -288,7 +299,7 @@ export class ServiceSmbComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
