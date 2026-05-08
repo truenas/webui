@@ -37,7 +37,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
       contextualHelp: T('License issues can affect system features and support eligibility. Update your license to restore full functionality.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/general/addlicenseproactivesupport/',
       actions: [
         {
           label: T('Manage License'),
@@ -57,7 +57,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('View Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
+          externalUrl: 'https://www.truenas.com/docs/scale/systemsettings/general/addlicenseproactivesupport/',
         },
       ],
     },
@@ -66,7 +66,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
       contextualHelp: T('Proactive Support helps iXsystems monitor your system health and provide early warnings. Configuration takes just a few minutes.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/general/addlicenseproactivesupport/',
       actions: [
         {
           label: T('Configure Support'),
@@ -80,7 +80,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Learn More'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('information', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
+          externalUrl: 'https://www.truenas.com/docs/scale/systemsettings/general/addlicenseproactivesupport/',
         },
       ],
     },
@@ -121,7 +121,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
       contextualHelp: T('Certificate issues can prevent secure connections and service access. Review and renew certificates before expiration.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/certificates/certificatesscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/certificates/certificatesscale/',
       actions: [
         {
           label: T('Renew Certificate'),
@@ -134,7 +134,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Certificate Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/certificates/certificatesscale/',
+          externalUrl: 'https://www.truenas.com/docs/scale/credentials/certificates/certificatesscale/',
         },
       ],
     },
@@ -146,7 +146,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'users'],
       contextualHelp: T('Using the root account for routine tasks poses security risks. Create dedicated administrator accounts with unique credentials for better security and accountability.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/managelocalusersscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/managelocalusersscale/',
       actions: [
         {
           label: T('Manage Users'),
@@ -159,7 +159,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('User Management Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/managelocalusersscale/',
+          externalUrl: 'https://www.truenas.com/docs/scale/credentials/managelocalusersscale/',
         },
       ],
     },
@@ -217,7 +217,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       relatedMenuPath: ['storage'],
       contextualHelp: T('Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.'),
       detailedHelp: T('Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/managepoolsscale/',
       extractApiParams: () => {
         // VolumeStatus alerts only provide pool name in args.volume, not pool ID
         // Since we can't synchronously resolve pool name to ID, navigate to storage dashboard instead
@@ -235,13 +235,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Managing Pools Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
+          externalUrl: 'https://www.truenas.com/docs/scale/storage/managepoolsscale/',
         },
         {
           label: T('Storage Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('help-circle', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/',
+          externalUrl: 'https://www.truenas.com/docs/scale/storage/',
         },
       ],
     },
@@ -262,7 +262,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Managing Pools Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
+          externalUrl: 'https://www.truenas.com/docs/scale/storage/managepoolsscale/',
         },
       ],
     },
@@ -274,7 +274,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['system', 'network'],
       contextualHelp: T('IPMI connectivity issues can prevent remote management. Check network configuration and IPMI settings.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/network/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/network/',
       actions: [
         {
           label: T('Configure IPMI'),
@@ -318,7 +318,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps'],
       contextualHelp: T('Application issues may be caused by misconfiguration, resource constraints, or storage problems.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/apps/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/apps/',
       actions: [
         {
           label: T('View Applications'),
@@ -331,7 +331,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('App Troubleshooting'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/apps/',
+          externalUrl: 'https://www.truenas.com/docs/scale/apps/',
         },
       ],
     },
@@ -343,7 +343,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'update'],
       contextualHelp: T('System updates include security patches, bug fixes, and new features. Review release notes before updating.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scaleupgrades/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/gettingstarted/upgrades/',
       actions: [
         {
           label: T('Check for Updates'),
@@ -427,7 +427,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloud-backup'],
       contextualHelp: T('Cloud backup failures may be caused by network connectivity issues, insufficient cloud storage space, invalid credentials, or expired authentication tokens.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloudtasks/',
       actions: [
         {
           label: T('Rerun Cloud Backup'),
@@ -453,7 +453,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Backup Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
+          externalUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloudtasks/',
         },
       ],
       extractFragment: createFragmentExtractor(
@@ -468,7 +468,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloudsync'],
       contextualHelp: T('Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/cloudsynctasks/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/cloudsynctasks/',
       actions: [
         {
           label: T('Rerun Cloud Sync'),
@@ -496,7 +496,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'replication'],
       contextualHelp: T('Replication failures can cause backup gaps. Check network connectivity and destination system health.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/replication/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/replication/',
       actions: [
         {
           label: T('View Replication'),
@@ -521,7 +521,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'rsync'],
       contextualHelp: T('Rsync task failures may be due to connectivity issues, permission problems, or incorrect paths.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/rsynctasksscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/rsynctasksscale/',
       actions: [
         {
           label: T('Rerun Rsync Task'),
@@ -737,7 +737,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ActiveDirectoryDomainBind]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configadscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configadscale/',
       actions: [{
         label: T('Go To Directory Services'),
         type: SmartAlertActionType.Navigate,
@@ -750,7 +750,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ActiveDirectoryDomainHealth]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configadscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configadscale/',
       actions: [{
         label: T('Go To Directory Services'),
         type: SmartAlertActionType.Navigate,
@@ -763,7 +763,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.LdapBind]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configldapscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configldapscale/',
       actions: [{
         label: T('Go To Directory Services'),
         type: SmartAlertActionType.Navigate,
@@ -938,7 +938,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.Smart]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['storage', 'disks'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/disks/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
       actions: [{
         label: T('Go to Disks'),
         type: SmartAlertActionType.Navigate,
@@ -964,7 +964,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.KmipConnectionFailed]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/configuringkmipscale/',
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
@@ -977,7 +977,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.KmipSedGlobalPasswordSyncFailure]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/configuringkmipscale/',
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
@@ -990,7 +990,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.KmipSedDisksSyncFailure]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/configuringkmipscale/',
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
@@ -1003,7 +1003,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.KmipZfsDatasetsSyncFailure]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'kmip'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/configuringkmipscale/',
       actions: [{
         label: T('Go to KMIP'),
         type: SmartAlertActionType.Navigate,
@@ -1017,7 +1017,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.NfsBindAddress]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['system', 'services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/nfsservicescale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/nfsservicescale/',
       actions: [{
         label: T('Go to NFS Service'),
         type: SmartAlertActionType.Navigate,
@@ -1032,7 +1032,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.SmbPath]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'smb'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/shares/smb/managesmbshares/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/shares/smb/managesmbshares/',
       actions: [{
         label: T('Go to SMB shares'),
         type: SmartAlertActionType.Navigate,
@@ -1045,7 +1045,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.SmbLegacyProtocol]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'smb'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/smbservicescale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/smbservicescale/',
       actions: [{
         label: T('Go to SMB sessions'),
         type: SmartAlertActionType.Navigate,
@@ -1071,7 +1071,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.QuotaCritical]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/datasets/managequotas/',
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
@@ -1084,7 +1084,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.QuotaWarning]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/datasets/managequotas/',
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
@@ -1140,7 +1140,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
             category: SmartAlertCategory.System,
             relatedMenuPath: ['system', 'boot'],
             contextualHelp: T('Boot pool capacity is critically high. Clean up old boot environments to free up space and prevent system issues.'),
-            documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/',
             actions: [{
               label: T('Manage Boot Environments'),
               type: SmartAlertActionType.Navigate,
@@ -1151,7 +1151,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
               label: T('Boot Environments Guide'),
               type: SmartAlertActionType.ExternalLink,
               icon: tnIconMarker('book-open-variant', 'mdi'),
-              externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+              externalUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/',
             }],
           },
         },
@@ -1180,7 +1180,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
             category: SmartAlertCategory.System,
             relatedMenuPath: ['system', 'boot'],
             contextualHelp: T('Boot pool capacity is high. Consider cleaning up old boot environments to free up space.'),
-            documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/',
             actions: [{
               label: T('Manage Boot Environments'),
               type: SmartAlertActionType.Navigate,
@@ -1191,7 +1191,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
               label: T('Boot Environments Guide'),
               type: SmartAlertActionType.ExternalLink,
               icon: tnIconMarker('book-open-variant', 'mdi'),
-              externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+              externalUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/',
             }],
           },
         },
@@ -1220,7 +1220,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
             category: SmartAlertCategory.System,
             relatedMenuPath: ['system', 'boot'],
             contextualHelp: T('Boot pool usage is increasing. Consider reviewing and cleaning up old boot environments.'),
-            documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/',
             actions: [{
               label: T('Manage Boot Environments'),
               type: SmartAlertActionType.Navigate,
@@ -1231,7 +1231,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
               label: T('Boot Environments Guide'),
               type: SmartAlertActionType.ExternalLink,
               icon: tnIconMarker('book-open-variant', 'mdi'),
-              externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+              externalUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/',
             }],
           },
         },
@@ -1450,7 +1450,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareLoginFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/creatingvmwaresnapshots/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),
         type: SmartAlertActionType.Navigate,
@@ -1463,7 +1463,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareSnapshotDeleteFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/creatingvmwaresnapshots/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),
         type: SmartAlertActionType.Navigate,
@@ -1476,7 +1476,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareSnapshotCreateFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/creatingvmwaresnapshots/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),
         type: SmartAlertActionType.Navigate,
@@ -1490,7 +1490,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     UPSCommbad: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/upsservicesscale/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
       actions: [{
         label: T('Go to UPS service'),
         type: SmartAlertActionType.Navigate,

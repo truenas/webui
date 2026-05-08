@@ -151,7 +151,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly helptext = helptextCloudBackup;
   readonly storjAccountUrl = 'https://www.storj.io/get-started';
-  readonly documentationUrl = 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/';
+  readonly documentationUrl = 'https://www.truenas.com/docs/scale/dataprotection/truecloud/truecloudtasks/';
 
   constructor() {
     const slideInRef = this.slideInRef;
