@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -26,8 +25,6 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -72,12 +69,6 @@ describe('WebShareCardComponent', () => {
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
     imports: [IxTablePagerShowMoreComponent,
-    ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
     ],
     providers: [
       mockAuth(),
@@ -143,7 +134,7 @@ describe('WebShareCardComponent', () => {
 
   it('shows Open WebShare button when service is running', async () => {
     const openButton = await loader.getHarnessOrNull(
-      MatButtonHarness.with({ text: 'Open WebShare' }),
+      TnButtonHarness.with({ label: 'Open WebShare' }),
     );
     expect(openButton).toBeTruthy();
   });
@@ -153,7 +144,7 @@ describe('WebShareCardComponent', () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation();
 
     const openButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Open WebShare' }),
+      TnButtonHarness.with({ label: 'Open WebShare' }),
     );
     await openButton.click();
 
@@ -166,7 +157,7 @@ describe('WebShareCardComponent', () => {
     const slideIn = spectator.inject(SlideIn);
 
     const addButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Add' }),
+      TnButtonHarness.with({ label: 'Add' }),
     );
     await addButton.click();
 
@@ -224,12 +215,6 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
     imports: [IxTablePagerShowMoreComponent,
-    ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
     ],
     providers: [
       mockAuth(),
@@ -325,12 +310,6 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
     imports: [IxTablePagerShowMoreComponent,
-    ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
     ],
     providers: [
       mockAuth(),
