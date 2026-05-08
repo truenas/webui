@@ -1,51 +1,12 @@
-@if (service()) {
-  <div>
-    <button
-      mat-icon-button
-      [matTooltip]="'Actions for {name}' | translate: { name: serviceNames.get(service().service) }"
-      [attr.aria-label]="'Actions for {name}' | translate: { name: serviceNames.get(service().service) }"
-      [ixTest]="[service().id, 'actions-menu']"
-      [matMenuTriggerFor]="rowActions"
-    >
-      <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-    </button>
-    <mat-menu #rowActions="matMenu">
-      <button
-        *ixRequiresRoles="requiredRoles()"
-        mat-menu-item
-        [ixTest]="[service().service, 'actions-menu', serviceStateLabel()]"
-        (click)="changeServiceState(service())"
-      >
-        {{ serviceStateLabel() | translate }}
-      </button>
-
-      <button
-        mat-menu-item
-        [ixTest]="[service().service, 'actions-menu', configServiceLabel]"
-        (click)="configureService(service())"
-      >
-        {{ configServiceLabel | translate }}
-      </button>
-
-      @if (hasSessions()) {
-        <button
-          mat-menu-item
-          [ixTest]="[service().service, 'actions-menu', 'sessions']"
-          (click)="viewSessions(service().service)"
-        >
-          {{ '{name} Sessions' | translate: { name: serviceNames.get(service().service) } }}
-        </button>
-      }
-
-      @if (hasLogs()) {
-        <button
-          mat-menu-item
-          [ixTest]="[service().service, 'actions-menu', 'logs']"
-          (click)="viewLogs()"
-        >
-          {{ 'Audit Logs' | translate }}
-        </button>
-      }
-    </mat-menu>
-  </div>
+@if (service(); as svc) {
+  <tn-icon-button
+    name="dots-vertical"
+    library="mdi"
+    size="md"
+    [ariaLabel]="'Actions for {name}' | translate: { name: serviceNames.get(svc.service) }"
+    [tooltip]="'Actions for {name}' | translate: { name: serviceNames.get(svc.service) }"
+    [ixTest]="[svc.id, 'actions-menu']"
+    [tnMenuTriggerFor]="actionsMenu"
+  />
+  <tn-menu #actionsMenu [items]="menuItems()" />
 }
