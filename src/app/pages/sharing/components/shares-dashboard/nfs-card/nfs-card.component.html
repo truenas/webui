@@ -1,46 +1,28 @@
-<mat-card>
-  <mat-toolbar-row>
-    <div class="toolbar-row-title">
-      <a
-        [ixTest]="['nfs-share', 'open-in-new']"
-        [routerLink]="['/sharing', 'nfs']"
-        [matTooltip]="'Open NFS list in full page' | translate"
-      >
-        <h3 class="card-title">
-          {{ 'UNIX (NFS) Shares' | translate }}
-          <tn-icon
-            name="open-in-new"
-            library="mdi"
-            class="title-icon"
-            [attr.aria-label]="'Open NFS list in full page' | translate"
-          ></tn-icon>
-          <ix-card-alert-badge [menuPath]="cardMenuPath" />
-        </h3>
-      </a>
-
-      <ix-service-state-button
-        [service]="(service$ | async) || undefined"
-        [count]="+(dataProvider.currentPageCount$ | async)"
-      ></ix-service-state-button>
-    </div>
-
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['nfs-share', 'add']"
-        [attr.aria-label]="'Add NFS Share' | translate"
-        (click)="openForm()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-
-      <ix-service-extra-actions
-        [service]="service$ | async"
-        [requiredRoles]="requiredRoles"
-      ></ix-service-extra-actions>
-    </div>
-  </mat-toolbar-row>
+<tn-card
+  padding="small"
+  [bordered]="true"
+  [headerStatus]="serviceStatus()"
+  [headerMenu]="serviceMenu()"
+  [primaryAction]="addAction()"
+>
+  <a
+    tnCardHeader
+    class="card-title-link"
+    [ixTest]="['nfs-share', 'open-in-new']"
+    [routerLink]="['/sharing', 'nfs']"
+    [tnTooltip]="'Open NFS list in full page' | translate"
+  >
+    <h3 class="card-title">
+      {{ 'UNIX (NFS) Shares' | translate }}
+      <tn-icon
+        name="open-in-new"
+        library="mdi"
+        class="title-icon"
+        [attr.aria-label]="'Open NFS list in full page' | translate"
+      ></tn-icon>
+      <ix-card-alert-badge [menuPath]="cardMenuPath" />
+    </h3>
+  </a>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <ix-empty [conf]="emptyConfig"></ix-empty>
@@ -70,4 +52,4 @@
     [ixTestOverride]="['nfs']"
     [routerLink]="['/sharing', 'nfs']"
   ></ix-table-pager-show-more>
-</mat-card>
+</tn-card>
