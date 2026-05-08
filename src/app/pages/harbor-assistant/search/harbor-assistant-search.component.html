@@ -1,0 +1,192 @@
+<section class="harbor-assistant-search-page">
+  <div class="harbor-assistant-search-shell">
+    <main class="rag-workbench">
+      @if (loading() || response() || error()) {
+        <section #searchResults class="results-workbench" data-testid="harbor-assistant-search-search-results">
+          @if (response(); as result) {
+            <div class="results-header">
+              <div>
+                <h2>{{ 'Search results' | translate }}</h2>
+                <p>{{ form.controls.query.value }}</p>
+              </div>
+              <div class="result-summary">
+                <strong>{{ result.total_matches }}</strong>
+                <span>{{ 'results' | translate }}</span>
+                <span>{{ searchStatusLabel(result) | translate }}</span>
+                @if (result.degraded) {
+                  <span>{{ userFacingSearchNotice(result.degraded_reason || '') | translate }}</span>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="results-header">
+              <div>
+                <h2>{{ 'Search results' | translate }}</h2>
+                <p>{{ form.controls.query.value }}</p>
+              </div>
+              <div class="result-summary">
+                <strong>{{ loading() ? ('Searching' | translate) : ('0' | translate) }}</strong>
+                <span>{{ loading() ? ('Searching' | translate) : ('Error' | translate) }}</span>
+              </div>
+            </div>
+          }
+
+          @if (loading()) {
+            <section class="results-skeleton" aria-live="polite">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card tall"></div>
+              <div class="skeleton-card"></div>
+            </section>
+          } @else if (response(); as result) {
+            @if (noResults()) {
+              <div class="empty-state filter-empty-state">
+                <span>{{ emptyMessage(result) | translate }}</span>
+                @if (availableResultFilters(result).length > 0) {
+                  <div class="empty-actions">
+                    @for (filter of availableResultFilters(result); track filter) {
+                      <button mat-stroked-button type="button" (click)="switchFilter(filter)">
+                        {{ filterLabel(filter) | translate }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            } @else {
+              <section class="results-waterfall" aria-live="polite">
+                @for (item of waterfallItems(); track resultTrackKey($index, item)) {
+                  <mat-card class="result-card" [ngClass]="item.kind" tabindex="0" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
+                    @if (item.kind === 'image') {
+                      <div class="image-frame">
+                        <img [src]="item.previewUrl" [alt]="item.hit.title" loading="lazy" />
+                      </div>
+                    }
+                    @if (item.kind === 'video') {
+                      <div class="video-frame">
+                        <video [src]="videoPreviewUrl(item)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                        <span class="play-chip">{{ 'Play' | translate }}</span>
+                      </div>
+                    }
+
+                  <mat-card-content>
+                    <div class="card-topline">
+                      <span>{{ kindLabel(item) | translate }}</span>
+                    </div>
+                    <h2>{{ item.hit.title }}</h2>
+                    <p>{{ summary(item.hit) }}</p>
+                  </mat-card-content>
+                </mat-card>
+              }
+              </section>
+            }
+          } @else if (error()) {
+            <div class="empty-state error">{{ error() | translate }}</div>
+          }
+        </section>
+      } @else {
+        <section class="empty-state start-state">
+          <strong>{{ 'Search files, photos, and videos' | translate }}</strong>
+          <span>{{ 'Enter a question, choose a scope, then inspect evidence results.' | translate }}</span>
+        </section>
+      }
+    </main>
+
+    <aside class="assistant-panel">
+      <div class="assistant-header">
+        <h2>{{ 'Search' | translate }}</h2>
+      </div>
+
+      <form class="assistant-form" [formGroup]="form" (ngSubmit)="search()">
+        <div class="query-composer">
+          <textarea
+            class="query-input"
+            rows="5"
+            aria-label="Assistant search query"
+            formControlName="query"
+            [placeholder]="'Try asking: who is pouring beer?' | translate"
+          ></textarea>
+          <div class="query-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
+              {{ 'Search' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="prompt-strip" aria-label="Search question examples">
+          <span>{{ 'Try' | translate }}</span>
+          @for (suggestion of promptSuggestions; track suggestion.query) {
+            <button type="button" class="suggestion-chip" (click)="usePromptSuggestion(suggestion)">
+              {{ suggestion.label | translate }}
+            </button>
+          }
+        </div>
+
+        @if (searchHistory().length > 0) {
+          <div class="prompt-strip search-history-strip" aria-label="Search history">
+            <span>{{ 'History' | translate }}</span>
+            @for (term of searchHistory(); track term) {
+              <button type="button" class="suggestion-chip" (click)="useSearchHistoryTerm(term)">
+                {{ term }}
+              </button>
+            }
+            <button type="button" class="history-clear" (click)="clearSearchHistory()">
+              {{ 'Clear' | translate }}
+            </button>
+          </div>
+        }
+
+        <div class="scope-note">{{ 'Search scope' | translate }}: {{ searchScopeLabel() | translate }}</div>
+
+        <mat-button-toggle-group class="scope-toggle" formControlName="sourceScope" aria-label="Search source scope">
+          <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="nas_files">{{ 'NAS folders' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="dvr_library">{{ 'DVR media library' | translate }}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="Search result filter">
+          <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="images">{{ 'Image' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="videos">{{ 'Video' | translate }}</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <div class="scope-fields time-range-summary">
+          <span class="scope-fields-label">{{ 'Time range' | translate }}</span>
+          <button mat-stroked-button type="button" class="time-range-button" (click)="openTimeRangeDialog()">
+            {{ timeRangeLabel() }}
+          </button>
+          @if (hasTimeRange()) {
+            <button mat-button type="button" (click)="clearTimeRange()">
+              {{ 'Clear' | translate }}
+            </button>
+          }
+        </div>
+      </form>
+
+      @if (loading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+      @if (error()) {
+        <div class="notice error compact">{{ error() | translate }}</div>
+      }
+      @if (response(); as result) {
+        @if (result.warnings.length > 0 || result.blockers.length > 0) {
+          <div class="notice warning compact">
+            @for (warning of result.warnings; track warning) {
+              <span>{{ userFacingSearchNotice(warning) | translate }}</span>
+            }
+            @for (blocker of result.blockers; track blocker) {
+              <span>{{ userFacingSearchNotice(blocker) | translate }}</span>
+            }
+          </div>
+        }
+
+        @if (embeddingUnavailable(result)) {
+          <div class="notice warning compact embedding-action">
+            <span>{{ 'Vector search model is unavailable. Open Harbor Assistant Settings / AI Settings / Models to select or install a model, then re-index the knowledge base.' | translate }}</span>
+            <button mat-stroked-button type="button" (click)="openHarborAssistantModels()">{{ 'Open model settings' | translate }}</button>
+          </div>
+        }
+      }
+    </aside>
+  </div>
+</section>

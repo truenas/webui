@@ -120,8 +120,8 @@ export class NavigationService {
       name: T('Harbor Assistant'),
       type: MenuItemType.Link,
       tooltip: T('Harbor Assistant'),
-      icon: tnIconMarker('app-desktop-harborbot', 'custom'),
-      iconActive: tnIconMarker('app-desktop-harborbot-active', 'custom'),
+      icon: tnIconMarker('app-desktop-harbor-assistant', 'custom'),
+      iconActive: tnIconMarker('app-desktop-harbor-assistant-active', 'custom'),
       state: 'harbor-assistant',
     },
     {

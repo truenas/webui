@@ -65,7 +65,9 @@ function processLanguageFiles(languages: string[]): void {
       '--clean',
     ];
 
-    const child = spawn('./node_modules/.bin/ngx-translate-extract', args, { stdio: 'inherit' });
+    const child = process.platform === 'win32'
+      ? spawn('cmd.exe', ['/d', '/s', '/c', 'node_modules\\.bin\\ngx-translate-extract.cmd', ...args], { stdio: 'inherit' })
+      : spawn('./node_modules/.bin/ngx-translate-extract', args, { stdio: 'inherit' });
 
     child.on('close', (code) => {
       if (code !== 0) {

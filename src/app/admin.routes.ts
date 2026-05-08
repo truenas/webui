@@ -57,23 +57,8 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'harbor-assistant',
-        loadChildren: () => import('app/pages/harbordesk/harbordesk.routes').then((module) => module.harbordeskRoutes),
+        loadChildren: () => import('app/pages/harbor-assistant/harbor-assistant.routes').then((module) => module.harborAssistantRoutes),
         data: { title: T('Harbor Assistant'), breadcrumb: T('Harbor Assistant') },
-      },
-      {
-        path: 'harbordesk',
-        loadChildren: () => import('app/pages/harbordesk/harbordesk.routes').then((module) => module.harbordeskRoutes),
-        data: { title: T('Harbor Assistant'), breadcrumb: T('Harbor Assistant') },
-      },
-      {
-        path: 'harborbot',
-        loadChildren: () => import('app/pages/harborbot/harborbot.routes').then((module) => module.harborbotRoutes),
-        data: { title: T('HarborBot'), breadcrumb: T('HarborBot') },
-      },
-      {
-        path: 'harborcam',
-        loadChildren: () => import('app/pages/harborcam/harborcam.routes').then((module) => module.harborcamRoutes),
-        data: { title: T('HarborCam'), breadcrumb: T('HarborCam') },
       },
       {
         path: 'sharing',
