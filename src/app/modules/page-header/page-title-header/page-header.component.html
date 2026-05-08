@@ -23,6 +23,10 @@
     <div class="border-r h-[42px]"></div>
     <div class="flex items-center gap-5">
       <button mat-button class="cursor-pointer border w-[42px] h-[42px] rounded-full flex items-center justify-center shadow-md"
+        (click)="goBack()">
+        <tn-icon name="chevron-left" library="mdi"></tn-icon>
+      </button>
+      <button mat-button class="cursor-pointer border w-[42px] h-[42px] rounded-full flex items-center justify-center shadow-md"
         (click)="minimize()">
         <tn-icon name="minus" library="mdi"></tn-icon>
       </button>

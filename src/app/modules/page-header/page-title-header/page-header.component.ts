@@ -73,6 +73,10 @@ export class PageHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  goBack(): void {
+    history.back();
+  }
+
   minimize(): void {
     const currentState = this.getCurrentMenuItemState();
     this.store.dispatch(appBarMinimized({ stateName: currentState }));

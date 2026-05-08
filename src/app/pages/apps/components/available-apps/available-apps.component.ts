@@ -16,6 +16,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
@@ -44,6 +45,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     MatButton,
     UiSearchDirective,
     RouterLink,
+    PageContentComponent,
   ],
 })
 export class AvailableAppsComponent implements OnInit {
