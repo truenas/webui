@@ -1,0 +1,209 @@
+.home-assistant-page {
+  display: grid;
+  gap: 16px;
+}
+
+.settings-card {
+  border: 1px solid var(--lines);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.ha-status-card mat-card-content,
+.native-panel mat-card-content {
+  display: grid;
+  gap: 16px;
+}
+
+.ha-status-toolbar,
+.ha-install-line {
+  align-items: center;
+  border: 1px solid var(--lines);
+  border-left-width: 4px;
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 16px;
+
+  p {
+    color: var(--fg2);
+    margin: 4px 0 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.ha-config-form {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  mat-checkbox,
+  .full-span {
+    grid-column: 1 / -1;
+  }
+}
+
+.advanced-sync-scope {
+  border-top: 1px solid var(--lines);
+  padding-top: 8px;
+
+  summary {
+    color: var(--fg2);
+    cursor: pointer;
+    font-weight: 600;
+    width: max-content;
+  }
+
+  mat-form-field {
+    margin-top: 12px;
+    width: 100%;
+  }
+}
+
+.ha-metric-grid,
+.ha-install-plan {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ha-install-plan {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  > div {
+    border: 1px solid var(--lines);
+    border-radius: 8px;
+    padding: 12px;
+  }
+}
+
+.field-label {
+  color: var(--fg2);
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.button-row,
+.row-actions,
+.ha-service-domain-list {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-block {
+  border: 1px solid var(--lines);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 12px;
+
+  span {
+    color: var(--fg2);
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+}
+
+.tone-good {
+  border-left-color: var(--green);
+}
+
+.tone-warn {
+  border-left-color: var(--orange);
+}
+
+.tone-danger {
+  border-left-color: var(--red);
+}
+
+.tone-neutral {
+  border-left-color: var(--primary);
+}
+
+.pill {
+  border: 1px solid var(--lines);
+  border-radius: 999px;
+  color: var(--fg2);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 4px 10px;
+}
+
+.table-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.table-row {
+  align-items: center;
+  border: 1px solid var(--lines);
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px;
+
+  h2 {
+    font-size: 16px;
+    margin: 0 0 4px;
+  }
+}
+
+.muted {
+  color: var(--fg2);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  border: 1px solid var(--lines);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.notice.error {
+  border-left-color: var(--red);
+}
+
+.notice.success {
+  border-left-color: var(--green);
+}
+
+.compact-notice {
+  margin-top: -4px;
+}
+
+.empty-state {
+  border: 1px dashed var(--lines);
+  border-radius: 8px;
+  color: var(--fg2);
+  padding: 16px;
+}
+
+@media (max-width: 960px) {
+  .ha-config-form,
+  .ha-metric-grid,
+  .ha-install-plan {
+    grid-template-columns: 1fr;
+  }
+
+  .ha-status-toolbar,
+  .ha-install-line,
+  .table-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

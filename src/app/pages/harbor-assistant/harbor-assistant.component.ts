@@ -25,6 +25,7 @@ import { Observable, forkJoin, of, timer } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HarborAssistantCameraComponent } from 'app/pages/harbor-assistant/camera/harbor-assistant-camera.component';
+import { HarborAssistantHomeAssistantComponent } from 'app/pages/harbor-assistant/home-assistant/harbor-assistant-home-assistant.component';
 import { HarborAssistantSearchComponent } from 'app/pages/harbor-assistant/search/harbor-assistant-search.component';
 import {
   FolderPickerDialogComponent,
@@ -374,6 +375,7 @@ export const harborAssistantI18nMarkers = [
     NgClass,
     HarborAssistantSearchComponent,
     HarborAssistantCameraComponent,
+    HarborAssistantHomeAssistantComponent,
     PageHeaderComponent,
     ReactiveFormsModule,
     RouterLink,
@@ -393,6 +395,7 @@ export class HarborAssistantComponent implements OnInit {
     { id: 'search', label: T('Search'), detail: '' },
     { id: 'camera', label: T('Camera'), detail: '' },
     { id: 'messages', label: T('Message connections'), detail: '' },
+    { id: 'home-assistant', label: T('Home Assistant'), detail: '' },
     { id: 'settings', label: T('Settings'), detail: '' },
   ];
 

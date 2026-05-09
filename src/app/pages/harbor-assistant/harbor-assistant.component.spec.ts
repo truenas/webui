@@ -101,18 +101,19 @@ describe('Harbor Assistant component', () => {
     expect(spectator.query('.settings-tab')).not.toExist();
   });
 
-  it('uses one native Harbor Assistant shell for search, camera, messages, and settings', () => {
+  it('uses one native Harbor Assistant shell for search, camera, messages, Home Assistant, and settings', () => {
     spectator = createComponent();
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      selectTab: (tab: 'messages' | 'settings') => void;
+      selectTab: (tab: 'messages' | 'home-assistant' | 'settings') => void;
       selectSettingsSection: (section: 'ai' | 'camera') => void;
     };
 
     expect(spectator.query('.tab-strip')).toHaveText('Search');
     expect(spectator.query('.tab-strip')).toHaveText('Camera');
     expect(spectator.query('.tab-strip')).toHaveText('Message connections');
+    expect(spectator.query('.tab-strip')).toHaveText('Home Assistant');
     expect(spectator.query('.tab-strip')).toHaveText('Settings');
 
     component.selectTab('messages');
@@ -123,6 +124,10 @@ describe('Harbor Assistant component', () => {
     expect(spectator.query('input[type="radio"]')).toExist();
     expect(spectator.element.textContent).not.toContain('Route key');
     expect(spectator.element.textContent).not.toContain('route_key');
+
+    component.selectTab('home-assistant');
+    spectator.detectChanges();
+    expect(spectator.query('.home-assistant-tab')).toExist();
 
     component.selectTab('settings');
     component.selectSettingsSection('camera');
@@ -1216,6 +1221,101 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       blockers: [],
     })),
     getHarborOsImCapabilityMap: jest.fn(() => of({ items: [] })),
+    getHomeAssistantStatus: jest.fn(() => of({
+      configured: false,
+      enabled: true,
+      base_url: '',
+      token_configured: false,
+      token_redacted: false,
+      exposed_domains: ['light', 'switch', 'sensor', 'camera'],
+      status: 'not_configured',
+      entity_count: 0,
+      service_count: 0,
+    })),
+    saveHomeAssistantConfig: jest.fn((payload) => of({
+      status: {
+        configured: Boolean(payload.base_url),
+        enabled: payload.enabled,
+        base_url: payload.base_url,
+        token_configured: Boolean(payload.access_token),
+        token_redacted: Boolean(payload.access_token),
+        exposed_domains: payload.exposed_domains,
+        status: payload.base_url ? 'configured' : 'not_configured',
+        entity_count: 0,
+        service_count: 0,
+      },
+    })),
+    testHomeAssistantConnection: jest.fn(() => of({
+      test: { ok: true, status: 'connected', location_name: 'Home', version: '2026.5.0' },
+      status: {
+        configured: true,
+        enabled: true,
+        base_url: 'http://192.168.3.82:8123',
+        token_configured: true,
+        token_redacted: true,
+        exposed_domains: ['light', 'camera'],
+        status: 'connected',
+        entity_count: 0,
+        service_count: 0,
+        location_name: 'Home',
+        version: '2026.5.0',
+      },
+    })),
+    syncHomeAssistant: jest.fn(() => of({
+      status: {
+        configured: true,
+        enabled: true,
+        base_url: 'http://192.168.3.82:8123',
+        token_configured: true,
+        token_redacted: true,
+        exposed_domains: ['light', 'camera'],
+        status: 'synced',
+        entity_count: 1,
+        service_count: 1,
+      },
+      entities: [{ entity_id: 'light.kitchen', domain: 'light', state: 'on', display_name: 'Kitchen' }],
+      service_domains: [{ domain: 'light', services: [{ service: 'turn_on' }] }],
+    })),
+    getHomeAssistantEntities: jest.fn(() => of({
+      entities: [{ entity_id: 'light.kitchen', domain: 'light', state: 'on', display_name: 'Kitchen' }],
+    })),
+    getHomeAssistantServices: jest.fn(() => of({
+      services: [{ domain: 'light', services: [{ service: 'turn_on' }] }],
+    })),
+    getHomeAssistantInstallStatus: jest.fn(() => of({
+      app_id: 'home-assistant',
+      status: 'not_installed',
+      managed: true,
+      runtime: 'docker_container',
+      container_name: 'harbor-home-assistant',
+      onboarding_url: null,
+      message: 'Home Assistant Container is not installed yet.',
+    })),
+    getHomeAssistantInstallPlan: jest.fn(() => of({
+      app_id: 'home-assistant',
+      target: 'Home Assistant Container',
+      runtime: 'docker',
+      image: 'ghcr.io/home-assistant/home-assistant:stable',
+      container_name: 'harbor-home-assistant',
+      ports: ['8123:8123/tcp'],
+      volumes: ['harbor-home-assistant-config:/config'],
+      next_step: 'Create the container.',
+    })),
+    installHomeAssistant: jest.fn(() => of({
+      status: 'created',
+      dry_run: false,
+      message: 'Home Assistant install requested.',
+      plan: {
+        app_id: 'home-assistant',
+        target: 'Home Assistant Container',
+        runtime: 'docker',
+        image: 'ghcr.io/home-assistant/home-assistant:stable',
+        container_name: 'harbor-home-assistant',
+        ports: ['8123:8123/tcp'],
+        volumes: ['harbor-home-assistant-config:/config'],
+        next_step: 'Create the container.',
+      },
+    })),
     getShareLinks: jest.fn(() => of([])),
   };
 }

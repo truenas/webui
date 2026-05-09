@@ -20,6 +20,16 @@ import {
   FilesBrowseResponse,
   GatewayStatusResponse,
   HarborAssistantBackendStatus,
+  HomeAssistantConfigPayload,
+  HomeAssistantConfigResponse,
+  HomeAssistantEntitiesResponse,
+  HomeAssistantInstallPlanResponse,
+  HomeAssistantInstallResponse,
+  HomeAssistantInstallStatusResponse,
+  HomeAssistantServicesResponse,
+  HomeAssistantStatusResponse,
+  HomeAssistantSyncResponse,
+  HomeAssistantTestResponse,
   HarborOsImCapabilityMapResponse,
   HarborOsStatusResponse,
   HardwareReadinessResponse,
@@ -50,6 +60,10 @@ import {
 })
 export class HarborAssistantApiService {
   private http = inject(HttpClient);
+
+  private apiUrl(path: string): string {
+    return `/api/harbor-assistant${path}`;
+  }
 
   getState(): Observable<AdminStateResponse> {
     return this.http.get<AdminStateResponse>('/api/harbor-assistant/state');
@@ -133,6 +147,44 @@ export class HarborAssistantApiService {
 
   getHarborOsImCapabilityMap(): Observable<HarborOsImCapabilityMapResponse> {
     return this.http.get<HarborOsImCapabilityMapResponse>('/api/harbor-assistant/harboros/im-capability-map');
+  }
+
+  getHomeAssistantStatus(): Observable<HomeAssistantStatusResponse> {
+    return this.http.get<HomeAssistantStatusResponse>(this.apiUrl('/home-assistant/status'));
+  }
+
+  saveHomeAssistantConfig(payload: HomeAssistantConfigPayload): Observable<HomeAssistantConfigResponse> {
+    return this.http.put<HomeAssistantConfigResponse>(this.apiUrl('/home-assistant/config'), payload);
+  }
+
+  testHomeAssistantConnection(): Observable<HomeAssistantTestResponse> {
+    return this.http.post<HomeAssistantTestResponse>(this.apiUrl('/home-assistant/test'), {});
+  }
+
+  syncHomeAssistant(): Observable<HomeAssistantSyncResponse> {
+    return this.http.post<HomeAssistantSyncResponse>(this.apiUrl('/home-assistant/sync'), {});
+  }
+
+  getHomeAssistantEntities(): Observable<HomeAssistantEntitiesResponse> {
+    return this.http.get<HomeAssistantEntitiesResponse>(this.apiUrl('/home-assistant/entities'));
+  }
+
+  getHomeAssistantServices(): Observable<HomeAssistantServicesResponse> {
+    return this.http.get<HomeAssistantServicesResponse>(this.apiUrl('/home-assistant/services'));
+  }
+
+  getHomeAssistantInstallStatus(): Observable<HomeAssistantInstallStatusResponse> {
+    return this.http.get<HomeAssistantInstallStatusResponse>(this.apiUrl('/harboros/apps/home-assistant/status'));
+  }
+
+  getHomeAssistantInstallPlan(): Observable<HomeAssistantInstallPlanResponse> {
+    return this.http.post<HomeAssistantInstallPlanResponse>(this.apiUrl('/harboros/apps/home-assistant/install-plan'), {});
+  }
+
+  installHomeAssistant(dryRun = false): Observable<HomeAssistantInstallResponse> {
+    return this.http.post<HomeAssistantInstallResponse>(this.apiUrl('/harboros/apps/home-assistant/install'), {
+      dry_run: dryRun,
+    });
   }
 
   getModelEndpoints(): Observable<ModelEndpointsResponse> {

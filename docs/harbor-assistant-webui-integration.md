@@ -37,6 +37,8 @@ proxy remains separate.
 - Devices & AIoT management for discovery scan, manual device add, default
   camera selection, RTSP checks, snapshot checks, share-link create/revoke, and
   device credential configured/redacted status.
+- Home Assistant bridge setup for read-only connection status, token test,
+  entity sync, exposed domains, and managed Container install lifecycle.
 - All Harbor Assistant backend calls use `/api/harbor-assistant/*` and are rewritten by the
   dev proxy to the HarborBeacon single-port API.
 - Overview health reads include the HarborBeacon inference facade at

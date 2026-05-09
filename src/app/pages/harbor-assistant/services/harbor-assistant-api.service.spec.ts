@@ -192,6 +192,105 @@ describe('Harbor Assistant API service', () => {
     await harborOsPromise;
   });
 
+  it('keeps Home Assistant APIs under the Harbor Assistant proxy', async () => {
+    const haStatus = {
+      configured: true,
+      enabled: true,
+      base_url: 'http://homeassistant.local:8123',
+      token_configured: true,
+      token_redacted: true,
+      exposed_domains: ['light', 'switch'],
+      status: 'connected',
+      entity_count: 2,
+      service_count: 3,
+    };
+    const installPlan = {
+      app_id: 'home-assistant',
+      target: 'docker',
+      runtime: 'container',
+      image: 'ghcr.io/home-assistant/home-assistant:stable',
+      container_name: 'harbor-home-assistant',
+      ports: ['8123:8123'],
+      volumes: ['harbor-home-assistant-config:/config'],
+      next_step: 'Create a long-lived token in Home Assistant.',
+    };
+
+    const statusPromise = firstValueFrom(spectator.service.getHomeAssistantStatus());
+    const statusReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/status');
+    expect(statusReq.request.method).toBe('GET');
+    statusReq.flush(haStatus);
+    expect((await statusPromise).status).toBe('connected');
+
+    const configPromise = firstValueFrom(spectator.service.saveHomeAssistantConfig({
+      enabled: true,
+      base_url: 'http://homeassistant.local:8123',
+      access_token: 'secret-token',
+      exposed_domains: ['light'],
+    }));
+    const configReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/config');
+    expect(configReq.request.method).toBe('PUT');
+    expect(configReq.request.url).not.toContain('harborgate');
+    expect(configReq.request.body.access_token).toBe('secret-token');
+    configReq.flush({ status: haStatus });
+    await configPromise;
+
+    const testPromise = firstValueFrom(spectator.service.testHomeAssistantConnection());
+    const testReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/test');
+    expect(testReq.request.method).toBe('POST');
+    testReq.flush({ test: { ok: true, status: 'connected' }, status: haStatus });
+    await testPromise;
+
+    const syncPromise = firstValueFrom(spectator.service.syncHomeAssistant());
+    const syncReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/sync');
+    expect(syncReq.request.method).toBe('POST');
+    syncReq.flush({ status: haStatus, entities: [], service_domains: [] });
+    await syncPromise;
+
+    const entitiesPromise = firstValueFrom(spectator.service.getHomeAssistantEntities());
+    const entitiesReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/entities');
+    expect(entitiesReq.request.method).toBe('GET');
+    entitiesReq.flush({ entities: [] });
+    await entitiesPromise;
+
+    const servicesPromise = firstValueFrom(spectator.service.getHomeAssistantServices());
+    const servicesReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/services');
+    expect(servicesReq.request.method).toBe('GET');
+    servicesReq.flush({ services: [] });
+    await servicesPromise;
+
+    const installStatusPromise = firstValueFrom(spectator.service.getHomeAssistantInstallStatus());
+    const installStatusReq = httpMock.expectOne('/api/harbor-assistant/harboros/apps/home-assistant/status');
+    expect(installStatusReq.request.method).toBe('GET');
+    installStatusReq.flush({
+      app_id: 'home-assistant',
+      status: 'not_installed',
+      managed: false,
+      runtime: 'container',
+      container_name: null,
+      onboarding_url: null,
+      message: 'Home Assistant is not installed.',
+    });
+    await installStatusPromise;
+
+    const installPlanPromise = firstValueFrom(spectator.service.getHomeAssistantInstallPlan());
+    const installPlanReq = httpMock.expectOne('/api/harbor-assistant/harboros/apps/home-assistant/install-plan');
+    expect(installPlanReq.request.method).toBe('POST');
+    installPlanReq.flush(installPlan);
+    await installPlanPromise;
+
+    const installPromise = firstValueFrom(spectator.service.installHomeAssistant(false));
+    const installReq = httpMock.expectOne('/api/harbor-assistant/harboros/apps/home-assistant/install');
+    expect(installReq.request.method).toBe('POST');
+    expect(installReq.request.body).toEqual({ dry_run: false });
+    installReq.flush({
+      status: 'installed',
+      dry_run: false,
+      plan: installPlan,
+      message: 'Home Assistant container is running.',
+    });
+    await installPromise;
+  });
+
   it('keeps model management APIs under /api/harbor-assistant', async () => {
     const endpointId = 'llm/local';
 
@@ -368,8 +467,8 @@ describe('Harbor Assistant API service', () => {
     );
 
     expect(source).toContain('const setupUrl = connected ? null : harborGateConnectorSetupUrl');
-    expect(template).toContain('重新绑定');
-    expect(template).toContain('管理');
+    expect(template).toContain('Reconnect');
+    expect(template).toContain('Manage');
     expect(template).toContain('color="primary"');
   });
 });
