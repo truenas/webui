@@ -112,7 +112,7 @@ export class AlertServiceComponent implements OnInit {
 
   readonly helptext = helptextAlertService;
 
-  private alertServiceForm: BaseAlertServiceForm;
+  protected alertServiceForm: BaseAlertServiceForm;
 
   constructor() {
     this.setFormEvents();

@@ -25,7 +25,10 @@ export class AddSubsystemNamespaceComponent {
   // Required by `ComponentInSlideIn<D, R>` for caller-side type inference on
   // `.onSuccess((response) => ...)`. Not used by this component itself —
   // `<ix-form>` (via the base) injects its own `SlideInRef` and owns close.
-  slideInRef = inject<SlideInRef<void, NamespaceChanges>>(SlideInRef);
+  // Field is annotated explicitly because `inject<…>(SlideInRef)` won't
+  // narrow the class's default generic args when nothing here reads from
+  // the ref — leaving the caller's `response` typed as `unknown`.
+  slideInRef = inject(SlideInRef) as SlideInRef<void, NamespaceChanges>;
 
   handleSubmit = (changes: NamespaceChanges): SubmitResult => ({
     request$: of(changes),
