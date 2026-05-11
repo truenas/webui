@@ -141,6 +141,8 @@ export class GroupFormComponent implements OnInit {
     // Uses the full form value instead of event.changedValues because sudo_commands
     // and sudo_commands_nopasswd are derived from their `_all` toggles; sending a
     // partial update based on which individual field changed would drop that pairing.
+    // This is the "Derived/paired controls" unsafe-diff case called out in
+    // FormSubmitEvent.changedValues' JSDoc.
     const values = this.form.getRawValue();
     const commonBody = {
       name: values.name,

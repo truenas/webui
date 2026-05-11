@@ -5,6 +5,7 @@ import {
   DestroyRef,
   inject,
   input,
+  isDevMode,
   OnInit,
   signal,
 } from '@angular/core';
@@ -45,6 +46,13 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
    * after init won't appear here. Conversely, controls `addControl`'d after
    * the snapshot was captured are absent from the snapshot and therefore
    * always treated as changed, even if their value matches the default.
+   *
+   * `removeControl` after the snapshot is the asymmetric case: the removed
+   * key is gone from `allValues` so the diff silently omits it, even if its
+   * pre-removal value was meaningful. Forms that toggle controls in/out
+   * dynamically should call `refreshSnapshot()` after the structural
+   * change so the baseline matches the new shape (or build the payload
+   * from `allValues` directly).
    *
    * Comparison is a shallow per-top-level-key deep equality (lodash isEqual).
    * Nested FormGroups and FormArrays compare correctly by value, but the
@@ -393,12 +401,16 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly dirtyPredicate = input<(() => Observable<boolean>) | null>(null);
 
   /**
-   * Internal loading state – set during form submission.
+   * Submit-only loading state, true while the wrapper's submit lifecycle
+   * is in flight. Consumer-stable: hosts read this via a template ref
+   * (e.g. `#ixForm` + `ixForm.isSubmitting()`) to gate extra-action
+   * buttons during submit. Renames here are breaking.
    */
   readonly isSubmitting = signal(false);
 
   /**
-   * Combined loading state – true during either external loading or submit.
+   * Combined loading state: submit OR `externalLoading`. Consumer-stable
+   * for the same reason as `isSubmitting`.
    */
   readonly isLoading = computed(() => this.isSubmitting() || this.externalLoading());
 
@@ -531,8 +543,22 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         onSuccess?.(result);
         const payload = closeWith ? closeWith(result) : result;
         // SlideInResponse treats `undefined` as a cancelled close, so coerce
-        // to `true` when no caller-chosen payload is available.
-        this.slideInRef.close({ response: payload === undefined ? true : payload });
+        // to `true` when no caller-chosen payload is available. Warn in dev
+        // mode when the coercion actually triggers — callers wiring
+        // `.onSuccess((res) => …)` to a void endpoint will silently observe
+        // `true` instead of `undefined` unless they provide `closeWith`.
+        if (payload === undefined) {
+          if (isDevMode()) {
+            console.warn(
+              '[ix-form] submitHandler.request$ emitted undefined and no closeWith was provided; '
+              + 'slide-in will close with `true` so upstream listeners don\'t observe a cancel. '
+              + 'Provide an explicit `closeWith` in SubmitResult to silence this warning.',
+            );
+          }
+          this.slideInRef.close({ response: true });
+        } else {
+          this.slideInRef.close({ response: payload });
+        }
         // Re-enable the button *after* close so a synchronous-complete
         // observable doesn't briefly expose an enabled save button while the
         // modal is animating out.
@@ -570,6 +596,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * No-op when `initialFormSnapshot` is bound externally: the wrapper does
    * not own that snapshot, so the consumer should re-emit a fresh value
    * through the input instead.
+   *
+   * Consumer-stable: hosts call this via a template ref after structural
+   * form changes. Renames are breaking.
    */
   refreshSnapshot(): void {
     if (this.initialFormSnapshot() != null) {

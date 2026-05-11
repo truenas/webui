@@ -142,6 +142,12 @@ export class AlertServiceComponent implements OnInit {
   // changing `type`. The new child form starts pristine even though the
   // user has clearly edited the parent — we keep a sticky bit so that
   // post-rerender state is still counted as dirty.
+  //
+  // Intentionally never reset: even if the user flips back to the
+  // original type, the act of swapping replaced the child form with a
+  // fresh instance, so the original child's pristine/dirty bookkeeping
+  // is gone. Treating that round-trip as "still dirty" is the safer
+  // default — false positive on dirty-confirm vs. silently losing edits.
   private hadTypeChange = false;
 
   // Combined dirty: both the top-level commonForm and the dynamic
