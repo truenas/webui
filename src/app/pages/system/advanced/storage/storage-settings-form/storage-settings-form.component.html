@@ -1,74 +1,59 @@
-<ix-modal-header
-  [requiredRoles]="anyRoles"
+<ix-form
+  [formGroup]="form"
+  [initialFormSnapshot]="initialSnapshot()"
+  [isEditMode]="true"
+  [requireDirty]="true"
   [title]="'Storage Settings' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
+  [requiredRoles]="anyRoles"
+  [submitHandler]="handleSubmit"
+>
+  <ix-fieldset>
+    <ix-select
+      formControlName="systemDatasetPool"
+      [label]="'System Dataset Pool' | translate"
+      [required]="true"
+      [options]="poolOptions$"
+    ></ix-select>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
+    @if (isSmbRunning$ | async) {
+      <ix-warning
+        [message]="helptext.smbRebootWarning | translate"
+      ></ix-warning>
+    }
+  </ix-fieldset>
+
+  <ix-fieldset
+    [title]="'Priority Resilvering' | translate"
+    [formGroup]="form.controls.priorityResilver"
+  >
+    <ix-checkbox
+      formControlName="enabled"
+      [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
+      [tooltip]="helptext.priorityResilverEnabled | translate"
+    ></ix-checkbox>
+
+    @if (this.form.value.priorityResilver.enabled) {
+      <ix-select
+        formControlName="weekday"
+        [label]="'Days of the Week' | translate"
+        [options]="daysOfWeek$"
+        [multiple]="true"
+        [required]="true"
+      ></ix-select>
+
+      <div class="priority-times">
         <ix-select
-          formControlName="systemDatasetPool"
-          [label]="'System Dataset Pool' | translate"
-          [required]="true"
-          [options]="poolOptions$"
+          formControlName="begin"
+          [label]="'From' | translate"
+          [options]="timeOptions$"
         ></ix-select>
 
-        @if (isSmbRunning$ | async) {
-          <ix-warning
-            [message]="helptext.smbRebootWarning | translate"
-          ></ix-warning>
-        }
-      </ix-fieldset>
-
-      <ix-fieldset
-        [title]="'Priority Resilvering' | translate"
-        [formGroup]="form.controls.priorityResilver"
-      >
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Run Resilvering At Higher Priority At Certain Times' | translate"
-          [tooltip]="helptext.priorityResilverEnabled | translate"
-        ></ix-checkbox>
-
-        @if (this.form.value.priorityResilver.enabled) {
-          <ix-select
-            formControlName="weekday"
-            [label]="'Days of the Week' | translate"
-            [options]="daysOfWeek$"
-            [multiple]="true"
-            [required]="true"
-          ></ix-select>
-
-          <div class="priority-times">
-            <ix-select
-              formControlName="begin"
-              [label]="'From' | translate"
-              [options]="timeOptions$"
-            ></ix-select>
-
-            <ix-select
-              formControlName="end"
-              [label]="'To' | translate"
-              [options]="timeOptions$"
-            ></ix-select>
-          </div>
-        }
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="anyRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+        <ix-select
+          formControlName="end"
+          [label]="'To' | translate"
+          [options]="timeOptions$"
+        ></ix-select>
+      </div>
+    }
+  </ix-fieldset>
+</ix-form>

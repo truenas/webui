@@ -15,6 +15,7 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -34,6 +35,7 @@ describe('StorageSettingsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
@@ -152,13 +154,13 @@ describe('StorageSettingsFormComponent', () => {
     expect(await warning.getText()).toBe(helptextSystemAdvanced.storageSettings.smbRebootWarning);
   });
 
-  it('closes the form with no requests if no changes were made', async () => {
+  it('keeps Save disabled and fires no requests when nothing is changed', async () => {
+    // requireDirty=true gates the save button while the form is pristine; the
+    // old "close with undefined response" path is now expressed as "Save is
+    // simply unavailable", so the caller's success$ never fires.
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    expect(await saveButton.isDisabled()).toBe(true);
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: undefined,
-    });
     expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
     expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());
   });
