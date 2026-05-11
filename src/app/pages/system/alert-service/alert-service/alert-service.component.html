@@ -5,7 +5,7 @@
   [editTitle]="'Edit Alert Service' | translate"
   [requiredRoles]="requiredRoles"
   [dirtyPredicate]="dirtyPredicate"
-  [extraDisabled]="!!alertServiceForm?.form?.invalid"
+  [extraDisabled]="childFormInvalid()"
   [externalLoading]="testAlertLoading()"
   [submitHandler]="handleSubmit"
 >

@@ -7,7 +7,9 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { finalize, Observable, of } from 'rxjs';
+import {
+  finalize, Observable, of, startWith, Subscription,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
@@ -108,6 +110,16 @@ export class AlertServiceComponent implements OnInit {
   protected readonly testAlertLoading = signal(false);
   protected readonly existingAlertService = this.slideInRef.getData();
 
+  // Mirrors the dynamic child form's `invalid` state into a signal so the
+  // wrapper's OnPush `[extraDisabled]` binding (and the Send Test Alert
+  // button's `[disabled]`) re-evaluate reactively. The child lives in a
+  // ViewContainerRef, so its statusChanges don't flow through Angular's
+  // input system to this host — without this mirror, a programmatic
+  // setValidators/setValue on the child wouldn't tick CD on the host and
+  // the gate would appear stuck.
+  protected readonly childFormInvalid = signal(true);
+  private childFormStatusSub?: Subscription;
+
   private readonly alertServiceContainer = viewChild.required('alertServiceContainer', { read: ViewContainerRef });
 
   readonly helptext = helptextAlertService;
@@ -123,7 +135,7 @@ export class AlertServiceComponent implements OnInit {
   }
 
   get canSubmit(): boolean {
-    return this.commonForm.valid && this.alertServiceForm?.form.valid;
+    return this.commonForm.valid && !this.childFormInvalid();
   }
 
   // True once the user has ever caused the child form to re-render by
@@ -233,6 +245,16 @@ export class AlertServiceComponent implements OnInit {
     const formClass = this.getAlertServiceClass();
     const formRef = this.alertServiceContainer().createComponent(formClass);
     this.alertServiceForm = formRef.instance;
+
+    // Re-subscribe each render: the previous child's statusChanges belongs
+    // to a destroyed FormGroup and would never emit again, but the explicit
+    // unsubscribe keeps the subscription list bounded if `type` is flipped
+    // many times in one session.
+    this.childFormStatusSub?.unsubscribe();
+    this.childFormStatusSub = this.alertServiceForm.form.statusChanges.pipe(
+      startWith(this.alertServiceForm.form.status),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.childFormInvalid.set(this.alertServiceForm.form.invalid));
   }
 
   private getAlertServiceClass(): Type<BaseAlertServiceForm> {

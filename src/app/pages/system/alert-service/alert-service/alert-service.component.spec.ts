@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { NEVER } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -44,7 +45,12 @@ jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
         get valid(): boolean {
           return true;
         },
-      } as FormGroup;
+        get invalid(): boolean {
+          return false;
+        },
+        status: 'VALID',
+        statusChanges: NEVER,
+      } as unknown as FormGroup;
     }),
   };
 });
@@ -64,7 +70,12 @@ jest.mock('./alert-services/ops-genie-service/ops-genie-service.component', () =
         get valid(): boolean {
           return true;
         },
-      } as FormGroup;
+        get invalid(): boolean {
+          return false;
+        },
+        status: 'VALID',
+        statusChanges: NEVER,
+      } as unknown as FormGroup;
     }),
   };
 });

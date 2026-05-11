@@ -175,7 +175,7 @@ export class CloudSyncFormComponent implements OnInit {
   });
 
   isCredentialInvalid$ = new BehaviorSubject(false);
-  isLoading = signal(false);
+  protected isLoading = signal(false);
   bucketPlaceholder: string = helptextCloudSync.bucketLabel;
   bucketTooltip: string = helptextCloudSync.bucketTooltip;
   bucketInputPlaceholder: string = helptextCloudSync.bucketLabel;
