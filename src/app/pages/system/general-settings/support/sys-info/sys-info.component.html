@@ -1,25 +1,31 @@
 @let license = licenseInfo();
-@if (hasLicense() && license) {
-  <mat-list>
-    <mat-list-item>
-      <span class="label">{{ 'Contract Type' | translate }}:</span>
-      <span class="value">{{ getLabelForContractType(license.contract_type) }}</span>
-    </mat-list-item>
-    <mat-list-item>
-      <span class="label">{{ 'Expiration Date' | translate }}:</span>
-      <span class="value">
-        {{ license.expiration_date }}
-        @if (license.daysLeftinContract > 0) {
-          ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: license.daysLeftinContract } }})
-        }
-        @if (license.daysLeftinContract === 0) {
-          ({{ 'EXPIRES TODAY' | translate }})
-        }
-        @if (license.daysLeftinContract < 0) {
-          ({{ 'EXPIRED' | translate }})
-        }
-      </span>
-    </mat-list-item>
+<mat-list>
+  @if (hasLicense() && license) {
+    @if (license.contractType) {
+      <mat-list-item>
+        <span class="label">{{ 'Contract Type' | translate }}:</span>
+        <span class="value">{{ getLabelForContractType(license.contractType) }}</span>
+      </mat-list-item>
+    }
+    @if (license.expirationDateDisplay) {
+      <mat-list-item>
+        <span class="label">{{ 'Expiration Date' | translate }}:</span>
+        <span class="value">
+          {{ license.expirationDateDisplay }}
+          @if (license.daysLeftInContract !== null) {
+            @if (license.daysLeftInContract > 0) {
+              ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: license.daysLeftInContract } }})
+            }
+            @if (license.daysLeftInContract === 0) {
+              ({{ 'EXPIRES TODAY' | translate }})
+            }
+            @if (license.daysLeftInContract < 0) {
+              ({{ 'EXPIRED' | translate }})
+            }
+          }
+        </span>
+      </mat-list-item>
+    }
     @if (isProactiveSupportEnabled() || !isProactiveSupportAvailable()) {
       <mat-list-item class="proactive-status">
         <span class="label">{{ 'Proactive Support' | translate }}:</span>
@@ -63,35 +69,29 @@
         <span class="value">{{ systemInfo().system_serial }}</span>
       </mat-list-item>
     }
-    @if (license.system_serial || license.system_serial_ha) {
+    @if (license.serials.length) {
       <mat-list-item>
         <span class="label">{{ 'Licensed Serials' | translate }}:</span>
-        <span class="value">
-          @if (license.system_serial) {
-            <span>{{ license.system_serial }}</span>
-          }
-          @if (license.system_serial && license.system_serial_ha) {
-            <span> / </span>
-          }
-          @if (license.system_serial_ha) {
-            <span>{{ license.system_serial_ha }}</span>
-          }
-        </span>
+        <span class="value">{{ license.serials.join(' / ') }}</span>
       </mat-list-item>
     }
     <mat-list-item>
       <span class="label">{{ 'Features' | translate }}:</span>
-      <span class="value">{{ license.features.length ? license.features.join(', ') : 'NONE' }}</span>
+      <span class="value">
+        @if (license.featureNames.length) {
+          {{ license.featureNames.join(', ') }}
+        } @else {
+          {{ 'NONE' | translate }}
+        }
+      </span>
     </mat-list-item>
-    @if (license.add_hardware) {
+    @if (license.additionalHardware) {
       <mat-list-item>
         <span class="label">{{ 'Additional Hardware' | translate }}:</span>
-        <span class="value">{{ license.add_hardware }}</span>
+        <span class="value">{{ license.additionalHardware }}</span>
       </mat-list-item>
     }
-  </mat-list>
-} @else {
-  <mat-list>
+  } @else {
     <mat-list-item>
       <span class="label">{{ 'OS Version' | translate }}:</span>
       <span class="value">{{ systemInfo().version }}</span>
@@ -118,5 +118,32 @@
         <span class="value">{{ systemInfo().system_serial }}</span>
       </mat-list-item>
     }
-  </mat-list>
-}
+  }
+
+  <mat-list-item class="fingerprint-row">
+    <span class="label">{{ 'System Thumbprint' | translate }}:</span>
+    <span class="value fingerprint-actions">
+      <button
+        mat-icon-button
+        type="button"
+        ixTest="view-fingerprint"
+        [attr.aria-label]="'View System Thumbprint' | translate"
+        [matTooltip]="'View Thumbprint' | translate"
+        (click)="openFingerprintDialog()"
+      >
+        <tn-icon name="eye" library="mdi" size="md"></tn-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        ixTest="copy-fingerprint"
+        [attr.aria-label]="'Copy System Thumbprint' | translate"
+        [disabled]="isFingerprintBusy()"
+        [matTooltip]="'Copy to Clipboard' | translate"
+        (click)="copyFingerprint()"
+      >
+        <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
+      </button>
+    </span>
+  </mat-list-item>
+</mat-list>

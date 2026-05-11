@@ -259,7 +259,6 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
       1,
       {
         topology: {
-          cache: [],
           data: [
             { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
           ],
@@ -270,7 +269,6 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             { type: TopologyItemType.Stripe, disks: ['sda1'] },
           ],
           spares: ['sda2'],
-          special: [],
         },
         allow_duplicate_serials: false,
       },

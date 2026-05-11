@@ -71,6 +71,7 @@ export interface App {
   active_workloads: AppActiveWorkloads;
   state: AppState;
   upgrade_available: boolean;
+  action_required: boolean;
   latest_version: string;
   /**
    * Latest upstream app version available. Provided by backend for version comparison.
@@ -137,6 +138,7 @@ export interface AppCreate {
   catalog_app: string;
   train: string;
   version?: string;
+  custom_compose_config?: Record<string, unknown>;
   custom_compose_config_string?: string;
   custom_app?: boolean;
 }

@@ -397,23 +397,7 @@ describe('PoolManagerValidationService', () => {
       [VDevType.Special]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
-        vdevs: [
-          [
-            {
-              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
-              name: 'sdc',
-              subsystem: 'scsi',
-              number: 2080,
-              serial: '8HG29G5H',
-              lunid: '5000cca2700430f8',
-              enclosure: {
-                number: 0,
-                slot: 1,
-              },
-              devname: 'sdc',
-            },
-          ],
-        ],
+        vdevs: [[{ devname: 'sdc' }]],
       },
     });
     const mockEnclosureSettings$ = of({
@@ -476,23 +460,7 @@ describe('PoolManagerValidationService', () => {
       [VDevType.Dedup]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
-        vdevs: [
-          [
-            {
-              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
-              name: 'sdc',
-              subsystem: 'scsi',
-              number: 2080,
-              serial: '8HG29G5H',
-              lunid: '5000cca2700430f8',
-              enclosure: {
-                number: 0,
-                slot: 1,
-              },
-              devname: 'sdc',
-            },
-          ],
-        ],
+        vdevs: [[{ devname: 'sdc' }]],
       },
     });
     const mockEnclosureSettings$ = of({
@@ -542,6 +510,237 @@ describe('PoolManagerValidationService', () => {
             },
           ],
         });
+      });
+    });
+  });
+
+  describe('incomplete optional category validation', () => {
+    const emptyCategory: Partial<PoolManagerTopologyCategory> = { vdevs: [], diskSize: null, layout: null };
+    const dataCategory: Partial<PoolManagerTopologyCategory> = {
+      vdevs: [[{}]] as PoolManagerTopologyCategory['vdevs'],
+      layout: CreateVdevLayout.Raidz2,
+    };
+
+    const sharedProviders = [
+      mockProvider(AddVdevsStore, { pool$: of(null) }),
+      provideMockStore({
+        selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+      }),
+    ];
+    const sharedStoreMock = {
+      name$: of('Pool'),
+      nameErrors$: of(null),
+      enclosureSettings$: of({
+        limitToSingleEnclosure: null,
+        dispersalStrategy: DispersalStrategy.None,
+      }),
+      hasMultipleEnclosuresAfterFirstStep$: of(false),
+    };
+
+    describe('when user picked a disk size for metadata but width was cleared', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Special]: {
+                ...emptyCategory,
+                diskSize: 12000138625024,
+                layout: CreateVdevLayout.Raidz2,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags metadata step', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+        });
+      });
+    });
+
+    describe('when user picked a disk size for dedup but width was cleared', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Dedup]: {
+                ...emptyCategory,
+                diskSize: 12000138625024,
+                layout: CreateVdevLayout.Raidz2,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags dedup step', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Dedup,
+          text: 'Dedup VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+        });
+      });
+    });
+
+    describe('when user toggled treatDiskSizeAsMinimum on metadata but nothing else', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Special]: {
+                ...emptyCategory,
+                treatDiskSizeAsMinimum: true,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags metadata step', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+        });
+      });
+    });
+
+    describe('when user picked a width for metadata but diskSize was never set', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Special]: {
+                ...emptyCategory,
+                width: 2,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('flags metadata step even without a disk size', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+        });
+      });
+    });
+
+    describe.each([
+      [VDevType.Log, PoolCreationWizardStep.Log, 'Log'],
+      [VDevType.Spare, PoolCreationWizardStep.Spare, 'Spare'],
+      [VDevType.Cache, PoolCreationWizardStep.Cache, 'Cache'],
+    ])('when %s category is partially configured', (vdevType, step, label) => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [vdevType]: {
+                ...emptyCategory,
+                diskSize: 12000138625024,
+                vdevs: [],
+              },
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it(`flags ${label} step`, async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Error,
+          step,
+          text: `${label} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.`,
+        });
+      });
+    });
+
+    describe('when optional categories were never configured', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: dataCategory,
+              [VDevType.Log]: emptyCategory,
+              [VDevType.Spare]: emptyCategory,
+              [VDevType.Cache]: emptyCategory,
+              [VDevType.Special]: emptyCategory,
+              [VDevType.Dedup]: emptyCategory,
+            }),
+          }),
+          ...sharedProviders,
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('does not flag any incomplete errors', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
+        expect(incompleteErrors).toEqual([]);
       });
     });
   });

@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { SystemLicense, SystemInfo, ContractType } from 'app/interfaces/system-info.interface';
+import { License, SystemInfo, ContractType } from 'app/interfaces/system-info.interface';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -31,11 +31,8 @@ describe('WidgetSysInfoActiveComponent', () => {
     version: '25.10.0-MASTER-20250126-184805',
     license: {
       contract_type: ContractType.Gold,
-      contract_end: {
-        $type: 'date',
-        $value: '2025-01-01',
-      },
-    } as SystemLicense,
+      expires_at: { $type: 'date', $value: '2025-01-01' },
+    } as License,
     system_serial: 'AA-00001',
     hostname: 'test-hostname-a',
     uptime_seconds: 83532.938532175,
@@ -64,6 +61,7 @@ describe('WidgetSysInfoActiveComponent', () => {
       mockProvider(LocaleService, {
         getDateAndTime: () => ['2024-03-15', '10:34:11'],
         getDateFromString: (date: string) => new Date(date),
+        getPreferredDateFormat: () => 'yyyy-MM-dd',
       }),
       provideMockStore({
         selectors: [
@@ -116,7 +114,7 @@ describe('WidgetSysInfoActiveComponent', () => {
       'Platform: TRUENAS-M40-HA',
       'Edition: Enterprise',
       'Version: 25.10.0-MASTER-20250126-184805',
-      'Support License: Gold Contract,  Expires on 2025-01-01',
+      'Support License: Gold Contract  Expires on 2025-01-01',
       'System Serial: AA-00001',
       'Uptime: 23 hours 12 minutes as of 10:34',
     ]);

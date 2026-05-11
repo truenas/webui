@@ -263,8 +263,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         return;
       }
 
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-      if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
+      if (systemInfo.license?.features.some((feature) => feature.name === LicenseFeature.Dedup)) {
         this.hasDeduplication = true;
         this.cdr.markForCheck();
       }

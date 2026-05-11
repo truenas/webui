@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
+import { NetworkInterfaceReport } from 'app/interfaces/reporting.interface';
 
 @Component({
   selector: 'ix-interface-status-icon',
@@ -24,7 +24,7 @@ import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 export class InterfaceStatusIconComponent {
   private translate = inject(TranslateService);
 
-  update = input<NetworkInterfaceUpdate>();
+  update = input<NetworkInterfaceReport>();
 
   protected elementId: string;
   private minRate = KiB;

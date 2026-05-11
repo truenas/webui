@@ -78,7 +78,7 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class WebShareCardComponent implements OnInit {
-  readonly requiredRoles = [Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly cardMenuPath = ['sharing', 'webshare'];
 
   private api = inject(ApiService);

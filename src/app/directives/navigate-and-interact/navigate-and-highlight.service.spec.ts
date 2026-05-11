@@ -7,7 +7,7 @@ import {
 import { MockProvider } from 'ng-mocks';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 
-describe('NavigateAndInteractService', () => {
+describe('NavigateAndHighlightService', () => {
   let spectator: SpectatorService<NavigateAndHighlightService>;
   const createComponent = createServiceFactory({
     service: NavigateAndHighlightService,
@@ -64,4 +64,37 @@ describe('NavigateAndInteractService', () => {
     expect(element1.style.outline).toBe('');
     expect(element2.style.outline).toBe('2px solid var(--primary)');
   });
+
+  it('cancels an in-flight poll when waitForElement is called again', fakeAsync(() => {
+    const firstScrollSpy = jest.fn();
+    const secondScrollSpy = jest.fn();
+
+    const firstElement = document.createElement('div');
+    firstElement.id = 'first-poll-target';
+    firstElement.scrollIntoView = firstScrollSpy;
+
+    const secondElement = document.createElement('div');
+    secondElement.id = 'second-poll-target';
+    secondElement.scrollIntoView = secondScrollSpy;
+
+    spectator.service.waitForElement('first-poll-target');
+    // Second call before either element is in the DOM should cancel the first poll.
+    spectator.service.waitForElement('second-poll-target');
+
+    document.body.appendChild(firstElement);
+    document.body.appendChild(secondElement);
+
+    tick(150);
+
+    expect(firstScrollSpy).not.toHaveBeenCalled();
+    expect(secondScrollSpy).toHaveBeenCalledTimes(1);
+
+    // Run past further poll intervals to confirm the cancelled poll never fires.
+    tick(500);
+    expect(firstScrollSpy).not.toHaveBeenCalled();
+    expect(secondScrollSpy).toHaveBeenCalledTimes(1);
+
+    document.body.removeChild(firstElement);
+    document.body.removeChild(secondElement);
+  }));
 });

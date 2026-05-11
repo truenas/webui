@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
-import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
@@ -29,6 +30,14 @@ import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/p
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
+
+const incompleteCategoryRules: { vdevType: VDevType; step: PoolCreationWizardStep }[] = [
+  { vdevType: VDevType.Log, step: PoolCreationWizardStep.Log },
+  { vdevType: VDevType.Spare, step: PoolCreationWizardStep.Spare },
+  { vdevType: VDevType.Cache, step: PoolCreationWizardStep.Cache },
+  { vdevType: VDevType.Special, step: PoolCreationWizardStep.Metadata },
+  { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup },
+];
 
 @Injectable()
 export class PoolManagerValidationService {
@@ -62,6 +71,7 @@ export class PoolManagerValidationService {
         } else {
           errors.push(...this.validateAddVdevs(topology));
         }
+        errors.push(...this.validateIncompleteCategories(topology));
 
         return uniqBy(errors, 'text')
           .sort((a, b) => {
@@ -300,6 +310,65 @@ export class PoolManagerValidationService {
     });
 
     return errors;
+  }
+
+  /**
+   * Flags an optional category that the user has partially configured (picked
+   * a disk size) but that currently has no vdevs. Runs in both flows:
+   *  - New pool: typical trigger is the data-parity lock changing the
+   *    metadata/dedup layout, which invalidates a previously picked width and
+   *    clears the category's vdevs.
+   *  - Add vdev to existing pool: user picks disk size / width for an optional
+   *    category (Log/Spare/Cache/Special/Dedup) and then clears it, leaving
+   *    state partially filled.
+   * Without this, the Review step silently omits the category and the step
+   * header shows no error indicator even though the form inside the step is
+   * invalid.
+   */
+  private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
+    const messageTemplate = T('{vdevType} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.');
+
+    const errors: PoolCreationError[] = [];
+    incompleteCategoryRules.forEach(({ vdevType, step }) => {
+      const category = topology[vdevType];
+      if (!category) {
+        return;
+      }
+      const hasNoVdevs = !category.vdevs?.length;
+      if (hasNoVdevs && this.isCategoryPartiallyConfigured(category)) {
+        const vdevTypeLabel = this.translate.instant(vdevTypeLabels.get(vdevType) ?? vdevType);
+        errors.push({
+          text: this.translate.instant(messageTemplate, { vdevType: vdevTypeLabel }),
+          severity: PoolCreationSeverity.Error,
+          step,
+        });
+      }
+    });
+    return errors;
+  }
+
+  /**
+   * True when the user has touched any of the category's configurable fields.
+   * `layout` is intentionally excluded because it can be set programmatically:
+   * AutomatedDiskSelectionComponent auto-selects the sole choice when a
+   * category has only one allowed layout, and resetTopologyCategory preloads
+   * Stripe for Spare/Cache. A non-null layout therefore does not imply that
+   * the user engaged with the category.
+   *
+   * We use `!= null` (matching both null and undefined) rather than `!== null`
+   * so partially-populated test fixtures — which cast `Partial<Category>` via
+   * `as` and only fill the fields under test — still register as "not touched"
+   * on unspecified fields. Production state (from the store's initialTopology)
+   * never leaves any of these fields undefined.
+   */
+  private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
+    return category.diskSize != null
+      || category.diskType != null
+      || category.width != null
+      || category.vdevsNumber != null
+      || category.draidDataDisks != null
+      || category.draidSpareDisks != null
+      || category.treatDiskSizeAsMinimum === true;
   }
 
   private validateAddVdevRedundancy(

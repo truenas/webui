@@ -38,7 +38,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   ],
 })
 export class ContainerFilesystemDevicesComponent {
-  protected readonly requiredRoles = [Role.ContainerWrite];
+  protected readonly requiredRoles = [Role.ContainerDeviceWrite];
 
   private destroyRef = inject(DestroyRef);
   private slideIn = inject(SlideIn);

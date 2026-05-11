@@ -12,8 +12,9 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
+import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -34,6 +35,25 @@ const systemInfo = {
   system_product: 'N7',
   datetime: { $date: 1666376171107 },
 } as SystemInfo;
+
+function makeLicense(supportExpiresAt: string | null): License {
+  const expiresAtDate = supportExpiresAt ? { $type: 'date' as const, $value: supportExpiresAt } : null;
+  return {
+    id: 'test-license-id',
+    type: LicenseType.EnterpriseSingle,
+    contract_type: ContractType.Gold,
+    model: 'M40',
+    expires_at: expiresAtDate,
+    features: [
+      { name: LicenseFeature.Apps, start_date: null, expires_at: null },
+      ...(expiresAtDate
+        ? [{ name: LicenseFeature.Support, start_date: null, expires_at: expiresAtDate }]
+        : []),
+    ],
+    serials: ['AA-00001'],
+    enclosures: {},
+  };
+}
 
 describe('SupportCardComponent', () => {
   let spectator: Spectator<SupportCardComponent>;
@@ -81,23 +101,24 @@ describe('SupportCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  describe('System with a license', () => {
-    beforeEach(() => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectSystemInfo, {
-        ...systemInfo,
-        license: {
-          features: [LicenseFeature.Jails],
-          contract_end: {
-            $type: 'date',
-            $value: '2027-09-29',
-          },
-          addhw_detail: [] as unknown[],
-        } as SystemLicense,
-      });
-      store$.refreshState();
-      spectator.detectChanges();
+  /**
+   * Push a fresh systemInfo through the store and let the support-card
+   * subscription re-fire (NgRx select uses identity-based distinctUntilChanged,
+   * so we always pass a new reference).
+   */
+  function emitSystemInfo(overrides: Partial<SystemInfo> = {}): void {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectSystemInfo, {
+      ...systemInfo,
+      license: makeLicense('2027-09-29'),
+      ...overrides,
     });
+    store$.refreshState();
+    spectator.detectChanges();
+  }
+
+  describe('System with a license', () => {
+    beforeEach(() => emitSystemInfo());
 
     describe('Proactive support availability', () => {
       it('checks if proactive support is available when license is present', () => {
@@ -112,7 +133,7 @@ describe('SupportCardComponent', () => {
         const api = spectator.inject(ApiService);
         jest.spyOn(api, 'call').mockReturnValue(of(false));
 
-        spectator.component.ngOnInit();
+        emitSystemInfo();
 
         expect(spectator.component.isProactiveSupportAvailable()).toBe(false);
       });
@@ -174,8 +195,7 @@ describe('SupportCardComponent', () => {
           return of(true);
         });
 
-        spectator.component.ngOnInit();
-        spectator.detectChanges();
+        emitSystemInfo();
 
         const banner = spectator.query('.support-banner.proactive');
         expect(banner).not.toExist();
@@ -184,21 +204,10 @@ describe('SupportCardComponent', () => {
 
     describe('Contract expiration warning banner', () => {
       beforeEach(() => {
-        const store$ = spectator.inject(MockStore);
-        store$.overrideSelector(selectSystemInfo, {
-          ...systemInfo,
-          datetime: { $date: 1767830400000 }, // 2026-01-08
-          license: {
-            features: [LicenseFeature.Jails],
-            contract_end: {
-              $type: 'date',
-              $value: '2026-01-11',
-            },
-            addhw_detail: [] as unknown[],
-          } as SystemLicense,
+        emitSystemInfo({
+          datetime: { $date: 1767830400000 } as SystemInfo['datetime'], // 2026-01-08
+          license: makeLicense('2026-01-11'),
         });
-        store$.refreshState();
-        spectator.detectChanges();
       });
 
       it('shows warning banner when contract expires within 14 days', () => {
@@ -213,21 +222,10 @@ describe('SupportCardComponent', () => {
       });
 
       it('does not show warning banner when contract expires in more than 14 days', () => {
-        const store$ = spectator.inject(MockStore);
-        store$.overrideSelector(selectSystemInfo, {
-          ...systemInfo,
-          datetime: { $date: 1767830400000 }, // 2026-01-08
-          license: {
-            features: [LicenseFeature.Jails],
-            contract_end: {
-              $type: 'date',
-              $value: '2026-02-01', // 24 days away
-            },
-            addhw_detail: [] as unknown[],
-          } as SystemLicense,
+        emitSystemInfo({
+          datetime: { $date: 1767830400000 } as SystemInfo['datetime'], // 2026-01-08
+          license: makeLicense('2026-02-01'), // 24 days away
         });
-        store$.refreshState();
-        spectator.detectChanges();
 
         const banner = spectator.query('.support-banner.warning');
         expect(banner).not.toExist();
@@ -289,20 +287,7 @@ describe('SupportCardComponent', () => {
         return of(null);
       });
 
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectSystemInfo, {
-        ...systemInfo,
-        license: {
-          features: [LicenseFeature.Jails],
-          contract_end: {
-            $type: 'date',
-            $value: '2027-09-29',
-          },
-          addhw_detail: [] as unknown[],
-        } as SystemLicense,
-      });
-      store$.refreshState();
-      spectator.detectChanges();
+      emitSystemInfo();
     });
 
     it('shows upsell banner for support options', () => {

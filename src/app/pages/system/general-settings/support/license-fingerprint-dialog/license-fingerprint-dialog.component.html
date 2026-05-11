@@ -1,0 +1,34 @@
+<h1 matDialogTitle>{{ 'System Thumbprint' | translate }}</h1>
+
+<div mat-dialog-content class="dialog-content">
+  @if (isLoading()) {
+    <div class="loading">
+      <mat-spinner [diameter]="36"></mat-spinner>
+      <span>{{ 'Loading thumbprint…' | translate }}</span>
+    </div>
+  } @else if (fingerprintDecoded()) {
+    <p class="hint">
+      {{ 'This identifies your system to the licensing service. Share it with iX support to request or update a license.' | translate }}
+    </p>
+    <pre class="fingerprint-decoded">{{ fingerprintDecoded() }}</pre>
+  }
+</div>
+
+<div mat-dialog-actions class="dialog-actions">
+  <button
+    mat-icon-button
+    type="button"
+    ixTest="copy-fingerprint"
+    [disabled]="isLoading() || !fingerprintRaw()"
+    [matTooltip]="'Copy raw thumbprint to clipboard' | translate"
+    (click)="copyToClipboard()"
+  >
+    <tn-icon name="content-copy" library="mdi" size="md"></tn-icon>
+  </button>
+
+  <span class="spacer"></span>
+
+  <button mat-button type="button" ixTest="close" [matDialogClose]="true">
+    {{ 'Close' | translate }}
+  </button>
+</div>

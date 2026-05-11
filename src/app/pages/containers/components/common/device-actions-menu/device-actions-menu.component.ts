@@ -50,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeviceActionsMenuComponent {
-  protected readonly requiredRoles = [Role.ContainerWrite];
+  protected readonly requiredRoles = [Role.ContainerDeviceWrite];
 
   private destroyRef = inject(DestroyRef);
   private dialog = inject(DialogService);

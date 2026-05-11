@@ -67,7 +67,7 @@ export interface WebShareFormData {
   providers: [WebShareValidatorService],
 })
 export class WebShareSharesFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.SharingWrite];
+  protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly helptext = helptextSharingWebshare;
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {

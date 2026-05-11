@@ -17,6 +17,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { PoolManagerTopology, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { resolveTopologyLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 const defaultCategory: PoolManagerTopologyCategory = {
   layout: null,
@@ -77,11 +78,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
     for (const type of vdevTypes) {
       managerTopology[type] = cloneDeep(defaultCategory);
 
-      let firstVdevType = topology[type][0].type;
-      if (firstVdevType === TopologyItemType.Disk && !topology[type][0].children?.length) {
-        firstVdevType = TopologyItemType.Stripe;
-      }
-      managerTopology[type].layout = firstVdevType as unknown as CreateVdevLayout;
+      managerTopology[type].layout = resolveTopologyLayout(topology[type]);
 
       const allCategoryVdevsDisks = [];
       for (const vdev of topology[type]) {
@@ -93,7 +90,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
         }
         managerTopology[type].width = vdev.children?.length || 1;
 
-        if (firstVdevType === TopologyItemType.Stripe) {
+        if (managerTopology[type].layout === CreateVdevLayout.Stripe) {
           const vdevDisk = this.disks().find((disk) => disk.devname === vdev.disk);
           allCategoryVdevsDisks.push(cloneDeep(vdevDisk));
           managerTopology[type].vdevs.push([cloneDeep(vdevDisk)]);

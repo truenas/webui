@@ -72,7 +72,7 @@ export class LicenseComponent {
     this.isFormLoading = true;
 
     const { license } = this.form.getRawValue();
-    this.api.call('system.license_update', [license]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.call('truenas.license.upload', [license]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.slideInRef.close({ response: true });

@@ -32,7 +32,8 @@ const dummyAlert = {
   formatted: 'CPU is on fire',
   klass: AlertClassName.ApiKeyRevoked,
   dismissed: false,
-} as Alert;
+  allIds: ['79'],
+} as Alert & { allIds: string[] };
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
@@ -114,7 +115,7 @@ describe('AlertComponent', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         type: '[Alert Panel] Dismiss Pressed',
-        id: '79',
+        ids: ['79'],
       }),
     );
   });
@@ -140,7 +141,7 @@ describe('AlertComponent', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         type: '[Alert Panel] Reopen Pressed',
-        id: '79',
+        ids: ['79'],
       }),
     );
   });

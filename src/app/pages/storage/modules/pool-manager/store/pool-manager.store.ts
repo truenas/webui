@@ -93,8 +93,8 @@ const initialTopology = Object.values(VDevType).reduce((topology, value) => {
       vdevs: [] as DetailsDisk[][],
       hasCustomDiskSelection: false,
 
-      draidDataDisks: 0,
-      draidSpareDisks: 0,
+      draidDataDisks: null,
+      draidSpareDisks: null,
     } as PoolManagerTopologyCategory,
   };
 }, {} as PoolManagerTopology);
@@ -194,26 +194,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   );
 
   isUsingDraidLayout(topology: PoolManagerTopology): boolean {
-    const dataCategory = topology[VDevType.Data];
-    return Boolean(dataCategory.layout
-      && [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout));
-  }
-
-  getLayoutsForVdevType(vdevType: VDevType): Observable<CreateVdevLayout[]> {
-    switch (vdevType) {
-      case VDevType.Cache:
-        return of([CreateVdevLayout.Stripe]);
-      case VDevType.Dedup:
-        return this.select((state) => [state.topology[VDevType.Data].layout]);
-      case VDevType.Log:
-        return of([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
-      case VDevType.Spare:
-        return of([CreateVdevLayout.Stripe]);
-      case VDevType.Special:
-        return this.select((state) => [state.topology[VDevType.Data].layout]);
-      default:
-        return of(Object.values(CreateVdevLayout));
-    }
+    const { layout } = topology[VDevType.Data];
+    return layout !== null && isDraidLayout(layout);
   }
 
   readonly inventory$ = this.select(

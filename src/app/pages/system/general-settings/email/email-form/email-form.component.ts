@@ -77,6 +77,7 @@ export class EmailFormComponent implements OnInit {
   private productType = toSignal(this.store$.select(selectProductType));
 
   protected readonly requiredRoles = [Role.AlertWrite];
+  protected readonly requiredRolesMailWrite = [Role.MailWrite];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 

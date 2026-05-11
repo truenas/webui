@@ -10,17 +10,16 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { format } from 'date-fns-tz';
-import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { oneDayMillis } from 'app/constants/time.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { LicenseFeature, getLabelForLicenseFeature } from 'app/enums/license-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { License, SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -29,7 +28,10 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { getProductImageSrc } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import {
+  formatLicenseExpiration,
+  getProductImageSrc,
+} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -110,10 +112,14 @@ export class SupportCardComponent implements OnInit {
 
       if (systemInfo.license) {
         this.hasLicense = true;
-        this.licenseInfo = { ...systemInfo.license };
-        this.parseLicenseInfo(this.licenseInfo);
+        this.licenseInfo = this.buildLicenseInfo(systemInfo.license, systemInfo.datetime.$date);
+        this.isContractExpiringSoon.set(this.computeExpiringSoon(this.licenseInfo.daysLeftInContract));
         this.checkProactiveSupportAvailability();
         this.setupProductImage(systemInfo);
+      } else {
+        this.hasLicense = false;
+        this.licenseInfo = null;
+        this.isContractExpiringSoon.set(false);
       }
       this.cdr.markForCheck();
     });
@@ -127,32 +133,41 @@ export class SupportCardComponent implements OnInit {
     this.productImageSrc.set(productImageUrl);
   }
 
-  private parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
-    if (licenseInfo.features.length === 0) {
-      licenseInfo.featuresString = 'NONE';
-    } else {
-      licenseInfo.featuresString = licenseInfo.features.join(', ');
-    }
-    const expDateConverted = new Date(licenseInfo.contract_end.$value);
-    const userDateFormat = this.localeService.getPreferredDateFormat();
-    licenseInfo.expiration_date = format(expDateConverted, userDateFormat);
+  private buildLicenseInfo(license: License, nowMs: number): LicenseInfoInSupport {
+    // Support contract dates live on the SUPPORT feature entry; fall back to the
+    // top-level expiration if the SUPPORT entry is absent.
+    const supportFeature = license.features.find((feature) => feature.name === LicenseFeature.Support);
+    const expiresAt = supportFeature?.expires_at ?? license.expires_at ?? null;
 
-    if (licenseInfo.addhw_detail.length === 0) {
-      licenseInfo.add_hardware = 'NONE';
-    } else {
-      licenseInfo.add_hardware = licenseInfo.addhw_detail.join(', ');
+    const expirationDateDisplay = formatLicenseExpiration(expiresAt, this.localeService);
+    let daysLeftInContract: number | null = null;
+    if (expiresAt?.$value) {
+      daysLeftInContract = Math.round((new Date(expiresAt.$value).getTime() - nowMs) / oneDayMillis);
     }
-    const now = new Date(this.systemInfo.datetime.$date);
-    const then = expDateConverted;
-    licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
 
-    this.isContractExpiringSoon.set(
-      licenseInfo.daysLeftinContract >= 0 && licenseInfo.daysLeftinContract <= this.expirationWarningDays,
-    );
+    const featureNames = license.features
+      .filter((feature) => feature.name !== LicenseFeature.Support)
+      .map((feature) => getLabelForLicenseFeature(feature.name));
+
+    const additionalHardware = Object.entries(license.enclosures)
+      .map(([model, count]) => this.translate.instant('{count}× {model}', { count, model }))
+      .join(', ') || null;
+
+    return {
+      contractType: license.contract_type,
+      model: license.model,
+      expirationDateDisplay,
+      daysLeftInContract,
+      featureNames,
+      additionalHardware,
+      serials: license.serials,
+    };
   }
 
-  private daysTillExpiration(now: Date, then: Date): number {
-    return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
+  private computeExpiringSoon(daysLeft: number | null): boolean {
+    return daysLeft !== null
+      && daysLeft >= 0
+      && daysLeft <= this.expirationWarningDays;
   }
 
   updateLicense(): void {
@@ -187,7 +202,7 @@ export class SupportCardComponent implements OnInit {
 
     request$.pipe(
       switchMap((result) => {
-        const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
+        const attachDebug = (typeof result === 'object' && result?.sendInitialDebug) || false;
 
         return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
           this.loader.withLoader(),

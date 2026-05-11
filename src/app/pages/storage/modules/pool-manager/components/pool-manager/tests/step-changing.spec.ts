@@ -166,6 +166,10 @@ describe('PoolManagerComponent – step changing', () => {
       'Number of VDEVs': '1',
     });
 
+    // Stripe data has no redundancy, so the parity lock for metadata/dedup is
+    // unconstrained — it admits every non-dRAID layout, so AutomatedDiskSelection
+    // can't auto-pick one. Special and Dedup therefore stay unmoved until the
+    // user actually visits those steps.
     expect(store.state().categorySequence).toEqual([
       VDevType.Log,
       VDevType.Special,

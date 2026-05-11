@@ -1,0 +1,30 @@
+:host {
+  display: contents;
+}
+
+.action-required-badge {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: var(--orange);
+  cursor: pointer;
+  display: inline-flex;
+  line-height: 1;
+  padding: 2px;
+
+  &:hover {
+    background: var(--hover-bg);
+  }
+
+  &:focus-visible {
+    background: var(--hover-bg);
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+
+  tn-icon {
+    height: 18px;
+    width: 18px;
+  }
+}

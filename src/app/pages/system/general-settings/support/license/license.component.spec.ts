@@ -38,7 +38,7 @@ describe('LicenseComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('system.license_update'),
+        mockCall('truenas.license.upload'),
       ]),
       mockProvider(SlideIn),
       mockProvider(DialogService, {
@@ -70,7 +70,7 @@ describe('LicenseComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(api.call).toHaveBeenCalledWith('system.license_update', ['test-license']);
+    expect(api.call).toHaveBeenCalledWith('truenas.license.upload', ['test-license']);
   });
 
   it('shows a warning that UI needs to be reloaded and reloads it after dialog is closed', async () => {
