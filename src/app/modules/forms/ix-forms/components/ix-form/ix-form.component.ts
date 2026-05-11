@@ -47,9 +47,12 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
    * always treated as changed, even if their value matches the default.
    *
    * Comparison is a shallow per-top-level-key deep equality (lodash isEqual).
-   * Nested FormGroups compare correctly, but a FormArray with one mutated
-   * item appears as a single changed key whose value is the entire array —
-   * forms needing granular array diffs should build their own payload.
+   * Nested FormGroups and FormArrays compare correctly by value, but the
+   * diff is reported at the top-level key only: any change inside a nested
+   * group/array appears as a single entry whose value is the *entire*
+   * nested object. Forms whose API expects an all-or-nothing block per
+   * nested group can rely on this; forms needing a leaf-level diff inside
+   * a nested group should build their own payload from `allValues`.
    *
    * Snapshot uses `getRawValue()`, so disabled controls are included on both
    * sides; toggling a control's enabled state without changing its value
@@ -478,7 +481,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     if (data != null) {
       const transform = this.transformEditData();
       const patchData = transform ? transform(data) : (data as Partial<T>);
-      this.formGroup().patchValue(patchData as Record<string, unknown>);
+      this.formGroup().patchValue(patchData);
       // patchValue doesn't mark the form dirty today, but markAsPristine is
       // defensive against a refactor swapping in setValue (which would mark
       // dirty) and against any nested controls a user-supplied transform
