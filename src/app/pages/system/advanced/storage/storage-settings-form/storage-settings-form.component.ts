@@ -117,6 +117,22 @@ export class StorageSettingsFormComponent implements OnInit {
     }
   }
 
+  // User can mark the form dirty without changing any value (e.g., type into a
+  // field then revert). `requireDirty` lets that case reach Save, but
+  // `changedValues` will be empty — short-circuit before forkJoin([]) emits an
+  // empty array synchronously and the wrapper shows a misleading success
+  // snackbar. Returning `false` cancels the wrapper's submit lifecycle; the
+  // manual close mirrors the pre-migration "close with undefined response".
+  protected preSubmit = (
+    event: FormSubmitEvent<StorageSettingsData>,
+  ): FormSubmitEvent<StorageSettingsData> | false => {
+    if (Object.keys(event.changedValues).length === 0) {
+      this.slideInRef.close({ response: undefined });
+      return false;
+    }
+    return event;
+  };
+
   protected handleSubmit = (event: FormSubmitEvent<StorageSettingsData>): SubmitResult => {
     const requests: Observable<unknown>[] = [];
 

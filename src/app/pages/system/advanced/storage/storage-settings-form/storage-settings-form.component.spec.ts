@@ -19,6 +19,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   StorageSettingsData,
   StorageSettingsFormComponent,
@@ -161,6 +162,22 @@ describe('StorageSettingsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(true);
 
+    expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
+    expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());
+  });
+
+  it('closes silently without snackbar when user touches a field and reverts it', async () => {
+    // requireDirty only checks form.pristine — typing and reverting flips dirty
+    // to true but leaves changedValues empty. preSubmit catches this case.
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'System Dataset Pool': 'new-pool' });
+    await form.fillForm({ 'System Dataset Pool': 'current-pool' });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
+    expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
     expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());
   });
