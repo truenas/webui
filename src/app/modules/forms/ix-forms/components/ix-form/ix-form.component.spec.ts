@@ -6,7 +6,9 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
-import { concat, EMPTY, of, throwError } from 'rxjs';
+import {
+  concat, EMPTY, firstValueFrom, Observable, of, throwError,
+} from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -270,9 +272,89 @@ describe('IxFormComponent', () => {
   });
 
   describe('dirty confirmation', () => {
+    // Pull the factory passed to slideInRef.requireConfirmationWhen so tests
+    // can subscribe to it directly and assert what it emits.
+    const getConfirmationFactory = (): () => Observable<boolean> => {
+      const mock = slideInRef.requireConfirmationWhen as jest.Mock;
+      const lastCall = mock.mock.calls.at(-1);
+      if (!lastCall) {
+        throw new Error('requireConfirmationWhen was not called');
+      }
+      return lastCall[0] as () => Observable<boolean>;
+    };
+
     it('registers dirty confirmation with SlideInRef', () => {
       createComponent();
       expect(slideInRef.requireConfirmationWhen).toHaveBeenCalled();
+    });
+
+    it('default predicate emits false when the form is pristine', async () => {
+      createComponent();
+      await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(false);
+    });
+
+    it('default predicate emits true once the form is dirty', async () => {
+      spectator = createComponent();
+      spectator.component.form.markAsDirty();
+      await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(true);
+    });
+
+    describe('dirtyPredicate override', () => {
+      @Component({
+        template: `
+          <ix-form
+            [formGroup]="form"
+            [title]="'Predicate'"
+            [requiredRoles]="[role]"
+            [dirtyPredicate]="predicate"
+            [submitHandler]="handleSubmit"
+          >
+            <ix-fieldset>
+              <ix-input formControlName="name" [label]="'Name'" />
+            </ix-fieldset>
+          </ix-form>
+        `,
+        standalone: true,
+        changeDetection: ChangeDetectionStrategy.OnPush,
+        selector: 'ix-predicate-host',
+        imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+      })
+      class PredicateHostComponent {
+        ixForm = viewChild.required(IxFormComponent);
+        role = Role.FullAdmin;
+        hasChanges = signal(false);
+        predicate = (): Observable<boolean> => of(this.hasChanges());
+
+        private fb = inject(FormBuilder);
+
+        form = this.fb.group({ name: [''] });
+
+        handleSubmit = (): SubmitResult => ({
+          request$: of(undefined),
+          successMessage: 'Saved!' as TranslatedString,
+        });
+      }
+
+      const createPredicateComponent = createComponentFactory({
+        component: PredicateHostComponent,
+        imports: [ReactiveFormsModule],
+        providers: [
+          ...ixFormTestingProviders(),
+          mockProvider(SlideInRef, slideInRef),
+          mockAuth(),
+        ],
+      });
+
+      it('uses the override and ignores formGroup.dirty', async () => {
+        const predicateSpectator = createPredicateComponent();
+        // Form is dirty, but predicate returns false — override must win.
+        predicateSpectator.component.form.markAsDirty();
+        await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(false);
+
+        // Flipping the external signal flips the result without touching form.
+        predicateSpectator.component.hasChanges.set(true);
+        await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(true);
+      });
     });
   });
 

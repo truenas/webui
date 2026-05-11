@@ -255,6 +255,24 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly isEditMode = input<boolean | null>(null);
 
   /**
+   * Override for the dirty-confirmation check. The factory returns an
+   * Observable that emits `true` when the slide-in should ask the user to
+   * confirm closing (i.e. the form has unsaved changes).
+   *
+   * Default behavior reads `formGroup.dirty`. Override when:
+   * - the form has multiple FormGroups (e.g. a main form plus sub-section
+   *   forms) and dirty status must combine them all;
+   * - dirty isn't the right signal (e.g. the form tracks an external
+   *   `hasChanges` signal outside the FormGroup);
+   * - the form should never prompt (e.g. read-only-style forms) — return
+   *   `of(false)`.
+   *
+   * The factory is re-invoked each time the slide-in checks, so it can read
+   * live state.
+   */
+  readonly dirtyPredicate = input<(() => Observable<boolean>) | null>(null);
+
+  /**
    * Internal loading state – set during form submission.
    */
   readonly isSubmitting = signal(false);
@@ -293,9 +311,13 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   ngOnInit(): void {
     if (this.slideInRef) {
-      // `defer` makes the dirty read lazy no matter how the slide-in chooses
-      // to consume the returned observable (call-time or subscribe-time).
-      this.slideInRef.requireConfirmationWhen(() => defer(() => of(this.formGroup().dirty)));
+      // `defer` makes the read lazy no matter how the slide-in chooses to
+      // consume the returned observable (call-time or subscribe-time), and
+      // also picks up a `dirtyPredicate` set after init.
+      this.slideInRef.requireConfirmationWhen(() => defer(() => {
+        const predicate = this.dirtyPredicate();
+        return predicate ? predicate() : of(this.formGroup().dirty);
+      }));
     }
 
     if (this.initialFormSnapshot() != null) {
