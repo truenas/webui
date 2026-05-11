@@ -27,7 +27,9 @@ import {
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import {
+  existingVdevLayout, isDraidLayout, layoutParity, resolveTopologyLayout,
+} from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
@@ -39,13 +41,52 @@ const incompleteCategoryRules: { vdevType: VDevType; step: PoolCreationWizardSte
   { vdevType: VDevType.Dedup, step: PoolCreationWizardStep.Dedup },
 ];
 
+type AllocClassVdev = VDevType.Special | VDevType.Dedup;
+const allocClassVdevs: readonly AllocClassVdev[] = [VDevType.Special, VDevType.Dedup];
+
+interface AllocClassRule {
+  step: PoolCreationWizardStep;
+  redundancyMismatchText: string;
+  mixedLayoutText: string;
+}
+
+const allocClassRules: Record<AllocClassVdev, AllocClassRule> = {
+  [VDevType.Special]: {
+    step: PoolCreationWizardStep.Metadata,
+    redundancyMismatchText: helptextPoolCreation.specialRedundancyMismatchWarning,
+    mixedLayoutText: helptextPoolCreation.specialMixedLayoutWarning,
+  },
+  [VDevType.Dedup]: {
+    step: PoolCreationWizardStep.Dedup,
+    redundancyMismatchText: helptextPoolCreation.dedupRedundancyMismatchWarning,
+    mixedLayoutText: helptextPoolCreation.dedupMixedLayoutWarning,
+  },
+};
+
+/**
+ * Layout parity (drive failures the layout can survive) for the given width,
+ * or null when parity cannot yet be determined. Currently only Mirror without
+ * a chosen width yields null — Stripe, RAIDZN and dRAIDN are layout-determined
+ * and parity for them is independent of width. Sharing this between the data
+ * resolver and the per-category check keeps both deferring on identical
+ * conditions.
+ */
+function parityFromLayoutWidth(
+  layout: CreateVdevLayout,
+  width: number | null | undefined,
+): number | null {
+  if (layout === CreateVdevLayout.Mirror && width == null) {
+    return null;
+  }
+  return layoutParity(layout, width ?? 0);
+}
+
 @Injectable()
 export class PoolManagerValidationService {
   protected store = inject(PoolManagerStore);
   protected systemStore$ = inject<Store<AppState>>(Store);
   protected translate = inject(TranslateService);
   private addVdevsStore = inject(AddVdevsStore);
-
 
   exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedSelectedDisksWarning);
 
@@ -71,6 +112,8 @@ export class PoolManagerValidationService {
         } else {
           errors.push(...this.validateAddVdevs(topology));
         }
+        errors.push(...this.validateRedundancyMismatch(topology, existingPool));
+        errors.push(...this.validateMixedAllocClassLayout(topology, existingPool));
         errors.push(...this.validateIncompleteCategories(topology));
 
         return uniqBy(errors, 'text')
@@ -396,5 +439,120 @@ export class PoolManagerValidationService {
     }
 
     return errors;
+  }
+
+  /**
+   * NAS-140839 / ER-72 — special and dedup vdevs may now be created with any
+   * non-stripe redundancy regardless of the data vdev's parity. When the
+   * special/dedup parity is lower than data parity, surface a non-blocking
+   * warning so the user is aware that losing the metadata vdev would still
+   * destroy the pool.
+   */
+  private validateRedundancyMismatch(
+    topology: PoolManagerTopology,
+    existingPool: Pool | null,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const dataParity = this.resolveDataParity(topology, existingPool);
+    // dataParity === 0 means data is Stripe; nothing can be lower than 0, so
+    // skipping the loop is equivalent to running it but makes the intent
+    // explicit (and avoids implying Stripe data ever produces a mismatch).
+    if (dataParity === null || dataParity <= 0) {
+      return errors;
+    }
+
+    allocClassVdevs.forEach((vdevType) => {
+      const category = topology[vdevType];
+      if (!category?.vdevs.length || !category.layout) {
+        return;
+      }
+      // Stripe is handled by validateStripeVdevsWarning / validateAddVdevRedundancy
+      // with its own dedicated message; don't double-warn here.
+      if (category.layout === CreateVdevLayout.Stripe) {
+        return;
+      }
+      const categoryParity = parityFromLayoutWidth(category.layout, category.width);
+      if (categoryParity === null) {
+        return;
+      }
+      if (categoryParity < dataParity) {
+        const rule = allocClassRules[vdevType];
+        errors.push({
+          text: this.translate.instant(rule.redundancyMismatchText),
+          severity: PoolCreationSeverity.Warning,
+          step: rule.step,
+        });
+      }
+    });
+
+    return errors;
+  }
+
+  /**
+   * NAS-140839 / ER-72 — adding a special/dedup vdev whose layout differs from
+   * the existing pool's special/dedup layout is allowed but warned about. The
+   * topology category carries a single layout, so mixing can only arise in the
+   * add-vdev flow against an already-populated pool category.
+   */
+  private validateMixedAllocClassLayout(
+    topology: PoolManagerTopology,
+    existingPool: Pool | null,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    if (!existingPool) {
+      return errors;
+    }
+
+    allocClassVdevs.forEach((vdevType) => {
+      const category = topology[vdevType];
+      if (!category?.vdevs.length || !category.layout) {
+        return;
+      }
+      // Asymmetric skip: only suppress when the *new* category is Stripe —
+      // that case already gets validateAddVdevRedundancy's dedicated SPOF
+      // message and we don't want to double-warn. If the existing pool's
+      // class is Stripe and the new vdev is non-stripe, mixing within an
+      // existing Stripe class is itself a real concern, so we still warn.
+      if (category.layout === CreateVdevLayout.Stripe) {
+        return;
+      }
+      const existingLayout = existingVdevLayout(existingPool.topology?.[vdevType]);
+      if (existingLayout !== null && existingLayout !== category.layout) {
+        const rule = allocClassRules[vdevType];
+        errors.push({
+          text: this.translate.instant(rule.mixedLayoutText),
+          severity: PoolCreationSeverity.Warning,
+          step: rule.step,
+        });
+      }
+    });
+
+    return errors;
+  }
+
+  private resolveDataParity(topology: PoolManagerTopology, existingPool: Pool | null): number | null {
+    const existingDataVdevs = existingPool?.topology?.[VDevType.Data];
+    if (existingDataVdevs?.length) {
+      const layout = resolveTopologyLayout(existingDataVdevs);
+      if (layout === null) {
+        return null;
+      }
+      // Existing pool vdevs always carry a children list; the fallback only
+      // guards against malformed payloads and is irrelevant for non-Mirror
+      // layouts where parity is layout-determined. Note that a malformed
+      // payload could mask a backend bug as a 2-disk Mirror (parity 1).
+      const width = existingDataVdevs[0].children?.length ?? 2;
+      return layoutParity(layout, width);
+    }
+
+    // Existing pool with an empty data array (or no existing pool) falls
+    // through to the wizard category. In add-vdev mode the wizard's data
+    // category is unset, so we return null and the mismatch warning is
+    // suppressed until parity can actually be resolved.
+    const dataCategory = topology[VDevType.Data];
+    if (!dataCategory?.layout) {
+      return null;
+    }
+    return parityFromLayoutWidth(dataCategory.layout, dataCategory.width);
   }
 }
