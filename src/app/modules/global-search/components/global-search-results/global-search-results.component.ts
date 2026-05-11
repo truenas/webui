@@ -87,10 +87,32 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     const route = element.anchorRouterLink || element.routerLink;
     if (route?.length) {
-      if (!route.includes('*')) {
-        this.router.navigate(route);
-      } else if (!this.router.url.startsWith(route.slice(0, -1).join('/'))) {
-        this.router.navigate(route.slice(0, -1));
+      const hasWildcard = route[route.length - 1] === '*';
+      const navigateTo = hasWildcard ? route.slice(0, -1) : route;
+
+      // Convention: `anchorRouterLink` / `routerLink` always start with `/`
+      // (verified across all `*.elements.ts` files). We resolve via the
+      // router so the segments serialise to the same absolute string format
+      // as `router.url`, making the equality / startsWith comparisons below
+      // exact. `createUrlTree` without `relativeTo` resolves from
+      // `routerState.snapshot.root`, so even if a non-absolute route ever
+      // sneaks in it serialises from root rather than the active route.
+      const targetPath = this.router.serializeUrl(this.router.createUrlTree(navigateTo))
+        .split('?')[0].split('#')[0];
+
+      // Skip navigation when we're already on the target page — even same-URL
+      // `router.navigate` calls fire `NavigationSkipped` events that
+      // master-detail views interpret as "page changed".
+      // Prefix-startsWith only applies when the route opts in with a trailing
+      // `*` (master-detail descendants like `/datasets/<pool>`). Without it
+      // we'd treat sibling pages such as `/credentials/users/api-keys` as a
+      // descendant of `/credentials/users` and skip the navigation the user
+      // actually asked for.
+      const currentPath = this.router.url.split('?')[0].split('#')[0];
+      const onTargetPath = currentPath === targetPath
+        || (hasWildcard && currentPath.startsWith(`${targetPath}/`));
+      if (!onTargetPath) {
+        this.router.navigate(navigateTo);
       }
     }
 
@@ -124,21 +146,30 @@ export class GlobalSearchResultsComponent implements OnChanges {
   removeRecentSearch(event: Event, result: UiSearchableElement): void {
     event.stopPropagation();
 
-    const existingResults = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    const existingResults = this.readRecentSearches();
     const updatedResults = existingResults.filter((item) => !isEqual(item.hierarchy, result.hierarchy));
-    localStorage.setItem('recentSearches', JSON.stringify(updatedResults));
+    this.window.localStorage.setItem('recentSearches', JSON.stringify(updatedResults));
     this.recentSearchRemoved.emit();
   }
 
+  private readRecentSearches(): UiSearchableElement[] {
+    try {
+      const parsed: unknown = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]');
+      return Array.isArray(parsed) ? parsed as UiSearchableElement[] : [];
+    } catch {
+      return [];
+    }
+  }
+
   private saveSearchResult(result: UiSearchableElement): void {
-    const existingResults = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    const existingResults = this.readRecentSearches();
     const existingIndex = findIndex(existingResults, (item) => isEqual(item.hierarchy, result.hierarchy));
 
     if (existingIndex !== -1) existingResults.splice(existingIndex, 1);
 
     existingResults.unshift(result);
 
-    localStorage.setItem('recentSearches', JSON.stringify(
+    this.window.localStorage.setItem('recentSearches', JSON.stringify(
       existingResults
         .slice(0, this.globalSearchSectionsProvider.recentSearchesMaximumToSave)
         .map((item) => ({ ...item, section: GlobalSearchSection.RecentSearches })),

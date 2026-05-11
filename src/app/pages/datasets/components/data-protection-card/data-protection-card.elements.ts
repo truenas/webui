@@ -4,7 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export const dataProtectionCardElements = {
   hierarchy: [T('Datasets')],
   synonyms: [T('View Datasets')],
-  anchorRouterLink: ['/datasets'],
+  anchorRouterLink: ['/datasets', '*'],
   elements: {
     createSnapshot: {
       hierarchy: [T('Take Snapshot')],

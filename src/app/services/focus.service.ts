@@ -1,20 +1,21 @@
 import { Injectable, DOCUMENT, inject } from '@angular/core';
 
+export const focusableSelectors = [
+  'a[href]', 'area[href]', 'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])', 'textarea:not([disabled])',
+  'button:not([disabled])', 'iframe', 'object', 'embed',
+  '[contenteditable]', '[tabindex]:not([tabindex="-1"])',
+] as const;
+
+const focusableSelectorString = focusableSelectors.join(', ');
+
 @Injectable({
   providedIn: 'root',
 })
 export class FocusService {
   private document = inject<Document>(DOCUMENT);
 
-
   private lastFocusedElement: HTMLElement | null = null;
-
-  private focusableSelectors = [
-    'a[href]', 'area[href]', 'input:not([disabled]):not([type="hidden"])',
-    'select:not([disabled])', 'textarea:not([disabled])',
-    'button:not([disabled])', 'iframe', 'object', 'embed',
-    '[contenteditable]', '[tabindex]:not([tabindex="-1"])',
-  ];
 
   captureCurrentFocus(): void {
     this.lastFocusedElement = this.document.activeElement as HTMLElement;
@@ -53,7 +54,26 @@ export class FocusService {
   }
 
   getFocusableElements(wrapper: HTMLElement): HTMLElement[] {
-    const elements = wrapper.querySelectorAll(this.focusableSelectors.join(', '));
+    const elements = wrapper.querySelectorAll(focusableSelectorString);
     return Array.from(elements) as HTMLElement[];
+  }
+
+  isFocusable(element: HTMLElement): boolean {
+    if (element.matches(':disabled')) return false;
+    return element.matches(focusableSelectorString);
+  }
+
+  /**
+   * Focuses an element, adding tabindex=-1 first when it isn't natively
+   * focusable. Returns true if a tabindex was added so the caller can clean
+   * up after the focus is no longer needed.
+   */
+  focusWithFallback(element: HTMLElement, options?: FocusOptions): boolean {
+    const needsTabindex = !this.isFocusable(element);
+    if (needsTabindex) {
+      element.setAttribute('tabindex', '-1');
+    }
+    element.focus(options);
+    return needsTabindex;
   }
 }

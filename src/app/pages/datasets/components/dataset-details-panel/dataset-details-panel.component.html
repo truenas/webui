@@ -51,14 +51,14 @@
     @if (isCapacityAllowed()) {
       <ix-dataset-capacity-management-card
         [ixUiSearch]="searchableElements.elements.datasetCapacityCard"
-        [dataset]="dataset()"
+          [dataset]="dataset()"
       ></ix-dataset-capacity-management-card>
     }
     @if (isEncryptionAllowed()) {
       <ix-zfs-encryption-card
         [dataset]="dataset()"
         [ixUiSearch]="searchableElements.elements.datasetZfsEncryptionCard"
-        [parentDataset]="selectedParentDataset$ | async"
+          [parentDataset]="selectedParentDataset$ | async"
       ></ix-zfs-encryption-card>
     }
     <ix-data-protection-card
@@ -70,13 +70,13 @@
         [dataset]="dataset()"
         [hasChildrenWithShares]="hasChildrenWithShares()"
         [ixUiSearch]="searchableElements.elements.datasetRolesCard"
-        [systemDataset]="systemDataset()"
+          [systemDataset]="systemDataset()"
       ></ix-usage-card>
     }
     @if (hasPermissions()) {
       <ix-permissions-card
         [ixUiSearch]="searchableElements.elements.datasetPermissionsCard"
-        [dataset]="dataset()"
+          [dataset]="dataset()"
       ></ix-permissions-card>
     }
   </div>

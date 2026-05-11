@@ -15,7 +15,6 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
-import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
@@ -147,13 +146,11 @@ describe('GlobalSearchComponent', () => {
     expect(document.activeElement).toBe(spectator.query('input'));
   });
 
-  it('handles keydown events', fakeAsync(() => {
-    jest.spyOn(focusHelper, 'moveToNextFocusableElement').mockImplementation();
-
+  it('submits the first result on Enter from the input (skips the reset button)', fakeAsync(() => {
     const inputElement = spectator.query<HTMLInputElement>('.search-input');
 
     'Filtered'.split('').forEach((symbol) => {
-      if (spectator.component.isSearchInputFocused) {
+      if (spectator.component.isSearchInputFocused()) {
         spectator.component.searchControl.setValue(spectator.component.searchControl.value + symbol);
       }
       spectator.dispatchKeyboardEvent(inputElement!, 'keydown', symbol);
@@ -163,8 +160,16 @@ describe('GlobalSearchComponent', () => {
     expect(spectator.component.searchControl.value).toBe('Filtered');
     expect(spectator.component.searchResults).toHaveLength(3);
 
+    const firstResult = spectator.query<HTMLElement>('.search-result');
+    expect(firstResult).toBeTruthy();
+    const clickSpy = jest.spyOn(firstResult!, 'click');
+
     spectator.dispatchKeyboardEvent(inputElement!, 'keydown', 'Enter');
-    expect(focusHelper.moveToNextFocusableElement).toHaveBeenCalled();
+
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    // Reset button is right after the input in tab order; if Enter were
+    // falling through to moveToNextFocusableElement it would clear the field.
+    expect(spectator.component.searchControl.value).toBe('Filtered');
   }));
 
   it('should close all backdrops', () => {
