@@ -194,6 +194,21 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly editData = input<Partial<T> | null | undefined>(null);
 
   /**
+   * Transform `editData` from API/entity shape to form-value shape before
+   * the wrapper auto-patches the form. Use when the entity has nested or
+   * renamed fields (e.g., `entity.attributes.type` → `form.type`).
+   *
+   * Receives the raw `editData` value (cast to `unknown` since the entity
+   * is unlikely to match `Partial<T>`) and must return the form's expected
+   * shape. The returned object is fed to `patchValue` and then captured as
+   * the internal snapshot.
+   *
+   * Skipped when `editData` is null or `initialFormSnapshot` is provided.
+   * The same disabled-controls caveat applies — see `editData`.
+   */
+  readonly transformEditData = input<((data: unknown) => Partial<T>) | null>(null);
+
+  /**
    * External initial snapshot for change tracking. Use this when the form
    * does its own async setup/patching. Pass the result of
    * formGroup.getRawValue() after setup is complete.
@@ -234,6 +249,34 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * itself as `(event: FormSubmitEvent<MyFormShape>) => SubmitResult`.
    */
   readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult>();
+
+  /**
+   * Hook invoked between the wrapper's submit-disabled guards and
+   * `submitHandler`. Receives the built `FormSubmitEvent` and may:
+   * - return a new `FormSubmitEvent<T>` to forward to `submitHandler`
+   *   (use for adding computed fields, normalizing values, etc.);
+   * - return `false` to cancel the submit silently (the wrapper resets
+   *   its loading state and stays open — no error path runs).
+   *
+   * Most cases can also be handled inside `submitHandler` itself; reach
+   * for this hook when it's cleaner to keep payload-shaping isolated from
+   * request orchestration, or to gate a submit on async user confirmation
+   * that should NOT surface as a request error.
+   */
+  readonly preSubmit = input<((event: FormSubmitEvent<T>) => FormSubmitEvent<T> | false) | null>(null);
+
+  /**
+   * Callback fired when the form's slide-in is destroyed without a
+   * successful submit — i.e. user cancelled via close-X / escape /
+   * click-outside, or any caller called `slideInRef.close({ response:
+   * undefined })`. Also fires on `slideInRef.swap(...)` since the
+   * destroyed-without-submit condition is the same.
+   *
+   * Use for cleanup that must run on cancel paths — releasing a
+   * server-side lock acquired during setup, reverting a temporary
+   * preview, telemetry, etc. Does NOT fire when submit succeeds.
+   */
+  readonly onCancel = input<(() => void) | null>(null);
 
   /**
    * External loading state (e.g., during async setup). Combined with
@@ -323,6 +366,10 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);
 
+  // Set true once submitHandler's request$ has emitted successfully. Read
+  // by the DestroyRef hook to decide whether to fire `onCancel`.
+  private hadSuccessfulSubmit = false;
+
   private slideInRef = inject(SlideInRef, { optional: true }) as SlideInRef<unknown, unknown> | null;
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -359,13 +406,24 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       }));
     }
 
+    // Wire onCancel via DestroyRef so it fires on every non-success destroy
+    // path (close-X, escape, programmatic cancel, swap). The success path
+    // sets `hadSuccessfulSubmit` before closing the slide-in.
+    this.destroyRef.onDestroy(() => {
+      if (!this.hadSuccessfulSubmit) {
+        this.onCancel()?.();
+      }
+    });
+
     if (this.initialFormSnapshot() != null) {
       return;
     }
 
     const data = this.editData();
     if (data != null) {
-      this.formGroup().patchValue(data as Record<string, unknown>);
+      const transform = this.transformEditData();
+      const patchData = transform ? transform(data) : data;
+      this.formGroup().patchValue(patchData as Record<string, unknown>);
       this.internalSnapshot.set(this.formGroup().getRawValue() as Partial<T>);
     }
   }
@@ -384,11 +442,20 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     }
 
     const allValues = this.formGroup().getRawValue() as T;
-    const event: FormSubmitEvent<T> = {
+    let event: FormSubmitEvent<T> = {
       isEdit: this.isEdit(),
       allValues,
       changedValues: this.getChangedValues(allValues),
     };
+
+    const preSubmit = this.preSubmit();
+    if (preSubmit) {
+      const result = preSubmit(event);
+      if (result === false) {
+        return;
+      }
+      event = result;
+    }
 
     const {
       request$, successMessage, onSuccess, onError, closeWith,
@@ -399,6 +466,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     request$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
         handledSuccess = true;
+        this.hadSuccessfulSubmit = true;
         if (!this.suppressSuccessSnackbar()) {
           this.snackbar.success(successMessage);
         }

@@ -522,6 +522,234 @@ describe('IxFormComponent', () => {
     });
   });
 
+  describe('transformEditData', () => {
+    interface MismatchedEntity {
+      label: string;
+      meta: { nestedDescription: string };
+    }
+
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [editData]="entity"
+          [transformEditData]="transform"
+          [title]="'Transform'"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+            <ix-input formControlName="description" [label]="'Description'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-transform-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class TransformHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+
+      entity: MismatchedEntity = {
+        label: 'Renamed',
+        meta: { nestedDescription: 'From nested' },
+      };
+
+      transform = (data: unknown): Record<string, unknown> => {
+        const entity = data as MismatchedEntity;
+        return {
+          name: entity.label,
+          description: entity.meta.nestedDescription,
+        };
+      };
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({
+        name: [''],
+        description: [''],
+      });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createTransformComponent = createComponentFactory({
+      component: TransformHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('runs the transform before patching the form', () => {
+      const transformSpectator = createTransformComponent();
+      expect(transformSpectator.component.form.getRawValue()).toEqual({
+        name: 'Renamed',
+        description: 'From nested',
+      });
+    });
+
+    it('captures the transformed result as the diff baseline', async () => {
+      const transformSpectator = createTransformComponent();
+      const transformLoader = TestbedHarnessEnvironment.loader(transformSpectator.fixture);
+
+      const form = await transformLoader.getHarness(IxFormHarness);
+      await form.fillForm({ Name: 'Edited' });
+
+      const saveButton = await transformLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ changedValues: { name: 'Edited' } }),
+      );
+    });
+  });
+
+  describe('preSubmit', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [title]="'PreSubmit'"
+          [requiredRoles]="[role]"
+          [preSubmit]="preSubmit()"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-pre-submit-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class PreSubmitHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+      // Signal so tests can swap the hook between cases — reassigning a plain
+      // class field after init isn't picked up by the wrapper's `input()`.
+      preSubmit = signal<((event: FormSubmitEvent) => FormSubmitEvent | false) | null>(null);
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: ['initial'] });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createPreSubmitComponent = createComponentFactory({
+      component: PreSubmitHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('forwards the transformed event to submitHandler', async () => {
+      const preSubmitSpectator = createPreSubmitComponent();
+      preSubmitSpectator.component.preSubmit.set((event) => ({
+        ...event,
+        allValues: { ...event.allValues, name: 'overridden' },
+      }));
+      preSubmitSpectator.detectChanges();
+      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
+
+      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ allValues: { name: 'overridden' } }),
+      );
+    });
+
+    it('cancels the submit when preSubmit returns false', async () => {
+      const preSubmitSpectator = createPreSubmitComponent();
+      preSubmitSpectator.component.preSubmit.set(() => false);
+      preSubmitSpectator.detectChanges();
+      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
+
+      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy).not.toHaveBeenCalled();
+      expect(slideInRef.close).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onCancel', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [title]="'Cancel'"
+          [requiredRoles]="[role]"
+          [onCancel]="onCancel"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-cancel-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class CancelHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+      onCancel = jest.fn();
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: [''] });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createCancelComponent = createComponentFactory({
+      component: CancelHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('fires when the component is destroyed without a submit', () => {
+      const cancelSpectator = createCancelComponent();
+      const onCancelFn = cancelSpectator.component.onCancel;
+
+      cancelSpectator.fixture.destroy();
+
+      expect(onCancelFn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does NOT fire when the component is destroyed after a successful submit', async () => {
+      const cancelSpectator = createCancelComponent();
+      const onCancelFn = cancelSpectator.component.onCancel;
+      const cancelLoader = TestbedHarnessEnvironment.loader(cancelSpectator.fixture);
+
+      const saveButton = await cancelLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      cancelSpectator.fixture.destroy();
+
+      expect(onCancelFn).not.toHaveBeenCalled();
+    });
+  });
+
   describe('suppressSuccessSnackbar', () => {
     @Component({
       template: `
