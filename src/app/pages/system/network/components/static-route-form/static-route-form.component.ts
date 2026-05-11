@@ -33,13 +33,7 @@ export class StaticRouteFormComponent {
 
   protected editingRoute = this.slideInRef.getData();
 
-  protected get title(): string {
-    return this.editingRoute
-      ? this.translate.instant('Edit Static Route')
-      : this.translate.instant('Add Static Route');
-  }
-
-  form = this.fb.group({
+  protected form = this.fb.group({
     destination: ['', [Validators.required]],
     gateway: ['', [Validators.required, ipv4or6Validator()]],
     description: [''],

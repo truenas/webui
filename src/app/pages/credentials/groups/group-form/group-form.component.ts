@@ -59,7 +59,7 @@ export class GroupFormComponent implements OnInit {
   protected readonly formSnapshot = signal<Record<string, unknown> | null>(null);
   protected readonly initialLoading = signal(false);
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo_commands: [[] as string[]],

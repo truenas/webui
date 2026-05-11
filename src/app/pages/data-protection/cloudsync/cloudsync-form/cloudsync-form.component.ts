@@ -116,13 +116,13 @@ export class CloudSyncFormComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  get isNew(): boolean {
+  protected get isNew(): boolean {
     return !this.editingTask;
   }
 
   protected readonly slashRootNode = [slashRootNode];
 
-  get credentialsDependentControls(): FormControl[] {
+  private get credentialsDependentControls(): FormControl[] {
     return [
       this.form.controls.bucket,
       this.form.controls.bucket_input,
@@ -136,9 +136,9 @@ export class CloudSyncFormComponent implements OnInit {
     ];
   }
 
-  googleDriveProviderIds: number[] = [];
+  protected googleDriveProviderIds: number[] = [];
 
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
     transfer_mode: [TransferMode.Copy, Validators.required],
@@ -277,7 +277,7 @@ export class CloudSyncFormComponent implements OnInit {
     });
   }
 
-  setupForm(): void {
+  private setupForm(): void {
     this.form.controls.path_source.disable();
     this.form.controls.filename_encryption.disable();
     this.form.controls.encryption_password.disable();
@@ -405,7 +405,7 @@ export class CloudSyncFormComponent implements OnInit {
     });
   }
 
-  loadBucketOptions(): void {
+  private loadBucketOptions(): void {
     if (!this.hasRequiredRoles()) {
       this.isLoading.set(false);
       const bucket = this.editingTask?.attributes?.bucket as string;

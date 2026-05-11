@@ -35,7 +35,7 @@ export class NtpServersFormComponent {
 
   protected editingServer = this.slideInRef.getData();
 
-  form = this.fb.nonNullable.group({
+  protected form = this.fb.nonNullable.group({
     address: [''],
     burst: [false],
     iburst: [true],
@@ -53,13 +53,7 @@ export class NtpServersFormComponent {
     ],
   });
 
-  readonly helptext = helptext;
-
-  protected get title(): string {
-    return this.editingServer
-      ? this.translate.instant('Edit NTP Server')
-      : this.translate.instant('Add NTP Server');
-  }
+  protected readonly helptext = helptext;
 
   protected handleSubmit = (event: FormSubmitEvent<CreateNtpServer>): SubmitResult => ({
     request$: this.editingServer

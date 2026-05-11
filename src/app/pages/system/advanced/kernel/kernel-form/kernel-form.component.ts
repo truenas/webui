@@ -37,11 +37,11 @@ export class KernelFormComponent {
 
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  form = this.fb.nonNullable.group({
+  protected form = this.fb.nonNullable.group({
     debugkernel: [false],
   });
 
-  readonly tooltips = {
+  protected readonly tooltips = {
     debugkernel: helptextSystemAdvanced.debugKernelTooltip,
   };
 

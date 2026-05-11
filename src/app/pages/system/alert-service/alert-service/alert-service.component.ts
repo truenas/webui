@@ -129,6 +129,11 @@ export class AlertServiceComponent implements OnInit {
   // Combined dirty: both the top-level commonForm and the dynamic
   // alertServiceForm child (rendered into a ViewContainerRef, so its dirty
   // state is invisible to commonForm).
+  //
+  // `alertServiceForm` is set synchronously in `ngOnInit` via
+  // `renderAlertServiceForm()`. The slide-in framework only invokes this
+  // predicate when the user attempts to close, which is necessarily after
+  // ngOnInit — so the optional chain here is defensive, not load-bearing.
   protected dirtyPredicate = (): Observable<boolean> => {
     return of(Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty));
   };
