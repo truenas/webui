@@ -55,7 +55,7 @@ export class MetadataWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    parityLock$(this.addVdevsStore.pool$, this.store.topology$, VDevType.Special)
+    parityLock$(this.addVdevsStore.pool$, this.store.topology$)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((lock) => {
         this.allowedLayouts = lock.allowedLayouts;

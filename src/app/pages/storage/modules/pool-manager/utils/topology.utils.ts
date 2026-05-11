@@ -208,21 +208,25 @@ export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(Create
   .filter((layout) => !draidCreateLayouts.includes(layout));
 
 /**
+ * Stable references for the two outcomes of {@link resolveParityLock} so that
+ * callers can compare allowedLayouts by reference (parityLock$'s
+ * distinctUntilChanged) without walking the array on every emission.
+ */
+const layoutsWithoutStripe: readonly CreateVdevLayout[] = nonDraidLayouts
+  .filter((layout) => layout !== CreateVdevLayout.Stripe);
+
+/**
  * Constraint on the Layout + Width controls for a special/dedup vdev.
- * Expressed as the set of layouts the user may pick plus a minimum Mirror
- * width, rather than a single locked layout, so that any layout matching the
- * data vdev's parity level is allowed (e.g. a 3-way mirror alongside RAIDZ2).
+ * After NAS-140839 the lock is intentionally permissive: any non-dRAID layout
+ * is allowed regardless of the data vdev's redundancy, with Stripe gated only
+ * on the data vdev also being Stripe. Lower-redundancy choices surface as
+ * non-blocking warnings in PoolManagerValidationService.
  */
 export interface ParityLock {
   allowedLayouts: readonly CreateVdevLayout[];
   /** Applies only when Mirror is selected. `2` is the effective floor. */
   minMirrorWidth: number;
 }
-
-const unconstrainedParityLock: ParityLock = {
-  allowedLayouts: nonDraidLayouts,
-  minMirrorWidth: 2,
-};
 
 /**
  * Number of simultaneous drive failures `layout` at the given width can
@@ -243,87 +247,47 @@ export function layoutParity(layout: CreateVdevLayout, width: number): number {
 }
 
 /**
- * ParityLock admitting every non-dRAID layout that can tolerate at least
- * `minParity` drive failures. Mirror is always in the set but gated by
- * `minMirrorWidth` (width-1 >= minParity).
+ * Resolves the parity lock for a special or dedup vdev. ER-72 requires that
+ * Mirror, RAIDZ1, RAIDZ2 and RAIDZ3 are always selectable regardless of the
+ * data vdev's layout — the wizard no longer enforces parity matching at the
+ * dropdown level. Stripe remains gated on the data vdev also being Stripe so
+ * a no-redundancy metadata vdev can't be silently introduced. dRAID is never
+ * offered (ZFS doesn't support it for special/dedup).
+ *
+ * Mirror data without a width still resolves to Mirror, which hides Stripe.
+ * Stripe special/dedup is a misconfiguration anyway, so concealing it during
+ * the transient pre-width state is preferable to briefly exposing it.
  */
-export function parityLockForMinParity(minParity: number): ParityLock {
-  const allowedLayouts = nonDraidLayouts.filter((layout) => {
-    if (layout === CreateVdevLayout.Mirror) {
-      return true;
-    }
-    return layoutParity(layout, 0) >= minParity;
-  });
+export function resolveParityLock(
+  existingData: VDevItem[] | undefined,
+  wizardData: { layout: CreateVdevLayout | null } | undefined,
+): ParityLock {
+  const dataLayout = resolveTopologyLayout(existingData) ?? wizardData?.layout ?? null;
+  const allowStripe = dataLayout === CreateVdevLayout.Stripe;
+
   return {
-    allowedLayouts,
-    minMirrorWidth: Math.max(2, minParity + 1),
+    allowedLayouts: allowStripe ? nonDraidLayouts : layoutsWithoutStripe,
+    minMirrorWidth: 2,
   };
 }
 
 /**
- * Resolves the parity lock for a special or dedup vdev. These vdevs' failure
- * destroys the whole pool, so their redundancy must be at least the data
- * vdev's. Preference order:
- *   1. Existing special/dedup layout (pool already has vdevs in this category;
- *      the new vdev must match exactly — pools don't mix layouts inside a
- *      category).
- *   2. Existing data layout (pool has data vdevs; match their parity level).
- *   3. Wizard-selected data layout and width (new pool; match parity).
- * Returns the fully permissive lock when none are set (e.g. user jumps to the
- * step before picking a data layout).
- */
-export function resolveParityLock(
-  existingCategory: VDevItem[] | undefined,
-  existingData: VDevItem[] | undefined,
-  wizardData: { layout: CreateVdevLayout | null; width: number | null } | undefined,
-): ParityLock {
-  // A Stripe special/dedup vdev would be a misconfigured pool (no redundancy
-  // where it's required). Ignore it and fall through to data-parity so we
-  // don't "lock" a new vdev into a no-redundancy layout.
-  const categoryLayout = existingVdevLayout(existingCategory);
-  if (categoryLayout !== null && categoryLayout !== CreateVdevLayout.Stripe) {
-    return { allowedLayouts: [categoryLayout], minMirrorWidth: 2 };
-  }
-
-  if (existingData?.length) {
-    const layout = resolveTopologyLayout(existingData);
-    if (layout !== null) {
-      const width = existingData[0].children?.length ?? 2;
-      return parityLockForMinParity(layoutParity(layout, width));
-    }
-  }
-
-  if (wizardData?.layout) {
-    // Mirror parity depends on width; if width isn't picked yet, don't lock.
-    if (wizardData.layout === CreateVdevLayout.Mirror && !wizardData.width) {
-      return unconstrainedParityLock;
-    }
-    return parityLockForMinParity(layoutParity(wizardData.layout, wizardData.width ?? 2));
-  }
-
-  return unconstrainedParityLock;
-}
-
-/**
- * Emits the parity lock for the given special/dedup category. Shared by the
- * metadata and dedup wizard steps so both react to the same set of inputs
- * (existing pool topology, wizard data layout + width) in the same way.
+ * Emits the parity lock for special/dedup categories. Shared by the metadata
+ * and dedup wizard steps so both react to the same set of inputs (existing
+ * pool data layout, wizard data layout) in the same way.
  */
 export function parityLock$(
   pool$: Observable<Pool | null>,
   topology$: Observable<PoolManagerTopology>,
-  vdevType: VDevType.Special | VDevType.Dedup,
 ): Observable<ParityLock> {
   return combineLatest([pool$, topology$]).pipe(
     map(([pool, topology]) => resolveParityLock(
-      pool?.topology[vdevType],
       pool?.topology[VDevType.Data],
-      { layout: topology[VDevType.Data].layout, width: topology[VDevType.Data].width },
+      { layout: topology[VDevType.Data].layout },
     )),
     distinctUntilChanged((a, b) => (
       a.minMirrorWidth === b.minMirrorWidth
-      && a.allowedLayouts.length === b.allowedLayouts.length
-      && a.allowedLayouts.every((layout, i) => layout === b.allowedLayouts[i])
+      && a.allowedLayouts === b.allowedLayouts
     )),
   );
 }
