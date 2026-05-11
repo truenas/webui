@@ -23,7 +23,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="formGroup().invalid || isLoading() || (requireDirty() && formGroup().pristine)"
+          [disabled]="formGroup().invalid || isLoading() || (requireDirty() && formGroup().pristine) || extraDisabled()"
           [attr.aria-busy]="isSubmitting() || null"
         >
           {{ (isSubmitting() ? 'Saving…' : 'Save') | translate }}

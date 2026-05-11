@@ -458,6 +458,70 @@ describe('IxFormComponent', () => {
     });
   });
 
+  describe('extraDisabled', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [title]="'Extra Disabled'"
+          [extraDisabled]="extraDisabled()"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-extra-disabled-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class ExtraDisabledHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+      extraDisabled = signal(true);
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: ['filled'] });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createExtraDisabledComponent = createComponentFactory({
+      component: ExtraDisabledHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('disables Save when extraDisabled is true and re-enables when it flips', async () => {
+      const extraSpectator = createExtraDisabledComponent();
+      const extraLoader = TestbedHarnessEnvironment.loader(extraSpectator.fixture);
+      const saveButton = await extraLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      extraSpectator.component.extraDisabled.set(false);
+      extraSpectator.detectChanges();
+
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('ignores Enter-key submit while extraDisabled is true', () => {
+      const extraSpectator = createExtraDisabledComponent();
+
+      extraSpectator.dispatchFakeEvent(extraSpectator.query('form')!, 'submit');
+
+      expect(submitHandlerSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('error handling', () => {
     it('handles errors from submitHandler request', async () => {
       const error = new Error('Validation failed');

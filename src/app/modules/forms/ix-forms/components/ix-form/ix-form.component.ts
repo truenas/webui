@@ -267,6 +267,19 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly requireDirty = input(false);
 
   /**
+   * Extra disabled gate ORed with the wrapper's built-in checks
+   * (`formGroup.invalid`, `isLoading`, and `requireDirty && pristine`).
+   * Use when Save should also depend on state outside `formGroup` — e.g. a
+   * sibling FormGroup's validity, a child component's `valid` signal, or a
+   * computed business rule. Pristine-submit via Enter is also blocked when
+   * this is true.
+   *
+   * Pass a no-arg function (often a signal getter or computed) so the
+   * binding stays reactive.
+   */
+  readonly extraDisabled = input<boolean>(false);
+
+  /**
    * Override for the dirty-confirmation check. The factory returns an
    * Observable that emits `true` when the slide-in should ask the user to
    * confirm closing (i.e. the form has unsaved changes).
@@ -350,6 +363,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       return;
     }
     if (this.requireDirty() && this.formGroup().pristine) {
+      return;
+    }
+    if (this.extraDisabled()) {
       return;
     }
 
