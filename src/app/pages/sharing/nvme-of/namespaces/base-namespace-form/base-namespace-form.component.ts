@@ -1,19 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
@@ -22,11 +19,11 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -60,31 +57,37 @@ const typeOptions: Option[] = [
     IxExplorerComponent,
     ReactiveFormsModule,
     TranslateModule,
-    MatButton,
-    TestDirective,
-    FormActionsComponent,
-    MatCard,
-    MatCardContent,
-    ModalHeaderComponent,
     IxFieldsetComponent,
     IxButtonGroupComponent,
     IxInputComponent,
+    IxFormComponent,
     ExplorerCreateZvolComponent,
-    RequiresRolesDirective,
   ],
 })
-export class BaseNamespaceFormComponent implements OnInit, OnChanges {
+export class BaseNamespaceFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
   protected formatter = inject(IxFormatterService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   namespace = input<NvmeOfNamespace>();
-  error = input<unknown>(null);
 
-  submitted = output<NamespaceChanges>();
+  /**
+   * Submit callback supplied by each parent. The base computes the
+   * `NamespaceChanges` payload from the form, then hands it off — parents
+   * decide between a synthetic close (subsystem-wizard flow) or an API call
+   * (subsystem-details flow). Required so the wrapper's submitHandler can
+   * never be wired up to a no-op by accident.
+   */
+  submitHandler = input.required<(changes: NamespaceChanges) => SubmitResult>();
+
+  /**
+   * Passthrough to `<ix-form>`. Parents that close with a payload (no API
+   * call, no "Saved!" semantics) set this to true so the wrapper skips the
+   * default success snackbar.
+   */
+  suppressSuccessSnackbar = input(false);
 
   protected readonly zvolsRootNode = [zvolsRootNode];
   protected readonly zvolProvider = this.filesystemService.getFilesystemNodeProvider({
@@ -110,18 +113,8 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  get isFormDirty(): boolean {
-    return this.form.dirty;
-  }
-
   constructor() {
     this.clearPathOnTypeChanges();
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<BaseNamespaceFormComponent>): void {
-    if (changes.error && changes.error.currentValue) {
-      this.formErrorHandler.handleValidationErrors(this.error(), this.form);
-    }
   }
 
   ngOnInit(): void {
@@ -135,7 +128,11 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
+    return this.submitHandler()(this.computeChanges());
+  };
+
+  private computeChanges(): NamespaceChanges {
     const value = this.form.value;
     let path = '';
 
@@ -153,11 +150,11 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
         break;
     }
 
-    this.submitted.emit({
+    return {
       device_path: path,
       device_type: value.device_type === FormNamespaceType.Zvol ? NvmeOfNamespaceType.Zvol : NvmeOfNamespaceType.File,
       filesize: value.device_type === FormNamespaceType.NewFile ? value.filesize : undefined,
-    });
+    };
   }
 
   private clearPathOnTypeChanges(): void {
