@@ -267,6 +267,17 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly requireDirty = input(false);
 
   /**
+   * When true, the wrapper skips the success snackbar after a successful
+   * submit. Use for "config-builder" forms whose submit returns a payload
+   * to the caller rather than persisting via an API call — there's nothing
+   * to congratulate the user about, and the toast reads as noise.
+   *
+   * The slide-in still closes (with `closeWith` / the raw request$ result)
+   * and `onSuccess` still fires; only the snackbar is suppressed.
+   */
+  readonly suppressSuccessSnackbar = input(false);
+
+  /**
    * Extra disabled gate ORed with the wrapper's built-in checks
    * (`formGroup.invalid`, `isLoading`, and `requireDirty && pristine`).
    * Use when Save should also depend on state outside `formGroup` — e.g. a
@@ -388,7 +399,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     request$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result: unknown) => {
         handledSuccess = true;
-        this.snackbar.success(successMessage);
+        if (!this.suppressSuccessSnackbar()) {
+          this.snackbar.success(successMessage);
+        }
         onSuccess?.(result);
         const payload = closeWith ? closeWith(result) : result;
         // SlideInResponse treats `undefined` as a cancelled close, so coerce

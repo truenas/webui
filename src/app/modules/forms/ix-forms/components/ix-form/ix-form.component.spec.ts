@@ -522,6 +522,84 @@ describe('IxFormComponent', () => {
     });
   });
 
+  describe('suppressSuccessSnackbar', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [title]="'Suppressed'"
+          [suppressSuccessSnackbar]="true"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-suppress-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class SuppressHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: [''] });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createSuppressComponent = createComponentFactory({
+      component: SuppressHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('skips the snackbar but still closes the slide-in on success', async () => {
+      const apiResult = { id: 1 };
+      submitHandlerSpy.mockReturnValue({
+        request$: of(apiResult),
+        successMessage: 'Saved!' as TranslatedString,
+      });
+
+      const suppressSpectator = createSuppressComponent();
+      const suppressLoader = TestbedHarnessEnvironment.loader(suppressSpectator.fixture);
+
+      const saveButton = await suppressLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(suppressSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: apiResult });
+    });
+
+    it('still invokes onSuccess when the snackbar is suppressed', async () => {
+      const onSuccessSpy = jest.fn();
+      const apiResult = { id: 1 };
+      submitHandlerSpy.mockReturnValue({
+        request$: of(apiResult),
+        successMessage: 'Saved!' as TranslatedString,
+        onSuccess: onSuccessSpy,
+      });
+
+      const suppressSpectator = createSuppressComponent();
+      const suppressLoader = TestbedHarnessEnvironment.loader(suppressSpectator.fixture);
+
+      const saveButton = await suppressLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(onSuccessSpy).toHaveBeenCalledWith(apiResult);
+      expect(suppressSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    });
+  });
+
   describe('error handling', () => {
     it('handles errors from submitHandler request', async () => {
       const error = new Error('Validation failed');
