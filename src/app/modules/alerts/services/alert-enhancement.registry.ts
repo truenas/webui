@@ -427,7 +427,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloud-backup'],
       contextualHelp: T('Cloud backup failures may be caused by network connectivity issues, insufficient cloud storage space, invalid credentials, or expired authentication tokens.'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloudtasks/',
+      documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloud/truecloudtasks/',
       actions: [
         {
           label: T('Rerun Cloud Backup'),
@@ -453,7 +453,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           label: T('Backup Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: tnIconMarker('book-open-variant', 'mdi'),
-          externalUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloudtasks/',
+          externalUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloud/truecloudtasks/',
         },
       ],
       extractFragment: createFragmentExtractor(
