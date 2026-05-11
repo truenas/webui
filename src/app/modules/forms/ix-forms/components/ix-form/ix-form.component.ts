@@ -179,9 +179,11 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * handing the snapshot to this component.
    *
    * Only safe to use when the entity shape matches the form-control shape
-   * 1-to-1. For entities that need key renames or transforms (e.g. API
-   * `group` → form `name`), skip this and use `initialFormSnapshot` with
-   * your own setup logic.
+   * 1-to-1. For entities that need key renames or shape transforms (e.g.
+   * API `entity.attributes.type` → `form.type`), pair this with the
+   * `transformEditData` input rather than reaching for `initialFormSnapshot`
+   * — the latter carries an async-snapshot expectation and is heavier
+   * machinery than a synchronous rename needs.
    *
    * Controls that are already disabled when this runs are NOT patched by
    * Angular's `patchValue` — the snapshot captured afterwards via
@@ -424,6 +426,11 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       const transform = this.transformEditData();
       const patchData = transform ? transform(data) : data;
       this.formGroup().patchValue(patchData as Record<string, unknown>);
+      // patchValue doesn't mark the form dirty today, but markAsPristine is
+      // defensive against a refactor swapping in setValue (which would mark
+      // dirty) and against any nested controls a user-supplied transform
+      // might have produced via setValue under the hood.
+      this.formGroup().markAsPristine();
       this.internalSnapshot.set(this.formGroup().getRawValue() as Partial<T>);
     }
   }
