@@ -126,16 +126,26 @@ export class AlertServiceComponent implements OnInit {
     return this.commonForm.valid && this.alertServiceForm?.form.valid;
   }
 
+  // True once the user has ever caused the child form to re-render by
+  // changing `type`. The new child form starts pristine even though the
+  // user has clearly edited the parent — we keep a sticky bit so that
+  // post-rerender state is still counted as dirty.
+  private hadTypeChange = false;
+
   // Combined dirty: both the top-level commonForm and the dynamic
   // alertServiceForm child (rendered into a ViewContainerRef, so its dirty
-  // state is invisible to commonForm).
+  // state is invisible to commonForm). Also stays true once the user has
+  // changed `type` at least once, since rerendering the child resets its
+  // dirty flag while the parent's edit clearly hasn't been undone.
   //
   // `alertServiceForm` is set synchronously in `ngOnInit` via
   // `renderAlertServiceForm()`. The slide-in framework only invokes this
   // predicate when the user attempts to close, which is necessarily after
   // ngOnInit — so the optional chain here is defensive, not load-bearing.
   protected dirtyPredicate = (): Observable<boolean> => {
-    return of(Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty));
+    return of(Boolean(
+      this.commonForm.dirty || this.alertServiceForm?.form.dirty || this.hadTypeChange,
+    ));
   };
 
   ngOnInit(): void {
@@ -212,6 +222,7 @@ export class AlertServiceComponent implements OnInit {
     this.commonForm.controls.type.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+        this.hadTypeChange = true;
         this.renderAlertServiceForm();
       });
   }

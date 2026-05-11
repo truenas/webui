@@ -23,10 +23,14 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="formGroup().invalid || isLoading() || (requireDirty() && formGroup().pristine) || extraDisabled()"
+          [disabled]="isSaveDisabled()"
           [attr.aria-busy]="isSubmitting() || null"
         >
-          {{ (isSubmitting() ? 'Saving…' : 'Save') | translate }}
+          @if (isSubmitting()) {
+            {{ 'Saving…' | translate }}
+          } @else {
+            {{ 'Save' | translate }}
+          }
         </button>
       </ix-form-actions>
     </form>

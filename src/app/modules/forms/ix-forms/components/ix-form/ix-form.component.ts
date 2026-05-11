@@ -56,7 +56,22 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
    * does not produce an entry here.
    *
    * If a submit depends on a group of fields moving together (e.g. paired
-   * toggles), prefer `allValues` over this.
+   * toggles), prefer `allValues` over this. Known cases where the diff is
+   * unsafe and the handler should build its own payload from `allValues`
+   * (or a transform of the form value):
+   *   - **Derived/paired controls** — e.g. a list value gated by a sibling
+   *     "use defaults" toggle. A diff that only includes the changed half
+   *     drops the pairing.
+   *   - **Inherit semantics** — controls where the user-visible value is
+   *     "inherit" but the API expects either the sentinel string or an
+   *     omitted key depending on context.
+   *   - **Heavy payload transforms** — forms whose submit handler reshapes
+   *     the form value into a structurally different API shape (renamed
+   *     keys, nested encryption blocks, schedule normalization, etc.).
+   *     A key-by-key diff won't line up with the API shape.
+   *   - **Multi-stage forms** — when controls are added/removed after
+   *     init, see `IxFormComponent.refreshSnapshot()` for the recovery
+   *     path; without it, late-added controls always appear changed.
    */
   changedValues: Partial<T>;
 }
@@ -82,10 +97,21 @@ export interface SubmitResult {
   /**
    * Override the payload the slide-in closes with. Receives the value
    * emitted by request$ and must return what downstream listeners
-   * (success$ / onSuccess on the caller side) should observe. When
-   * omitted, the raw request$ result is passed through — or `true` if
-   * the request emitted `undefined`, since `undefined` is reserved to
-   * signal a cancelled close.
+   * (success$ / onSuccess on the caller side) should observe.
+   *
+   * When `closeWith` is omitted, the raw `request$` result is passed
+   * through. There is one coercion: if both `closeWith` is omitted AND
+   * `request$` emits `undefined`, the slide-in closes with `true`.
+   * That coercion exists because `SlideInResponse` treats `undefined`
+   * as a cancelled close, and a successful submit must not look like a
+   * cancel to upstream `.onSuccess(...)` listeners.
+   *
+   * Caveat: any caller whose `request$` emits `undefined` AND who wants
+   * upstream listeners to receive `undefined` (or any other specific
+   * payload) MUST provide `closeWith` — relying on pass-through will
+   * silently observe `true` on the success$ side. In practice, prefer
+   * providing `closeWith` whenever the API endpoint's success payload
+   * is `void`/`undefined` so the contract is explicit at the call site.
    */
   closeWith?: (result: unknown) => unknown;
 }
@@ -140,11 +166,12 @@ export interface SubmitResult {
  * source entity. Otherwise the title briefly shows "Add …" before the
  * snapshot settles, since inferred edit state sees a null snapshot on init.
  *
- * Must be rendered inside a slide-in: the embedded `<ix-modal-header>` injects
- * `SlideIn` and `SlideInRef` non-optionally. Forms rendered on a standalone
- * route or outside `SlideIn.open(...)` will fail at construction with an
- * injector error. If a use case for that arises, `SlideIn`/`SlideInRef`
- * injection in the header (and this component) would need to become optional.
+ * Must be rendered inside a slide-in: this component and the embedded
+ * `<ix-modal-header>` both inject `SlideInRef`, and the header also injects
+ * `SlideIn`. Forms rendered on a standalone route or outside `SlideIn.open(...)`
+ * will fail at construction with an injector error. If a use case for that
+ * arises, the injections in this component and the header would need to
+ * become optional in lockstep.
  */
 @Component({
   selector: 'ix-form',
@@ -178,12 +205,17 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * prefer `initialFormSnapshot` and patch the form yourself before
    * handing the snapshot to this component.
    *
-   * Only safe to use when the entity shape matches the form-control shape
-   * 1-to-1. For entities that need key renames or shape transforms (e.g.
-   * API `entity.attributes.type` → `form.type`), pair this with the
-   * `transformEditData` input rather than reaching for `initialFormSnapshot`
-   * — the latter carries an async-snapshot expectation and is heavier
-   * machinery than a synchronous rename needs.
+   * Two shapes are accepted:
+   * - Without `transformEditData`: pass `Partial<T>` matching the form
+   *   shape 1-to-1.
+   * - With `transformEditData`: pass the raw entity (any object). The
+   *   transform's input is typed as `unknown` precisely because the
+   *   entity rarely matches `Partial<T>` — see `transformEditData`.
+   *
+   * The input is intentionally typed as `Partial<T> | object` so consumers
+   * binding an entity (e.g. `[editData]="apiEntity"`) don't need a cast,
+   * while consumers passing pre-shaped form data still get the structural
+   * check on `Partial<T>`.
    *
    * Controls that are already disabled when this runs are NOT patched by
    * Angular's `patchValue` — the snapshot captured afterwards via
@@ -193,7 +225,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * If any control is disabled at init, use `initialFormSnapshot` and
    * patch the form yourself (use `setValue` or reset before disabling).
    */
-  readonly editData = input<Partial<T> | null | undefined>(null);
+  readonly editData = input<Partial<T> | object | null | undefined>(null);
 
   /**
    * Transform `editData` from API/entity shape to form-value shape before
@@ -330,11 +362,12 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * computed business rule. Pristine-submit via Enter is also blocked when
    * this is true.
    *
-   * The binding re-evaluates on each change detection cycle, so a signal
-   * read, computed, or getter all work. User-driven status changes
-   * (typing, clicking) trigger CD naturally; if Save needs to track state
-   * that only changes asynchronously without user interaction, drive a
-   * signal from that source and read it here.
+   * This wrapper is OnPush, so the binding only re-evaluates when something
+   * marks the host for check. Drive it from a `signal`, `computed`, or a
+   * binding that depends on an `input()` — those automatically schedule
+   * CD when their underlying state changes. A plain getter that reads
+   * non-signal external state will appear "stuck" until an unrelated event
+   * happens to mark the host for check; avoid that pattern.
    */
   readonly extraDisabled = input<boolean>(false);
 
@@ -372,7 +405,13 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   // by the DestroyRef hook to decide whether to fire `onCancel`.
   private hadSuccessfulSubmit = false;
 
-  private slideInRef = inject(SlideInRef, { optional: true }) as SlideInRef<unknown, unknown> | null;
+  // Required, not optional: the embedded <ix-modal-header> injects SlideInRef
+  // non-optionally already, so a non-slide-in render fails at the header
+  // regardless. Keeping this required surfaces the error closer to the source
+  // and matches the contract documented above (must be rendered inside a
+  // slide-in). Tests render <ix-form> via ixFormTestingProviders(), which
+  // supplies a SlideInRef mock — no production caller renders it standalone.
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
@@ -397,16 +436,30 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     return this.title() || (this.isEdit() ? this.editTitle() : this.addTitle());
   });
 
+  /**
+   * Single source of truth for "Save should be blocked". Both the button's
+   * `[disabled]` binding and the Enter-key guard in `onFormSubmit` read this,
+   * so the two can't drift out of sync. Implemented as a method (not a
+   * `computed`) because the form's `invalid` / `pristine` flags are not
+   * signals — a memoized computed wouldn't re-run when the form changes.
+   * Re-evaluation happens naturally during the template's CD pass.
+   */
+  protected isSaveDisabled(): boolean {
+    const form = this.formGroup();
+    return form.invalid
+      || this.isLoading()
+      || (this.requireDirty() && form.pristine)
+      || this.extraDisabled();
+  }
+
   ngOnInit(): void {
-    if (this.slideInRef) {
-      // `defer` makes the read lazy no matter how the slide-in chooses to
-      // consume the returned observable (call-time or subscribe-time), and
-      // also picks up a `dirtyPredicate` set after init.
-      this.slideInRef.requireConfirmationWhen(() => defer(() => {
-        const predicate = this.dirtyPredicate();
-        return predicate ? predicate() : of(this.formGroup().dirty);
-      }));
-    }
+    // `defer` makes the read lazy no matter how the slide-in chooses to
+    // consume the returned observable (call-time or subscribe-time), and
+    // also picks up a `dirtyPredicate` set after init.
+    this.slideInRef.requireConfirmationWhen(() => defer(() => {
+      const predicate = this.dirtyPredicate();
+      return predicate ? predicate() : of(this.formGroup().dirty);
+    }));
 
     // Wire onCancel via DestroyRef so it fires on every non-success destroy
     // path (close-X, escape, programmatic cancel, swap). The success path
@@ -424,7 +477,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     const data = this.editData();
     if (data != null) {
       const transform = this.transformEditData();
-      const patchData = transform ? transform(data) : data;
+      const patchData = transform ? transform(data) : (data as Partial<T>);
       this.formGroup().patchValue(patchData as Record<string, unknown>);
       // patchValue doesn't mark the form dirty today, but markAsPristine is
       // defensive against a refactor swapping in setValue (which would mark
@@ -437,14 +490,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
 
   onFormSubmit(): void {
     // Pressing Enter in an input fires ngSubmit even when the save button is
-    // disabled, so guard here to match the disabled-button behavior.
-    if (this.isLoading() || this.formGroup().invalid) {
-      return;
-    }
-    if (this.requireDirty() && this.formGroup().pristine) {
-      return;
-    }
-    if (this.extraDisabled()) {
+    // disabled, so guard here using the same predicate that drives the
+    // button's `[disabled]` binding.
+    if (this.isSaveDisabled()) {
       return;
     }
 
@@ -481,7 +529,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         const payload = closeWith ? closeWith(result) : result;
         // SlideInResponse treats `undefined` as a cancelled close, so coerce
         // to `true` when no caller-chosen payload is available.
-        this.slideInRef?.close({ response: payload === undefined ? true : payload });
+        this.slideInRef.close({ response: payload === undefined ? true : payload });
         // Re-enable the button *after* close so a synchronous-complete
         // observable doesn't briefly expose an enabled save button while the
         // modal is animating out.
@@ -503,6 +551,28 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         }
       },
     });
+  }
+
+  /**
+   * Re-capture the current form value as the diff baseline. Call after any
+   * post-init form mutation that should be considered "initial state" — e.g.
+   * `addControl`/`removeControl` calls, async setup that toggles enabled
+   * state, or anything else that changes the structure of the form after
+   * `editData`/`initialFormSnapshot` were applied.
+   *
+   * Without this, controls added later are absent from the original snapshot
+   * and `getChangedValues` will always flag them as changed even when the
+   * user never touched them — see the FormSubmitEvent.changedValues docs.
+   *
+   * No-op when `initialFormSnapshot` is bound externally: the wrapper does
+   * not own that snapshot, so the consumer should re-emit a fresh value
+   * through the input instead.
+   */
+  refreshSnapshot(): void {
+    if (this.initialFormSnapshot() != null) {
+      return;
+    }
+    this.internalSnapshot.set(this.formGroup().getRawValue() as Partial<T>);
   }
 
   private getChangedValues(current: T): Partial<T> {

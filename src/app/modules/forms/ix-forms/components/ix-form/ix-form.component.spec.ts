@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import {
-  concat, EMPTY, firstValueFrom, Observable, of, throwError,
+  concat, EMPTY, firstValueFrom, NEVER, Observable, of, throwError,
 } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -362,13 +362,24 @@ describe('IxFormComponent', () => {
     // The save button is disabled while loading/invalid, so we can't click it —
     // pressing Enter in an input still fires the form's `submit` event, so
     // exercise that path directly via the <form> element.
-    it('does not call submitHandler when submit fires while loading', () => {
+    it('does not call submitHandler when submit fires while loading', async () => {
+      // Start an in-flight submit (NEVER never emits/completes) — the wrapper
+      // sets its internal loading state, which should block subsequent submits.
+      submitHandlerSpy.mockReturnValueOnce({
+        request$: NEVER,
+        successMessage: 'Saved!' as TranslatedString,
+      });
       spectator = createComponent();
-      spectator.component.ixForm().isSubmitting.set(true);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+      expect(submitHandlerSpy).toHaveBeenCalledTimes(1);
+
+      // Second submit via Enter (button is disabled while loading, so we can't
+      // click it) must be ignored — handler call count stays at 1.
       spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
-
-      expect(submitHandlerSpy).not.toHaveBeenCalled();
+      expect(submitHandlerSpy).toHaveBeenCalledTimes(1);
     });
 
     it('does not call submitHandler when submit fires with an invalid form', () => {
@@ -842,8 +853,8 @@ describe('IxFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      const ixForm = spectator.component.ixForm();
-      expect(ixForm.isSubmitting()).toBe(false);
+      // Save button re-enables after the error path runs.
+      expect(await saveButton.isDisabled()).toBe(false);
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
         .toHaveBeenCalledWith(error, spectator.component.form);
     });
