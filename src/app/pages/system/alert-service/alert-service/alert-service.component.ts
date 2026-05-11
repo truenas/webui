@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, ViewContainerRef, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, ViewContainerRef, viewChild, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, FormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { finalize, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
@@ -16,13 +17,14 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAlertService } from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -64,16 +66,13 @@ import {
   templateUrl: './alert-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     FormsModule,
     IxFieldsetComponent,
     IxInputComponent,
     IxCheckboxComponent,
     IxSelectComponent,
-    FormActionsComponent,
+    IxFormComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -83,7 +82,6 @@ import {
 export class AlertServiceComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -105,8 +103,10 @@ export class AlertServiceComponent implements OnInit {
     map((levels) => mapToOptions(levels, this.translate)),
   );
 
-  isLoading = false;
-  protected readonly existingAlertService: AlertService | undefined;
+  // Drives the modal-header progress bar while a Send Test Alert call is in
+  // flight. Submit's own loading state is handled by the wrapper internally.
+  protected readonly testAlertLoading = signal(false);
+  protected readonly existingAlertService = this.slideInRef.getData();
 
   private readonly alertServiceContainer = viewChild.required('alertServiceContainer', { read: ViewContainerRef });
 
@@ -115,10 +115,6 @@ export class AlertServiceComponent implements OnInit {
   private alertServiceForm: BaseAlertServiceForm;
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty));
-    });
-    this.existingAlertService = this.slideInRef.getData();
     this.setFormEvents();
   }
 
@@ -127,8 +123,15 @@ export class AlertServiceComponent implements OnInit {
   }
 
   get canSubmit(): boolean {
-    return this.commonForm.valid && this.alertServiceForm.form.valid;
+    return this.commonForm.valid && this.alertServiceForm?.form.valid;
   }
+
+  // Combined dirty: both the top-level commonForm and the dynamic
+  // alertServiceForm child (rendered into a ViewContainerRef, so its dirty
+  // state is invisible to commonForm).
+  protected dirtyPredicate = (): Observable<boolean> => {
+    return of(Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty));
+  };
 
   ngOnInit(): void {
     this.renderAlertServiceForm();
@@ -149,17 +152,17 @@ export class AlertServiceComponent implements OnInit {
     });
   }
 
-  onSendTestAlert(): void {
-    this.isLoading = true;
-    this.cdr.detectChanges();
+  protected onSendTestAlert(): void {
+    this.testAlertLoading.set(true);
     const payload = this.generatePayload();
 
     this.api.call('alertservice.test', [payload])
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        finalize(() => this.testAlertLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (wasAlertSent) => {
-          this.isLoading = false;
-          this.cdr.detectChanges();
           if (wasAlertSent) {
             this.snackbar.success(this.translate.instant('Test alert sent'));
           } else {
@@ -170,40 +173,23 @@ export class AlertServiceComponent implements OnInit {
           }
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.detectChanges();
           this.errorHandler.handleValidationErrors(error, this.commonForm);
         },
       });
   }
 
-  onSubmit(event: Event): void {
-    event.preventDefault();
-    this.isLoading = true;
-    this.cdr.detectChanges();
-
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const payload = this.generatePayload();
 
     const request$ = this.existingAlertService
       ? this.api.call('alertservice.update', [this.existingAlertService.id, payload])
       : this.api.call('alertservice.create', [payload]);
 
-    request$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.cdr.detectChanges();
-          this.snackbar.success(this.translate.instant('Alert service saved'));
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.detectChanges();
-          this.errorHandler.handleValidationErrors(error, this.commonForm);
-        },
-      });
-  }
+    return {
+      request$,
+      successMessage: this.translate.instant('Alert service saved'),
+    };
+  };
 
   private generatePayload(): AlertServiceEdit {
     const { type, ...rest } = this.commonForm.value;

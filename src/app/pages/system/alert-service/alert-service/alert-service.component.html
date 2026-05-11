@@ -1,70 +1,56 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="commonForm"
+  [isEditMode]="!isNew"
+  [addTitle]="'Add Alert Service' | translate"
+  [editTitle]="'Edit Alert Service' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="isNew ? ('Add Alert Service' | translate) : ('Edit Alert Service' | translate)"
-  [loading]="isLoading"
-></ix-modal-header>
+  [dirtyPredicate]="dirtyPredicate"
+  [extraDisabled]="!!alertServiceForm?.form?.invalid"
+  [externalLoading]="testAlertLoading()"
+  [submitHandler]="handleSubmit"
+>
+  <ix-fieldset [title]="'Name and Type' | translate">
+    <ix-input
+      formControlName="name"
+      [label]="'Name' | translate"
+      [required]="true"
+    ></ix-input>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" (submit)="onSubmit($event)">
-      <ix-fieldset
-        [title]="'Name and Type' | translate"
-        [formGroup]="commonForm"
-      >
-        <ix-input
-          formControlName="name"
-          [label]="'Name' | translate"
-          [required]="true"
-        ></ix-input>
+    <ix-checkbox
+      formControlName="enabled"
+      [label]="'Enabled' | translate"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
+    <ix-select
+      formControlName="type"
+      [label]="'Type' | translate"
+      [options]="services$"
+      [required]="true"
+      [tooltip]="helptext.typeTooltip | translate"
+    ></ix-select>
 
-        <ix-select
-          formControlName="type"
-          [label]="'Type' | translate"
-          [options]="services$"
-          [required]="true"
-          [tooltip]="helptext.typeTooltip | translate"
-        ></ix-select>
+    <ix-select
+      formControlName="level"
+      [label]="'Level' | translate"
+      [options]="levels$"
+      [required]="true"
+      [tooltip]="helptext.levelTooltip | translate"
+    ></ix-select>
+  </ix-fieldset>
 
-        <ix-select
-          formControlName="level"
-          [label]="'Level' | translate"
-          [options]="levels$"
-          [required]="true"
-          [tooltip]="helptext.levelTooltip | translate"
-        ></ix-select>
-      </ix-fieldset>
+  <ix-fieldset [title]="'Settings' | translate">
+    <ng-container #alertServiceContainer></ng-container>
+  </ix-fieldset>
 
-      <ix-fieldset [title]="'Settings' | translate">
-        <ng-container #alertServiceContainer></ng-container>
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="!canSubmit"
-        >
-          {{ 'Save' | translate }}
-        </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          ixTest="send-test-alert"
-          [disabled]="!canSubmit"
-          (click)="onSendTestAlert()"
-        >
-          {{ 'Send Test Alert' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    ixExtraActions
+    mat-button
+    type="button"
+    ixTest="send-test-alert"
+    [disabled]="!canSubmit || testAlertLoading()"
+    (click)="onSendTestAlert()"
+  >
+    {{ 'Send Test Alert' | translate }}
+  </button>
+</ix-form>
