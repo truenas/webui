@@ -12608,7 +12608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:~9.0.7, minimatch@npm:~9.0.9":
+"minimatch@npm:~9.0.9":
   version: 9.0.9
   resolution: "minimatch@npm:9.0.9"
   dependencies:
@@ -13809,7 +13809,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:~2.3.2":
+"picomatch@npm:^2.2.3, picomatch@npm:^2.3.1, picomatch@npm:~2.3.2":
   version: 2.3.2
   resolution: "picomatch@npm:2.3.2"
   checksum: 10/b788ef8148a2415b9dec12f0bb350ae6a5830f8f1950e472abc2f5225494debf7d1b75eb031df0ceaea9e8ec3e7bad599e8dbf3c60d61b42be429ba41bff4426
