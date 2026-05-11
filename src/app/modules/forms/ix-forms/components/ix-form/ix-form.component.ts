@@ -274,8 +274,11 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * computed business rule. Pristine-submit via Enter is also blocked when
    * this is true.
    *
-   * Pass a no-arg function (often a signal getter or computed) so the
-   * binding stays reactive.
+   * The binding re-evaluates on each change detection cycle, so a signal
+   * read, computed, or getter all work. User-driven status changes
+   * (typing, clicking) trigger CD naturally; if Save needs to track state
+   * that only changes asynchronously without user interaction, drive a
+   * signal from that source and read it here.
    */
   readonly extraDisabled = input<boolean>(false);
 
