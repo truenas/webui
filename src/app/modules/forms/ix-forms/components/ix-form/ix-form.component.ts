@@ -255,6 +255,18 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   readonly isEditMode = input<boolean | null>(null);
 
   /**
+   * When true, the Save button stays disabled while the form is pristine,
+   * and a pristine submit (e.g. via Enter) is ignored. Use for forms where
+   * submitting without edits has no meaningful effect — singleton-config
+   * forms that no-op when nothing changed, edit modals that would otherwise
+   * resubmit the unchanged entity, etc.
+   *
+   * Default is false so create forms (where `pristine === true` is normal
+   * at first interaction) keep their existing behavior.
+   */
+  readonly requireDirty = input(false);
+
+  /**
    * Override for the dirty-confirmation check. The factory returns an
    * Observable that emits `true` when the slide-in should ask the user to
    * confirm closing (i.e. the form has unsaved changes).
@@ -335,6 +347,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     // Pressing Enter in an input fires ngSubmit even when the save button is
     // disabled, so guard here to match the disabled-button behavior.
     if (this.isLoading() || this.formGroup().invalid) {
+      return;
+    }
+    if (this.requireDirty() && this.formGroup().pristine) {
       return;
     }
 

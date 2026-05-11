@@ -381,6 +381,83 @@ describe('IxFormComponent', () => {
     });
   });
 
+  describe('requireDirty', () => {
+    @Component({
+      template: `
+        <ix-form
+          [formGroup]="form"
+          [title]="'Dirty Required'"
+          [requireDirty]="true"
+          [requiredRoles]="[role]"
+          [submitHandler]="handleSubmit"
+        >
+          <ix-fieldset>
+            <ix-input formControlName="name" [label]="'Name'" />
+          </ix-fieldset>
+        </ix-form>
+      `,
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      selector: 'ix-require-dirty-host',
+      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
+    })
+    class RequireDirtyHostComponent {
+      ixForm = viewChild.required(IxFormComponent);
+      role = Role.FullAdmin;
+
+      private fb = inject(FormBuilder);
+
+      form = this.fb.group({ name: [''] });
+
+      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    }
+
+    const createRequireDirtyComponent = createComponentFactory({
+      component: RequireDirtyHostComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockProvider(SlideInRef, slideInRef),
+        mockAuth(),
+      ],
+    });
+
+    it('disables Save while pristine and enables it once dirty', async () => {
+      const requireDirtySpectator = createRequireDirtyComponent();
+      const requireDirtyLoader = TestbedHarnessEnvironment.loader(requireDirtySpectator.fixture);
+      const saveButton = await requireDirtyLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      const form = await requireDirtyLoader.getHarness(IxFormHarness);
+      await form.fillForm({ Name: 'Edited' });
+
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('ignores Enter-key submit while pristine', () => {
+      const requireDirtySpectator = createRequireDirtyComponent();
+
+      // ngSubmit fires on Enter even when the disabled button blocks click —
+      // the component-side guard must mirror the disabled state.
+      requireDirtySpectator.dispatchFakeEvent(requireDirtySpectator.query('form')!, 'submit');
+
+      expect(submitHandlerSpy).not.toHaveBeenCalled();
+    });
+
+    it('allows submit once the form has been edited', async () => {
+      const requireDirtySpectator = createRequireDirtyComponent();
+      const requireDirtyLoader = TestbedHarnessEnvironment.loader(requireDirtySpectator.fixture);
+      const form = await requireDirtyLoader.getHarness(IxFormHarness);
+      await form.fillForm({ Name: 'Edited' });
+
+      const saveButton = await requireDirtyLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(submitHandlerSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('error handling', () => {
     it('handles errors from submitHandler request', async () => {
       const error = new Error('Validation failed');
