@@ -1,185 +1,176 @@
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from './focus-helper';
 
+interface FocusableSpec {
+  tag: 'button' | 'input';
+  disabled?: boolean;
+  tabIndex?: number;
+}
+
 describe('Focus Helper', () => {
-  let mockDocument: Document;
-  let mockContainer: Partial<HTMLElement>;
-  let mockElements: Partial<HTMLElement>[];
+  let container: HTMLDivElement;
+  let elements: HTMLElement[];
 
-  beforeEach(() => {
-    mockElements = [
-      { disabled: false, tabIndex: 0, focus: jest.fn() } as Partial<HTMLElement>,
-      { disabled: false, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>,
-      { disabled: false, tabIndex: 2, focus: jest.fn() } as Partial<HTMLElement>,
-    ];
+  function setup(specs: FocusableSpec[]): HTMLElement[] {
+    container = document.createElement('div');
+    container.className = 'search-box-wrapper';
+    document.body.appendChild(container);
 
-    mockContainer = {
-      querySelectorAll: jest.fn().mockReturnValue(mockElements),
-    };
-
-    mockDocument = {
-      querySelector: jest.fn().mockReturnValue(mockContainer),
-    } as unknown as Document;
-
-    Object.defineProperty(mockDocument, 'activeElement', {
-      value: mockElements[0] as HTMLElement,
-      writable: true,
-      configurable: true,
+    return specs.map((spec) => {
+      const element = document.createElement(spec.tag);
+      if (spec.disabled) element.setAttribute('disabled', '');
+      if (spec.tabIndex !== undefined) element.tabIndex = spec.tabIndex;
+      container.appendChild(element);
+      return element;
     });
+  }
+
+  function focusActive(element: HTMLElement): void {
+    element.focus();
+  }
+
+  afterEach(() => {
+    document.body.innerHTML = '';
   });
 
   describe('moveToNextFocusableElement', () => {
-    it('should focus next element in sequence', () => {
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[0] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('focuses the next element in document order', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button' },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[0]);
 
-      moveToNextFocusableElement(mockDocument);
+      moveToNextFocusableElement(document);
 
-      expect(mockElements[1]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[1]);
     });
 
-    it('should wrap around to first element when at end', () => {
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[2] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('wraps around to the first element when at the end', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button' },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[2]);
 
-      moveToNextFocusableElement(mockDocument);
+      moveToNextFocusableElement(document);
 
-      expect(mockElements[0]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[0]);
     });
 
-    it('should handle case when container is not found', () => {
-      mockDocument.querySelector = jest.fn().mockReturnValue(null);
-
-      expect(() => moveToNextFocusableElement(mockDocument)).not.toThrow();
+    it('does nothing when the container is missing', () => {
+      expect(() => moveToNextFocusableElement(document)).not.toThrow();
     });
 
-    it('should filter out disabled elements', () => {
-      mockElements[1] = { disabled: true, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>;
-      mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[0] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('skips disabled buttons', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button', disabled: true },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[0]);
 
-      moveToNextFocusableElement(mockDocument);
+      moveToNextFocusableElement(document);
 
-      expect(mockElements[2]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[2]);
     });
 
-    it('should filter out elements with negative tabIndex', () => {
-      mockElements[1] = { disabled: false, tabIndex: -1, focus: jest.fn() } as Partial<HTMLElement>;
-      mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[0] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('skips elements with tabindex="-1"', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button', tabIndex: -1 },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[0]);
 
-      moveToNextFocusableElement(mockDocument);
+      moveToNextFocusableElement(document);
 
-      expect(mockElements[2]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[2]);
     });
 
-    it('should sort elements by tabIndex', () => {
-      const unsortedElements = [
-        { disabled: false, tabIndex: 2, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 0, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>,
-      ];
-      mockContainer.querySelectorAll = jest.fn().mockReturnValue(unsortedElements);
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: unsortedElements[1] as HTMLElement, // tabIndex: 0
-        writable: true,
-        configurable: true,
-      });
+    it('orders by tabIndex when explicit tab indices are set', () => {
+      elements = setup([
+        { tag: 'button', tabIndex: 2 },
+        { tag: 'button', tabIndex: 1 },
+        { tag: 'button', tabIndex: 3 },
+      ]);
+      focusActive(elements[1]); // tabIndex 1
 
-      moveToNextFocusableElement(mockDocument);
+      moveToNextFocusableElement(document);
 
-      expect(unsortedElements[2]?.focus).toHaveBeenCalled(); // tabIndex: 1
+      expect(document.activeElement).toBe(elements[0]); // tabIndex 2
     });
   });
 
   describe('moveToPreviousFocusableElement', () => {
-    it('should focus previous element in sequence', () => {
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[1] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('focuses the previous element in document order', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button' },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[1]);
 
-      moveToPreviousFocusableElement(mockDocument);
+      moveToPreviousFocusableElement(document);
 
-      expect(mockElements[0]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[0]);
     });
 
-    it('should wrap around to last element when at beginning', () => {
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[0] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('wraps around to the last element when at the beginning', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button' },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[0]);
 
-      moveToPreviousFocusableElement(mockDocument);
+      moveToPreviousFocusableElement(document);
 
-      expect(mockElements[2]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[2]);
     });
 
-    it('should handle case when container is not found', () => {
-      mockDocument.querySelector = jest.fn().mockReturnValue(null);
-
-      expect(() => moveToPreviousFocusableElement(mockDocument)).not.toThrow();
+    it('does nothing when the container is missing', () => {
+      expect(() => moveToPreviousFocusableElement(document)).not.toThrow();
     });
 
-    it('should filter out disabled elements', () => {
-      mockElements[1] = { disabled: true, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>;
-      mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[2] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('skips disabled buttons', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button', disabled: true },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[2]);
 
-      moveToPreviousFocusableElement(mockDocument);
+      moveToPreviousFocusableElement(document);
 
-      expect(mockElements[0]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[0]);
     });
 
-    it('should filter out elements with negative tabIndex', () => {
-      mockElements[1] = { disabled: false, tabIndex: -1, focus: jest.fn() } as Partial<HTMLElement>;
-      mockContainer.querySelectorAll = jest.fn().mockReturnValue(mockElements);
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: mockElements[2] as HTMLElement,
-        writable: true,
-        configurable: true,
-      });
+    it('skips elements with tabindex="-1"', () => {
+      elements = setup([
+        { tag: 'button' },
+        { tag: 'button', tabIndex: -1 },
+        { tag: 'button' },
+      ]);
+      focusActive(elements[2]);
 
-      moveToPreviousFocusableElement(mockDocument);
+      moveToPreviousFocusableElement(document);
 
-      expect(mockElements[0]?.focus).toHaveBeenCalled();
+      expect(document.activeElement).toBe(elements[0]);
     });
 
-    it('should sort elements by tabIndex', () => {
-      const unsortedElements = [
-        { disabled: false, tabIndex: 2, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 0, focus: jest.fn() } as Partial<HTMLElement>,
-        { disabled: false, tabIndex: 1, focus: jest.fn() } as Partial<HTMLElement>,
-      ];
-      mockContainer.querySelectorAll = jest.fn().mockReturnValue(unsortedElements);
-      Object.defineProperty(mockDocument, 'activeElement', {
-        value: unsortedElements[2] as HTMLElement, // tabIndex: 1
-        writable: true,
-        configurable: true,
-      });
+    it('orders by tabIndex when explicit tab indices are set', () => {
+      elements = setup([
+        { tag: 'button', tabIndex: 2 },
+        { tag: 'button', tabIndex: 1 },
+        { tag: 'button', tabIndex: 3 },
+      ]);
+      focusActive(elements[2]); // tabIndex 3
 
-      moveToPreviousFocusableElement(mockDocument);
+      moveToPreviousFocusableElement(document);
 
-      expect(unsortedElements[1]?.focus).toHaveBeenCalled(); // tabIndex: 0
+      expect(document.activeElement).toBe(elements[0]); // tabIndex 2
     });
   });
 });

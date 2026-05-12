@@ -4,7 +4,7 @@
   class="search-box-wrapper"
   [class.sidenav-collapsed]="sidenavService.isMenuCollapsed"
   [class.sidenav-mobile]="sidenavService.isMobile()"
-  [cdkTrapFocusAutoCapture]="true"
+  [cdkTrapFocusAutoCapture]="autoRestoreFocus"
 >
   <div class="search-box">
     <tn-icon name="magnify" library="mdi" class="search-icon"></tn-icon>
@@ -20,9 +20,14 @@
     />
 
     @if (searchControl.value) {
-      <span class="reset-icon reset-input" (click)="resetInput()">
+      <button
+        type="button"
+        class="reset-icon reset-input"
+        [attr.aria-label]="'Clear search' | translate"
+        (click)="resetInput()"
+      >
         <tn-icon name="close-circle" library="mdi"></tn-icon>
-      </span>
+      </button>
     }
   </div>
 
@@ -30,7 +35,7 @@
     [searchTerm]="searchControl.value"
     [results]="searchResults"
     [isLoading]="isLoading"
-    [isSearchInputFocused]="isSearchInputFocused"
+    [isSearchInputFocused]="isSearchInputFocused()"
     (keydown)="handleKeyDown($event)"
     (recentSearchRemoved)="setInitialSearchResults()"
   ></ix-global-search-results>

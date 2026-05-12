@@ -39,6 +39,11 @@ export const helptextPoolCreation = {
   addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
   addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
 
+  specialRedundancyMismatchWarning: T('The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),
+  dedupRedundancyMismatchWarning: T('The dedup VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),
+  specialMixedLayoutWarning: T('Mixing layouts within the metadata class is not recommended.'),
+  dedupMixedLayoutWarning: T('Mixing layouts within the dedup class is not recommended.'),
+
   // SED Encryption
   sedInfoMessage: T('SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.'),
   sedGlobalPasswordInfo: T('The Global SED Password is a system-wide setting that applies to all pools using SED encryption.'),

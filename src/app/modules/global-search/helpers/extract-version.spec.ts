@@ -31,9 +31,16 @@ describe('extractVersion', () => {
     expect(result).toBe('0');
   });
 
-  it('should return undefined for a string "Version-1-2-3"', () => {
+  it('should extract the version "1" from a dot-less segmented string "Version-1-2-3"', () => {
+    // Bare digit runs match the new fallback so a version without a minor
+    // (e.g. `TrueNAS-SCALE-27-RELEASE`) still produces a major segment.
     const result = extractVersion('Version-1-2-3');
-    expect(result).toBeUndefined();
+    expect(result).toBe('1');
+  });
+
+  it('should extract the version "27" from "TrueNAS-SCALE-27-RELEASE"', () => {
+    const result = extractVersion('TrueNAS-SCALE-27-RELEASE');
+    expect(result).toBe('27');
   });
 
   it('should extract the version "2" from "2.5-rc.1-build.2023"', () => {
