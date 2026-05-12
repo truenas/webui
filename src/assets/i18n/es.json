@@ -197,7 +197,7 @@
   "HarborBeacon admin API is not reachable through the Harbor Assistant proxy.": "",
   "HarborBeacon admin API is reachable.": "",
   "HarborBeacon exposes local inference through the unified API.": "",
-  "HarborGate adapters run inside harborgate.service and surface through /api/harbor-assistant/gateway/status.": "",
+  "HarborOS IM Gate adapters run inside harboros-im-gate.service and surface through /api/harbor-assistant/gateway/status.": "",
   "HarborGate reports credentials are configured; connection is not confirmed.": "",
   "HarborGate reports this connector as connected.": "",
   "HarborOS path": "",

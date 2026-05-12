@@ -119,7 +119,7 @@ describe('Harbor Assistant search result helpers', () => {
     expect(harborAssistantSearchHasNoResults(null)).toBe(false);
     expect(harborAssistantSearchErrorMessage({ error: { error: 'blocked by preview guard' } })).toBe('blocked by preview guard');
     expect(harborAssistantSearchErrorMessage({ message: 'network failed' })).toBe('network failed');
-    expect(harborAssistantSearchErrorMessage(null)).toBe('搜索失败。');
+    expect(harborAssistantSearchErrorMessage(null)).toBe('Search failed.');
   });
 });
 

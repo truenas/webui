@@ -4357,7 +4357,7 @@ export class HarborAssistantComponent implements OnInit {
       {
         label: T('Gateway Runtime'),
         value: gateway ? T('Connected') : T('Offline'),
-        detail: T('HarborGate adapters run inside harborgate.service and surface through /api/harbor-assistant/gateway/status.'),
+        detail: T('HarborOS IM Gate adapters run inside harboros-im-gate.service and surface through /api/harbor-assistant/gateway/status.'),
         tone: gateway ? 'good' : 'danger',
       },
       {

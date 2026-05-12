@@ -10,9 +10,20 @@ import {
 export type AppBarState = AppBarItem;
 
 const appBarStorageKey = 'ix-app-bar-state';
-const hiddenAppBarStates = new Set(['harbor-assistant']);
 
-function defaultAppBarState(): AppBarItem[] {
+function loadStateFromStorage(): AppBarItem[] {
+  try {
+    const stored = localStorage.getItem(appBarStorageKey);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load app-bar state from localStorage:', error);
+  }
+  // Default state if nothing is stored
   return [
     {
       status: 'open',
@@ -24,44 +35,6 @@ function defaultAppBarState(): AppBarItem[] {
   ];
 }
 
-export function sanitizeAppBarState(state: AppBarItem[]): AppBarItem[] {
-  const visibleItems = state.filter((item) => !hiddenAppBarStates.has(item.state));
-  if (!visibleItems.length) {
-    return defaultAppBarState();
-  }
-
-  const hasOpenItem = visibleItems.some((item) => item.status === 'open');
-  if (hasOpenItem) {
-    return visibleItems;
-  }
-
-  return visibleItems.map((item) => (
-    item.state === 'desktop'
-      ? { ...item, status: 'open' as const }
-      : item
-  ));
-}
-
-function loadStateFromStorage(): AppBarItem[] {
-  try {
-    const stored = localStorage.getItem(appBarStorageKey);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        const sanitized = sanitizeAppBarState(parsed);
-        if (sanitized.length !== parsed.length) {
-          localStorage.setItem(appBarStorageKey, JSON.stringify(sanitized));
-        }
-        return sanitized;
-      }
-    }
-  } catch (error) {
-    console.error('Failed to load app-bar state from localStorage:', error);
-  }
-
-  return defaultAppBarState();
-}
-
 export const initialState: AppBarItem[] = loadStateFromStorage();
 
 function updateItem(state: AppBarState[], stateId: string, changes: Partial<AppBarState>): AppBarState[] {
@@ -71,10 +44,6 @@ function updateItem(state: AppBarState[], stateId: string, changes: Partial<AppB
 export const appBarReducer = createReducer(
   initialState,
   on(appBarOpened, (state, { item }) => {
-    if (hiddenAppBarStates.has(item.state)) {
-      return sanitizeAppBarState(state);
-    }
-
     const itemExists = state.some((i) => i.state === item.state);
     if (itemExists) {
       return updateItem(state, item.state, { ...item, status: 'open' as const });
@@ -101,10 +70,6 @@ export const appBarReducer = createReducer(
     return { ...item, status: 'minimized' as const };
   })),
   on(appBarAdded, (state, { item }) => {
-    if (hiddenAppBarStates.has(item.state)) {
-      return sanitizeAppBarState(state);
-    }
-
     const itemExists = state.some((i) => i.state === item.state);
     if (itemExists) {
       return state;
