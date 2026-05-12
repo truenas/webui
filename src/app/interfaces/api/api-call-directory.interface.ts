@@ -576,7 +576,7 @@ export interface ApiCallDirectory {
   'iscsi.extent.delete': { params: [id: number, remove: boolean, force: boolean]; response: boolean };
   'iscsi.extent.disk_choices': { params: void; response: Choices };
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
-  'iscsi.extent.update': { params: [id: number, update: Partial<IscsiExtentUpdate>]; response: IscsiExtentUpdate };
+  'iscsi.extent.update': { params: [id: number, update: Partial<IscsiExtentUpdate>]; response: IscsiExtent };
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
   'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };
   'iscsi.global.update': { params: [Partial<IscsiGlobalConfigUpdate>]; response: IscsiGlobalConfig };
