@@ -103,4 +103,17 @@ describe('TierConfigFormComponent', () => {
   it('does not show warning when tiering is already enabled', () => {
     expect(spectator.query('tn-banner')).not.toExist();
   });
+
+  it('marks the form invalid when max_used_percentage > 100 or max_concurrent_jobs < 1', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+
+    await form.fillForm({
+      'Max Used Percentage': 150,
+      'Max Concurrent Jobs': 0,
+    });
+
+    expect(spectator.component.formGroup.invalid).toBe(true);
+    expect(spectator.component.formGroup.controls.max_used_percentage.hasError('max')).toBe(true);
+    expect(spectator.component.formGroup.controls.max_concurrent_jobs.hasError('min')).toBe(true);
+  });
 });

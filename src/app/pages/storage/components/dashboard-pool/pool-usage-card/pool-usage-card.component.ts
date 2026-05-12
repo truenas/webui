@@ -1,7 +1,8 @@
 import { PercentPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, input, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -10,7 +11,6 @@ import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent, GaugeSegment } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -48,9 +48,9 @@ export class PoolUsageCardComponent implements OnInit {
   themeService = inject(ThemeService);
   private translate = inject(TranslateService);
   private tierService = inject(SharingTierService);
+  private destroyRef = inject(DestroyRef);
 
   readonly poolState = input.required<Pool>();
-  readonly rootDataset = input.required<Dataset>();
 
   protected tierEnabled = signal(false);
 
@@ -65,9 +65,11 @@ export class PoolUsageCardComponent implements OnInit {
     this.chartFillColor = this.themeService.currentTheme().primary;
     this.chartLowCapacityColor = this.themeService.currentTheme().red;
 
-    this.tierService.getTierConfig().subscribe((config) => {
-      this.tierEnabled.set(config.enabled);
-    });
+    this.tierService.getTierConfig()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((config) => {
+        this.tierEnabled.set(config.enabled);
+      });
   }
 
   protected isLowCapacity = computed(() => {
@@ -91,7 +93,9 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected usedPercentage = computed(() => {
-    return (this.used() / this.capacity()) * 100;
+    const cap = this.capacity();
+    const used = this.used();
+    return cap ? (used / cap) * 100 : 0;
   });
 
   protected iconType = computed(() => {
@@ -139,7 +143,7 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected performanceReserved = computed(() => {
-    return this.poolState().special_class_reserved || 0;
+    return Math.max(0, this.poolState().special_class_reserved || 0);
   });
 
   protected performanceTotal = computed(() => {

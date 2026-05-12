@@ -8,6 +8,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
@@ -104,8 +105,8 @@ export class DatasetDetailsCardComponent {
 
   protected readonly tierLabel = computed(() => {
     return this.dataset().tier?.tier_type === DatasetTier.Performance
-      ? this.translate.instant('Performance')
-      : this.translate.instant('Regular');
+      ? this.translate.instant(T('Performance'))
+      : this.translate.instant(T('Regular'));
   });
 
   protected readonly tierJob = computed(() => this.dataset().tier?.tier_job ?? null);
@@ -172,7 +173,7 @@ export class DatasetDetailsCardComponent {
     this.matDialog.open(DataMigrationStatusDialogComponent, {
       data: {
         tierJob: tier.tier_job,
-        tierType: tier.tier_type,
+        targetTier: tier.tier_type,
       },
     });
   }

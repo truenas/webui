@@ -15,6 +15,7 @@
 
   @if (isEnterprise()) {
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="tiering"
       [ixUiSearch]="searchableElements.elements.tiering"

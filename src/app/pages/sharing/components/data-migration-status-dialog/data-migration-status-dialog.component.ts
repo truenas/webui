@@ -16,11 +16,14 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  getTierJobStatusClass, getTierJobStatusLabel, isTierJobRunning,
+} from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface DataMigrationStatusDialogData {
   tierJob: ZfsTierRewriteJobEntry;
-  tierType: DatasetTier;
+  targetTier: DatasetTier;
 }
 
 @Component({
@@ -58,55 +61,26 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   protected estimatedCompletion: Date | null = null;
 
   get isRunning(): boolean {
-    return this.job?.status === TierRewriteJobStatus.Running
-      || this.job?.status === TierRewriteJobStatus.Queued;
+    return isTierJobRunning(this.job);
   }
 
   get statusLabel(): string {
-    switch (this.job?.status) {
-      case TierRewriteJobStatus.Complete:
-        return this.translate.instant('Complete');
-      case TierRewriteJobStatus.Running:
-        return this.translate.instant('Running');
-      case TierRewriteJobStatus.Queued:
-        return this.translate.instant('Queued');
-      case TierRewriteJobStatus.Error:
-        return this.translate.instant('Error');
-      case TierRewriteJobStatus.Cancelled:
-        return this.translate.instant('Cancelled');
-      case TierRewriteJobStatus.Stopped:
-        return this.translate.instant('Stopped');
-      default:
-        return '';
-    }
+    const label = getTierJobStatusLabel(this.job);
+    return label ? this.translate.instant(label) : '';
   }
 
   get statusClass(): string {
-    switch (this.job?.status) {
-      case TierRewriteJobStatus.Complete:
-        return 'fn-theme-green';
-      case TierRewriteJobStatus.Running:
-        return 'fn-theme-orange';
-      case TierRewriteJobStatus.Queued:
-        return 'fn-theme-primary';
-      case TierRewriteJobStatus.Error:
-        return 'fn-theme-red';
-      case TierRewriteJobStatus.Cancelled:
-      case TierRewriteJobStatus.Stopped:
-        return 'fn-theme-grey';
-      default:
-        return '';
-    }
+    return getTierJobStatusClass(this.job);
   }
 
   get sourceTier(): string {
-    return this.data.tierType === DatasetTier.Performance
+    return this.data.targetTier === DatasetTier.Performance
       ? this.translate.instant('Regular')
       : this.translate.instant('Performance');
   }
 
-  get targetTier(): string {
-    return this.data.tierType === DatasetTier.Performance
+  get targetTierLabel(): string {
+    return this.data.targetTier === DatasetTier.Performance
       ? this.translate.instant('Performance')
       : this.translate.instant('Regular');
   }
@@ -120,7 +94,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   protected onCancel(): void {
     this.dialogService.confirm({
       message: this.translate.instant('Are you sure you want to cancel this data migration? Data already transferred will remain at its destination.'),
-      buttonText: this.translate.instant('Cancel'),
+      buttonText: this.translate.instant('Stop migration'),
       buttonColor: 'warn',
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -141,10 +115,9 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   private subscribeToJobUpdates(): void {
-    const datasetName = this.data.tierJob.dataset_name;
-    const subscriptionKey = `zfs.tier.rewrite_job_status:${JSON.stringify({ dataset_name: datasetName })}` as const;
+    const tierJobId = this.data.tierJob.tier_job_id;
 
-    this.api.subscribe(subscriptionKey).pipe(
+    this.api.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (event) => {

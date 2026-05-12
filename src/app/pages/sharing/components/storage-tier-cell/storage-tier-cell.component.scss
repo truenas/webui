@@ -13,6 +13,11 @@
   &.spinning {
     animation: spin 2s infinite linear;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
 }
 
 @keyframes spin {
@@ -27,9 +32,9 @@
 
 .job-status-text {
   cursor: pointer;
+  flex-shrink: 0;
   font-size: 12px;
   white-space: nowrap;
-  flex-shrink: 0;
 
   &.fn-theme-primary {
     color: var(--primary);
@@ -37,6 +42,11 @@
 
   &.fn-theme-grey {
     color: var(--fg2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
   }
 }
 

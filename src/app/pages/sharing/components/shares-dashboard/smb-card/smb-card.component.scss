@@ -1,3 +1,7 @@
+@import '../../storage-tier-cell/tier-cell-host';
+
+@include tier-cell-host;
+
 mat-card {
   height: 100%;
 }
@@ -18,10 +22,5 @@ mat-card {
 
   .tight-toggle {
     width: 70px;
-  }
-
-  .tier-cell {
-    overflow: visible;
-    width: 160px;
   }
 }

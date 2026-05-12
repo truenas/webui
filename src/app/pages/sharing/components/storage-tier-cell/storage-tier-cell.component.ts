@@ -2,6 +2,7 @@ import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
@@ -41,9 +42,9 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
     }
     switch (row.tier.tier_type) {
       case DatasetTier.Performance:
-        return this.translate.instant('Performance');
+        return this.translate.instant(T('Performance'));
       case DatasetTier.Regular:
-        return this.translate.instant('Regular');
+        return this.translate.instant(T('Regular'));
       default:
         return '-';
     }
@@ -69,7 +70,7 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
     this.matDialog.open(DataMigrationStatusDialogComponent, {
       data: {
         tierJob: row.tier.tier_job,
-        tierType: row.tier.tier_type,
+        targetTier: row.tier.tier_type,
       },
     });
   }

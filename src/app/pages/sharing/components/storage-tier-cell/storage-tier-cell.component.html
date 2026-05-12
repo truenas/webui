@@ -5,20 +5,30 @@
     <tn-icon
       class="job-status-icon"
       size="sm"
+      role="button"
+      tabindex="0"
       [class.spinning]="icon.spinning"
       [name]="icon.name"
       [library]="icon.library"
       [color]="icon.color"
-      [matTooltip]="'Migration: ' + jobStatusLabel()"
+      [matTooltip]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
+      [attr.aria-label]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
       (click)="openMigrationDialog($event)"
+      (keydown.enter)="openMigrationDialog($event)"
+      (keydown.space)="$event.preventDefault(); openMigrationDialog($event)"
     />
   } @else {
     <span
       class="job-status-text"
+      role="button"
+      tabindex="0"
       [ngClass]="jobStatusClass()"
+      [attr.aria-label]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
       (click)="openMigrationDialog($event)"
+      (keydown.enter)="openMigrationDialog($event)"
+      (keydown.space)="$event.preventDefault(); openMigrationDialog($event)"
     >
-      {{ 'Migration:' | translate }} {{ jobStatusLabel() }}
+      {{ 'Migration: {status}' | translate: { status: jobStatusLabel() } }}
     </span>
   }
 }

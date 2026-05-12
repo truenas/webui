@@ -85,28 +85,38 @@
               <tn-icon
                 class="job-status-icon"
                 size="sm"
+                role="button"
+                tabindex="0"
                 [class.spinning]="icon.spinning"
                 [name]="icon.name"
                 [library]="icon.library"
                 [color]="icon.color"
-                [matTooltip]="'Migration: ' + tierJobStatusLabel()"
+                [matTooltip]="'Migration: {status}' | translate: { status: tierJobStatusLabel() }"
+                [attr.aria-label]="'Migration: {status}' | translate: { status: tierJobStatusLabel() }"
                 (click)="openMigrationStatus()"
+                (keydown.enter)="openMigrationStatus()"
+                (keydown.space)="$event.preventDefault(); openMigrationStatus()"
               />
             } @else {
               <span
                 class="job-status-text"
+                role="button"
+                tabindex="0"
                 [ngClass]="tierJobStatusClass()"
+                [attr.aria-label]="'Migration: {status}' | translate: { status: tierJobStatusLabel() }"
                 (click)="openMigrationStatus()"
+                (keydown.enter)="openMigrationStatus()"
+                (keydown.space)="$event.preventDefault(); openMigrationStatus()"
               >
-                {{ 'Migration:' | translate }} {{ tierJobStatusLabel() }}
+                {{ 'Migration: {status}' | translate: { status: tierJobStatusLabel() } }}
               </span>
             }
           }
         </div>
         @if (!dataset().locked) {
-          <a class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
+          <button type="button" class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
             {{ 'Change' | translate }}
-          </a>
+          </button>
         }
       </div>
     }

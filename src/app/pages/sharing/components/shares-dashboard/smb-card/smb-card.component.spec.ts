@@ -121,11 +121,12 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
-        mockCall('zfs.tier.config', { enabled: false, max_concurrent_jobs: 1, max_used_percentage: 80 }),
       ]),
       mockProvider(SharingTierService, {
         getTierConfig: () => of({ enabled: false }),
         subscribeTierJobUpdates: () => of(),
+        tierJobRefreshes$: () => of(),
+        openChangeTierDialog: () => of(true),
       }),
     ],
   });

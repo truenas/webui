@@ -1,12 +1,11 @@
 <h1 mat-dialog-title>
   {{ 'Data Migration' | translate }}
-  <button
-    mat-stroked-button
-    class="status-button"
+  <span
+    class="status-badge"
     [ngClass]="statusClass"
   >
     {{ statusLabel }}
-  </button>
+  </span>
 </h1>
 
 <div mat-dialog-content>
@@ -16,8 +15,8 @@
 
   <div class="migration-direction">
     <span class="tier-label">{{ sourceTier }}</span>
-    <span class="arrow">&rarr;</span>
-    <span class="tier-label">{{ targetTier }}</span>
+    <span aria-hidden="true" class="arrow">&rarr;</span>
+    <span class="tier-label">{{ targetTierLabel }}</span>
   </div>
 
   <div class="time-info">

@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, inject, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -29,7 +30,7 @@ import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
   data: string;
-  metadata: string;
+  special: string;
   log: string;
   cache: string;
   spare: string;
@@ -65,6 +66,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   translate = inject(TranslateService);
   storageService = inject(StorageService);
   private tierService = inject(SharingTierService);
+  private destroyRef = inject(DestroyRef);
 
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
@@ -81,7 +83,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
 
   topologyState: TopologyState = {
     data: this.notAssignedDev,
-    metadata: this.notAssignedDev,
+    special: this.notAssignedDev,
     log: this.notAssignedDev,
     cache: this.notAssignedDev,
     spare: this.notAssignedDev,
@@ -112,7 +114,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
 
   readonly noOtherVdevTypes = computed(() => {
     const nonDataVdevs = [
-      this.topologyState.metadata,
+      this.topologyState.special,
       this.topologyState.log,
       this.topologyState.cache,
       this.topologyState.spare,
@@ -134,7 +136,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.parseTopology(this.poolState().topology);
-    this.tierService.getTierConfig().subscribe((config) => {
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
       this.tierEnabled.set(config.enabled);
     });
   }
@@ -148,17 +150,17 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VDevType.Log);
     this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VDevType.Cache);
     this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VDevType.Spare);
-    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VDevType.Special);
+    this.topologyWarningsState.special = this.parseDevsWarnings(topology.special, VDevType.Special);
     this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VDevType.Dedup);
 
     this.topologyState.data = this.parseDevs(topology.data, VDevType.Data, this.topologyWarningsState.data);
     this.topologyState.log = this.parseDevs(topology.log, VDevType.Log, this.topologyWarningsState.log);
     this.topologyState.cache = this.parseDevs(topology.cache, VDevType.Cache, this.topologyWarningsState.cache);
     this.topologyState.spare = this.parseDevs(topology.spare, VDevType.Spare, this.topologyWarningsState.spare);
-    this.topologyState.metadata = this.parseDevs(
+    this.topologyState.special = this.parseDevs(
       topology.special,
       VDevType.Special,
-      this.topologyWarningsState.metadata,
+      this.topologyWarningsState.special,
     );
     this.topologyState.dedup = this.parseDevs(topology.dedup, VDevType.Dedup, this.topologyWarningsState.dedup);
   }

@@ -30,9 +30,18 @@
     }
 
     .change-tier-link {
+      background: none;
+      border: none;
       color: var(--link);
       cursor: pointer;
+      font: inherit;
+      padding: 0;
       text-decoration: underline;
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
     }
 
     .tier-value {
@@ -47,6 +56,11 @@
       &.spinning {
         animation: spin 2s infinite linear;
       }
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
     }
 
     .job-status-text {
@@ -60,6 +74,11 @@
 
       &.fn-theme-grey {
         color: var(--fg2);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
     }
 

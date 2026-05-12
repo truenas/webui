@@ -22,7 +22,7 @@
           [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
           [colorBlank]="chartBlankColor"
           [segments]="chartSegments()"
-          [sublabel]="showTierBreakdown() ? ('used' | translate) : ''"
+          [sublabel]="showTierBreakdown() ? ('Used' | translate) : ''"
           [width]="150"
           [height]="150"
           [label]="(usedPercentage() / 100 | percent: '1.0-1') || ''"
@@ -93,15 +93,15 @@
             <div class="tier-stats-detail">
               <span class="stat-item">
                 <span class="stat-dot used"></span>
-                {{ performanceUsed() | ixFileSize }} {{ 'used' | translate }}
+                {{ performanceUsed() | ixFileSize }} {{ 'Used' | translate }}
               </span>
               <span class="stat-item">
                 <span class="stat-dot available"></span>
-                {{ performanceAvailable() | ixFileSize }} {{ 'available' | translate }}
+                {{ performanceAvailable() | ixFileSize }} {{ 'Available' | translate }}
               </span>
               <span class="stat-item">
                 <span class="stat-dot reserved"></span>
-                {{ performanceReserved() | ixFileSize }} {{ 'reserved' | translate }}
+                {{ performanceReserved() | ixFileSize }} {{ 'Reserved' | translate }}
               </span>
             </div>
           </div>
@@ -123,11 +123,11 @@
             <div class="tier-stats-detail">
               <span class="stat-item">
                 <span class="stat-dot regular-used"></span>
-                {{ regularUsed() | ixFileSize }} {{ 'used' | translate }}
+                {{ regularUsed() | ixFileSize }} {{ 'Used' | translate }}
               </span>
               <span class="stat-item">
                 <span class="stat-dot regular-available"></span>
-                {{ regularAvailable() | ixFileSize }} {{ 'available' | translate }}
+                {{ regularAvailable() | ixFileSize }} {{ 'Available' | translate }}
               </span>
             </div>
           </div>

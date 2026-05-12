@@ -1,0 +1,12 @@
+// Shared host-side styling for the `.tier-cell` `<td>` produced by
+// `storageTierColumn(...)`. Lives next to the cell component so that all
+// sharing list/card components can `@use` it instead of duplicating the
+// `::ng-deep` block.
+@mixin tier-cell-host() {
+  :host ::ng-deep {
+    .tier-cell {
+      overflow: visible;
+      width: 160px;
+    }
+  }
+}

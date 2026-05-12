@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { IconLibraryType } from '@truenas/ui-components';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
@@ -39,17 +40,25 @@ export function getTierJobIcon(
   }
 }
 
+export function isTierJobRunning(
+  job: ZfsTierRewriteJobEntry | null,
+): boolean {
+  if (!job) return false;
+  return job.status === TierRewriteJobStatus.Running
+    || job.status === TierRewriteJobStatus.Queued;
+}
+
 export function getTierJobStatusLabel(
   job: ZfsTierRewriteJobEntry | null,
 ): string {
   if (!job) return '';
   switch (job.status) {
-    case TierRewriteJobStatus.Complete: return 'Complete';
-    case TierRewriteJobStatus.Running: return 'Running';
-    case TierRewriteJobStatus.Queued: return 'Queued';
-    case TierRewriteJobStatus.Error: return 'Error';
-    case TierRewriteJobStatus.Cancelled: return 'Cancelled';
-    case TierRewriteJobStatus.Stopped: return 'Stopped';
+    case TierRewriteJobStatus.Complete: return T('Complete');
+    case TierRewriteJobStatus.Running: return T('Running');
+    case TierRewriteJobStatus.Queued: return T('Queued');
+    case TierRewriteJobStatus.Error: return T('Error');
+    case TierRewriteJobStatus.Cancelled: return T('Cancelled');
+    case TierRewriteJobStatus.Stopped: return T('Stopped');
     default: return '';
   }
 }

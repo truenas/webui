@@ -7,6 +7,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
@@ -75,11 +76,11 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   get currentTierLabel(): string {
-    return this.data.currentTier === DatasetTier.Performance ? 'Performance' : 'Regular';
+    return this.data.currentTier === DatasetTier.Performance ? T('Performance') : T('Regular');
   }
 
   get newTierLabel(): string {
-    return this.newTier === DatasetTier.Performance ? 'Performance' : 'Regular';
+    return this.newTier === DatasetTier.Performance ? T('Performance') : T('Regular');
   }
 
   protected currentTierSpace(): string | null {

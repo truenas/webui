@@ -56,7 +56,7 @@
         </div>
       }
 
-      @if (topologyState.metadata !== notAssignedDev && !isPoolOffline()) {
+      @if (topologyState.special !== notAssignedDev && !isPoolOffline()) {
         <div class="vdev-line">
           <b>
             {{ 'Special VDEVs' | translate }}
@@ -65,12 +65,12 @@
             }
           </b>
           <div class="vdev-stats">
-            @if (!!topologyWarningsState.metadata) {
-              <span class="warning" [matTooltip]="topologyWarningsState.metadata">
+            @if (!!topologyWarningsState.special) {
+              <span class="warning" [matTooltip]="topologyWarningsState.special">
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
             }
-            <span class="vdev-value">{{ topologyState.metadata }}</span>
+            <span class="vdev-value">{{ topologyState.special }}</span>
           </div>
         </div>
       }

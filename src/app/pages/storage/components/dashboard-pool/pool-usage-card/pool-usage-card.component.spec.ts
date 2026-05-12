@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
@@ -86,7 +85,6 @@ describe('PoolUsageCardComponent', () => {
             }],
           },
         } as Pool,
-        rootDataset: {} as Dataset,
       },
     });
   });
@@ -213,13 +211,13 @@ describe('PoolUsageCardComponent', () => {
 
     const performanceStatItems = tierRows[0].querySelectorAll('.stat-item');
     expect(performanceStatItems).toHaveLength(3);
-    expect(performanceStatItems[0]).toHaveText('512 MiB used');
-    expect(performanceStatItems[1]).toHaveText('1.5 GiB available');
-    expect(performanceStatItems[2]).toHaveText('256 MiB reserved');
+    expect(performanceStatItems[0]).toHaveText('512 MiB Used');
+    expect(performanceStatItems[1]).toHaveText('1.5 GiB Available');
+    expect(performanceStatItems[2]).toHaveText('256 MiB Reserved');
 
     const regularStatItems = tierRows[1].querySelectorAll('.stat-item');
     expect(regularStatItems).toHaveLength(2);
-    expect(regularStatItems[0]).toHaveText('3.15 GiB used');
-    expect(regularStatItems[1]).toHaveText('2.34 GiB available');
+    expect(regularStatItems[0]).toHaveText('3.15 GiB Used');
+    expect(regularStatItems[1]).toHaveText('2.34 GiB Available');
   });
 });

@@ -1,8 +1,11 @@
-.status-button {
-  line-height: initial;
-  padding: 0 8px;
+.status-badge {
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  display: inline-block;
   font-size: 12px;
+  line-height: 1.5;
   margin-left: 8px;
+  padding: 0 8px;
   vertical-align: middle;
 }
 

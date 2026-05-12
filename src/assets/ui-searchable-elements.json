@@ -2649,7 +2649,9 @@
       "Performance Tier",
       "Storage Tier"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "POOL_WRITE"
+    ],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"

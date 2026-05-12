@@ -1,6 +1,3 @@
-:host ::ng-deep {
-  .tier-cell {
-    overflow: visible;
-    width: 160px;
-  }
-}
+@import '../../components/storage-tier-cell/tier-cell-host';
+
+@include tier-cell-host;

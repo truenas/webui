@@ -5,7 +5,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
@@ -13,7 +12,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
 import {
-  BehaviorSubject, filter, of,
+  BehaviorSubject, of,
 } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,14 +38,11 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  ChangeTierDialogComponent, ChangeTierDialogData,
-} from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import {
-  storageTierColumn,
+  StorageTierCellComponent, storageTierColumn,
 } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -92,7 +88,6 @@ export class NfsCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
-  private matDialog = inject(MatDialog);
   private cdr = inject(ChangeDetectorRef);
   private tierService = inject(SharingTierService);
   tierEnabled = signal(false);
@@ -140,7 +135,11 @@ export class NfsCardComponent implements OnInit {
           iconName: tnIconMarker('swap-horizontal', 'mdi'),
           tooltip: this.translate.instant('Change Storage Tier'),
           hidden: (row) => of(!this.tierEnabled() || !row.tier || row.locked),
-          onClick: (row) => this.openChangeTierDialog(row),
+          onClick: (row) => {
+            this.tierService.openChangeTierDialog(row).pipe(
+              takeUntilDestroyed(this.destroyRef),
+            ).subscribe(() => this.dataProvider.load());
+          },
         },
         {
           iconName: tnIconMarker('delete', 'mdi'),
@@ -173,7 +172,7 @@ export class NfsCardComponent implements OnInit {
     });
 
     this.loadTierConfig();
-    this.tierService.subscribeTierJobUpdates().pipe(
+    this.tierService.tierJobRefreshes$().pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dataProvider.load());
   }
@@ -201,7 +200,7 @@ export class NfsCardComponent implements OnInit {
       next: (config) => {
         if (config.enabled) {
           this.tierEnabled.set(true);
-          const tierColumn = this.columns.find((col) => col.title === this.translate.instant('Storage Tier'));
+          const tierColumn = this.columns.find((col) => col.type === StorageTierCellComponent);
           if (tierColumn) {
             tierColumn.hidden = false;
           }
@@ -210,22 +209,6 @@ export class NfsCardComponent implements OnInit {
         }
       },
     });
-  }
-
-  private openChangeTierDialog(row: NfsShare): void {
-    if (!row.tier) return;
-
-    const datasetName = row.path.replace(/^\/mnt\//, '');
-    this.matDialog.open(ChangeTierDialogComponent, {
-      data: {
-        datasetName,
-        currentTier: row.tier.tier_type,
-        poolName: datasetName.split('/')[0],
-      } as ChangeTierDialogData,
-    }).afterClosed().pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
   }
 
   private onChangeEnabledState(row: NfsShare): void {

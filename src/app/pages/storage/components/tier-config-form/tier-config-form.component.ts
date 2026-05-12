@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -54,8 +54,8 @@ export class TierConfigFormComponent implements OnInit {
 
   formGroup = this.fb.nonNullable.group({
     enabled: [false],
-    max_concurrent_jobs: [1],
-    max_used_percentage: [80],
+    max_concurrent_jobs: [1, [Validators.required, Validators.min(1)]],
+    max_used_percentage: [80, [Validators.required, Validators.min(0), Validators.max(100)]],
   });
 
   private initialEnabled = false;
@@ -66,7 +66,7 @@ export class TierConfigFormComponent implements OnInit {
     });
 
     this.formGroup.controls.enabled.valueChanges.pipe(
-      takeUntilDestroyed(),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((enabled) => {
       this.showEnabledWarning.set(enabled && !this.initialEnabled);
     });
