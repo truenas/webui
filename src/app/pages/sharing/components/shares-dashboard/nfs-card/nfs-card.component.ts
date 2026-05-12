@@ -11,9 +11,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
-import {
-  BehaviorSubject, of,
-} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -41,9 +39,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import {
-  StorageTierCellComponent, storageTierColumn,
-} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -90,7 +86,6 @@ export class NfsCardComponent implements OnInit {
   private poolStoreService = inject(poolStore);
   private cdr = inject(ChangeDetectorRef);
   private tierService = inject(SharingTierService);
-  tierEnabled = signal(false);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
@@ -131,16 +126,10 @@ export class NfsCardComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
-        {
-          iconName: tnIconMarker('swap-horizontal', 'mdi'),
-          tooltip: this.translate.instant('Change Storage Tier'),
-          hidden: (row) => of(!this.tierEnabled() || !row.tier || row.locked),
-          onClick: (row) => {
-            this.tierService.openChangeTierDialog(row).pipe(
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.dataProvider.load());
-          },
-        },
+        this.tierService.createChangeTierAction<NfsShare>({
+          destroyRef: this.destroyRef,
+          reload: () => this.dataProvider.load(),
+        }),
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -171,10 +160,13 @@ export class NfsCardComponent implements OnInit {
       },
     });
 
-    this.loadTierConfig();
-    this.tierService.tierJobRefreshes$().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
+    this.tierService.wireTierColumnUpdates<NfsShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
+    });
   }
 
   protected openForm(row?: NfsShare): void {
@@ -190,24 +182,6 @@ export class NfsCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.dataProvider.load();
-    });
-  }
-
-  private loadTierConfig(): void {
-    this.tierService.getTierConfig().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (config) => {
-        if (config.enabled) {
-          this.tierEnabled.set(true);
-          const tierColumn = this.columns.find((col) => col.type === StorageTierCellComponent);
-          if (tierColumn) {
-            tierColumn.hidden = false;
-          }
-          this.columns = [...this.columns];
-          this.cdr.markForCheck();
-        }
-      },
     });
   }
 

@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -8,12 +7,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
@@ -33,10 +29,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ChangeTierDialogComponent, ChangeTierDialogData } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
-import { DataMigrationStatusDialogComponent } from 'app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component';
-import {
-  getTierJobIcon, getTierJobStatusClass, getTierJobStatusLabel,
-} from 'app/pages/sharing/components/tier-status.utils';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -45,7 +38,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./dataset-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgClass,
     MatCard,
     MatCardHeader,
     MatCardTitle,
@@ -59,7 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CopyButtonComponent,
     MatCardActions,
     TooltipComponent,
-    TnIconComponent,
+    TierStatusComponent,
   ],
 })
 export class DatasetDetailsCardComponent {
@@ -102,22 +94,6 @@ export class DatasetDetailsCardComponent {
     const comments = getUserProperty<string>(this.dataset(), 'comments');
     return comments?.value || '';
   });
-
-  protected readonly tierLabel = computed(() => {
-    return this.dataset().tier?.tier_type === DatasetTier.Performance
-      ? this.translate.instant(T('Performance'))
-      : this.translate.instant(T('Regular'));
-  });
-
-  protected readonly tierJob = computed(() => this.dataset().tier?.tier_job ?? null);
-
-  protected readonly tierJobStatusLabel = computed(() => {
-    return this.translate.instant(getTierJobStatusLabel(this.tierJob()));
-  });
-
-  protected readonly tierJobStatusClass = computed(() => getTierJobStatusClass(this.tierJob()));
-
-  protected readonly tierJobIcon = computed(() => getTierJobIcon(this.tierJob()));
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
@@ -164,18 +140,6 @@ export class DatasetDetailsCardComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.datasetStore.datasetUpdated());
-  }
-
-  openMigrationStatus(): void {
-    const tier = this.dataset().tier;
-    if (!tier?.tier_job) return;
-
-    this.matDialog.open(DataMigrationStatusDialogComponent, {
-      data: {
-        tierJob: tier.tier_job,
-        targetTier: tier.tier_type,
-      },
-    });
   }
 
   editDataset(): void {

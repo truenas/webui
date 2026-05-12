@@ -29,7 +29,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
-import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -122,12 +122,7 @@ describe('SmbCardComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
       ]),
-      mockProvider(SharingTierService, {
-        getTierConfig: () => of({ enabled: false }),
-        subscribeTierJobUpdates: () => of(),
-        tierJobRefreshes$: () => of(),
-        openChangeTierDialog: () => of(true),
-      }),
+      mockSharingTierService({ enabled: false }),
     ],
   });
 

@@ -51,9 +51,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import {
-  StorageTierCellComponent, storageTierColumn,
-} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
@@ -107,7 +105,6 @@ export class SmbListComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private poolStoreService = inject(poolStore);
   private tierService = inject(SharingTierService);
-  tierEnabled = signal(false);
 
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
@@ -197,16 +194,10 @@ export class SmbListComponent implements OnInit {
             });
           },
         },
-        {
-          iconName: tnIconMarker('swap-horizontal', 'mdi'),
-          tooltip: this.translate.instant('Change Storage Tier'),
-          hidden: (row) => of(!this.tierEnabled() || !row.tier || row.locked),
-          onClick: (row) => {
-            this.tierService.openChangeTierDialog(row).pipe(
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.dataProvider.load());
-          },
-        },
+        this.tierService.createChangeTierAction<SmbShare>({
+          destroyRef: this.destroyRef,
+          reload: () => this.dataProvider.load(),
+        }),
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -250,10 +241,13 @@ export class SmbListComponent implements OnInit {
       },
     });
 
-    this.loadTierConfig();
-    this.tierService.tierJobRefreshes$().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
+    this.tierService.wireTierColumnUpdates<SmbShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
+    });
   }
 
   private setDefaultSort(): void {
@@ -282,24 +276,6 @@ export class SmbListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
-  }
-
-  private loadTierConfig(): void {
-    this.tierService.getTierConfig().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (config) => {
-        if (config.enabled) {
-          this.tierEnabled.set(true);
-          const tierColumn = this.columns.find((col) => col.type === StorageTierCellComponent);
-          if (tierColumn) {
-            tierColumn.hidden = false;
-          }
-          this.columns = [...this.columns];
-          this.cdr.markForCheck();
-        }
-      },
-    });
   }
 
   private onChangeEnabledState(row: SmbShare): void {

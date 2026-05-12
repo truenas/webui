@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
-import { of, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -40,9 +40,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import {
-  StorageTierCellComponent, storageTierColumn,
-} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -100,7 +98,6 @@ export class NfsListComponent implements OnInit {
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<NfsShare>;
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  tierEnabled = signal(false);
 
   nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -159,16 +156,10 @@ export class NfsListComponent implements OnInit {
               .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
-        {
-          iconName: tnIconMarker('swap-horizontal', 'mdi'),
-          tooltip: this.translate.instant('Change Storage Tier'),
-          hidden: (row) => of(!this.tierEnabled() || !row.tier || row.locked),
-          onClick: (row) => {
-            this.tierService.openChangeTierDialog(row).pipe(
-              takeUntilDestroyed(this.destroyRef),
-            ).subscribe(() => this.refresh());
-          },
-        },
+        this.tierService.createChangeTierAction<NfsShare>({
+          destroyRef: this.destroyRef,
+          reload: () => this.refresh(),
+        }),
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -211,10 +202,13 @@ export class NfsListComponent implements OnInit {
       },
     });
 
-    this.loadTierConfig();
-    this.tierService.tierJobRefreshes$().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.refresh());
+    this.tierService.wireTierColumnUpdates<NfsShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.refresh(),
+    });
   }
 
   private setDefaultSort(): void {
@@ -247,24 +241,6 @@ export class NfsListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-  }
-
-  private loadTierConfig(): void {
-    this.tierService.getTierConfig().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (config) => {
-        if (config.enabled) {
-          this.tierEnabled.set(true);
-          const tierColumn = this.columns.find((col) => col.type === StorageTierCellComponent);
-          if (tierColumn) {
-            tierColumn.hidden = false;
-          }
-          this.columns = [...this.columns];
-          this.cdr.markForCheck();
-        }
-      },
-    });
   }
 
   private onChangeEnabledState(row: NfsShare): void {

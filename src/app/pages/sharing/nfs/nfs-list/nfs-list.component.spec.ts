@@ -23,7 +23,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -93,12 +93,7 @@ describe('NfsListComponent', () => {
         mockCall('sharing.nfs.update'),
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
-      mockProvider(SharingTierService, {
-        getTierConfig: () => of({ enabled: false }),
-        subscribeTierJobUpdates: () => of(),
-        tierJobRefreshes$: () => of(),
-        openChangeTierDialog: () => of(true),
-      }),
+      mockSharingTierService({ enabled: false }),
     ],
   });
 
@@ -227,12 +222,7 @@ describe('NfsListComponent', () => {
           mockCall('sharing.nfs.update'),
           mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
-        mockProvider(SharingTierService, {
-          getTierConfig: () => of({ enabled: true }),
-          subscribeTierJobUpdates: () => jobUpdates$,
-          tierJobRefreshes$: () => jobUpdates$,
-          openChangeTierDialog: () => of(true),
-        }),
+        mockSharingTierService({ enabled: true, jobUpdates$ }),
       ],
     });
 
@@ -264,12 +254,7 @@ describe('NfsListComponent', () => {
           mockCall('sharing.nfs.update'),
           mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
-        mockProvider(SharingTierService, {
-          getTierConfig: () => of({ enabled: true }),
-          subscribeTierJobUpdates: () => of(),
-          tierJobRefreshes$: () => of(),
-          openChangeTierDialog: () => of(true),
-        }),
+        mockSharingTierService({ enabled: true }),
       ],
     });
 
@@ -304,12 +289,7 @@ describe('NfsListComponent', () => {
           mockCall('sharing.nfs.update'),
           mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
         ]),
-        mockProvider(SharingTierService, {
-          getTierConfig: () => of({ enabled: true }),
-          subscribeTierJobUpdates: () => of(),
-          tierJobRefreshes$: () => of(),
-          openChangeTierDialog: () => of(true),
-        }),
+        mockSharingTierService({ enabled: true }),
       ],
     });
 

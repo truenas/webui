@@ -29,7 +29,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
-import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -122,12 +122,7 @@ describe('NfsCardComponent', () => {
         mockCall('sharing.nfs.update'),
         mockCall('pool.query', [{ path: '/mnt/x' }] as Pool[]),
       ]),
-      mockProvider(SharingTierService, {
-        getTierConfig: () => of({ enabled: false }),
-        subscribeTierJobUpdates: () => of(),
-        tierJobRefreshes$: () => of(),
-        openChangeTierDialog: () => of(true),
-      }),
+      mockSharingTierService({ enabled: false }),
     ],
   });
 

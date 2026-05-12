@@ -79,39 +79,7 @@
       <div class="details-item tier-item">
         <div class="label">{{ 'Storage Tier' | translate }}:</div>
         <div class="value tier-value">
-          {{ tierLabel() }}
-          @if (tierJob()) {
-            @if (tierJobIcon(); as icon) {
-              <tn-icon
-                class="job-status-icon"
-                size="sm"
-                role="button"
-                tabindex="0"
-                [class.spinning]="icon.spinning"
-                [name]="icon.name"
-                [library]="icon.library"
-                [color]="icon.color"
-                [matTooltip]="'Migration: {status}' | translate: { status: tierJobStatusLabel() }"
-                [attr.aria-label]="'Migration: {status}' | translate: { status: tierJobStatusLabel() }"
-                (click)="openMigrationStatus()"
-                (keydown.enter)="openMigrationStatus()"
-                (keydown.space)="$event.preventDefault(); openMigrationStatus()"
-              />
-            } @else {
-              <span
-                class="job-status-text"
-                role="button"
-                tabindex="0"
-                [ngClass]="tierJobStatusClass()"
-                [attr.aria-label]="'Migration: {status}' | translate: { status: tierJobStatusLabel() }"
-                (click)="openMigrationStatus()"
-                (keydown.enter)="openMigrationStatus()"
-                (keydown.space)="$event.preventDefault(); openMigrationStatus()"
-              >
-                {{ 'Migration: {status}' | translate: { status: tierJobStatusLabel() } }}
-              </span>
-            }
-          }
+          <ix-tier-status [tier]="dataset().tier" />
         </div>
         @if (!dataset().locked) {
           <button type="button" class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
