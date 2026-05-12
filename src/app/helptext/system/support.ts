@@ -86,9 +86,7 @@ export const helptextSystemSupport = {
 
   updateLicense: {
     licensePlaceholder: T('License'),
-    reloadDialogTitle: T('Reload the page'),
-    reloadDialogMessage: T('Reload the page for the license to take effect.'),
-    reloadDialogAction: T('Reload now'),
+    reloadingMessage: T('License updated. Reloading...'),
   },
 
   isProductionDialog: {
