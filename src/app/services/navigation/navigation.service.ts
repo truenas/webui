@@ -117,14 +117,6 @@ export class NavigationService {
       state: 'featured-photos/admin',
     },
     {
-      name: T('Harbor Assistant'),
-      type: MenuItemType.Link,
-      tooltip: T('Harbor Assistant'),
-      icon: tnIconMarker('app-desktop-harbor-assistant', 'custom'),
-      iconActive: tnIconMarker('app-desktop-harbor-assistant-active', 'custom'),
-      state: 'harbor-assistant',
-    },
-    {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),
