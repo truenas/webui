@@ -76,6 +76,10 @@ export class ChangeTierDialogComponent implements OnInit {
       : DatasetTier.Performance;
   }
 
+  // currentTierLabel / newTierLabel assume currentTier is a known DatasetTier.
+  // ngOnInit() enforces that invariant: it shows an error modal and closes the
+  // dialog if the data slot was opened with an unknown tier, so by the time
+  // these getters render the template the value is guaranteed valid.
   get currentTierLabel(): string {
     return getTierLabelKey(this.data.currentTier);
   }
