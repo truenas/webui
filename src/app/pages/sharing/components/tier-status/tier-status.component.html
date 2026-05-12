@@ -13,9 +13,9 @@
       [color]="icon.color"
       [matTooltip]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
       [attr.aria-label]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
-      (click)="openMigrationDialog($event)"
-      (keydown.enter)="openMigrationDialog($event)"
-      (keydown.space)="$event.preventDefault(); openMigrationDialog($event)"
+      (click)="onActivate($event)"
+      (keydown.enter)="onActivate($event)"
+      (keydown.space)="onActivate($event)"
     />
   } @else {
     <span
@@ -24,9 +24,9 @@
       tabindex="0"
       [ngClass]="jobStatusClass()"
       [attr.aria-label]="'Migration: {status}' | translate: { status: jobStatusLabel() }"
-      (click)="openMigrationDialog($event)"
-      (keydown.enter)="openMigrationDialog($event)"
-      (keydown.space)="$event.preventDefault(); openMigrationDialog($event)"
+      (click)="onActivate($event)"
+      (keydown.enter)="onActivate($event)"
+      (keydown.space)="onActivate($event)"
     >
       {{ 'Migration: {status}' | translate: { status: jobStatusLabel() } }}
     </span>

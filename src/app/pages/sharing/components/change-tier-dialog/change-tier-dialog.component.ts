@@ -10,6 +10,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -154,7 +155,7 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   private loadShareUsage(): void {
-    const mountpoint = `/mnt/${this.data.datasetName}`;
+    const mountpoint = `${mntPath}/${this.data.datasetName}`;
 
     forkJoin([
       this.api.call('sharing.smb.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),

@@ -46,8 +46,13 @@ export class TierStatusComponent {
 
   protected jobStatusClass = computed(() => getTierJobStatusClass(this.tierJob()));
 
-  protected openMigrationDialog(event: Event): void {
+  protected onActivate(event: Event): void {
+    event.preventDefault();
     event.stopPropagation();
+    this.openMigrationDialog();
+  }
+
+  private openMigrationDialog(): void {
     const tier = this.tier();
     if (!tier?.tier_job) return;
 

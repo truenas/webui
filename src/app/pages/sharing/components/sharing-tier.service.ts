@@ -77,6 +77,17 @@ export class SharingTierService {
    *   - mirrors the latest tier config to the shared `tierEnabled` signal
    *   - unhides the `StorageTierCellComponent` column when tiering is enabled
    *   - reloads the data provider whenever a tier job ticks
+   *
+   * Contract for `getColumns`/`setColumns`:
+   *   The caller owns the `columns` array (typically `this.columns` returned from
+   *   `createTable(...)`). When tiering is enabled, this method builds a new array
+   *   (via `Array.map` with a fresh column object for the tier column) and hands
+   *   it back through `setColumns`. The caller MUST persist the returned array
+   *   (e.g. `setColumns: (cols) => { this.columns = cols; }`) so subsequent reads
+   *   via `getColumns` and the ix-table input both observe the unhidden column.
+   *   A plain getter/setter is used instead of a reactive `hidden` field because
+   *   `ix-table-columns-selector` writes to `column.hidden` directly to support
+   *   user-controlled column visibility — making it reactive would break that flow.
    */
   wireTierColumnUpdates<T>(opts: {
     destroyRef: DestroyRef;
