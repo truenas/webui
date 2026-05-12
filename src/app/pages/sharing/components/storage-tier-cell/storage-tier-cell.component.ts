@@ -62,7 +62,7 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
 
   protected jobStatusClass = computed(() => getTierJobStatusClass(this.tierJob()));
 
-  protected openMigrationDialog(event: MouseEvent): void {
+  protected openMigrationDialog(event: Event): void {
     event.stopPropagation();
     const row = this.row();
     if (!row?.tier?.tier_job) return;
