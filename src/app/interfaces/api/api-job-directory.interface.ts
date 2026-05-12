@@ -205,7 +205,6 @@ export interface ApiJobDirectory {
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };
   'vm.restart': { params: [id: number]; response: void };
   'vm.stop': { params: VmStopParams; response: void };
-
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;

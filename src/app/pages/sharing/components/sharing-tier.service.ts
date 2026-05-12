@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  EMPTY, Observable, auditTime, filter, map, shareReplay,
+  EMPTY, Observable, auditTime, catchError, filter, map, of, shareReplay,
 } from 'rxjs';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -21,11 +21,12 @@ export class SharingTierService {
   private api = inject(ApiService);
   private matDialog = inject(MatDialog);
 
-  private tierConfig$: Observable<ZfsTierConfig>;
+  private tierConfig$: Observable<ZfsTierConfig> | null = null;
 
   getTierConfig(): Observable<ZfsTierConfig> {
     if (!this.tierConfig$) {
       this.tierConfig$ = this.api.call('zfs.tier.config').pipe(
+        catchError(() => of({ enabled: false } as ZfsTierConfig)),
         shareReplay({ bufferSize: 1, refCount: true }),
       );
     }

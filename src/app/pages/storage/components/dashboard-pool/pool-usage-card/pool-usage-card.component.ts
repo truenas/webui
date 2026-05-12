@@ -167,11 +167,11 @@ export class PoolUsageCardComponent implements OnInit {
 
 
   protected regularUsed = computed(() => {
-    return this.poolState().used;
+    return this.poolState().used ?? 0;
   });
 
   protected regularAvailable = computed(() => {
-    return this.poolState().available;
+    return this.poolState().available ?? 0;
   });
 
   protected regularTotal = computed(() => {
