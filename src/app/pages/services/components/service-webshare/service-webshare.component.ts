@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, computed, output, signal, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
@@ -45,7 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ServiceWebshareComponent implements OnInit {
-  protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -53,9 +53,12 @@ export class ServiceWebshareComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject(SlideInRef<undefined, boolean>);
+  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
+  slideInRef = inject(SlideInRef<undefined, boolean>, { optional: true });
+  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
+  readonly closed = output<boolean>();
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
 
   form = this.fb.group({
     search: [false],
@@ -65,10 +68,31 @@ export class ServiceWebshareComponent implements OnInit {
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
 
+  private formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+  }
+
+  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
+  submit(): void {
+    this.onSubmit();
+  }
+
+  private close(saved: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: saved });
+    } else {
+      this.closed.emit(saved);
+    }
   }
 
   ngOnInit(): void {
@@ -96,7 +120,7 @@ export class ServiceWebshareComponent implements OnInit {
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

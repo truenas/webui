@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, viewChild, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -8,9 +8,12 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
   TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
   type TnCardAction,
   type TnCardHeaderStatus,
   type TnMenuItem,
@@ -45,6 +48,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -62,8 +66,11 @@ import { selectService } from 'app/store/services/services.selectors';
   standalone: true,
   imports: [
     AsyncPipe,
+    TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     RouterLink,
     TnIconComponent,
     TestDirective,
@@ -75,6 +82,7 @@ import { selectService } from 'app/store/services/services.selectors';
     IxTableEmptyDirective,
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
+    ServiceWebshareComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
@@ -163,13 +171,30 @@ export class WebShareCardComponent implements OnInit {
     };
   });
 
+  protected configOpen = signal(false);
+  protected configForm = viewChild(ServiceWebshareComponent);
+
   protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
     const svc = this.service();
     if (!svc) {
       return undefined;
     }
-    return this.actionsMenu.buildMenuItems(svc, this.hasAddRole());
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasAddRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
   });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
 
   private titleCase(value: string): string {
     return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
