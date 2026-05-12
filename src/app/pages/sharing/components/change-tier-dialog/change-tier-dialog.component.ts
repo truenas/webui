@@ -7,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
@@ -16,6 +15,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ChangeTierDialogData {
@@ -81,11 +81,11 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   get currentTierLabel(): string {
-    return this.data.currentTier === DatasetTier.Performance ? T('Performance') : T('Regular');
+    return getTierLabelKey(this.data.currentTier);
   }
 
   get newTierLabel(): string {
-    return this.newTier === DatasetTier.Performance ? T('Performance') : T('Regular');
+    return getTierLabelKey(this.newTier);
   }
 
   protected currentTierSpace(): string | null {

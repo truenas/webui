@@ -17,7 +17,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  getTierJobStatusClass, getTierJobStatusLabel, isTierJobRunning,
+  getTierJobStatusClass, getTierJobStatusLabelKey, getTierLabelKey, isTierJobRunning,
 } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -65,8 +65,8 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   get statusLabel(): string {
-    const label = getTierJobStatusLabel(this.job);
-    return label ? this.translate.instant(label) : '';
+    const key = getTierJobStatusLabelKey(this.job);
+    return key ? this.translate.instant(key) : '';
   }
 
   get statusClass(): string {
@@ -74,15 +74,14 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   get sourceTier(): string {
-    return this.data.targetTier === DatasetTier.Performance
-      ? this.translate.instant('Regular')
-      : this.translate.instant('Performance');
+    const sourceTier = this.data.targetTier === DatasetTier.Performance
+      ? DatasetTier.Regular
+      : DatasetTier.Performance;
+    return this.translate.instant(getTierLabelKey(sourceTier));
   }
 
   get targetTierLabel(): string {
-    return this.data.targetTier === DatasetTier.Performance
-      ? this.translate.instant('Performance')
-      : this.translate.instant('Regular');
+    return this.translate.instant(getTierLabelKey(this.data.targetTier));
   }
 
   ngOnInit(): void {

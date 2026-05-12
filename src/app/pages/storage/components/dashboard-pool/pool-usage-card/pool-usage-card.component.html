@@ -79,15 +79,15 @@
             <div class="tier-bar-container">
               <div
                 class="tier-bar performance-used"
-                [style.width.%]="performanceUsedPercent()"
+                [style.width.%]="tierBreakdown().performance.usedPercent"
               ></div>
               <div
                 class="tier-bar performance-available"
-                [style.width.%]="performanceAvailablePercent()"
+                [style.width.%]="tierBreakdown().performance.availablePercent"
               ></div>
               <div
                 class="tier-bar performance-reserved"
-                [style.width.%]="performanceReservedPercent()"
+                [style.width.%]="tierBreakdown().performance.reservedPercent"
               ></div>
             </div>
             <div class="tier-stats-detail">
@@ -113,11 +113,11 @@
             <div class="tier-bar-container">
               <div
                 class="tier-bar regular-used"
-                [style.width.%]="regularUsedPercent()"
+                [style.width.%]="tierBreakdown().regular.usedPercent"
               ></div>
               <div
                 class="tier-bar regular-available"
-                [style.width.%]="regularAvailablePercent()"
+                [style.width.%]="tierBreakdown().regular.availablePercent"
               ></div>
             </div>
             <div class="tier-stats-detail">

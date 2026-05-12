@@ -18,6 +18,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const tierColumnClass = 'tier-cell';
 
@@ -34,6 +35,7 @@ export class SharingTierService {
   private api = inject(ApiService);
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
 
   private tierConfig$: Observable<ZfsTierConfig> | null = null;
   private tierEnabledSignal = signal(false);
@@ -42,12 +44,17 @@ export class SharingTierService {
   getTierConfig(): Observable<ZfsTierConfig> {
     if (!this.tierConfig$) {
       this.tierConfig$ = this.api.call('zfs.tier.config').pipe(
-        catchError(() => of({ enabled: false } as ZfsTierConfig)),
         tap((config) => this.tierEnabledSignal.set(config.enabled)),
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     }
-    return this.tierConfig$;
+    return this.tierConfig$.pipe(
+      catchError(() => {
+        this.tierConfig$ = null;
+        this.tierEnabledSignal.set(false);
+        return of({ enabled: false } as ZfsTierConfig);
+      }),
+    );
   }
 
   invalidate(): void {
@@ -83,11 +90,10 @@ export class SharingTierService {
       if (!config.enabled) return;
 
       const columns = opts.getColumns();
-      const tierColumn = columns.find((col) => col.cssClass === tierColumnClass);
-      if (tierColumn) {
-        tierColumn.hidden = false;
-      }
-      opts.setColumns([...columns]);
+      const updatedColumns = columns.map((col) => (
+        col.cssClass === tierColumnClass ? { ...col, hidden: false } : col
+      ));
+      opts.setColumns(updatedColumns);
       opts.cdr.markForCheck();
     });
 
@@ -119,26 +125,50 @@ export class SharingTierService {
   /**
    * Opens the Change Tier dialog for a share-like row. Returns an Observable
    * that emits once with the truthy dialog result (i.e. the change was confirmed)
-   * and completes. Emits nothing if the row is missing tier info or has an
-   * unusable mount path.
+   * and completes. Emits nothing if the row is missing tier info; surfaces an
+   * error modal if the mount path cannot be parsed.
    */
   openChangeTierDialog(row: TierRow): Observable<unknown> {
     if (!row?.tier || !row.path) {
       return EMPTY;
     }
 
+    if (!row.path.startsWith(`${mntPath}/`)) {
+      this.errorHandler.showErrorModal(
+        new Error(this.translate.instant(
+          T('Cannot change storage tier: share path "{path}" is not under {mntPath}.'),
+          { path: row.path, mntPath },
+        )),
+      );
+      return EMPTY;
+    }
+
     const [poolName, ...rest] = this.datasetFromMountPath(row.path);
     if (!poolName) {
+      this.errorHandler.showErrorModal(
+        new Error(this.translate.instant(
+          T('Cannot change storage tier: pool name could not be determined from path "{path}".'),
+          { path: row.path },
+        )),
+      );
       return EMPTY;
     }
     const datasetName = [poolName, ...rest].join('/');
 
+    return this.openChangeTierDialogForDataset({
+      datasetName,
+      currentTier: row.tier.tier_type,
+      poolName,
+    });
+  }
+
+  /**
+   * Opens the Change Tier dialog for a dataset (bypassing share path parsing).
+   * Returns an Observable that emits once with the truthy dialog result and completes.
+   */
+  openChangeTierDialogForDataset(data: ChangeTierDialogData): Observable<unknown> {
     return this.matDialog.open(ChangeTierDialogComponent, {
-      data: {
-        datasetName,
-        currentTier: row.tier.tier_type,
-        poolName,
-      } as ChangeTierDialogData,
+      data,
     }).afterClosed().pipe(filter(Boolean));
   }
 

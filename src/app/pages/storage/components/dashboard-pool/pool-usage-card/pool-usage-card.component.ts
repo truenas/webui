@@ -146,26 +146,6 @@ export class PoolUsageCardComponent implements OnInit {
     return Math.max(0, this.poolState().special_class_reserved || 0);
   });
 
-  protected performanceTotal = computed(() => {
-    return this.performanceUsed() + this.performanceAvailable() + this.performanceReserved();
-  });
-
-  protected performanceUsedPercent = computed(() => {
-    const total = this.performanceTotal();
-    return total > 0 ? (this.performanceUsed() / total) * 100 : 0;
-  });
-
-  protected performanceAvailablePercent = computed(() => {
-    const total = this.performanceTotal();
-    return total > 0 ? (this.performanceAvailable() / total) * 100 : 0;
-  });
-
-  protected performanceReservedPercent = computed(() => {
-    const total = this.performanceTotal();
-    return total > 0 ? (this.performanceReserved() / total) * 100 : 0;
-  });
-
-
   protected regularUsed = computed(() => {
     return this.poolState().used ?? 0;
   });
@@ -174,17 +154,20 @@ export class PoolUsageCardComponent implements OnInit {
     return this.poolState().available ?? 0;
   });
 
-  protected regularTotal = computed(() => {
-    return this.regularUsed() + this.regularAvailable();
-  });
-
-  protected regularUsedPercent = computed(() => {
-    const total = this.regularTotal();
-    return total > 0 ? (this.regularUsed() / total) * 100 : 0;
-  });
-
-  protected regularAvailablePercent = computed(() => {
-    const total = this.regularTotal();
-    return total > 0 ? (this.regularAvailable() / total) * 100 : 0;
+  protected tierBreakdown = computed(() => {
+    const performanceTotal = this.performanceUsed() + this.performanceAvailable() + this.performanceReserved();
+    const regularTotal = this.regularUsed() + this.regularAvailable();
+    const pct = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0);
+    return {
+      performance: {
+        usedPercent: pct(this.performanceUsed(), performanceTotal),
+        availablePercent: pct(this.performanceAvailable(), performanceTotal),
+        reservedPercent: pct(this.performanceReserved(), performanceTotal),
+      },
+      regular: {
+        usedPercent: pct(this.regularUsed(), regularTotal),
+        availablePercent: pct(this.regularAvailable(), regularTotal),
+      },
+    };
   });
 }

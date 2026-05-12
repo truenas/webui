@@ -1,5 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { IconLibraryType } from '@truenas/ui-components';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
@@ -48,7 +49,11 @@ export function isTierJobRunning(
     || job.status === TierRewriteJobStatus.Queued;
 }
 
-export function getTierJobStatusLabel(
+/**
+ * Returns the i18n extraction key for a tier job status. Callers must run
+ * the result through TranslateService to display it.
+ */
+export function getTierJobStatusLabelKey(
   job: ZfsTierRewriteJobEntry | null,
 ): string {
   if (!job) return '';
@@ -59,6 +64,18 @@ export function getTierJobStatusLabel(
     case TierRewriteJobStatus.Error: return T('Error');
     case TierRewriteJobStatus.Cancelled: return T('Cancelled');
     case TierRewriteJobStatus.Stopped: return T('Stopped');
+    default: return '';
+  }
+}
+
+/**
+ * Returns the i18n extraction key for a DatasetTier label. Callers must run
+ * the result through TranslateService to display it.
+ */
+export function getTierLabelKey(tier: DatasetTier | null | undefined): string {
+  switch (tier) {
+    case DatasetTier.Performance: return T('Performance');
+    case DatasetTier.Regular: return T('Regular');
     default: return '';
   }
 }

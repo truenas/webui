@@ -4,16 +4,14 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import {
   DataMigrationStatusDialogComponent,
 } from 'app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component';
 import {
-  getTierJobIcon, getTierJobStatusClass, getTierJobStatusLabel,
+  getTierJobIcon, getTierJobStatusClass, getTierJobStatusLabelKey, getTierLabelKey,
 } from 'app/pages/sharing/components/tier-status.utils';
 
 @Component({
@@ -35,21 +33,17 @@ export class TierStatusComponent {
   readonly tier = input<SharingTierInfo | null | undefined>();
 
   protected tierLabel = computed(() => {
-    const value = this.tier();
-    if (!value) return '-';
-    switch (value.tier_type) {
-      case DatasetTier.Performance:
-        return this.translate.instant(T('Performance'));
-      case DatasetTier.Regular:
-        return this.translate.instant(T('Regular'));
-      default:
-        return '-';
-    }
+    const key = getTierLabelKey(this.tier()?.tier_type);
+    return key ? this.translate.instant(key) : '-';
   });
 
   protected tierJob = computed(() => this.tier()?.tier_job ?? null);
   protected jobIcon = computed(() => getTierJobIcon(this.tierJob()));
-  protected jobStatusLabel = computed(() => this.translate.instant(getTierJobStatusLabel(this.tierJob())));
+  protected jobStatusLabel = computed(() => {
+    const key = getTierJobStatusLabelKey(this.tierJob());
+    return key ? this.translate.instant(key) : '';
+  });
+
   protected jobStatusClass = computed(() => getTierJobStatusClass(this.tierJob()));
 
   protected openMigrationDialog(event: Event): void {

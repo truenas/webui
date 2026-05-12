@@ -28,7 +28,7 @@ import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-datase
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { ChangeTierDialogComponent, ChangeTierDialogData } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -64,6 +64,7 @@ export class DatasetDetailsCardComponent {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
+  private tierService = inject(SharingTierService);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -135,19 +136,13 @@ export class DatasetDetailsCardComponent {
       return;
     }
 
-    this.matDialog.open(ChangeTierDialogComponent, {
-      data: {
-        datasetName: this.dataset().name,
-        currentTier,
-        poolName: this.dataset().name.split('/')[0],
-      } satisfies ChangeTierDialogData,
-    })
-      .afterClosed()
-      .pipe(
-        filter(Boolean),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => this.datasetStore.datasetUpdated());
+    this.tierService.openChangeTierDialogForDataset({
+      datasetName: this.dataset().name,
+      currentTier,
+      poolName: this.dataset().name.split('/')[0],
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editDataset(): void {

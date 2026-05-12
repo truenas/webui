@@ -52,10 +52,19 @@ export class TierConfigFormComponent implements OnInit {
   protected readonly enabledWarningHeading = T('Shares will be locked to a single dataset');
   protected readonly enabledWarningMessage = T('Once tiering is on, SMB shares and Webshares stop following nested datasets. Each share will expose only its own dataset, and any child datasets under it will no longer be visible to clients through that share. Create a separate share for each dataset you want to expose.');
 
+  private static readonly defaultMaxConcurrentJobs = 1;
+  private static readonly defaultMaxUsedPercentage = 80;
+
   formGroup = this.fb.nonNullable.group({
     enabled: [false],
-    max_concurrent_jobs: [1, [Validators.required, Validators.min(1)]],
-    max_used_percentage: [80, [Validators.required, Validators.min(0), Validators.max(100)]],
+    max_concurrent_jobs: [
+      TierConfigFormComponent.defaultMaxConcurrentJobs,
+      [Validators.required, Validators.min(1)],
+    ],
+    max_used_percentage: [
+      TierConfigFormComponent.defaultMaxUsedPercentage,
+      [Validators.required, Validators.min(0), Validators.max(100)],
+    ],
   });
 
   private initialEnabled = false;
@@ -78,8 +87,12 @@ export class TierConfigFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (config: ZfsTierConfig) => {
-        this.initialEnabled = config.enabled;
-        this.formGroup.patchValue(config);
+        this.initialEnabled = config.enabled ?? false;
+        this.formGroup.patchValue({
+          enabled: config.enabled ?? false,
+          max_concurrent_jobs: config.max_concurrent_jobs ?? TierConfigFormComponent.defaultMaxConcurrentJobs,
+          max_used_percentage: config.max_used_percentage ?? TierConfigFormComponent.defaultMaxUsedPercentage,
+        });
         this.isFormLoading.set(false);
       },
       error: () => {

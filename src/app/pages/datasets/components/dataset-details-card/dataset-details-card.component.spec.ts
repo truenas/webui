@@ -24,7 +24,8 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ChangeTierDialogComponent } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 
 const dataset = {
   id: 'pool/child',
@@ -94,6 +95,7 @@ describe('DatasetDetailsCardComponent', () => {
       ]),
       mockProvider(Router),
       mockProvider(DialogService),
+      mockSharingTierService(),
       mockAuth(),
     ],
   });
@@ -158,12 +160,10 @@ describe('DatasetDetailsCardComponent', () => {
 
       spectator.click('.change-tier-link');
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangeTierDialogComponent, {
-        data: {
-          datasetName: 'pool/child',
-          currentTier: DatasetTier.Regular,
-          poolName: 'pool',
-        },
+      expect(spectator.inject(SharingTierService).openChangeTierDialogForDataset).toHaveBeenCalledWith({
+        datasetName: 'pool/child',
+        currentTier: DatasetTier.Regular,
+        poolName: 'pool',
       });
     });
 
