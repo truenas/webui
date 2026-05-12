@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=4c9272f7e3",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=1f051c6124",
   "icons": [
     "app-account_circle",
     "app-alert-settings",
@@ -28,10 +28,8 @@
     "app-desktop-datasets-active",
     "app-desktop-file-manager",
     "app-desktop-file-manager-active",
-    "app-desktop-harborbot",
-    "app-desktop-harborbot-active",
-    "app-desktop-harbordesk",
-    "app-desktop-harbordesk-active",
+    "app-desktop-harbor-assistant",
+    "app-desktop-harbor-assistant-active",
     "app-desktop-reporting",
     "app-desktop-reporting-active",
     "app-desktop-shares",

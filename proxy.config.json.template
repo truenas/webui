@@ -5,11 +5,11 @@
         "changeOrigin": true,
         "logLevel": "debug"
     },
-    "/api/harbordesk/**": {
+    "/api/harbor-assistant/**": {
         "target": "http://127.0.0.1:4174",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/api/harbordesk" : "/api"},
+        "pathRewrite": {"^/api/harbor-assistant" : "/api"},
         "loglevel": "debug"
     },
     "/api/**": {

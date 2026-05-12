@@ -16,7 +16,7 @@ export class DesktopComponent {
   readonly isLoading = false;
   private navService = inject(NavigationService);
 
-  menuItems = this.navService.menuItems;
+  menuItems = this.navService.menuItems.filter((item) => item.state !== 'harbor-assistant');
 
   readonly MenuItemType = MenuItemType;
 

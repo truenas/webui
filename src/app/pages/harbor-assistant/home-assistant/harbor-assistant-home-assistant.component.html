@@ -1,0 +1,182 @@
+<section class="home-assistant-page">
+  @if (error()) {
+    <div class="notice error">{{ error() | translate }}</div>
+  }
+
+  @if (message()) {
+    <div class="notice success">{{ message() | translate }}</div>
+  }
+
+  <mat-card class="settings-card native-panel ha-status-card">
+    <mat-card-header>
+      <mat-card-title>{{ 'Home Assistant' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <section class="ha-status-toolbar" [ngClass]="toneClass(statusTone())">
+        <div>
+          <span class="field-label">{{ 'Connection' | translate }}</span>
+          <strong>{{ statusLabel() | translate }}</strong>
+          @if (status()?.location_name) {
+            <p>{{ status()?.location_name }} / {{ status()?.base_url }}</p>
+          } @else if (status()?.base_url) {
+            <p>{{ status()?.base_url }}</p>
+          } @else {
+            <p>{{ 'No Home Assistant connection is saved.' | translate }}</p>
+          }
+        </div>
+        <div class="row-actions">
+          <button mat-button type="button" [disabled]="loading()" (click)="refresh()">
+            {{ 'Refresh' | translate }}
+          </button>
+          @if (homeAssistantUrl(); as url) {
+            <a mat-button color="primary" [href]="url" target="_blank" rel="noopener">
+              {{ 'Open HA' | translate }}
+            </a>
+          }
+        </div>
+      </section>
+
+      <div class="ha-metric-grid">
+        @for (metric of metrics(); track metric.label) {
+          <article class="status-block" [ngClass]="toneClass(metric.tone)">
+            <span>{{ metric.label | translate }}</span>
+            <strong>{{ metric.value | translate }}</strong>
+          </article>
+        }
+      </div>
+
+      @if (status()?.last_error) {
+        <div class="notice error compact-notice">{{ status()?.last_error }}</div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="settings-card native-panel">
+    <mat-card-header>
+      <mat-card-title>{{ 'Connect existing HA' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="ha-config-form" [formGroup]="configForm" (ngSubmit)="saveConfig()">
+        <mat-checkbox formControlName="enabled">{{ 'Enabled' | translate }}</mat-checkbox>
+
+        <mat-form-field>
+          <mat-label>{{ 'Home Assistant URL' | translate }}</mat-label>
+          <input matInput formControlName="baseUrl" placeholder="http://192.168.3.82:8123" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'Long-lived access token' | translate }}</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="accessToken"
+            autocomplete="new-password"
+            [placeholder]="status()?.token_configured ? ('Configured; leave blank to keep' | translate) : ('Long-lived access token' | translate)"
+          />
+        </mat-form-field>
+
+        <details class="advanced-sync-scope full-span">
+          <summary>{{ 'Advanced sync scope' | translate }}</summary>
+          <mat-form-field class="full-span">
+            <mat-label>{{ 'Device types to sync' | translate }}</mat-label>
+            <textarea matInput rows="4" formControlName="exposedDomains"></textarea>
+          </mat-form-field>
+        </details>
+
+        <div class="button-row full-span">
+          <button mat-button color="primary" type="submit" [disabled]="isBusy()">
+            {{ actionBusy('home-assistant-config') ? ('Saving' | translate) : ('Save' | translate) }}
+          </button>
+          <button mat-button type="button" [disabled]="isBusy() || !status()?.configured" (click)="testConnection()">
+            {{ actionBusy('home-assistant-test') ? ('Testing...' | translate) : ('Test connection' | translate) }}
+          </button>
+          <button mat-button type="button" [disabled]="isBusy() || !status()?.configured" (click)="syncEntities()">
+            {{ actionBusy('home-assistant-sync') ? ('Syncing' | translate) : ('Sync entities' | translate) }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="settings-card native-panel">
+    <mat-card-header>
+      <mat-card-title>{{ 'Managed install' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (installStatus(); as app) {
+        <section class="ha-install-line" [ngClass]="toneClass(installTone())">
+          <div>
+            <span class="field-label">{{ app.runtime }}</span>
+            <strong>{{ app.status | translate }}</strong>
+            <p>{{ app.message | translate }}</p>
+          </div>
+          <span class="pill" [ngClass]="toneClass(installTone())">{{ app.container_name }}</span>
+        </section>
+      }
+
+      @if (installPlan(); as plan) {
+        <mat-divider></mat-divider>
+        <div class="ha-install-plan">
+          <div>
+            <span class="field-label">{{ 'Image' | translate }}</span>
+            <strong>{{ plan.image }}</strong>
+          </div>
+          <div>
+            <span class="field-label">{{ 'Ports' | translate }}</span>
+            <strong>{{ plan.ports.join(', ') }}</strong>
+          </div>
+          <div>
+            <span class="field-label">{{ 'Volumes' | translate }}</span>
+            <strong>{{ plan.volumes.join(', ') }}</strong>
+          </div>
+        </div>
+      }
+
+      <div class="button-row">
+        <button mat-button type="button" [disabled]="isBusy()" (click)="loadInstallPlan()">
+          {{ actionBusy('home-assistant-install-plan') ? ('Loading' | translate) : ('Install plan' | translate) }}
+        </button>
+        <button mat-button color="primary" type="button" [disabled]="isBusy()" (click)="installManaged()">
+          {{ actionBusy('home-assistant-install') ? ('Installing' | translate) : ('Install Home Assistant' | translate) }}
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="settings-card native-panel">
+    <mat-card-header>
+      <mat-card-title>{{ 'HA inventory' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (visibleEntities().length === 0) {
+        <div class="empty-state">{{ 'No entities have been synced yet.' | translate }}</div>
+      } @else {
+        <div class="table-list compact-table ha-entity-list">
+          @for (entity of visibleEntities(); track entity.entity_id) {
+            <article class="table-row">
+              <div>
+                <h2>{{ entity.display_name }}</h2>
+                <p class="muted">{{ entity.entity_id }} / {{ entity.domain }}</p>
+              </div>
+              <div class="row-actions">
+                <span class="pill">{{ entity.state }}</span>
+                @if (entity.device_class) {
+                  <span class="pill">{{ entity.device_class }}</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
+
+      @if (visibleServiceDomains().length > 0) {
+        <mat-divider></mat-divider>
+        <div class="ha-service-domain-list">
+          @for (domain of visibleServiceDomains(); track domain.domain) {
+            <span class="pill">{{ domain.domain }}: {{ domain.services.length }}</span>
+          }
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>
