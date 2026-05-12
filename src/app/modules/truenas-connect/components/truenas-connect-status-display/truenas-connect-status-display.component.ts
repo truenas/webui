@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import {
+  TncStatus, TruenasConnectFailureDescription, TruenasConnectStatus, TruenasConnectStatusReason,
+} from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
@@ -21,7 +24,6 @@ import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-t
 })
 export class TruenasConnectStatusDisplayComponent {
   readonly TncStatus = TncStatus;
-  readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
 
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
@@ -36,5 +38,10 @@ export class TruenasConnectStatusDisplayComponent {
   protected tierCssClass = computed(() => {
     const tier = this.tier();
     return tier ? tierDisplayConfig[tier].cssClass : '';
+  });
+
+  protected failedDescription = computed(() => {
+    return TruenasConnectFailureDescription[this.rawStatus()]
+      ?? T('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
   });
 }
