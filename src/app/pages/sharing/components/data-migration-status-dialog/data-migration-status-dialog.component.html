@@ -2,61 +2,63 @@
   {{ 'Data Migration' | translate }}
   <span
     class="status-badge"
-    [ngClass]="statusClass"
+    [ngClass]="statusClass()"
   >
-    {{ statusLabel }}
+    {{ statusLabel() }}
   </span>
 </h1>
 
 <div mat-dialog-content>
   <div class="dataset-name">
-    <strong>{{ 'Dataset' | translate }}:</strong> {{ job?.dataset_name }}
+    <strong>{{ 'Dataset' | translate }}:</strong> {{ job()?.dataset_name }}
   </div>
 
   <div class="migration-direction">
-    <span class="tier-label">{{ sourceTier }}</span>
+    <span class="tier-label">{{ sourceTier() }}</span>
     <span aria-hidden="true" class="arrow">&rarr;</span>
-    <span class="tier-label">{{ targetTierLabel }}</span>
+    <span class="tier-label">{{ targetTierLabel() }}</span>
   </div>
 
   <div class="time-info">
-    @if (startTime) {
-      <span>{{ 'Started' | translate }}: {{ startTime | formatDateTime }}</span>
+    @if (startTime(); as start) {
+      <span>{{ 'Started' | translate }}: {{ start | formatDateTime }}</span>
     }
-    @if (finishedTime) {
-      <span>{{ 'Finished' | translate }}: {{ finishedTime | formatDateTime }}</span>
-    } @else if (estimatedCompletion && isRunning) {
-      <span>{{ 'Est. completion' | translate }}: {{ estimatedCompletion | formatDateTime }}</span>
+    @if (finishedTime(); as finished) {
+      <span>{{ 'Finished' | translate }}: {{ finished | formatDateTime }}</span>
+    } @else if (estimatedCompletion(); as eta) {
+      @if (isRunning()) {
+        <span>{{ 'Est. completion' | translate }}: {{ eta | formatDateTime }}</span>
+      }
     }
   </div>
 
-  @if (job?.stats) {
+  @if (job()?.stats; as stats) {
     <mat-progress-bar
       mode="determinate"
-      [value]="progressPercent"
+      [value]="progressPercent()"
     />
 
     <div class="stats-cards">
       <div class="stat-card">
         <div class="stat-label">{{ 'Data Transferred' | translate }}</div>
         <div class="stat-value">
-          {{ job.stats.count_bytes | ixFileSize }}
+          {{ stats.count_bytes | ixFileSize }}
           /
-          {{ job.stats.total_bytes | ixFileSize }}
+          {{ stats.total_bytes | ixFileSize }}
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">{{ 'Items Completed' | translate }}</div>
-        <div class="stat-value">{{ job.stats.success }} / {{ job.stats.total_items }}</div>
+        <div class="stat-value">{{ stats.success }} / {{ stats.total_items }}</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">{{ 'Failures' | translate }}</div>
-        <div class="stat-value">{{ job.stats.failures }}</div>
+        <div class="stat-value">{{ stats.failures }}</div>
       </div>
     </div>
-  } @else if (isRunning) {
+  } @else if (isRunning()) {
     <mat-progress-bar mode="indeterminate" />
 
     <div class="stats-placeholder">
@@ -72,7 +74,7 @@
   >
     {{ 'Close' | translate }}
   </button>
-  @if (isRunning) {
+  @if (isRunning()) {
     <button
       mat-button
       color="warn"

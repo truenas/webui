@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -46,7 +46,6 @@ export interface DataMigrationStatusDialogData {
 })
 export class DataMigrationStatusDialogComponent implements OnInit {
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -54,38 +53,61 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected data = inject<DataMigrationStatusDialogData>(MAT_DIALOG_DATA);
 
-  protected job: ZfsTierRewriteJobEntry = this.data.tierJob;
-  protected progressPercent = 0;
-  protected startTime: Date | null = null;
-  protected finishedTime: Date | null = null;
-  protected estimatedCompletion: Date | null = null;
+  protected job = signal<ZfsTierRewriteJobEntry>(this.data.tierJob);
 
-  get isRunning(): boolean {
-    return isTierJobRunning(this.job);
-  }
+  protected isRunning = computed(() => isTierJobRunning(this.job()));
 
-  get statusLabel(): string {
-    const key = getTierJobStatusLabelKey(this.job);
+  protected statusLabel = computed(() => {
+    const key = getTierJobStatusLabelKey(this.job());
     return key ? this.translate.instant(key) : '';
-  }
+  });
 
-  get statusClass(): string {
-    return getTierJobStatusClass(this.job);
-  }
+  protected statusClass = computed(() => getTierJobStatusClass(this.job()));
 
-  get sourceTier(): string {
+  protected sourceTier = computed(() => {
     const sourceTier = this.data.targetTier === DatasetTier.Performance
       ? DatasetTier.Regular
       : DatasetTier.Performance;
     return this.translate.instant(getTierLabelKey(sourceTier));
-  }
+  });
 
-  get targetTierLabel(): string {
-    return this.translate.instant(getTierLabelKey(this.data.targetTier));
-  }
+  protected targetTierLabel = computed(
+    () => this.translate.instant(getTierLabelKey(this.data.targetTier)),
+  );
+
+  protected startTime = computed<Date | null>(() => {
+    const stats = this.job()?.stats;
+    return stats ? new Date(stats.start_time * 1000) : null;
+  });
+
+  protected finishedTime = computed<Date | null>(() => {
+    const job = this.job();
+    if (job?.status === TierRewriteJobStatus.Complete && job.stats) {
+      return new Date(job.stats.update_time * 1000);
+    }
+    return null;
+  });
+
+  protected progressPercent = computed(() => {
+    const stats = this.job()?.stats;
+    if (!stats || stats.total_bytes <= 0) return 0;
+    return Math.round((stats.count_bytes / stats.total_bytes) * 100);
+  });
+
+  protected estimatedCompletion = computed<Date | null>(() => {
+    const job = this.job();
+    const start = this.startTime();
+    if (!start || !job?.stats || job.stats.count_bytes <= 0 || job.stats.total_bytes <= 0) {
+      return null;
+    }
+    const now = job.stats.update_time * 1000;
+    const elapsed = now - start.getTime();
+    const fractionDone = job.stats.count_bytes / job.stats.total_bytes;
+    const estimatedTotal = elapsed / fractionDone;
+    return new Date(start.getTime() + estimatedTotal);
+  });
 
   ngOnInit(): void {
-    this.updateProgress();
     this.subscribeToJobUpdates();
   }
 
@@ -99,7 +121,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     ).subscribe((confirmed) => {
       if (!confirmed) return;
 
-      this.api.call('zfs.tier.rewrite_job_cancel', [{ tier_job_id: this.job.tier_job_id }]).pipe(
+      this.api.call('zfs.tier.rewrite_job_cancel', [{ tier_job_id: this.job().tier_job_id }]).pipe(
         takeUntilDestroyed(this.destroyRef),
       ).subscribe({
         next: () => {
@@ -119,40 +141,8 @@ export class DataMigrationStatusDialogComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (event) => {
-        this.job = event.fields;
-        this.updateProgress();
-        this.cdr.markForCheck();
+        this.job.set(event.fields);
       },
     });
-  }
-
-  private updateProgress(): void {
-    if (this.job?.stats) {
-      this.startTime = new Date(this.job.stats.start_time * 1000);
-
-      if (this.job.status === TierRewriteJobStatus.Complete) {
-        this.finishedTime = new Date(this.job.stats.update_time * 1000);
-      }
-
-      if (this.job.stats.total_bytes > 0) {
-        this.progressPercent = Math.round(
-          (this.job.stats.count_bytes / this.job.stats.total_bytes) * 100,
-        );
-
-        this.estimatedCompletion = this.calculateEstimatedCompletion();
-      }
-    }
-  }
-
-  private calculateEstimatedCompletion(): Date | null {
-    if (!this.startTime || !this.job?.stats || this.job.stats.count_bytes <= 0) {
-      return null;
-    }
-
-    const now = this.job.stats.update_time * 1000;
-    const elapsed = now - this.startTime.getTime();
-    const fractionDone = this.job.stats.count_bytes / this.job.stats.total_bytes;
-    const estimatedTotal = elapsed / fractionDone;
-    return new Date(this.startTime.getTime() + estimatedTotal);
   }
 }
