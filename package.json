@@ -46,7 +46,7 @@
   },
   "private": true,
   "resolutions": {
-    "mermaid": "^11.10.1",
+    "mermaid": "^11.15.0",
     "test-exclude": "^7.0.1"
   },
   "dependencies": {
