@@ -9,6 +9,7 @@ import { tnIconMarker } from '@truenas/ui-components';
 import {
   EMPTY, Observable, auditTime, catchError, filter, map, of, shareReplay, tap,
 } from 'rxjs';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
@@ -176,8 +177,20 @@ export class SharingTierService {
   /**
    * Opens the Change Tier dialog for a dataset (bypassing share path parsing).
    * Returns an Observable that emits once with the truthy dialog result and completes.
+   * Surfaces an error modal and emits nothing if `currentTier` is not a known
+   * DatasetTier value, so callers can't open an unusable dialog.
    */
   openChangeTierDialogForDataset(data: ChangeTierDialogData): Observable<unknown> {
+    if (data.currentTier !== DatasetTier.Performance && data.currentTier !== DatasetTier.Regular) {
+      this.errorHandler.showErrorModal(
+        new Error(this.translate.instant(
+          T('Cannot change storage tier: current tier "{tier}" is not recognized.'),
+          { tier: String(data.currentTier) },
+        )),
+      );
+      return EMPTY;
+    }
+
     return this.matDialog.open(ChangeTierDialogComponent, {
       data,
     }).afterClosed().pipe(filter(Boolean));

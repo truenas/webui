@@ -101,5 +101,16 @@ describe('SharingTierService', () => {
         },
       });
     });
+
+    it('surfaces an error and does not open the dialog when currentTier is not a known DatasetTier', () => {
+      spectator.service.openChangeTierDialogForDataset({
+        datasetName: 'pool1/ds',
+        currentTier: 'BOGUS' as DatasetTier,
+        poolName: 'pool1',
+      });
+
+      expect(matDialogOpen).not.toHaveBeenCalled();
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    });
   });
 });

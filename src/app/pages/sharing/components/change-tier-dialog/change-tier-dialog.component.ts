@@ -77,9 +77,8 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   // currentTierLabel / newTierLabel assume currentTier is a known DatasetTier.
-  // ngOnInit() enforces that invariant: it shows an error modal and closes the
-  // dialog if the data slot was opened with an unknown tier, so by the time
-  // these getters render the template the value is guaranteed valid.
+  // SharingTierService.openChangeTierDialogForDataset (the single dialog entry
+  // point) validates this before opening, so the getters can rely on it.
   get currentTierLabel(): string {
     return getTierLabelKey(this.data.currentTier);
   }
@@ -101,17 +100,6 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (
-      this.data.currentTier !== DatasetTier.Performance
-      && this.data.currentTier !== DatasetTier.Regular
-    ) {
-      this.errorHandler.showErrorModal(
-        new Error(`ChangeTierDialog opened with unknown currentTier: ${String(this.data.currentTier)}`),
-      );
-      this.dialogRef.close(false);
-      return;
-    }
-
     this.loadDetails();
     this.loadShareUsage();
   }
