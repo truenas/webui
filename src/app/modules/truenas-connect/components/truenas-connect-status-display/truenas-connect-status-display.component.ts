@@ -21,6 +21,7 @@ import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-t
 })
 export class TruenasConnectStatusDisplayComponent {
   readonly TncStatus = TncStatus;
+  readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
 
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
