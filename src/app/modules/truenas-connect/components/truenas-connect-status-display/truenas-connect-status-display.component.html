@@ -10,11 +10,7 @@
     <span ixTest="tnc-status" class="failed-header">{{ "Connection Failed..." | translate }}</span>
   </div>
   <div ixTest="tnc-status-reason" class="failed-description">
-    @if (rawStatus() === TruenasConnectStatus.RegistrationFinalizationTimeout) {
-      {{ "Registration wasn't completed in time. Click Retry Connection and finish authorization in the TrueNAS Connect window." | translate }}
-    } @else {
-      {{ "Something went wrong! Please check your network connectivity and then click Retry Connection to get started." | translate }}
-    }
+    {{ failedDescription() | translate }}
   </div>
 } @else if (status() === TncStatus.Active) {
   <div class="status-header">
