@@ -1,8 +1,10 @@
-<ix-modal-header
-  title="NFS"
-  [requiredRoles]="requiredRoles"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    title="NFS"
+    [requiredRoles]="requiredRoles"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
 <mat-card class="card">
   <mat-card-content>
@@ -100,18 +102,20 @@
       </ix-fieldset>
 
       <ix-form-actions>
-        <div>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            type="submit"
-            color="primary"
-            ixTest="save"
-            [disabled]="form.invalid || isFormLoading()"
-          >
-            {{ 'Save' | translate }}
-          </button>
-        </div>
+        @if (slideInRef) {
+          <div>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              type="submit"
+              color="primary"
+              ixTest="save"
+              [disabled]="form.invalid || isFormLoading()"
+            >
+              {{ 'Save' | translate }}
+            </button>
+          </div>
+        }
         <div class="add-spn-container">
           @if (isAddSpnVisible && isAddSpnDisabled()) {
             <ix-tooltip

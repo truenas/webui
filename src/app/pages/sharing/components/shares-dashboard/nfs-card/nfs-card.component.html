@@ -53,3 +53,22 @@
     [routerLink]="['/sharing', 'nfs']"
   ></ix-table-pager-show-more>
 </tn-card>
+
+<tn-side-panel
+  [title]="'NFS' | translate"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-service-nfs (closed)="onConfigClosed()"></ix-service-nfs>
+  }
+  @if (configForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [ixTest]="['nfs-config', 'save']"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

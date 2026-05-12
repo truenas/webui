@@ -1,14 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, DestroyRef, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, DestroyRef, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
   TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
   type TnCardHeaderStatus,
@@ -40,6 +43,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -56,8 +60,11 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./nfs-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -71,6 +78,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     EmptyComponent,
     CardAlertBadgeComponent,
+    ServiceNfsComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
@@ -118,13 +126,30 @@ export class NfsCardComponent implements OnInit {
     };
   });
 
+  protected configOpen = signal(false);
+  protected configForm = viewChild(ServiceNfsComponent);
+
   protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
     const svc = this.service();
     if (!svc) {
       return undefined;
     }
-    return this.actionsMenu.buildMenuItems(svc, this.hasAddRole());
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasAddRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
   });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
 
   private titleCase(value: string): string {
     return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
