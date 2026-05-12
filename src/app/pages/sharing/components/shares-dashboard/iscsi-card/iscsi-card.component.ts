@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
@@ -7,9 +7,12 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
   TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
   type TnCardHeaderStatus,
@@ -46,6 +49,9 @@ import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import {
+  GlobalTargetConfigurationComponent,
+} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -60,8 +66,11 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./iscsi-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -76,6 +85,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RouterLink,
     EmptyComponent,
     CardAlertBadgeComponent,
+    GlobalTargetConfigurationComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -138,13 +148,30 @@ export class IscsiCardComponent implements OnInit {
     };
   });
 
+  protected configOpen = signal(false);
+  protected configForm = viewChild(GlobalTargetConfigurationComponent);
+
   protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
     const svc = this.service();
     if (!svc) {
       return undefined;
     }
-    return this.actionsMenu.buildMenuItems(svc, this.hasWriteRole());
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasWriteRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
   });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
 
   private titleCase(value: string): string {
     return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
