@@ -247,7 +247,7 @@ export class SnapshotTaskFormComponent implements OnInit {
       // cspell:ignore snapshottask
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
-        params as PeriodicSnapshotTaskUpdate,
+        params,
       ]);
     } else {
       // cspell:ignore snapshottask

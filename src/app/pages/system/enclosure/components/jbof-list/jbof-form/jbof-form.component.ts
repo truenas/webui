@@ -7,7 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
+import { Jbof } from 'app/interfaces/jbof.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -50,7 +50,7 @@ export class JbofFormComponent implements OnInit {
   protected isFormLoading = signal(false);
   protected editingJbof: Jbof | undefined;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     description: ['', [Validators.required]],
     mgmt_ip1: ['', [Validators.required, ipv4Validator()]],
     mgmt_ip2: ['', [ipv4Validator()]],
@@ -82,7 +82,7 @@ export class JbofFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value as JbofUpdate;
+    const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);
     let request$: Observable<unknown>;

@@ -12,7 +12,7 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import { Option } from 'app/interfaces/option.interface';
 import {
-  MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
+  MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot,
 } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -67,7 +67,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       : this.translate.instant('Edit VM Snapshot');
   }
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     hostname: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
@@ -186,7 +186,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value as VmwareSnapshotUpdate;
+    const values = this.form.getRawValue();
 
     this.isLoading = true;
     let request$: Observable<unknown>;
