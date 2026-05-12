@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -104,16 +105,20 @@ describe('TierConfigFormComponent', () => {
     expect(spectator.query('tn-banner')).not.toExist();
   });
 
-  it('marks the form invalid when max_used_percentage > 100 or max_concurrent_jobs < 1', async () => {
+  it('shows validation errors and disables Save when max_used_percentage > 100 or max_concurrent_jobs < 1', async () => {
     const form = await loader.getHarness(IxFormHarness);
-
     await form.fillForm({
       'Max Used Percentage': 150,
       'Max Concurrent Jobs': 0,
     });
 
-    expect(spectator.component.formGroup.invalid).toBe(true);
-    expect(spectator.component.formGroup.controls.max_used_percentage.hasError('max')).toBe(true);
-    expect(spectator.component.formGroup.controls.max_concurrent_jobs.hasError('min')).toBe(true);
+    const percentInput = await loader.getHarness(IxInputHarness.with({ label: 'Max Used Percentage' }));
+    const jobsInput = await loader.getHarness(IxInputHarness.with({ label: 'Max Concurrent Jobs' }));
+
+    expect(await percentInput.getErrorText()).toBe('Maximum value is 100');
+    expect(await jobsInput.getErrorText()).toBe('Minimum value is 1');
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
   });
 });
