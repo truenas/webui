@@ -137,6 +137,9 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private subscribeToJobUpdates(): void {
     const tierJobId = this.data.tierJob.tier_job_id;
 
+    // Topic format is contract'd with middleware: `zfs.tier.rewrite_job_status:<json-args>`,
+    // where <json-args> is the JSON-stringified call args. tier_job_id is server-generated
+    // and safe to embed without further escaping.
     this.api.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
