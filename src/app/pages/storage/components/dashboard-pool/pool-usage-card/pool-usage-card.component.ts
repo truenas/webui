@@ -160,11 +160,13 @@ export class PoolUsageCardComponent implements OnInit {
     const pct = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0);
     return {
       performance: {
+        hasData: performanceTotal > 0,
         usedPercent: pct(this.performanceUsed(), performanceTotal),
         availablePercent: pct(this.performanceAvailable(), performanceTotal),
         reservedPercent: pct(this.performanceReserved(), performanceTotal),
       },
       regular: {
+        hasData: regularTotal > 0,
         usedPercent: pct(this.regularUsed(), regularTotal),
         availablePercent: pct(this.regularAvailable(), regularTotal),
       },

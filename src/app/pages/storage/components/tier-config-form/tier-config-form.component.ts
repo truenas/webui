@@ -19,6 +19,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-tier-config-form',
@@ -43,6 +44,7 @@ export class TierConfigFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
+  private globalErrorHandler = inject(ErrorHandlerService);
   slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
@@ -95,8 +97,9 @@ export class TierConfigFormComponent implements OnInit {
         });
         this.isFormLoading.set(false);
       },
-      error: () => {
+      error: (error: unknown) => {
         this.isFormLoading.set(false);
+        this.globalErrorHandler.showErrorModal(error);
       },
     });
   }

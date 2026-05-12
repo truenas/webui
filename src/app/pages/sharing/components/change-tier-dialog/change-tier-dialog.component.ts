@@ -70,14 +70,9 @@ export class ChangeTierDialogComponent implements OnInit {
   });
 
   get newTier(): DatasetTier {
-    switch (this.data.currentTier) {
-      case DatasetTier.Performance:
-        return DatasetTier.Regular;
-      case DatasetTier.Regular:
-        return DatasetTier.Performance;
-      default:
-        throw new Error(`ChangeTierDialog opened with unknown currentTier: ${String(this.data.currentTier)}`);
-    }
+    return this.data.currentTier === DatasetTier.Performance
+      ? DatasetTier.Regular
+      : DatasetTier.Performance;
   }
 
   get currentTierLabel(): string {
@@ -101,6 +96,17 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (
+      this.data.currentTier !== DatasetTier.Performance
+      && this.data.currentTier !== DatasetTier.Regular
+    ) {
+      this.errorHandler.showErrorModal(
+        new Error(`ChangeTierDialog opened with unknown currentTier: ${String(this.data.currentTier)}`),
+      );
+      this.dialogRef.close(false);
+      return;
+    }
+
     this.loadDetails();
     this.loadShareUsage();
   }

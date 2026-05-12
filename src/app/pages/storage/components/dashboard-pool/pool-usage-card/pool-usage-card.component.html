@@ -72,65 +72,76 @@
 
       @if (showTierBreakdown()) {
         <div class="tier-breakdown">
-          <div class="tier-row">
-            <div class="tier-header">
-              <span class="tier-name">{{ 'Performance' | translate }}</span>
+          @if (tierBreakdown().performance.hasData) {
+            <div class="tier-row">
+              <div class="tier-header">
+                <span class="tier-name">{{ 'Performance' | translate }}</span>
+              </div>
+              <div class="tier-bar-container">
+                <div
+                  class="tier-bar performance-used"
+                  [style.width.%]="tierBreakdown().performance.usedPercent"
+                ></div>
+                <div
+                  class="tier-bar performance-available"
+                  [style.width.%]="tierBreakdown().performance.availablePercent"
+                ></div>
+                <div
+                  class="tier-bar performance-reserved"
+                  [style.width.%]="tierBreakdown().performance.reservedPercent"
+                ></div>
+              </div>
+              <div class="tier-stats-detail">
+                <span class="stat-item">
+                  <span class="stat-dot used"></span>
+                  {{ performanceUsed() | ixFileSize }} {{ 'Used' | translate }}
+                </span>
+                <span class="stat-item">
+                  <span class="stat-dot available"></span>
+                  {{ performanceAvailable() | ixFileSize }} {{ 'Available' | translate }}
+                </span>
+                <span class="stat-item">
+                  <span class="stat-dot reserved"></span>
+                  {{ performanceReserved() | ixFileSize }} {{ 'Reserved' | translate }}
+                </span>
+              </div>
             </div>
-            <div class="tier-bar-container">
-              <div
-                class="tier-bar performance-used"
-                [style.width.%]="tierBreakdown().performance.usedPercent"
-              ></div>
-              <div
-                class="tier-bar performance-available"
-                [style.width.%]="tierBreakdown().performance.availablePercent"
-              ></div>
-              <div
-                class="tier-bar performance-reserved"
-                [style.width.%]="tierBreakdown().performance.reservedPercent"
-              ></div>
+          } @else {
+            <div class="tier-row tier-empty">
+              <div class="tier-header">
+                <span class="tier-name">{{ 'Performance' | translate }}</span>
+              </div>
+              <span class="tier-empty-note">{{ 'No allocation yet' | translate }}</span>
             </div>
-            <div class="tier-stats-detail">
-              <span class="stat-item">
-                <span class="stat-dot used"></span>
-                {{ performanceUsed() | ixFileSize }} {{ 'Used' | translate }}
-              </span>
-              <span class="stat-item">
-                <span class="stat-dot available"></span>
-                {{ performanceAvailable() | ixFileSize }} {{ 'Available' | translate }}
-              </span>
-              <span class="stat-item">
-                <span class="stat-dot reserved"></span>
-                {{ performanceReserved() | ixFileSize }} {{ 'Reserved' | translate }}
-              </span>
-            </div>
-          </div>
+          }
 
-          <div class="tier-row">
-            <div class="tier-header">
-              <span class="tier-name">{{ 'Regular' | translate }}</span>
+          @if (tierBreakdown().regular.hasData) {
+            <div class="tier-row">
+              <div class="tier-header">
+                <span class="tier-name">{{ 'Regular' | translate }}</span>
+              </div>
+              <div class="tier-bar-container">
+                <div
+                  class="tier-bar regular-used"
+                  [style.width.%]="tierBreakdown().regular.usedPercent"
+                ></div>
+                <div
+                  class="tier-bar regular-available"
+                  [style.width.%]="tierBreakdown().regular.availablePercent"
+                ></div>
+              </div>
+              <div class="tier-stats-detail">
+                <span class="stat-item">
+                  <span class="stat-dot regular-used"></span>
+                  {{ regularUsed() | ixFileSize }} {{ 'Used' | translate }}
+                </span>
+                <span class="stat-item">
+                  <span class="stat-dot regular-available"></span>
+                  {{ regularAvailable() | ixFileSize }} {{ 'Available' | translate }}
+                </span>
+              </div>
             </div>
-            <div class="tier-bar-container">
-              <div
-                class="tier-bar regular-used"
-                [style.width.%]="tierBreakdown().regular.usedPercent"
-              ></div>
-              <div
-                class="tier-bar regular-available"
-                [style.width.%]="tierBreakdown().regular.availablePercent"
-              ></div>
-            </div>
-            <div class="tier-stats-detail">
-              <span class="stat-item">
-                <span class="stat-dot regular-used"></span>
-                {{ regularUsed() | ixFileSize }} {{ 'Used' | translate }}
-              </span>
-              <span class="stat-item">
-                <span class="stat-dot regular-available"></span>
-                {{ regularAvailable() | ixFileSize }} {{ 'Available' | translate }}
-              </span>
-            </div>
-          </div>
+          }
         </div>
       }
 
