@@ -54,7 +54,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected data = inject<DataMigrationStatusDialogData>(MAT_DIALOG_DATA);
 
-  protected job: ZfsTierRewriteJobEntry;
+  protected job: ZfsTierRewriteJobEntry = this.data.tierJob;
   protected progressPercent = 0;
   protected startTime: Date | null = null;
   protected finishedTime: Date | null = null;
@@ -86,7 +86,6 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.job = this.data.tierJob;
     this.updateProgress();
     this.subscribeToJobUpdates();
   }

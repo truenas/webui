@@ -70,9 +70,14 @@ export class ChangeTierDialogComponent implements OnInit {
   });
 
   get newTier(): DatasetTier {
-    return this.data.currentTier === DatasetTier.Performance
-      ? DatasetTier.Regular
-      : DatasetTier.Performance;
+    switch (this.data.currentTier) {
+      case DatasetTier.Performance:
+        return DatasetTier.Regular;
+      case DatasetTier.Regular:
+        return DatasetTier.Performance;
+      default:
+        throw new Error(`ChangeTierDialog opened with unknown currentTier: ${String(this.data.currentTier)}`);
+    }
   }
 
   get currentTierLabel(): string {
@@ -118,7 +123,10 @@ export class ChangeTierDialogComponent implements OnInit {
     forkJoin([
       this.api.call('zpool.query', [{ properties: ['class_normal_available', 'class_special_available'] }]),
       this.api.call('pool.dataset.query', [[['id', '=', this.data.datasetName]]]),
-    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    ]).pipe(
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: ([zpools, datasets]) => {
         const zpool = zpools.find((pool) => pool.name === this.data.poolName);
         if (zpool) {
@@ -146,7 +154,10 @@ export class ChangeTierDialogComponent implements OnInit {
       this.api.call('sharing.smb.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
       this.api.call('sharing.nfs.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
       this.api.call('sharing.webshare.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
-    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    ]).pipe(
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
       next: ([smb, nfs, webshare]) => {
         this.shareUsage.set({
           smb: smb.map((share) => share.name),

@@ -127,12 +127,20 @@ export class DatasetDetailsCardComponent {
   }
 
   changeTier(): void {
+    const currentTier = this.dataset().tier?.tier_type;
+    if (!currentTier) {
+      this.errorHandler.showErrorModal(
+        new Error(this.translate.instant('Current storage tier is unknown for this dataset.')),
+      );
+      return;
+    }
+
     this.matDialog.open(ChangeTierDialogComponent, {
       data: {
         datasetName: this.dataset().name,
-        currentTier: this.dataset().tier?.tier_type,
+        currentTier,
         poolName: this.dataset().name.split('/')[0],
-      } as ChangeTierDialogData,
+      } satisfies ChangeTierDialogData,
     })
       .afterClosed()
       .pipe(
