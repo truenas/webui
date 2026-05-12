@@ -6,7 +6,11 @@
   >
     @if (!isLoading()) {
       <div class="icon-div">
-        <tn-icon class="icon" [customSize]="conf().large ? '90px' : '50px'" [name]="getIcon()"></tn-icon>
+        @if (conf().image) {
+          <img class="icon" [src]="conf().image" [style.width]="conf().large ? '90px' : '50px'" [alt]="conf().title | translate" />
+        } @else {
+          <tn-icon class="icon" [customSize]="conf().large ? '90px' : '50px'" [name]="getIcon()"></tn-icon>
+        }
       </div>
     }
 

@@ -48,9 +48,13 @@
   .icon-div {
     text-align: center;
 
-    .icon {
+    tn-icon.icon {
       color: var(--fg2);
       opacity: 0.1;
+    }
+
+    img.icon {
+      object-fit: contain;
     }
   }
 

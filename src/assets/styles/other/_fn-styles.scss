@@ -448,3 +448,31 @@ input:-webkit-autofill {
 .has-tooltip .tooltip .material-icons {
   vertical-align: middle;
 }
+
+
+* {
+  --sb-track-color: #ffffff;
+  --sb-thumb-color: #6715ff;
+  --sb-size: 12px;
+}
+
+*::-webkit-scrollbar {
+  width: var(--sb-size)
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 20px;
+
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+  }
+}

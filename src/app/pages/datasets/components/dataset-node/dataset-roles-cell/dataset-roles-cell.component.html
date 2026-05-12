@@ -1,8 +1,11 @@
 @if (isSystemDataset()) {
-  <tn-icon
-    name="tn-truenas-logo-mark"
+  <img width="24" height="24" src="assets/icons/custom/harbor-logo-mark.svg" alt="Harbor Logo" class="system-logo">
+  <!-- <tn-icon
+    name="app-harbor-logo-mark"
+    library="custom"
+    [size]="'sm'"
     [tnTooltip]="'This dataset is used by the system' | translate"
-  ></tn-icon>
+  ></tn-icon> -->
 }
 
 @if (dataset().apps?.length || isApps()) {
