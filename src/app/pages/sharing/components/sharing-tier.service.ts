@@ -18,9 +18,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
-import {
-  StorageTierCellComponent,
-} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+
+const tierColumnClass = 'tier-cell';
 
 interface TierRow {
   path: string;
@@ -84,7 +83,7 @@ export class SharingTierService {
       if (!config.enabled) return;
 
       const columns = opts.getColumns();
-      const tierColumn = columns.find((col) => col.type === StorageTierCellComponent);
+      const tierColumn = columns.find((col) => col.cssClass === tierColumnClass);
       if (tierColumn) {
         tierColumn.hidden = false;
       }
