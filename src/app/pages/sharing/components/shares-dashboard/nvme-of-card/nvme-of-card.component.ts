@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, inject, signal, viewChild, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
@@ -7,9 +7,12 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
   TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
   type TnCardHeaderStatus,
@@ -46,6 +49,9 @@ import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { AddSubsystemComponent } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem.component';
+import {
+  NvmeOfConfigurationComponent,
+} from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
@@ -59,8 +65,11 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./nvme-of-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     TestDirective,
     TnIconComponent,
     TnTooltipDirective,
@@ -76,6 +85,7 @@ import { selectService } from 'app/store/services/services.selectors';
     EmptyComponent,
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
+    NvmeOfConfigurationComponent,
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
@@ -128,13 +138,30 @@ export class NvmeOfCardComponent implements OnInit {
     };
   });
 
+  protected configOpen = signal(false);
+  protected configForm = viewChild(NvmeOfConfigurationComponent);
+
   protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
     const svc = this.service();
     if (!svc) {
       return undefined;
     }
-    return this.actionsMenu.buildMenuItems(svc, this.hasAddRole());
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasAddRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
   });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
 
   private titleCase(value: string): string {
     return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
