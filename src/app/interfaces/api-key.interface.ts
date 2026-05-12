@@ -19,8 +19,10 @@ export interface CreateApiKeyRequest {
   expires_at: ApiTimestamp | null;
 }
 
-export type UpdateApiKeyRequest = [number, {
-  name: string;
+export interface UpdateApiKeyBody {
+  name?: string;
   reset?: boolean;
   expires_at?: ApiTimestamp | null;
-}];
+}
+
+export type UpdateApiKeyRequest = [number, UpdateApiKeyBody];
