@@ -9,7 +9,11 @@ class RoundedDoughnutController extends DoughnutController {
     const meta = this.getMeta();
     const lastVisibleIndex = meta.data.length - 2;
 
-    let previousColor: Color;
+    // Assigned at the end of each iteration (line 94) and read by the next
+    // iteration's `index > 0` branch. Initialize to transparent so a hypothetical
+    // read at index 0 — which the branch guard prevents today — would still be
+    // valid, instead of relying on TS allowing read-before-assign.
+    let previousColor: Color = '#0000';
 
     (meta.data as elements.ArcElement[]).forEach((chartElem, index) => {
       if (index > lastVisibleIndex) {
