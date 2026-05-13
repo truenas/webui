@@ -6,13 +6,13 @@
 >
   <span class="icon-wrapper">
     <tn-icon size="lg" name="tn-truenas-connect-logo"></tn-icon>
-    @if (showBadge()) {
-      <span [class]="'tier-badge ' + tierCssClass()">{{ tierLabel() }}</span>
-    } @else {
-      @let badge = statusBadge();
-      @if (badge) {
-        <ix-status-badge [icon]="badge.icon" [kind]="badge.kind"></ix-status-badge>
-      }
+    @let currentBadge = badge();
+    @if (currentBadge) {
+      <ix-status-badge
+        [icon]="currentBadge.icon ?? null"
+        [label]="currentBadge.label ?? null"
+        [kind]="currentBadge.kind"
+      ></ix-status-badge>
     }
   </span>
 </button>

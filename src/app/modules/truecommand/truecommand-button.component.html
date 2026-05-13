@@ -1,35 +1,38 @@
-@if (tcStatus && tcStatus.status === TrueCommandStatus.Connecting) {
+@let status = tcStatus();
+@if (status && status.status === TrueCommandStatus.Connecting) {
   <button
     mat-icon-button
     id="tc-connecting"
-    class="topbar-button-right"
+    class="topbar-button-right truecommand-button"
     ixTest="truecommand-indicator"
-    [matTooltip]="tooltips.connectingToTruecommand | translate"
+    [matTooltip]="tooltip()"
     (click)="stopTrueCommandConnecting()"
   >
-    <tn-icon
-      size="lg"
-      class="truecommand-button-connecting-animation"
-      name="tn-truecommand-logo-mark"
-    ></tn-icon>
+    <span class="icon-wrapper">
+      <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
+      @let badge = statusBadge();
+      @if (badge) {
+        <ix-status-badge [icon]="badge.icon ?? null" [kind]="badge.kind"></ix-status-badge>
+      }
+    </span>
   </button>
 }
 
-@if (tcStatus && tcStatus.status !== TrueCommandStatus.Connecting) {
+@if (status && status.status !== TrueCommandStatus.Connecting) {
   <button
     mat-icon-button
     class="topbar-button-right truecommand-button"
     ixTest="truecommand-indicator"
-    [matTooltip]="tooltips.truecommandStatus | translate"
-    [ngClass]="[tcStatus.status]"
+    [matTooltip]="tooltip()"
+    [ngClass]="[status.status]"
     [ixUiSearch]="searchableElements.elements.trueCommand"
     (click)="handleClick()"
   >
     <span class="icon-wrapper">
       <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
-      @let badge = statusBadge;
+      @let badge = statusBadge();
       @if (badge) {
-        <ix-status-badge [icon]="badge.icon" [kind]="badge.kind"></ix-status-badge>
+        <ix-status-badge [icon]="badge.icon ?? null" [kind]="badge.kind"></ix-status-badge>
       }
     </span>
   </button>

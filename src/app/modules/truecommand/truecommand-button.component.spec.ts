@@ -102,6 +102,16 @@ describe('TruecommandButtonComponent', () => {
           );
         }
       });
+
+      it(`shows the expected badge for ${status}`, () => {
+        const badge = spectator.query('ix-status-badge');
+        if (status === TrueCommandStatus.Disabled || status === TrueCommandStatus.Connecting) {
+          expect(badge).toExist();
+          expect(badge).toHaveClass('warning');
+        } else {
+          expect(badge).not.toExist();
+        }
+      });
     });
   });
 

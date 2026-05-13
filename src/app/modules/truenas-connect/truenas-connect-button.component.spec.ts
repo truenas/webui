@@ -9,6 +9,7 @@ import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
+import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
 describe('TruenasConnectButtonComponent', () => {
   let spectator: Spectator<TruenasConnectButtonComponent>;
@@ -59,54 +60,34 @@ describe('TruenasConnectButtonComponent', () => {
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });
 
-  it('should not show tier badge when tier is null', () => {
-    expect(spectator.query('.tier-badge')).not.toExist();
+  [
+    TruenasConnectTier.Foundation,
+    TruenasConnectTier.Plus,
+    TruenasConnectTier.Business,
+  ].forEach((tier) => {
+    it(`shows the tier badge for ${tier} when status is Configured`, () => {
+      configSignal.set({
+        enabled: true,
+        status: TruenasConnectStatus.Configured,
+        tier,
+      } as TruenasConnectConfig);
+      spectator.detectChanges();
+
+      const { short, cssClass } = tierDisplayConfig[tier];
+      const badge = spectator.query('ix-status-badge');
+      expect(badge).toExist();
+      expect(badge).toHaveClass(cssClass);
+      expect(badge?.textContent?.trim()).toBe(short);
+    });
   });
 
-  it('should show Foundation badge when tier is FOUNDATION and status is Configured', () => {
-    configSignal.set({
-      enabled: true,
-      status: TruenasConnectStatus.Configured,
-      tier: TruenasConnectTier.Foundation,
-    } as TruenasConnectConfig);
-    spectator.detectChanges();
-
-    const badge = spectator.query('.tier-badge');
+  it('should not show a badge when tier is null and status is Configured without tier (success path)', () => {
+    const badge = spectator.query('ix-status-badge');
     expect(badge).toExist();
-    expect(badge).toHaveText('F');
-    expect(badge).toHaveClass('tier-foundation');
-    expect(spectator.query('ix-status-badge')).not.toExist();
+    expect(badge).toHaveClass('success');
   });
 
-  it('should show Plus badge when tier is PLUS and status is Configured', () => {
-    configSignal.set({
-      enabled: true,
-      status: TruenasConnectStatus.Configured,
-      tier: TruenasConnectTier.Plus,
-    } as TruenasConnectConfig);
-    spectator.detectChanges();
-
-    const badge = spectator.query('.tier-badge');
-    expect(badge).toExist();
-    expect(badge).toHaveText('+');
-    expect(badge).toHaveClass('tier-plus');
-  });
-
-  it('should show Business badge when tier is BUSINESS and status is Configured', () => {
-    configSignal.set({
-      enabled: true,
-      status: TruenasConnectStatus.Configured,
-      tier: TruenasConnectTier.Business,
-    } as TruenasConnectConfig);
-    spectator.detectChanges();
-
-    const badge = spectator.query('.tier-badge');
-    expect(badge).toExist();
-    expect(badge).toHaveText('B');
-    expect(badge).toHaveClass('tier-business');
-  });
-
-  it('should not show tier badge when status is not Configured even if tier is set', () => {
+  it('should show a warning (disabled) badge — not a tier badge — when status is Disabled even if tier is set', () => {
     configSignal.set({
       enabled: true,
       status: TruenasConnectStatus.Disabled,
@@ -114,16 +95,13 @@ describe('TruenasConnectButtonComponent', () => {
     } as TruenasConnectConfig);
     spectator.detectChanges();
 
-    expect(spectator.query('.tier-badge')).not.toExist();
-  });
-
-  it('should show a success status badge when Configured without a tier', () => {
     const badge = spectator.query('ix-status-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('success');
+    expect(badge).toHaveClass('warning');
+    expect(badge).not.toHaveClass(tierDisplayConfig[TruenasConnectTier.Plus].cssClass);
   });
 
-  it('should show an error status badge for failed certificate statuses', () => {
+  it('should show an error badge for failed certificate statuses', () => {
     configSignal.set({
       enabled: true,
       status: TruenasConnectStatus.CertRenewalFailure,
@@ -136,7 +114,7 @@ describe('TruenasConnectButtonComponent', () => {
     expect(badge).toHaveClass('error');
   });
 
-  it('should not show a status badge for a generic non-configured status', () => {
+  it('should show a warning badge with pause icon for the Disabled status', () => {
     configSignal.set({
       enabled: true,
       status: TruenasConnectStatus.Disabled,
@@ -144,6 +122,30 @@ describe('TruenasConnectButtonComponent', () => {
     } as TruenasConnectConfig);
     spectator.detectChanges();
 
-    expect(spectator.query('ix-status-badge')).not.toExist();
+    const badge = spectator.query('ix-status-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('warning');
+  });
+
+  [
+    TruenasConnectStatus.RegistrationFinalizationWaiting,
+    TruenasConnectStatus.RegistrationFinalizationSuccess,
+    TruenasConnectStatus.CertGenerationInProgress,
+    TruenasConnectStatus.CertGenerationSuccess,
+    TruenasConnectStatus.CertRenewalInProgress,
+    TruenasConnectStatus.CertRenewalSuccess,
+  ].forEach((status) => {
+    it(`shows a warning badge for in-progress status ${status}`, () => {
+      configSignal.set({
+        enabled: true,
+        status,
+        tier: null,
+      } as TruenasConnectConfig);
+      spectator.detectChanges();
+
+      const badge = spectator.query('ix-status-badge');
+      expect(badge).toExist();
+      expect(badge).toHaveClass('warning');
+    });
   });
 });

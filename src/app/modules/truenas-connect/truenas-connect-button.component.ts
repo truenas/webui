@@ -3,17 +3,12 @@ import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { StatusBadgeComponent, StatusBadgeKind } from 'app/modules/layout/topbar/status-badge/status-badge.component';
+import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
-
-interface StatusBadge {
-  icon: string;
-  kind: StatusBadgeKind;
-}
 
 const failedStatuses: ReadonlySet<TruenasConnectStatus> = new Set([
   TruenasConnectStatus.RegistrationFinalizationFailed,
@@ -21,6 +16,15 @@ const failedStatuses: ReadonlySet<TruenasConnectStatus> = new Set([
   TruenasConnectStatus.CertGenerationFailed,
   TruenasConnectStatus.CertConfigurationFailure,
   TruenasConnectStatus.CertRenewalFailure,
+]);
+
+const inProgressStatuses: ReadonlySet<TruenasConnectStatus> = new Set([
+  TruenasConnectStatus.RegistrationFinalizationWaiting,
+  TruenasConnectStatus.RegistrationFinalizationSuccess,
+  TruenasConnectStatus.CertGenerationInProgress,
+  TruenasConnectStatus.CertGenerationSuccess,
+  TruenasConnectStatus.CertRenewalInProgress,
+  TruenasConnectStatus.CertRenewalSuccess,
 ]);
 
 @Component({
@@ -42,47 +46,47 @@ export class TruenasConnectButtonComponent {
   private truenasConnectService = inject(TruenasConnectService);
   private translate = inject(TranslateService);
 
-  protected tier = computed(() => this.truenasConnectService.config()?.tier ?? null);
+  private tier = computed(() => this.truenasConnectService.config()?.tier ?? null);
 
-  protected showBadge = computed(() => {
-    const config = this.truenasConnectService.config();
-
-    return config?.status === TruenasConnectStatus.Configured && config?.tier != null;
-  });
-
-  protected statusBadge = computed<StatusBadge | null>(() => {
+  protected badge = computed<StatusBadge | null>(() => {
     const config = this.truenasConnectService.config();
     if (!config) {
       return null;
     }
+
+    const tier = this.tier();
+    if (config.status === TruenasConnectStatus.Configured) {
+      if (tier != null) {
+        const tierConfig = tierDisplayConfig[tier];
+        return { label: tierConfig.short, kind: tierConfig.cssClass };
+      }
+      return { icon: 'check', kind: 'success' };
+    }
+
     if (failedStatuses.has(config.status)) {
       return { icon: 'close', kind: 'error' };
     }
-    if (config.status === TruenasConnectStatus.Configured && config.tier == null) {
-      return { icon: 'check', kind: 'success' };
+
+    if (inProgressStatuses.has(config.status)) {
+      return { icon: 'clock-outline', kind: 'warning' };
     }
+
+    if (config.status === TruenasConnectStatus.Disabled) {
+      return { icon: 'pause-circle', kind: 'warning' };
+    }
+
     return null;
   });
 
-  protected tierLabel = computed(() => {
-    const tier = this.tier();
-    return tier ? tierDisplayConfig[tier].short : '';
-  });
-
-  protected tierCssClass = computed(() => {
-    const tier = this.tier();
-    return tier ? tierDisplayConfig[tier].cssClass : '';
-  });
-
-  protected tierName = computed(() => {
-    const tier = this.tier();
-    return tier ? tierDisplayConfig[tier].label : null;
-  });
-
   protected tooltip = computed(() => {
-    const base = this.translate.instant(helptextTopbar.tooltips.tncStatus);
-    const name = this.tierName();
-    if (name && this.showBadge()) {
+    const config = this.truenasConnectService.config();
+    if (!config) {
+      return this.translate.instant(helptextTopbar.tooltips.tncStatus);
+    }
+    const base = this.translate.instant(TruenasConnectStatusReason[config.status]);
+    const tier = this.tier();
+    if (tier && config.status === TruenasConnectStatus.Configured) {
+      const name = tierDisplayConfig[tier].label;
       return `${base}\n${this.translate.instant('Tier: {tier}', { tier: name })}`;
     }
     return base;

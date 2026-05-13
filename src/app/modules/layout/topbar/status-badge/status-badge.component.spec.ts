@@ -31,6 +31,11 @@ describe('StatusBadgeComponent', () => {
     expect(spectator.element).not.toHaveClass('success');
   });
 
+  it('applies a tier class when kind is a tier variant', () => {
+    spectator = createComponent({ props: { label: 'F', kind: 'tier-foundation' } });
+    expect(spectator.element).toHaveClass('tier-foundation');
+  });
+
   it('marks the host as decorative for screen readers', () => {
     spectator = createComponent({ props: { icon: 'check', kind: 'success' } });
     expect(spectator.element.getAttribute('aria-hidden')).toBe('true');
@@ -41,5 +46,11 @@ describe('StatusBadgeComponent', () => {
     const loader: HarnessLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const icon = await loader.getHarness(TnIconHarness);
     expect(await icon.getName()).toBe('close');
+  });
+
+  it('renders a label when label is provided instead of an icon', () => {
+    spectator = createComponent({ props: { label: '+', kind: 'tier-plus' } });
+    expect(spectator.query('.label')).toHaveText('+');
+    expect(spectator.query('tn-icon')).not.toExist();
   });
 });

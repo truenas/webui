@@ -1,1 +1,5 @@
-<tn-icon library="mdi" customSize="11px" [name]="icon()"></tn-icon>
+@if (icon(); as iconName) {
+  <tn-icon size="sm" library="mdi" [name]="iconName"></tn-icon>
+} @else if (label(); as labelText) {
+  <span class="label">{{ labelText }}</span>
+}
