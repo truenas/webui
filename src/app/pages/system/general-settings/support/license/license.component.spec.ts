@@ -3,15 +3,20 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
+import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import {
+  DialogWithSecondaryCheckboxResult,
+} from 'app/interfaces/dialog.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from './license.component';
 
@@ -36,7 +41,9 @@ describe('LicenseComponent', () => {
         mockCall('truenas.license.upload'),
       ]),
       mockProvider(SlideIn),
-      mockProvider(SnackbarService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of()),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
@@ -66,7 +73,9 @@ describe('LicenseComponent', () => {
     expect(api.call).toHaveBeenCalledWith('truenas.license.upload', ['test-license']);
   });
 
-  it('shows a success snackbar and reloads the page after the license is saved', async () => {
+  it('shows a warning that UI needs to be reloaded and reloads it after dialog is closed', async () => {
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({} as DialogWithSecondaryCheckboxResult));
+
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       License: 'test-license',
@@ -75,7 +84,11 @@ describe('LicenseComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('License updated. Reloading...');
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+      title: helptext.updateLicense.reloadDialogTitle,
+      message: helptext.updateLicense.reloadDialogMessage,
+    }));
+
     expect(spectator.inject<Window>(WINDOW).location.reload).toHaveBeenCalled();
   });
 });
