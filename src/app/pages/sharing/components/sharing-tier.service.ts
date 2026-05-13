@@ -118,23 +118,25 @@ export class SharingTierService {
   }
 
   /**
-   * Convenience wiring for share list/card components: enables the tier column,
-   * subscribes to job refreshes, and returns the "Change Storage Tier" action
-   * to drop into the row's action menu. Replaces the three-step boilerplate
-   * (`storageTierColumn` + `createChangeTierAction` + `wireTierColumnUpdates`)
-   * that previously had to be repeated by every share consumer.
+   * Side-effect wiring for share list/card components: enables the tier column
+   * (via `enableTierColumn`) and reloads on tier job ticks (via
+   * `wireTierJobRefresh`). Returns nothing — use `createChangeTierAction`
+   * separately for the row action so it can be created at field-init time and
+   * referenced from the `columns = createTable([...])` initializer.
+   *
+   * Call this from `ngOnInit`, NOT a field initializer: it reads the columns
+   * array via the `getColumns` callback once the tier config arrives, and the
+   * columns array won't exist yet at field-init time if the action is in it.
    */
-  attachTierToShareList<T extends TierRow>(opts: {
+  attachTierToShareList<T>(opts: {
     destroyRef: DestroyRef;
     cdr: ChangeDetectorRef;
     getColumns: () => Column<T, ColumnComponent<T>>[];
     setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
     reload: () => void;
-    requiredRoles?: Role[];
-  }): IconActionConfig<T> {
+  }): void {
     this.enableTierColumn(opts);
     this.wireTierJobRefresh(opts);
-    return this.createChangeTierAction(opts);
   }
 
   /**

@@ -121,11 +121,8 @@ export class SmbListComponent implements OnInit {
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
-  private tierAction: IconActionConfig<SmbShare> = this.tierService.attachTierToShareList<SmbShare>({
+  private tierAction: IconActionConfig<SmbShare> = this.tierService.createChangeTierAction<SmbShare>({
     destroyRef: this.destroyRef,
-    cdr: this.cdr,
-    getColumns: () => this.columns,
-    setColumns: (columns) => { this.columns = columns; },
     reload: () => this.dataProvider.load(),
     requiredRoles: this.requiredRoles,
   });
@@ -247,6 +244,14 @@ export class SmbListComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
+    });
+
+    this.tierService.attachTierToShareList<SmbShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
     });
   }
 

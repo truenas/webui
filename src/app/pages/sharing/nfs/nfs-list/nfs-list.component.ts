@@ -104,11 +104,8 @@ export class NfsListComponent implements OnInit {
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
-  private tierAction: IconActionConfig<NfsShare> = this.tierService.attachTierToShareList<NfsShare>({
+  private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
     destroyRef: this.destroyRef,
-    cdr: this.cdr,
-    getColumns: () => this.columns,
-    setColumns: (columns) => { this.columns = columns; },
     reload: () => this.refresh(),
   });
 
@@ -207,6 +204,14 @@ export class NfsListComponent implements OnInit {
       error: () => {
         this.refresh();
       },
+    });
+
+    this.tierService.attachTierToShareList<NfsShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.refresh(),
     });
   }
 

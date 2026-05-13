@@ -38,9 +38,8 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     wireTierJobRefresh: (wireOpts: { reload: () => void }) => {
       jobUpdates$.subscribe(() => wireOpts.reload());
     },
-    attachTierToShareList: <T extends TierRow>(wireOpts: { reload: () => void }): IconActionConfig<T> => {
+    attachTierToShareList: (wireOpts: { reload: () => void }) => {
       jobUpdates$.subscribe(() => wireOpts.reload());
-      return buildAction<T>(wireOpts);
     },
     createChangeTierAction: buildAction,
   });

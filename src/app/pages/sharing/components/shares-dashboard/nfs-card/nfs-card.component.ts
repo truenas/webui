@@ -97,11 +97,8 @@ export class NfsCardComponent implements OnInit {
   protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
-  private tierAction: IconActionConfig<NfsShare> = this.tierService.attachTierToShareList<NfsShare>({
+  private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
     destroyRef: this.destroyRef,
-    cdr: this.cdr,
-    getColumns: () => this.columns,
-    setColumns: (columns) => { this.columns = columns; },
     reload: () => this.dataProvider.load(),
     requiredRoles: this.requiredRoles,
   });
@@ -165,6 +162,14 @@ export class NfsCardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
+    });
+
+    this.tierService.attachTierToShareList<NfsShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
     });
   }
 
