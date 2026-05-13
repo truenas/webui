@@ -12,7 +12,11 @@
       <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
       @let badge = statusBadge();
       @if (badge) {
-        <ix-status-badge [icon]="badge.icon ?? null" [kind]="badge.kind"></ix-status-badge>
+        <ix-status-badge
+          [icon]="badge.icon ?? null"
+          [background]="badge.background"
+          [spinning]="badge.spinning ?? false"
+        ></ix-status-badge>
       }
     </span>
   </button>
@@ -32,7 +36,11 @@
       <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
       @let badge = statusBadge();
       @if (badge) {
-        <ix-status-badge [icon]="badge.icon ?? null" [kind]="badge.kind"></ix-status-badge>
+        <ix-status-badge
+          [icon]="badge.icon ?? null"
+          [background]="badge.background"
+          [spinning]="badge.spinning ?? false"
+        ></ix-status-badge>
       }
     </span>
   </button>

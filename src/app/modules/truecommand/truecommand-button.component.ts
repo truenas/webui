@@ -74,13 +74,11 @@ export class TruecommandButtonComponent implements OnInit {
   protected statusBadge = computed<StatusBadge | null>(() => {
     switch (this.tcStatus()?.status) {
       case TrueCommandStatus.Connected:
-        return { icon: 'check', kind: 'success' };
+        return { icon: 'check', background: 'var(--green)' };
       case TrueCommandStatus.Failed:
-        return { icon: 'close', kind: 'error' };
+        return { icon: 'close', background: 'var(--red)' };
       case TrueCommandStatus.Connecting:
-        return { icon: 'clock-outline', kind: 'warning' };
-      case TrueCommandStatus.Disabled:
-        return { icon: 'pause-circle', kind: 'warning' };
+        return { icon: 'clock-outline', background: 'var(--yellow)', spinning: true };
       default:
         return null;
     }

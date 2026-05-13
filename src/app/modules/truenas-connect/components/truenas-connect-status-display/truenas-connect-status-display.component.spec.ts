@@ -1,6 +1,7 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
+import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 import { TruenasConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
 
 describe('TruenasConnectStatusDisplayComponent', () => {
@@ -81,9 +82,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.setInput('tier', TruenasConnectTier.Foundation);
     spectator.detectChanges();
 
-    const badge = spectator.query('.tier-badge');
+    const badge = spectator.query<HTMLElement>('.tier-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('tier-foundation');
+    expect(badge?.style.background).toBe(tierDisplayConfig[TruenasConnectTier.Foundation].background);
     expect(badge).toContainText('Tier: Foundation');
   });
 
@@ -92,9 +93,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.setInput('tier', TruenasConnectTier.Plus);
     spectator.detectChanges();
 
-    const badge = spectator.query('.tier-badge');
+    const badge = spectator.query<HTMLElement>('.tier-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('tier-plus');
+    expect(badge?.style.background).toBe(tierDisplayConfig[TruenasConnectTier.Plus].background);
     expect(badge).toContainText('Tier: Plus');
   });
 
@@ -103,9 +104,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.setInput('tier', TruenasConnectTier.Business);
     spectator.detectChanges();
 
-    const badge = spectator.query('.tier-badge');
+    const badge = spectator.query<HTMLElement>('.tier-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('tier-business');
+    expect(badge?.style.background).toBe(tierDisplayConfig[TruenasConnectTier.Business].background);
     expect(badge).toContainText('Tier: Business');
   });
 });

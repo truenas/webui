@@ -58,21 +58,17 @@ export class TruenasConnectButtonComponent {
     if (config.status === TruenasConnectStatus.Configured) {
       if (tier != null) {
         const tierConfig = tierDisplayConfig[tier];
-        return { label: tierConfig.short, kind: tierConfig.cssClass };
+        return { label: tierConfig.short, background: tierConfig.background };
       }
-      return { icon: 'check', kind: 'success' };
+      return { icon: 'check', background: 'var(--green)' };
     }
 
     if (failedStatuses.has(config.status)) {
-      return { icon: 'close', kind: 'error' };
+      return { icon: 'close', background: 'var(--red)' };
     }
 
     if (inProgressStatuses.has(config.status)) {
-      return { icon: 'clock-outline', kind: 'warning' };
-    }
-
-    if (config.status === TruenasConnectStatus.Disabled) {
-      return { icon: 'pause-circle', kind: 'warning' };
+      return { icon: 'clock-outline', background: 'var(--yellow)', spinning: true };
     }
 
     return null;

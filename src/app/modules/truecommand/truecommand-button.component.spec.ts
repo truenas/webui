@@ -104,10 +104,10 @@ describe('TruecommandButtonComponent', () => {
       });
 
       it(`shows the expected badge for ${status}`, () => {
-        const badge = spectator.query('ix-status-badge');
-        if (status === TrueCommandStatus.Disabled || status === TrueCommandStatus.Connecting) {
+        const badge = spectator.query<HTMLElement>('ix-status-badge');
+        if (status === TrueCommandStatus.Connecting) {
           expect(badge).toExist();
-          expect(badge).toHaveClass('warning');
+          expect(badge?.style.background).toBe('var(--yellow)');
         } else {
           expect(badge).not.toExist();
         }
@@ -147,13 +147,13 @@ describe('TruecommandButtonComponent', () => {
       });
 
       it(`shows the expected status badge for status '${status}'`, () => {
-        const badge = spectator.query('ix-status-badge');
+        const badge = spectator.query<HTMLElement>('ix-status-badge');
         if (status === TrueCommandStatus.Connected) {
           expect(badge).toExist();
-          expect(badge).toHaveClass('success');
+          expect(badge?.style.background).toBe('var(--green)');
         } else if (status === TrueCommandStatus.Failed) {
           expect(badge).toExist();
-          expect(badge).toHaveClass('error');
+          expect(badge?.style.background).toBe('var(--red)');
         } else {
           expect(badge).not.toExist();
         }

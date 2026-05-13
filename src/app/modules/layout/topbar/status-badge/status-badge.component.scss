@@ -20,18 +20,6 @@
   }
 }
 
-:host(.success) {
-  background: var(--green);
-}
-
-:host(.error) {
-  background: var(--red);
-}
-
-:host(.warning) {
-  background: var(--yellow);
-}
-
 .label {
   font-size: 10px;
   font-weight: 700;
@@ -44,6 +32,6 @@
   }
 }
 
-::ng-deep tn-icon[name='clock-outline'] {
+:host(.spinning) tn-icon {
   animation: ix-status-badge-spin 3s linear infinite;
 }

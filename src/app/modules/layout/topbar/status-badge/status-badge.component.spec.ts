@@ -19,37 +19,30 @@ describe('StatusBadgeComponent', () => {
     ],
   });
 
-  it('applies the success class when kind is success', () => {
-    spectator = createComponent({ props: { icon: 'check', kind: 'success' } });
-    expect(spectator.element).toHaveClass('success');
-    expect(spectator.element).not.toHaveClass('error');
+  it('applies the given background as an inline style', () => {
+    spectator = createComponent({ props: { icon: 'check', background: 'var(--green)' } });
+    expect(spectator.element.style.background).toBe('var(--green)');
   });
 
-  it('applies the error class when kind is error', () => {
-    spectator = createComponent({ props: { icon: 'close', kind: 'error' } });
-    expect(spectator.element).toHaveClass('error');
-    expect(spectator.element).not.toHaveClass('success');
-  });
-
-  it('applies a tier class when kind is a tier variant', () => {
-    spectator = createComponent({ props: { label: 'F', kind: 'tier-foundation' } });
-    expect(spectator.element).toHaveClass('tier-foundation');
+  it('applies the spinning class when spinning is true', () => {
+    spectator = createComponent({ props: { icon: 'clock-outline', background: 'var(--yellow)', spinning: true } });
+    expect(spectator.element).toHaveClass('spinning');
   });
 
   it('marks the host as decorative for screen readers', () => {
-    spectator = createComponent({ props: { icon: 'check', kind: 'success' } });
+    spectator = createComponent({ props: { icon: 'check', background: 'var(--green)' } });
     expect(spectator.element.getAttribute('aria-hidden')).toBe('true');
   });
 
   it('renders the given icon name on the inner tn-icon', async () => {
-    spectator = createComponent({ props: { icon: 'close', kind: 'error' } });
+    spectator = createComponent({ props: { icon: 'close', background: 'var(--red)' } });
     const loader: HarnessLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const icon = await loader.getHarness(TnIconHarness);
     expect(await icon.getName()).toBe('close');
   });
 
   it('renders a label when label is provided instead of an icon', () => {
-    spectator = createComponent({ props: { label: '+', kind: 'tier-plus' } });
+    spectator = createComponent({ props: { label: '+', background: 'var(--blue)' } });
     expect(spectator.query('.label')).toHaveText('+');
     expect(spectator.query('tn-icon')).not.toExist();
   });

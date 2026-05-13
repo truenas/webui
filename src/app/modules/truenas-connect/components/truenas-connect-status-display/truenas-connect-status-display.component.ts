@@ -32,8 +32,8 @@ export class TruenasConnectStatusDisplayComponent {
     return tier ? tierDisplayConfig[tier].label : null;
   });
 
-  protected tierCssClass = computed(() => {
+  protected tierBackground = computed(() => {
     const tier = this.tier();
-    return tier ? tierDisplayConfig[tier].cssClass : '';
+    return tier ? tierDisplayConfig[tier].background : null;
   });
 }

@@ -1,16 +1,13 @@
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
-import { StatusBadgeKind } from 'app/modules/layout/topbar/status-badge/status-badge.component';
-
-type TierKind = Extract<StatusBadgeKind, `tier-${string}`>;
 
 export interface TierDisplayConfig {
   label: string;
   short: string;
-  cssClass: TierKind;
+  background: string;
 }
 
 export const tierDisplayConfig: Record<TruenasConnectTier, TierDisplayConfig> = {
-  [TruenasConnectTier.Foundation]: { label: 'Foundation', short: 'F', cssClass: 'tier-foundation' },
-  [TruenasConnectTier.Plus]: { label: 'Plus', short: '+', cssClass: 'tier-plus' },
-  [TruenasConnectTier.Business]: { label: 'Business', short: 'B', cssClass: 'tier-business' },
+  [TruenasConnectTier.Foundation]: { label: 'Foundation', short: 'F', background: 'var(--green)' },
+  [TruenasConnectTier.Plus]: { label: 'Plus', short: '+', background: 'var(--blue)' },
+  [TruenasConnectTier.Business]: { label: 'Business', short: 'B', background: 'var(--violet)' },
 };
