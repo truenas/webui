@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import type { TnMenuItem } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -61,6 +62,7 @@ export class ServiceActionsMenuService {
     return {
       id: 'service-state-toggle',
       label: stateLabel,
+      testId: this.menuItemTestId(service, stateLabel),
       action: () => this.changeServiceState(service),
     };
   }
@@ -69,6 +71,7 @@ export class ServiceActionsMenuService {
     return {
       id: 'service-config',
       label: this.translate.instant('Config Service'),
+      testId: this.menuItemTestId(service, 'Config Service'),
       action: () => this.configureService(service),
     };
   }
@@ -80,6 +83,7 @@ export class ServiceActionsMenuService {
     return {
       id: 'service-sessions',
       label: this.translate.instant('{name} Sessions', { name: serviceNames.get(service.service) }),
+      testId: this.menuItemTestId(service, 'sessions'),
       action: () => this.viewSessions(service.service),
     };
   }
@@ -91,8 +95,25 @@ export class ServiceActionsMenuService {
     return {
       id: 'service-logs',
       label: this.translate.instant('Audit Logs'),
+      testId: this.menuItemTestId(service, 'logs'),
       action: () => this.viewLogs(),
     };
+  }
+
+  /**
+   * Mirrors the value the legacy `[ixTest]="[service.service, 'actions-menu', label]"`
+   * directive used to produce on the old `<button mat-menu-item>` element, including the
+   * `button-` element-type prefix that `[ixTest]` would auto-add. Each part is kebab-cased
+   * to match the directive's normalization, so e.g. service `iscsi.target` with label
+   * `Config Service` yields `button-iscsi-target-actions-menu-config-service`.
+   */
+  menuItemTestId(service: Service, actionLabel: string): string {
+    return [
+      'button',
+      kebabCase(service.service),
+      'actions-menu',
+      kebabCase(actionLabel),
+    ].join('-');
   }
 
   private changeServiceState(service: Service): void {

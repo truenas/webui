@@ -3,6 +3,7 @@
   [bordered]="true"
   [headerStatus]="serviceStatus()"
   [headerMenu]="serviceMenu()"
+  [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
   [primaryAction]="addAction()"
 >
   <a
@@ -74,7 +75,7 @@
     <tn-button
       tnSidePanelAction
       color="primary"
-      [ixTest]="['nvme-of-config', 'save']"
+      [ixTest]="'save'"
       [label]="'Save' | translate"
       [disabled]="!form.canSubmit()"
       (onClick)="form.submit()"

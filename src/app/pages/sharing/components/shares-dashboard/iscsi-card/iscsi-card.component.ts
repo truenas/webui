@@ -18,6 +18,7 @@ import {
   type TnCardHeaderStatus,
   type TnMenuItem,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, startWith, tap,
 } from 'rxjs';
@@ -128,14 +129,20 @@ export class IscsiCardComponent implements OnInit {
       return undefined;
     }
     const label = this.translate.instant(this.titleCase(svc.state));
+    const testId = `button-service-status-${kebabCase(svc.service)}`;
     switch (svc.state) {
       case ServiceStatus.Running:
-        return { label, type: 'success' };
+        return { label, type: 'success', testId };
       case ServiceStatus.Stopped:
-        return { label, type: 'neutral' };
+        return { label, type: 'neutral', testId };
       default:
-        return { label, type: 'warning' };
+        return { label, type: 'warning', testId };
     }
+  });
+
+  protected headerMenuTriggerTestId = computed<string | undefined>(() => {
+    const svc = this.service();
+    return svc ? `button-${svc.id}-actions-menu` : undefined;
   });
 
   protected wizardAction = computed<TnCardAction | undefined>(() => {
@@ -144,6 +151,7 @@ export class IscsiCardComponent implements OnInit {
     }
     return {
       label: this.translate.instant('Wizard'),
+      testId: 'button-iscsi-share-wizard',
       handler: () => this.openForm(undefined, true),
     };
   });
@@ -159,6 +167,7 @@ export class IscsiCardComponent implements OnInit {
     const localConfigItem: TnMenuItem = {
       id: 'service-config',
       label: this.translate.instant('Config Service'),
+      testId: this.actionsMenu.menuItemTestId(svc, 'Config Service'),
       action: () => this.configOpen.set(true),
     };
     return [

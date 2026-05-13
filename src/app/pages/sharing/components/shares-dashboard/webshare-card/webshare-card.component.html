@@ -3,6 +3,7 @@
   [bordered]="true"
   [headerStatus]="serviceStatus()"
   [headerMenu]="serviceMenu()"
+  [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
   [primaryAction]="addAction()"
   [secondaryAction]="openAction()"
 >
@@ -90,7 +91,7 @@
     <tn-button
       tnSidePanelAction
       color="primary"
-      [ixTest]="['webshare-config', 'save']"
+      [ixTest]="'save'"
       [label]="'Save' | translate"
       [disabled]="!form.canSubmit()"
       (onClick)="form.submit()"

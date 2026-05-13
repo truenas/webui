@@ -3,6 +3,7 @@
   [bordered]="true"
   [headerStatus]="serviceStatus()"
   [headerMenu]="serviceMenu()"
+  [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
   [primaryAction]="wizardAction()"
 >
   <a
@@ -70,7 +71,7 @@
     <tn-button
       tnSidePanelAction
       color="primary"
-      [ixTest]="['iscsi-config', 'save']"
+      [ixTest]="'save'"
       [label]="'Save' | translate"
       [disabled]="!form.canSubmit()"
       (onClick)="form.submit()"
