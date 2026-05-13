@@ -1,0 +1,20 @@
+:host {
+  align-items: center;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  width: 16px;
+}
+
+:host(.success) {
+  background: var(--green);
+}
+
+:host(.error) {
+  background: var(--red);
+}

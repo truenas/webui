@@ -14,6 +14,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { StatusBadgeComponent, StatusBadgeKind } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -29,6 +30,11 @@ import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+interface StatusBadge {
+  icon: string;
+  kind: StatusBadgeKind;
+}
+
 @Component({
   selector: 'ix-truecommand-button',
   styleUrls: ['./truecommand-button.component.scss'],
@@ -40,6 +46,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatTooltip,
     TnIconComponent,
     NgClass,
+    StatusBadgeComponent,
     UiSearchDirective,
     TranslateModule,
   ],
@@ -57,19 +64,18 @@ export class TruecommandButtonComponent implements OnInit {
   tooltips = helptextTopbar.tooltips;
   protected searchableElements = trueCommandElements;
 
-
   protected tcStatus: TrueCommandConfig;
   private tcConnected = false;
   private isTcStatusOpened = false;
   private tcStatusDialogRef: MatDialogRef<TruecommandStatusModalComponent>;
 
-  get statusBadgeIcon(): string | null {
+  get statusBadge(): StatusBadge | null {
     if (this.tcStatus.status === TrueCommandStatus.Connected) {
-      return 'check';
+      return { icon: 'check', kind: 'success' };
     }
 
     if (this.tcStatus.status === TrueCommandStatus.Failed) {
-      return 'close';
+      return { icon: 'close', kind: 'error' };
     }
 
     return null;

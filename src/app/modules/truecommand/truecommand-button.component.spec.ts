@@ -136,6 +136,19 @@ describe('TruecommandButtonComponent', () => {
         expect(icon).toBeTruthy();
       });
 
+      it(`shows the expected status badge for status '${status}'`, () => {
+        const badge = spectator.query('ix-status-badge');
+        if (status === TrueCommandStatus.Connected) {
+          expect(badge).toExist();
+          expect(badge).toHaveClass('success');
+        } else if (status === TrueCommandStatus.Failed) {
+          expect(badge).toExist();
+          expect(badge).toHaveClass('error');
+        } else {
+          expect(badge).not.toExist();
+        }
+      });
+
       it(`shows status modal when user clicks on the ${expectedButtonId} button`, () => {
         spectator.click(spectator.query(expectedButtonId)!);
 
