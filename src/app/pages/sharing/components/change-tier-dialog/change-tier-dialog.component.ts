@@ -8,7 +8,7 @@ import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -60,6 +60,9 @@ export class ChangeTierDialogComponent implements OnInit {
   protected estimatedRewriteSize = signal<string | null>(null);
   protected hasSnapshots = signal(false);
   protected isSubmitting = signal(false);
+  // Set when loadDetails or loadShareUsage fails; disables Apply so the user
+  // can't fire the mutation against an unknown current state.
+  protected loadFailed = signal(false);
   // SMB and Webshare carry a user-visible `name`; NFS shares only have an
   // `id` + the same `path` already shown in the dialog header, so listing
   // names would just be a column of duplicate paths — show a count instead.
@@ -115,7 +118,7 @@ export class ChangeTierDialogComponent implements OnInit {
     this.api.call('zfs.tier.dataset_set_tier', [{
       dataset_name: this.data.datasetName,
       tier_type: this.newTier,
-      move_existing_data: this.form.value.moveExistingData,
+      move_existing_data: this.form.getRawValue().moveExistingData,
     }]).pipe(
       this.loader.withLoader(),
       takeUntilDestroyed(this.destroyRef),
@@ -136,6 +139,7 @@ export class ChangeTierDialogComponent implements OnInit {
       }]),
       this.api.call('pool.dataset.query', [[['id', '=', this.data.datasetName]]]),
     ]).pipe(
+      tap({ error: () => this.loadFailed.set(true) }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
@@ -167,6 +171,7 @@ export class ChangeTierDialogComponent implements OnInit {
       this.api.call('sharing.nfs.query', [[['path', '=', mountpoint]], { select: ['id'] }]),
       this.api.call('sharing.webshare.query', [[['path', '=', mountpoint]], { select: ['id', 'name'] }]),
     ]).pipe(
+      tap({ error: () => this.loadFailed.set(true) }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({

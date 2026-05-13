@@ -10,7 +10,7 @@
 
 <div mat-dialog-content>
   <div class="dataset-name">
-    <strong>{{ 'Dataset' | translate }}:</strong> {{ job()?.dataset_name }}
+    <strong>{{ 'Dataset' | translate }}:</strong> {{ job().dataset_name }}
   </div>
 
   <div class="migration-direction">
@@ -32,7 +32,7 @@
     }
   </div>
 
-  @if (job()?.stats; as stats) {
+  @if (job().stats; as stats) {
     <mat-progress-bar
       mode="determinate"
       [value]="progressPercent()"

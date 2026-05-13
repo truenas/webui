@@ -44,18 +44,17 @@ export class SharingTierService {
 
   getTierConfig(): Observable<ZfsTierConfig> {
     if (!this.tierConfig$) {
+      // catchError is inside the shareReplay boundary so the fallback is what
+      // gets cached and replayed to future subscribers. Transient failures (e.g.
+      // a websocket reconnect at boot) will surface as "tiering off" until
+      // invalidate() runs — which happens after the tiering config form saves.
       this.tierConfig$ = this.api.call('zfs.tier.config').pipe(
+        catchError(() => of({ enabled: false } as ZfsTierConfig)),
         tap((config) => this.tierEnabledSignal.set(config.enabled)),
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     }
-    return this.tierConfig$.pipe(
-      catchError(() => {
-        this.tierConfig$ = null;
-        this.tierEnabledSignal.set(false);
-        return of({ enabled: false } as ZfsTierConfig);
-      }),
-    );
+    return this.tierConfig$;
   }
 
   invalidate(): void {

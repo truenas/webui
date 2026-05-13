@@ -89,12 +89,8 @@ export class TierConfigFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (config: ZfsTierConfig) => {
-        this.initialEnabled = config.enabled ?? false;
-        this.formGroup.patchValue({
-          enabled: config.enabled ?? false,
-          max_concurrent_jobs: config.max_concurrent_jobs ?? TierConfigFormComponent.defaultMaxConcurrentJobs,
-          max_used_percentage: config.max_used_percentage ?? TierConfigFormComponent.defaultMaxUsedPercentage,
-        });
+        this.initialEnabled = config.enabled;
+        this.formGroup.patchValue(config);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
