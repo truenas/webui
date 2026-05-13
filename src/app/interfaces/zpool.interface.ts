@@ -21,6 +21,6 @@ export interface Zpool {
   properties: Record<string, ZpoolProperty>;
   topology: PoolTopology | null;
   scan: PoolScanUpdate | null;
-  expand: unknown;
-  features: unknown;
+  // `expand` and `features` are present on the wire but not consumed in the
+  // UI — re-add them with concrete types when a consumer actually needs them.
 }

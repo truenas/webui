@@ -94,15 +94,25 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     return Math.round((stats.count_bytes / stats.total_bytes) * 100);
   });
 
+  /**
+   * Below this fraction the ETA is too unstable to display — at <1% complete,
+   * a brief stall at the start can extrapolate to days/years out, which is
+   * worse than showing nothing.
+   */
+  private static readonly minFractionForEta = 0.01;
+
   protected estimatedCompletion = computed<Date | null>(() => {
     const job = this.job();
     const start = this.startTime();
     if (!start || !job?.stats || job.stats.count_bytes <= 0 || job.stats.total_bytes <= 0) {
       return null;
     }
+    const fractionDone = job.stats.count_bytes / job.stats.total_bytes;
+    if (fractionDone < DataMigrationStatusDialogComponent.minFractionForEta) {
+      return null;
+    }
     const now = job.stats.update_time * 1000;
     const elapsed = now - start.getTime();
-    const fractionDone = job.stats.count_bytes / job.stats.total_bytes;
     const estimatedTotal = elapsed / fractionDone;
     return new Date(start.getTime() + estimatedTotal);
   });
