@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
@@ -49,6 +49,7 @@ const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
     MatTooltip,
     TnIconComponent,
     NgClass,
+    NgTemplateOutlet,
     StatusBadgeComponent,
     UiSearchDirective,
     TranslateModule,

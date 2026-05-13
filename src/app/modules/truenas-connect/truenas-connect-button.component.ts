@@ -10,22 +10,36 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
-const failedStatuses: ReadonlySet<TruenasConnectStatus> = new Set([
-  TruenasConnectStatus.RegistrationFinalizationFailed,
-  TruenasConnectStatus.RegistrationFinalizationTimeout,
-  TruenasConnectStatus.CertGenerationFailed,
-  TruenasConnectStatus.CertConfigurationFailure,
-  TruenasConnectStatus.CertRenewalFailure,
-]);
+type StatusKind = 'success' | 'failure' | 'in-progress' | 'idle';
 
-const inProgressStatuses: ReadonlySet<TruenasConnectStatus> = new Set([
-  TruenasConnectStatus.RegistrationFinalizationWaiting,
-  TruenasConnectStatus.RegistrationFinalizationSuccess,
-  TruenasConnectStatus.CertGenerationInProgress,
-  TruenasConnectStatus.CertGenerationSuccess,
-  TruenasConnectStatus.CertRenewalInProgress,
-  TruenasConnectStatus.CertRenewalSuccess,
-]);
+function classifyStatus(status: TruenasConnectStatus): StatusKind {
+  switch (status) {
+    case TruenasConnectStatus.Configured:
+      return 'success';
+    case TruenasConnectStatus.RegistrationFinalizationFailed:
+    case TruenasConnectStatus.RegistrationFinalizationTimeout:
+    case TruenasConnectStatus.CertGenerationFailed:
+    case TruenasConnectStatus.CertConfigurationFailure:
+    case TruenasConnectStatus.CertRenewalFailure:
+      return 'failure';
+    case TruenasConnectStatus.RegistrationFinalizationWaiting:
+    case TruenasConnectStatus.RegistrationFinalizationSuccess:
+    case TruenasConnectStatus.CertGenerationInProgress:
+    case TruenasConnectStatus.CertGenerationSuccess:
+    case TruenasConnectStatus.CertRenewalInProgress:
+    case TruenasConnectStatus.CertRenewalSuccess:
+      return 'in-progress';
+    case TruenasConnectStatus.Disabled:
+    case TruenasConnectStatus.ClaimTokenMissing:
+      return 'idle';
+    default:
+      return assertNever(status);
+  }
+}
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled TruenasConnectStatus: ${value as string}`);
+}
 
 @Component({
   selector: 'ix-truenas-connect-button',
@@ -55,22 +69,20 @@ export class TruenasConnectButtonComponent {
     }
 
     const tier = this.tier();
-    if (config.status === TruenasConnectStatus.Configured) {
+    const kind = classifyStatus(config.status);
+    if (kind === 'success') {
       if (tier != null) {
         const tierConfig = tierDisplayConfig[tier];
         return { label: tierConfig.short, background: tierConfig.background };
       }
       return { icon: 'check', background: 'var(--green)' };
     }
-
-    if (failedStatuses.has(config.status)) {
+    if (kind === 'failure') {
       return { icon: 'close', background: 'var(--red)' };
     }
-
-    if (inProgressStatuses.has(config.status)) {
+    if (kind === 'in-progress') {
       return { icon: 'clock-outline', background: 'var(--yellow)', spinning: true };
     }
-
     return null;
   });
 

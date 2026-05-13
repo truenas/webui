@@ -1,47 +1,41 @@
 @let status = tcStatus();
-@if (status && status.status === TrueCommandStatus.Connecting) {
-  <button
-    mat-icon-button
-    id="tc-connecting"
-    class="topbar-button-right truecommand-button"
-    ixTest="truecommand-indicator"
-    [matTooltip]="tooltip()"
-    (click)="stopTrueCommandConnecting()"
-  >
-    <span class="icon-wrapper">
-      <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
-      @let badge = statusBadge();
-      @if (badge) {
-        <ix-status-badge
-          [icon]="badge.icon ?? null"
-          [background]="badge.background"
-          [spinning]="badge.spinning ?? false"
-        ></ix-status-badge>
-      }
-    </span>
-  </button>
+@if (status) {
+  @if (status.status === TrueCommandStatus.Connecting) {
+    <button
+      mat-icon-button
+      id="tc-connecting"
+      class="topbar-button-right truecommand-button"
+      ixTest="truecommand-indicator"
+      [matTooltip]="tooltip()"
+      (click)="stopTrueCommandConnecting()"
+    >
+      <ng-container *ngTemplateOutlet="logoWithBadge"></ng-container>
+    </button>
+  } @else {
+    <button
+      mat-icon-button
+      class="topbar-button-right truecommand-button"
+      ixTest="truecommand-indicator"
+      [matTooltip]="tooltip()"
+      [ngClass]="[status.status]"
+      [ixUiSearch]="searchableElements.elements.trueCommand"
+      (click)="handleClick()"
+    >
+      <ng-container *ngTemplateOutlet="logoWithBadge"></ng-container>
+    </button>
+  }
 }
 
-@if (status && status.status !== TrueCommandStatus.Connecting) {
-  <button
-    mat-icon-button
-    class="topbar-button-right truecommand-button"
-    ixTest="truecommand-indicator"
-    [matTooltip]="tooltip()"
-    [ngClass]="[status.status]"
-    [ixUiSearch]="searchableElements.elements.trueCommand"
-    (click)="handleClick()"
-  >
-    <span class="icon-wrapper">
-      <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
-      @let badge = statusBadge();
-      @if (badge) {
-        <ix-status-badge
-          [icon]="badge.icon ?? null"
-          [background]="badge.background"
-          [spinning]="badge.spinning ?? false"
-        ></ix-status-badge>
-      }
-    </span>
-  </button>
-}
+<ng-template #logoWithBadge>
+  <span class="icon-wrapper">
+    <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
+    @let badge = statusBadge();
+    @if (badge) {
+      <ix-status-badge
+        [icon]="badge.icon ?? null"
+        [background]="badge.background"
+        [spinning]="badge.spinning ?? false"
+      ></ix-status-badge>
+    }
+  </span>
+</ng-template>
