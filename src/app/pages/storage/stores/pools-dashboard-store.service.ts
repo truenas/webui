@@ -112,21 +112,22 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         const poolsWithTierData = pools.map((pool) => {
           const zpool = zpoolsByName[pool.name];
           if (!zpool) return pool;
+          const toBytes = (raw: number | string | undefined | null): number => Number(raw ?? 0);
           const specialUsable = zpool.properties.class_special_usable?.value;
           const specialReserved = specialUsable === undefined || specialUsable === null
             ? 0
             : Math.max(
                 0,
-                specialUsable
-                - (zpool.properties.class_special_available?.value ?? 0)
-                - (zpool.properties.class_special_used?.value ?? 0),
+                Number(specialUsable)
+                - toBytes(zpool.properties.class_special_available?.value)
+                - toBytes(zpool.properties.class_special_used?.value),
               );
           return {
             ...pool,
-            used: zpool.properties.class_normal_used?.value ?? pool.used,
-            available: zpool.properties.class_normal_available?.value ?? pool.available,
-            special_class_used: zpool.properties.class_special_used?.value ?? 0,
-            special_class_available: zpool.properties.class_special_available?.value ?? 0,
+            used: toBytes(zpool.properties.class_normal_used?.value) || pool.used,
+            available: toBytes(zpool.properties.class_normal_available?.value) || pool.available,
+            special_class_used: toBytes(zpool.properties.class_special_used?.value),
+            special_class_available: toBytes(zpool.properties.class_special_available?.value),
             special_class_reserved: specialReserved,
           };
         });

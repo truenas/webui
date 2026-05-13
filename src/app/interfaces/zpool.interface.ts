@@ -4,7 +4,10 @@ import { PoolScanUpdate, PoolTopology } from 'app/interfaces/pool.interface';
 export interface ZpoolProperty {
   raw: string;
   source: string | null;
-  value: number;
+  // ZFS properties arrive parsed, but the wire format varies by property:
+  // size-like properties (e.g. class_*_available) come as numbers,
+  // while string-typed properties (e.g. compressratio) come as strings.
+  value: number | string;
 }
 
 export interface Zpool {
