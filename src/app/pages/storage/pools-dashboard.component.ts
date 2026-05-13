@@ -85,6 +85,10 @@ export class PoolsDashboardComponent implements OnInit {
         this.cdr.markForCheck();
       });
 
+    // Prime the shared tier config so child cards (pool-usage-card, vdevs-card)
+    // can read tierService.tierEnabled directly without each subscribing.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+
     this.store.loadDashboard();
   }
 
@@ -99,6 +103,8 @@ export class PoolsDashboardComponent implements OnInit {
   protected onTiering(): void {
     this.slideIn.open(TierConfigFormComponent).onSuccess(() => {
       this.tierService.invalidate();
+      // Re-prime so tierService.tierEnabled reflects the new config for child cards.
+      this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
       this.store.loadDashboard();
     }, this.destroyRef);
   }

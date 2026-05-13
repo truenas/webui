@@ -11,34 +11,64 @@ export interface TierJobIconInfo {
   spinning: boolean;
 }
 
+interface TierJobStatusDescriptor {
+  icon: TierJobIconInfo | null;
+  themeClass: string;
+  labelKey: string;
+}
+
+/**
+ * Single source of truth for per-status display: icon, theme class, and label
+ * extraction key. Adding a new TierRewriteJobStatus value here automatically
+ * covers all three consumer helpers below.
+ */
+const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> = {
+  [TierRewriteJobStatus.Complete]: {
+    icon: {
+      name: 'check-circle', library: 'mdi', color: 'green', spinning: false,
+    },
+    themeClass: 'fn-theme-green',
+    labelKey: T('Complete'),
+  },
+  [TierRewriteJobStatus.Running]: {
+    icon: {
+      name: 'sync', library: 'mdi', color: 'orange', spinning: true,
+    },
+    themeClass: 'fn-theme-orange',
+    labelKey: T('Running'),
+  },
+  [TierRewriteJobStatus.Queued]: {
+    icon: null,
+    themeClass: 'fn-theme-primary',
+    labelKey: T('Queued'),
+  },
+  [TierRewriteJobStatus.Error]: {
+    icon: {
+      name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
+    },
+    themeClass: 'fn-theme-red',
+    labelKey: T('Error'),
+  },
+  [TierRewriteJobStatus.Cancelled]: {
+    icon: {
+      name: 'cancel', library: 'mdi', color: 'grey', spinning: false,
+    },
+    themeClass: 'fn-theme-grey',
+    labelKey: T('Cancelled'),
+  },
+  [TierRewriteJobStatus.Stopped]: {
+    icon: {
+      name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,
+    },
+    themeClass: 'fn-theme-grey',
+    labelKey: T('Stopped'),
+  },
+};
+
 export function getTierJobIcon(
   job: ZfsTierRewriteJobEntry | null,
 ): TierJobIconInfo | null {
-  if (!job) return null;
-  switch (job.status) {
-    case TierRewriteJobStatus.Complete:
-      return {
-        name: 'check-circle', library: 'mdi', color: 'green', spinning: false,
-      };
-    case TierRewriteJobStatus.Running:
-      return {
-        name: 'sync', library: 'mdi', color: 'orange', spinning: true,
-      };
-    case TierRewriteJobStatus.Error:
-      return {
-        name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
-      };
-    case TierRewriteJobStatus.Cancelled:
-      return {
-        name: 'cancel', library: 'mdi', color: 'grey', spinning: false,
-      };
-    case TierRewriteJobStatus.Stopped:
-      return {
-        name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,
-      };
-    default:
-      return null;
-  }
+  return job ? tierJobStatusTable[job.status]?.icon ?? null : null;
 }
 
 export function isTierJobRunning(
@@ -56,16 +86,13 @@ export function isTierJobRunning(
 export function getTierJobStatusLabelKey(
   job: ZfsTierRewriteJobEntry | null,
 ): string {
-  if (!job) return '';
-  switch (job.status) {
-    case TierRewriteJobStatus.Complete: return T('Complete');
-    case TierRewriteJobStatus.Running: return T('Running');
-    case TierRewriteJobStatus.Queued: return T('Queued');
-    case TierRewriteJobStatus.Error: return T('Error');
-    case TierRewriteJobStatus.Cancelled: return T('Cancelled');
-    case TierRewriteJobStatus.Stopped: return T('Stopped');
-    default: return '';
-  }
+  return job ? tierJobStatusTable[job.status]?.labelKey ?? '' : '';
+}
+
+export function getTierJobStatusClass(
+  job: ZfsTierRewriteJobEntry | null,
+): string {
+  return job ? tierJobStatusTable[job.status]?.themeClass ?? '' : '';
 }
 
 /**
@@ -76,21 +103,6 @@ export function getTierLabelKey(tier: DatasetTier | null | undefined): string {
   switch (tier) {
     case DatasetTier.Performance: return T('Performance');
     case DatasetTier.Regular: return T('Regular');
-    default: return '';
-  }
-}
-
-export function getTierJobStatusClass(
-  job: ZfsTierRewriteJobEntry | null,
-): string {
-  if (!job) return '';
-  switch (job.status) {
-    case TierRewriteJobStatus.Complete: return 'fn-theme-green';
-    case TierRewriteJobStatus.Running: return 'fn-theme-orange';
-    case TierRewriteJobStatus.Queued: return 'fn-theme-primary';
-    case TierRewriteJobStatus.Error: return 'fn-theme-red';
-    case TierRewriteJobStatus.Cancelled:
-    case TierRewriteJobStatus.Stopped: return 'fn-theme-grey';
     default: return '';
   }
 }

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { tnIconMarker } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
@@ -27,6 +28,7 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
   });
 
   return mockProvider(SharingTierService, {
+    tierEnabled: signal(enabled).asReadonly(),
     getTierConfig: () => of({ enabled }),
     subscribeTierJobUpdates: () => jobUpdates$,
     tierJobRefreshes$: () => jobUpdates$,

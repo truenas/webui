@@ -1,13 +1,13 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, inject, signal,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -89,12 +89,11 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   translate = inject(TranslateService);
   storageService = inject(StorageService);
   private tierService = inject(SharingTierService);
-  private destroyRef = inject(DestroyRef);
 
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
-  protected tierEnabled = signal(false);
+  protected readonly tierEnabled = this.tierService.tierEnabled;
 
   protected showTierLabels = computed(() => {
     return this.tierEnabled() && this.poolState().topology?.special?.length > 0;
@@ -122,6 +121,23 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     spare: '',
     dedup: '',
   };
+
+  /**
+   * Layout for the non-data VDEV rows. `data` is rendered separately because
+   * it has a unique "Offline VDEVs" branch driven by isPoolOffline().
+   */
+  protected readonly otherVdevRows: {
+    key: 'special' | 'log' | 'cache' | 'spare' | 'dedup';
+    titleKey: string;
+    tierLabelKey?: string;
+    hidden?: () => boolean;
+  }[] = [
+    { key: 'special', titleKey: T('Special VDEVs'), tierLabelKey: T('Performance Tier') },
+    { key: 'log', titleKey: T('Log VDEVs') },
+    { key: 'cache', titleKey: T('Cache VDEVs') },
+    { key: 'spare', titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs },
+    { key: 'dedup', titleKey: T('Dedup VDEVs') },
+  ];
 
   protected iconType = computed(() => {
     if (this.isStatusError(this.poolState())) {
@@ -167,9 +183,6 @@ export class VDevsCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.parseTopology(this.poolState().topology);
-    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
-      this.tierEnabled.set(config.enabled);
-    });
   }
 
   parseTopology(topology: PoolTopology): void {

@@ -1,14 +1,14 @@
 import { PercentPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, inject, input, OnInit,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -21,7 +21,6 @@ import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-po
 import { usageCardElements } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.elements';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
-const maxPct = 80;
 
 @Component({
   selector: 'ix-pool-usage-card',
@@ -48,11 +47,10 @@ export class PoolUsageCardComponent implements OnInit {
   themeService = inject(ThemeService);
   private translate = inject(TranslateService);
   private tierService = inject(SharingTierService);
-  private destroyRef = inject(DestroyRef);
 
   readonly poolState = input.required<Pool>();
 
-  protected tierEnabled = signal(false);
+  protected readonly tierEnabled = this.tierService.tierEnabled;
 
   chartLowCapacityColor: string;
   chartFillColor: string;
@@ -64,16 +62,10 @@ export class PoolUsageCardComponent implements OnInit {
     this.chartBlankColor = this.themeService.currentTheme().bg1;
     this.chartFillColor = this.themeService.currentTheme().primary;
     this.chartLowCapacityColor = this.themeService.currentTheme().red;
-
-    this.tierService.getTierConfig()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((config) => {
-        this.tierEnabled.set(config.enabled);
-      });
   }
 
   protected isLowCapacity = computed(() => {
-    return this.usedPercentage() >= maxPct;
+    return this.usedPercentage() >= poolLowCapacityPercent;
   });
 
   protected disks = computed(() => {
@@ -107,7 +99,7 @@ export class PoolUsageCardComponent implements OnInit {
 
   protected iconTooltip = computed(() => {
     if (this.isLowCapacity()) {
-      return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct });
+      return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolLowCapacityPercent });
     }
     return this.translate.instant('Everything is fine');
   });

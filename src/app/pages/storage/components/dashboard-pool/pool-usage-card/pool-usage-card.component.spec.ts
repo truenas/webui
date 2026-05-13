@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
@@ -9,7 +10,6 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -20,6 +20,7 @@ import { selectPreferencesState } from 'app/store/preferences/preferences.select
 
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
+  const tierEnabled = signal(false);
 
   const createComponent = createComponentFactory({
     component: PoolUsageCardComponent,
@@ -34,7 +35,8 @@ describe('PoolUsageCardComponent', () => {
     providers: [
       ThemeService,
       mockProvider(SharingTierService, {
-        getTierConfig: () => of({ enabled: false }),
+        tierEnabled,
+        getTierConfig: () => of({ enabled: tierEnabled() }),
       }),
       provideMockStore({
         selectors: [
@@ -66,6 +68,7 @@ describe('PoolUsageCardComponent', () => {
   });
 
   beforeEach(() => {
+    tierEnabled.set(false);
     spectator = createComponent({
       props: {
         poolState: {
@@ -164,18 +167,14 @@ describe('PoolUsageCardComponent', () => {
   });
 
   it('does not show tier breakdown when tiering is enabled but no special vdev', () => {
-    const tierService = spectator.inject(SharingTierService);
-    jest.spyOn(tierService, 'getTierConfig').mockReturnValue(of({ enabled: true } as ZfsTierConfig));
-
-    spectator.component.ngOnInit();
+    tierEnabled.set(true);
     spectator.detectChanges();
 
     expect(spectator.query('.tier-breakdown')).not.toExist();
   });
 
   it('shows tier breakdown when tiering is enabled and pool has special vdev', () => {
-    const tierService = spectator.inject(SharingTierService);
-    jest.spyOn(tierService, 'getTierConfig').mockReturnValue(of({ enabled: true } as ZfsTierConfig));
+    tierEnabled.set(true);
 
     spectator.setInput('poolState', {
       healthy: true,

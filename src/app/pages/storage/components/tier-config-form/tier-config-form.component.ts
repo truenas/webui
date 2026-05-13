@@ -9,6 +9,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -55,7 +56,6 @@ export class TierConfigFormComponent implements OnInit {
   protected readonly enabledWarningMessage = T('Once tiering is on, SMB shares and Webshares stop following nested datasets. Each share will expose only its own dataset, and any child datasets under it will no longer be visible to clients through that share. Create a separate share for each dataset you want to expose.');
 
   private static readonly defaultMaxConcurrentJobs = 1;
-  private static readonly defaultMaxUsedPercentage = 80;
 
   formGroup = this.fb.nonNullable.group({
     enabled: [false],
@@ -64,7 +64,7 @@ export class TierConfigFormComponent implements OnInit {
       [Validators.required, Validators.min(1)],
     ],
     max_used_percentage: [
-      TierConfigFormComponent.defaultMaxUsedPercentage,
+      poolLowCapacityPercent,
       [Validators.required, Validators.min(0), Validators.max(100)],
     ],
   });
