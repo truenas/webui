@@ -94,6 +94,7 @@
     mat-button
     color="primary"
     ixTest="apply"
+    [disabled]="isSubmitting()"
     (click)="onApply()"
   >
     {{ 'Apply' | translate }}

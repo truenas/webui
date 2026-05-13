@@ -178,16 +178,17 @@ export class SharingTierService {
       return EMPTY;
     }
 
-    const [poolName, ...rest] = this.datasetFromMountPath(row.path);
-    if (!poolName) {
+    const segments = this.datasetFromMountPath(row.path);
+    if (!segments.length || segments.some((seg) => !seg)) {
       this.errorHandler.showErrorModal(
         new Error(this.translate.instant(
-          T('Cannot change storage tier: pool name could not be determined from path "{path}".'),
+          T('Cannot change storage tier: dataset path could not be determined from "{path}".'),
           { path: row.path },
         )),
       );
       return EMPTY;
     }
+    const [poolName, ...rest] = segments;
     const datasetName = [poolName, ...rest].join('/');
 
     return this.openChangeTierDialogForDataset({

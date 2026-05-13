@@ -59,6 +59,10 @@ export class ChangeTierDialogComponent implements OnInit {
   protected performanceAvailable = signal<string | null>(null);
   protected estimatedRewriteSize = signal<string | null>(null);
   protected hasSnapshots = signal(false);
+  protected isSubmitting = signal(false);
+  // SMB and Webshare carry a user-visible `name`; NFS shares only have an
+  // `id` + the same `path` already shown in the dialog header, so listing
+  // names would just be a column of duplicate paths — show a count instead.
   protected shareUsage = signal<{ smb: string[]; nfs: number; webshare: string[] }>({
     smb: [],
     nfs: 0,
@@ -105,6 +109,9 @@ export class ChangeTierDialogComponent implements OnInit {
   }
 
   protected onApply(): void {
+    if (this.isSubmitting()) return;
+    this.isSubmitting.set(true);
+
     this.api.call('zfs.tier.dataset_set_tier', [{
       dataset_name: this.data.datasetName,
       tier_type: this.newTier,
@@ -114,7 +121,10 @@ export class ChangeTierDialogComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => this.dialogRef.close(true),
-      error: (error: unknown) => this.errorHandler.showErrorModal(error),
+      error: (error: unknown) => {
+        this.isSubmitting.set(false);
+        this.errorHandler.showErrorModal(error);
+      },
     });
   }
 

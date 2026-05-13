@@ -120,7 +120,7 @@ export class PoolUsageCardComponent implements OnInit {
     return this.tierEnabled() && this.hasSpecialVdev();
   });
 
-  protected chartSegments = computed<GaugeSegment[]>(() => {
+  protected chartSegments = computed<GaugeSegment[] | undefined>(() => {
     if (!this.showTierBreakdown()) {
       return undefined;
     }

@@ -74,6 +74,26 @@ describe('SharingTierService', () => {
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
     });
 
+    it('surfaces an error when the path contains interior empty segments', () => {
+      spectator.service.openChangeTierDialog({
+        path: '/mnt/pool//ds',
+        tier: baseTier,
+      });
+
+      expect(matDialogOpen).not.toHaveBeenCalled();
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    });
+
+    it('surfaces an error when the path has a trailing slash', () => {
+      spectator.service.openChangeTierDialog({
+        path: '/mnt/pool/',
+        tier: baseTier,
+      });
+
+      expect(matDialogOpen).not.toHaveBeenCalled();
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    });
+
     it('emits nothing without surfacing an error when row has no tier info', () => {
       spectator.service.openChangeTierDialog({
         path: '/mnt/pool1',
