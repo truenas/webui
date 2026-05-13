@@ -85,26 +85,28 @@ export class ChangeTierDialogComponent implements OnInit {
 
   // currentTierLabel / newTierLabel assume currentTier is a known DatasetTier.
   // SharingTierService.openChangeTierDialogForDataset (the single dialog entry
-  // point) validates this before opening, so the getters can rely on it.
+  // point) validates this before opening; the `?? ''` fallback is a defensive
+  // tail in case a new DatasetTier value lands without an entry in
+  // getTierLabelKey.
   get currentTierLabel(): string {
-    return getTierLabelKey(this.data.currentTier);
+    return getTierLabelKey(this.data.currentTier) ?? '';
   }
 
   get newTierLabel(): string {
-    return getTierLabelKey(this.newTier);
+    return getTierLabelKey(this.newTier) ?? '';
   }
 
-  protected currentTierSpace(): string | null {
+  protected currentTierSpace = computed<string | null>(() => {
     return this.data.currentTier === DatasetTier.Performance
       ? this.performanceAvailable()
       : this.regularAvailable();
-  }
+  });
 
-  protected newTierSpace(): string | null {
+  protected newTierSpace = computed<string | null>(() => {
     return this.newTier === DatasetTier.Performance
       ? this.performanceAvailable()
       : this.regularAvailable();
-  }
+  });
 
   ngOnInit(): void {
     this.loadDetails();

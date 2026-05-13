@@ -96,13 +96,15 @@ export function getTierJobStatusClass(
 }
 
 /**
- * Returns the i18n extraction key for a DatasetTier label. Callers must run
- * the result through TranslateService to display it.
+ * Returns the i18n extraction key for a DatasetTier label, or `null` if the
+ * tier value is unknown (e.g. a new DatasetTier enum value was added without
+ * updating this helper). Callers must run the key through TranslateService
+ * and handle the `null` case explicitly.
  */
-export function getTierLabelKey(tier: DatasetTier | null | undefined): string {
+export function getTierLabelKey(tier: DatasetTier | null | undefined): string | null {
   switch (tier) {
     case DatasetTier.Performance: return T('Performance');
     case DatasetTier.Regular: return T('Regular');
-    default: return '';
+    default: return null;
   }
 }

@@ -68,12 +68,14 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     const sourceTier = this.data.targetTier === DatasetTier.Performance
       ? DatasetTier.Regular
       : DatasetTier.Performance;
-    return this.translate.instant(getTierLabelKey(sourceTier));
+    const key = getTierLabelKey(sourceTier);
+    return key ? this.translate.instant(key) : '';
   });
 
-  protected targetTierLabel = computed(
-    () => this.translate.instant(getTierLabelKey(this.data.targetTier)),
-  );
+  protected targetTierLabel = computed(() => {
+    const key = getTierLabelKey(this.data.targetTier);
+    return key ? this.translate.instant(key) : '';
+  });
 
   protected startTime = computed<Date | null>(() => {
     const stats = this.job()?.stats;

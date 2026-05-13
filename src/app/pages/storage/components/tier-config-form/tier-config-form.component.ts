@@ -101,6 +101,7 @@ export class TierConfigFormComponent implements OnInit {
   }
 
   protected submit(): void {
+    if (this.isFormLoading()) return;
     const values = this.formGroup.getRawValue();
     this.isFormLoading.set(true);
 
