@@ -77,31 +77,42 @@
               <div class="tier-header">
                 <span class="tier-name">{{ 'Performance' | translate }}</span>
               </div>
-              <div class="tier-bar-container">
+              <div
+                class="tier-bar-container"
+                role="img"
+                [attr.aria-label]="'Performance tier: {used} used, {available} available, {reserved} reserved' | translate: {
+                  used: performanceUsed() | ixFileSize,
+                  available: performanceAvailable() | ixFileSize,
+                  reserved: performanceReserved() | ixFileSize
+                }"
+              >
                 <div
+                  aria-hidden="true"
                   class="tier-bar performance-used"
                   [style.width.%]="tierBreakdown().performance.usedPercent"
                 ></div>
                 <div
+                  aria-hidden="true"
                   class="tier-bar performance-available"
                   [style.width.%]="tierBreakdown().performance.availablePercent"
                 ></div>
                 <div
+                  aria-hidden="true"
                   class="tier-bar performance-reserved"
                   [style.width.%]="tierBreakdown().performance.reservedPercent"
                 ></div>
               </div>
               <div class="tier-stats-detail">
                 <span class="stat-item">
-                  <span class="stat-dot used"></span>
+                  <span aria-hidden="true" class="stat-dot used"></span>
                   {{ performanceUsed() | ixFileSize }} {{ 'Used' | translate }}
                 </span>
                 <span class="stat-item">
-                  <span class="stat-dot available"></span>
+                  <span aria-hidden="true" class="stat-dot available"></span>
                   {{ performanceAvailable() | ixFileSize }} {{ 'Available' | translate }}
                 </span>
                 <span class="stat-item">
-                  <span class="stat-dot reserved"></span>
+                  <span aria-hidden="true" class="stat-dot reserved"></span>
                   {{ performanceReserved() | ixFileSize }} {{ 'Reserved' | translate }}
                 </span>
               </div>
@@ -120,23 +131,32 @@
               <div class="tier-header">
                 <span class="tier-name">{{ 'Regular' | translate }}</span>
               </div>
-              <div class="tier-bar-container">
+              <div
+                class="tier-bar-container"
+                role="img"
+                [attr.aria-label]="'Regular tier: {used} used, {available} available' | translate: {
+                  used: regularUsed() | ixFileSize,
+                  available: regularAvailable() | ixFileSize
+                }"
+              >
                 <div
+                  aria-hidden="true"
                   class="tier-bar regular-used"
                   [style.width.%]="tierBreakdown().regular.usedPercent"
                 ></div>
                 <div
+                  aria-hidden="true"
                   class="tier-bar regular-available"
                   [style.width.%]="tierBreakdown().regular.availablePercent"
                 ></div>
               </div>
               <div class="tier-stats-detail">
                 <span class="stat-item">
-                  <span class="stat-dot regular-used"></span>
+                  <span aria-hidden="true" class="stat-dot regular-used"></span>
                   {{ regularUsed() | ixFileSize }} {{ 'Used' | translate }}
                 </span>
                 <span class="stat-item">
-                  <span class="stat-dot regular-available"></span>
+                  <span aria-hidden="true" class="stat-dot regular-available"></span>
                   {{ regularAvailable() | ixFileSize }} {{ 'Available' | translate }}
                 </span>
               </div>

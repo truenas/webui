@@ -50,7 +50,7 @@
         <span class="tier-space">{{ space }} {{ 'available' | translate }}</span>
       }
     </div>
-    <span class="arrow">&rarr;</span>
+    <span aria-hidden="true" class="arrow">&rarr;</span>
     <div class="tier-column">
       <span class="tier-chip new">{{ newTierLabel | translate }}</span>
       @if (newTierSpace(); as space) {
