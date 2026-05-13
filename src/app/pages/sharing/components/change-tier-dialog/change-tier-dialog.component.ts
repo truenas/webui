@@ -51,7 +51,7 @@ export class ChangeTierDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   protected data = inject<ChangeTierDialogData>(MAT_DIALOG_DATA);
 
-  protected form = this.fb.group({
+  protected form = this.fb.nonNullable.group({
     moveExistingData: [true],
   });
 

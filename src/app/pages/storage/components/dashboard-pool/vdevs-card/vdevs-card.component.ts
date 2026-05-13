@@ -28,7 +28,30 @@ import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-po
 import { vDevsCardElements } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.elements';
 import { StorageService } from 'app/services/storage.service';
 
+/**
+ * Per-VDEV-type display state. `assigned` is the source of truth for whether a
+ * row should render; `text` is the user-visible string. Keeping these as
+ * separate fields avoids the locale-dependent "is this string the same as the
+ * 'not assigned' marker" comparison that used to drive template visibility.
+ */
+interface VdevTypeState {
+  assigned: boolean;
+  text: string;
+}
+
 interface TopologyState {
+  data: VdevTypeState;
+  special: VdevTypeState;
+  log: VdevTypeState;
+  cache: VdevTypeState;
+  spare: VdevTypeState;
+  dedup: VdevTypeState;
+}
+
+/**
+ * Warnings keyed identically to TopologyState. Empty string means no warning.
+ */
+interface TopologyWarningState {
   data: string;
   special: string;
   log: string;
@@ -79,18 +102,26 @@ export class VDevsCardComponent implements OnInit, OnChanges {
 
   protected readonly searchableElements = vDevsCardElements;
   protected readonly vdevsHelpTooltip = this.translate.instant('A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together');
-  notAssignedDev = this.translate.instant('VDEVs not assigned');
+  private readonly notAssignedDev = this.translate.instant('VDEVs not assigned');
+  private readonly emptyVdevState: VdevTypeState = { assigned: false, text: this.notAssignedDev };
 
   topologyState: TopologyState = {
-    data: this.notAssignedDev,
-    special: this.notAssignedDev,
-    log: this.notAssignedDev,
-    cache: this.notAssignedDev,
-    spare: this.notAssignedDev,
-    dedup: this.notAssignedDev,
+    data: this.emptyVdevState,
+    special: this.emptyVdevState,
+    log: this.emptyVdevState,
+    cache: this.emptyVdevState,
+    spare: this.emptyVdevState,
+    dedup: this.emptyVdevState,
   };
 
-  topologyWarningsState: TopologyState = { ...this.topologyState };
+  topologyWarningsState: TopologyWarningState = {
+    data: '',
+    special: '',
+    log: '',
+    cache: '',
+    spare: '',
+    dedup: '',
+  };
 
   protected iconType = computed(() => {
     if (this.isStatusError(this.poolState())) {
@@ -121,13 +152,13 @@ export class VDevsCardComponent implements OnInit, OnChanges {
       this.topologyState.dedup,
     ];
 
-    const emptyCount = nonDataVdevs.filter((vdevType) => vdevType === this.notAssignedDev).length;
+    const emptyCount = nonDataVdevs.filter((vdevType) => !vdevType.assigned).length;
 
     return emptyCount >= 3;
   });
 
   get isDraidLayoutDataVdevs(): boolean {
-    return /\bDRAID\b/.test(this.topologyState.data);
+    return /\bDRAID\b/.test(this.topologyState.data.text);
   }
 
   ngOnChanges(): void {
@@ -165,8 +196,12 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     this.topologyState.dedup = this.parseDevs(topology.dedup, VDevType.Dedup, this.topologyWarningsState.dedup);
   }
 
-  private parseDevs(vdevs: VDevItem[], category: VDevType, warning?: string): string {
-    let outputString = vdevs.length ? '' : this.notAssignedDev as string;
+  private parseDevs(vdevs: VDevItem[], category: VDevType, warning?: string): VdevTypeState {
+    if (!vdevs.length) {
+      return this.emptyVdevState;
+    }
+
+    let outputString = '';
 
     // Check VDEV Widths
     let vdevWidth = 0;
@@ -180,12 +215,8 @@ export class VDevsCardComponent implements OnInit, OnChanges {
       vdevWidth = Array.from(allVdevWidths.values())[0];
     }
 
-    if (outputString && outputString === this.notAssignedDev) {
-      return outputString;
-    }
-
     const type = vdevs[0]?.type;
-    const size = vdevs[0]?.children.length
+    const size = vdevs[0]?.children?.length
       ? this.disks()?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
       : this.disks()?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
 
@@ -205,7 +236,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
       outputString += '?';
     }
 
-    return outputString;
+    return { assigned: true, text: outputString };
   }
 
   private parseDevsWarnings(vdevs: VDevItem[], category: VDevType): string {

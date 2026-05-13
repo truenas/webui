@@ -128,9 +128,13 @@ export class PoolUsageCardComponent implements OnInit {
     if (!cap) {
       return undefined;
     }
+    // Clamp so rounding / data skew can't push segments past 100%, which would
+    // distort the gauge's rounded-doughnut math (gapValue assumes total = 100).
+    const performancePct = Math.min(100, Math.max(0, (this.performanceUsed() / cap) * 100));
+    const regularPct = Math.min(100 - performancePct, Math.max(0, (this.regularUsed() / cap) * 100));
     return [
-      { value: (this.performanceUsed() / cap) * 100, color: 'var(--green)' },
-      { value: (this.regularUsed() / cap) * 100, color: 'var(--primary)' },
+      { value: performancePct, color: 'var(--green)' },
+      { value: regularPct, color: 'var(--primary)' },
     ];
   });
 

@@ -27,7 +27,7 @@
 
   <mat-card-content>
     <div class="content-container">
-      @if (topologyState.data !== notAssignedDev) {
+      @if (topologyState.data.assigned) {
         <div class="vdev-line">
           <b>
             {{ 'Data VDEVs' | translate }}
@@ -50,13 +50,13 @@
               </span>
               <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
             } @else {
-              <span class="vdev-value">{{ topologyState.data }}</span>
+              <span class="vdev-value">{{ topologyState.data.text }}</span>
             }
           </div>
         </div>
       }
 
-      @if (topologyState.special !== notAssignedDev && !isPoolOffline()) {
+      @if (topologyState.special.assigned && !isPoolOffline()) {
         <div class="vdev-line">
           <b>
             {{ 'Special VDEVs' | translate }}
@@ -70,12 +70,12 @@
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
             }
-            <span class="vdev-value">{{ topologyState.special }}</span>
+            <span class="vdev-value">{{ topologyState.special.text }}</span>
           </div>
         </div>
       }
 
-      @if (topologyState.log !== notAssignedDev && !isPoolOffline()) {
+      @if (topologyState.log.assigned && !isPoolOffline()) {
         <div class="vdev-line">
           <b>{{ 'Log VDEVs' | translate }}</b>
           <div class="vdev-stats">
@@ -84,12 +84,12 @@
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
             }
-            <span class="vdev-value">{{ topologyState.log }}</span>
+            <span class="vdev-value">{{ topologyState.log.text }}</span>
           </div>
         </div>
       }
 
-      @if (topologyState.cache !== notAssignedDev && !isPoolOffline()) {
+      @if (topologyState.cache.assigned && !isPoolOffline()) {
         <div class="vdev-line">
           <b>{{ 'Cache VDEVs' | translate }}</b>
           <div class="vdev-stats">
@@ -98,12 +98,12 @@
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
             }
-            <span class="vdev-value">{{ topologyState.cache }}</span>
+            <span class="vdev-value">{{ topologyState.cache.text }}</span>
           </div>
         </div>
       }
 
-      @if (!isDraidLayoutDataVdevs && topologyState.spare !== notAssignedDev && !isPoolOffline()) {
+      @if (!isDraidLayoutDataVdevs && topologyState.spare.assigned && !isPoolOffline()) {
         <div class="vdev-line">
           <b>{{ 'Spare VDEVs' | translate }}</b>
           <div class="vdev-stats">
@@ -112,12 +112,12 @@
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
             }
-            <span class="vdev-value">{{ topologyState.spare }}</span>
+            <span class="vdev-value">{{ topologyState.spare.text }}</span>
           </div>
         </div>
       }
 
-      @if (topologyState.dedup !== notAssignedDev && !isPoolOffline()) {
+      @if (topologyState.dedup.assigned && !isPoolOffline()) {
         <div class="vdev-line">
           <b>{{ 'Dedup VDEVs' | translate }}</b>
           <div class="vdev-stats">
@@ -126,7 +126,7 @@
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
             }
-            <span class="vdev-value">{{ topologyState.dedup }}</span>
+            <span class="vdev-value">{{ topologyState.dedup.text }}</span>
           </div>
         </div>
       }
