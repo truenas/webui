@@ -74,10 +74,8 @@ export class SharingTierService {
   }
 
   /**
-   * Wires a share list/card to react to tier config + live job updates:
-   *   - mirrors the latest tier config to the shared `tierEnabled` signal
-   *   - unhides the `StorageTierCellComponent` column when tiering is enabled
-   *   - reloads the data provider whenever a tier job ticks
+   * Subscribes to the tier config and unhides the `StorageTierCellComponent`
+   * column when tiering is enabled.
    *
    * Contract for `getColumns`/`setColumns`:
    *   The caller owns the `columns` array (typically `this.columns` returned from
@@ -90,12 +88,11 @@ export class SharingTierService {
    *   `ix-table-columns-selector` writes to `column.hidden` directly to support
    *   user-controlled column visibility — making it reactive would break that flow.
    */
-  wireTierColumnUpdates<T>(opts: {
+  enableTierColumn<T>(opts: {
     destroyRef: DestroyRef;
     cdr: ChangeDetectorRef;
     getColumns: () => Column<T, ColumnComponent<T>>[];
     setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
-    reload: () => void;
   }): void {
     this.getTierConfig().pipe(takeUntilDestroyed(opts.destroyRef)).subscribe((config) => {
       this.tierEnabledSignal.set(config.enabled);
@@ -108,8 +105,34 @@ export class SharingTierService {
       opts.setColumns(updatedColumns);
       opts.cdr.markForCheck();
     });
+  }
 
+  /**
+   * Subscribes to tier rewrite job ticks and invokes `reload` whenever a job
+   * progresses. Useful for share/dataset lists that show tier job progress.
+   */
+  wireTierJobRefresh(opts: { destroyRef: DestroyRef; reload: () => void }): void {
     this.tierJobRefreshes$().pipe(takeUntilDestroyed(opts.destroyRef)).subscribe(() => opts.reload());
+  }
+
+  /**
+   * Convenience wiring for share list/card components: enables the tier column,
+   * subscribes to job refreshes, and returns the "Change Storage Tier" action
+   * to drop into the row's action menu. Replaces the three-step boilerplate
+   * (`storageTierColumn` + `createChangeTierAction` + `wireTierColumnUpdates`)
+   * that previously had to be repeated by every share consumer.
+   */
+  attachTierToShareList<T extends TierRow>(opts: {
+    destroyRef: DestroyRef;
+    cdr: ChangeDetectorRef;
+    getColumns: () => Column<T, ColumnComponent<T>>[];
+    setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
+    reload: () => void;
+    requiredRoles?: Role[];
+  }): IconActionConfig<T> {
+    this.enableTierColumn(opts);
+    this.wireTierJobRefresh(opts);
+    return this.createChangeTierAction(opts);
   }
 
   /**

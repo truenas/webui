@@ -102,6 +102,15 @@ export class NfsListComponent implements OnInit {
   nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
+
+  private tierAction = this.tierService.attachTierToShareList<NfsShare>({
+    destroyRef: this.destroyRef,
+    cdr: this.cdr,
+    getColumns: () => this.columns,
+    setColumns: (columns) => { this.columns = columns; },
+    reload: () => this.refresh(),
+  });
+
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -156,10 +165,7 @@ export class NfsListComponent implements OnInit {
               .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
-        this.tierService.createChangeTierAction<NfsShare>({
-          destroyRef: this.destroyRef,
-          reload: () => this.refresh(),
-        }),
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -200,14 +206,6 @@ export class NfsListComponent implements OnInit {
       error: () => {
         this.refresh();
       },
-    });
-
-    this.tierService.wireTierColumnUpdates<NfsShare>({
-      destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
-      reload: () => this.refresh(),
     });
   }
 

@@ -96,6 +96,15 @@ export class NfsCardComponent implements OnInit {
   protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
+  private tierAction = this.tierService.attachTierToShareList<NfsShare>({
+    destroyRef: this.destroyRef,
+    cdr: this.cdr,
+    getColumns: () => this.columns,
+    setColumns: (columns) => { this.columns = columns; },
+    reload: () => this.dataProvider.load(),
+    requiredRoles: this.requiredRoles,
+  });
+
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -126,10 +135,7 @@ export class NfsCardComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
-        this.tierService.createChangeTierAction<NfsShare>({
-          destroyRef: this.destroyRef,
-          reload: () => this.dataProvider.load(),
-        }),
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -158,14 +164,6 @@ export class NfsCardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
-    });
-
-    this.tierService.wireTierColumnUpdates<NfsShare>({
-      destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
-      reload: () => this.dataProvider.load(),
     });
   }
 

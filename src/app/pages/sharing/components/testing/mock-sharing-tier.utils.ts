@@ -19,20 +19,27 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
   const enabled = opts.enabled ?? false;
   const jobUpdates$ = opts.jobUpdates$ ?? of();
 
+  const buildAction = <T extends TierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => ({
+    iconName: tnIconMarker('swap-horizontal', 'mdi'),
+    tooltip: 'Change Storage Tier',
+    hidden: (row) => of(!enabled || !row.tier || Boolean(row.locked)),
+    onClick: () => actionOpts.reload(),
+  });
+
   return mockProvider(SharingTierService, {
     getTierConfig: () => of({ enabled }),
     subscribeTierJobUpdates: () => jobUpdates$,
     tierJobRefreshes$: () => jobUpdates$,
     openChangeTierDialog: jest.fn(() => of(true)),
     openChangeTierDialogForDataset: jest.fn(() => of(true)),
-    wireTierColumnUpdates: (wireOpts: { reload: () => void }) => {
+    enableTierColumn: () => {},
+    wireTierJobRefresh: (wireOpts: { reload: () => void }) => {
       jobUpdates$.subscribe(() => wireOpts.reload());
     },
-    createChangeTierAction: <T extends TierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => ({
-      iconName: tnIconMarker('swap-horizontal', 'mdi'),
-      tooltip: 'Change Storage Tier',
-      hidden: (row) => of(!enabled || !row.tier || Boolean(row.locked)),
-      onClick: () => actionOpts.reload(),
-    }),
+    attachTierToShareList: <T extends TierRow>(wireOpts: { reload: () => void }): IconActionConfig<T> => {
+      jobUpdates$.subscribe(() => wireOpts.reload());
+      return buildAction<T>(wireOpts);
+    },
+    createChangeTierAction: buildAction,
   });
 }

@@ -108,6 +108,15 @@ export class SmbCardComponent implements OnInit {
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
 
+  private tierAction = this.tierService.attachTierToShareList<SmbShare>({
+    destroyRef: this.destroyRef,
+    cdr: this.cdr,
+    getColumns: () => this.columns,
+    setColumns: (columns) => { this.columns = columns; },
+    reload: () => this.dataProvider.load(),
+    requiredRoles: this.requiredRoles,
+  });
+
   columns = createTable<SmbShare>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -163,10 +172,7 @@ export class SmbCardComponent implements OnInit {
           ),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
-        this.tierService.createChangeTierAction<SmbShare>({
-          destroyRef: this.destroyRef,
-          reload: () => this.dataProvider.load(),
-        }),
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -195,14 +201,6 @@ export class SmbCardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
-    });
-
-    this.tierService.wireTierColumnUpdates<SmbShare>({
-      destroyRef: this.destroyRef,
-      cdr: this.cdr,
-      getColumns: () => this.columns,
-      setColumns: (columns) => { this.columns = columns; },
-      reload: () => this.dataProvider.load(),
     });
   }
 
