@@ -59,7 +59,7 @@ describe('TruenasConnectButtonComponent', () => {
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });
 
-  it('should not show badge when tier is null', () => {
+  it('should not show tier badge when tier is null', () => {
     expect(spectator.query('.tier-badge')).not.toExist();
   });
 
@@ -75,6 +75,7 @@ describe('TruenasConnectButtonComponent', () => {
     expect(badge).toExist();
     expect(badge).toHaveText('F');
     expect(badge).toHaveClass('tier-foundation');
+    expect(spectator.query('ix-status-badge')).not.toExist();
   });
 
   it('should show Plus badge when tier is PLUS and status is Configured', () => {
@@ -105,7 +106,7 @@ describe('TruenasConnectButtonComponent', () => {
     expect(badge).toHaveClass('tier-business');
   });
 
-  it('should not show badge when status is not Configured even if tier is set', () => {
+  it('should not show tier badge when status is not Configured even if tier is set', () => {
     configSignal.set({
       enabled: true,
       status: TruenasConnectStatus.Disabled,
@@ -114,5 +115,35 @@ describe('TruenasConnectButtonComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.tier-badge')).not.toExist();
+  });
+
+  it('should show a success status badge when Configured without a tier', () => {
+    const badge = spectator.query('ix-status-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('success');
+  });
+
+  it('should show an error status badge for failed certificate statuses', () => {
+    configSignal.set({
+      enabled: true,
+      status: TruenasConnectStatus.CertRenewalFailure,
+      tier: null,
+    } as TruenasConnectConfig);
+    spectator.detectChanges();
+
+    const badge = spectator.query('ix-status-badge');
+    expect(badge).toExist();
+    expect(badge).toHaveClass('error');
+  });
+
+  it('should not show a status badge for a generic non-configured status', () => {
+    configSignal.set({
+      enabled: true,
+      status: TruenasConnectStatus.Disabled,
+      tier: null,
+    } as TruenasConnectConfig);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-status-badge')).not.toExist();
   });
 });

@@ -27,10 +27,9 @@
   >
     <span class="icon-wrapper">
       <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
-      @if (statusBadgeIcon) {
-        <span class="status-badge" [ngClass]="tcStatus.status">
-          <tn-icon size="sm" library="mdi" [name]="statusBadgeIcon"></tn-icon>
-        </span>
+      @let badge = statusBadge;
+      @if (badge) {
+        <ix-status-badge [icon]="badge.icon" [kind]="badge.kind"></ix-status-badge>
       }
     </span>
   </button>
