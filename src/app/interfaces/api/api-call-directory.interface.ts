@@ -1005,7 +1005,7 @@ export interface ApiCallDirectory {
   'pool.snapshot.rollback': { params: ZfsRollbackParams; response: void };
 
   // ZPool
-  'zpool.query': { params: [{ properties?: string[] }?]; response: Zpool[] };
+  'zpool.query': { params: [{ properties?: string[]; pool_names?: string[] }?]; response: Zpool[] };
 
   // ZFS Tier
   'zfs.tier.config': { params: void; response: ZfsTierConfig };
