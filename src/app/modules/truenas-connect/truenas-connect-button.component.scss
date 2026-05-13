@@ -14,13 +14,45 @@
 .tier-badge {
   border-radius: 50%;
   color: #fff;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
-  height: 14px;
-  line-height: 14px;
-  min-width: 14px;
+  height: 16px;
+  line-height: 16px;
+  min-width: 16px;
   position: absolute;
   right: -4px;
   text-align: center;
   top: -4px;
+}
+
+.status-badge {
+  align-items: center;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  width: 16px;
+
+  tn-icon {
+    font-size: 11px;
+    height: 11px;
+    width: 11px;
+
+    ::ng-deep svg {
+      height: 11px;
+      width: 11px;
+    }
+  }
+
+  &.active {
+    background: var(--green);
+  }
+
+  &.failed {
+    background: var(--red);
+  }
 }

@@ -17,14 +17,39 @@
   animation: nudge 3s infinite linear;
 }
 
-::ng-deep .truecommand-button > span.mat-badge-content {
-  font-family: 'Material Icons';
+.icon-wrapper {
+  display: inline-flex;
+  position: relative;
 }
 
-::ng-deep .truecommand-button.CONNECTED > span.mat-badge-content {
-  background: var(--green);
-}
+.status-badge {
+  align-items: center;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  width: 16px;
 
-::ng-deep .truecommand-button.FAILED > span.mat-badge-content {
-  background: var(--red);
+  tn-icon {
+    font-size: 11px;
+    height: 11px;
+    width: 11px;
+
+    ::ng-deep svg {
+      height: 11px;
+      width: 11px;
+    }
+  }
+
+  &.CONNECTED {
+    background: var(--green);
+  }
+
+  &.FAILED {
+    background: var(--red);
+  }
 }

@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -40,7 +39,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     MatTooltip,
     TnIconComponent,
-    MatBadge,
     NgClass,
     UiSearchDirective,
     TranslateModule,
@@ -59,22 +57,22 @@ export class TruecommandButtonComponent implements OnInit {
   tooltips = helptextTopbar.tooltips;
   protected searchableElements = trueCommandElements;
 
-  tcStatus: TrueCommandConfig;
 
+  protected tcStatus: TrueCommandConfig;
   private tcConnected = false;
   private isTcStatusOpened = false;
   private tcStatusDialogRef: MatDialogRef<TruecommandStatusModalComponent>;
 
-  get tcsStatusMatBadge(): string {
+  get statusBadgeIcon(): string | null {
     if (this.tcStatus.status === TrueCommandStatus.Connected) {
       return 'check';
     }
 
     if (this.tcStatus.status === TrueCommandStatus.Failed) {
-      return 'priority_high';
+      return 'close';
     }
 
-    return '';
+    return null;
   }
 
   ngOnInit(): void {

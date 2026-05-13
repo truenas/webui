@@ -35,6 +35,42 @@ export class TruenasConnectButtonComponent {
     return config?.status === TruenasConnectStatus.Configured && config?.tier != null;
   });
 
+  private readonly failedStatuses: TruenasConnectStatus[] = [
+    TruenasConnectStatus.RegistrationFinalizationFailed,
+    TruenasConnectStatus.RegistrationFinalizationTimeout,
+    TruenasConnectStatus.CertGenerationFailed,
+    TruenasConnectStatus.CertConfigurationFailure,
+    TruenasConnectStatus.CertRenewalFailure,
+  ];
+
+  protected statusBadgeIcon = computed(() => {
+    const config = this.truenasConnectService.config();
+    if (!config) {
+      return null;
+    }
+    if (this.failedStatuses.includes(config.status)) {
+      return 'mdi-close';
+    }
+    if (config.status === TruenasConnectStatus.Configured && config.tier == null) {
+      return 'mdi-check';
+    }
+    return null;
+  });
+
+  protected statusBadgeClass = computed(() => {
+    const config = this.truenasConnectService.config();
+    if (!config) {
+      return '';
+    }
+    if (this.failedStatuses.includes(config.status)) {
+      return 'failed';
+    }
+    if (config.status === TruenasConnectStatus.Configured) {
+      return 'active';
+    }
+    return '';
+  });
+
   protected tierLabel = computed(() => {
     const tier = this.tier();
     return tier ? tierDisplayConfig[tier].short : '';
