@@ -689,7 +689,7 @@
   "At least one network (IPv4 or IPv6) must be specified.": "Ní mór líonra amháin ar a laghad (IPv4 nó IPv6) a shonrú.",
   "At least one pool must be available to use apps": "Caithfidh comhthiomsú amháin ar a laghad a bheith ar fáil chun aipeanna a úsáid",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "Moltar spáráil amháin ar a laghad le haghaidh dRAID. Ní féidir spártha a chur leis níos déanaí.",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "Teastaíonn diosca(í) {min} ar a laghad le haghaidh vdevs {vdevType}",
+  "At least {min} disk(s)  are required for {vdevType} vdevs": "Teastaíonn diosca(í) {min} ar a laghad le haghaidh vdevs {vdevType}",
   "Attach": "Ceangail",
   "Attach additional images": "Ceangail íomhánna breise",
   "Attach debug": "Ceangail debug",

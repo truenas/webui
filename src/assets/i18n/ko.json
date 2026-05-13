@@ -927,7 +927,7 @@
   "At least one network (IPv4 or IPv6) must be specified.": "적어도 하나의 네트워크(IPv4 또는 IPv6)를 지정해야 합니다.",
   "At least one pool must be available to use apps": "앱을 사용하려면 최소 하나의 사용 가능한 풀이 있어야 함",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "dRAID을(를) 위해 최소 하나의 여분 드라이브가 필요합니다. 나중에 추가할 수 없습니다.",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "{vdevType} VDEV를 위해 최소 {min}개의 디스크 필요",
+  "At least {min} disk(s)  are required for {vdevType} vdevs": "{vdevType} VDEV를 위해 최소 {min}개의 디스크 필요",
   "Attach": "첨부",
   "Attach additional images": "추가 이미지 첨부",
   "Attach debug": "디버그 첨부",

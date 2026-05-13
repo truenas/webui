@@ -1355,7 +1355,7 @@
   "At least one module must be defined in <a href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" target=\"_blank\">rsyncd.conf(5)</a> of the rsync server or in the <b>Rsync Modules</b> of another system.": "必须在<a href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" target=\"_blank\">rsyncd.conf(5)</a>中定义至少一个模块或另一个系统的<b>Rsync 模块</b>中定义一个模块。",
   "At least one pool must be available to use apps": "必须至少有一个池才能使用应用",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "建议 dRAID 至少有一个备用磁盘。备用磁盘无法在今后添加。",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "{vdevType} vdevs 至少需要 {min} 个磁盘",
+  "At least {min} disk(s)  are required for {vdevType} vdevs": "{vdevType} vdevs 至少需要 {min} 个磁盘",
   "Attach": "附加",
   "Attach additional images": "附加额外图片",
   "Attach debug": "附加调试",

@@ -678,7 +678,7 @@
   "At least one network (IPv4 or IPv6) must be specified.": "Необходимо указать хотя бы одну сеть (IPv4 или IPv6).",
   "At least one pool must be available to use apps": "Для использования приложений должен быть доступен хотя бы один пул.",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "Для dRAID рекомендуется использовать хотя бы один запасной. Запасные части не могут быть добавлены позже.",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "Минимальное количество дисков для нескольких виртуальных устройств {vdevType}: {min}",
+  "At least {min} disk(s)  are required for {vdevType} vdevs": "Минимальное количество дисков для нескольких виртуальных устройств {vdevType}: {min}",
   "Attach": "Прикрепить",
   "Attach additional images": "Добавить картинки",
   "Attach debug": "Прикрепить отладку",

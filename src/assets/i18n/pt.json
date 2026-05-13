@@ -1546,7 +1546,7 @@
   "At least one module must be defined in <a href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" target=\"_blank\">rsyncd.conf(5)</a> of the rsync server or in the <b>Rsync Modules</b> of another system.": "Pelo menos um módulo deve ser definido em <a href = \"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" Target = \"_ em branco\"> rsyncd.conf (5) </a> do servidor rsync ou no <b>",
   "At least one pool must be available to use apps": "Pelo menos um pool deve estar disponível para usar aplicações",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "Recomenda-se pelo menos uma peça sobresselente para o dRAID. As peças sobresselentes não podem ser adicionadas posteriormente.",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "Pelo menos {min} disco(s) são necessários para {vdevType} vdevs",
+  "At least {min} disk(s)  are required for {vdevType} vdevs": "Pelo menos {min} disco(s) são necessários para {vdevType} vdevs",
   "Attach": "Anexar",
   "Attach additional images": "Anexar imagens adicionais",
   "Attach debug": "Anexar detecção e supressão de erros",

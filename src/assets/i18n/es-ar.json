@@ -689,7 +689,7 @@
   "At least one network (IPv4 or IPv6) must be specified.": "Se debe especificar al menos una red (IPv4 o IPv6).",
   "At least one pool must be available to use apps": "Al menos un pool debe estar disponible para usar aplicaciones",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "Se recomienda tener al menos una unidad de repuesto para dRAID. No se pueden agregar unidades de repuesto más adelante.",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "Se requieren al menos {min} discos para {vdevType} vdevs",
+  "At least {min} disk(s)  are required for {vdevType} vdevs": "Se requieren al menos {min} discos para {vdevType} vdevs",
   "Attach": "Adjuntar",
   "Attach additional images": "Adjuntar imágenes adicionales",
   "Attach debug": "Adjuntar depuración",
