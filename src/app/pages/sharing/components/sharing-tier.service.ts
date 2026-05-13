@@ -7,7 +7,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import {
-  EMPTY, Observable, auditTime, catchError, filter, map, of, shareReplay, tap,
+  EMPTY, Observable, auditTime, catchError, filter, map, of, retry, shareReplay, tap, timer,
 } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -44,11 +44,14 @@ export class SharingTierService {
 
   getTierConfig(): Observable<ZfsTierConfig> {
     if (!this.tierConfig$) {
-      // catchError is inside the shareReplay boundary so the fallback is what
-      // gets cached and replayed to future subscribers. Transient failures (e.g.
-      // a websocket reconnect at boot) will surface as "tiering off" until
-      // invalidate() runs — which happens after the tiering config form saves.
+      // Auto-retry transient failures (websocket reconnect at boot, slow
+      // middleware) with backoff before caching the "tiering off" fallback.
+      // After retries are exhausted the fallback is cached and replayed to
+      // future subscribers — `invalidate()` (called after the tiering config
+      // form saves) is the only way to force another live fetch.
       this.tierConfig$ = this.api.call('zfs.tier.config').pipe(
+        // 1s, 2s, 4s exponential backoff before giving up.
+        retry({ count: 3, delay: (_err, attempt) => timer(2 ** (attempt - 1) * 1000) }),
         catchError(() => of({ enabled: false } as ZfsTierConfig)),
         tap((config) => this.tierEnabledSignal.set(config.enabled)),
         shareReplay({ bufferSize: 1, refCount: false }),
