@@ -42,5 +42,7 @@ export class StorageTierCellComponent<T extends HasTier> extends ColumnComponent
 export function storageTierColumn<T extends HasTier>(
   options: StorageTierColumnOptions<T>,
 ): Column<T, StorageTierCellComponent<T>> {
-  return { type: StorageTierCellComponent, cssClass: tierColumnCssClass, ...options };
+  // Spread options first so the explicit `cssClass` below always wins, even
+  // if a caller forces a `cssClass` through (e.g. via a cast).
+  return { type: StorageTierCellComponent, ...options, cssClass: tierColumnCssClass };
 }
