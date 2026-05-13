@@ -86,9 +86,13 @@ export class SharingTierService {
    *   it back through `setColumns`. The caller MUST persist the returned array
    *   (e.g. `setColumns: (cols) => { this.columns = cols; }`) so subsequent reads
    *   via `getColumns` and the ix-table input both observe the unhidden column.
+   *
    *   A plain getter/setter is used instead of a reactive `hidden` field because
    *   `ix-table-columns-selector` writes to `column.hidden` directly to support
-   *   user-controlled column visibility — making it reactive would break that flow.
+   *   user-controlled column visibility — making it reactive would break that
+   *   flow. The shape also mirrors the existing `(columnsChange)` event on
+   *   `ix-table-columns-selector`, which is the codebase's convention for
+   *   external mutators of a table's columns array.
    */
   enableTierColumn<T>(opts: {
     destroyRef: DestroyRef;
