@@ -152,7 +152,7 @@ export class ManualSelectionVdevComponent implements OnChanges {
         ([, value]) => value === this.layout(),
       ).map(([key]) => key)[0];
       vdevErrorMsg = this.translate.instant(
-        'Atleast {min} disk(s) are required for {vdevType} vdevs',
+        'At least {min} disk(s) are required for {vdevType} vdevs',
         { min: this.minDisks[this.layout()], vdevType: typeKey },
       );
     }
