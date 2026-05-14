@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -12,9 +12,11 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
@@ -24,6 +26,8 @@ import { FilesystemService } from 'app/services/filesystem.service';
 describe('BaseNamespaceFormComponent', () => {
   let spectator: Spectator<BaseNamespaceFormComponent>;
   let loader: HarnessLoader;
+  let submitHandler: jest.Mock<SubmitResult, [NamespaceChanges]>;
+
   const createComponent = createComponentFactory({
     component: BaseNamespaceFormComponent,
     imports: [
@@ -31,24 +35,32 @@ describe('BaseNamespaceFormComponent', () => {
       MockComponent(ExplorerCreateZvolComponent),
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
-      mockProvider(FormErrorHandlerService),
       mockProvider(FilesystemService),
-      mockProvider(SlideInRef),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
+        getData: jest.fn(),
+      }),
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    submitHandler = jest.fn<SubmitResult, [NamespaceChanges]>(() => ({
+      request$: of(undefined),
+      successMessage: 'Saved!' as TranslatedString,
+    }));
+    spectator = createComponent({
+      props: { submitHandler },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
-    jest.spyOn(spectator.component.submitted, 'emit');
   });
 
   describe('creation', () => {
-    it('emits new values for a Zvol when form is filled in', async () => {
+    it('invokes submitHandler with the Zvol payload', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Type: 'Zvol',
@@ -58,14 +70,14 @@ describe('BaseNamespaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
+      expect(submitHandler).toHaveBeenCalledWith({
         device_path: 'zvol/tank/test-zvol',
         device_type: NvmeOfNamespaceType.Zvol,
         filesize: undefined,
       } as NamespaceChanges);
     });
 
-    it('emits new values for an existing file when form is filled in', async () => {
+    it('invokes submitHandler with the existing-file payload', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Type: 'Existing File',
@@ -75,14 +87,14 @@ describe('BaseNamespaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
+      expect(submitHandler).toHaveBeenCalledWith({
         device_path: '/mnt/tank/test-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,
       } as NamespaceChanges);
     });
 
-    it('emits new values for a new file when form is filled in', async () => {
+    it('invokes submitHandler with the new-file payload', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Type: 'New File',
@@ -94,22 +106,11 @@ describe('BaseNamespaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
+      expect(submitHandler).toHaveBeenCalledWith({
         device_path: '/mnt/tank/new-file.img',
         device_type: NvmeOfNamespaceType.File,
         filesize: 1024 * MiB,
       } as NamespaceChanges);
-    });
-
-    it('shows errors when they are provided in the input', () => {
-      const mockError = {
-        device_path: 'This field is required',
-      };
-      spectator.setInput('error', mockError);
-      spectator.detectChanges();
-
-      expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
-        .toHaveBeenCalledWith(mockError, expect.any(FormGroup));
     });
   });
 
@@ -120,14 +121,15 @@ describe('BaseNamespaceFormComponent', () => {
         device_path: 'zvol/tank/test-zvol',
       } as NvmeOfNamespace;
 
+      submitHandler = jest.fn<SubmitResult, [NamespaceChanges]>(() => ({
+        request$: of(undefined),
+        successMessage: 'Saved!' as TranslatedString,
+      }));
       spectator = createComponent({
-        props: {
-          namespace: mockNamespace,
-        },
+        props: { namespace: mockNamespace, submitHandler },
       });
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      jest.spyOn(spectator.component.submitted, 'emit');
     });
 
     it('shows values for an existing namespace', async () => {
@@ -140,7 +142,7 @@ describe('BaseNamespaceFormComponent', () => {
       });
     });
 
-    it('emits changed values when existing namespace is updated', async () => {
+    it('invokes submitHandler with the updated payload', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Type: 'Existing File',
@@ -150,7 +152,7 @@ describe('BaseNamespaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.component.submitted.emit).toHaveBeenCalledWith({
+      expect(submitHandler).toHaveBeenCalledWith({
         device_path: '/mnt/tank/updated-file',
         device_type: NvmeOfNamespaceType.File,
         filesize: undefined,

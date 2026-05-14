@@ -1,77 +1,57 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [editData]="editingServer"
+  [addTitle]="'Add NTP Server' | translate"
+  [editTitle]="'Edit NTP Server' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+  [submitHandler]="handleSubmit"
+>
+  <ix-fieldset [title]="helptext.fieldset | translate">
+    <ix-input
+      formControlName="address"
+      [label]="helptext.address.label | translate"
+      [tooltip]="helptext.address.tooltip | translate"
+      [required]="true"
+    ></ix-input>
 
-<mat-card>
-  <mat-card-content>
-    <form
-      class="ix-form-container"
-      [formGroup]="formGroup"
-      (submit)="onSubmit()"
-    >
-      <ix-fieldset [title]="helptext.fieldset | translate">
-        <ix-input
-          formControlName="address"
-          [label]="helptext.address.label | translate"
-          [tooltip]="helptext.address.tooltip | translate"
-          [required]="true"
-        ></ix-input>
+    <ix-checkbox
+      formControlName="burst"
+      [label]="helptext.burst.label | translate"
+      [tooltip]="helptext.burst.tooltip | translate"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="burst"
-          [label]="helptext.burst.label | translate"
-          [tooltip]="helptext.burst.tooltip | translate"
-        ></ix-checkbox>
+    <ix-checkbox
+      formControlName="iburst"
+      [label]="helptext.iburst.label | translate"
+      [tooltip]="helptext.iburst.tooltip | translate"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="iburst"
-          [label]="helptext.iburst.label | translate"
-          [tooltip]="helptext.iburst.tooltip | translate"
-        ></ix-checkbox>
+    <ix-checkbox
+      formControlName="prefer"
+      [label]="helptext.prefer.label | translate"
+      [tooltip]="helptext.prefer.tooltip | translate"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="prefer"
-          [label]="helptext.prefer.label | translate"
-          [tooltip]="helptext.prefer.tooltip | translate"
-        ></ix-checkbox>
+    <ix-input
+      formControlName="minpoll"
+      type="number"
+      [label]="helptext.minpoll.label | translate"
+      [tooltip]="helptext.minpoll.tooltip | translate"
+      [required]="true"
+    ></ix-input>
 
-        <ix-input
-          formControlName="minpoll"
-          type="number"
-          [label]="helptext.minpoll.label | translate"
-          [tooltip]="helptext.minpoll.tooltip | translate"
-          [required]="true"
-        ></ix-input>
+    <ix-input
+      formControlName="maxpoll"
+      type="number"
+      [label]="helptext.maxpoll.label | translate"
+      [tooltip]="helptext.maxpoll.tooltip | translate"
+      [required]="true"
+    ></ix-input>
 
-        <ix-input
-          formControlName="maxpoll"
-          type="number"
-          [label]="helptext.maxpoll.label | translate"
-          [tooltip]="helptext.maxpoll.tooltip | translate"
-          [required]="true"
-        ></ix-input>
-
-        <ix-checkbox
-          formControlName="force"
-          [label]="helptext.force.label | translate"
-          [tooltip]="helptext.force.tooltip | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <ix-checkbox
+      formControlName="force"
+      [label]="helptext.force.label | translate"
+      [tooltip]="helptext.force.tooltip | translate"
+    ></ix-checkbox>
+  </ix-fieldset>
+</ix-form>

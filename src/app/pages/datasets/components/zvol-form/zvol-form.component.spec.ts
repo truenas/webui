@@ -1,4 +1,4 @@
-// cspell:ignore ngneat snapshottask
+// cspell:ignore ngneat snapshottask zvol volsize volblocksize pbkdf
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -20,6 +20,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -151,6 +152,7 @@ describe('ZvolFormComponent', () => {
         }),
       ]),
       mockProvider(DialogService),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -315,6 +317,7 @@ describe('ZvolFormComponent', () => {
           }),
         ]),
         mockProvider(DialogService),
+        ...ixFormTestingProviders(),
         mockProvider(SlideInRef, {
           ...slideInRef,
           getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
@@ -388,7 +391,7 @@ describe('ZvolFormComponent', () => {
       });
     });
 
-    it('saves updated zvol when form opened for edit is saved', async () => {
+    it('sends only changed properties when form opened for edit is saved', async () => {
       await form.fillForm({
         Size: '2 GiB',
       });
@@ -397,13 +400,6 @@ describe('ZvolFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
-        comments: '',
-        compression: 'LZ4',
-        deduplication: 'OFF',
-        force_size: false,
-        readonly: 'INHERIT',
-        snapdev: 'INHERIT',
-        sync: 'STANDARD',
         volsize: 2147483648,
       }]);
 
@@ -493,6 +489,7 @@ describe('ZvolFormComponent', () => {
             close: jest.fn(),
           }),
           mockProvider(DialogService),
+          ...ixFormTestingProviders(),
           mockProvider(ErrorHandlerService, {
             withErrorHandler: () => tap(),
           }),

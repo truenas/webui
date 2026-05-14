@@ -1,16 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, map, Observable, of,
+  forkJoin, map, Observable, of,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -20,16 +18,14 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -47,40 +43,29 @@ export interface StorageSettingsData {
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    TranslateModule,
     IxCheckboxComponent,
+    IxFormComponent,
+    TranslateModule,
     AsyncPipe,
     WarningComponent,
   ],
 })
 export class StorageSettingsFormComponent implements OnInit {
   private api = inject(ApiService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
-  private snackbar = inject(SnackbarService);
   private taskService = inject(TaskService);
   private auth = inject(AuthService);
   slideInRef = inject<SlideInRef<StorageSettingsData, boolean>>(SlideInRef);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly rolesToEditPool = [Role.DatasetWrite];
   protected readonly rolesToEditPriorityResilver = [Role.PoolWrite];
 
   protected readonly anyRoles = [...this.rolesToEditPool, ...this.rolesToEditPriorityResilver];
-
-  protected isLoading = signal(false);
 
   protected readonly helptext = helptextSystemAdvanced.storageSettings;
 
@@ -102,6 +87,12 @@ export class StorageSettingsFormComponent implements OnInit {
     }),
   });
 
+  // Snapshot is set after we patch and selectively disable controls, so the
+  // wrapper's diff sees the post-role-disable shape as the baseline. Using
+  // `initialFormSnapshot` (instead of `editData`) because Angular's
+  // `patchValue` skips disabled controls — we must patch before disabling.
+  protected initialSnapshot = signal<StorageSettingsData | null>(null);
+
   protected poolOptions$ = this.api.call('systemdataset.pool_choices').pipe(choicesToOptions());
   protected daysOfWeek$ = of(mapToOptions(weekdayLabels, this.translate));
   protected timeOptions$ = of(this.taskService.getTimeOptions());
@@ -110,17 +101,10 @@ export class StorageSettingsFormComponent implements OnInit {
     map((service) => service?.state === ServiceStatus.Running),
   );
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => of(this.form.dirty));
-  }
-
   ngOnInit(): void {
-    this.setFormData();
-    this.disableControlsBasedOnRoles();
-  }
-
-  private setFormData(): void {
     this.form.patchValue(this.slideInRef.getData());
+    this.disableControlsBasedOnRoles();
+    this.initialSnapshot.set(this.form.getRawValue() as StorageSettingsData);
   }
 
   private disableControlsBasedOnRoles(): void {
@@ -133,44 +117,42 @@ export class StorageSettingsFormComponent implements OnInit {
     }
   }
 
-  protected onSubmit(): void {
+  // User can mark the form dirty without changing any value (e.g., type into a
+  // field then revert). `requireDirty` lets that case reach Save, but
+  // `changedValues` will be empty — short-circuit before forkJoin([]) emits an
+  // empty array synchronously and the wrapper shows a misleading success
+  // snackbar. Returning `false` cancels the wrapper's submit lifecycle; the
+  // manual close mirrors the pre-migration "close with undefined response".
+  protected preSubmit = (
+    event: FormSubmitEvent<StorageSettingsData>,
+  ): FormSubmitEvent<StorageSettingsData> | false => {
+    if (Object.keys(event.changedValues).length === 0) {
+      this.slideInRef.close({ response: undefined });
+      return false;
+    }
+    return event;
+  };
+
+  protected handleSubmit = (event: FormSubmitEvent<StorageSettingsData>): SubmitResult => {
     const requests: Observable<unknown>[] = [];
 
-    if (this.form.controls.priorityResilver.dirty) {
-      const updateResilver$ = this.api.call('pool.resilver.update', [this.form.controls.priorityResilver.getRawValue()]);
-      requests.push(updateResilver$);
-    }
-
-    if (this.form.controls.systemDatasetPool.dirty) {
-      const updatePool$ = this.api.job('systemdataset.update', [{ pool: this.form.controls.systemDatasetPool.value }]).pipe(
-        tap(() => this.store$.dispatch(advancedConfigUpdated())),
+    if ('priorityResilver' in event.changedValues) {
+      requests.push(
+        this.api.call('pool.resilver.update', [this.form.controls.priorityResilver.getRawValue()]),
       );
-      requests.push(updatePool$);
     }
 
-    if (requests.length === 0) {
-      // No changes made
-      this.slideInRef.close({
-        response: undefined,
-      });
-      return;
+    if ('systemDatasetPool' in event.changedValues) {
+      requests.push(
+        this.api.job('systemdataset.update', [{ pool: event.allValues.systemDatasetPool }]).pipe(
+          tap(() => this.store$.dispatch(advancedConfigUpdated())),
+        ),
+      );
     }
 
-    this.isLoading.set(true);
-
-    forkJoin(requests)
-      .pipe(
-        finalize(() => this.isLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({
-        complete: () => {
-          this.snackbar.success(this.translate.instant('Storage Settings Updated.'));
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: forkJoin(requests),
+      successMessage: this.translate.instant('Storage Settings Updated.'),
+    };
+  };
 }

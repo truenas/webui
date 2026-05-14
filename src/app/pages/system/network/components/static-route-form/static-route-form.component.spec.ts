@@ -1,3 +1,4 @@
+// cspell:ignore staticroute ngneat
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -6,9 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StaticRouteFormComponent } from 'app/pages/system/network/components/static-route-form/static-route-form.component';
@@ -41,10 +41,7 @@ describe('StaticRouteFormComponent', () => {
         mockCall('staticroute.create'),
         mockCall('staticroute.update'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(),
-      }),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -115,6 +112,25 @@ describe('StaticRouteFormComponent', () => {
           destination: '15.24.12.13/16',
           gateway: '15.24.12.1',
           description: 'Updated route',
+        },
+      ]);
+    });
+
+    it('sends the full payload even when a single field is edited', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Description: 'Only description changed',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('staticroute.update', [
+        13,
+        {
+          destination: '20.24.12.13/16',
+          gateway: '20.24.12.1',
+          description: 'Only description changed',
         },
       ]);
     });

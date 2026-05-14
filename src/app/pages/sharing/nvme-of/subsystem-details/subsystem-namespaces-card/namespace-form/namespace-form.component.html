@@ -1,5 +1,4 @@
 <ix-base-namespace-form
-  [error]="error()"
   [namespace]="existingNamespace()"
-  (submitted)="onSubmit($event)"
+  [submitHandler]="handleSubmit"
 ></ix-base-namespace-form>

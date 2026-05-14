@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { NEVER, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -44,7 +45,12 @@ jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
         get valid(): boolean {
           return true;
         },
-      } as FormGroup;
+        get invalid(): boolean {
+          return false;
+        },
+        status: 'VALID',
+        statusChanges: NEVER,
+      } as unknown as FormGroup;
     }),
   };
 });
@@ -64,7 +70,12 @@ jest.mock('./alert-services/ops-genie-service/ops-genie-service.component', () =
         get valid(): boolean {
           return true;
         },
-      } as FormGroup;
+        get invalid(): boolean {
+          return false;
+        },
+        status: 'VALID',
+        statusChanges: NEVER,
+      } as unknown as FormGroup;
     }),
   };
 });
@@ -156,6 +167,31 @@ describe('AlertServiceComponent', () => {
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('disables Save while a Send Test Alert call is in flight', async () => {
+      // Override alertservice.test with NEVER so the call stays in flight,
+      // which keeps testAlertLoading=true and should feed the wrapper's
+      // externalLoading gate. The save button must reflect that.
+      const api = spectator.inject(ApiService);
+      (api.call as jest.Mock).mockImplementation((method: string) => {
+        return method === 'alertservice.test' ? NEVER : of(undefined);
+      });
+
+      await form.fillForm({
+        Name: 'My Alert Service',
+        Enabled: true,
+        Type: 'AWS SNS',
+        Level: 'Error',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
+      await sendTestAlertButton.click();
+
+      expect(await saveButton.isDisabled()).toBe(true);
     });
 
     it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {

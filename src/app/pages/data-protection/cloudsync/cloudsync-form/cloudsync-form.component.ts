@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationExtras, Router } from '@angular/router';
@@ -45,6 +44,7 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -55,7 +55,6 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -80,9 +79,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    IxFormComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -119,19 +116,13 @@ export class CloudSyncFormComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  get isNew(): boolean {
+  protected get isNew(): boolean {
     return !this.editingTask;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Cloud Sync Task')
-      : this.translate.instant('Edit Cloud Sync Task');
   }
 
   protected readonly slashRootNode = [slashRootNode];
 
-  get credentialsDependentControls(): FormControl[] {
+  private get credentialsDependentControls(): FormControl[] {
     return [
       this.form.controls.bucket,
       this.form.controls.bucket_input,
@@ -145,9 +136,9 @@ export class CloudSyncFormComponent implements OnInit {
     ];
   }
 
-  googleDriveProviderIds: number[] = [];
+  protected googleDriveProviderIds: number[] = [];
 
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
     transfer_mode: [TransferMode.Copy, Validators.required],
@@ -184,7 +175,7 @@ export class CloudSyncFormComponent implements OnInit {
   });
 
   isCredentialInvalid$ = new BehaviorSubject(false);
-  isLoading = false;
+  protected isLoading = signal(false);
   bucketPlaceholder: string = helptextCloudSync.bucketLabel;
   bucketTooltip: string = helptextCloudSync.bucketTooltip;
   bucketInputPlaceholder: string = helptextCloudSync.bucketLabel;
@@ -240,9 +231,6 @@ export class CloudSyncFormComponent implements OnInit {
   private editingTask: CloudSyncTaskUi | undefined;
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
     this.editingTask = this.slideInRef.getData();
   }
 
@@ -289,7 +277,7 @@ export class CloudSyncFormComponent implements OnInit {
     });
   }
 
-  setupForm(): void {
+  private setupForm(): void {
     this.form.controls.path_source.disable();
     this.form.controls.filename_encryption.disable();
     this.form.controls.encryption_password.disable();
@@ -310,7 +298,7 @@ export class CloudSyncFormComponent implements OnInit {
       });
       dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
-          this.isLoading = true;
+          this.isLoading.set(true);
           this.loadBucketOptions();
           this.form.controls.bucket.setValue(bucket);
         } else {
@@ -417,9 +405,9 @@ export class CloudSyncFormComponent implements OnInit {
     });
   }
 
-  loadBucketOptions(): void {
+  private loadBucketOptions(): void {
     if (!this.hasRequiredRoles()) {
-      this.isLoading = false;
+      this.isLoading.set(false);
       const bucket = this.editingTask?.attributes?.bucket as string;
       if (bucket) {
         this.form.controls.bucket.enable();
@@ -451,12 +439,12 @@ export class CloudSyncFormComponent implements OnInit {
             });
           }
           this.bucketOptions$ = of(bucketOptions);
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.isCredentialInvalid$.next(false);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.isCredentialInvalid$.next(true);
           this.dialogService.closeAllDialogs();
           this.cdr.markForCheck();
@@ -536,7 +524,7 @@ export class CloudSyncFormComponent implements OnInit {
       const targetCredentials = find(this.credentialsList, { id: credentials });
       const targetProvider = find(this.providersList, { name: targetCredentials?.provider.type });
       if (targetCredentials && targetProvider?.buckets) {
-        this.isLoading = true;
+        this.isLoading.set(true);
         if (targetCredentials.provider.type === CloudSyncProviderName.MicrosoftAzure
           || targetCredentials.provider.type === CloudSyncProviderName.Hubic
         ) {
@@ -770,35 +758,22 @@ export class CloudSyncFormComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  // Typed for consistency with the other migrated forms even though the body
+  // ignores the event — the transform done by getPayload() is non-diffable.
+  protected handleSubmit: (event: FormSubmitEvent<FormValue>) => SubmitResult = () => {
+    // getPayload() heavily transforms the form (bwlimit, schedule, encryption,
+    // attributes, etc.), so a key-by-key diff against the snapshot wouldn't
+    // line up with the API shape. Send the full transformed payload instead.
     const payload = this.getPayload();
-
-    this.isLoading = true;
-    let request$: Observable<unknown>;
-
-    if (this.editingTask) {
-      request$ = this.api.call('cloudsync.update', [this.editingTask.id, payload]);
-    } else {
-      request$ = this.api.call('cloudsync.create', [payload]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (response: CloudSyncTask) => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Task created'));
-        } else {
-          this.snackbar.success(this.translate.instant('Task updated'));
-        }
-        this.isLoading = false;
-        this.slideInRef.close({ response });
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-        this.cdr.markForCheck();
-      },
-    });
-  }
+    return {
+      request$: this.editingTask
+        ? this.api.call('cloudsync.update', [this.editingTask.id, payload])
+        : this.api.call('cloudsync.create', [payload]),
+      successMessage: this.isNew
+        ? this.translate.instant('Task created')
+        : this.translate.instant('Task updated'),
+    };
+  };
 
   onSwitchToWizard(): void {
     this.slideInRef.swap?.(CloudSyncWizardComponent, { wide: true });
@@ -810,20 +785,20 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   private getInitialData(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     forkJoin([
       this.getCredentialsList(),
       this.getProviders(),
     ]).pipe(
       catchError((error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.cdr.markForCheck();
         this.formErrorHandler.handleValidationErrors(error, this.form);
         return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.isLoading = false;
+      this.isLoading.set(false);
       this.cdr.markForCheck();
 
       this.setFileNodeProvider();

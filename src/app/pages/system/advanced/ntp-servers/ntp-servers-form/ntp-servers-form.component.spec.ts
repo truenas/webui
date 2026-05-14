@@ -1,3 +1,4 @@
+// cspell:ignore ngneat ntpserver iburst minpoll maxpoll
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -6,9 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersFormComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers-form.component';
@@ -40,12 +40,11 @@ describe('NtpServerFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(DialogService),
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('system.ntpserver.create'),
         mockCall('system.ntpserver.update'),
       ]),
-      mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
@@ -107,7 +106,7 @@ describe('NtpServerFormComponent', () => {
       });
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends the full payload on update when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Address: 'updated.mock.ntp.server',
