@@ -33,11 +33,22 @@ describe('TruenasConnectStatusDisplayComponent', () => {
 
   it('should display failed state correctly', () => {
     spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
     spectator.detectChanges();
 
     expect(spectator.query('.status-failed')).toBeTruthy();
     expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('Connection Failed...');
     expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
+  });
+
+  it('shows a timeout-specific message when the user did not finish authorization in time', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationTimeout);
+    spectator.detectChanges();
+
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText(
+      "Registration wasn't completed in time. Click Retry Connection and finish authorization in the TrueNAS Connect window.",
+    );
   });
 
   it('should display active state correctly', () => {
