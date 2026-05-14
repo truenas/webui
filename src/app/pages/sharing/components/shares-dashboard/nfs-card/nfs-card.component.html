@@ -26,7 +26,11 @@
   </a>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="nfs-share"
+      iconLibrary="custom"
+      [title]="'Optimized for Linux and Unix systems, offering deeper integration in those environments. Choose NFS if you\'re working primarily with Linux servers or need efficient file access in Unix-based workflows.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"

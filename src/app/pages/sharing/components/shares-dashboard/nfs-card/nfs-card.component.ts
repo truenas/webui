@@ -9,6 +9,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnEmptyComponent,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
@@ -19,7 +20,6 @@ import {
 } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 import { BehaviorSubject } from 'rxjs';
-import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -28,7 +28,6 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -77,7 +76,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
     ServiceNfsComponent,
   ],
@@ -167,7 +166,6 @@ export class NfsCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<NfsShare>;
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
-  protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
   columns = createTable<NfsShare>([

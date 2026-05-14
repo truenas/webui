@@ -26,7 +26,11 @@
   </a>
 
   @if (!(dataProvider().currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="nvme-share"
+      iconLibrary="custom"
+      [title]="'Raw block storage using NVMe over Fabrics (e.g. NVMe/TCP), appearing as a local disk on the client. Compared to iSCSI, NVMe-oF offers significantly lower latency and higher throughput.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"

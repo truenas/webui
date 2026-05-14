@@ -11,6 +11,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnEmptyComponent,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
@@ -23,18 +24,15 @@ import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -76,7 +74,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnIconComponent,
     TestDirective,
     TranslateModule,
-    EmptyComponent,
+    TnEmptyComponent,
     IxTableComponent,
     IxTableHeadComponent,
     IxTableBodyComponent,
@@ -209,16 +207,6 @@ export class WebShareCardComponent implements OnInit {
   private titleCase(value: string): string {
     return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
   }
-
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: '',
-    message: this.translate.instant(
-      'WebShare service provides web-based file access.<br><br>Users can access these shares if they have the WebShare Enabled option set on their account.',
-    ),
-    icon: tnIconMarker('webshare', 'custom'),
-    large: true,
-  };
 
   columns = createTable<WebShareTableRow>([
     webShareNameColumn({

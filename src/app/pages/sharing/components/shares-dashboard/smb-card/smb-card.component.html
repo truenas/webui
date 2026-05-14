@@ -26,7 +26,11 @@
   </a>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="smb-share"
+      iconLibrary="custom"
+      [title]="'Well supported by all major operating systems, allows for easy authentication and authorization. Choose SMB for easy file sharing across mixed operating systems, especially in home or office networks.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"

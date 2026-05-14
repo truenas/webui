@@ -31,7 +31,11 @@
   </a>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="iscsi-share"
+      iconLibrary="custom"
+      [title]="'Raw block storage over the network, appearing as a local disk on the client. Ideal for virtual machines or applications that require direct disk-level access.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"

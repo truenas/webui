@@ -10,6 +10,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnEmptyComponent,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
@@ -20,7 +21,6 @@ import {
 } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 import { filter, switchMap } from 'rxjs';
-import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -28,7 +28,6 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -83,7 +82,7 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     RouterLink,
     IxTableCellDirective,
-    EmptyComponent,
+    TnEmptyComponent,
     SubSystemNameCellComponent,
     CardAlertBadgeComponent,
     NvmeOfConfigurationComponent,
@@ -106,7 +105,6 @@ export class NvmeOfCardComponent implements OnInit {
 
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
-  protected readonly emptyConfig = nvmeOfEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'nvme-of'];
 
   protected service$ = this.store$.select(selectService(ServiceName.NvmeOf));

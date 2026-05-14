@@ -9,6 +9,7 @@ import {
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
+  TnEmptyComponent,
   TnIconComponent,
   TnSidePanelActionDirective,
   TnSidePanelComponent,
@@ -21,7 +22,6 @@ import { kebabCase } from 'lodash-es';
 import {
   map, BehaviorSubject, of,
 } from 'rxjs';
-import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -32,7 +32,6 @@ import {
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -86,7 +85,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
     ServiceSmbComponent,
   ],
@@ -107,7 +106,6 @@ export class SmbCardComponent implements OnInit {
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
-  protected readonly emptyConfig = smbCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'smb'];
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));

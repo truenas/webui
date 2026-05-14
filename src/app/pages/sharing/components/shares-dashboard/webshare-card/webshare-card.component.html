@@ -51,7 +51,11 @@
   }
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="webshare"
+      iconLibrary="custom"
+      [title]="'WebShare service provides web-based file access. Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"
