@@ -471,7 +471,12 @@ export class PoolManagerValidationService {
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
-      const categoryParity = parityFromLayoutWidth(category.layout, category.width);
+      // Manual disk selection commits vdevs without updating `width` on the
+      // category, so fall back to the smallest vdev's disk count to compute
+      // worst-case Mirror parity.
+      const effectiveWidth = category.width
+        ?? Math.min(...category.vdevs.map((vdev) => vdev.length));
+      const categoryParity = parityFromLayoutWidth(category.layout, effectiveWidth);
       if (categoryParity === null) {
         return;
       }
