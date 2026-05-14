@@ -81,6 +81,23 @@ function parityFromLayoutWidth(
   return layoutParity(layout, width ?? 0);
 }
 
+/**
+ * Parity for a topology category, accounting for the fact that manual disk
+ * selection commits `vdevs` without updating `width` on the category. In that
+ * case we fall back to the smallest vdev's disk count so worst-case Mirror
+ * parity is still computed. For layout-determined parity (Stripe/RAIDZ/dRAID)
+ * the fallback is harmless. Returns null when neither layout nor an
+ * effective width can be resolved.
+ */
+function parityFromCategory(category: PoolManagerTopologyCategory): number | null {
+  if (!category.layout) {
+    return null;
+  }
+  const effectiveWidth = category.width
+    ?? (category.vdevs.length ? Math.min(...category.vdevs.map((vdev) => vdev.length)) : null);
+  return parityFromLayoutWidth(category.layout, effectiveWidth);
+}
+
 @Injectable()
 export class PoolManagerValidationService {
   protected store = inject(PoolManagerStore);
@@ -471,12 +488,7 @@ export class PoolManagerValidationService {
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
-      // Manual disk selection commits vdevs without updating `width` on the
-      // category, so fall back to the smallest vdev's disk count to compute
-      // worst-case Mirror parity.
-      const effectiveWidth = category.width
-        ?? Math.min(...category.vdevs.map((vdev) => vdev.length));
-      const categoryParity = parityFromLayoutWidth(category.layout, effectiveWidth);
+      const categoryParity = parityFromCategory(category);
       if (categoryParity === null) {
         return;
       }
@@ -555,9 +567,9 @@ export class PoolManagerValidationService {
     // category is unset, so we return null and the mismatch warning is
     // suppressed until parity can actually be resolved.
     const dataCategory = topology[VDevType.Data];
-    if (!dataCategory?.layout) {
+    if (!dataCategory) {
       return null;
     }
-    return parityFromLayoutWidth(dataCategory.layout, dataCategory.width);
+    return parityFromCategory(dataCategory);
   }
 }
