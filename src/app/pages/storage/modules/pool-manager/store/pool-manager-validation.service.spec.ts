@@ -797,6 +797,47 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
+    describe('when special is manually selected (no width set on category)', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: {
+                layout: CreateVdevLayout.Raidz2,
+                width: 4,
+                vdevs: [[{ devname: 'sda' }]],
+              },
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Mirror,
+                width: null,
+                vdevs: [[{ devname: 'sdb' }, { devname: 'sdc' }]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('still emits the metadata redundancy warning using the smallest vdev disk count', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).toContainEqual({
+          severity: PoolCreationSeverity.Warning,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.',
+        });
+      });
+    });
+
     describe('when special parity matches data parity', () => {
       let spectator: SpectatorService<PoolManagerValidationService>;
       const createService = createServiceFactory({
