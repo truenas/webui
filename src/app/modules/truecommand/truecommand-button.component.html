@@ -8,6 +8,7 @@
       ixTest="truecommand-indicator"
       matTooltipClass="tooltip-multiline"
       [matTooltip]="tooltip()"
+      [attr.aria-label]="tooltip()"
       (click)="stopTrueCommandConnecting()"
     >
       <ng-container *ngTemplateOutlet="logoWithBadge"></ng-container>
@@ -19,6 +20,7 @@
       ixTest="truecommand-indicator"
       matTooltipClass="tooltip-multiline"
       [matTooltip]="tooltip()"
+      [attr.aria-label]="tooltip()"
       [ngClass]="[status.status]"
       [ixUiSearch]="searchableElements.elements.trueCommand"
       (click)="handleClick()"

@@ -6,9 +6,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTnSpriteLoader } from 'app/core/testing/utils/mock-tn-sprite-loader.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -57,13 +58,7 @@ describe('TruecommandButtonComponent', () => {
           })),
         }),
         mockProvider(MatDialogRef),
-        mockProvider(TnSpriteLoaderService, {
-          ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
-          getIconUrl: jest.fn(),
-          getSafeIconUrl: jest.fn(),
-          isSpriteLoaded: jest.fn(() => true),
-          getSpriteConfig: jest.fn(),
-        }),
+        mockTnSpriteLoader(),
       ],
     });
   }

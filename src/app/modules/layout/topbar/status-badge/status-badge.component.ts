@@ -7,10 +7,6 @@ export type StatusBadge
   = { icon: string; background: string; spinning?: boolean }
     | { label: string; background: string };
 
-function isIconBadge(badge: StatusBadge): badge is Extract<StatusBadge, { icon: string }> {
-  return 'icon' in badge;
-}
-
 @Component({
   selector: 'ix-status-badge',
   templateUrl: './status-badge.component.html',
@@ -28,16 +24,20 @@ export class StatusBadgeComponent {
 
   protected iconBadge = computed(() => {
     const value = this.badge();
-    return isIconBadge(value) ? value : null;
+    return StatusBadgeComponent.isIconBadge(value) ? value : null;
   });
 
   protected labelBadge = computed(() => {
     const value = this.badge();
-    return isIconBadge(value) ? null : value;
+    return StatusBadgeComponent.isIconBadge(value) ? null : value;
   });
 
   protected isSpinning = computed(() => {
     const value = this.badge();
-    return isIconBadge(value) && !!value.spinning;
+    return StatusBadgeComponent.isIconBadge(value) && !!value.spinning;
   });
+
+  static isIconBadge(badge: StatusBadge): badge is Extract<StatusBadge, { icon: string }> {
+    return 'icon' in badge;
+  }
 }

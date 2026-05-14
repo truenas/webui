@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -12,33 +12,28 @@ import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-t
 
 type StatusKind = 'success' | 'failure' | 'in-progress' | 'idle';
 
-function classifyStatus(status: TruenasConnectStatus): StatusKind {
-  switch (status) {
-    case TruenasConnectStatus.Configured:
-      return 'success';
-    case TruenasConnectStatus.RegistrationFinalizationFailed:
-    case TruenasConnectStatus.RegistrationFinalizationTimeout:
-    case TruenasConnectStatus.CertGenerationFailed:
-    case TruenasConnectStatus.CertConfigurationFailure:
-    case TruenasConnectStatus.CertRenewalFailure:
-      return 'failure';
-    case TruenasConnectStatus.RegistrationFinalizationWaiting:
-    case TruenasConnectStatus.RegistrationFinalizationSuccess:
-    case TruenasConnectStatus.CertGenerationInProgress:
-    case TruenasConnectStatus.CertGenerationSuccess:
-    case TruenasConnectStatus.CertRenewalInProgress:
-    case TruenasConnectStatus.CertRenewalSuccess:
-      return 'in-progress';
-    case TruenasConnectStatus.Disabled:
-    case TruenasConnectStatus.ClaimTokenMissing:
-      return 'idle';
-    default:
-      return assertNever(status);
-  }
-}
+const statusKinds = {
+  [TruenasConnectStatus.Configured]: 'success',
 
-function assertNever(value: never): never {
-  throw new Error(`Unhandled TruenasConnectStatus: ${value as string}`);
+  [TruenasConnectStatus.RegistrationFinalizationFailed]: 'failure',
+  [TruenasConnectStatus.RegistrationFinalizationTimeout]: 'failure',
+  [TruenasConnectStatus.CertGenerationFailed]: 'failure',
+  [TruenasConnectStatus.CertConfigurationFailure]: 'failure',
+  [TruenasConnectStatus.CertRenewalFailure]: 'failure',
+
+  [TruenasConnectStatus.RegistrationFinalizationWaiting]: 'in-progress',
+  [TruenasConnectStatus.RegistrationFinalizationSuccess]: 'in-progress',
+  [TruenasConnectStatus.CertGenerationInProgress]: 'in-progress',
+  [TruenasConnectStatus.CertGenerationSuccess]: 'in-progress',
+  [TruenasConnectStatus.CertRenewalInProgress]: 'in-progress',
+  [TruenasConnectStatus.CertRenewalSuccess]: 'in-progress',
+
+  [TruenasConnectStatus.Disabled]: 'idle',
+  [TruenasConnectStatus.ClaimTokenMissing]: 'idle',
+} as const satisfies Record<TruenasConnectStatus, StatusKind>;
+
+function classifyStatus(status: TruenasConnectStatus): StatusKind {
+  return statusKinds[status] ?? 'idle';
 }
 
 @Component({
@@ -49,7 +44,6 @@ function assertNever(value: never): never {
     MatIconButton,
     MatTooltip,
     StatusBadgeComponent,
-    TranslateModule,
     TestDirective,
   ],
   templateUrl: './truenas-connect-button.component.html',
@@ -94,7 +88,7 @@ export class TruenasConnectButtonComponent {
     const base = this.translate.instant(TruenasConnectStatusReason[config.status]);
     const tier = this.tier();
     if (tier && config.status === TruenasConnectStatus.Configured) {
-      const name = tierDisplayConfig[tier].label;
+      const name = this.translate.instant(tierDisplayConfig[tier].label);
       return `${base}\n${this.translate.instant('Tier: {tier}', { tier: name })}`;
     }
     return base;

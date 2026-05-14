@@ -7,7 +7,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -52,7 +52,6 @@ const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
     NgTemplateOutlet,
     StatusBadgeComponent,
     UiSearchDirective,
-    TranslateModule,
   ],
 })
 export class TruecommandButtonComponent implements OnInit {
