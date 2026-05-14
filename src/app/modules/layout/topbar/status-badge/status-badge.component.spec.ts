@@ -2,14 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { mockTnSpriteLoader } from 'app/core/testing/utils/mock-tn-sprite-loader.utils';
 import { StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 
 describe('StatusBadgeComponent', () => {
   let spectator: Spectator<StatusBadgeComponent>;
   const createComponent = createComponentFactory({
     component: StatusBadgeComponent,
-    providers: [mockTnSpriteLoader()],
   });
 
   it('applies the given background as an inline style', () => {

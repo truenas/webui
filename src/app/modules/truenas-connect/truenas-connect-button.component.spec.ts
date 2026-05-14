@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { mockTnSpriteLoader } from 'app/core/testing/utils/mock-tn-sprite-loader.utils';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -31,7 +30,6 @@ describe('TruenasConnectButtonComponent', () => {
         config: configSignal,
         openStatusModal: jest.fn(),
       }),
-      mockTnSpriteLoader(),
     ],
   });
 

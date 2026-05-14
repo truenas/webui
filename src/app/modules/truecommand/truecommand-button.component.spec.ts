@@ -9,7 +9,6 @@ import {
 import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { mockTnSpriteLoader } from 'app/core/testing/utils/mock-tn-sprite-loader.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -58,7 +57,6 @@ describe('TruecommandButtonComponent', () => {
           })),
         }),
         mockProvider(MatDialogRef),
-        mockTnSpriteLoader(),
       ],
     });
   }
