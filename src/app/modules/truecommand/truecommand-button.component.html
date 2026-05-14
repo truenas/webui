@@ -6,6 +6,7 @@
       id="tc-connecting"
       class="topbar-button-right truecommand-button"
       ixTest="truecommand-indicator"
+      matTooltipClass="tooltip-multiline"
       [matTooltip]="tooltip()"
       (click)="stopTrueCommandConnecting()"
     >
@@ -16,6 +17,7 @@
       mat-icon-button
       class="topbar-button-right truecommand-button"
       ixTest="truecommand-indicator"
+      matTooltipClass="tooltip-multiline"
       [matTooltip]="tooltip()"
       [ngClass]="[status.status]"
       [ixUiSearch]="searchableElements.elements.trueCommand"
@@ -31,11 +33,7 @@
     <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
     @let badge = statusBadge();
     @if (badge) {
-      <ix-status-badge
-        [icon]="badge.icon ?? null"
-        [background]="badge.background"
-        [spinning]="badge.spinning ?? false"
-      ></ix-status-badge>
+      <ix-status-badge [badge]="badge"></ix-status-badge>
     }
   </span>
 </ng-template>

@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { TnIconComponent } from '@truenas/ui-components';
 
-export interface StatusBadge {
-  icon?: string;
-  label?: string;
-  background: string;
-  spinning?: boolean;
+export type StatusBadge
+  = { icon: string; background: string; spinning?: boolean }
+    | { label: string; background: string };
+
+function isIconBadge(badge: StatusBadge): badge is Extract<StatusBadge, { icon: string }> {
+  return 'icon' in badge;
 }
 
 @Component({
@@ -16,13 +19,25 @@ export interface StatusBadge {
   imports: [TnIconComponent],
   host: {
     'aria-hidden': 'true',
-    '[class.spinning]': 'spinning()',
-    '[style.background]': 'background()',
+    '[class.spinning]': 'isSpinning()',
+    '[style.background]': 'badge().background',
   },
 })
 export class StatusBadgeComponent {
-  readonly icon = input<string | null>(null);
-  readonly label = input<string | null>(null);
-  readonly background = input.required<string>();
-  readonly spinning = input(false);
+  readonly badge = input.required<StatusBadge>();
+
+  protected iconBadge = computed(() => {
+    const value = this.badge();
+    return isIconBadge(value) ? value : null;
+  });
+
+  protected labelBadge = computed(() => {
+    const value = this.badge();
+    return isIconBadge(value) ? null : value;
+  });
+
+  protected isSpinning = computed(() => {
+    const value = this.badge();
+    return isIconBadge(value) && !!value.spinning;
+  });
 }

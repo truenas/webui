@@ -1,6 +1,7 @@
 <button
   ixTest="tnc-show-status"
   mat-icon-button
+  matTooltipClass="tooltip-multiline"
   [matTooltip]="tooltip()"
   (click)="showStatus()"
 >
@@ -8,12 +9,7 @@
     <tn-icon size="lg" name="tn-truenas-connect-logo"></tn-icon>
     @let currentBadge = badge();
     @if (currentBadge) {
-      <ix-status-badge
-        [icon]="currentBadge.icon ?? null"
-        [label]="currentBadge.label ?? null"
-        [background]="currentBadge.background"
-        [spinning]="currentBadge.spinning ?? false"
-      ></ix-status-badge>
+      <ix-status-badge [badge]="currentBadge"></ix-status-badge>
     }
   </span>
 </button>
