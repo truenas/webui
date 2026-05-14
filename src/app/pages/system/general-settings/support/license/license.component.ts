@@ -9,13 +9,13 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -39,7 +39,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class LicenseComponent {
   private fb = inject(FormBuilder);
-  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
   protected api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
@@ -75,9 +75,20 @@ export class LicenseComponent {
     this.api.call('truenas.license.upload', [license]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.snackbar.success(this.translate.instant(helptext.updateLicense.reloadingMessage));
-        this.slideInRef.close({ response: true });
-        this.window.location.reload();
+        this.cdr.markForCheck();
+        this.dialogService
+          .confirm({
+            title: this.translate.instant(helptext.updateLicense.reloadDialogTitle),
+            message: this.translate.instant(helptext.updateLicense.reloadDialogMessage),
+            hideCheckbox: true,
+            buttonText: this.translate.instant(helptext.updateLicense.reloadDialogAction),
+            hideCancel: true,
+            disableClose: true,
+          })
+          .subscribe(() => {
+            this.slideInRef.close({ response: true });
+            this.window.location.reload();
+          });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
