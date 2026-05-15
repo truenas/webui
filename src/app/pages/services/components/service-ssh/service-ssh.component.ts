@@ -10,7 +10,6 @@ import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
-import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -125,7 +124,7 @@ export class ServiceSshComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading.set(true);
-    this.api.call('ssh.update', [values as SshConfigUpdate])
+    this.api.call('ssh.update', [values])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

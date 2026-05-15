@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
-import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -109,7 +109,7 @@ export class CronFormComponent implements OnInit {
     const values = {
       ...this.form.getRawValue(),
       schedule: crontabToSchedule(this.form.getRawValue().schedule),
-    } as CronjobUpdate;
+    };
 
     this.isLoading.set(true);
     let request$: Observable<unknown>;

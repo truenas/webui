@@ -10,7 +10,7 @@ import { forkJoin, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { SupportConfig, SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -85,7 +85,7 @@ export class ProactiveComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const values = this.form.value as SupportConfigUpdate;
+    const values = this.form.value;
     this.isLoading.set(true);
 
     this.api.call('support.update', [values])

@@ -19,7 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -248,7 +248,7 @@ export class RsyncTaskCardComponent implements OnInit {
 
   private onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
     this.api
-      .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled } as RsyncTaskUpdate])
+      .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
