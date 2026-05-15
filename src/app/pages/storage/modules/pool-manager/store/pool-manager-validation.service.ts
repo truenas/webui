@@ -84,17 +84,22 @@ function parityFromLayoutWidth(
 /**
  * Parity for a topology category, accounting for the fact that manual disk
  * selection commits `vdevs` without updating `width` on the category. In that
- * case we fall back to the smallest vdev's disk count so worst-case Mirror
- * parity is still computed. For layout-determined parity (Stripe/RAIDZ/dRAID)
- * the fallback is harmless. Returns null when neither layout nor an
- * effective width can be resolved.
+ * case we fall back to the smallest vdev's disk count, which yields the
+ * worst-case parity across the configured vdevs — the conservative choice for
+ * a warning. For layout-determined parity (Stripe/RAIDZ/dRAID) the fallback is
+ * harmless. Returns null when neither layout nor an effective width can be
+ * resolved.
  */
 function parityFromCategory(category: PoolManagerTopologyCategory): number | null {
   if (!category.layout) {
     return null;
   }
-  const effectiveWidth = category.width
-    ?? (category.vdevs.length ? Math.min(...category.vdevs.map((vdev) => vdev.length)) : null);
+  let effectiveWidth: number | null = null;
+  if (category.width != null) {
+    effectiveWidth = category.width;
+  } else if (category.vdevs.length) {
+    effectiveWidth = category.vdevs.reduce((min, vdev) => Math.min(min, vdev.length), Infinity);
+  }
   return parityFromLayoutWidth(category.layout, effectiveWidth);
 }
 
