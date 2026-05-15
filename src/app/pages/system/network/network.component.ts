@@ -373,7 +373,7 @@ export class NetworkComponent implements OnInit {
   }
 
   protected goToHa(): void {
-    this.router.navigate(['/', 'system', 'failover']);
+    this.router.navigate(['/', 'system', 'advanced'], { fragment: 'failover-card' });
   }
 
   private openInterfaceForEditFromRoute(): void {
