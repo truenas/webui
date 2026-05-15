@@ -10,7 +10,7 @@
     <span ixTest="tnc-status" class="failed-header">{{ "Connection Failed..." | translate }}</span>
   </div>
   <div ixTest="tnc-status-reason" class="failed-description">
-    {{ "Something went wrong! Please check your network connectivity and then click Retry Connection to get started." | translate }}
+    {{ failedDescription() | translate }}
   </div>
 } @else if (status() === TncStatus.Active) {
   <div class="status-header">
