@@ -9,6 +9,9 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import {
+  mockSharingTierService,
+} from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
+import {
   PoolCardIconComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
@@ -2372,6 +2375,70 @@ describe('VDevsCardComponent', () => {
 
       expect(captions[0]).toHaveText('Data VDEVs');
       expect(spectator.query('.offline-data-vdevs')!.textContent).toBe('Offline VDEVs');
+    });
+  });
+
+  describe('tier labels', () => {
+    const createTierComponent = createComponentFactory({
+      component: VDevsCardComponent,
+      imports: [
+        ReactiveFormsModule,
+      ],
+      declarations: [
+        MockComponent(PoolCardIconComponent),
+      ],
+      providers: [
+        mockApi([]),
+        mockSharingTierService({ enabled: true }),
+      ],
+    });
+
+    function makePool(withSpecial: boolean): Pool {
+      const disk = (name: string): unknown => ({
+        type: 'DISK',
+        disk: name,
+        children: [],
+        stats: {
+          size: 1024 * GiB, timestamp: 0, read_errors: 0, write_errors: 0, checksum_errors: 0,
+        },
+      });
+      return {
+        healthy: true,
+        name: 'pool1',
+        status: PoolStatus.Online,
+        topology: {
+          data: [disk('sda')],
+          special: withSpecial ? [disk('nvme0')] : [],
+          log: [],
+          cache: [],
+          spare: [],
+          dedup: [],
+        } as Pool['topology'],
+      } as Pool;
+    }
+
+    it('renders Regular Tier and Performance Tier labels when tier is enabled and pool has a special vdev', () => {
+      spectator = createTierComponent({
+        props: {
+          poolState: makePool(true),
+          disks: [],
+        },
+      });
+
+      const labels = spectator.queryAll('.tier-label');
+      const labelText = labels.map((el) => el.textContent?.trim());
+      expect(labelText).toEqual(expect.arrayContaining(['(Regular Tier)', '(Performance Tier)']));
+    });
+
+    it('does not render tier labels when the pool has no special vdev (even if tiering is enabled)', () => {
+      spectator = createTierComponent({
+        props: {
+          poolState: makePool(false),
+          disks: [],
+        },
+      });
+
+      expect(spectator.queryAll('.tier-label')).toHaveLength(0);
     });
   });
 });

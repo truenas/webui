@@ -1,11 +1,19 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  EMPTY, Observable, catchError, of, throwError,
+} from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ChangeTierDialogComponent — share usage list', () => {
   let spectator: Spectator<ChangeTierDialogComponent>;
@@ -91,5 +99,117 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     expect(block.textContent).toContain('SMB Share');
     expect(block.textContent).not.toContain('NFS Share');
     expect(block.textContent).not.toContain('WebShare');
+  });
+});
+
+describe('ChangeTierDialogComponent — load failure', () => {
+  let spectator: Spectator<ChangeTierDialogComponent>;
+  let loader: HarnessLoader;
+
+  const dialogData: ChangeTierDialogData = {
+    datasetName: 'tank/SHARE',
+    currentTier: DatasetTier.Regular,
+    poolName: 'tank',
+  };
+
+  const createComponent = createComponentFactory({
+    component: ChangeTierDialogComponent,
+    providers: [
+      mockApi([
+        mockCall('zpool.query', []),
+        mockCall('pool.dataset.query', []),
+        mockCall('sharing.smb.query', []),
+        mockCall('sharing.nfs.query', []),
+        mockCall('sharing.webshare.query', []),
+      ]),
+      { provide: MAT_DIALOG_DATA, useValue: dialogData },
+      mockProvider(MatDialogRef),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: <T>() => (source$: Observable<T>) => source$.pipe(catchError((err: unknown) => {
+          spectator.inject(ErrorHandlerService).showErrorModal(err);
+          return EMPTY;
+        })),
+      }),
+    ],
+  });
+
+  it('disables the Apply button when loadDetails fails', async () => {
+    spectator = createComponent({ detectChanges: false });
+    const api = spectator.inject(ApiService);
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      if (method === 'zpool.query') {
+        return throwError(() => new Error('boom')) as ReturnType<ApiService['call']>;
+      }
+      return of([]) as ReturnType<ApiService['call']>;
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const applyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Apply' }));
+    expect(await applyButton.isDisabled()).toBe(true);
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+  });
+});
+
+describe('ChangeTierDialogComponent — loadDetails parsing', () => {
+  let spectator: Spectator<ChangeTierDialogComponent>;
+
+  const dialogData: ChangeTierDialogData = {
+    datasetName: 'tank/SHARE',
+    currentTier: DatasetTier.Regular,
+    poolName: 'tank',
+  };
+
+  const createComponent = createComponentFactory({
+    component: ChangeTierDialogComponent,
+    providers: [
+      mockApi([
+        mockCall('zpool.query', [{
+          name: 'tank',
+          properties: {
+            class_normal_available: { value: 1024 * 1024 * 1024 * 4 }, // 4 GiB
+            class_special_available: { value: 1024 * 1024 * 1024 * 2 }, // 2 GiB
+          },
+        }]),
+        mockCall('pool.dataset.query', [{
+          id: 'tank/SHARE',
+          usedbydataset: { parsed: 1024 * 1024 * 512 }, // 512 MiB
+          usedbysnapshots: { parsed: 0 },
+        }]),
+        mockCall('sharing.smb.query', []),
+        mockCall('sharing.nfs.query', []),
+        mockCall('sharing.webshare.query', []),
+      ]),
+      { provide: MAT_DIALOG_DATA, useValue: dialogData },
+      mockProvider(MatDialogRef),
+    ],
+  });
+
+  it('parses zpool / dataset details into the displayed strings', async () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    // currentTier is Regular → currentTierSpace pulls regularAvailable
+    expect(spectator.component.regularAvailable()).toBe('4 GiB');
+    expect(spectator.component.performanceAvailable()).toBe('2 GiB');
+    expect(spectator.component.estimatedRewriteSize()).toBe('512 MiB');
+    expect(spectator.component.hasSnapshots()).toBe(false);
+  });
+
+  it('flags hasSnapshots when usedbysnapshots > 0', async () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.inject(MockApiService).mockCall('pool.dataset.query', [{
+      id: 'tank/SHARE',
+      usedbydataset: { parsed: 1024 },
+      usedbysnapshots: { parsed: 4096 },
+    }]);
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(spectator.component.hasSnapshots()).toBe(true);
   });
 });
