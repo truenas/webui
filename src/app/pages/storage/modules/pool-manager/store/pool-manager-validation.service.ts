@@ -97,8 +97,15 @@ function parityFromCategory(category: PoolManagerTopologyCategory): number | nul
   let effectiveWidth: number | null = null;
   if (category.width != null) {
     effectiveWidth = category.width;
-  } else if (category.vdevs.length) {
-    effectiveWidth = category.vdevs.reduce((min, vdev) => Math.min(min, vdev.length), Infinity);
+  } else {
+    // Filter out empty vdev arrays before computing the min: a committed vdev
+    // should always carry at least one disk, but defensively skipping them
+    // avoids Infinity (no real vdevs) or a phantom width=0 (only empty vdevs)
+    // being passed to layoutParity.
+    const nonEmptyVdevs = category.vdevs.filter((vdev) => vdev.length > 0);
+    if (nonEmptyVdevs.length) {
+      effectiveWidth = nonEmptyVdevs.reduce((min, vdev) => Math.min(min, vdev.length), Infinity);
+    }
   }
   return parityFromLayoutWidth(category.layout, effectiveWidth);
 }
