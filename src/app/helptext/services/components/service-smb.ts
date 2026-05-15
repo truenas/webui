@@ -41,7 +41,7 @@ export const helptextServiceSmb = {
   multichannelTooltip: T('SMB multichannel allows servers to use multiple network connections\
  simultaneously by combining the bandwidth of several network interface cards (NICs) for\
  better performance. SMB multichannel does not function if you combine NICs into a LAGG.\
- <a href="https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/" target="_blank">Read more in docs</a>'),
+ <a href="https://www.truenas.com/docs/scale/shares/smb/smbmultichannel/" target="_blank">Read more in docs</a>'),
   guestTooltip: T('Account to be used for guest access. Default is\
  <i>nobody</i>. The chosen account is required to have permissions to the\
  shared pool or dataset. To adjust permissions, edit the dataset Access\
