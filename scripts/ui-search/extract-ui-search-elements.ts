@@ -69,6 +69,7 @@
 
 import * as fs from 'fs';
 import { join } from 'path';
+import { pathToFileURL } from 'url';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { extractComponentFileContent } from './extract-component-file-content';
 import { findComponentFiles } from './find-component-files';
@@ -84,7 +85,8 @@ export async function extractUiSearchElements(): Promise<void> {
       const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
       const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
-      const elementConfig = await import(join(import.meta.dirname, '../../', elementsTsFilePath)) as Record<string, UiSearchableElement>;
+      const elementConfigPath = join(import.meta.dirname, '../../', elementsTsFilePath);
+      const elementConfig = await import(pathToFileURL(elementConfigPath).href) as Record<string, UiSearchableElement>;
       const componentProperties = extractComponentFileContent(tsComponentFilePath);
       const uiSearchHtmlElements = parseUiSearchElements(htmlComponentFilePath, elementConfig, componentProperties);
 

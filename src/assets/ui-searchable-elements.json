@@ -381,52 +381,6 @@
     "hierarchy": [
       "System",
       "General Settings",
-      "Support",
-      "File Ticket"
-    ],
-    "synonyms": [
-      "Rate this page"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "file-ticket",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Support",
-      "License"
-    ],
-    "synonyms": [
-      "Update License",
-      "Add License",
-      "License Update"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "license",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
       "Save Debug"
     ],
     "synonyms": [],
@@ -5678,31 +5632,6 @@
   {
     "hierarchy": [
       "Toolbar",
-      "Send Feedback"
-    ],
-    "synonyms": [
-      "Bug",
-      "Feature Request",
-      "Suggestion",
-      "Improvement",
-      "Review",
-      "Report Bug",
-      "Jira",
-      "Ticket",
-      "Issue",
-      "Defect",
-      "File Ticket"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "routerLink": null,
-    "anchor": "send-feedback",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
       "Alerts"
     ],
     "synonyms": [
@@ -5745,27 +5674,6 @@
     "visibleTokens": [],
     "routerLink": null,
     "anchor": "change-password",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
-      "Preferences"
-    ],
-    "synonyms": [
-      "Session Timeout",
-      "Token Lifetime",
-      "Theme",
-      "Language",
-      "Date Format",
-      "Time Format"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "routerLink": null,
-    "anchor": "preferences",
     "triggerAnchor": "user-menu",
     "section": "ui"
   },

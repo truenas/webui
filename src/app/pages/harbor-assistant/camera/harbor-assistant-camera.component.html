@@ -1,0 +1,417 @@
+<section class="harbor-assistant-camera-page">
+  <mat-tab-group
+    class="harbor-assistant-camera-tabs"
+    animationDuration="120ms"
+    [selectedIndex]="selectedTabIndex()"
+    (selectedIndexChange)="selectedTabIndex.set($event)"
+  >
+    <mat-tab [label]="'Live' | translate">
+      <section class="live-tab">
+        <section class="dvr-compact">
+          <div class="workbench-header">
+            <div>
+              <h2>{{ selectedCameraLabel() }}</h2>
+            </div>
+            <button mat-stroked-button type="button" [disabled]="cameraLoading()" (click)="refreshCameraDvr()">
+              {{ cameraLoading() ? ('Refreshing' | translate) : ('Refresh cameras' | translate) }}
+            </button>
+          </div>
+
+          @if (cameraError()) {
+            <div class="notice warning compact">{{ cameraStatusNotice() | translate }}</div>
+          }
+
+          @if (liveCameras().length > 0) {
+            <div class="camera-pills">
+              @for (camera of liveCameras(); track camera.device_id) {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [class.selected]="camera.device_id === selectedCameraId()"
+                  (click)="selectCamera(camera.device_id)"
+                >
+                  {{ camera.name || camera.device_id }}
+                </button>
+              }
+            </div>
+
+            <div class="dvr-preview-row">
+              <div class="live-stack">
+                <div
+                  class="live-panel"
+                  [class.recording]="isRecording()"
+                  [class.starting]="recordIntent() === 'starting'"
+                  [class.finalizing]="recordIntent() === 'finalizing'"
+                >
+                  @if (showRecordingIndicator()) {
+                    <div class="recording-badge" aria-label="Recording">
+                      <span></span>
+                      {{ recordBadgeLabel() | translate }}
+                    </div>
+                  }
+                  @if (liveFeedback()) {
+                    <div class="live-feedback">{{ liveFeedback() | translate }}</div>
+                  }
+                  @if (selectedLiveUrl(); as liveUrl) {
+                    <img
+                      #liveImage
+                      [src]="liveUrl"
+                      [alt]="selectedCamera()?.name || selectedCameraId() || 'camera'"
+                      (load)="handleLiveLoad($event)"
+                      (error)="handleLiveError()"
+                    />
+                  } @else if (livePreviewErrorMessage(); as previewError) {
+                    <div class="live-empty-state">
+                      <strong>{{ previewError | translate }}</strong>
+                      <div>
+                        <button mat-stroked-button type="button" (click)="retryLivePreview()">
+                          {{ 'Retry' | translate }}
+                        </button>
+                        <button mat-button type="button" (click)="openCameraSettings()">
+                          {{ 'Camera settings' | translate }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                @if (recentTimelineItems().length > 0) {
+                  <section class="recent-media-strip" data-testid="harbor-assistant-camera-recent-media-strip">
+                    <div class="strip-header">
+                      <div>
+                        <h3>{{ 'Recent media' | translate }}</h3>
+                        <p>{{ latestMediaLabel() | translate }}</p>
+                      </div>
+                    </div>
+
+                    <div class="recent-strip-track">
+                      @for (segment of recentTimelineItems(); track timelineTrackKey($index, segment)) {
+                        <button
+                          type="button"
+                          class="recent-media-card"
+                          [class.snapshot]="mediaKind(segment) === 'snapshot'"
+                          [class.pending]="isOptimisticMediaItem(segment)"
+                          [class.archive-failed]="isArchiveFailed(segment)"
+                          [disabled]="!canOpenMediaItem(segment)"
+                          (click)="openReplay(segment)"
+                        >
+                          <span class="media-thumb compact">
+                            @if (mediaKind(segment) === 'snapshot') {
+                              <img [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" loading="lazy" />
+                            } @else {
+                              <video [src]="mediaVideoPreviewUrl(segment)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                            }
+                          </span>
+                          <span>
+                            <strong>{{ mediaKindLabel(segment) | translate }}</strong>
+                            <small>{{ displayMediaTime(segment) }}</small>
+                          </span>
+                        </button>
+                      }
+                    </div>
+                  </section>
+                }
+              </div>
+
+              <aside class="dvr-sidecar">
+                <div class="status-strip">
+                  <span>{{ recordingStatusLabel() | translate }}</span>
+                  <span>{{ timelineItems().length }} {{ 'items' | translate }}</span>
+                </div>
+
+                <div class="dvr-controls">
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    type="button"
+                    (click)="captureSnapshot()"
+                    [disabled]="actionBusy() === 'record' || actionBusy() === 'snapshot'"
+                  >
+                    {{ actionBusy() === 'snapshot' ? ('Capturing' | translate) : ('Snapshot' | translate) }}
+                  </button>
+                  @if (isRecording() || recordIntent() === 'finalizing') {
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      (click)="stopRecording()"
+                      [disabled]="actionBusy() === 'record' || recordIntent() === 'finalizing'"
+                    >
+                      {{ recordIntent() === 'finalizing' ? ('Finalizing' | translate) : ('Stop recording' | translate) }}
+                    </button>
+                  } @else {
+                    <button mat-stroked-button type="button" (click)="startRecording()" [disabled]="actionBusy() === 'record'">
+                      {{ recordIntent() === 'starting' ? ('Starting' | translate) : ('Record' | translate) }}
+                    </button>
+                  }
+                </div>
+
+                <details class="ptz-panel" [class.disabled]="!canPtz()">
+                  <summary>
+                    <span>{{ 'PTZ' | translate }}</span>
+                    <span>{{ canPtz() ? ('Available' | translate) : ('Unavailable' | translate) }}</span>
+                  </summary>
+                  <div class="ptz-pad">
+                    <span></span>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('up')">{{ 'Up' | translate }}</button>
+                    <span></span>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('left')">{{ 'Left' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('stop')">{{ 'Stop' | translate }}</button>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('right')">{{ 'Right' | translate }}</button>
+                    <span></span>
+                    <button mat-stroked-button type="button" [disabled]="!canPtz()" (click)="ptzAction('down')">{{ 'Down' | translate }}</button>
+                    <span></span>
+                  </div>
+                </details>
+
+                @if (actionError()) {
+                  <div class="notice error compact">{{ actionError() | translate }}</div>
+                }
+                @if (actionMessage()) {
+                  <div class="notice compact">{{ actionMessage() | translate }}</div>
+                }
+              </aside>
+            </div>
+          } @else {
+            <div class="empty-state">{{ 'No available cameras yet.' | translate }}</div>
+          }
+        </section>
+      </section>
+    </mat-tab>
+
+    <mat-tab [label]="'Playback' | translate">
+      <section class="playback-tab">
+        @if (selectedMediaItem(); as mediaItem) {
+          <section #mediaViewer class="media-viewer" data-testid="harbor-assistant-camera-media-viewer">
+            <header>
+              <div>
+                <h3>{{ mediaKindLabel(mediaItem) | translate }}</h3>
+                <p>{{ displayMediaTime(mediaItem) }}</p>
+              </div>
+              <div class="viewer-actions">
+                <button mat-stroked-button type="button" (click)="fullscreenMediaViewer()">{{ 'Fullscreen' | translate }}</button>
+                <button mat-stroked-button type="button" (click)="closeMediaPreview()">{{ 'Close' | translate }}</button>
+              </div>
+            </header>
+
+            @if (mediaKind(mediaItem) === 'snapshot') {
+              <img [src]="mediaPlaybackUrl(mediaItem)" [alt]="selectedCameraLabel() + ' snapshot'" />
+            } @else {
+              <video [src]="mediaPlaybackUrl(mediaItem)" controls autoplay playsinline preload="auto"></video>
+            }
+          </section>
+        }
+
+        <main class="camera-workbench">
+          <section class="results-workbench media-library-workbench" data-testid="harbor-assistant-camera-media-library">
+            <div class="results-header">
+              <div>
+                <h2>{{ 'Recordings and snapshots' | translate }}</h2>
+                <p>{{ selectedCameraLabel() }}</p>
+              </div>
+              <div class="result-summary">
+                <strong>{{ timelineItems().length }}</strong>
+                <span>{{ 'items' | translate }}</span>
+              </div>
+            </div>
+
+            @if (timelineItems().length > 0) {
+              <div class="recent-grid">
+                @for (segment of timelineItems(); track timelineTrackKey($index, segment)) {
+                  <button
+                    type="button"
+                    class="recording-card"
+                    [class.snapshot]="mediaKind(segment) === 'snapshot'"
+                    [class.pending]="isOptimisticMediaItem(segment)"
+                    [class.archive-failed]="isArchiveFailed(segment)"
+                    [class.unplayable]="!canOpenMediaItem(segment)"
+                    (click)="openReplay(segment)"
+                    [disabled]="!canOpenMediaItem(segment)"
+                  >
+                    <span class="media-thumb">
+                      @if (mediaKind(segment) === 'snapshot') {
+                        <img [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" loading="lazy" />
+                      } @else {
+                        <video [src]="mediaVideoPreviewUrl(segment)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                      }
+                    </span>
+                    <span class="card-topline">
+                      <span>{{ mediaKindLabel(segment) | translate }}</span>
+                      <span>{{ bytesLabel(segment.size_bytes) }}</span>
+                    </span>
+                    <strong>{{ displayMediaTime(segment) }}</strong>
+                    <span>{{ segment.stream_kind }} / {{ mediaDurationLabel(segment) | translate }}</span>
+                    <span>{{ mediaStatusLabel(segment) | translate }}</span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">{{ 'No recordings or snapshots yet.' | translate }}</div>
+            }
+          </section>
+
+          @if (loading() || response() || error()) {
+            <section #searchResults class="results-workbench search-results-workbench" data-testid="harbor-assistant-camera-search-results">
+              @if (response(); as result) {
+                <div class="results-header">
+                  <div>
+                    <h2>{{ 'Search results' | translate }}</h2>
+                    <p>{{ form.controls.query.value }}</p>
+                  </div>
+                  <div class="result-summary">
+                    <strong>{{ result.total_matches }}</strong>
+                    <span>{{ 'results' | translate }}</span>
+                    <span>{{ searchStatusLabel(result) | translate }}</span>
+                    @if (result.degraded) {
+                      <span>{{ userFacingSearchNotice(result.degraded_reason || '') | translate }}</span>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="results-header">
+                  <div>
+                    <h2>{{ 'Search results' | translate }}</h2>
+                    <p>{{ form.controls.query.value }}</p>
+                  </div>
+                  <div class="result-summary">
+                    <strong>{{ loading() ? ('Searching' | translate) : ('0' | translate) }}</strong>
+                    <span>{{ loading() ? ('Searching' | translate) : ('Error' | translate) }}</span>
+                  </div>
+                </div>
+              }
+
+              @if (loading()) {
+                <section class="results-skeleton" aria-live="polite">
+                  <div class="skeleton-card"></div>
+                  <div class="skeleton-card tall"></div>
+                  <div class="skeleton-card"></div>
+                </section>
+              } @else if (response(); as result) {
+                @if (noResults()) {
+                  <div class="empty-state filter-empty-state">
+                    <span>{{ emptyMessage(result) | translate }}</span>
+                    @if (availableResultFilters(result).length > 0) {
+                      <div class="empty-actions">
+                        @for (filter of availableResultFilters(result); track filter) {
+                          <button mat-stroked-button type="button" (click)="switchFilter(filter)">
+                            {{ filterLabel(filter) | translate }}
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <section class="results-waterfall" aria-live="polite">
+                    @for (item of waterfallItems(); track resultTrackKey($index, item)) {
+                      <mat-card class="result-card" [ngClass]="item.kind" tabindex="0" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
+                        @if (item.kind === 'image') {
+                          <div class="image-frame">
+                            <img [src]="item.previewUrl" [alt]="item.hit.title" loading="lazy" />
+                          </div>
+                        }
+                        @if (item.kind === 'video') {
+                          <div class="video-frame">
+                            <video [src]="videoPreviewUrl(item)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                            <span class="play-chip">{{ 'Play' | translate }}</span>
+                          </div>
+                        }
+
+                        <mat-card-content>
+                          <div class="card-topline">
+                            <span>{{ kindLabel(item) | translate }}</span>
+                          </div>
+                          <h2>{{ item.hit.title }}</h2>
+                          <p>{{ summary(item.hit) }}</p>
+                        </mat-card-content>
+                      </mat-card>
+                    }
+                  </section>
+                }
+              } @else if (error()) {
+                <div class="empty-state error">{{ error() | translate }}</div>
+              }
+            </section>
+          }
+        </main>
+
+        <aside class="assistant-panel">
+          <div class="assistant-header">
+            <h2>{{ 'Event search' | translate }}</h2>
+          </div>
+
+          <form class="assistant-form" [formGroup]="form" (ngSubmit)="search()">
+            <div class="query-composer">
+              <textarea
+                class="query-input"
+                rows="5"
+                aria-label="Camera event search query"
+                formControlName="query"
+                [placeholder]="'Try asking: who is pouring beer?' | translate"
+              ></textarea>
+              <div class="query-actions">
+                <button mat-flat-button color="primary" type="submit" [disabled]="loading() || form.invalid">
+                  {{ 'Search recordings' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="prompt-strip" aria-label="Camera event question examples">
+              <span>{{ 'Try' | translate }}</span>
+              @for (suggestion of promptSuggestions; track suggestion.query) {
+                <button type="button" class="suggestion-chip" (click)="usePromptSuggestion(suggestion)">
+                  {{ suggestion.label | translate }}
+                </button>
+              }
+            </div>
+
+            <div class="scope-note">{{ 'Search scope' | translate }}: {{ searchScopeLabel() | translate }}</div>
+
+            <mat-button-toggle-group class="mode-toggle" formControlName="filter" aria-label="Camera event result filter">
+              <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="images">{{ 'Image' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="videos">{{ 'Video' | translate }}</mat-button-toggle>
+            </mat-button-toggle-group>
+
+            <div class="scope-fields time-range-summary">
+              <span class="scope-fields-label">{{ 'Time range' | translate }}</span>
+              <button mat-stroked-button type="button" class="time-range-button" (click)="openTimeRangeDialog()">
+                {{ timeRangeLabel() }}
+              </button>
+              @if (hasTimeRange()) {
+                <button mat-button type="button" (click)="clearTimeRange()">
+                  {{ 'Clear' | translate }}
+                </button>
+              }
+            </div>
+          </form>
+
+          @if (loading()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          }
+          @if (error()) {
+            <div class="notice error compact">{{ error() | translate }}</div>
+          }
+          @if (response(); as result) {
+            @if (result.warnings.length > 0 || result.blockers.length > 0) {
+              <div class="notice warning compact">
+                @for (warning of result.warnings; track warning) {
+                  <span>{{ userFacingSearchNotice(warning) | translate }}</span>
+                }
+                @for (blocker of result.blockers; track blocker) {
+                  <span>{{ userFacingSearchNotice(blocker) | translate }}</span>
+                }
+              </div>
+            }
+
+            @if (embeddingUnavailable(result)) {
+              <div class="notice warning compact embedding-action">
+                <span>{{ 'Vector search model is unavailable. Open Harbor Assistant Settings / AI Settings / Models to select or install a model, then re-index the knowledge base.' | translate }}</span>
+                <button mat-stroked-button type="button" (click)="openHarborAssistantModels()">{{ 'Open model settings' | translate }}</button>
+              </div>
+            }
+          }
+        </aside>
+      </section>
+    </mat-tab>
+  </mat-tab-group>
+</section>
