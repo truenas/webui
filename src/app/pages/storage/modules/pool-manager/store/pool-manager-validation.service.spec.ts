@@ -915,6 +915,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).not.toContainEqual(expect.objectContaining({
           step: PoolCreationWizardStep.Metadata,
           severity: PoolCreationSeverity.Warning,
+          text: expect.stringContaining('redundancy is lower'),
         }));
       });
     });
@@ -1004,7 +1005,7 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
-    describe('when special has only empty vdevs (unreachable in practice)', () => {
+    describe('when special has only empty vdev arrays', () => {
       let spectator: SpectatorService<PoolManagerValidationService>;
       const createService = createServiceFactory({
         service: PoolManagerValidationService,
@@ -1035,11 +1036,12 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('suppresses the redundancy warning rather than treating Infinity as a width', async () => {
+      it('suppresses the redundancy warning when no real vdev disks are present', async () => {
         const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
         expect(errors).not.toContainEqual(expect.objectContaining({
           step: PoolCreationWizardStep.Metadata,
           severity: PoolCreationSeverity.Warning,
+          text: expect.stringContaining('redundancy is lower'),
         }));
       });
     });
