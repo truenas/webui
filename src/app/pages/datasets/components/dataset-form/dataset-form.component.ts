@@ -16,6 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -308,9 +309,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection().canCreateSmb) {
       return of(dataset);
     }
+    const isMultiprotocol = this.nameAndOptionsSection().form.value.share_type === DatasetPreset.Multiprotocol;
     return this.api.call('sharing.smb.create', [{
       name: datasetPresetFormValue.smb_name,
       path: `${mntPath}/${dataset.id}`,
+      ...(isMultiprotocol ? { purpose: SmbSharePurpose.MultiProtocolShare } : {}),
     }]).pipe(
       switchMap(() => of(dataset)),
       catchError((error: unknown) => this.rollBack(dataset, error)),
