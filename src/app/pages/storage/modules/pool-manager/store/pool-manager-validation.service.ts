@@ -82,30 +82,30 @@ function parityFromLayoutWidth(
 }
 
 /**
- * Parity for a topology category, accounting for the fact that manual disk
- * selection commits `vdevs` without updating `width` on the category. In that
- * case we fall back to the smallest vdev's disk count, which yields the
- * worst-case parity across the configured vdevs — the conservative choice for
- * a warning. For layout-determined parity (Stripe/RAIDZ/dRAID) the fallback is
- * harmless. Returns null when neither layout nor an effective width can be
- * resolved.
+ * Parity for a topology category. The actual disk count in `vdevs` takes
+ * precedence over the configured `width`: manual disk selection updates
+ * `vdevs` without re-syncing `width` on the category, so `width` can be stale
+ * (e.g. width=2 from a prior automated selection, then a 3rd disk added
+ * manually). When vdevs are present we use the smallest vdev's disk count,
+ * which yields the worst-case parity across configured vdevs — the
+ * conservative choice for a warning. Width is the source of truth only when
+ * vdevs haven't been generated yet. For layout-determined parity
+ * (Stripe/RAIDZ/dRAID) this choice is harmless. Returns null when neither a
+ * layout nor an effective width can be resolved.
  */
 function parityFromCategory(category: PoolManagerTopologyCategory): number | null {
   if (!category.layout) {
     return null;
   }
   let effectiveWidth: number | null = null;
-  if (category.width != null) {
+  // A committed vdev should always carry at least one disk; filtering empty
+  // vdev arrays defensively avoids Infinity (vdevs all empty) or a phantom
+  // width=0 being passed to layoutParity.
+  const nonEmptyVdevs = category.vdevs.filter((vdev) => vdev.length > 0);
+  if (nonEmptyVdevs.length) {
+    effectiveWidth = nonEmptyVdevs.reduce((min, vdev) => Math.min(min, vdev.length), Infinity);
+  } else if (category.width != null) {
     effectiveWidth = category.width;
-  } else {
-    // Filter out empty vdev arrays before computing the min: a committed vdev
-    // should always carry at least one disk, but defensively skipping them
-    // avoids Infinity (no real vdevs) or a phantom width=0 (only empty vdevs)
-    // being passed to layoutParity.
-    const nonEmptyVdevs = category.vdevs.filter((vdev) => vdev.length > 0);
-    if (nonEmptyVdevs.length) {
-      effectiveWidth = nonEmptyVdevs.reduce((min, vdev) => Math.min(min, vdev.length), Infinity);
-    }
   }
   return parityFromLayoutWidth(category.layout, effectiveWidth);
 }
