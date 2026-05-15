@@ -12,6 +12,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { catchError, lastValueFrom, of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -42,7 +44,7 @@ const adminApiBase = '/featured-photos-api/admin';
 @Component({
   selector: 'ix-featured-photos-admin',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, PageContentComponent, PageHeaderComponent],
   templateUrl: './featured-photos-admin.component.html',
   styleUrls: ['./featured-photos-admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
