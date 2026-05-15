@@ -28,7 +28,9 @@
                 [required]="true"
                 [nodeProvider]="fileNodeProvider"
                 [tooltip]="helptext.cd_path_tooltip | translate"
-              ></ix-explorer>
+              >
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              </ix-explorer>
             }
             @case (VmDeviceType.Disk) {
               @if (isNew) {
@@ -137,7 +139,9 @@
                 [required]="true"
                 [nodeProvider]="fileNodeProvider"
                 [tooltip]="helptext.raw_file_path_tooltip | translate"
-              ></ix-explorer>
+              >
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              </ix-explorer>
 
               <ix-select
                 formControlName="sectorsize"

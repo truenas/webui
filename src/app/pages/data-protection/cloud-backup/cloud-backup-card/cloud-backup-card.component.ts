@@ -17,7 +17,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
-import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -218,7 +218,7 @@ export class CloudBackupCardComponent implements OnInit {
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.updatedCount.update((count) => count + 1);
     this.api
-      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
+      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

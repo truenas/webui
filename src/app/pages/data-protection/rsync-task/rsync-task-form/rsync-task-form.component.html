@@ -11,7 +11,9 @@
             [tooltip]="helptext.rsyncPathTooltip | translate"
             [required]="true"
             [nodeProvider]="treeNodeProvider"
-          ></ix-explorer>
+          >
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          </ix-explorer>
 
           <ix-user-combobox
             formControlName="user"

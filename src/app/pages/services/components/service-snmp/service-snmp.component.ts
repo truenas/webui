@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceSnmp } from 'app/helptext/services/components/service-snmp';
-import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -128,7 +127,7 @@ export class ServiceSnmpComponent implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.api.call('snmp.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Service configuration saved'));

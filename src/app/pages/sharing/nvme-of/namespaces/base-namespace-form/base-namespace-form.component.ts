@@ -18,6 +18,9 @@ import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -69,6 +72,7 @@ const typeOptions: Option[] = [
     IxFieldsetComponent,
     IxButtonGroupComponent,
     IxInputComponent,
+    ExplorerCreateDatasetComponent,
     ExplorerCreateZvolComponent,
     RequiresRolesDirective,
   ],

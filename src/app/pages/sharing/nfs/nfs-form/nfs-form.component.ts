@@ -17,7 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -201,7 +201,7 @@ export class NfsFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const nfsShare = { ...this.form.value } as NfsShareUpdate;
+    const nfsShare = { ...this.form.value };
 
     if (!this.isEnterprise()) {
       delete nfsShare.expose_snapshots;

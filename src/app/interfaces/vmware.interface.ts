@@ -34,4 +34,4 @@ export interface VmwareSnapshot {
   state: VmwareState;
 }
 
-export type VmwareSnapshotUpdate = Omit<VmwareSnapshot, 'id'>;
+export type VmwareSnapshotUpdate = Omit<VmwareSnapshot, 'id' | 'state'>;
