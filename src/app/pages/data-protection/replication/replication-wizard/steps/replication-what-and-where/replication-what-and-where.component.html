@@ -32,7 +32,11 @@
           [required]="true"
           [rootNodes]="sourceDatasetsRootNodes"
           [nodeProvider]="sourceNodeProvider"
-        ></ix-explorer>
+        >
+          @if (isSourceLocal) {
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
       }
 
       @if (form.controls.recursive.enabled) {
@@ -101,7 +105,11 @@
           [required]="true"
           [rootNodes]="targetDatasetsRootNodes"
           [nodeProvider]="targetNodeProvider"
-        ></ix-explorer>
+        >
+          @if (isTargetLocal) {
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
       }
       @if (form.controls.encryption.enabled) {
         <ix-checkbox

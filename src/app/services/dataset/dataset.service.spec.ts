@@ -38,18 +38,21 @@ describe('DatasetService', () => {
         name: 'pool',
         path: 'pool',
         type: ExplorerNodeType.Directory,
+        isMountpoint: true,
         children: [
           {
             hasChildren: true,
             name: 'subpool',
             path: 'pool/subpool',
             type: ExplorerNodeType.Directory,
+            isMountpoint: true,
             children: [
               {
                 hasChildren: false,
                 name: 'subsub',
                 path: 'pool/subpool/subsub',
                 type: ExplorerNodeType.Directory,
+                isMountpoint: true,
                 children: [],
               },
             ],
@@ -60,6 +63,7 @@ describe('DatasetService', () => {
             name: 'anotherpool',
             path: 'pool/anotherpool',
             type: ExplorerNodeType.Directory,
+            isMountpoint: true,
           },
         ],
       },
