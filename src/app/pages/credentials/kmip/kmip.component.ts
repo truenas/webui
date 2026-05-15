@@ -13,7 +13,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
-import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -129,7 +128,7 @@ export class KmipComponent implements OnInit {
 
   protected onSubmit(): void {
     this.dialogService.jobDialog(
-      this.api.job('kmip.update', [this.form.value as KmipConfigUpdate]),
+      this.api.job('kmip.update', [this.form.value]),
       { title: this.translate.instant(helptextSystemKmip.jobDialog.title) },
     )
       .afterClosed()

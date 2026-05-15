@@ -289,6 +289,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationTimeout }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
+    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain("Registration wasn't completed in time");
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationFailed }));
     spectator.detectChanges();

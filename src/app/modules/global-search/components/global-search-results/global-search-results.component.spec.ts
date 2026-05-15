@@ -70,6 +70,81 @@ describe('GlobalSearchResultsComponent', () => {
     expect(searchProvider.select).toHaveBeenCalledWith(mockResults[0]);
   });
 
+  function stubRouterUrl(url: string): void {
+    Object.defineProperty(router, 'url', { value: url, configurable: true });
+  }
+
+  it('should NOT navigate when already on the target path', () => {
+    const mockResults: UiSearchableElement[] = [mockedUiElement];
+
+    spectator.setInput('results', mockResults);
+    spectator.detectChanges();
+
+    // Pretend the router is already on the entry's target path.
+    stubRouterUrl('/ui-section/item');
+
+    const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    spectator.click('.search-result');
+
+    expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to a sibling page when the prefix overlaps but the path is different', () => {
+    const sibling: UiSearchableElement = {
+      hierarchy: ['Sibling Page'],
+      section: GlobalSearchSection.Ui,
+      anchorRouterLink: ['/credentials', 'users', 'api-keys'],
+    };
+
+    spectator.setInput('results', [sibling]);
+    spectator.detectChanges();
+
+    // Currently on /credentials/users — without the wildcard guard, the
+    // startsWith fallback could mis-classify the sibling as a descendant.
+    stubRouterUrl('/credentials/users');
+
+    const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    spectator.click('.search-result');
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/credentials', 'users', 'api-keys']);
+  });
+
+  it('should NOT navigate when on a master-detail descendant of a wildcard path', () => {
+    const masterDetail: UiSearchableElement = {
+      hierarchy: ['Datasets'],
+      section: GlobalSearchSection.Ui,
+      anchorRouterLink: ['/datasets', '*'],
+    };
+
+    spectator.setInput('results', [masterDetail]);
+    spectator.detectChanges();
+
+    stubRouterUrl('/datasets/tank/child');
+
+    const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    spectator.click('.search-result');
+
+    expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should strip a trailing wildcard from the navigation array before calling router.navigate', () => {
+    const masterDetail: UiSearchableElement = {
+      hierarchy: ['Datasets'],
+      section: GlobalSearchSection.Ui,
+      anchorRouterLink: ['/datasets', '*'],
+    };
+
+    spectator.setInput('results', [masterDetail]);
+    spectator.detectChanges();
+
+    stubRouterUrl('/dashboard');
+
+    const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    spectator.click('.search-result');
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/datasets']);
+  });
+
   it('should open link in new window on element clicked if "targetHref" specified', () => {
     const mockResults: UiSearchableElement[] = [mockedHelpElement];
 
@@ -167,8 +242,9 @@ describe('GlobalSearchResultsComponent', () => {
 
   it('should remove element from recent searches and update local storage', () => {
     const mockResults: UiSearchableElement[] = [mockedRecentSearchesElement];
+    const window = spectator.inject<Window>(WINDOW);
+    (window.localStorage.getItem as jest.Mock).mockReturnValue(JSON.stringify(mockResults));
 
-    localStorage.setItem('recentSearches', JSON.stringify(mockResults));
     spectator.setInput('results', mockResults);
     spectator.detectChanges();
 
@@ -177,8 +253,7 @@ describe('GlobalSearchResultsComponent', () => {
 
     spectator.click(removeIcon);
 
-    const updatedResults = JSON.parse(localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
-    expect(updatedResults).toHaveLength(0);
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('recentSearches', JSON.stringify([]));
     expect(recentSearchRemovedSpy).toHaveBeenCalled();
   });
 });

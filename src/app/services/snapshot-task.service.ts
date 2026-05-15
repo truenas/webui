@@ -33,7 +33,7 @@ export class SnapshotTaskService {
    */
   checkUpdateWillChangeRetention(
     taskId: number,
-    update: PeriodicSnapshotTaskUpdate,
+    update: Partial<PeriodicSnapshotTaskUpdate>,
   ): Observable<string[]> {
     // cspell:ignore snapshottask
     return this.api.call('pool.snapshottask.update_will_change_retention_for', [taskId, update]).pipe(

@@ -66,9 +66,13 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
 
     this.cdr.markForCheck();
 
+    // Auto-close the search overlay after a selection, but DO NOT refocus
+    // <main>. The highlight service has already focused the chosen element
+    // (which may be a mat-menu-item we just opened); moving focus to main
+    // would yank it out of the menu and trigger mat-menu's auto-close.
     this.searchProvider.selectionChanged$
       .pipe(take(1), delay(searchDelayConst), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.detachOverlayAndFocusMainContent());
+      .subscribe(() => this.detachOverlay());
   }
 
   @HostListener('document:keydown.escape', ['$event'])

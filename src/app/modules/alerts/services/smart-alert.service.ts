@@ -3,7 +3,7 @@ import { Injectable, inject, isDevMode } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  distinctUntilChanged, filter, first, switchMap, takeUntil, tap, timeout,
+  distinctUntilChanged, filter, first, from, of, switchMap, takeUntil, tap, timeout,
 } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -262,12 +262,17 @@ export class SmartAlertService {
     const taskName = this.extractTaskName(alert);
     const confirmationMessage = this.translate.instant('Run «{name}» now?', { name: taskName });
     const relatedRoute = this.getRelatedRouteForAlert(alert);
+    const currentUrl = this.router.url.split('?')[0].split('#')[0];
+    const navigation$ = relatedRoute && currentUrl !== relatedRoute
+      ? from(this.router.navigateByUrl(relatedRoute))
+      : of(true);
 
-    this.dialogService.confirm({
-      title: this.translate.instant('Run Now'),
-      message: confirmationMessage,
-      hideCheckbox: true,
-    }).pipe(
+    navigation$.pipe(
+      switchMap(() => this.dialogService.confirm({
+        title: this.translate.instant('Run Now'),
+        message: confirmationMessage,
+        hideCheckbox: true,
+      })),
       filter(Boolean),
       switchMap(() => {
         // Extract task ID from apiParams (should be the task ID)

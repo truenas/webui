@@ -7,7 +7,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { datasetsRootNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -21,7 +20,6 @@ import {
   SnapshotIncludeExclude,
   snapshotIncludeExcludeOptions,
 } from 'app/interfaces/cloud-backup.interface';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -108,10 +106,6 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   protected readonly slashRootNode: ExplorerNodeData = slashRootNode;
 
   protected isLoading = signal(false);
-
-  createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   get backupMntPath(): string {
     return this.data.backup.absolute_paths ? this.data.backup.path : '/';

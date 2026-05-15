@@ -72,7 +72,10 @@ export class AdvancedSettingsComponent {
   private license = inject(LicenseService);
   private searchDirectives = inject(UiSearchDirectivesService);
 
-  protected readonly isSystemLicensed = toSignal(this.api.call('system.security.info.fips_available'));
+  // Re-uses LicenseService.hasSystemSecurity$ so the global search filter and
+  // this card share a single `system.security.info.fips_available` call
+  // (shareReplay) instead of each running their own subscription.
+  protected readonly isSystemLicensed = toSignal(this.license.hasSystemSecurity$);
   protected readonly Role = Role;
   protected readonly searchableElements = advancedSettingsElements;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));

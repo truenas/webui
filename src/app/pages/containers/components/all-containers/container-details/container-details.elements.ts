@@ -10,26 +10,32 @@ export const containerDetailsElements = {
     generalInfo: {
       hierarchy: [T('General Info')],
       anchor: 'general-info',
+      inset: true,
     },
     usbDevices: {
       hierarchy: [T('USB Devices')],
       anchor: 'usb-devices',
+      inset: true,
     },
     gpuDevices: {
       hierarchy: [T('GPU Devices')],
       anchor: 'gpu-devices',
+      inset: true,
     },
     disks: {
       hierarchy: [T('Disks')],
       anchor: 'disks',
+      inset: true,
     },
     nic: {
       hierarchy: [T('NIC')],
       anchor: 'nic',
+      inset: true,
     },
     tools: {
       hierarchy: [T('Tools')],
       anchor: 'tools',
+      inset: true,
     },
   },
   visibleTokens: [GlobalSearchVisibleToken.Vms],

@@ -13,7 +13,9 @@
           [tooltip]="'Select the host directory to mount inside the container' | translate"
           [required]="true"
           [nodeProvider]="fileProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer-create-dataset></ix-explorer-create-dataset>
+        </ix-explorer>
 
         <ix-input
           formControlName="target"

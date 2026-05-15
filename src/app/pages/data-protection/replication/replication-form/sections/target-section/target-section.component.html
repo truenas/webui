@@ -6,7 +6,11 @@
     [rootNodes]="emptyRootNode"
     [tooltip]="helptext.targetDatasetTooltip | translate"
     [nodeProvider]="nodeProvider()"
-  ></ix-explorer>
+  >
+    @if (isLocal()) {
+      <ix-explorer-create-dataset></ix-explorer-create-dataset>
+    }
+  </ix-explorer>
   <ix-select
     formControlName="readonly"
     [label]="'Destination Dataset Read-only Policy' | translate"
