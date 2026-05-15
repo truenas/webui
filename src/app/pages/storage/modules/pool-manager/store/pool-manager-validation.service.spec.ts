@@ -879,6 +879,46 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
+    describe('when special has only empty vdevs (unreachable in practice)', () => {
+      let spectator: SpectatorService<PoolManagerValidationService>;
+      const createService = createServiceFactory({
+        service: PoolManagerValidationService,
+        providers: [
+          mockProvider(PoolManagerStore, {
+            ...sharedStoreMock,
+            topology$: of({
+              [VDevType.Data]: {
+                layout: CreateVdevLayout.Raidz2,
+                width: 4,
+                vdevs: [[{ devname: 'sda' }]],
+              },
+              [VDevType.Special]: {
+                layout: CreateVdevLayout.Mirror,
+                width: null,
+                vdevs: [[]],
+              },
+            }),
+          }),
+          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          provideMockStore({
+            selectors: [{ selector: selectHasEnclosureSupport, value: true }],
+          }),
+        ],
+      });
+
+      beforeEach(() => {
+        spectator = createService();
+      });
+
+      it('suppresses the redundancy warning rather than treating Infinity as a width', async () => {
+        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+        expect(errors).not.toContainEqual(expect.objectContaining({
+          step: PoolCreationWizardStep.Metadata,
+          severity: PoolCreationSeverity.Warning,
+        }));
+      });
+    });
+
     describe('when special parity matches data parity', () => {
       let spectator: SpectatorService<PoolManagerValidationService>;
       const createService = createServiceFactory({
