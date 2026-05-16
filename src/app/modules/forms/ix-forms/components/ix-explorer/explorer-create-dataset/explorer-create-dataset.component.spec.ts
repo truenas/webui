@@ -44,6 +44,7 @@ describe('ExplorerCreateDatasetComponent', () => {
     }) as TreeNode<ExplorerNodeData>),
 
     refreshNode: jest.fn(),
+    refreshNodeByPath: jest.fn(),
   } as unknown as IxExplorerComponent;
 
   const fakeControl = {
@@ -79,22 +80,31 @@ describe('ExplorerCreateDatasetComponent', () => {
   const datasetProps = { comments: 'test' };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
+    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
+      isMountpoint: true,
+      path: '/mnt/test',
+    }) as TreeNode<ExplorerNodeData>);
+
     spectator = createComponent({
       props: {
         datasetProperties: datasetProps,
       },
     });
 
-    jest.spyOn(fakeControl.control, 'setValue');
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
+    // Seed the form to trigger the component's valueChanges subscription.
     fakeControl.control.setValue('/mnt/test');
+
+    // Spy after the seed so setup mutations don't inflate the call count.
+    jest.spyOn(fakeControl.control, 'setValue');
   });
 
   it('opens CreateDatasetDialog when Create Dataset button is pressed', async () => {
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBeFalsy();
+    expect(await createButton.isDisabled()).toBe(false);
 
     await createButton.click();
 
@@ -115,7 +125,7 @@ describe('ExplorerCreateDatasetComponent', () => {
     spectator.detectChanges();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBeTruthy();
+    expect(await createButton.isDisabled()).toBe(true);
   });
 
   it('disables Create Dataset button when no mountpoint is selected', async () => {
@@ -127,6 +137,79 @@ describe('ExplorerCreateDatasetComponent', () => {
     spectator.detectChanges();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+    expect(await createButton.isDisabled()).toBe(true);
+  });
+
+  it('disables Create Dataset button when selected path is outside /mnt/ (e.g. zvol device path)', async () => {
+    // Reproduces the rejected "Parent dataset /dev/zvol/<pool> not found" case: the file
+    // node provider can mark zvol device paths as mountpoints, but pool.dataset.create
+    // only accepts real dataset names ("tank", "tank/foo"), not device paths.
+    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
+      isMountpoint: true,
+      path: '/dev/zvol/dozer',
+    }) as TreeNode<ExplorerNodeData>);
+    fakeControl.control.setValue('/dev/zvol/dozer');
+    spectator.detectChanges();
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
     expect(await createButton.isDisabled()).toBeTruthy();
+  });
+
+  describe('multi-select mode', () => {
+    it('enables Create Dataset button when exactly one item is selected, even after lastSelectedNode is cleared', async () => {
+      // The explorer clears lastSelectedNode when the most recently clicked node is deselected
+      // (e.g. user picked A then B, then unchecks B). The form value still has [A], so the
+      // button must be enabled.
+      fakeExplorer.lastSelectedNode.set(null);
+      fakeControl.control.setValue(['/mnt/test']);
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createButton.isDisabled()).toBe(false);
+    });
+
+    it('disables Create Dataset button when multiple items are selected', async () => {
+      fakeControl.control.setValue(['/mnt/test', '/mnt/other']);
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createButton.isDisabled()).toBe(true);
+    });
+
+    it('disables Create Dataset button when no items are selected', async () => {
+      fakeControl.control.setValue([]);
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createButton.isDisabled()).toBe(true);
+    });
+
+    it('opens dialog with parentId derived from array form value, refreshes the parent node, and replaces it in the array', async () => {
+      // In multi-select mode the explorer clears lastSelectedNode after deselect. Verify the
+      // parentId is still derived from the form value, the parent tree node is refreshed by
+      // path, and setValue replaces the parent path with the new dataset's mountpoint without
+      // clobbering the array.
+      fakeExplorer.lastSelectedNode.set(null);
+      fakeControl.control.setValue(['/mnt/test']);
+      spectator.detectChanges();
+
+      spectator.inject<MatDialog>(MatDialog).open = jest.fn(() => ({
+        afterClosed: () => of({ mountpoint: '/mnt/test/new' }),
+      })) as unknown as MatDialog['open'];
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      await createButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
+        data: {
+          parentId: 'test',
+          dataset: datasetProps,
+        },
+      });
+
+      expect(fakeExplorer.refreshNodeByPath).toHaveBeenCalledWith('/mnt/test');
+      expect(fakeExplorer.refreshNode).not.toHaveBeenCalled();
+      expect(fakeControl.control.setValue).toHaveBeenCalledWith(['/mnt/test/new']);
+    });
   });
 });

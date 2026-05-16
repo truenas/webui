@@ -19,7 +19,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -336,7 +336,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
     this.api
-      .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled } as CloudSyncTaskUpdate])
+      .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

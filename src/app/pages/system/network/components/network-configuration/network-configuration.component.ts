@@ -14,7 +14,6 @@ import { helptextNetworkConfiguration } from 'app/helptext/network/configuration
 import {
   NetworkConfiguration,
   NetworkConfigurationActivity,
-  NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -364,7 +363,7 @@ export class NetworkConfigurationComponent implements OnInit {
     };
 
     this.isFormLoading.set(true);
-    this.api.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
+    this.api.call('network.configuration.update', [params])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

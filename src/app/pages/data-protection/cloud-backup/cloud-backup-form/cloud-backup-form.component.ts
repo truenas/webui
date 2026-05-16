@@ -24,6 +24,7 @@ import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-select
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -58,6 +59,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     CloudCredentialsSelectComponent,
     IxSelectComponent,
     IxInputComponent,
@@ -151,7 +153,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly helptext = helptextCloudBackup;
   readonly storjAccountUrl = 'https://www.storj.io/get-started';
-  readonly documentationUrl = 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/';
+  readonly documentationUrl = 'https://www.truenas.com/docs/scale/dataprotection/truecloud/truecloudtasks/';
 
   constructor() {
     const slideInRef = this.slideInRef;

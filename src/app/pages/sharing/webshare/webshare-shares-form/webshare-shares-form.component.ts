@@ -10,11 +10,9 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
-import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -69,10 +67,6 @@ export interface WebShareFormData {
 export class WebShareSharesFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly helptext = helptextSharingWebshare;
-
-  createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Generic,
-  };
 
   protected isFormLoading = signal(true);
   protected webShares = signal<WebShare[]>([]);

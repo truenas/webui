@@ -11,7 +11,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -214,7 +214,7 @@ export class CloudBackupListComponent {
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.api
-      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
+      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.dataProvider().load(),

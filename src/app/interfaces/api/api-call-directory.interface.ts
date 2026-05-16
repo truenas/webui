@@ -312,7 +312,7 @@ export interface ApiCallDirectory {
   'acme.dns.authenticator.create': { params: [CreateDnsAuthenticator]; response: DnsAuthenticator };
   'acme.dns.authenticator.delete': { params: [id: number]; response: boolean };
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
-  'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
+  'acme.dns.authenticator.update': { params: [number, Partial<UpdateDnsAuthenticator>]; response: DnsAuthenticator };
 
   // Alert
   'alert.dismiss': { params: string[]; response: void };
@@ -323,7 +323,7 @@ export interface ApiCallDirectory {
 
   // Alert Classes
   'alertclasses.config': { params: void; response: AlertClasses };
-  'alertclasses.update': { params: [AlertClassesUpdate]; response: AlertClasses };
+  'alertclasses.update': { params: [Partial<AlertClassesUpdate>]; response: AlertClasses };
   'alertservice.create': { params: [AlertServiceEdit]; response: AlertService };
   'alertservice.delete': { params: [number]; response: boolean };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
@@ -350,7 +350,7 @@ export interface ApiCallDirectory {
   // App/Docker Registry
   'app.registry.create': { params: [DockerRegistryPayload]; response: DockerRegistry };
   'app.registry.delete': { params: [number]; response: null };
-  'app.registry.update': { params: [number, DockerRegistryPayload]; response: DockerRegistry };
+  'app.registry.update': { params: [number, Partial<DockerRegistryPayload>]; response: DockerRegistry };
   'app.registry.get_instance': { params: [number]; response: DockerRegistry };
   'app.registry.query': { params: QueryParams<DockerRegistryPayload>; response: DockerRegistry[] };
 
@@ -362,7 +362,7 @@ export interface ApiCallDirectory {
   // Audit
   'audit.config': { params: void; response: AuditConfig };
   'audit.query': { params: [AuditQueryParams]; response: AuditEntry[] };
-  'audit.update': { params: [AuditConfig]; response: AuditEntry[] };
+  'audit.update': { params: [Partial<AuditConfig>]; response: AuditEntry[] };
   'audit.download_report': { params: [{ report_name?: string }]; response: string[] };
 
   // Auth
@@ -377,7 +377,7 @@ export interface ApiCallDirectory {
   'auth.terminate_other_sessions': { params: void; response: void };
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
-  'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
+  'auth.twofactor.update': { params: [Partial<GlobalTwoFactorConfigUpdate>]; response: GlobalTwoFactorConfig };
 
   // Boot
   'boot.detach': { params: [disk: string]; response: void };
@@ -394,7 +394,7 @@ export interface ApiCallDirectory {
   // Catalog
   'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
   'catalog.trains': { params: void; response: string[] };
-  'catalog.update': { params: [CatalogUpdate]; response: CatalogConfig };
+  'catalog.update': { params: [Partial<CatalogUpdate>]; response: CatalogConfig };
   'catalog.config': { params: void; response: CatalogConfig };
 
   // Certificate
@@ -411,7 +411,7 @@ export interface ApiCallDirectory {
   'cloud_backup.list_snapshot_directory': { params: CloudBackupSnapshotDirectoryParams; response: CloudBackupSnapshotDirectoryListing[] };
   'cloud_backup.transfer_setting_choices': { params: void; response: CloudsyncTransferSetting[] };
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
-  'cloud_backup.update': { params: [id: number, update: CloudBackupUpdate]; response: CloudBackup };
+  'cloud_backup.update': { params: [id: number, update: Partial<CloudBackupUpdate>]; response: CloudBackup };
 
   // CloudSync
   'cloudsync.abort': { params: [id: number]; response: boolean };
@@ -429,7 +429,7 @@ export interface ApiCallDirectory {
   'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
-  'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
+  'cloudsync.update': { params: [id: number, task: Partial<CloudSyncTaskUpdate>]; response: CloudSyncTask };
 
   // Core
   'core.ping': { params: void; response: 'pong' };
@@ -447,7 +447,7 @@ export interface ApiCallDirectory {
   'cronjob.delete': { params: [id: number]; response: boolean };
   'cronjob.query': { params: QueryParams<Cronjob>; response: Cronjob[] };
   'cronjob.run': { params: [id: number]; response: void };
-  'cronjob.update': { params: [id: number, update: CronjobUpdate]; response: Cronjob };
+  'cronjob.update': { params: [id: number, update: Partial<CronjobUpdate>]; response: Cronjob };
 
   // Device
   'device.get_info': { params: [{ type: DeviceType }]; response: Device[] };
@@ -472,7 +472,7 @@ export interface ApiCallDirectory {
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.unlock_sed': { params: [params: { name: string; password: string }]; response: void };
-  'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
+  'disk.update': { params: [id: string, update: Partial<DiskUpdate>]; response: Disk };
 
   // Enclosure
   'enclosure2.query': { params: void; response: Enclosure[] };
@@ -491,7 +491,7 @@ export interface ApiCallDirectory {
   'failover.status': { params: void; response: FailoverStatus };
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
-  'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
+  'failover.update': { params: [Partial<FailoverUpdate>]; response: FailoverConfig };
 
   // Fibre Channel
   'fc.capable': { params: []; response: boolean };
@@ -502,7 +502,7 @@ export interface ApiCallDirectory {
 
   // Fibre Channel Port
   'fcport.create': { params: [FibreChannelPortUpdate]; response: FibreChannelPort };
-  'fcport.update': { params: [id: number, update: FibreChannelPortUpdate]; response: FibreChannelPort };
+  'fcport.update': { params: [id: number, update: Partial<FibreChannelPortUpdate>]; response: FibreChannelPort };
   'fcport.delete': { params: [id: number]; response: true };
   'fcport.port_choices': { params: [include_used?: boolean]; response: FibreChannelPortChoices };
   'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
@@ -519,7 +519,7 @@ export interface ApiCallDirectory {
 
   // FTP
   'ftp.config': { params: void; response: FtpConfig };
-  'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };
+  'ftp.update': { params: [Partial<FtpConfigUpdate>]; response: FtpConfig };
 
   // Group
   'group.create': { params: [CreateGroup]; response: number };
@@ -527,7 +527,7 @@ export interface ApiCallDirectory {
   'group.get_group_obj': { params: [{ groupname?: string; gid?: number }]; response: DsUncachedGroup };
   'group.get_next_gid': { params: void; response: number };
   'group.query': { params: QueryParams<Group>; response: Group[] };
-  'group.update': { params: [number, UpdateGroup]; response: number };
+  'group.update': { params: [number, Partial<UpdateGroup>]; response: number };
 
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
@@ -555,7 +555,7 @@ export interface ApiCallDirectory {
   'interface.save_default_route': { params: string[]; response: void };
   'interface.save_network_config': { params: [{ ipv4gateway: string; nameserver1?: string; nameserver2?: string; nameserver3?: string }]; response: void };
   'interface.services_restarted_on_sync': { params: void; response: ServiceRestartedOnNetworkSync[] };
-  'interface.update': { params: [id: string, update: NetworkInterfaceUpdate]; response: NetworkInterface };
+  'interface.update': { params: [id: string, update: Partial<NetworkInterfaceUpdate>]; response: NetworkInterface };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.websocket_local_ip': { params: void; response: string };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
@@ -571,39 +571,39 @@ export interface ApiCallDirectory {
   'iscsi.auth.create': { params: [IscsiAuthAccessUpdate]; response: IscsiAuthAccess };
   'iscsi.auth.delete': { params: [id: number]; response: boolean };
   'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
-  'iscsi.auth.update': { params: [id: number, auth: IscsiAuthAccessUpdate]; response: IscsiAuthAccess };
+  'iscsi.auth.update': { params: [id: number, auth: Partial<IscsiAuthAccessUpdate>]; response: IscsiAuthAccess };
   'iscsi.extent.create': { params: [IscsiExtentUpdate]; response: IscsiExtent };
   'iscsi.extent.delete': { params: [id: number, remove: boolean, force: boolean]; response: boolean };
   'iscsi.extent.disk_choices': { params: void; response: Choices };
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
-  'iscsi.extent.update': { params: [id: number, update: IscsiExtentUpdate]; response: IscsiExtentUpdate };
+  'iscsi.extent.update': { params: [id: number, update: Partial<IscsiExtentUpdate>]; response: IscsiExtent };
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
   'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };
-  'iscsi.global.update': { params: [IscsiGlobalConfigUpdate]; response: IscsiGlobalConfig };
+  'iscsi.global.update': { params: [Partial<IscsiGlobalConfigUpdate>]; response: IscsiGlobalConfig };
   'iscsi.initiator.create': { params: [IscsiInitiatorGroupUpdate]; response: IscsiInitiatorGroup };
   'iscsi.initiator.delete': { params: [id: number]; response: boolean };
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };
-  'iscsi.initiator.update': { params: [id: number, initiator: IscsiInitiatorGroupUpdate]; response: IscsiInitiatorGroup };
+  'iscsi.initiator.update': { params: [id: number, initiator: Partial<IscsiInitiatorGroupUpdate>]; response: IscsiInitiatorGroup };
   'iscsi.portal.create': { params: [IscsiPortalUpdate]; response: IscsiPortal };
   'iscsi.portal.delete': { params: [number]; response: boolean };
   'iscsi.portal.listen_ip_choices': { params: void; response: Choices };
   'iscsi.portal.query': { params: QueryParams<IscsiPortal>; response: IscsiPortal[] };
-  'iscsi.portal.update': { params: [id: number, target: IscsiPortalUpdate]; response: IscsiPortal };
+  'iscsi.portal.update': { params: [id: number, target: Partial<IscsiPortalUpdate>]; response: IscsiPortal };
   'iscsi.target.create': { params: [IscsiTargetUpdate]; response: IscsiTarget };
   'iscsi.target.delete': { params: [id: number, force?: boolean, delete_extents?: boolean]; response: boolean };
   'iscsi.target.query': { params: QueryParams<IscsiTarget>; response: IscsiTarget[] };
-  'iscsi.target.update': { params: [id: number, target: IscsiTargetUpdate]; response: IscsiTarget };
+  'iscsi.target.update': { params: [id: number, target: Partial<IscsiTargetUpdate>]; response: IscsiTarget };
   'iscsi.targetextent.create': { params: [IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
-  'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
+  'iscsi.targetextent.update': { params: [id: number, extent: Partial<IscsiTargetExtentUpdate>]; response: IscsiTargetExtent };
   'iscsi.target.validate_name': { params: string[]; response: null | string };
 
   // Jbof
   'jbof.licensed': { params: void; response: number };
   'jbof.query': { params: [QueryParams<Jbof>]; response: Jbof[] };
   'jbof.create': { params: [JbofUpdate]; response: Jbof };
-  'jbof.update': { params: [id: number, update: JbofUpdate]; response: Jbof };
+  'jbof.update': { params: [id: number, update: Partial<JbofUpdate>]; response: Jbof };
   'jbof.delete': { params: [id: number, force?: boolean]; response: boolean };
 
   // Kerberos
@@ -612,12 +612,12 @@ export interface ApiCallDirectory {
   'kerberos.keytab.delete': { params: [id: number]; response: boolean };
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
   'kerberos.keytab.query': { params: QueryParams<KerberosKeytab>; response: KerberosKeytab[] };
-  'kerberos.keytab.update': { params: [id: number, update: KerberosKeytabUpdate]; response: KerberosKeytab };
+  'kerberos.keytab.update': { params: [id: number, update: Partial<KerberosKeytabUpdate>]; response: KerberosKeytab };
   'kerberos.realm.create': { params: [KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.delete': { params: [id: number]; response: boolean };
   'kerberos.realm.query': { params: QueryParams<KerberosRealm>; response: KerberosRealm[] };
-  'kerberos.realm.update': { params: [id: number, update: KerberosRealmUpdate]; response: KerberosRealm };
-  'kerberos.update': { params: [KerberosConfigUpdate]; response: KerberosConfig };
+  'kerberos.realm.update': { params: [id: number, update: Partial<KerberosRealmUpdate>]; response: KerberosRealm };
+  'kerberos.update': { params: [Partial<KerberosConfigUpdate>]; response: KerberosConfig };
 
   // Keychain credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
@@ -626,7 +626,7 @@ export interface ApiCallDirectory {
   'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
   'keychaincredential.remote_ssh_host_key_scan': { params: [RemoteSshScanParams]; response: string };
   'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: KeychainSshCredentials };
-  'keychaincredential.update': { params: [id: number, credential: KeychainCredentialUpdate]; response: KeychainCredential };
+  'keychaincredential.update': { params: [id: number, credential: Partial<KeychainCredentialUpdate>]; response: KeychainCredential };
   'keychaincredential.used_by': { params: [id: number]; response: KeychainCredentialUsedBy[] };
 
   // KMIP
@@ -642,12 +642,12 @@ export interface ApiCallDirectory {
   // Mail
   'mail.config': { params: void; response: MailConfig };
   'mail.local_administrator_email': { params: void; response: string | null };
-  'mail.update': { params: [MailConfigUpdate]; response: MailConfig };
+  'mail.update': { params: [Partial<MailConfigUpdate>]; response: MailConfig };
 
   // Network configuration
   'network.configuration.activity_choices': { params: void; response: MapOption[] };
   'network.configuration.config': { params: void; response: NetworkConfiguration };
-  'network.configuration.update': { params: [NetworkConfigurationUpdate]; response: NetworkConfiguration };
+  'network.configuration.update': { params: [Partial<NetworkConfigurationUpdate>]; response: NetworkConfiguration };
   'network.general.summary': { params: void; response: NetworkSummary };
 
   // NFS
@@ -656,20 +656,20 @@ export interface ApiCallDirectory {
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
   'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
-  'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
+  'nfs.update': { params: [Partial<NfsConfigUpdate>]; response: NfsConfig };
 
   // NVMe-oF
   'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
-  'nvmet.global.update': { params: [NvmeOfGlobalConfigUpdate]; response: NvmeOfGlobalConfig };
+  'nvmet.global.update': { params: [Partial<NvmeOfGlobalConfigUpdate>]; response: NvmeOfGlobalConfig };
 
   'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem, { extra: { verbose: boolean } }>; response: NvmeOfSubsystem[] };
   'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
-  'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
+  'nvmet.subsys.update': { params: [id: number, update: Partial<UpdateNvmeOfSubsystem>]; response: NvmeOfSubsystem };
   'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
 
   'nvmet.port.query': { params: QueryParams<NvmeOfPort>; response: NvmeOfPort[] };
   'nvmet.port.create': { params: [CreateNvmeOfPort]; response: NvmeOfPort };
-  'nvmet.port.update': { params: [id: number, update: UpdateNvmeOfPort]; response: NvmeOfPort };
+  'nvmet.port.update': { params: [id: number, update: Partial<UpdateNvmeOfPort>]; response: NvmeOfPort };
   'nvmet.port.delete': { params: [id: number, { force: boolean }?]; response: void };
 
   'nvmet.port_subsys.query': { params: QueryParams<SubsystemPortAssociation>; response: SubsystemPortAssociation[] };
@@ -678,7 +678,7 @@ export interface ApiCallDirectory {
 
   'nvmet.host.query': { params: QueryParams<NvmeOfHost>; response: NvmeOfHost[] };
   'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
-  'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
+  'nvmet.host.update': { params: [id: number, update: Partial<UpdateNvmeOfHost>]; response: NvmeOfHost };
   'nvmet.host.delete': { params: [id: number, { force: boolean }?]; response: void };
   'nvmet.host.generate_key': { params: GenerateNvmeHostParams; response: string };
   'nvmet.host.dhchap_dhgroup_choices': { params: void; response: string[] };
@@ -690,7 +690,7 @@ export interface ApiCallDirectory {
 
   'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace[] };
   'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
-  'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
+  'nvmet.namespace.update': { params: [id: number, update: Partial<UpdateNvmeOfNamespace>]; response: NvmeOfNamespace };
   'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
 
   'nvmet.port.transport_address_choices': { params: NvmeOfTransportParams; response: Choices };
@@ -713,7 +713,7 @@ export interface ApiCallDirectory {
   'pool.dataset.recommended_zvol_blocksize': { params: [pool: string]; response: DatasetRecordSize };
   'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
-  'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
+  'pool.dataset.update': { params: [id: string, update: Partial<DatasetUpdate>]; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
@@ -721,17 +721,17 @@ export interface ApiCallDirectory {
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.resilver.config': { params: void; response: ResilverConfig };
-  'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
+  'pool.resilver.update': { params: [Partial<ResilverConfigUpdate>]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreateScrubTask]; response: ScrubTask };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
   'pool.scrub.query': { params: QueryParams<ScrubTask>; response: ScrubTask[] };
-  'pool.scrub.update': { params: [id: number, params: CreateScrubTask]; response: ScrubTask };
+  'pool.scrub.update': { params: [id: number, params: Partial<CreateScrubTask>]; response: ScrubTask };
   'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number, options?: { fixate_removal_date: boolean }]; response: boolean };
   'pool.snapshottask.delete_will_change_retention_for': { params: [id: number]; response: Record<string, string[]> };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
-  'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
-  'pool.snapshottask.update_will_change_retention_for': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: Record<string, string[]> };
+  'pool.snapshottask.update': { params: [id: number, update: Partial<PeriodicSnapshotTaskUpdate>]; response: PeriodicSnapshotTask };
+  'pool.snapshottask.update_will_change_retention_for': { params: [id: number, update: Partial<PeriodicSnapshotTaskUpdate>]; response: Record<string, string[]> };
   'pool.upgrade': { params: [id: number]; response: boolean };
   'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
@@ -740,14 +740,14 @@ export interface ApiCallDirectory {
   'privilege.delete': { params: [id: number]; response: boolean };
   'privilege.query': { params: QueryParams<Privilege>; response: Privilege[] };
   'privilege.roles': { params: QueryParams<PrivilegeRole>; response: PrivilegeRole[] };
-  'privilege.update': { params: [id: number, update: PrivilegeUpdate]; response: Privilege };
+  'privilege.update': { params: [id: number, update: Partial<PrivilegeUpdate>]; response: Privilege };
 
   // RDMA
   'rdma.capable_protocols': { params: []; response: RdmaProtocolName[] };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
-  'replication.config.update': { params: [ReplicationConfigUpdate]; response: ReplicationConfig };
+  'replication.config.update': { params: [Partial<ReplicationConfigUpdate>]; response: ReplicationConfig };
   'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };
   'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
   'replication.delete': { params: [id: number]; response: boolean };
@@ -763,7 +763,7 @@ export interface ApiCallDirectory {
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
   'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
   'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
-  'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.update': { params: [number, Partial<UpdateReportingExporter>]; response: ReportingExporter };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
 
@@ -771,7 +771,7 @@ export interface ApiCallDirectory {
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
   'rsynctask.delete': { params: [id: number]; response: boolean };
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
-  'rsynctask.update': { params: [id: number, params: RsyncTaskUpdate]; response: RsyncTask };
+  'rsynctask.update': { params: [id: number, params: Partial<RsyncTaskUpdate>]; response: RsyncTask };
 
   // Service
   'service.query': { params: QueryParams<Service>; response: Service[] };
@@ -781,7 +781,7 @@ export interface ApiCallDirectory {
   'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
-  'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
+  'sharing.nfs.update': { params: [id: number, update: Partial<NfsShareUpdate>]; response: NfsShare };
   'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
@@ -792,35 +792,35 @@ export interface ApiCallDirectory {
   'sharing.webshare.create': { params: [WebShareUpdate]; response: WebShare };
   'sharing.webshare.delete': { params: [id: number]; response: boolean };
   'sharing.webshare.query': { params: QueryParams<WebShare>; response: WebShare[] };
-  'sharing.webshare.update': { params: [id: number, update: WebShareUpdate]; response: WebShare };
+  'sharing.webshare.update': { params: [id: number, update: Partial<WebShareUpdate>]; response: WebShare };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
   'smb.config': { params: void; response: SmbConfig };
   'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbStatus>]; response: SmbStatus[] };
   'smb.unixcharset_choices': { params: void; response: Choices };
-  'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
+  'smb.update': { params: [Partial<SmbConfigUpdate>]; response: SmbConfig };
 
   // SNMP
   'snmp.config': { params: void; response: SnmpConfig };
-  'snmp.update': { params: [SnmpConfigUpdate]; response: SnmpConfig };
+  'snmp.update': { params: [Partial<SnmpConfigUpdate>]; response: SnmpConfig };
 
   // SSH
   'ssh.bindiface_choices': { params: void; response: Choices };
   'ssh.config': { params: void; response: SshConfig };
-  'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
+  'ssh.update': { params: [Partial<SshConfigUpdate>]; response: SshConfig };
 
   // Static route
   'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
   'staticroute.delete': { params: [id: number]; response: boolean };
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
-  'staticroute.update': { params: [id: number, update: UpdateStaticRoute]; response: StaticRoute };
+  'staticroute.update': { params: [id: number, update: Partial<UpdateStaticRoute>]; response: StaticRoute };
 
   // Support
   'support.config': { params: void; response: SupportConfig };
   'support.is_available': { params: void; response: boolean };
   'support.is_available_and_enabled': { params: void; response: boolean };
-  'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
+  'support.update': { params: [Partial<SupportConfigUpdate>]; response: SupportConfig };
   'support.similar_issues': { params: SimilarIssuesParams; response: SimilarIssue[] };
   'support.attach_ticket_max_size': { params: void; response: number };
 
@@ -844,13 +844,13 @@ export interface ApiCallDirectory {
   'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
   'system.general.ui_restart': { params: void; response: void };
   'system.general.ui_v6address_choices': { params: void; response: Choices };
-  'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
+  'system.general.update': { params: [Partial<SystemGeneralConfigUpdate>]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
   'system.ntpserver.create': { params: [CreateNtpServer]; response: NtpServer };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
-  'system.ntpserver.update': { params: [id: number, params: CreateNtpServer]; response: NtpServer };
+  'system.ntpserver.update': { params: [id: number, params: Partial<CreateNtpServer>]; response: NtpServer };
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
@@ -862,11 +862,11 @@ export interface ApiCallDirectory {
 
   // Truecommand
   'truecommand.config': { params: void; response: TrueCommandConfig };
-  'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
+  'truecommand.update': { params: [Partial<UpdateTrueCommand>]; response: TrueCommandUpdateResponse };
 
   // Truenas Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
-  'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
+  'tn_connect.update': { params: [Partial<TruenasConnectUpdate>]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
   'tn_connect.ips_with_hostnames': { params: void; response: Record<string, string> };
@@ -899,11 +899,11 @@ export interface ApiCallDirectory {
   'ups.config': { params: void; response: UpsConfig };
   'ups.driver_choices': { params: void; response: Choices };
   'ups.port_choices': { params: void; response: string[] };
-  'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };
+  'ups.update': { params: [Partial<UpsConfigUpdate>]; response: UpsConfig };
 
   // User
   'user.create': { params: [UserUpdate]; response: User };
-  'user.update': { params: [id: number, update: UserUpdate]; response: User };
+  'user.update': { params: [id: number, update: Partial<UserUpdate>]; response: User };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_next_uid': { params: void; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
@@ -919,7 +919,7 @@ export interface ApiCallDirectory {
   'container.device.create': { params: [ContainerDevicePayload]; response: ContainerDeviceEntry };
   'container.device.delete': { params: [id: number, options?: ContainerDeviceDelete]; response: boolean };
   'container.device.query': { params: QueryParams<ContainerDeviceEntry>; response: ContainerDeviceEntry[] };
-  'container.device.update': { params: [id: number, update: ContainerDevicePayload]; response: ContainerDeviceEntry };
+  'container.device.update': { params: [id: number, update: Partial<ContainerDevicePayload>]; response: ContainerDeviceEntry };
   'container.device.disk_choices': { params: []; response: Record<string, string> };
   'container.device.gpu_choices': { params: []; response: Record<string, string> };
   'container.device.nic_attach_choices': { params: []; response: Record<string, string[]> };
@@ -932,12 +932,12 @@ export interface ApiCallDirectory {
   'container.pool_choices': { params: []; response: Choices };
   'container.query': { params: QueryParams<Container>; response: Container[] };
   'container.start': { params: [containerId: number]; response: void };
-  'container.update': { params: [containerId: number, update: UpdateContainer]; response: Container };
+  'container.update': { params: [containerId: number, update: Partial<UpdateContainer>]; response: Container };
 
   // LXC (actual available endpoints only)
   'lxc.bridge_choices': { params: []; response: Choices };
   'lxc.config': { params: []; response: ContainerGlobalConfig };
-  'lxc.update': { params: [ContainerGlobalConfig]; response: ContainerGlobalConfig };
+  'lxc.update': { params: [Partial<ContainerGlobalConfig>]; response: ContainerGlobalConfig };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };
@@ -954,7 +954,7 @@ export interface ApiCallDirectory {
   'vm.device.nic_attach_choices': { params: void; response: Record<string, string[]> };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
-  'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
+  'vm.device.update': { params: [id: number, update: Partial<VmDeviceUpdate>]; response: VmDevice };
   'vm.device.usb_controller_choices': { params: void; response: Choices };
   'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
   'vm.device.virtual_size': { params: [{ path: string }]; response: number };
@@ -968,7 +968,7 @@ export interface ApiCallDirectory {
   'vm.random_mac': { params: void; response: string };
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
-  'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.update': { params: [id: number, update: Partial<VirtualMachineUpdate>]; response: VirtualMachine };
   'vm.virtualization_details': { params: void; response: VirtualizationDetails };
   'vm.resume': { params: [id: number]; response: void };
 
@@ -978,7 +978,7 @@ export interface ApiCallDirectory {
   'vmware.delete': { params: [id: number]; response: boolean };
   'vmware.match_datastores_with_datasets': { params: [MatchDatastoresWithDatasetsParams]; response: MatchDatastoresWithDatasets };
   'vmware.query': { params: QueryParams<VmwareSnapshot>; response: VmwareSnapshot[] };
-  'vmware.update': { params: [id: number, update: VmwareSnapshotUpdate]; response: VmwareSnapshot };
+  'vmware.update': { params: [id: number, update: Partial<VmwareSnapshotUpdate>]; response: VmwareSnapshot };
 
   // WebUI main
   // TODO: Incorrect response definition here or for system.info.
@@ -990,7 +990,7 @@ export interface ApiCallDirectory {
 
   // WebShare
   'webshare.config': { params: void; response: WebShareConfig };
-  'webshare.update': { params: [WebShareConfigUpdate]; response: WebShareConfig };
+  'webshare.update': { params: [Partial<WebShareConfigUpdate>]; response: WebShareConfig };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
