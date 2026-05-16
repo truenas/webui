@@ -23,6 +23,12 @@
   }
 }
 
+.app-info-content {
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
 .app-list-item {
   align-items: center;
   display: flex;
