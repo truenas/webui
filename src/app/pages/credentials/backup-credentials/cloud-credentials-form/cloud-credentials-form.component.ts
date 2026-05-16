@@ -22,6 +22,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { hideParentSlideInsWhenStacked } from 'app/modules/slide-ins/utils/hide-parent-slide-ins-when-stacked';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -92,6 +93,8 @@ export class CloudCredentialsFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor() {
+    hideParentSlideInsWhenStacked();
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.commonForm.dirty || this.providerForm.form.dirty);
     });

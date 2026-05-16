@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, ElementRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef,
   forwardRef, Signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,7 +19,6 @@ import {
   UseIconsInStepperComponent,
 } from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,8 +50,6 @@ export class CloudSyncWizardComponent {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
-  private elementRef = inject(ElementRef<HTMLElement>);
-  private slideIn = inject(SlideIn);
 
   readonly whatAndWhen: Signal<CloudSyncWhatAndWhenComponent>
     = viewChild(forwardRef(() => CloudSyncWhatAndWhenComponent));
@@ -71,15 +68,6 @@ export class CloudSyncWizardComponent {
     this.slideInRef.requireConfirmationWhen(() => of(
       Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty()),
     ));
-
-    effect(() => {
-      const slideInContainer = this.elementRef.nativeElement.closest('ix-slide-in-container') as HTMLElement | null;
-      if (!slideInContainer) {
-        return;
-      }
-
-      slideInContainer.style.display = this.slideIn.openSlideIns() > 1 ? 'none' : '';
-    });
   }
 
   private createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {

@@ -37,6 +37,7 @@ import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { hideParentSlideInsWhenStacked } from 'app/modules/slide-ins/utils/hide-parent-slide-ins-when-stacked';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -152,6 +153,8 @@ export class CloudBackupFormComponent implements OnInit {
   readonly documentationUrl = 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/';
 
   constructor() {
+    hideParentSlideInsWhenStacked();
+
     const slideInRef = this.slideInRef;
 
     this.slideInRef.requireConfirmationWhen(() => {
