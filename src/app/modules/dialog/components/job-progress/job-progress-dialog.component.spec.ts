@@ -85,6 +85,22 @@ describe('JobProgressDialogComponent', () => {
     expect(await progressBar.getValue()).toBe(50);
   });
 
+  it('shows 0% as determinate progress instead of indeterminate loading', async () => {
+    await setupTest({
+      job$: of({
+        ...testJob,
+        progress: {
+          percent: 0,
+        },
+      } as Job),
+    });
+
+    const progressBar = await loader.getHarness(MatProgressBarHarness);
+    expect(await progressBar.getValue()).toBe(0);
+    expect(await progressBar.getMode()).toBe('determinate');
+    expect(spectator.query('.description-line small')?.textContent?.trim()).toBe('0.00%');
+  });
+
   it('should update job description and progress when job updates', async () => {
     await setupTest({
       job$: of({

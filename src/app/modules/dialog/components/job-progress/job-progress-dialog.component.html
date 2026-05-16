@@ -15,7 +15,7 @@
         <span>{{ job.description ? job.description : job.method }}</span>
         @if (!hideProgressValue) {
           <small>
-            {{ progressTotalPercent || 0 | number: '1.2-2' }}%
+            {{ (progressTotalPercent ?? 0) | number: '1.2-2' }}%
           </small>
         }
       </div>
@@ -23,7 +23,7 @@
         color="primary"
         class="job-progress job-running"
         [value]="progressTotalPercent"
-        [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
+        [mode]="progressTotalPercent !== null ? 'determinate' : 'indeterminate'"
       ></mat-progress-bar>
     </div>
   }

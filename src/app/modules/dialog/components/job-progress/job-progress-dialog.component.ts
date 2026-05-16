@@ -85,7 +85,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private realtimeLogsSubscribed = false;
   protected realtimeLogs = '';
   protected showMinimizeButton = true;
-  protected progressTotalPercent = 0;
+  protected progressTotalPercent: number | null = null;
   protected hideProgressValue = false;
   protected showRealtimeLogs = false;
 
@@ -143,10 +143,10 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
           if (job.progress.description) {
             this.description = ignoreTranslation(job.progress.description);
           }
-          if (job.progress.percent) {
+          if (job.progress.percent !== null && job.progress.percent !== undefined) {
             this.progressTotalPercent = job.progress.percent;
           }
-          this.hideProgressValue = job.progress.percent === null;
+          this.hideProgressValue = job.progress.percent === null || job.progress.percent === undefined;
         }
 
         this.cdr.markForCheck();
