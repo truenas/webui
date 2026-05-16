@@ -8,6 +8,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dataProtectionDashboardElements } from 'app/pages/data-protection/data-protection-dashboard.elements';
@@ -31,6 +32,7 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
     EmptyComponent,
     TranslateModule,
     PageHeaderComponent,
+    PageContentComponent,
   ],
 })
 export class DataProtectionDashboardComponent {
