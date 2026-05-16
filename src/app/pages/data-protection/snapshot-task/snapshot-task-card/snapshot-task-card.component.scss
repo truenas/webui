@@ -11,6 +11,14 @@ ix-table {
   height: 100%;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
+.table {
+  min-width: 760px;
+}
+
 .footer-actions {
   display: flex;
   gap: 8px;
@@ -18,8 +26,37 @@ ix-table {
 }
 
 :host ::ng-deep {
-  .state-button {
+  ix-table.table table {
+    min-width: 860px;
+    table-layout: auto;
+    width: max-content;
+  }
+
+  th.frequency-cell,
+  td.frequency-cell {
+    max-width: 180px;
+    width: 180px;
+  }
+
+  td.frequency-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  th.state-button,
+  td.state-button {
+    min-width: 160px;
+    overflow: visible;
+    text-overflow: clip;
+    width: 160px;
+  }
+
+  button.state-button {
+    display: inline-flex;
+    justify-content: center;
+    min-width: 140px;
     text-overflow: inherit !important;
-    width: 78px;
+    white-space: nowrap;
+    width: auto;
   }
 }

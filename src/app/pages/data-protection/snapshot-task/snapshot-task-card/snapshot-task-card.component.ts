@@ -104,6 +104,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     }),
     scheduleColumn({
       title: this.translate.instant('Frequency'),
+      cssClass: 'frequency-cell',
       getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
