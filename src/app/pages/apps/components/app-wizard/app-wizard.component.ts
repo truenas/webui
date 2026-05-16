@@ -56,6 +56,7 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
@@ -86,6 +87,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
     ReactiveFormsModule,
     TnIconComponent,
     IxDynamicWizardComponent,
+    PageContentComponent,
   ],
 })
 export class AppWizardComponent implements OnInit, OnDestroy {

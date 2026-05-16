@@ -3,92 +3,94 @@
   [loading]="isLoading()"
 ></ix-page-header>
 
-<div class="flex-container p-4">
-  <div class="app-wrapper">
-    <section>
-      <ix-app-details-header
-        [app]="app()"
-        [isLoading]="isLoading()"
-      ></ix-app-details-header>
-    </section>
-
-    @if (isLoading() || app()?.screenshots?.length) {
+<ix-page-content>
+  <div class="flex-container p-4">
+    <div class="app-wrapper">
       <section>
-        <h2>{{ "Screenshots" | translate }}</h2>
-        <div>
-          @if (isLoading()) {
-            <div class="screenshots-loader">
-              <ngx-skeleton-loader
-                class="screenshot-loader"
-              ></ngx-skeleton-loader>
-              <ngx-skeleton-loader
-                class="screenshot-loader"
-              ></ngx-skeleton-loader>
-              <ngx-skeleton-loader
-                class="screenshot-loader"
-              ></ngx-skeleton-loader>
-            </div>
-          } @else {
-            <div class="screenshots" gallerize>
-              @let screenshots = app()?.screenshots || [];
-              @for (image of screenshots; track image) {
-                <div class="screenshot">
-                  <img
-                    class="screenshot-image"
-                    [src]="image"
-                    [src-fallback]="imagePlaceholder"
-                  />
-                </div>
-              }
-            </div>
-          }
-        </div>
+        <ix-app-details-header
+          [app]="app()"
+          [isLoading]="isLoading()"
+        ></ix-app-details-header>
       </section>
-    }
 
-    <div class="show-xs-md">
-      <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+      @if (isLoading() || app()?.screenshots?.length) {
+        <section>
+          <h2>{{ "Screenshots" | translate }}</h2>
+          <div>
+            @if (isLoading()) {
+              <div class="screenshots-loader">
+                <ngx-skeleton-loader
+                  class="screenshot-loader"
+                ></ngx-skeleton-loader>
+                <ngx-skeleton-loader
+                  class="screenshot-loader"
+                ></ngx-skeleton-loader>
+                <ngx-skeleton-loader
+                  class="screenshot-loader"
+                ></ngx-skeleton-loader>
+              </div>
+            } @else {
+              <div class="screenshots" gallerize>
+                @let screenshots = app()?.screenshots || [];
+                @for (image of screenshots; track image) {
+                  <div class="screenshot">
+                    <img
+                      class="screenshot-image"
+                      [src]="image"
+                      [src-fallback]="imagePlaceholder"
+                    />
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      <div class="show-xs-md">
+        <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+      </div>
+
+      @if (app()) {
+        <section>
+          <ix-app-details-similar [app]="app()"></ix-app-details-similar>
+        </section>
+      }
     </div>
 
-    @if (app()) {
-      <section>
-        <ix-app-details-similar [app]="app()"></ix-app-details-similar>
+    <div class="hide-xs-md">
+      <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+    </div>
+  </div>
+
+  <ng-template #appDetailCards>
+    <div class="cards-wrapper">
+      <section class="app-info-cards">
+        <ix-app-resources-card
+          class="app-info-card"
+          [isLoading]="isLoading()"
+        ></ix-app-resources-card>
+
+        <ix-app-available-info-card
+          class="app-info-card"
+          [app]="app()"
+          [isLoading]="isLoading()"
+        ></ix-app-available-info-card>
+
+        <ix-app-json-details-card
+          class="app-info-card"
+          [title]="'Run As Context' | translate"
+          [jsonDetails]="app()?.run_as_context"
+          [isLoading]="isLoading()"
+        ></ix-app-json-details-card>
+
+        <ix-app-json-details-card
+          class="app-info-card"
+          [title]="'Capabilities' | translate"
+          [jsonDetails]="app()?.capabilities"
+          [isLoading]="isLoading()"
+        ></ix-app-json-details-card>
       </section>
-    }
-  </div>
-
-  <div class="hide-xs-md">
-    <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
-  </div>
-</div>
-
-<ng-template #appDetailCards>
-  <div class="cards-wrapper">
-    <section class="app-info-cards">
-      <ix-app-resources-card
-        class="app-info-card"
-        [isLoading]="isLoading()"
-      ></ix-app-resources-card>
-
-      <ix-app-available-info-card
-        class="app-info-card"
-        [app]="app()"
-        [isLoading]="isLoading()"
-      ></ix-app-available-info-card>
-
-      <ix-app-json-details-card
-        class="app-info-card"
-        [title]="'Run As Context' | translate"
-        [jsonDetails]="app()?.run_as_context"
-        [isLoading]="isLoading()"
-      ></ix-app-json-details-card>
-
-      <ix-app-json-details-card
-        class="app-info-card"
-        [title]="'Capabilities' | translate"
-        [jsonDetails]="app()?.capabilities"
-        [isLoading]="isLoading()"
-      ></ix-app-json-details-card>
-    </section>
-  </div>
-</ng-template>
+    </div>
+  </ng-template>
+</ix-page-content>

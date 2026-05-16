@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailsHeaderComponent } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
@@ -42,6 +43,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     AppJsonDetailsCardComponent,
     LightboxModule,
     GalleryModule,
+    PageContentComponent,
   ],
 })
 export class AppDetailViewComponent implements OnInit {
