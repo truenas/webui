@@ -111,8 +111,8 @@ export class ReplicationWizardComponent {
     });
 
     this.createdSnapshotTasks.forEach((task) => {
-      // Temporary tasks created during wizard should not preserve retention (fixate_removal_date: false)
-      requests.push(this.api.call('pool.snapshottask.delete', [task.id, false]));
+      // Temporary tasks created during wizard should not preserve retention.
+      requests.push(this.api.call('pool.snapshottask.delete', [task.id, { fixate_removal_date: false }]));
     });
 
     if (requests.length) {

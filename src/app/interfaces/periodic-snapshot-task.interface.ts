@@ -33,6 +33,10 @@ export interface PeriodicSnapshotTaskUpdate extends PeriodicSnapshotTaskCreate {
   fixate_removal_date?: boolean;
 }
 
+export interface PeriodicSnapshotTaskDeleteOptions {
+  fixate_removal_date?: boolean;
+}
+
 export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   keepfor: string;
   when: string;
