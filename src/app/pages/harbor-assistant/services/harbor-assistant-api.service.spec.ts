@@ -30,7 +30,7 @@ describe('Harbor Assistant API service', () => {
   it('uses the same-origin Harbor Assistant state endpoint', async () => {
     const promise = firstValueFrom(spectator.service.getState());
 
-    const req = httpMock.expectOne('/api/harbor-assistant/state');
+    const req = httpMock.expectOne('/api/harbor-beacon/state');
     expect(req.request.method).toBe('GET');
     req.flush({ devices: [], defaults: {} });
 
@@ -38,29 +38,29 @@ describe('Harbor Assistant API service', () => {
     expect(result.devices).toEqual([]);
   });
 
-  it('keeps device management actions under /api/harbor-assistant', async () => {
+  it('keeps device management actions under /api/harbor-beacon', async () => {
     const deviceId = 'cam 1/left';
 
     const rtspPromise = firstValueFrom(spectator.service.checkDeviceRtsp(deviceId, { reason: 'test' }));
-    const rtspReq = httpMock.expectOne('/api/harbor-assistant/devices/cam%201%2Fleft/rtsp-check');
+    const rtspReq = httpMock.expectOne('/api/harbor-beacon/devices/cam%201%2Fleft/rtsp-check');
     expect(rtspReq.request.method).toBe('POST');
     rtspReq.flush({ reachable: true });
     await rtspPromise;
 
     const evidencePromise = firstValueFrom(spectator.service.getDeviceEvidence(deviceId));
-    const evidenceReq = httpMock.expectOne('/api/harbor-assistant/devices/cam%201%2Fleft/evidence');
+    const evidenceReq = httpMock.expectOne('/api/harbor-beacon/devices/cam%201%2Fleft/evidence');
     expect(evidenceReq.request.method).toBe('GET');
     evidenceReq.flush({ device_id: deviceId, evidence: [] });
     await evidencePromise;
 
     const sharePromise = firstValueFrom(spectator.service.createCameraShareLink(deviceId));
-    const shareReq = httpMock.expectOne('/api/harbor-assistant/cameras/cam%201%2Fleft/share-link');
+    const shareReq = httpMock.expectOne('/api/harbor-beacon/cameras/cam%201%2Fleft/share-link');
     expect(shareReq.request.method).toBe('POST');
     shareReq.flush({});
     await sharePromise;
   });
 
-  it('keeps camera DVR management APIs under /api/harbor-assistant', async () => {
+  it('keeps camera DVR management APIs under /api/harbor-beacon', async () => {
     const settings = {
       recording_root: '/mnt/software/harborbeacon-agent-ci/camera-dvr',
       media_library_root: '/mnt/software/harborbeacon-agent-ci/camera-dvr/library',
@@ -80,26 +80,26 @@ describe('Harbor Assistant API service', () => {
     };
 
     const settingsPromise = firstValueFrom(spectator.service.getDvrRecordingSettings());
-    const settingsReq = httpMock.expectOne('/api/harbor-assistant/cameras/recording-settings');
+    const settingsReq = httpMock.expectOne('/api/harbor-beacon/cameras/recording-settings');
     expect(settingsReq.request.method).toBe('GET');
     settingsReq.flush(settings);
     expect((await settingsPromise).segment_seconds).toBe(60);
 
     const savePromise = firstValueFrom(spectator.service.saveDvrRecordingSettings(settings));
-    const saveReq = httpMock.expectOne('/api/harbor-assistant/cameras/recording-settings');
+    const saveReq = httpMock.expectOne('/api/harbor-beacon/cameras/recording-settings');
     expect(saveReq.request.method).toBe('PUT');
     expect(saveReq.request.body.enabled_device_ids).toEqual(['camera-main']);
     saveReq.flush(settings);
     await savePromise;
 
     const statusPromise = firstValueFrom(spectator.service.getDvrRecordingStatus());
-    const statusReq = httpMock.expectOne('/api/harbor-assistant/cameras/recordings/status');
+    const statusReq = httpMock.expectOne('/api/harbor-beacon/cameras/recordings/status');
     expect(statusReq.request.method).toBe('GET');
     statusReq.flush({ generated_at: '1', settings, capacity: {}, root_exists: true, root_writable: true, statuses: [] });
     await statusPromise;
 
     const timelinePromise = firstValueFrom(spectator.service.getDvrTimeline('camera-main'));
-    const timelineReq = httpMock.expectOne('/api/harbor-assistant/cameras/recordings/timeline?device_id=camera-main');
+    const timelineReq = httpMock.expectOne('/api/harbor-beacon/cameras/recordings/timeline?device_id=camera-main');
     expect(timelineReq.request.method).toBe('GET');
     timelineReq.flush({
       generated_at: '1',
@@ -110,13 +110,13 @@ describe('Harbor Assistant API service', () => {
     await timelinePromise;
 
     const startPromise = firstValueFrom(spectator.service.startDvrRecording('camera-main'));
-    const startReq = httpMock.expectOne('/api/harbor-assistant/cameras/camera-main/recordings/start');
+    const startReq = httpMock.expectOne('/api/harbor-beacon/cameras/camera-main/recordings/start');
     expect(startReq.request.method).toBe('POST');
     startReq.flush({ generated_at: '1', settings, capacity: {}, root_exists: true, root_writable: true, statuses: [] });
     await startPromise;
 
     const stopPromise = firstValueFrom(spectator.service.stopDvrRecording('camera-main'));
-    const stopReq = httpMock.expectOne('/api/harbor-assistant/cameras/camera-main/recordings/stop');
+    const stopReq = httpMock.expectOne('/api/harbor-beacon/cameras/camera-main/recordings/stop');
     expect(stopReq.request.method).toBe('POST');
     stopReq.flush({ generated_at: '1', settings, capacity: {}, root_exists: true, root_writable: true, statuses: [] });
     await stopPromise;
@@ -130,7 +130,7 @@ describe('Harbor Assistant API service', () => {
       rtsp_paths: ['/stream1'],
     }));
 
-    const req = httpMock.expectOne('/api/harbor-assistant/devices/cam-1/credentials');
+    const req = httpMock.expectOne('/api/harbor-beacon/devices/cam-1/credentials');
     expect(req.request.method).toBe('POST');
     expect(req.request.url).not.toContain('harborgate');
     expect(req.request.body).toEqual({
@@ -145,15 +145,15 @@ describe('Harbor Assistant API service', () => {
     expect(result.configured).toBe(true);
   });
 
-  it('keeps settings status APIs under /api/harbor-assistant', async () => {
+  it('keeps settings status APIs under /api/harbor-beacon', async () => {
     const gatewayPromise = firstValueFrom(spectator.service.getGatewayStatus());
-    const gatewayReq = httpMock.expectOne('/api/harbor-assistant/gateway/status');
+    const gatewayReq = httpMock.expectOne('/api/harbor-beacon/gateway/status');
     expect(gatewayReq.request.method).toBe('GET');
     gatewayReq.flush({ channels: [] });
     await gatewayPromise;
 
     const inferencePromise = firstValueFrom(spectator.service.getInferenceHealth());
-    const inferenceReq = httpMock.expectOne('/api/harbor-assistant/inference/healthz');
+    const inferenceReq = httpMock.expectOne('/api/harbor-beacon/inference/healthz');
     expect(inferenceReq.request.method).toBe('GET');
     expect(inferenceReq.request.url).not.toContain(':4174');
     expect(inferenceReq.request.url).not.toContain(':4176');
@@ -161,32 +161,32 @@ describe('Harbor Assistant API service', () => {
     expect((await inferencePromise).ready).toBe(true);
 
     const targetsPromise = firstValueFrom(spectator.service.getNotificationTargets());
-    const targetsReq = httpMock.expectOne('/api/harbor-assistant/admin/notification-targets');
+    const targetsReq = httpMock.expectOne('/api/harbor-beacon/admin/notification-targets');
     expect(targetsReq.request.method).toBe('GET');
     targetsReq.flush({ targets: [] });
     await targetsPromise;
 
     const defaultPromise = firstValueFrom(spectator.service.setDefaultNotificationTarget('route/weixin'));
-    const defaultReq = httpMock.expectOne('/api/harbor-assistant/admin/notification-targets/default');
+    const defaultReq = httpMock.expectOne('/api/harbor-beacon/admin/notification-targets/default');
     expect(defaultReq.request.method).toBe('POST');
     expect(defaultReq.request.body).toEqual({ target_id: 'route/weixin' });
     defaultReq.flush({ targets: [] });
     await defaultPromise;
 
     const deletePromise = firstValueFrom(spectator.service.deleteNotificationTarget('route/weixin'));
-    const deleteReq = httpMock.expectOne('/api/harbor-assistant/admin/notification-targets/route%2Fweixin');
+    const deleteReq = httpMock.expectOne('/api/harbor-beacon/admin/notification-targets/route%2Fweixin');
     expect(deleteReq.request.method).toBe('DELETE');
     deleteReq.flush({});
     await deletePromise;
 
     const hardwarePromise = firstValueFrom(spectator.service.getHardwareReadiness());
-    const hardwareReq = httpMock.expectOne('/api/harbor-assistant/hardware/readiness');
+    const hardwareReq = httpMock.expectOne('/api/harbor-beacon/hardware/readiness');
     expect(hardwareReq.request.method).toBe('GET');
     hardwareReq.flush({ status: 'ready', cpu: {}, memory: {}, gpu: {}, npu: {}, recommended_model_profile: 'cpu' });
     await hardwarePromise;
 
     const harborOsPromise = firstValueFrom(spectator.service.getHarborOsImCapabilityMap());
-    const harborOsReq = httpMock.expectOne('/api/harbor-assistant/harboros/im-capability-map');
+    const harborOsReq = httpMock.expectOne('/api/harbor-beacon/harboros/im-capability-map');
     expect(harborOsReq.request.method).toBe('GET');
     harborOsReq.flush({ items: [] });
     await harborOsPromise;
@@ -216,7 +216,7 @@ describe('Harbor Assistant API service', () => {
     };
 
     const statusPromise = firstValueFrom(spectator.service.getHomeAssistantStatus());
-    const statusReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/status');
+    const statusReq = httpMock.expectOne('/api/harbor-beacon/home-assistant/status');
     expect(statusReq.request.method).toBe('GET');
     statusReq.flush(haStatus);
     expect((await statusPromise).status).toBe('connected');
@@ -227,7 +227,7 @@ describe('Harbor Assistant API service', () => {
       access_token: 'secret-token',
       exposed_domains: ['light'],
     }));
-    const configReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/config');
+    const configReq = httpMock.expectOne('/api/harbor-beacon/home-assistant/config');
     expect(configReq.request.method).toBe('PUT');
     expect(configReq.request.url).not.toContain('harborgate');
     expect(configReq.request.body.access_token).toBe('secret-token');
@@ -235,31 +235,31 @@ describe('Harbor Assistant API service', () => {
     await configPromise;
 
     const testPromise = firstValueFrom(spectator.service.testHomeAssistantConnection());
-    const testReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/test');
+    const testReq = httpMock.expectOne('/api/harbor-beacon/home-assistant/test');
     expect(testReq.request.method).toBe('POST');
     testReq.flush({ test: { ok: true, status: 'connected' }, status: haStatus });
     await testPromise;
 
     const syncPromise = firstValueFrom(spectator.service.syncHomeAssistant());
-    const syncReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/sync');
+    const syncReq = httpMock.expectOne('/api/harbor-beacon/home-assistant/sync');
     expect(syncReq.request.method).toBe('POST');
     syncReq.flush({ status: haStatus, entities: [], service_domains: [] });
     await syncPromise;
 
     const entitiesPromise = firstValueFrom(spectator.service.getHomeAssistantEntities());
-    const entitiesReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/entities');
+    const entitiesReq = httpMock.expectOne('/api/harbor-beacon/home-assistant/entities');
     expect(entitiesReq.request.method).toBe('GET');
     entitiesReq.flush({ entities: [] });
     await entitiesPromise;
 
     const servicesPromise = firstValueFrom(spectator.service.getHomeAssistantServices());
-    const servicesReq = httpMock.expectOne('/api/harbor-assistant/home-assistant/services');
+    const servicesReq = httpMock.expectOne('/api/harbor-beacon/home-assistant/services');
     expect(servicesReq.request.method).toBe('GET');
     servicesReq.flush({ services: [] });
     await servicesPromise;
 
     const installStatusPromise = firstValueFrom(spectator.service.getHomeAssistantInstallStatus());
-    const installStatusReq = httpMock.expectOne('/api/harbor-assistant/harboros/apps/home-assistant/status');
+    const installStatusReq = httpMock.expectOne('/api/harbor-beacon/harboros/apps/home-assistant/status');
     expect(installStatusReq.request.method).toBe('GET');
     installStatusReq.flush({
       app_id: 'home-assistant',
@@ -273,13 +273,13 @@ describe('Harbor Assistant API service', () => {
     await installStatusPromise;
 
     const installPlanPromise = firstValueFrom(spectator.service.getHomeAssistantInstallPlan());
-    const installPlanReq = httpMock.expectOne('/api/harbor-assistant/harboros/apps/home-assistant/install-plan');
+    const installPlanReq = httpMock.expectOne('/api/harbor-beacon/harboros/apps/home-assistant/install-plan');
     expect(installPlanReq.request.method).toBe('POST');
     installPlanReq.flush(installPlan);
     await installPlanPromise;
 
     const installPromise = firstValueFrom(spectator.service.installHomeAssistant(false));
-    const installReq = httpMock.expectOne('/api/harbor-assistant/harboros/apps/home-assistant/install');
+    const installReq = httpMock.expectOne('/api/harbor-beacon/harboros/apps/home-assistant/install');
     expect(installReq.request.method).toBe('POST');
     expect(installReq.request.body).toEqual({ dry_run: false });
     installReq.flush({
@@ -291,17 +291,17 @@ describe('Harbor Assistant API service', () => {
     await installPromise;
   });
 
-  it('keeps model management APIs under /api/harbor-assistant', async () => {
+  it('keeps model management APIs under /api/harbor-beacon', async () => {
     const endpointId = 'llm/local';
 
     const listPromise = firstValueFrom(spectator.service.getModelEndpoints());
-    const listReq = httpMock.expectOne('/api/harbor-assistant/models/endpoints');
+    const listReq = httpMock.expectOne('/api/harbor-beacon/models/endpoints');
     expect(listReq.request.method).toBe('GET');
     listReq.flush({ endpoints: [] });
     await listPromise;
 
     const capabilitiesPromise = firstValueFrom(spectator.service.getModelCapabilities());
-    const capabilitiesReq = httpMock.expectOne('/api/harbor-assistant/models/capabilities');
+    const capabilitiesReq = httpMock.expectOne('/api/harbor-beacon/models/capabilities');
     expect(capabilitiesReq.request.method).toBe('GET');
     capabilitiesReq.flush({ generated_at: '1', checked_at: '1', status: 'ready', capabilities: [] });
     expect((await capabilitiesPromise).capabilities).toEqual([]);
@@ -310,14 +310,14 @@ describe('Harbor Assistant API service', () => {
       status: 'disabled',
       metadata: { api_key_configured: true },
     }));
-    const patchReq = httpMock.expectOne('/api/harbor-assistant/models/endpoints/llm%2Flocal');
+    const patchReq = httpMock.expectOne('/api/harbor-beacon/models/endpoints/llm%2Flocal');
     expect(patchReq.request.method).toBe('PATCH');
     expect(patchReq.request.body.metadata.api_key_configured).toBe(true);
     patchReq.flush({ endpoints: [] });
     await patchPromise;
 
     const testPromise = firstValueFrom(spectator.service.testModelEndpoint(endpointId));
-    const testReq = httpMock.expectOne('/api/harbor-assistant/models/endpoints/llm%2Flocal/test');
+    const testReq = httpMock.expectOne('/api/harbor-beacon/models/endpoints/llm%2Flocal/test');
     expect(testReq.request.method).toBe('POST');
     testReq.flush({ ok: true, status: 'active', summary: 'ok' });
     await testPromise;
@@ -326,14 +326,14 @@ describe('Harbor Assistant API service', () => {
       model_id: 'qwen2.5-1.5b-instruct',
       metadata: { source_url: 'file:///tmp/model.gguf' },
     }));
-    const downloadReq = httpMock.expectOne('/api/harbor-assistant/models/local-downloads');
+    const downloadReq = httpMock.expectOne('/api/harbor-beacon/models/local-downloads');
     expect(downloadReq.request.method).toBe('POST');
     expect(downloadReq.request.body.metadata.source_url).toBe('file:///tmp/model.gguf');
     downloadReq.flush({ job: { job_id: 'job-1', model_id: 'qwen2.5-1.5b-instruct', status: 'queued' } });
     await downloadPromise;
   });
 
-  it('keeps knowledge and file-picker APIs under /api/harbor-assistant', async () => {
+  it('keeps knowledge and file-picker APIs under /api/harbor-beacon', async () => {
     const settings = {
       source_roots: [{
         root_id: 'mm-test',
@@ -350,13 +350,13 @@ describe('Harbor Assistant API service', () => {
     };
 
     const settingsPromise = firstValueFrom(spectator.service.getKnowledgeSettings());
-    const settingsReq = httpMock.expectOne('/api/harbor-assistant/knowledge/settings');
+    const settingsReq = httpMock.expectOne('/api/harbor-beacon/knowledge/settings');
     expect(settingsReq.request.method).toBe('GET');
     settingsReq.flush(settings);
     expect(await settingsPromise).toEqual(settings);
 
     const savePromise = firstValueFrom(spectator.service.saveKnowledgeSettings(settings));
-    const saveReq = httpMock.expectOne('/api/harbor-assistant/knowledge/settings');
+    const saveReq = httpMock.expectOne('/api/harbor-beacon/knowledge/settings');
     expect(saveReq.request.method).toBe('PUT');
     expect(saveReq.request.body.index_root).toBe(settings.index_root);
     expect(saveReq.request.body.privacy_level).toBe('strict_local');
@@ -365,13 +365,13 @@ describe('Harbor Assistant API service', () => {
     await savePromise;
 
     const indexPromise = firstValueFrom(spectator.service.runKnowledgeIndex());
-    const indexReq = httpMock.expectOne('/api/harbor-assistant/knowledge/index/run');
+    const indexReq = httpMock.expectOne('/api/harbor-beacon/knowledge/index/run');
     expect(indexReq.request.method).toBe('POST');
     indexReq.flush({ generated_at: '1', status: 'completed', index_root: settings.index_root, root_count: 1, indexed_roots: [], errors: [] });
     await indexPromise;
 
     const statusPromise = firstValueFrom(spectator.service.getKnowledgeIndexStatus());
-    const statusReq = httpMock.expectOne('/api/harbor-assistant/knowledge/index/status');
+    const statusReq = httpMock.expectOne('/api/harbor-beacon/knowledge/index/status');
     expect(statusReq.request.method).toBe('GET');
     statusReq.flush({
       generated_at: '1',
@@ -391,7 +391,7 @@ describe('Harbor Assistant API service', () => {
     expect(status.vlm_indexed_image_count).toBe(7);
 
     const browsePromise = firstValueFrom(spectator.service.browseFiles('/mnt/MM-test'));
-    const browseReq = httpMock.expectOne('/api/harbor-assistant/files/browse?path=%2Fmnt%2FMM-test');
+    const browseReq = httpMock.expectOne('/api/harbor-beacon/files/browse?path=%2Fmnt%2FMM-test');
     expect(browseReq.request.method).toBe('GET');
     browseReq.flush({ path: '/mnt/MM-test', parent: '/mnt', readonly: true, allowed_roots: ['/mnt'], entries: [] });
     await browsePromise;
@@ -415,7 +415,7 @@ describe('Harbor Assistant API service', () => {
       keyframe_count: 3,
       keyframe_interval_seconds: 5,
     }));
-    const defaultsReq = httpMock.expectOne('/api/harbor-assistant/defaults');
+    const defaultsReq = httpMock.expectOne('/api/harbor-beacon/defaults');
     expect(defaultsReq.request.method).toBe('POST');
     expect(defaultsReq.request.url).not.toContain('harborgate');
     defaultsReq.flush({});
@@ -425,14 +425,14 @@ describe('Harbor Assistant API service', () => {
       room: 'front door',
       rtsp_path: '/stream1',
     }));
-    const metadataReq = httpMock.expectOne('/api/harbor-assistant/devices/cam%201');
+    const metadataReq = httpMock.expectOne('/api/harbor-beacon/devices/cam%201');
     expect(metadataReq.request.method).toBe('PATCH');
     expect(metadataReq.request.body.room).toBe('front door');
     metadataReq.flush({ devices: [] });
     await metadataPromise;
 
     const deletePromise = firstValueFrom(spectator.service.deleteDevice('cam 1'));
-    const deleteReq = httpMock.expectOne('/api/harbor-assistant/devices/cam%201');
+    const deleteReq = httpMock.expectOne('/api/harbor-beacon/devices/cam%201');
     expect(deleteReq.request.method).toBe('DELETE');
     deleteReq.flush({ devices: [] });
     await deletePromise;
@@ -449,8 +449,8 @@ describe('Harbor Assistant API service', () => {
       .filter((url) => !url.startsWith('app/'));
 
     expect(literalApiUrls.length).toBeGreaterThan(0);
-    literalApiUrls.forEach((url) => expect(url).toContain('/api/harbor-assistant'));
-    expect(source).toContain('/api/harbor-assistant/inference/healthz');
+    literalApiUrls.forEach((url) => expect(url).toContain('/api/harbor-beacon'));
+    expect(source).toContain('/api/harbor-beacon/inference/healthz');
     [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
       expect(source).not.toContain(forbidden);
     });

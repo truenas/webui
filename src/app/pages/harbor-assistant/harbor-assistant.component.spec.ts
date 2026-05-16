@@ -78,7 +78,7 @@ describe('Harbor Assistant component', () => {
     (spectator.component as unknown as { endpointErrors: { set: (errors: Record<string, string>) => void } })
       .endpointErrors
       .set({
-        knowledgeIndexStatus: 'knowledge-index-status: Http failure response for /api/harbor-assistant/knowledge/index/status: 500 OK',
+        knowledgeIndexStatus: 'knowledge-index-status: Http failure response for /api/harbor-beacon/knowledge/index/status: 500 OK',
       });
     spectator.detectChanges();
 

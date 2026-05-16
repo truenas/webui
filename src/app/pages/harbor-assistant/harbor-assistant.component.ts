@@ -698,8 +698,8 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly metrics = computed<HarborAssistantMetric[]>(() => this.buildMetrics());
   protected readonly connectorCards = computed<ConnectorCard[]>(() => this.buildConnectorCards());
   protected readonly weixinConnector = computed(() => this.connectorCards().find((card) => card.id === 'weixin') ?? null);
-  protected readonly weixinSetupUrl = computed(() => this.weixinConnector()?.setupUrl ?? '/setup/weixin');
-  protected readonly weixinManageUrl = computed(() => this.weixinConnector()?.manageUrl ?? '/admin/im/weixin');
+  protected readonly weixinSetupUrl = computed(() => this.weixinConnector()?.setupUrl ?? '/api/harbor-gate/setup/weixin');
+  protected readonly weixinManageUrl = computed(() => this.weixinConnector()?.manageUrl ?? '/api/harbor-gate/admin/im/weixin');
   protected readonly configuredConnectorCount = computed(() => this.connectorCards().filter((card) => card.configured).length);
   protected readonly notificationTargets = computed(() => {
     return this.notificationTargetsResponse()?.targets
@@ -1275,7 +1275,7 @@ export class HarborAssistantComponent implements OnInit {
 
   protected openDvrReplay(segment: DvrTimelineSegment): void {
     const replayUrl = this.sameOriginAdminUrl(segment.replay_url)
-      ?? `/api/harbor-assistant/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`;
+      ?? `/api/harbor-beacon/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`;
     window.open(replayUrl, '_blank', 'noopener');
   }
 
@@ -4471,11 +4471,11 @@ export class HarborAssistantComponent implements OnInit {
     try {
       const parsed = new URL(url, 'http://harbor.local');
       const path = `${parsed.pathname}${parsed.search}`;
-      if (path.startsWith('/api/harbor-assistant/')) {
+      if (path.startsWith('/api/harbor-beacon/')) {
         return path;
       }
       if (path.startsWith('/api/')) {
-        return `/api/harbor-assistant${path.slice(4)}`;
+        return `/api/harbor-beacon${path.slice(4)}`;
       }
       return path.startsWith('/') ? path : null;
     } catch {
@@ -4499,13 +4499,13 @@ export class HarborAssistantComponent implements OnInit {
       {
         label: T('Admin API'),
         value: state ? T('Connected') : T('Offline'),
-        detail: T('Harbor Assistant reaches its backend through the HarborGate /api/harbor-assistant/* facade.'),
+        detail: T('Harbor Assistant reads HarborBeacon through the /api/harbor-beacon/* service entry.'),
         tone: state ? 'good' : 'danger',
       },
       {
         label: T('Gateway Runtime'),
         value: gateway ? T('Connected') : T('Offline'),
-        detail: T('HarborGate owns the Harbor Assistant facade and routes backend calls to the right local service.'),
+        detail: T('HarborGate owns IM setup and management through the /api/harbor-gate/* service entry.'),
         tone: gateway ? 'good' : 'danger',
       },
       {

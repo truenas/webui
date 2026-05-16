@@ -36,7 +36,7 @@ describe('Harbor Assistant content API service', () => {
       include_videos: true,
     }));
 
-    const req = httpMock.expectOne('/api/harbor-assistant/knowledge/search');
+    const req = httpMock.expectOne('/api/harbor-beacon/knowledge/search');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({
       query: '找到和春天相关的照片',
@@ -83,28 +83,28 @@ describe('Harbor Assistant content API service', () => {
   it('builds encoded same-origin preview URLs', () => {
     const url = spectator.service.previewUrl('/mnt/software/photos/春天 01.jpg');
 
-    expect(url).toBe('/api/harbor-assistant/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
+    expect(url).toBe('/api/harbor-beacon/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
     expect(url).not.toContain(':4174');
     expect(url).not.toContain(':8787');
   });
 
   it('reads camera DVR state from same-origin Harbor Assistant endpoints', async () => {
     const statePromise = firstValueFrom(spectator.service.cameraState());
-    httpMock.expectOne('/api/harbor-assistant/state').flush({
+    httpMock.expectOne('/api/harbor-beacon/state').flush({
       defaults: { selected_camera_device_id: 'camera-main' },
       devices: [{ device_id: 'camera-main', name: 'Front Door' }],
     });
     expect((await statePromise).devices[0].device_id).toBe('camera-main');
 
     const statusPromise = firstValueFrom(spectator.service.dvrStatus());
-    httpMock.expectOne('/api/harbor-assistant/cameras/recordings/status').flush({
+    httpMock.expectOne('/api/harbor-beacon/cameras/recordings/status').flush({
       generated_at: '1',
       statuses: [{ device_id: 'camera-main', status: 'recording' }],
     });
     expect((await statusPromise).statuses[0].status).toBe('recording');
 
     const timelinePromise = firstValueFrom(spectator.service.dvrTimeline('camera-main'));
-    httpMock.expectOne('/api/harbor-assistant/cameras/recordings/timeline?device_id=camera-main').flush({
+    httpMock.expectOne('/api/harbor-beacon/cameras/recordings/timeline?device_id=camera-main').flush({
       generated_at: '1',
       recording_root: '/recordings',
       segments: [{ device_id: 'camera-main', file_path: '/recordings/camera-main.mp4' }],
@@ -112,7 +112,7 @@ describe('Harbor Assistant content API service', () => {
     expect((await timelinePromise).segments[0].file_path).toContain('camera-main');
 
     const filteredTimelinePromise = firstValueFrom(spectator.service.dvrTimeline('camera-main', '1714600000', '1714600300'));
-    httpMock.expectOne('/api/harbor-assistant/cameras/recordings/timeline?device_id=camera-main&from=1714600000&to=1714600300').flush({
+    httpMock.expectOne('/api/harbor-beacon/cameras/recordings/timeline?device_id=camera-main&from=1714600000&to=1714600300').flush({
       generated_at: '1',
       recording_root: '/recordings',
       segments: [],
@@ -120,21 +120,21 @@ describe('Harbor Assistant content API service', () => {
     expect((await filteredTimelinePromise).segments).toEqual([]);
 
     const startPromise = firstValueFrom(spectator.service.startDvrRecording('camera-main'));
-    httpMock.expectOne('/api/harbor-assistant/cameras/camera-main/recordings/start').flush({
+    httpMock.expectOne('/api/harbor-beacon/cameras/camera-main/recordings/start').flush({
       generated_at: '2',
       statuses: [{ device_id: 'camera-main', status: 'recording' }],
     });
     expect((await startPromise).statuses[0].status).toBe('recording');
 
     const stopPromise = firstValueFrom(spectator.service.stopDvrRecording('camera-main'));
-    httpMock.expectOne('/api/harbor-assistant/cameras/camera-main/recordings/stop').flush({
+    httpMock.expectOne('/api/harbor-beacon/cameras/camera-main/recordings/stop').flush({
       generated_at: '3',
       statuses: [{ device_id: 'camera-main', status: 'stopped' }],
     });
     expect((await stopPromise).statuses[0].status).toBe('stopped');
 
     const snapshotPromise = firstValueFrom(spectator.service.createSnapshotTask('camera-main'));
-    httpMock.expectOne('/api/harbor-assistant/cameras/camera-main/snapshot').flush({ task_id: 'task-1' });
+    httpMock.expectOne('/api/harbor-beacon/cameras/camera-main/snapshot').flush({ task_id: 'task-1' });
     expect(await snapshotPromise).toEqual({ task_id: 'task-1' });
   });
 
@@ -146,11 +146,11 @@ describe('Harbor Assistant content API service', () => {
       'src/app/pages/harbor-assistant/camera/harbor-assistant-camera.component.ts',
     ].map((path) => readFileSync(join(process.cwd(), path), 'utf8')).join('\n');
 
-    expect(sources).toContain('/api/harbor-assistant/knowledge/search');
-    expect(sources).toContain('/api/harbor-assistant/knowledge/preview');
-    expect(sources).toContain('/api/harbor-assistant/cameras/recordings/status');
-    expect(sources).toContain('/api/harbor-assistant/cameras/${encodeURIComponent(deviceId)}/recordings/start');
-    expect(sources).toContain('/api/harbor-assistant/cameras/${encodeURIComponent(deviceId)}/snapshot');
+    expect(sources).toContain('/api/harbor-beacon/knowledge/search');
+    expect(sources).toContain('/api/harbor-beacon/knowledge/preview');
+    expect(sources).toContain('/api/harbor-beacon/cameras/recordings/status');
+    expect(sources).toContain('/api/harbor-beacon/cameras/${encodeURIComponent(deviceId)}/recordings/start');
+    expect(sources).toContain('/api/harbor-beacon/cameras/${encodeURIComponent(deviceId)}/snapshot');
     [':4174', ':4175', ':4176', ':4196', ':8787', '/api/turns', '/api/web/turns'].forEach((forbidden) => {
       expect(sources).not.toContain(forbidden);
     });

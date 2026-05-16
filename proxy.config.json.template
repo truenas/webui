@@ -5,13 +5,25 @@
         "changeOrigin": true,
         "logLevel": "debug"
     },
-    "/api/harbor-assistant": {
+    "/api/harbor-beacon": {
+        "target": "http://127.0.0.1:4174",
+        "secure": false,
+        "changeOrigin": true,
+        "loglevel": "debug"
+    },
+    "/api/harbor-beacon/**": {
+        "target": "http://127.0.0.1:4174",
+        "secure": false,
+        "changeOrigin": true,
+        "loglevel": "debug"
+    },
+    "/api/harbor-gate": {
         "target": "http://127.0.0.1:8787",
         "secure": false,
         "changeOrigin": true,
         "loglevel": "debug"
     },
-    "/api/harbor-assistant/**": {
+    "/api/harbor-gate/**": {
         "target": "http://127.0.0.1:8787",
         "secure": false,
         "changeOrigin": true,

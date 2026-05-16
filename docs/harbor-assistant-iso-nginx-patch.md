@@ -1,24 +1,20 @@
-# Harbor Assistant ISO nginx Patch
+# Harbor Assistant ISO nginx Service Entries
 
-The HarborOS ISO middlewared repository was not present in this local checkout.
-Apply the following change to the source file that installs as:
-
-```text
-/usr/lib/python3/dist-packages/middlewared/etc_files/local/nginx/nginx.conf.mako
-```
-
-The goal is to keep the browser-facing Harbor Assistant API clean:
+Harbor Assistant WebUI now uses the HarborOS service-level API entries that are
+already present in the ISO template:
 
 ```text
-/api/harbor-assistant/* -> HarborGate facade -> Beacon-owned APIs
+/api/harbor-beacon/* -> harboros-beacon.service on 127.0.0.1:4174
+/api/harbor-gate/*   -> harboros-im-gate.service on 127.0.0.1:8787
 ```
 
-Patch the template near the existing `featured-photos-api`,
-`api/harbor-beacon`, and `api/harbor-gate` locations:
+Do not add a product-level Harbor Assistant nginx location for this WebUI
+slice. HarborBeacon and HarborGate both accept their service-level prefixes,
+so nginx can preserve the incoming URI:
 
 ```nginx
-        location = /api/harbor-assistant {
-            proxy_pass http://127.0.0.1:8787/api/harbor-assistant;
+        location = /api/harbor-beacon {
+            proxy_pass http://127.0.0.1:4174;
             proxy_http_version 1.1;
             proxy_set_header X-Real-Remote-Addr $remote_addr;
             proxy_set_header X-Real-Remote-Port $remote_port;
@@ -26,8 +22,26 @@ Patch the template near the existing `featured-photos-api`,
             proxy_set_header X-Forwarded-For $remote_addr;
         }
 
-        location /api/harbor-assistant/ {
-            proxy_pass http://127.0.0.1:8787/api/harbor-assistant/;
+        location /api/harbor-beacon/ {
+            proxy_pass http://127.0.0.1:4174;
+            proxy_http_version 1.1;
+            proxy_set_header X-Real-Remote-Addr $remote_addr;
+            proxy_set_header X-Real-Remote-Port $remote_port;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $remote_addr;
+        }
+
+        location = /api/harbor-gate {
+            proxy_pass http://127.0.0.1:8787;
+            proxy_http_version 1.1;
+            proxy_set_header X-Real-Remote-Addr $remote_addr;
+            proxy_set_header X-Real-Remote-Port $remote_port;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $remote_addr;
+        }
+
+        location /api/harbor-gate/ {
+            proxy_pass http://127.0.0.1:8787;
             proxy_http_version 1.1;
             proxy_set_header X-Real-Remote-Addr $remote_addr;
             proxy_set_header X-Real-Remote-Port $remote_port;
@@ -36,5 +50,11 @@ Patch the template near the existing `featured-photos-api`,
         }
 ```
 
-Keep the existing `/api/harbor-beacon` and `/api/harbor-gate` service-level
-locations as diagnostic/service entries.
+Runtime smoke after ISO install:
+
+```bash
+curl http://<vm-ip>/api/harbor-beacon/state
+curl http://<vm-ip>/api/harbor-beacon/home-assistant/status
+curl http://<vm-ip>/api/harbor-gate/setup/weixin
+curl http://<vm-ip>/api/harbor-gate/api/setup/weixin/login/status
+```

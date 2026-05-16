@@ -39,7 +39,7 @@ export function buildHarborAssistantSearchPayload(
 }
 
 export function harborAssistantPreviewUrl(path: string): string {
-  return `/api/harbor-assistant/knowledge/preview?path=${encodeURIComponent(path)}`;
+  return `/api/harbor-beacon/knowledge/preview?path=${encodeURIComponent(path)}`;
 }
 
 export function harborAssistantSearchSameOriginAdminUrl(url: string | null | undefined): string | null {
@@ -49,11 +49,11 @@ export function harborAssistantSearchSameOriginAdminUrl(url: string | null | und
   try {
     const parsed = new URL(url, 'http://harbor.local');
     const path = `${parsed.pathname}${parsed.search}`;
-    if (path.startsWith('/api/harbor-assistant/')) {
+    if (path.startsWith('/api/harbor-beacon/')) {
       return path;
     }
     if (path.startsWith('/api/')) {
-      return `/api/harbor-assistant${path.slice(4)}`;
+      return `/api/harbor-beacon${path.slice(4)}`;
     }
     return path.startsWith('/') ? path : null;
   } catch {

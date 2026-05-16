@@ -1,5 +1,7 @@
 import { GatewayPlatformStatus, GatewayStatusResponse } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
 
+const HARBOR_GATE_PUBLIC_PREFIX = '/api/harbor-gate';
+
 export function harborGateConnectorSetupUrl(
   connectorId: string,
   platform: GatewayPlatformStatus | null | undefined,
@@ -62,19 +64,30 @@ export function sameOriginHarborGateUrl(rawUrl: string | null | undefined, baseO
 
   try {
     const url = new URL(trimmed, baseOrigin);
-    if (
-      url.pathname === '/setup'
-      || url.pathname.startsWith('/setup/')
-      || url.pathname === '/admin/im'
-      || url.pathname.startsWith('/admin/im/')
-      || url.pathname.startsWith('/api/setup/')
-    ) {
-      return `${url.pathname}${url.search}${url.hash}`;
+    const sameOriginPath = harborGatePublicPath(url.pathname);
+    if (sameOriginPath) {
+      return `${sameOriginPath}${url.search}${url.hash}`;
     }
   } catch {
     return null;
   }
 
+  return null;
+}
+
+function harborGatePublicPath(pathname: string): string | null {
+  if (pathname === HARBOR_GATE_PUBLIC_PREFIX || pathname.startsWith(`${HARBOR_GATE_PUBLIC_PREFIX}/`)) {
+    return pathname;
+  }
+  if (
+    pathname === '/setup'
+    || pathname.startsWith('/setup/')
+    || pathname === '/admin/im'
+    || pathname.startsWith('/admin/im/')
+    || pathname.startsWith('/api/setup/')
+  ) {
+    return `${HARBOR_GATE_PUBLIC_PREFIX}${pathname}`;
+  }
   return null;
 }
 

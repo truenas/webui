@@ -81,13 +81,13 @@ describe('Harbor Assistant search result helpers', () => {
   it('encodes same-origin preview URLs', () => {
     const url = harborAssistantPreviewUrl('/mnt/software/photos/春天 01.jpg');
 
-    expect(url).toBe('/api/harbor-assistant/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
+    expect(url).toBe('/api/harbor-beacon/knowledge/preview?path=%2Fmnt%2Fsoftware%2Fphotos%2F%E6%98%A5%E5%A4%A9%2001.jpg');
     expect(url).not.toContain(':4174');
     expect(url).not.toContain(':8787');
     expect(harborAssistantSearchSameOriginAdminUrl('http://192.168.3.82:4174/api/knowledge/preview?path=/recordings/a.mp4'))
-      .toBe('/api/harbor-assistant/knowledge/preview?path=/recordings/a.mp4');
+      .toBe('/api/harbor-beacon/knowledge/preview?path=/recordings/a.mp4');
     expect(harborAssistantSearchSameOriginAdminUrl('/api/cameras/camera-main/snapshot.jpg'))
-      .toBe('/api/harbor-assistant/cameras/camera-main/snapshot.jpg');
+      .toBe('/api/harbor-beacon/cameras/camera-main/snapshot.jpg');
     expect(harborAssistantSearchSameOriginAdminUrl('http://127.0.0.1/ui/assets/harbor-fixtures/public-fixture-dvr.jpg'))
       .toBe('/ui/assets/harbor-fixtures/public-fixture-dvr.jpg');
   });
@@ -108,7 +108,7 @@ describe('Harbor Assistant search result helpers', () => {
     const items = buildHarborAssistantSearchWaterfallItems(response, 'all');
 
     expect(items.map((item) => item.kind)).toEqual(['document', 'video', 'image']);
-    expect(items[0].previewUrl).toBe('/api/harbor-assistant/knowledge/preview?path=%2Fmnt%2Fnote.md');
+    expect(items[0].previewUrl).toBe('/api/harbor-beacon/knowledge/preview?path=%2Fmnt%2Fnote.md');
     expect(buildHarborAssistantSearchWaterfallItems(response, 'images').map((item) => item.kind)).toEqual(['image']);
     expect(buildHarborAssistantSearchWaterfallItems(response, 'text').map((item) => item.kind)).toEqual(['document']);
     expect(buildHarborAssistantSearchWaterfallItems(response, 'videos').map((item) => item.kind)).toEqual(['video']);

@@ -17,12 +17,12 @@ git checkout -b feature/harbor-assistant-settings
 
 ## Development proxy
 
-The dev proxy reserves `/api/harbor-assistant/**` for the Harbor Assistant
-product facade hosted by HarborGate:
+The dev proxy reserves service-level entries for the local Harbor services:
 
 ```text
-/api/harbor-assistant/state -> http://127.0.0.1:8787/api/harbor-assistant/state -> HarborBeacon /api/state
-/api/harbor-assistant/inference/healthz -> http://127.0.0.1:8787/api/harbor-assistant/inference/healthz -> HarborBeacon /api/inference/healthz
+/api/harbor-beacon/state -> http://127.0.0.1:4174/api/harbor-beacon/state -> HarborBeacon /api/state
+/api/harbor-beacon/inference/healthz -> http://127.0.0.1:4174/api/harbor-beacon/inference/healthz -> HarborBeacon /api/inference/healthz
+/api/harbor-gate/setup/weixin -> http://127.0.0.1:8787/api/harbor-gate/setup/weixin -> HarborGate setup page
 ```
 
 Run `harboros-beacon.service` on `127.0.0.1:4174` and
@@ -40,10 +40,12 @@ The normal HarborOS `/api/**` proxy remains separate.
   device credential configured/redacted status.
 - Home Assistant bridge setup for read-only connection status, token test,
   entity sync, exposed domains, and managed Container install lifecycle.
-- All Harbor Assistant backend calls use `/api/harbor-assistant/*` and are
-  routed through the HarborGate facade before reaching Beacon-owned APIs.
-- Overview health reads include the HarborBeacon inference facade at
-  `/api/harbor-assistant/inference/healthz`; Harbor Assistant does not call model sidecar
+- All Harbor Assistant backend data calls use `/api/harbor-beacon/*` and are
+  handled by Beacon-owned APIs.
+- IM setup and management links use `/api/harbor-gate/*`, keeping Gate-owned
+  browser/admin pages under the HarborGate service entry.
+- Overview health reads include the HarborBeacon inference API at
+  `/api/harbor-beacon/inference/healthz`; Harbor Assistant does not call model sidecar
   ports directly.
 
 The Search tab is the northbound user retrieval surface recovered from the
@@ -53,9 +55,9 @@ The Search tab is the northbound user retrieval surface recovered from the
   on branch `codex/vm-admin-mmrag-webui-r1`.
 - Search is an internal Harbor Assistant tab, not a demo-only shell and not a
   separate service.
-- The tab consumes the real same-origin Harbor Assistant facade:
-  `POST /api/harbor-assistant/knowledge/search` and
-  `GET /api/harbor-assistant/knowledge/preview`.
+- The tab consumes the real same-origin HarborBeacon service entry:
+  `POST /api/harbor-beacon/knowledge/search` and
+  `GET /api/harbor-beacon/knowledge/preview`.
 - The waterfall result stream merges documents, images, and videos, and keeps
   evidence fields such as `content_source_kinds`, `content_indexed`,
   `content_match_used`, and `filename_match_used` visible so live testing can

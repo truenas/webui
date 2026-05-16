@@ -19,7 +19,7 @@ describe('Harbor Assistant HarborGate URL helpers', () => {
     };
 
     expect(harborGateConnectorSetupUrl('weixin', gateway.weixin, gateway, origin)).toBeNull();
-    expect(harborGateConnectorSetupUrl('feishu', gateway.feishu, gateway, origin)).toBe('/setup?session=feishu-session');
+    expect(harborGateConnectorSetupUrl('feishu', gateway.feishu, gateway, origin)).toBe('/api/harbor-gate/setup?session=feishu-session');
   });
 
   it('uses an explicit platform-specific Weixin setup URL when HarborGate provides one', () => {
@@ -31,7 +31,7 @@ describe('Harbor Assistant HarborGate URL helpers', () => {
       setup_url: 'http://192.168.3.182:8787/setup?session=feishu-session',
     };
 
-    expect(harborGateConnectorSetupUrl('weixin', gateway.weixin, gateway, origin)).toBe('/setup/weixin/qr');
+    expect(harborGateConnectorSetupUrl('weixin', gateway.weixin, gateway, origin)).toBe('/api/harbor-gate/setup/weixin/qr');
   });
 
   it('normalizes HarborGate setup and manage URLs to same-origin paths', () => {
@@ -40,8 +40,8 @@ describe('Harbor Assistant HarborGate URL helpers', () => {
       setup_url: 'http://192.168.3.182:8787/setup?session=feishu-session',
     };
 
-    expect(harborGateConnectorSetupUrl('feishu', null, gateway, origin)).toBe('/setup?session=feishu-session');
-    expect(harborGateConnectorManageUrl('feishu', null, gateway, origin)).toBe('/admin/im');
+    expect(harborGateConnectorSetupUrl('feishu', null, gateway, origin)).toBe('/api/harbor-gate/setup?session=feishu-session');
+    expect(harborGateConnectorManageUrl('feishu', null, gateway, origin)).toBe('/api/harbor-gate/admin/im');
   });
 
   it('keeps Weixin and Feishu manage URLs platform-specific', () => {
@@ -59,16 +59,17 @@ describe('Harbor Assistant HarborGate URL helpers', () => {
       },
     };
 
-    expect(harborGateConnectorSetupUrl('weixin', gateway.weixin, gateway, origin)).toBe('/setup/weixin');
-    expect(harborGateConnectorSetupUrl('feishu', gateway.feishu, gateway, origin)).toBe('/setup/feishu?session=feishu-session');
-    expect(harborGateConnectorManageUrl('weixin', gateway.weixin, gateway, origin)).toBe('/admin/im/weixin');
-    expect(harborGateConnectorManageUrl('feishu', gateway.feishu, gateway, origin)).toBe('/admin/im/feishu');
+    expect(harborGateConnectorSetupUrl('weixin', gateway.weixin, gateway, origin)).toBe('/api/harbor-gate/setup/weixin');
+    expect(harborGateConnectorSetupUrl('feishu', gateway.feishu, gateway, origin)).toBe('/api/harbor-gate/setup/feishu?session=feishu-session');
+    expect(harborGateConnectorManageUrl('weixin', gateway.weixin, gateway, origin)).toBe('/api/harbor-gate/admin/im/weixin');
+    expect(harborGateConnectorManageUrl('feishu', gateway.feishu, gateway, origin)).toBe('/api/harbor-gate/admin/im/feishu');
   });
 
   it('keeps Weixin setup and admin links on same-origin paths', () => {
-    expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/setup/weixin?session=abc', origin)).toBe('/setup/weixin?session=abc');
-    expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/admin/im/weixin', origin)).toBe('/admin/im/weixin');
-    expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/api/setup/weixin/status', origin)).toBe('/api/setup/weixin/status');
+    expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/setup/weixin?session=abc', origin)).toBe('/api/harbor-gate/setup/weixin?session=abc');
+    expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/admin/im/weixin', origin)).toBe('/api/harbor-gate/admin/im/weixin');
+    expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/api/setup/weixin/status', origin)).toBe('/api/harbor-gate/api/setup/weixin/status');
+    expect(sameOriginHarborGateUrl('/api/harbor-gate/setup/weixin?session=abc', origin)).toBe('/api/harbor-gate/setup/weixin?session=abc');
   });
 
   it('drops unsupported HarborGate browser URLs instead of returning a cross-origin href', () => {
