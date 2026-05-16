@@ -14,7 +14,6 @@ import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import {
   VirtualizationDetails,
   VirtualMachine,
-  VirtualMachineUpdate,
   VmDisplayWebUriParams,
   VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
@@ -178,7 +177,7 @@ export class VmService {
   }
 
   toggleVmAutostart(vm: VirtualMachine): Observable<boolean> {
-    return this.api.call('vm.update', [vm.id, { autostart: !vm.autostart } as VirtualMachineUpdate])
+    return this.api.call('vm.update', [vm.id, { autostart: !vm.autostart }])
       .pipe(
         this.loader.withLoader(),
         take(1),

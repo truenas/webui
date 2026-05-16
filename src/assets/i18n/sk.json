@@ -4876,7 +4876,7 @@
   "SMB Group": "",
   "SMB Lock": "",
   "SMB Locks": "",
-  "SMB multichannel allows servers to use multiple network connections simultaneously by combining the bandwidth of several network interface cards (NICs) for better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/\" target=\"_blank\">Read more in docs</a>": "",
+  "SMB multichannel allows servers to use multiple network connections simultaneously by combining the bandwidth of several network interface cards (NICs) for better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://www.truenas.com/docs/scale/shares/smb/smbmultichannel/\" target=\"_blank\">Read more in docs</a>": "",
   "SMB Name": "",
   "SMB Notification": "",
   "SMB Notifications": "",

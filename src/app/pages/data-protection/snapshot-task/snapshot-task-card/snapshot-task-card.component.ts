@@ -214,7 +214,7 @@ export class SnapshotTaskCardComponent implements OnInit {
 
   protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.api
-      .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
+      .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {

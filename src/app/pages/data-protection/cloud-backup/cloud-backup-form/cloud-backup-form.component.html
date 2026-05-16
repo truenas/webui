@@ -28,7 +28,9 @@
             [multiple]="false"
             [rootNodes]="slashRootNode"
             [nodeProvider]="fileNodeProvider"
-          ></ix-explorer>
+          >
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          </ix-explorer>
 
           <ix-explorer
             formControlName="cache_path"
@@ -36,7 +38,9 @@
             [tooltip]="helptext.cachePathTooltip | translate"
             [multiple]="false"
             [nodeProvider]="directoriesNodeProvider"
-          ></ix-explorer>
+          >
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          </ix-explorer>
         </ix-fieldset>
 
         <ix-fieldset

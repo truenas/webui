@@ -20,12 +20,14 @@
           [replication]="existingReplication"
           [direction]="generalSection().form.value.direction"
           [nodeProvider]="sourceNodeProvider"
+          [isLocal]="isSourceLocal"
         ></ix-replication-source-section>
 
         <ix-replication-target-section
           [replication]="existingReplication"
           [nodeProvider]="targetNodeProvider"
           [allowsCustomRetentionPolicy]="!usesNameRegex"
+          [isLocal]="isTargetLocal"
         ></ix-replication-target-section>
 
         <ix-replication-schedule-section

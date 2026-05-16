@@ -14,7 +14,6 @@ import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snap
 import {
   PeriodicSnapshotTask,
   PeriodicSnapshotTaskCreate,
-  PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -190,7 +189,7 @@ export class SnapshotTaskFormComponent implements OnInit {
 
         return this.snapshotTaskService.checkUpdateWillChangeRetention(
           this.editingTask.id,
-          params as PeriodicSnapshotTaskUpdate,
+          params,
         );
       }),
       takeUntilDestroyed(this.destroyRef),
@@ -247,7 +246,7 @@ export class SnapshotTaskFormComponent implements OnInit {
       // cspell:ignore snapshottask
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
-        params as PeriodicSnapshotTaskUpdate,
+        params,
       ]);
     } else {
       // cspell:ignore snapshottask
