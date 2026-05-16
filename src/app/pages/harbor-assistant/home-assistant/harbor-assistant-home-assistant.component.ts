@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -7,6 +8,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -33,6 +35,7 @@ const defaultExposedDomains = [
   'switch',
   'sensor',
   'binary_sensor',
+  'device_tracker',
   'climate',
   'cover',
   'fan',
@@ -58,6 +61,8 @@ const defaultExposedDomains = [
     MatFormField,
     MatInput,
     MatLabel,
+    MatOption,
+    MatSelect,
     NgClass,
     ReactiveFormsModule,
     TranslateModule,
@@ -66,6 +71,7 @@ const defaultExposedDomains = [
 export class HarborAssistantHomeAssistantComponent implements OnInit {
   private readonly harborAssistantApi = inject(HarborAssistantApiService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loading = signal(false);
   protected readonly actionInProgress = signal<string | null>(null);
@@ -83,6 +89,18 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     accessToken: [''],
     exposedDomains: [defaultExposedDomains.join('\n')],
   });
+  protected readonly entityFilterForm = this.fb.group({
+    query: [''],
+    domain: ['all'],
+    readiness: ['all'],
+  });
+  protected readonly entityFilters = signal({ query: '', domain: 'all', readiness: 'all' });
+  protected readonly readinessOptions = [
+    { label: T('All readiness'), value: 'all' },
+    { label: T('Safe control'), value: 'safe_control' },
+    { label: T('Read only'), value: 'read_only' },
+    { label: T('Unsupported'), value: 'unsupported' },
+  ];
 
   protected readonly statusTone = computed<HarborAssistantStatusTone>(() => {
     const status = this.status();
@@ -164,10 +182,38 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     ];
   });
 
-  protected readonly visibleEntities = computed(() => this.entities().slice(0, 16));
+  protected readonly domainOptions = computed(() => {
+    const domains = new Set(this.entities().map((entity) => entity.domain).filter(Boolean));
+    return Array.from(domains).sort();
+  });
+  protected readonly visibleEntities = computed(() => {
+    const filters = this.entityFilters();
+    const query = filters.query.trim().toLowerCase();
+    return this.entities()
+      .filter((entity) => {
+        const domainMatch = filters.domain === 'all' || entity.domain === filters.domain;
+        const readinessMatch = filters.readiness === 'all' || entity.readiness === filters.readiness;
+        const queryMatch = !query
+          || entity.entity_id.toLowerCase().includes(query)
+          || entity.display_name.toLowerCase().includes(query)
+          || entity.state.toLowerCase().includes(query);
+        return domainMatch && readinessMatch && queryMatch;
+      })
+      .slice(0, 48);
+  });
+  protected readonly syncScopeDomains = computed(() => this.status()?.exposed_domains ?? []);
   protected readonly visibleServiceDomains = computed(() => this.serviceDomains().slice(0, 12));
 
   ngOnInit(): void {
+    this.entityFilterForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((filters) => {
+        this.entityFilters.set({
+          query: filters.query ?? '',
+          domain: filters.domain ?? 'all',
+          readiness: filters.readiness ?? 'all',
+        });
+      });
     this.refresh();
   }
 
@@ -284,6 +330,49 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
 
   protected toneClass(tone: HarborAssistantStatusTone): string {
     return `tone-${tone}`;
+  }
+
+  protected readinessLabel(entity: HomeAssistantEntity): string {
+    switch (entity.readiness) {
+      case 'safe_control':
+        return T('Safe control');
+      case 'read_only':
+        return T('Read only');
+      case 'unsupported':
+        return T('Unsupported');
+      default:
+        return entity.readiness || T('Unknown');
+    }
+  }
+
+  protected readinessTone(entity: HomeAssistantEntity): HarborAssistantStatusTone {
+    switch (entity.readiness) {
+      case 'safe_control':
+        return 'good';
+      case 'read_only':
+        return 'neutral';
+      case 'unsupported':
+        return 'warn';
+      default:
+        return 'neutral';
+    }
+  }
+
+  protected automationRoleLabel(entity: HomeAssistantEntity): string {
+    switch (entity.automation_role) {
+      case 'safe_control_candidate':
+        return T('Low-risk action');
+      case 'trigger_source':
+        return T('Trigger source');
+      case 'read_only_context':
+        return T('Read-only context');
+      case 'manual_review_only':
+        return T('Manual review');
+      case 'unsupported':
+        return T('Not referable');
+      default:
+        return entity.automation_reference_allowed ? T('Referable') : T('Not referable');
+    }
   }
 
   protected formatTimestamp(value?: string | null): string {

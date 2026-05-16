@@ -62,10 +62,15 @@
 }
 
 .ha-metric-grid,
-.ha-install-plan {
+.ha-install-plan,
+.ha-entity-filters {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ha-entity-filters {
+  grid-template-columns: 2fr 1fr 1fr;
 }
 
 .ha-install-plan {
@@ -89,7 +94,8 @@
 
 .button-row,
 .row-actions,
-.ha-service-domain-list {
+.ha-service-domain-list,
+.ha-sync-scope {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -196,7 +202,8 @@
 @media (max-width: 960px) {
   .ha-config-form,
   .ha-metric-grid,
-  .ha-install-plan {
+  .ha-install-plan,
+  .ha-entity-filters {
     grid-template-columns: 1fr;
   }
 

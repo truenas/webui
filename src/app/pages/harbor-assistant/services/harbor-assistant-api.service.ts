@@ -6,6 +6,8 @@ import { catchError, map } from 'rxjs/operators';
 import {
   AdminDefaultsPayload,
   AdminStateResponse,
+  AutomationReviewPayload,
+  AutomationReviewsResponse,
   DeviceCredentialStatus,
   DeviceCredentialsPayload,
   DeviceEvidenceResponse,
@@ -185,6 +187,35 @@ export class HarborAssistantApiService {
     return this.http.post<HomeAssistantInstallResponse>(this.apiUrl('/harboros/apps/home-assistant/install'), {
       dry_run: dryRun,
     });
+  }
+
+  getAutomationReviews(): Observable<AutomationReviewsResponse> {
+    return this.http.get<AutomationReviewsResponse>(this.apiUrl('/automation/reviews'));
+  }
+
+  createAutomationReview(payload: AutomationReviewPayload): Observable<AutomationReviewsResponse> {
+    return this.http.post<AutomationReviewsResponse>(this.apiUrl('/automation/reviews'), payload);
+  }
+
+  enableAutomationReview(reviewId: string): Observable<AutomationReviewsResponse> {
+    return this.http.post<AutomationReviewsResponse>(
+      this.apiUrl(`/automation/reviews/${encodeURIComponent(reviewId)}/enable`),
+      {},
+    );
+  }
+
+  pauseAutomationReview(reviewId: string): Observable<AutomationReviewsResponse> {
+    return this.http.post<AutomationReviewsResponse>(
+      this.apiUrl(`/automation/reviews/${encodeURIComponent(reviewId)}/pause`),
+      {},
+    );
+  }
+
+  discardAutomationReview(reviewId: string): Observable<AutomationReviewsResponse> {
+    return this.http.post<AutomationReviewsResponse>(
+      this.apiUrl(`/automation/reviews/${encodeURIComponent(reviewId)}/discard`),
+      {},
+    );
   }
 
   getModelEndpoints(): Observable<ModelEndpointsResponse> {

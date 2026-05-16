@@ -148,6 +148,36 @@
       <mat-card-title>{{ 'HA inventory' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
+      <form class="ha-entity-filters" [formGroup]="entityFilterForm">
+        <mat-form-field>
+          <mat-label>{{ 'Search entities' | translate }}</mat-label>
+          <input matInput formControlName="query" placeholder="light.kitchen" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'Domain' | translate }}</mat-label>
+          <mat-select formControlName="domain">
+            <mat-option value="all">{{ 'All domains' | translate }}</mat-option>
+            @for (domain of domainOptions(); track domain) {
+              <mat-option [value]="domain">{{ domain }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'Readiness' | translate }}</mat-label>
+          <mat-select formControlName="readiness">
+            @for (option of readinessOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </form>
+
+      <div class="ha-sync-scope">
+        @for (domain of syncScopeDomains(); track domain) {
+          <span class="pill">{{ domain }}</span>
+        }
+      </div>
+
       @if (visibleEntities().length === 0) {
         <div class="empty-state">{{ 'No entities have been synced yet.' | translate }}</div>
       } @else {
@@ -156,10 +186,12 @@
             <article class="table-row">
               <div>
                 <h2>{{ entity.display_name }}</h2>
-                <p class="muted">{{ entity.entity_id }} / {{ entity.domain }}</p>
+                <p class="muted">{{ entity.entity_id }} / {{ entity.domain }} / {{ entity.source || ('Home Assistant' | translate) }}</p>
               </div>
               <div class="row-actions">
                 <span class="pill">{{ entity.state }}</span>
+                <span class="pill" [ngClass]="toneClass(readinessTone(entity))">{{ readinessLabel(entity) | translate }}</span>
+                <span class="pill">{{ automationRoleLabel(entity) | translate }}</span>
                 @if (entity.device_class) {
                   <span class="pill">{{ entity.device_class }}</span>
                 }

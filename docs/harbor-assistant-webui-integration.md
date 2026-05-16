@@ -17,16 +17,17 @@ git checkout -b feature/harbor-assistant-settings
 
 ## Development proxy
 
-The dev proxy reserves `/api/harbor-assistant/**` for the unified HarborBeacon API:
+The dev proxy reserves `/api/harbor-assistant/**` for the Harbor Assistant
+product facade hosted by HarborGate:
 
 ```text
-/api/harbor-assistant/state -> http://127.0.0.1:4174/api/state
-/api/harbor-assistant/inference/healthz -> http://127.0.0.1:4174/api/inference/healthz
+/api/harbor-assistant/state -> http://127.0.0.1:8787/api/harbor-assistant/state -> HarborBeacon /api/state
+/api/harbor-assistant/inference/healthz -> http://127.0.0.1:8787/api/harbor-assistant/inference/healthz -> HarborBeacon /api/inference/healthz
 ```
 
-Run `harborbeacon.service` or the unified `harborbeacon-service` binary on
-`127.0.0.1:4174` before testing Harbor Assistant. The normal HarborOS `/api/**`
-proxy remains separate.
+Run `harboros-beacon.service` on `127.0.0.1:4174` and
+`harboros-im-gate.service` on `127.0.0.1:8787` before testing Harbor Assistant.
+The normal HarborOS `/api/**` proxy remains separate.
 
 ## Current slice
 
@@ -39,8 +40,8 @@ proxy remains separate.
   device credential configured/redacted status.
 - Home Assistant bridge setup for read-only connection status, token test,
   entity sync, exposed domains, and managed Container install lifecycle.
-- All Harbor Assistant backend calls use `/api/harbor-assistant/*` and are rewritten by the
-  dev proxy to the HarborBeacon single-port API.
+- All Harbor Assistant backend calls use `/api/harbor-assistant/*` and are
+  routed through the HarborGate facade before reaching Beacon-owned APIs.
 - Overview health reads include the HarborBeacon inference facade at
   `/api/harbor-assistant/inference/healthz`; Harbor Assistant does not call model sidecar
   ports directly.
@@ -52,7 +53,7 @@ The Search tab is the northbound user retrieval surface recovered from the
   on branch `codex/vm-admin-mmrag-webui-r1`.
 - Search is an internal Harbor Assistant tab, not a demo-only shell and not a
   separate service.
-- The tab consumes the real same-origin HarborBeacon knowledge API:
+- The tab consumes the real same-origin Harbor Assistant facade:
   `POST /api/harbor-assistant/knowledge/search` and
   `GET /api/harbor-assistant/knowledge/preview`.
 - The waterfall result stream merges documents, images, and videos, and keeps

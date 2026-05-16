@@ -5,11 +5,16 @@
         "changeOrigin": true,
         "logLevel": "debug"
     },
-    "/api/harbor-assistant/**": {
-        "target": "http://127.0.0.1:4174",
+    "/api/harbor-assistant": {
+        "target": "http://127.0.0.1:8787",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/api/harbor-assistant" : "/api"},
+        "loglevel": "debug"
+    },
+    "/api/harbor-assistant/**": {
+        "target": "http://127.0.0.1:8787",
+        "secure": false,
+        "changeOrigin": true,
         "loglevel": "debug"
     },
     "/api/**": {

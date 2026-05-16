@@ -35,6 +35,8 @@ import {
 import {
   AdminDefaultsPayload,
   AdminStateResponse,
+  AutomationRuleReview,
+  AutomationReviewsResponse,
   CameraDevice,
   DeviceCredentialStatus,
   DeviceCredentialsPayload,
@@ -107,6 +109,7 @@ interface HarborAssistantPageData {
   harborOs: EndpointResult<HarborOsStatusResponse>;
   capabilityMap: EndpointResult<HarborOsImCapabilityMapResponse>;
   shareLinks: EndpointResult<ShareLinkSummary[]>;
+  automationReviews: EndpointResult<AutomationReviewsResponse>;
   evidenceByDevice: Record<string, DeviceEvidenceResponse>;
   evidenceErrors: Record<string, string>;
 }
@@ -441,6 +444,8 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly harborOs = signal<HarborOsStatusResponse | null>(null);
   protected readonly capabilityMap = signal<HarborOsImCapabilityMapResponse | null>(null);
   protected readonly shareLinks = signal<ShareLinkSummary[]>([]);
+  protected readonly automationReviews = signal<AutomationRuleReview[]>([]);
+  protected readonly rulesDrawerOpen = signal(false);
   protected readonly evidenceByDevice = signal<Record<string, DeviceEvidenceResponse>>({});
   protected readonly selectedDeviceId = signal<string>('');
   protected readonly pendingDeleteDeviceId = signal<string | null>(null);
@@ -524,6 +529,10 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly scanCredentialForm = this.fb.group({
     username: [''],
     password: ['', Validators.required],
+  });
+
+  protected readonly ruleDraftForm = this.fb.group({
+    prompt: ['', Validators.required],
   });
 
   protected readonly manualForm = this.fb.group({
@@ -712,6 +721,16 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly hardwareBlocks = computed<StatusBlock[]>(() => this.buildHardwareBlocks());
   protected readonly ragBlocks = computed<StatusBlock[]>(() => this.buildRagBlocks());
   protected readonly harborOsBlocks = computed<StatusBlock[]>(() => this.buildHarborOsBlocks());
+  protected readonly pendingRuleReviews = computed(() => this.automationReviews().filter((review) => {
+    return review.status === 'draft' || review.status === 'pending';
+  }));
+  protected readonly activeRuleReviews = computed(() => this.automationReviews().filter((review) => {
+    return review.status === 'active' || review.status === 'paused';
+  }));
+  protected readonly archivedRuleReviews = computed(() => this.automationReviews().filter((review) => {
+    return review.status === 'discarded' || review.status === 'expired';
+  }));
+  protected readonly pendingRuleCount = computed(() => this.pendingRuleReviews().length);
 
   ngOnInit(): void {
     this.route.queryParamMap
@@ -764,6 +783,109 @@ export class HarborAssistantComponent implements OnInit {
 
   protected isTab(tabId: HarborAssistantTabId): boolean {
     return this.activeTab() === tabId;
+  }
+
+  protected toggleRulesDrawer(): void {
+    this.rulesDrawerOpen.set(!this.rulesDrawerOpen());
+  }
+
+  protected saveRuleDraft(): void {
+    if (this.ruleDraftForm.invalid) {
+      this.ruleDraftForm.markAllAsTouched();
+      return;
+    }
+    const prompt = this.ruleDraftForm.controls.prompt.value.trim();
+    if (!prompt) {
+      this.ruleDraftForm.markAllAsTouched();
+      return;
+    }
+    this.actionInProgress.set('automation-review-create');
+    this.actionError.set(null);
+    this.actionMessage.set(null);
+    this.harborAssistantApi.createAutomationReview({
+      source: 'harbor_assistant_chat',
+      source_channel: 'HarborAssistant Chat',
+      original_prompt: prompt,
+      status: 'pending',
+      risk_level: 'medium',
+      requires_approval: true,
+      trigger_definition: {},
+      condition_definition: {},
+      action_plan: {},
+      device_refs: [],
+      metadata: {
+        pilot: 'chat_first_rule_review',
+      },
+    }).pipe(
+      finalize(() => this.actionInProgress.set(null)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (response) => {
+        this.automationReviews.set(response.reviews ?? []);
+        this.ruleDraftForm.reset();
+        this.rulesDrawerOpen.set(true);
+        this.actionMessage.set(T('Rule draft is waiting for review.'));
+      },
+      error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
+    });
+  }
+
+  protected enableRuleReview(review: AutomationRuleReview): void {
+    this.runRuleReviewAction(
+      `automation-review-enable:${review.review_id}`,
+      this.harborAssistantApi.enableAutomationReview(review.review_id),
+      T('Rule review was enabled.'),
+    );
+  }
+
+  protected pauseRuleReview(review: AutomationRuleReview): void {
+    this.runRuleReviewAction(
+      `automation-review-pause:${review.review_id}`,
+      this.harborAssistantApi.pauseAutomationReview(review.review_id),
+      T('Rule review was paused.'),
+    );
+  }
+
+  protected discardRuleReview(review: AutomationRuleReview): void {
+    this.runRuleReviewAction(
+      `automation-review-discard:${review.review_id}`,
+      this.harborAssistantApi.discardAutomationReview(review.review_id),
+      T('Rule review was discarded.'),
+    );
+  }
+
+  protected ruleReviewSourceLabel(review: AutomationRuleReview): string {
+    const source = (review.source_channel || review.source || '').trim();
+    switch (source) {
+      case 'weixin':
+      case 'Weixin':
+        return T('Weixin');
+      case 'feishu':
+      case 'Feishu':
+        return T('Feishu');
+      case 'harbor_assistant_chat':
+      case 'HarborAssistant Chat':
+        return T('HarborAssistant Chat');
+      default:
+        return source || T('Unknown source');
+    }
+  }
+
+  protected ruleReviewStatusTone(review: AutomationRuleReview): HarborAssistantStatusTone {
+    switch (review.status) {
+      case 'active':
+        return 'good';
+      case 'pending':
+      case 'draft':
+        return 'warn';
+      case 'paused':
+        return 'neutral';
+      case 'discarded':
+      case 'expired':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
   }
 
   protected selectSettingsSection(sectionId: AssistantSettingsSectionId): void {
@@ -3443,6 +3565,7 @@ export class HarborAssistantComponent implements OnInit {
         harborOs: this.result('harboros', this.harborAssistantApi.getHarborOsStatus()),
         capabilityMap: this.result('harboros-capabilities', this.harborAssistantApi.getHarborOsImCapabilityMap()),
         shareLinks: this.result('share-links', this.harborAssistantApi.getShareLinks()),
+        automationReviews: this.result('automation-reviews', this.harborAssistantApi.getAutomationReviews()),
         evidenceEntries: this.getDeviceEvidenceEntries(state.data?.devices ?? []),
       }).pipe(
         map((payload) => {
@@ -3477,6 +3600,7 @@ export class HarborAssistantComponent implements OnInit {
             harborOs: payload.harborOs,
             capabilityMap: payload.capabilityMap,
             shareLinks: payload.shareLinks,
+            automationReviews: payload.automationReviews,
             evidenceByDevice,
             evidenceErrors,
           };
@@ -3576,6 +3700,7 @@ export class HarborAssistantComponent implements OnInit {
     this.harborOs.set(pageData.harborOs.data);
     this.capabilityMap.set(pageData.capabilityMap.data);
     this.shareLinks.set(pageData.shareLinks.data ?? []);
+    this.automationReviews.set(pageData.automationReviews.data?.reviews ?? []);
     this.evidenceByDevice.set(pageData.evidenceByDevice);
 
     const errors = Object.fromEntries(
@@ -3599,6 +3724,7 @@ export class HarborAssistantComponent implements OnInit {
         harborOs: pageData.harborOs.error,
         capabilityMap: pageData.capabilityMap.error,
         shareLinks: pageData.shareLinks.error,
+        automationReviews: pageData.automationReviews.error,
         ...pageData.evidenceErrors,
       }).filter((entry): entry is [string, string] => typeof entry[1] === 'string' && entry[1].length > 0),
     );
@@ -3636,6 +3762,7 @@ export class HarborAssistantComponent implements OnInit {
     this.harborOs.set(null);
     this.capabilityMap.set(null);
     this.shareLinks.set([]);
+    this.automationReviews.set([]);
     this.evidenceByDevice.set({});
     this.endpointErrors.set({});
   }
@@ -3929,6 +4056,27 @@ export class HarborAssistantComponent implements OnInit {
         afterSuccess?.();
         this.actionMessage.set(successMessage);
         this.loadData();
+      },
+      error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
+    });
+  }
+
+  private runRuleReviewAction(
+    actionId: string,
+    request: Observable<AutomationReviewsResponse>,
+    successMessage: string,
+  ): void {
+    this.actionInProgress.set(actionId);
+    this.actionError.set(null);
+    this.actionMessage.set(null);
+
+    request.pipe(
+      finalize(() => this.actionInProgress.set(null)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (response) => {
+        this.automationReviews.set(response.reviews ?? []);
+        this.actionMessage.set(successMessage);
       },
       error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
     });
@@ -4351,13 +4499,13 @@ export class HarborAssistantComponent implements OnInit {
       {
         label: T('Admin API'),
         value: state ? T('Connected') : T('Offline'),
-        detail: T('Harbor Assistant reads HarborBeacon through /api/harbor-assistant/* same-origin proxy.'),
+        detail: T('Harbor Assistant reaches its backend through the HarborGate /api/harbor-assistant/* facade.'),
         tone: state ? 'good' : 'danger',
       },
       {
         label: T('Gateway Runtime'),
         value: gateway ? T('Connected') : T('Offline'),
-        detail: T('HarborOS IM Gate adapters run inside harboros-im-gate.service and surface through /api/harbor-assistant/gateway/status.'),
+        detail: T('HarborGate owns the Harbor Assistant facade and routes backend calls to the right local service.'),
         tone: gateway ? 'good' : 'danger',
       },
       {

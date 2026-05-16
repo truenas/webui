@@ -73,6 +73,11 @@ export interface HomeAssistantEntity {
   domain: string;
   state: string;
   display_name: string;
+  source?: string;
+  readiness?: 'read_only' | 'safe_control' | 'unsupported' | string;
+  automation_role?: string;
+  automation_reference_allowed?: boolean;
+  safe_control?: boolean;
   area_id?: string | null;
   device_class?: string | null;
   last_changed?: string | null;
@@ -104,6 +109,53 @@ export interface HomeAssistantSyncResponse {
   status: HomeAssistantStatusResponse;
   entities: HomeAssistantEntity[];
   service_domains: HomeAssistantServiceDomain[];
+}
+
+export type AutomationReviewStatus = 'draft' | 'pending' | 'active' | 'paused' | 'discarded' | 'expired';
+
+export interface AutomationRuleReview {
+  review_id: string;
+  workspace_id: string;
+  source: string;
+  source_channel?: string | null;
+  source_conversation_id?: string | null;
+  original_prompt: string;
+  status: AutomationReviewStatus;
+  trigger_definition?: Record<string, unknown> | null;
+  condition_definition?: Record<string, unknown> | null;
+  action_plan?: Record<string, unknown> | null;
+  device_refs?: unknown[];
+  risk_level?: string | null;
+  requires_approval?: boolean;
+  created_at?: string | null;
+  updated_at?: string | null;
+  expires_at?: string | null;
+  rule_id?: string | null;
+  run_summaries?: unknown[];
+  metadata?: Record<string, unknown> | null;
+}
+
+export interface AutomationReviewPayload {
+  review_id?: string;
+  workspace_id?: string;
+  source?: string;
+  source_channel?: string | null;
+  source_conversation_id?: string | null;
+  original_prompt: string;
+  status?: AutomationReviewStatus;
+  trigger_definition?: Record<string, unknown>;
+  condition_definition?: Record<string, unknown>;
+  action_plan?: Record<string, unknown>;
+  device_refs?: unknown[];
+  risk_level?: string;
+  requires_approval?: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+export interface AutomationReviewsResponse {
+  generated_at: string;
+  pending_count: number;
+  reviews: AutomationRuleReview[];
 }
 
 export interface HomeAssistantInstallStatusResponse {

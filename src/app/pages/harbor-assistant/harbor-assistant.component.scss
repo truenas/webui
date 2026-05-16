@@ -91,6 +91,70 @@ $hd-space-5: 20px;
   padding: $hd-space-3 $hd-space-5;
 }
 
+.rules-review-entry {
+  align-items: center;
+  background: $hd-bg-canvas;
+  border-bottom: 1px solid $hd-border-subtle;
+  display: flex;
+  justify-content: flex-end;
+  padding: $hd-space-3 $hd-space-5;
+}
+
+.rules-review-drawer {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+
+.rules-review-drawer mat-card-content {
+  display: grid;
+  gap: $hd-space-4;
+}
+
+.rule-draft-form {
+  align-items: flex-start;
+  display: grid;
+  gap: $hd-space-3;
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.rule-review-list {
+  display: grid;
+  gap: $hd-space-3;
+}
+
+.rule-review-card {
+  align-items: flex-start;
+  border: 1px solid $hd-border-subtle;
+  border-radius: 8px;
+  display: flex;
+  gap: $hd-space-4;
+  justify-content: space-between;
+  padding: $hd-space-4;
+
+  h2 {
+    font-size: 15px;
+    line-height: 1.35;
+    margin: $hd-space-2 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  &.compact h2 {
+    margin-top: $hd-space-2;
+  }
+}
+
+.rule-review-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $hd-space-2;
+}
+
 .tab-panel {
   display: flex;
   flex-direction: column;
@@ -1655,6 +1719,14 @@ $hd-space-5: 20px;
 }
 
 @media (max-width: $breakpoint-sm) {
+  .rule-draft-form {
+    grid-template-columns: 1fr;
+  }
+
+  .rule-review-card {
+    flex-direction: column;
+  }
+
   .device-main,
   .selected-device-heading {
     width: 100%;
