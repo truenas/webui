@@ -4,6 +4,10 @@
   }
 </ix-page-header>
 
+@if (conf().hint; as hint) {
+  <div class="terminal-hint">{{ hint | translate }}</div>
+}
+
 <div class="terminal-wrapper">
   @if (!shellConnected()) {
     <div class="terminal-busy-overlay">
