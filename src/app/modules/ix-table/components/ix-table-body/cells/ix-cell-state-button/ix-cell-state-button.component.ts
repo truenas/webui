@@ -184,6 +184,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
         return 'fn-theme-orange';
       case JobState.Running:
       case TaskState.Running:
+        return 'fn-theme-blue';
       case TaskState.Finished:
       case JobState.Success:
         return 'fn-theme-green';
