@@ -4,6 +4,7 @@ export interface TerminalConfiguration {
   reconnectShell$?: Subject<void>;
   preInit?(): Observable<void>;
   connectionData: TerminalConnectionData;
+  hint?: string;
 }
 
 export type TerminalConnectionData
