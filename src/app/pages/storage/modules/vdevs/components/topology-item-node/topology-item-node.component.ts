@@ -34,8 +34,19 @@ export class TopologyItemNodeComponent {
     return this.topologyItem().type;
   });
 
+  // Surface the worst descendant status when a parent VDEV would otherwise
+  // hide a faulted/degraded child behind its own ONLINE status.
+  protected readonly effectiveStatus = computed<TopologyItemStatus | undefined>(() => {
+    const own = this.topologyItem()?.status;
+    const worstChild = this.worstChildStatus(this.topologyItem());
+    if (worstChild && severityScore(worstChild) > severityScore(own)) {
+      return worstChild;
+    }
+    return own;
+  });
+
   protected readonly status = computed(() => {
-    return this.topologyItem()?.status ? this.topologyItem().status : '';
+    return this.effectiveStatus() ?? '';
   });
 
   protected readonly capacity = computed(() => {
@@ -52,12 +63,14 @@ export class TopologyItemNodeComponent {
   });
 
   protected readonly statusClass = computed(() => {
-    switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
+    switch (this.effectiveStatus() as (PoolStatus | TopologyItemStatus)) {
       case PoolStatus.Faulted:
+      case TopologyItemStatus.Unavail:
         return 'fn-theme-red';
       case PoolStatus.Degraded:
       case PoolStatus.Offline:
       case TopologyItemStatus.Offline:
+      case TopologyItemStatus.Removed:
         return 'fn-theme-yellow';
       default:
         return '';
@@ -67,4 +80,32 @@ export class TopologyItemNodeComponent {
   private readonly isDisk = computed(() => {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
+
+  private worstChildStatus(item: VDevItem | undefined): TopologyItemStatus | undefined {
+    let worst: TopologyItemStatus | undefined;
+    for (const child of item?.children ?? []) {
+      const candidates = [child.status, this.worstChildStatus(child)];
+      for (const candidate of candidates) {
+        if (candidate && (!worst || severityScore(candidate) > severityScore(worst))) {
+          worst = candidate;
+        }
+      }
+    }
+    return worst;
+  }
+}
+
+function severityScore(status: TopologyItemStatus | undefined): number {
+  switch (status) {
+    case TopologyItemStatus.Faulted:
+    case TopologyItemStatus.Unavail:
+      return 3;
+    case TopologyItemStatus.Degraded:
+      return 2;
+    case TopologyItemStatus.Offline:
+    case TopologyItemStatus.Removed:
+      return 1;
+    default:
+      return 0;
+  }
 }
