@@ -17,13 +17,11 @@ export class ContainerShellComponent implements TerminalConfiguration {
 
   protected instanceId = signal(0);
 
-  hint = 'If cursor keys or line editing do not work, run "bash" (or another shell available in the container) '
-    + 'to switch from /bin/sh.';
-
   get connectionData(): TerminalConnectionData {
     return {
       container_id: this.instanceId(),
       use_console: false,
+      command: '/bin/bash',
     };
   }
 
