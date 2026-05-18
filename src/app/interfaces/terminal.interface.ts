@@ -16,6 +16,7 @@ export type TerminalConnectionData
   | {
     container_id: number;
     use_console: boolean;
+    command: string;
   }
   // Apps
   | {
