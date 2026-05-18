@@ -1,0 +1,16 @@
+@if (datasetExists) {
+  <ix-widget-datapoint
+    [size]="size()"
+    [label]="datasetName()"
+    [text]="ratio()"
+    [subText]="subText"
+  ></ix-widget-datapoint>
+}
+
+@if (!datasetExists) {
+  <ix-widget-datapoint
+    [size]="size()"
+    [label]="name | translate"
+    [text]="'Dataset does not exist' | translate"
+  ></ix-widget-datapoint>
+}

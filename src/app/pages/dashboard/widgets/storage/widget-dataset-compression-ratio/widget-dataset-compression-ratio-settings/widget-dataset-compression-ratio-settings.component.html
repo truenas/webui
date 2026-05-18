@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <ix-select
+    class="half-width"
+    formControlName="datasetId"
+    [label]="'Dataset' | translate"
+    [options]="datasetOptions$"
+    [required]="true"
+  ></ix-select>
+</form>

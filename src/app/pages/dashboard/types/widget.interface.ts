@@ -36,6 +36,7 @@ export enum WidgetType {
   PoolStatus = 'pool-status',
   PoolDisksWithZfsErrors = 'pool-disk-with-zfs-errors',
   PoolLastScanErrors = 'pool-last-scan-errors',
+  DatasetCompressionRatio = 'dataset-compression-ratio',
   ArbitraryText = 'arbitrary-text',
   SerialActive = 'serial-active',
   SerialPassive = 'serial-passive',

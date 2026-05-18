@@ -8,6 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { App } from 'app/interfaces/app.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { UpdateStatus } from 'app/interfaces/system-update.interface';
@@ -23,6 +24,11 @@ const apps = [
   { id: '1', name: 'app_1' },
   { id: '2', name: 'app_2' },
 ] as App[];
+
+const datasets = [
+  { id: 'tank' },
+  { id: 'tank/data' },
+] as Dataset[];
 
 const interfaceEth0 = {
   name: 'interface',
@@ -46,6 +52,7 @@ describe('WidgetResourcesService', () => {
       mockApi([
         mockCall('app.query', apps),
         mockCall('pool.query', pools),
+        mockCall('pool.dataset.query', datasets),
         mockCall('replication.query'),
         mockCall('rsynctask.query'),
         mockCall('cloudsync.query'),
@@ -84,6 +91,14 @@ describe('WidgetResourcesService', () => {
 
   it('returns apps', async () => {
     expect(await firstValueFrom(spectator.service.installedApps$)).toEqual(apps);
+  });
+
+  it('returns datasets', async () => {
+    expect(await firstValueFrom(spectator.service.datasets$)).toEqual(datasets);
+  });
+
+  it('returns a dataset by id', async () => {
+    expect(await firstValueFrom(spectator.service.getDatasetById('tank/data'))).toEqual(datasets[1]);
   });
 
   describe('updateAvailable$', () => {
