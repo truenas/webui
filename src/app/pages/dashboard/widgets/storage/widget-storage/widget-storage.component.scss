@@ -21,6 +21,7 @@
   .container {
     flex: 1;
     min-height: 0;
+    overflow-y: auto;
     padding: 4px 16px 16px;
 
     // Only use flex display when showing stale notice
@@ -107,6 +108,8 @@ mat-grid-list[cols="2"] {
       flex: 1 1 1e-9px;
       flex-direction: row;
       font-size: 12px;
+      min-height: 0;
+      overflow-y: auto;
       padding-bottom: 10px;
       place-content: center space-between;
 
@@ -133,22 +136,27 @@ mat-grid-list[cols="2"] {
       }
 
       li {
+        align-items: flex-start;
         box-sizing: border-box;
         display: flex;
         flex-direction: row;
-        line-height: 20px;
-        overflow: hidden;
-        white-space: nowrap;
+        gap: 2px;
+        line-height: 16px;
+        min-width: 0;
+        overflow: visible;
+        padding-bottom: 4px;
+        white-space: normal;
 
         .label {
+          flex: 0 0 auto;
           margin-right: 2px;
+          white-space: nowrap;
         }
 
-        .label,
         .value {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          white-space: normal;
         }
       }
     }
