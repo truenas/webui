@@ -21,7 +21,6 @@ export class ContainerConsoleComponent implements TerminalConfiguration {
     return {
       container_id: this.instanceId(),
       use_console: true,
-      command: '/bin/bash',
     };
   }
 

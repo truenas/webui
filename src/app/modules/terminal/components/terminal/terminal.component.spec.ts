@@ -19,7 +19,7 @@ class TestTerminalReconnectLogic {
   shellService: ShellService;
 
   conf = (): TerminalConfiguration => ({
-    connectionData: { container_id: 1, use_console: false, command: '/bin/bash' },
+    connectionData: { container_id: 1, use_console: false },
   });
 
   constructor(

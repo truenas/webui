@@ -16,13 +16,13 @@ export type TerminalConnectionData
   | {
     container_id: number;
     use_console: boolean;
-    command: string;
+    command?: string;
   }
   // Apps
   | {
     app_name: string;
     container_id: string;
-    command: string;
+    command?: string;
   }
   // No params
   | Record<string, never>;
