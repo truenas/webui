@@ -75,7 +75,6 @@ export class LicenseComponent {
     this.api.call('truenas.license.upload', [license]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInRef.close({ response: true });
         this.cdr.markForCheck();
         this.dialogService
           .confirm({
@@ -86,8 +85,8 @@ export class LicenseComponent {
             hideCancel: true,
             disableClose: true,
           })
-          // Deliberate. Keeps subscribe effect going after form is closed.
           .subscribe(() => {
+            this.slideInRef.close({ response: true });
             this.window.location.reload();
           });
       },
