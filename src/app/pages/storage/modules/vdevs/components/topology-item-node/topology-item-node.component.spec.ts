@@ -60,64 +60,28 @@ describe('TopologyItemNodeComponent', () => {
     expect(spectator.query('.cell-errors')).toHaveText('6 Errors');
   });
 
-  describe('parent VDEV status reflects worst child', () => {
-    function makeChild(status: TopologyItemStatus): TopologyDisk {
-      return {
-        type: TopologyItemType.Disk,
-        status,
-        children: [] as TopologyDisk[],
-        disk: 'sdx',
-      } as TopologyDisk;
-    }
+  it('renders effectiveStatus when the store has attached it', () => {
+    spectator.setInput('topologyItem', {
+      type: TopologyItemType.Raidz3,
+      status: TopologyItemStatus.Online,
+      effectiveStatus: TopologyItemStatus.Faulted,
+      children: [],
+    } as unknown as VDev);
 
-    function makeRaidz(status: TopologyItemStatus, children: TopologyDisk[]): VDev {
-      return {
-        type: TopologyItemType.Raidz3,
-        status,
-        children,
-      } as VDev;
-    }
+    expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Faulted);
+    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
+  });
 
-    it('shows FAULTED red when a child disk is faulted but parent reports ONLINE', () => {
-      spectator.setInput('topologyItem', makeRaidz(TopologyItemStatus.Online, [
-        makeChild(TopologyItemStatus.Online),
-        makeChild(TopologyItemStatus.Faulted),
-        makeChild(TopologyItemStatus.Online),
-      ]));
+  it('falls back to deriving the worst child status when effectiveStatus is absent', () => {
+    spectator.setInput('topologyItem', {
+      type: TopologyItemType.Raidz3,
+      status: TopologyItemStatus.Online,
+      children: [
+        { type: TopologyItemType.Disk, status: TopologyItemStatus.Degraded, children: [] },
+      ],
+    } as unknown as VDev);
 
-      expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Faulted);
-      expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
-    });
-
-    it('shows DEGRADED yellow when worst child is degraded', () => {
-      spectator.setInput('topologyItem', makeRaidz(TopologyItemStatus.Online, [
-        makeChild(TopologyItemStatus.Online),
-        makeChild(TopologyItemStatus.Degraded),
-      ]));
-
-      expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Degraded);
-      expect(spectator.query('.cell-status')).toHaveClass('fn-theme-yellow');
-    });
-
-    it('keeps parent status when it is already worse than any child', () => {
-      spectator.setInput('topologyItem', makeRaidz(TopologyItemStatus.Faulted, [
-        makeChild(TopologyItemStatus.Online),
-        makeChild(TopologyItemStatus.Degraded),
-      ]));
-
-      expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Faulted);
-      expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
-    });
-
-    it('leaves ONLINE parent uncolored when all children are healthy', () => {
-      spectator.setInput('topologyItem', makeRaidz(TopologyItemStatus.Online, [
-        makeChild(TopologyItemStatus.Online),
-        makeChild(TopologyItemStatus.Online),
-      ]));
-
-      expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Online);
-      expect(spectator.query('.cell-status')).not.toHaveClass('fn-theme-red');
-      expect(spectator.query('.cell-status')).not.toHaveClass('fn-theme-yellow');
-    });
+    expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Degraded);
+    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-yellow');
   });
 });

@@ -3,7 +3,12 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
-export type VDevItem = (VDev | TopologyDisk) & { isRoot?: boolean };
+// `effectiveStatus` is enriched on the client (see topology-status.helper) so a parent VDEV
+// that itself reports ONLINE still surfaces the worst status from its descendants.
+export type VDevItem = (VDev | TopologyDisk) & {
+  isRoot?: boolean;
+  effectiveStatus?: TopologyItemStatus;
+};
 
 export interface VDev {
   type: Exclude<TopologyItemType, TopologyItemType.Disk>;
