@@ -4,7 +4,6 @@ import {
   getEffectiveStatus,
   getStatusSeverity,
   getStatusThemeClass,
-  worstDescendantStatus,
 } from 'app/helpers/topology-status.helper';
 import { TopologyDisk, VDev, VDevItem } from 'app/interfaces/storage.interface';
 
@@ -47,37 +46,12 @@ describe('topology-status.helper', () => {
     });
   });
 
-  describe('worstDescendantStatus', () => {
-    it('returns the highest-severity status found in any descendant', () => {
-      const vdev = makeRaidz(TopologyItemStatus.Online, [
-        makeDisk(TopologyItemStatus.Online),
-        makeDisk(TopologyItemStatus.Degraded),
-        makeDisk(TopologyItemStatus.Faulted),
-      ]);
-
-      expect(worstDescendantStatus(vdev)).toBe(TopologyItemStatus.Faulted);
-    });
-
-    it('walks nested children', () => {
-      const inner = makeRaidz(TopologyItemStatus.Online, [
-        makeDisk(TopologyItemStatus.Unavail),
-      ]);
-      const outer = makeRaidz(TopologyItemStatus.Online, [inner]);
-
-      expect(worstDescendantStatus(outer)).toBe(TopologyItemStatus.Unavail);
-    });
-
-    it('returns undefined when no children carry a severity-bearing status', () => {
-      const vdev = makeRaidz(TopologyItemStatus.Online, [
-        makeDisk(TopologyItemStatus.Online),
-      ]);
-
-      expect(worstDescendantStatus(vdev)).toBeUndefined();
-    });
-  });
-
   describe('getEffectiveStatus', () => {
-    it('prefers a worse child status over a healthier parent status', () => {
+    it('returns undefined for a missing item', () => {
+      expect(getEffectiveStatus(undefined)).toBeUndefined();
+    });
+
+    it('prefers a worse descendant status over a healthier parent status', () => {
       const vdev = makeRaidz(TopologyItemStatus.Online, [
         makeDisk(TopologyItemStatus.Faulted),
       ]);
@@ -85,7 +59,16 @@ describe('topology-status.helper', () => {
       expect(getEffectiveStatus(vdev)).toBe(TopologyItemStatus.Faulted);
     });
 
-    it('keeps the parent status when it is already worse than any child', () => {
+    it('walks nested descendants', () => {
+      const inner = makeRaidz(TopologyItemStatus.Online, [
+        makeDisk(TopologyItemStatus.Unavail),
+      ]);
+      const outer = makeRaidz(TopologyItemStatus.Online, [inner]);
+
+      expect(getEffectiveStatus(outer)).toBe(TopologyItemStatus.Unavail);
+    });
+
+    it('keeps the parent status when it is already worse than any descendant', () => {
       const vdev = makeRaidz(TopologyItemStatus.Faulted, [
         makeDisk(TopologyItemStatus.Degraded),
       ]);
@@ -93,7 +76,7 @@ describe('topology-status.helper', () => {
       expect(getEffectiveStatus(vdev)).toBe(TopologyItemStatus.Faulted);
     });
 
-    it('returns the parent status when no children are worse', () => {
+    it('returns the parent status when no descendants are worse', () => {
       const vdev = makeRaidz(TopologyItemStatus.Online, [
         makeDisk(TopologyItemStatus.Online),
       ]);

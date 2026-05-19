@@ -9,7 +9,9 @@ import { getEffectiveStatus } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
+import {
+  VDevItemEnriched, isTopologyDisk, TopologyDisk, VDevItem,
+} from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -186,19 +188,19 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     return dataNodes.map((node: VDevNestedDataNode) => {
       return {
         ...node,
-        children: node.children.map((child: VDevItem) => {
-          return { ...this.withEffectiveStatus(child), isRoot: true };
-        }) as TopologyDisk[],
+        children: node.children.map(
+          (child: VDevItem) => ({ ...this.withEffectiveStatus(child), isRoot: true }),
+        ) as TopologyDisk[],
       };
     });
   }
 
-  private withEffectiveStatus(item: VDevItem): VDevItem {
+  private withEffectiveStatus(item: VDevItem): VDevItemEnriched {
     const enrichedChildren = (item.children ?? []).map(
       (child) => this.withEffectiveStatus(child),
     ) as TopologyDisk[];
     const withChildren = { ...item, children: enrichedChildren };
-    return { ...withChildren, effectiveStatus: getEffectiveStatus(withChildren) };
+    return { ...withChildren, effectiveStatus: getEffectiveStatus(withChildren) ?? item.status };
   }
 
   getDisk(node: VDevNestedDataNode): Disk | undefined {

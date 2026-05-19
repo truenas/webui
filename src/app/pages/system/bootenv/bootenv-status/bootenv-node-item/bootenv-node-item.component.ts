@@ -1,4 +1,4 @@
-import { TitleCasePipe } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, computed, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -6,10 +6,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { getStatusThemeClass } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
@@ -22,6 +21,7 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   styleUrls: ['./bootenv-node-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgClass,
     TnIconComponent,
     TnTooltipDirective,
     MatTooltip,
@@ -66,16 +66,7 @@ export class BootenvNodeItemComponent {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
 
-  protected readonly statusColor = computed(() => {
-    switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
-      case PoolStatus.Faulted:
-        return 'var(--red)';
-      case PoolStatus.Offline:
-        return 'var(--alt-bg2)';
-      default:
-        return '';
-    }
-  });
+  protected readonly statusClass = computed(() => getStatusThemeClass(this.topologyItem().status));
 
   protected readonly errors = computed(() => {
     let errors = 0;

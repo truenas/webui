@@ -2,12 +2,16 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
-// As returned by pool.query under topology[<vdevtype>]
-// `effectiveStatus` is enriched on the client (see topology-status.helper) so a parent VDEV
-// that itself reports ONLINE still surfaces the worst status from its descendants.
-export type VDevItem = (VDev | TopologyDisk) & {
+// As returned by pool.query under topology[<vdevtype>].
+// `isRoot` is set by the UI when nesting items in the tree view.
+export type VDevItem = (VDev | TopologyDisk) & { isRoot?: boolean };
+
+// UI projection produced by `VDevsStore`: each node carries a precomputed `effectiveStatus`
+// so consumers don't recurse on every render. `effectiveStatus` reflects the worst status
+// reached by walking the node and its descendants (see topology-status.helper).
+export type VDevItemEnriched = (VDev | TopologyDisk) & {
   isRoot?: boolean;
-  effectiveStatus?: TopologyItemStatus;
+  effectiveStatus: TopologyItemStatus;
 };
 
 export interface VDev {

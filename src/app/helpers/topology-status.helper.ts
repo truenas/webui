@@ -6,8 +6,10 @@ interface StatusVisual {
   themeClass: string;
 }
 
-// Single source of truth for ordering and theming of TopologyItemStatus values.
-// Add new statuses here so every consumer (icons, cards, summaries) stays in sync.
+// Single source of truth for ordering and theming of `TopologyItemStatus` values used in the
+// per-VDEV/disk tree view (vdevs page, bootenv status). It deliberately does NOT cover
+// `PoolStatus`-level concerns (pool cards, dashboard widgets) — pool-level UIs treat values
+// like REMOVED as fatal, while at the VDEV level REMOVED means a single disk was pulled.
 const statusVisuals = new Map<TopologyItemStatus, StatusVisual>([
   [TopologyItemStatus.Faulted, { severity: 3, themeClass: 'fn-theme-red' }],
   [TopologyItemStatus.Unavail, { severity: 3, themeClass: 'fn-theme-red' }],
@@ -25,28 +27,19 @@ export function getStatusThemeClass(status: TopologyItemStatus | undefined): str
 }
 
 /**
- * Walks the tree below `item` and returns the worst (highest-severity) status found.
- * Returns undefined when there are no children with a comparable status.
- */
-export function worstDescendantStatus(item: VDevItem | undefined): TopologyItemStatus | undefined {
-  let worst: TopologyItemStatus | undefined;
-  for (const child of item?.children ?? []) {
-    const candidates = [child.status, worstDescendantStatus(child)];
-    for (const candidate of candidates) {
-      if (candidate && getStatusSeverity(candidate) > getStatusSeverity(worst)) {
-        worst = candidate;
-      }
-    }
-  }
-  return worst;
-}
-
-/**
- * Returns the higher-severity status between `item.status` and the worst status of its descendants,
+ * Returns the worst (highest-severity) status reached by walking `item` and its descendants,
  * so a parent VDEV reporting ONLINE still surfaces a faulted/degraded child.
  */
 export function getEffectiveStatus(item: VDevItem | undefined): TopologyItemStatus | undefined {
-  const own = item?.status;
-  const worstChild = worstDescendantStatus(item);
-  return getStatusSeverity(worstChild) > getStatusSeverity(own) ? worstChild : own;
+  if (!item) {
+    return undefined;
+  }
+  let worst = item.status;
+  for (const child of item.children ?? []) {
+    const childWorst = getEffectiveStatus(child);
+    if (childWorst && getStatusSeverity(childWorst) > getStatusSeverity(worst)) {
+      worst = childWorst;
+    }
+  }
+  return worst;
 }
