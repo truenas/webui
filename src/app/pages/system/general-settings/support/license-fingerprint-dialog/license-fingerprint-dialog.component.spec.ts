@@ -11,7 +11,14 @@ import {
 } from 'app/pages/system/general-settings/support/license-fingerprint-dialog/license-fingerprint-dialog.component';
 
 describe('LicenseFingerprintDialog', () => {
-  const payload = { system_serial: 'A1', hardware_model: 'M60', customer_id: 42 };
+  const payload = {
+    system_serial: 'A1',
+    hardware_model: 'M60',
+    customer_id: 42,
+    ha_enabled: true,
+    feature_flags: ['vm', 'replication'],
+    notes: null,
+  };
   const base64 = btoa(JSON.stringify(payload));
 
   let spectator: Spectator<LicenseFingerprintDialog>;
@@ -31,12 +38,22 @@ describe('LicenseFingerprintDialog', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('fetches the fingerprint on init and renders pretty-printed JSON', () => {
+  it('fetches the fingerprint on init and renders decoded fields as labeled key/value pairs', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
 
-    const decoded = spectator.query('.fingerprint-decoded');
-    expect(decoded).toExist();
-    expect(JSON.parse(decoded!.textContent!.trim())).toEqual(payload);
+    const labels = spectator.queryAll('.fingerprint-fields .field-label').map((el) => el.textContent!.trim());
+    expect(labels).toEqual(['System Serial', 'Hardware Model', 'Customer Id', 'Ha Enabled', 'Feature Flags', 'Notes']);
+
+    const rows = spectator.queryAll('.fingerprint-fields .field');
+    const singleValues = [0, 1, 2, 3, 5].map((index) => rows[index].querySelector('.field-value')!.textContent!.trim());
+    expect(singleValues).toEqual(['A1', 'M60', '42', 'true', '—']);
+
+    const arrayItems = rows[4].querySelectorAll('.field-list li');
+    expect(Array.from(arrayItems).map((el) => el.textContent!.trim())).toEqual(['vm', 'replication']);
+  });
+
+  it('does not mention iX in the dialog copy', () => {
+    expect(spectator.fixture.nativeElement.textContent).not.toMatch(/\biX\b/);
   });
 
   it('copies the raw base64 string when the copy button is clicked', async () => {
