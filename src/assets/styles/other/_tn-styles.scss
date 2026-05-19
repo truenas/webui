@@ -368,7 +368,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
         .mat-mdc-dialog-content,
         .mat-mdc-dialog-actions {
-          padding: 0;
+          padding: 0 0 5px;
         }
       }
     }
