@@ -81,6 +81,34 @@ function parityFromLayoutWidth(
   return layoutParity(layout, width ?? 0);
 }
 
+/**
+ * Parity for a topology category. The actual disk count in `vdevs` takes
+ * precedence over the configured `width`: manual disk selection updates
+ * `vdevs` without re-syncing `width` on the category, so `width` can be stale
+ * (e.g. width=2 from a prior automated selection, then a 3rd disk added
+ * manually). When vdevs are present we use the smallest vdev's disk count,
+ * which yields the worst-case parity across configured vdevs — the
+ * conservative choice for a warning. Width is the source of truth only when
+ * vdevs haven't been generated yet. For layout-determined parity
+ * (Stripe/RAIDZ/dRAID) this choice is harmless. Returns null when neither a
+ * layout nor an effective width can be resolved.
+ */
+function parityFromCategory(category: PoolManagerTopologyCategory): number | null {
+  if (!category.layout) {
+    return null;
+  }
+  let effectiveWidth: number | null = null;
+  // A committed vdev should always carry at least one disk; filter empty
+  // vdev arrays to avoid a phantom width=0 being passed to layoutParity.
+  const nonEmptyVdevs = category.vdevs.filter((vdev) => vdev.length > 0);
+  if (nonEmptyVdevs.length) {
+    effectiveWidth = Math.min(...nonEmptyVdevs.map((vdev) => vdev.length));
+  } else if (category.width != null) {
+    effectiveWidth = category.width;
+  }
+  return parityFromLayoutWidth(category.layout, effectiveWidth);
+}
+
 @Injectable()
 export class PoolManagerValidationService {
   protected store = inject(PoolManagerStore);
@@ -471,7 +499,7 @@ export class PoolManagerValidationService {
       if (category.layout === CreateVdevLayout.Stripe) {
         return;
       }
-      const categoryParity = parityFromLayoutWidth(category.layout, category.width);
+      const categoryParity = parityFromCategory(category);
       if (categoryParity === null) {
         return;
       }
@@ -539,8 +567,14 @@ export class PoolManagerValidationService {
       }
       // Existing pool vdevs always carry a children list; the fallback only
       // guards against malformed payloads and is irrelevant for non-Mirror
-      // layouts where parity is layout-determined. Note that a malformed
-      // payload could mask a backend bug as a 2-disk Mirror (parity 1).
+      // layouts where parity is layout-determined. We fall back to 2 (parity
+      // 1) rather than 1 (parity 0) because validateRedundancyMismatch
+      // short-circuits on `dataParity <= 0` — a lower fallback would silently
+      // suppress *all* mismatch warnings for a malformed Mirror payload.
+      // Existing-pool vdevs are not run through parityFromCategory: their
+      // disk count lives in `children`, not in a wizard `vdevs[][]`, and the
+      // wizard's "smallest vdev" convention doesn't translate cleanly to an
+      // existing pool whose vdevs are already created and immutable here.
       const width = existingDataVdevs[0].children?.length ?? 2;
       return layoutParity(layout, width);
     }
@@ -550,9 +584,9 @@ export class PoolManagerValidationService {
     // category is unset, so we return null and the mismatch warning is
     // suppressed until parity can actually be resolved.
     const dataCategory = topology[VDevType.Data];
-    if (!dataCategory?.layout) {
+    if (!dataCategory) {
       return null;
     }
-    return parityFromLayoutWidth(dataCategory.layout, dataCategory.width);
+    return parityFromCategory(dataCategory);
   }
 }
