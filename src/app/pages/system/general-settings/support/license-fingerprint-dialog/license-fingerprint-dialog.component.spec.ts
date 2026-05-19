@@ -100,3 +100,22 @@ describe('LicenseFingerprintDialog', () => {
     expect(writeText).toHaveBeenCalledWith(base64);
   });
 });
+
+describe('LicenseFingerprintDialog fallback rendering', () => {
+  const malformedRaw = 'not-base64!@#';
+
+  const createComponent = createComponentFactory({
+    component: LicenseFingerprintDialog,
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('truenas.license.fingerprint', malformedRaw)]),
+      mockProvider(MatDialogRef),
+    ],
+  });
+
+  it('renders the raw payload when decoding fails', () => {
+    const spectator = createComponent();
+    expect(spectator.query('.fingerprint-fields')).toBeNull();
+    expect(spectator.query('.fingerprint-raw')!.textContent!.trim()).toBe(malformedRaw);
+  });
+});

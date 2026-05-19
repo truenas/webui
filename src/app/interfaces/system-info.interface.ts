@@ -65,8 +65,7 @@ export interface License {
  * values are primitives or arrays of primitives. The UI renders the payload
  * generically so middleware can add or remove fields without coupled UI work.
  */
-export type LicenseFingerprintPrimitive = string | number | boolean | null;
-export type LicenseFingerprintValue = LicenseFingerprintPrimitive | LicenseFingerprintPrimitive[];
+export type LicenseFingerprintValue = string | number | boolean | null | (string | number | boolean | null)[];
 export type LicenseFingerprint = Record<string, LicenseFingerprintValue>;
 
 export enum ContractType {
