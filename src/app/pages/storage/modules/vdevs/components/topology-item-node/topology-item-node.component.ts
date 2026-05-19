@@ -2,12 +2,11 @@ import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { getEffectiveStatus, getStatusThemeClass } from 'app/helpers/topology-status.helper';
+import { getStatusThemeClass } from 'app/helpers/topology-status.helper';
 import { Disk } from 'app/interfaces/disk.interface';
 import {
-  TopologyDisk, VDevItem,
+  VDevItemEnriched, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 
@@ -21,7 +20,9 @@ import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/compo
 export class TopologyItemNodeComponent {
   protected translate = inject(TranslateService);
 
-  readonly topologyItem = input.required<VDevItem>();
+  // The store enriches every item via topology-status.helper, so this component just renders
+  // what it's given — no per-render recursion.
+  readonly topologyItem = input.required<VDevItemEnriched>();
   readonly disk = input.required<Disk>();
 
   protected readonly name = computed(() => {
@@ -34,14 +35,7 @@ export class TopologyItemNodeComponent {
     return this.topologyItem().type;
   });
 
-  // Prefer the store-enriched `effectiveStatus` so a parent VDEV still surfaces a
-  // faulted/degraded descendant; fall back to local computation for callers that
-  // hand us a raw VDevItem.
-  protected readonly effectiveStatus = computed<TopologyItemStatus | undefined>(() => {
-    return this.topologyItem().effectiveStatus ?? getEffectiveStatus(this.topologyItem());
-  });
-
-  protected readonly status = computed(() => this.effectiveStatus() ?? '');
+  protected readonly status = computed(() => this.topologyItem().effectiveStatus ?? '');
 
   protected readonly capacity = computed(() => {
     return this.isDisk() && this.disk()?.size ? buildNormalizedFileSize(this.disk().size) : '';
@@ -56,7 +50,7 @@ export class TopologyItemNodeComponent {
     return '';
   });
 
-  protected readonly statusClass = computed(() => getStatusThemeClass(this.effectiveStatus()));
+  protected readonly statusClass = computed(() => getStatusThemeClass(this.topologyItem().effectiveStatus));
 
   private readonly isDisk = computed(() => {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
