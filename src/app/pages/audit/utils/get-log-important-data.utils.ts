@@ -1,6 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { AuditEvent, AuditService, webshellTypeLabels } from 'app/enums/audit.enum';
+import {
+  AuditEvent, AuditService, WebshellType, webshellTypeLabels,
+} from 'app/enums/audit.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import {
@@ -62,21 +64,43 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
 }
 
 function getWebshellImportantData(eventData: MiddlewareWebshellEventData, translate: TranslateService): string {
-  const shellType = eventData?.shell_type;
-  const shellTypeLabel = shellType
-    ? translate.instant(webshellTypeLabels.get(shellType) || shellType)
-    : translate.instant(T('Unknown'));
-  const target = eventData?.target;
-  const targetLabel = target?.app_name || target?.vm_name || target?.container_id;
+  const shellType = eventData.shell_type;
+  const shellTypeLabel = translate.instant(webshellTypeLabels.get(shellType) ?? shellType);
+  const targetIdentifier = getWebshellTargetIdentifier(shellType, eventData.target);
+  const isFailed = Boolean(eventData.error);
 
-  if (targetLabel) {
-    return translate.instant(T('Shell: {shellType} ({target})'), {
-      shellType: shellTypeLabel,
-      target: targetLabel,
-    });
+  if (targetIdentifier) {
+    return translate.instant(
+      isFailed
+        ? T('Failed Shell Authentication: {shellType} ({target})')
+        : T('Shell: {shellType} ({target})'),
+      { shellType: shellTypeLabel, target: targetIdentifier },
+    );
   }
 
-  return translate.instant(T('Shell: {shellType}'), { shellType: shellTypeLabel });
+  return translate.instant(
+    isFailed ? T('Failed Shell Authentication: {shellType}') : T('Shell: {shellType}'),
+    { shellType: shellTypeLabel },
+  );
+}
+
+function getWebshellTargetIdentifier(
+  shellType: WebshellType,
+  target: MiddlewareWebshellEventData['target'],
+): string | undefined {
+  switch (shellType) {
+    case WebshellType.App:
+      return target?.app_name;
+    case WebshellType.Vm:
+      return target?.vm_name;
+    case WebshellType.Container:
+      return target?.container_id;
+    case WebshellType.Host:
+      return undefined;
+    default:
+      assertUnreachable(shellType);
+      return undefined;
+  }
 }
 
 function getSudoLogImportantData(log: SudoAuditEntry, translate: TranslateService): string {

@@ -41,7 +41,6 @@ export interface MiddlewareWebshellTarget {
   app_name?: string;
   container_id?: string;
   vm_name?: string;
-  [key: string]: unknown;
 }
 
 export interface MiddlewareWebshellEventData {
