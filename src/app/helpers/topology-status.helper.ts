@@ -6,10 +6,10 @@ interface StatusVisual {
   themeClass: string;
 }
 
-// Single source of truth for ordering and theming of `TopologyItemStatus` values used in the
-// per-VDEV/disk tree view (vdevs page, bootenv status). It deliberately does NOT cover
-// `PoolStatus`-level concerns (pool cards, dashboard widgets) — pool-level UIs treat values
-// like REMOVED as fatal, while at the VDEV level REMOVED means a single disk was pulled.
+// Single source of truth for ordering and theming of `TopologyItemStatus` values used in
+// per-VDEV/disk tree views. It deliberately does NOT cover `PoolStatus`-level concerns
+// (pool cards, dashboard widgets) — pool-level UIs treat values like REMOVED as fatal,
+// while at the VDEV level REMOVED means a single disk was pulled.
 const statusVisuals = new Map<TopologyItemStatus, StatusVisual>([
   [TopologyItemStatus.Faulted, { severity: 3, themeClass: 'fn-theme-red' }],
   [TopologyItemStatus.Unavail, { severity: 3, themeClass: 'fn-theme-red' }],

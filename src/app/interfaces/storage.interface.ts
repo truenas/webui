@@ -6,13 +6,10 @@ import { ZfsProperty } from './zfs-property.interface';
 // `isRoot` is set by the UI when nesting items in the tree view.
 export type VDevItem = (VDev | TopologyDisk) & { isRoot?: boolean };
 
-// UI projection produced by `VDevsStore`: each node carries a precomputed `effectiveStatus`
-// so consumers don't recurse on every render. `effectiveStatus` reflects the worst status
-// reached by walking the node and its descendants (see topology-status.helper).
-export type VDevItemEnriched = (VDev | TopologyDisk) & {
-  isRoot?: boolean;
-  effectiveStatus: TopologyItemStatus;
-};
+// UI-side projection of `VDevItem` that carries a precomputed `effectiveStatus`,
+// so consumers don't recurse on every render. `effectiveStatus` reflects the worst
+// status reached by walking the node and its descendants (see topology-status.helper).
+export type VDevItemEnriched = VDevItem & { effectiveStatus: TopologyItemStatus };
 
 export interface VDev {
   type: Exclude<TopologyItemType, TopologyItemType.Disk>;

@@ -8,7 +8,7 @@ import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { getStatusThemeClass } from 'app/helpers/topology-status.helper';
+import { getEffectiveStatus, getStatusThemeClass } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
@@ -66,7 +66,9 @@ export class BootenvNodeItemComponent {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
 
-  protected readonly statusClass = computed(() => getStatusThemeClass(this.topologyItem().status));
+  protected readonly effectiveStatus = computed(() => getEffectiveStatus(this.topologyItem()));
+
+  protected readonly statusClass = computed(() => getStatusThemeClass(this.effectiveStatus()));
 
   protected readonly errors = computed(() => {
     let errors = 0;

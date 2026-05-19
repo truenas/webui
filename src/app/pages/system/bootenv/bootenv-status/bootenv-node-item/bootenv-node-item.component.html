@@ -3,7 +3,7 @@
     <span class="name">{{ ownName() }}</span>
   </div>
   <div class="cell cell-status" [ngClass]="statusClass()">
-    <span>{{ topologyItem().status | titlecase }}</span>
+    <span>{{ effectiveStatus() | titlecase }}</span>
     @if (!isDisk() && !isMirror() && poolInstance()?.status_detail) {
       <tn-icon
         name="information-outline"

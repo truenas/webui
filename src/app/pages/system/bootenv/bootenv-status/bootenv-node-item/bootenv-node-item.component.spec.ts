@@ -65,4 +65,29 @@ describe('BootenvNodeItemComponent', () => {
   it('shows pool status', () => {
     expect(spectator.query('.cell-status')).toHaveText('Online');
   });
+
+  it('applies fn-theme-red when the node is faulted', () => {
+    spectator.setInput('node', {
+      ...topologyItem,
+      status: TopologyItemStatus.Faulted,
+    } as TopologyDisk);
+
+    expect(spectator.query('.cell-status')).toHaveText('Faulted');
+    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
+  });
+
+  it('surfaces the worst child status on a mirror parent', () => {
+    spectator.setInput('node', {
+      name: 'mirror-0',
+      type: TopologyItemType.Mirror,
+      status: TopologyItemStatus.Online,
+      children: [
+        { ...topologyItem, status: TopologyItemStatus.Online },
+        { ...topologyItem, status: TopologyItemStatus.Faulted },
+      ],
+    } as unknown as TopologyDisk);
+
+    expect(spectator.query('.cell-status')).toHaveText('Faulted');
+    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
+  });
 });
