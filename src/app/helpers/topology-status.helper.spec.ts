@@ -1,11 +1,11 @@
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  getEffectiveStatus,
+  enrichWithEffectiveStatus,
   getStatusSeverity,
   getStatusThemeClass,
 } from 'app/helpers/topology-status.helper';
-import { TopologyDisk, VDev, VDevItem } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDev, VDevItem, VDevItemEnriched } from 'app/interfaces/storage.interface';
 
 function makeDisk(status: TopologyItemStatus | undefined): TopologyDisk {
   return { type: TopologyItemType.Disk, status, children: [] } as TopologyDisk;
@@ -46,26 +46,28 @@ describe('topology-status.helper', () => {
     });
   });
 
-  describe('getEffectiveStatus', () => {
-    it('returns undefined for a missing item', () => {
-      expect(getEffectiveStatus(undefined)).toBeUndefined();
-    });
-
+  describe('enrichWithEffectiveStatus', () => {
     it('prefers a worse descendant status over a healthier parent status', () => {
       const vdev = makeRaidz(TopologyItemStatus.Online, [
         makeDisk(TopologyItemStatus.Faulted),
       ]);
 
-      expect(getEffectiveStatus(vdev)).toBe(TopologyItemStatus.Faulted);
+      const enriched = enrichWithEffectiveStatus(vdev);
+      expect(enriched.effectiveStatus).toBe(TopologyItemStatus.Faulted);
+      expect((enriched.children[0] as VDevItemEnriched).effectiveStatus).toBe(TopologyItemStatus.Faulted);
     });
 
-    it('walks nested descendants', () => {
+    it('walks nested descendants and tags every node', () => {
       const inner = makeRaidz(TopologyItemStatus.Online, [
         makeDisk(TopologyItemStatus.Unavail),
       ]);
       const outer = makeRaidz(TopologyItemStatus.Online, [inner]);
 
-      expect(getEffectiveStatus(outer)).toBe(TopologyItemStatus.Unavail);
+      const enriched = enrichWithEffectiveStatus(outer);
+      const innerEnriched = enriched.children[0] as VDevItemEnriched;
+      expect(enriched.effectiveStatus).toBe(TopologyItemStatus.Unavail);
+      expect(innerEnriched.effectiveStatus).toBe(TopologyItemStatus.Unavail);
+      expect((innerEnriched.children[0] as VDevItemEnriched).effectiveStatus).toBe(TopologyItemStatus.Unavail);
     });
 
     it('keeps the parent status when it is already worse than any descendant', () => {
@@ -73,7 +75,7 @@ describe('topology-status.helper', () => {
         makeDisk(TopologyItemStatus.Degraded),
       ]);
 
-      expect(getEffectiveStatus(vdev)).toBe(TopologyItemStatus.Faulted);
+      expect(enrichWithEffectiveStatus(vdev).effectiveStatus).toBe(TopologyItemStatus.Faulted);
     });
 
     it('returns the parent status when no descendants are worse', () => {
@@ -81,7 +83,13 @@ describe('topology-status.helper', () => {
         makeDisk(TopologyItemStatus.Online),
       ]);
 
-      expect(getEffectiveStatus(vdev)).toBe(TopologyItemStatus.Online);
+      expect(enrichWithEffectiveStatus(vdev).effectiveStatus).toBe(TopologyItemStatus.Online);
+    });
+
+    it('preserves an undefined status when no descendants override it', () => {
+      const vdev = makeRaidz(undefined, [makeDisk(undefined)]);
+
+      expect(enrichWithEffectiveStatus(vdev).effectiveStatus).toBeUndefined();
     });
   });
 });
