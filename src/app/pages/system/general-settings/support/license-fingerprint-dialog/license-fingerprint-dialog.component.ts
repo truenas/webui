@@ -8,15 +8,18 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { LicenseFingerprint, LicenseFingerprintPrimitive } from 'app/interfaces/system-info.interface';
+import {
+  LicenseFingerprint, LicenseFingerprintPrimitive, LicenseFingerprintValue,
+} from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-interface FingerprintField {
+export interface FingerprintField {
   key: string;
   label: string;
   values: string[];
@@ -24,7 +27,23 @@ interface FingerprintField {
 
 const emptyPlaceholder = '—';
 
-function formatFingerprintLabel(key: string): string {
+// Translatable labels for known middleware-supplied fingerprint keys. Unknown
+// keys fall through to a generic snake_case → Title Case formatter so the UI
+// still renders something when middleware adds new fields.
+export const fingerprintLabels: Record<string, string> = {
+  macs: T('MAC Addresses'),
+  cpu_id: T('CPU ID'),
+  machine_id: T('Machine ID'),
+  smbios_uuid: T('SMBIOS UUID'),
+  product_serial: T('Product Serial'),
+  chassis_serial: T('Chassis Serial'),
+  board_serial: T('Board Serial'),
+};
+
+export function formatFingerprintLabel(key: string): string {
+  if (fingerprintLabels[key]) {
+    return fingerprintLabels[key];
+  }
   return key
     .split('_')
     .filter((part) => part.length > 0)
@@ -32,20 +51,27 @@ function formatFingerprintLabel(key: string): string {
     .join(' ');
 }
 
-function formatFingerprintPrimitive(value: LicenseFingerprintPrimitive): string {
+function formatFingerprintPrimitive(value: LicenseFingerprintPrimitive, translate: TranslateService): string {
   if (value === null || value === '') {
     return emptyPlaceholder;
+  }
+  if (typeof value === 'boolean') {
+    return translate.instant(value ? T('Yes') : T('No'));
   }
   return String(value);
 }
 
-function buildFingerprintField(key: string, value: unknown): FingerprintField {
+export function buildFingerprintField(
+  key: string,
+  value: LicenseFingerprintValue,
+  translate: TranslateService,
+): FingerprintField {
   const label = formatFingerprintLabel(key);
   if (Array.isArray(value)) {
-    const values = (value as LicenseFingerprintPrimitive[]).map(formatFingerprintPrimitive);
+    const values = value.map((item) => formatFingerprintPrimitive(item, translate));
     return { key, label, values: values.length > 0 ? values : [emptyPlaceholder] };
   }
-  return { key, label, values: [formatFingerprintPrimitive(value as LicenseFingerprintPrimitive)] };
+  return { key, label, values: [formatFingerprintPrimitive(value, translate)] };
 }
 
 @Component({
@@ -84,7 +110,7 @@ export class LicenseFingerprintDialog implements OnInit {
     }
     try {
       const parsed = JSON.parse(atob(raw)) as LicenseFingerprint;
-      return Object.entries(parsed).map(([key, value]) => buildFingerprintField(key, value));
+      return Object.entries(parsed).map(([key, value]) => buildFingerprintField(key, value, this.translate));
     } catch {
       return null;
     }
