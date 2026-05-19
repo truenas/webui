@@ -1,5 +1,5 @@
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { VDevItem } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDevItem, VDevItemEnriched } from 'app/interfaces/storage.interface';
 
 interface StatusVisual {
   severity: number;
@@ -27,19 +27,19 @@ export function getStatusThemeClass(status: TopologyItemStatus | undefined): str
 }
 
 /**
- * Returns the worst (highest-severity) status reached by walking `item` and its descendants,
- * so a parent VDEV reporting ONLINE still surfaces a faulted/degraded child.
+ * Returns a deep copy of `item` where every node carries an `effectiveStatus` reflecting
+ * the worst (highest-severity) status reached by walking that node and its descendants,
+ * so a parent VDEV reporting ONLINE still surfaces a faulted/degraded child. The cast is
+ * isolated here so callers can treat the result as a fully enriched tree without their
+ * own casts.
  */
-export function getEffectiveStatus(item: VDevItem | undefined): TopologyItemStatus | undefined {
-  if (!item) {
-    return undefined;
-  }
-  let worst = item.status;
-  for (const child of item.children ?? []) {
-    const childWorst = getEffectiveStatus(child);
-    if (childWorst && getStatusSeverity(childWorst) > getStatusSeverity(worst)) {
-      worst = childWorst;
-    }
-  }
-  return worst;
+export function enrichWithEffectiveStatus(item: VDevItem): VDevItemEnriched {
+  const enrichedChildren = (item.children ?? []).map(enrichWithEffectiveStatus);
+  const effectiveStatus = enrichedChildren.reduce<TopologyItemStatus | undefined>(
+    (worst, child) => (getStatusSeverity(child.effectiveStatus) > getStatusSeverity(worst)
+      ? child.effectiveStatus
+      : worst),
+    item.status,
+  );
+  return { ...item, children: enrichedChildren as TopologyDisk[], effectiveStatus };
 }

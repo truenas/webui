@@ -8,10 +8,10 @@ import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { getEffectiveStatus, getStatusThemeClass } from 'app/helpers/topology-status.helper';
+import { getStatusThemeClass } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { VDevItem } from 'app/interfaces/storage.interface';
+import { VDevItemEnriched } from 'app/interfaces/storage.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 
@@ -46,7 +46,9 @@ export class BootenvNodeItemComponent {
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
 
-  protected readonly topologyItem = computed(() => this.node() as VDevItem);
+  // bootenv-status enriches every item via topology-status.helper, so this component just renders
+  // what it's given — no per-render recursion.
+  protected readonly topologyItem = computed(() => this.node() as VDevItemEnriched);
 
   protected readonly ownName = computed(() => {
     if (!this.topologyItem()) {
@@ -66,7 +68,7 @@ export class BootenvNodeItemComponent {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
 
-  protected readonly effectiveStatus = computed(() => getEffectiveStatus(this.topologyItem()));
+  protected readonly effectiveStatus = computed(() => this.topologyItem().effectiveStatus);
 
   protected readonly statusClass = computed(() => getStatusThemeClass(this.effectiveStatus()));
 

@@ -9,7 +9,8 @@ export type VDevItem = (VDev | TopologyDisk) & { isRoot?: boolean };
 // UI-side projection of `VDevItem` that carries a precomputed `effectiveStatus`,
 // so consumers don't recurse on every render. `effectiveStatus` reflects the worst
 // status reached by walking the node and its descendants (see topology-status.helper).
-export type VDevItemEnriched = VDevItem & { effectiveStatus: TopologyItemStatus };
+// Optional because middleware may omit `status` on edge-case nodes.
+export type VDevItemEnriched = VDevItem & { effectiveStatus: TopologyItemStatus | undefined };
 
 export interface VDev {
   type: Exclude<TopologyItemType, TopologyItemType.Disk>;
