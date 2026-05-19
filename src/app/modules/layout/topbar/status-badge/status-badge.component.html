@@ -1,1 +1,5 @@
-<tn-icon library="mdi" customSize="11px" [name]="icon()"></tn-icon>
+@if (iconBadge(); as badgeWithIcon) {
+  <tn-icon size="sm" library="mdi" [name]="badgeWithIcon.icon"></tn-icon>
+} @else if (labelBadge(); as badgeWithLabel) {
+  <span class="label">{{ badgeWithLabel.label }}</span>
+}

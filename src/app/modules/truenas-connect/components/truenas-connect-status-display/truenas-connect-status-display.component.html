@@ -18,7 +18,7 @@
     <span ixTest="tnc-status" class="active-header">{{ "TrueNAS Connect - Status Healthy" | translate }}</span>
   </div>
   @if (tierLabel()) {
-    <span ixTest="tnc-tier" [class]="'tier-badge ' + tierCssClass()">
+    <span ixTest="tnc-tier" class="tier-badge" [style.background]="tierBackground()">
       {{ "Tier: {tier}" | translate: { tier: tierLabel() } }}
     </span>
   }

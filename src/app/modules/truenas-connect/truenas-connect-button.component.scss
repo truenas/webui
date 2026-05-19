@@ -1,26 +1,7 @@
-@use './tier-colors';
+@use '../layout/topbar/icon-wrapper';
 
 :host {
   margin-left: 4px;
   margin-right: -4px;
   margin-top: 2px;
-}
-
-.icon-wrapper {
-  display: inline-flex;
-  position: relative;
-}
-
-.tier-badge {
-  border-radius: 50%;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  height: 16px;
-  line-height: 16px;
-  min-width: 16px;
-  position: absolute;
-  right: -4px;
-  text-align: center;
-  top: -4px;
 }

@@ -1,12 +1,13 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,7 +15,7 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { StatusBadgeComponent, StatusBadgeKind } from 'app/modules/layout/topbar/status-badge/status-badge.component';
+import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -30,10 +31,12 @@ import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-interface StatusBadge {
-  icon: string;
-  kind: StatusBadgeKind;
-}
+const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
+  [TrueCommandStatus.Disabled]: T('TrueCommand is disabled'),
+  [TrueCommandStatus.Connecting]: T('Connecting to TrueCommand'),
+  [TrueCommandStatus.Connected]: T('TrueCommand is connected'),
+  [TrueCommandStatus.Failed]: T('TrueCommand connection failed'),
+};
 
 @Component({
   selector: 'ix-truecommand-button',
@@ -46,9 +49,9 @@ interface StatusBadge {
     MatTooltip,
     TnIconComponent,
     NgClass,
+    NgTemplateOutlet,
     StatusBadgeComponent,
     UiSearchDirective,
-    TranslateModule,
   ],
 })
 export class TruecommandButtonComponent implements OnInit {
@@ -57,43 +60,53 @@ export class TruecommandButtonComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
-  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   readonly TrueCommandStatus = TrueCommandStatus;
-  tooltips = helptextTopbar.tooltips;
   protected searchableElements = trueCommandElements;
 
-  protected tcStatus: TrueCommandConfig;
+  protected tcStatus = signal<TrueCommandConfig | null>(null);
   private tcConnected = false;
   private isTcStatusOpened = false;
   private tcStatusDialogRef: MatDialogRef<TruecommandStatusModalComponent>;
 
-  get statusBadge(): StatusBadge | null {
-    if (this.tcStatus.status === TrueCommandStatus.Connected) {
-      return { icon: 'check', kind: 'success' };
+  protected statusBadge = computed<StatusBadge | null>(() => {
+    switch (this.tcStatus()?.status) {
+      case TrueCommandStatus.Connected:
+        return { icon: 'check', background: 'var(--green)' };
+      case TrueCommandStatus.Failed:
+        return { icon: 'close', background: 'var(--red)' };
+      case TrueCommandStatus.Connecting:
+        return { icon: 'clock-outline', background: 'var(--yellow)', spinning: true };
+      default:
+        return null;
     }
+  });
 
-    if (this.tcStatus.status === TrueCommandStatus.Failed) {
-      return { icon: 'close', kind: 'error' };
+  protected tooltip = computed(() => {
+    const config = this.tcStatus();
+    if (!config) {
+      return this.translate.instant(helptextTopbar.tooltips.truecommandStatus);
     }
-
-    return null;
-  }
+    const label = this.translate.instant(truecommandStatusLabels[config.status]);
+    if (config.status === TrueCommandStatus.Failed && config.status_reason) {
+      return `${label}\n${this.translate.instant(config.status_reason)}`;
+    }
+    return label;
+  });
 
   ngOnInit(): void {
     this.api.call('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((config) => {
-      this.tcStatus = config;
+      this.tcStatus.set(config);
       this.tcConnected = !!config.api_key;
-      this.cdr.markForCheck();
     });
     this.api.subscribe('truecommand.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      this.tcStatus = event.fields;
+      this.tcStatus.set(event.fields);
       this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
-        this.tcStatusDialogRef.componentInstance.update(this.tcStatus);
+        this.tcStatusDialogRef.componentInstance.update(event.fields);
       }
-      this.cdr.markForCheck();
     });
   }
 
@@ -104,7 +117,7 @@ export class TruecommandButtonComponent implements OnInit {
         minWidth: '350px',
         data: {
           isConnected: this.tcConnected,
-          config: this.tcStatus,
+          config: this.tcStatus(),
         } as TruecommandSignupModalState,
       })
       .afterClosed()
@@ -162,7 +175,7 @@ export class TruecommandButtonComponent implements OnInit {
   private openStatusDialog(): void {
     const data = {
       parent: this,
-      data: this.tcStatus,
+      data: this.tcStatus(),
     };
     if (this.isTcStatusOpened) {
       this.tcStatusDialogRef.close(true);
@@ -182,7 +195,6 @@ export class TruecommandButtonComponent implements OnInit {
     this.tcStatusDialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       () => {
         this.isTcStatusOpened = false;
-        this.cdr.markForCheck();
       },
     );
   }

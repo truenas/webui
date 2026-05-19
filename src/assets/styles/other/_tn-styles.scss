@@ -885,6 +885,11 @@ ix-nested-tree-node[aria-level='2'] {
   }
 }
 
+// Preserves explicit \n line breaks in matTooltip content.
+.tooltip-multiline {
+  white-space: pre-line;
+}
+
 .input-container {
   font-size: 12px;
 }
