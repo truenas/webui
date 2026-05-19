@@ -5,7 +5,8 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
-import { getEffectiveStatus } from 'app/helpers/topology-status.helper';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { getStatusSeverity } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
@@ -196,11 +197,16 @@ export class VDevsStore extends ComponentStore<VDevsState> {
   }
 
   private withEffectiveStatus(item: VDevItem): VDevItemEnriched {
-    const enrichedChildren = (item.children ?? []).map(
+    const enrichedChildren: VDevItemEnriched[] = (item.children ?? []).map(
       (child) => this.withEffectiveStatus(child),
-    ) as TopologyDisk[];
-    const withChildren = { ...item, children: enrichedChildren };
-    return { ...withChildren, effectiveStatus: getEffectiveStatus(withChildren) ?? item.status };
+    );
+    const effectiveStatus = enrichedChildren.reduce<TopologyItemStatus>(
+      (worst, child) => (getStatusSeverity(child.effectiveStatus) > getStatusSeverity(worst)
+        ? child.effectiveStatus
+        : worst),
+      item.status,
+    );
+    return { ...item, children: enrichedChildren as TopologyDisk[], effectiveStatus };
   }
 
   getDisk(node: VDevNestedDataNode): Disk | undefined {

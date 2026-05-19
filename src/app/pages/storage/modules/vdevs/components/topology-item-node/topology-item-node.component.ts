@@ -35,7 +35,7 @@ export class TopologyItemNodeComponent {
     return this.topologyItem().type;
   });
 
-  protected readonly status = computed(() => this.topologyItem().effectiveStatus ?? '');
+  protected readonly status = computed(() => this.topologyItem().effectiveStatus);
 
   protected readonly capacity = computed(() => {
     return this.isDisk() && this.disk()?.size ? buildNormalizedFileSize(this.disk().size) : '';
