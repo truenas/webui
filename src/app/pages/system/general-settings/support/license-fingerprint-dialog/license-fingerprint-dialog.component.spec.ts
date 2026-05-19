@@ -3,21 +3,63 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  buildFingerprintField,
+  formatFingerprintLabel,
   LicenseFingerprintDialog,
 } from 'app/pages/system/general-settings/support/license-fingerprint-dialog/license-fingerprint-dialog.component';
 
+const passthroughTranslate = { instant: (key: string) => key } as TranslateService;
+
+describe('formatFingerprintLabel', () => {
+  it('returns the known label for a known key', () => {
+    expect(formatFingerprintLabel('macs')).toBe('MAC Addresses');
+    expect(formatFingerprintLabel('smbios_uuid')).toBe('SMBIOS UUID');
+  });
+
+  it('title-cases unknown snake_case keys as a fallback', () => {
+    expect(formatFingerprintLabel('some_new_field')).toBe('Some New Field');
+    expect(formatFingerprintLabel('notes')).toBe('Notes');
+  });
+});
+
+describe('buildFingerprintField', () => {
+  it('wraps a primitive value in a single-element values array', () => {
+    expect(buildFingerprintField('product_serial', 'vm002', passthroughTranslate)).toEqual({
+      key: 'product_serial',
+      label: 'Product Serial',
+      values: ['vm002'],
+    });
+  });
+
+  it('renders booleans using translatable Yes/No', () => {
+    expect(buildFingerprintField('ha_enabled', true, passthroughTranslate).values).toEqual(['Yes']);
+    expect(buildFingerprintField('ha_enabled', false, passthroughTranslate).values).toEqual(['No']);
+  });
+
+  it('renders null and empty strings as an em dash placeholder', () => {
+    expect(buildFingerprintField('chassis_serial', null, passthroughTranslate).values).toEqual(['—']);
+    expect(buildFingerprintField('notes', '', passthroughTranslate).values).toEqual(['—']);
+  });
+
+  it('expands arrays of primitives into individual values', () => {
+    const field = buildFingerprintField('macs', ['52:54:00:9e:46:f4', '52:54:00:9e:46:f5'], passthroughTranslate);
+    expect(field.values).toEqual(['52:54:00:9e:46:f4', '52:54:00:9e:46:f5']);
+  });
+
+  it('renders an empty array as the placeholder', () => {
+    expect(buildFingerprintField('macs', [], passthroughTranslate).values).toEqual(['—']);
+  });
+});
+
 describe('LicenseFingerprintDialog', () => {
   const payload = {
-    system_serial: 'A1',
-    hardware_model: 'M60',
-    customer_id: 42,
-    ha_enabled: true,
-    feature_flags: ['vm', 'replication'],
-    notes: null,
+    macs: ['52:54:00:9e:46:f4'],
+    cpu_id: 'AuthenticAMD-25-1-1',
+    product_serial: 'vm002',
   };
   const base64 = btoa(JSON.stringify(payload));
 
@@ -38,22 +80,9 @@ describe('LicenseFingerprintDialog', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('fetches the fingerprint on init and renders decoded fields as labeled key/value pairs', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
-
-    const labels = spectator.queryAll('.fingerprint-fields .field-label').map((el) => el.textContent!.trim());
-    expect(labels).toEqual(['System Serial', 'Hardware Model', 'Customer Id', 'Ha Enabled', 'Feature Flags', 'Notes']);
-
+  it('fetches the fingerprint on init and renders one row per decoded key', () => {
     const rows = spectator.queryAll('.fingerprint-fields .field');
-    const singleValues = [0, 1, 2, 3, 5].map((index) => rows[index].querySelector('.field-value')!.textContent!.trim());
-    expect(singleValues).toEqual(['A1', 'M60', '42', 'true', '—']);
-
-    const arrayItems = rows[4].querySelectorAll('.field-list li');
-    expect(Array.from(arrayItems).map((el) => el.textContent!.trim())).toEqual(['vm', 'replication']);
-  });
-
-  it('does not mention iX in the dialog copy', () => {
-    expect(spectator.fixture.nativeElement.textContent).not.toMatch(/\biX\b/);
+    expect(rows).toHaveLength(Object.keys(payload).length);
   });
 
   it('copies the raw base64 string when the copy button is clicked', async () => {

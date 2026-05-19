@@ -15,7 +15,7 @@
       <dl class="fingerprint-fields">
         @for (field of fields; track field.key) {
           <div class="field">
-            <dt class="field-label">{{ field.label }}</dt>
+            <dt class="field-label">{{ field.label | translate }}</dt>
             <dd class="field-value">
               @if (field.values.length === 1) {
                 {{ field.values[0] }}
