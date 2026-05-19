@@ -1,10 +1,10 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { getEffectiveStatus, getStatusThemeClass } from 'app/helpers/topology-status.helper';
 import { Disk } from 'app/interfaces/disk.interface';
 import {
   TopologyDisk, VDevItem,
@@ -34,20 +34,14 @@ export class TopologyItemNodeComponent {
     return this.topologyItem().type;
   });
 
-  // Surface the worst descendant status when a parent VDEV would otherwise
-  // hide a faulted/degraded child behind its own ONLINE status.
+  // Prefer the store-enriched `effectiveStatus` so a parent VDEV still surfaces a
+  // faulted/degraded descendant; fall back to local computation for callers that
+  // hand us a raw VDevItem.
   protected readonly effectiveStatus = computed<TopologyItemStatus | undefined>(() => {
-    const own = this.topologyItem()?.status;
-    const worstChild = this.worstChildStatus(this.topologyItem());
-    if (worstChild && severityScore(worstChild) > severityScore(own)) {
-      return worstChild;
-    }
-    return own;
+    return this.topologyItem().effectiveStatus ?? getEffectiveStatus(this.topologyItem());
   });
 
-  protected readonly status = computed(() => {
-    return this.effectiveStatus() ?? '';
-  });
+  protected readonly status = computed(() => this.effectiveStatus() ?? '');
 
   protected readonly capacity = computed(() => {
     return this.isDisk() && this.disk()?.size ? buildNormalizedFileSize(this.disk().size) : '';
@@ -62,50 +56,9 @@ export class TopologyItemNodeComponent {
     return '';
   });
 
-  protected readonly statusClass = computed(() => {
-    switch (this.effectiveStatus() as (PoolStatus | TopologyItemStatus)) {
-      case PoolStatus.Faulted:
-      case TopologyItemStatus.Unavail:
-        return 'fn-theme-red';
-      case PoolStatus.Degraded:
-      case PoolStatus.Offline:
-      case TopologyItemStatus.Offline:
-      case TopologyItemStatus.Removed:
-        return 'fn-theme-yellow';
-      default:
-        return '';
-    }
-  });
+  protected readonly statusClass = computed(() => getStatusThemeClass(this.effectiveStatus()));
 
   private readonly isDisk = computed(() => {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
-
-  private worstChildStatus(item: VDevItem | undefined): TopologyItemStatus | undefined {
-    let worst: TopologyItemStatus | undefined;
-    for (const child of item?.children ?? []) {
-      const candidates = [child.status, this.worstChildStatus(child)];
-      for (const candidate of candidates) {
-        if (candidate && (!worst || severityScore(candidate) > severityScore(worst))) {
-          worst = candidate;
-        }
-      }
-    }
-    return worst;
-  }
-}
-
-function severityScore(status: TopologyItemStatus | undefined): number {
-  switch (status) {
-    case TopologyItemStatus.Faulted:
-    case TopologyItemStatus.Unavail:
-      return 3;
-    case TopologyItemStatus.Degraded:
-      return 2;
-    case TopologyItemStatus.Offline:
-    case TopologyItemStatus.Removed:
-      return 1;
-    default:
-      return 0;
-  }
 }

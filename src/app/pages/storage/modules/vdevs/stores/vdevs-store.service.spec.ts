@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -36,10 +37,33 @@ describe('VDevsStore', () => {
               name: 'tank',
               topology: {
                 data: [
-                  { name: 'raidz1-0', guid: 'guid1' },
+                  {
+                    name: 'raidz1-0',
+                    guid: 'guid1',
+                    status: TopologyItemStatus.Online,
+                    children: [
+                      {
+                        name: 'sda',
+                        guid: 'guid-sda',
+                        status: TopologyItemStatus.Online,
+                        children: [],
+                      },
+                      {
+                        name: 'sdb',
+                        guid: 'guid-sdb',
+                        status: TopologyItemStatus.Faulted,
+                        children: [],
+                      },
+                    ],
+                  },
                 ],
                 cache: [
-                  { name: 'sdr', guid: 'guid2' },
+                  {
+                    name: 'sdr',
+                    guid: 'guid2',
+                    status: TopologyItemStatus.Online,
+                    children: [],
+                  },
                 ],
                 log: [] as VDevItem[],
                 spare: [] as VDevItem[],
@@ -75,14 +99,43 @@ describe('VDevsStore', () => {
           nodes: [
             {
               children: [
-                { name: 'raidz1-0', guid: 'guid1', isRoot: true },
+                {
+                  name: 'raidz1-0',
+                  guid: 'guid1',
+                  status: TopologyItemStatus.Online,
+                  isRoot: true,
+                  effectiveStatus: TopologyItemStatus.Faulted,
+                  children: [
+                    {
+                      name: 'sda',
+                      guid: 'guid-sda',
+                      status: TopologyItemStatus.Online,
+                      effectiveStatus: TopologyItemStatus.Online,
+                      children: [],
+                    },
+                    {
+                      name: 'sdb',
+                      guid: 'guid-sdb',
+                      status: TopologyItemStatus.Faulted,
+                      effectiveStatus: TopologyItemStatus.Faulted,
+                      children: [],
+                    },
+                  ],
+                },
               ],
               group: 'Data VDEVs',
               guid: 'data',
             },
             {
               children: [
-                { name: 'sdr', guid: 'guid2', isRoot: true },
+                {
+                  name: 'sdr',
+                  guid: 'guid2',
+                  status: TopologyItemStatus.Online,
+                  isRoot: true,
+                  effectiveStatus: TopologyItemStatus.Online,
+                  children: [],
+                },
               ],
               group: 'Cache',
               guid: 'cache',

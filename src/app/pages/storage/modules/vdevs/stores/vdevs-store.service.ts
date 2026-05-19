@@ -5,6 +5,7 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { getEffectiveStatus } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
@@ -186,10 +187,18 @@ export class VDevsStore extends ComponentStore<VDevsState> {
       return {
         ...node,
         children: node.children.map((child: VDevItem) => {
-          return { ...child, isRoot: true };
+          return { ...this.withEffectiveStatus(child), isRoot: true };
         }) as TopologyDisk[],
       };
     });
+  }
+
+  private withEffectiveStatus(item: VDevItem): VDevItem {
+    const enrichedChildren = (item.children ?? []).map(
+      (child) => this.withEffectiveStatus(child),
+    ) as TopologyDisk[];
+    const withChildren = { ...item, children: enrichedChildren };
+    return { ...withChildren, effectiveStatus: getEffectiveStatus(withChildren) };
   }
 
   getDisk(node: VDevNestedDataNode): Disk | undefined {
