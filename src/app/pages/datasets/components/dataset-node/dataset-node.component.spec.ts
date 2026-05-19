@@ -68,4 +68,9 @@ describe('DatasetNodeComponent', () => {
     expect(cell.dataset).toBe(dataset);
     expect(cell.isSystemDataset).toBeFalsy();
   });
+
+  it('renders used and available in separate cells', () => {
+    expect(spectator.query('.cell-used')).toHaveText('11.77 MiB');
+    expect(spectator.query('.cell-available')).toHaveText('1.17 MiB');
+  });
 });

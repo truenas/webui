@@ -27,10 +27,12 @@
               {{ 'Dataset' | translate }}
             </span>
           </div>
-          <div>
-            {{ 'Used' | translate }}
-            /
-            {{ 'Available' | translate }}
+          <div>{{ 'Used' | translate }}</div>
+          <div class="available-header">
+            <span>{{ 'Available' | translate }}</span>
+            @if (tierEnabled()) {
+              <small class="tier-subtitle">{{ '(Regular Tier)' | translate }}</small>
+            }
           </div>
           <div>{{ 'Encryption' | translate }}</div>
           <div>{{ 'Usage' | translate }}</div>

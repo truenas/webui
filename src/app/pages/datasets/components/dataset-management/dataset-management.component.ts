@@ -55,6 +55,7 @@ import { datasetManagementElements } from 'app/pages/datasets/components/dataset
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -97,6 +98,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private layoutService = inject(LayoutService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+  private sharingTierService = inject(SharingTierService);
+
+  protected tierEnabled = this.sharingTierService.tierEnabled;
 
   readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
@@ -185,6 +189,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.listenForLoading();
     this.listenForDatasetScrolling();
     this.listenForTreeResizing();
+    this.sharingTierService.getTierConfig()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.cdr.markForCheck());
   }
 
   ngAfterViewInit(): void {
