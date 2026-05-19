@@ -194,6 +194,30 @@ const middlewareEntries = {
       error: null,
     },
   } as AuditEntry,
+  webshellAuthenticationVm: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.Vm,
+      target: {
+        vm_name: 'ubuntu',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellFailedAuthentication: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        app_name: 'syncthing',
+      },
+      username: 'root',
+      error: 'Invalid token',
+    },
+  } as AuditEntry,
   webshellLogoutHost: {
     service: AuditService.Middleware,
     event: AuditEvent.WebshellLogout,
@@ -316,6 +340,16 @@ describe('get important data from log', () => {
     it('returns value for WebshellAuthentication type with target', () => {
       expect(getLogImportantData(middlewareEntries.webshellAuthenticationApp, translate))
         .toBe('Shell: App (syncthing)');
+    });
+
+    it('returns value for WebshellAuthentication type with VM target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationVm, translate))
+        .toBe('Shell: VM (ubuntu)');
+    });
+
+    it('returns value for failed webshell authentication', () => {
+      expect(getLogImportantData(middlewareEntries.webshellFailedAuthentication, translate))
+        .toBe('Failed Shell Authentication: App (syncthing)');
     });
 
     it('returns value for WebshellLogout type without target', () => {
