@@ -11,9 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import {
-  LicenseFingerprint, LicenseFingerprintPrimitive, LicenseFingerprintValue,
-} from 'app/interfaces/system-info.interface';
+import { LicenseFingerprintValue } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -25,11 +23,29 @@ export interface FingerprintField {
   values: string[];
 }
 
+type FingerprintPrimitive = string | number | boolean | null;
+
 const emptyPlaceholder = '—';
+
+function isFingerprintPrimitive(value: unknown): value is FingerprintPrimitive {
+  return value === null
+    || typeof value === 'string'
+    || typeof value === 'number'
+    || typeof value === 'boolean';
+}
+
+function isFingerprintValue(value: unknown): value is LicenseFingerprintValue {
+  if (isFingerprintPrimitive(value)) {
+    return true;
+  }
+  return Array.isArray(value) && value.every(isFingerprintPrimitive);
+}
 
 // Translatable labels for known middleware-supplied fingerprint keys. Unknown
 // keys fall through to a generic snake_case → Title Case formatter so the UI
-// still renders something when middleware adds new fields.
+// still renders something when middleware adds new fields. Fallback labels are
+// passed through `| translate` unchanged (since they don't exist as translation
+// keys) — that's intentional, not a bug.
 export const fingerprintLabels: Record<string, string> = {
   macs: T('MAC Addresses'),
   cpu_id: T('CPU ID'),
@@ -51,7 +67,7 @@ export function formatFingerprintLabel(key: string): string {
     .join(' ');
 }
 
-function formatFingerprintPrimitive(value: LicenseFingerprintPrimitive, translate: TranslateService): string {
+function formatFingerprintPrimitive(value: FingerprintPrimitive, translate: TranslateService): string {
   if (value === null || value === '') {
     return emptyPlaceholder;
   }
@@ -109,8 +125,16 @@ export class LicenseFingerprintDialog implements OnInit {
       return null;
     }
     try {
-      const parsed = JSON.parse(atob(raw)) as LicenseFingerprint;
-      return Object.entries(parsed).map(([key, value]) => buildFingerprintField(key, value, this.translate));
+      const parsed: unknown = JSON.parse(atob(raw));
+      if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return null;
+      }
+      const entries = Object.entries(parsed as Record<string, unknown>);
+      if (entries.length === 0 || !entries.every(([, value]) => isFingerprintValue(value))) {
+        return null;
+      }
+      return (entries as [string, LicenseFingerprintValue][])
+        .map(([key, value]) => buildFingerprintField(key, value, this.translate));
     } catch {
       return null;
     }
