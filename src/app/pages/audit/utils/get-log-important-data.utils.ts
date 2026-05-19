@@ -1,9 +1,12 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService, webshellTypeLabels } from 'app/enums/audit.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
+import {
+  MiddlewareAuditEntry,
+  MiddlewareWebshellEventData,
+} from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
 import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
 import { SystemAuditEntry } from 'app/interfaces/audit/system-audit-entry.interface';
@@ -49,10 +52,31 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
         credentials: credentialType ? credentialTypeLabel : credentialType,
       });
     }
+    case AuditEvent.WebshellAuthentication:
+    case AuditEvent.WebshellLogout:
+      return getWebshellImportantData(log.event_data, translate);
     default:
       assertUnreachable(event);
       return ' - ';
   }
+}
+
+function getWebshellImportantData(eventData: MiddlewareWebshellEventData, translate: TranslateService): string {
+  const shellType = eventData?.shell_type;
+  const shellTypeLabel = shellType
+    ? translate.instant(webshellTypeLabels.get(shellType) || shellType)
+    : translate.instant(T('Unknown'));
+  const target = eventData?.target;
+  const targetLabel = target?.app_name || target?.vm_name || target?.container_id;
+
+  if (targetLabel) {
+    return translate.instant(T('Shell: {shellType} ({target})'), {
+      shellType: shellTypeLabel,
+      target: targetLabel,
+    });
+  }
+
+  return translate.instant(T('Shell: {shellType}'), { shellType: shellTypeLabel });
 }
 
 function getSudoLogImportantData(log: SudoAuditEntry, translate: TranslateService): string {

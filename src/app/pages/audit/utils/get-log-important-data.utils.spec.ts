@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService, WebshellType } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
@@ -181,6 +181,28 @@ const middlewareEntries = {
       description: 'Delete files',
     },
   } as AuditEntry,
+  webshellAuthenticationApp: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        app_name: 'syncthing',
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellLogoutHost: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellLogout,
+    event_data: {
+      shell_type: WebshellType.Host,
+      target: null,
+      username: 'root',
+    },
+  } as AuditEntry,
 };
 
 const sudoEntries = {
@@ -289,6 +311,15 @@ describe('get important data from log', () => {
 
     it('returns value for MethodCall type', () => {
       expect(getLogImportantData(middlewareEntries.methodCall, translate)).toBe('Delete files');
+    });
+
+    it('returns value for WebshellAuthentication type with target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationApp, translate))
+        .toBe('Shell: App (syncthing)');
+    });
+
+    it('returns value for WebshellLogout type without target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellLogoutHost, translate)).toBe('Shell: Host');
     });
   });
 
