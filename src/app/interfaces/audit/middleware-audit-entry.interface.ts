@@ -1,4 +1,4 @@
-import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService, WebshellType } from 'app/enums/audit.enum';
 import { AuditVersions, BaseAuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 
@@ -37,10 +37,30 @@ export interface MiddlewareRebootEntry extends BaseMiddlewareAuditEntry {
   };
 }
 
+export interface MiddlewareWebshellTarget {
+  app_name?: string;
+  container_id?: string;
+  vm_name?: string;
+  [key: string]: unknown;
+}
+
+export interface MiddlewareWebshellEventData {
+  shell_type: WebshellType;
+  target: MiddlewareWebshellTarget | null;
+  username: string;
+  error?: unknown;
+}
+
+export interface MiddlewareWebshellEntry extends BaseMiddlewareAuditEntry {
+  event: AuditEvent.WebshellAuthentication | AuditEvent.WebshellLogout;
+  event_data: MiddlewareWebshellEventData;
+}
+
 export type MiddlewareAuditEntry
   = | MiddlewareMethodCallEntry
     | MiddlewareAuthenticationEntry
-    | MiddlewareRebootEntry;
+    | MiddlewareRebootEntry
+    | MiddlewareWebshellEntry;
 
 export interface AuditMiddlewareCredentials {
   credentials: CredentialType;

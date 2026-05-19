@@ -38,7 +38,23 @@ export enum AuditEvent {
   ModuleLoad = 'MODULE-LOAD',
   Service = 'SERVICE',
   TtyRecord = 'TTY_RECORD',
+  WebshellAuthentication = 'WEBSHELL_AUTHENTICATION',
+  WebshellLogout = 'WEBSHELL_LOGOUT',
 }
+
+export enum WebshellType {
+  App = 'APP',
+  Container = 'CONTAINER',
+  Host = 'HOST',
+  Vm = 'VM',
+}
+
+export const webshellTypeLabels = new Map<WebshellType, string>([
+  [WebshellType.App, T('App')],
+  [WebshellType.Container, T('Container')],
+  [WebshellType.Host, T('Host')],
+  [WebshellType.Vm, T('VM')],
+]);
 
 export const auditServiceLabels = new Map<AuditService, string>([
   [AuditService.Smb, T('SMB')],
@@ -78,4 +94,6 @@ export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.ModuleLoad, T('Module Load')],
   [AuditEvent.Service, T('Service')],
   [AuditEvent.TtyRecord, T('TTY Record')],
+  [AuditEvent.WebshellAuthentication, T('Web Shell Authentication')],
+  [AuditEvent.WebshellLogout, T('Web Shell Logout')],
 ]);
