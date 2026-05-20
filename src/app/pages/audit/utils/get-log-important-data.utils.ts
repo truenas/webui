@@ -73,21 +73,25 @@ function getWebshellImportantData(
   const targetIdentifier = getWebshellTargetIdentifier(shellType, eventData.target);
   const params = { shellType: shellTypeLabel, target: targetIdentifier };
 
+  let message: string;
   if (event === AuditEvent.WebshellLogout) {
-    return targetIdentifier
+    message = targetIdentifier
       ? translate.instant(T('Shell Logout: {shellType} ({target})'), params)
       : translate.instant(T('Shell Logout: {shellType}'), params);
-  }
-
-  if (eventData.error) {
-    return targetIdentifier
+  } else if (eventData.error) {
+    message = targetIdentifier
       ? translate.instant(T('Failed Shell Authentication: {shellType} ({target})'), params)
       : translate.instant(T('Failed Shell Authentication: {shellType}'), params);
+  } else {
+    message = targetIdentifier
+      ? translate.instant(T('Shell: {shellType} ({target})'), params)
+      : translate.instant(T('Shell: {shellType}'), params);
   }
 
-  return targetIdentifier
-    ? translate.instant(T('Shell: {shellType} ({target})'), params)
-    : translate.instant(T('Shell: {shellType}'), params);
+  if (eventData.username) {
+    return `${message} | ${translate.instant(T('User: {username}'), { username: eventData.username })}`;
+  }
+  return message;
 }
 
 function getWebshellTargetIdentifier(

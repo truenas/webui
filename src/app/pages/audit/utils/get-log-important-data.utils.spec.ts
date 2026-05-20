@@ -375,36 +375,37 @@ describe('get important data from log', () => {
 
     it('returns value for WebshellAuthentication type with target', () => {
       expect(getLogImportantData(middlewareEntries.webshellAuthenticationApp, translate))
-        .toBe('Shell: App (syncthing)');
+        .toBe('Shell: App (syncthing) | User: root');
     });
 
     it('returns value for WebshellAuthentication type with VM target', () => {
       expect(getLogImportantData(middlewareEntries.webshellAuthenticationVm, translate))
-        .toBe('Shell: VM (ubuntu)');
+        .toBe('Shell: VM (ubuntu) | User: root');
     });
 
     it('prefers app_name over container_id for Container shell type', () => {
       expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainer, translate))
-        .toBe('Shell: Container (syncthing)');
+        .toBe('Shell: Container (syncthing) | User: root');
     });
 
     it('falls back to container_id for Container shell type when app_name is missing', () => {
       expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainerWithoutApp, translate))
-        .toBe('Shell: Container (f8edb5170814)');
+        .toBe('Shell: Container (f8edb5170814) | User: root');
     });
 
     it('returns value for failed webshell authentication', () => {
       expect(getLogImportantData(middlewareEntries.webshellFailedAuthentication, translate))
-        .toBe('Failed Shell Authentication: App (syncthing)');
+        .toBe('Failed Shell Authentication: App (syncthing) | User: root');
     });
 
     it('returns value for WebshellLogout type without target', () => {
-      expect(getLogImportantData(middlewareEntries.webshellLogoutHost, translate)).toBe('Shell Logout: Host');
+      expect(getLogImportantData(middlewareEntries.webshellLogoutHost, translate))
+        .toBe('Shell Logout: Host | User: root');
     });
 
     it('returns value for WebshellLogout type with target', () => {
       expect(getLogImportantData(middlewareEntries.webshellLogoutApp, translate))
-        .toBe('Shell Logout: App (syncthing)');
+        .toBe('Shell Logout: App (syncthing) | User: root');
     });
   });
 
