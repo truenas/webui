@@ -23,5 +23,9 @@ export const storageElements = {
       hierarchy: [T('Create Pool')],
       synonyms: [T('Add Pool'), T('New Pool'), T('Pool Wizard'), T('Pool Creation Wizard')],
     },
+    tiering: {
+      hierarchy: [T('Tiering')],
+      synonyms: [T('Tiering Configuration'), T('ZFS Tiering'), T('Performance Tier'), T('Storage Tier')],
+    },
   },
 } satisfies UiSearchableElement;

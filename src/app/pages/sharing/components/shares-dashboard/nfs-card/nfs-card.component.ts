@@ -1,5 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, DestroyRef, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed,
+  inject, DestroyRef, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -31,6 +34,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -47,6 +51,8 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -93,6 +99,8 @@ export class NfsCardComponent implements OnInit {
   private poolStoreService = inject(poolStore);
   private authService = inject(AuthService);
   private actionsMenu = inject(ServiceActionsMenuService);
+  private cdr = inject(ChangeDetectorRef);
+  private tierService = inject(SharingTierService);
 
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
@@ -168,6 +176,12 @@ export class NfsCardComponent implements OnInit {
   private activePoolPaths = signal<string[] | null>(null);
   protected readonly cardMenuPath = ['sharing', 'nfs'];
 
+  private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
+    destroyRef: this.destroyRef,
+    reload: () => this.dataProvider.load(),
+    requiredRoles: this.requiredRoles,
+  });
+
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -180,10 +194,15 @@ export class NfsCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      cssClass: 'tight-toggle',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
       isDisabled: (row: NfsShare) => isShareUnavailable(row, this.activePoolPaths()),
       getDisabledTooltip: (row: NfsShare) => this.translate.instant(getUnavailableReason(row, this.activePoolPaths())),
+    }),
+    storageTierColumn({
+      title: this.translate.instant('Storage Tier'),
+      hidden: true,
     }),
     actionsWithMenuColumn({
       cssClass: 'tight-actions',
@@ -193,6 +212,7 @@ export class NfsCardComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -221,6 +241,14 @@ export class NfsCardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
+    });
+
+    this.tierService.attachTierToShareList<NfsShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
     });
   }
 

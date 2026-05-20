@@ -24,6 +24,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -39,6 +40,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -86,6 +89,7 @@ export class NfsListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
   private poolStoreService = inject(poolStore);
+  private tierService = inject(SharingTierService);
 
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
@@ -99,6 +103,12 @@ export class NfsListComponent implements OnInit {
   nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
+
+  private tierAction: IconActionConfig<NfsShare> = this.tierService.createChangeTierAction<NfsShare>({
+    destroyRef: this.destroyRef,
+    reload: () => this.refresh(),
+  });
+
   columns = createTable<NfsShare>([
     textColumn({
       title: this.translate.instant('Path'),
@@ -139,6 +149,10 @@ export class NfsListComponent implements OnInit {
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),
     }),
+    storageTierColumn({
+      title: this.translate.instant('Storage Tier'),
+      hidden: true,
+    }),
     actionsWithMenuColumn({
       actions: [
         {
@@ -149,6 +163,7 @@ export class NfsListComponent implements OnInit {
               .onSuccess(() => this.refresh(), this.destroyRef);
           },
         },
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -189,6 +204,14 @@ export class NfsListComponent implements OnInit {
       error: () => {
         this.refresh();
       },
+    });
+
+    this.tierService.attachTierToShareList<NfsShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.refresh(),
     });
   }
 

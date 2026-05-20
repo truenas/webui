@@ -1,5 +1,5 @@
 {
-  "iconUrl": "assets/tn-icons/sprite.svg?v=2c99508c24",
+  "iconUrl": "assets/tn-icons/sprite.svg?v=3a6a9d9f3e",
   "icons": [
     "app-cloud-off",
     "app-dataset",
@@ -77,7 +77,6 @@
     "mdi-bookmark-outline",
     "mdi-bug",
     "mdi-camera",
-    "mdi-cancel",
     "mdi-cellphone-link",
     "mdi-cellphone-lock",
     "mdi-certificate",
@@ -222,6 +221,7 @@
     "mdi-star",
     "mdi-star-outline",
     "mdi-stop-circle",
+    "mdi-swap-horizontal",
     "mdi-sync",
     "mdi-sync-off",
     "mdi-tag",

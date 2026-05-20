@@ -1,0 +1,37 @@
+:host {
+  --tn-icon-size: 9px;
+
+  align-items: center;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  width: 16px;
+
+  &::ng-deep {
+    tn-icon div {
+      width: inherit !important;
+      height: inherit !important;
+    }
+  }
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+@keyframes ix-status-badge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:host(.spinning) tn-icon {
+  animation: ix-status-badge-spin 3s linear infinite;
+}

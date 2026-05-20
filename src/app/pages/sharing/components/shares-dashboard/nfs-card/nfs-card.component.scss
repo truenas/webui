@@ -1,3 +1,7 @@
+@import '../../storage-tier-cell/tier-cell-host';
+
+@include tier-cell-host;
+
 .card-title-link {
   color: inherit;
   display: inline-flex;
@@ -17,5 +21,9 @@
 :host ::ng-deep {
   .tight-actions {
     width: 80px;
+  }
+
+  .tight-toggle {
+    width: 70px;
   }
 }

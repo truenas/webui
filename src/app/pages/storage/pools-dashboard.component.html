@@ -13,6 +13,18 @@
     {{ 'Disks' | translate }}
   </a>
 
+  @if (isEnterprise()) {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="tiering"
+      [ixUiSearch]="searchableElements.elements.tiering"
+      (click)="onTiering()"
+    >
+      {{ 'Tiering' | translate }}
+    </button>
+  }
+
   @if (!hasNoPools() && !arePoolsLoading()) {
     <a
       *ixRequiresRoles="requiredRoles"
