@@ -10,6 +10,7 @@ import { detectStaleData, StaleDataState } from 'app/helpers/operators/detect-st
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -84,6 +85,10 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly datasets$ = this.api.call('pool.dataset.query', [[], { extra: { flat: true } }]).pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   // since pool.query doesn't emit events for scan updates, we need to subscribe to
   // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
   readonly scans$ = this.api.subscribe('pool.scan').pipe(
@@ -114,6 +119,13 @@ export class WidgetResourcesService {
   getPoolById(poolId: string): Observable<Pool | undefined> {
     return this.pools$.pipe(
       map((pools) => pools.find((pool) => pool.id === +poolId || pool.name === poolId)),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getDatasetById(datasetId: string): Observable<Dataset | undefined> {
+    return this.datasets$.pipe(
+      map((datasets) => datasets.find((dataset) => dataset.id === datasetId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

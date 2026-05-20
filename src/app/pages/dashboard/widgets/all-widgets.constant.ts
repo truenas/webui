@@ -17,6 +17,7 @@ import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-
 import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.definition';
 import { interfaceWidget } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.definition';
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { datasetCompressionRatioWidget } from 'app/pages/dashboard/widgets/storage/widget-dataset-compression-ratio/widget-dataset-compression-ratio.definition';
 import { poolWidget } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { poolDisksWithZfsErrorsWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-disks-with-zfs-errors/widget-pool-disks-with-zfs-errors.definition';
 import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-last-scan-errors/widget-pool-last-scan-errors.definition';
@@ -50,6 +51,7 @@ export const widgetRegistry = {
   [WidgetType.PoolStatus]: poolStatusWidget,
   [WidgetType.PoolDisksWithZfsErrors]: poolDisksWithZfsErrorsWidget,
   [WidgetType.PoolLastScanErrors]: poolLastScanErrorsWidget,
+  [WidgetType.DatasetCompressionRatio]: datasetCompressionRatioWidget,
   [WidgetType.Ipv4Address]: ipv4AddressWidget,
   [WidgetType.Ipv6Address]: ipv6AddressWidget,
   [WidgetType.Help]: helpWidget,
