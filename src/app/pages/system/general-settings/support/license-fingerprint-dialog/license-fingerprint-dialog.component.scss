@@ -15,7 +15,50 @@
   padding: 16px 0;
 }
 
-.fingerprint-decoded {
+.fingerprint-fields {
+  background: var(--bg1);
+  border-radius: 4px;
+  margin: 0;
+  max-height: 360px;
+  overflow: auto;
+  padding: 4px 12px;
+
+  .field {
+    align-items: baseline;
+    border-bottom: 1px solid var(--lines);
+    display: flex;
+    gap: 16px;
+    padding: 8px 0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .field-label {
+    color: var(--fg2);
+    flex: 0 0 40%;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .field-value {
+    color: var(--fg1);
+    flex: 1;
+    font-size: 13px;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .field-list {
+    list-style: disc;
+    margin: 0;
+    padding-left: 20px;
+  }
+}
+
+.fingerprint-raw {
   background: var(--alt-bg2);
   border-radius: 4px;
   font-size: 13px;
