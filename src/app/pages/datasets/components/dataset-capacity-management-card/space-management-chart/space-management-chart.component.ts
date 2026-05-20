@@ -10,6 +10,7 @@ import {
 } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 
 @Component({
   selector: 'ix-space-management-chart',
@@ -25,8 +26,10 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 })
 export class SpaceManagementChartComponent {
   private themeService = inject(ThemeService);
+  private sharingTierService = inject(SharingTierService);
 
   readonly dataset = input.required<DatasetDetails>();
+  protected readonly tierEnabled = this.sharingTierService.tierEnabled;
 
   protected swatchColors: SwatchColors = {};
   protected chartOptions: ChartOptions<'doughnut'> = {

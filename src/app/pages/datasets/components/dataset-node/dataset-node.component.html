@@ -9,11 +9,10 @@
       </span>
     </div>
     <div class="cell cell-used">
-      <div class="cell-used-content">
-        <span>{{ dataset().used.parsed | ixFileSize }}</span>
-        /
-        <span>{{ dataset().available.parsed | ixFileSize }}</span>
-      </div>
+      <span>{{ dataset().used.parsed | ixFileSize }}</span>
+    </div>
+    <div class="cell cell-available">
+      <span>{{ dataset().available.parsed | ixFileSize }}</span>
     </div>
     <div class="cell cell-encryption">
       <ix-dataset-encryption-cell

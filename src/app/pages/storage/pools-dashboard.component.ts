@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { storageEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -14,11 +15,15 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
+import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-pools-dashboard',
@@ -49,8 +54,11 @@ export class PoolsDashboardComponent implements OnInit {
   private store = inject(PoolsDashboardStore);
   protected translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private store$ = inject<Store<AppState>>(Store);
+  private tierService = inject(SharingTierService);
 
   protected readonly requiredRoles = [Role.PoolWrite];
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly searchableElements = storageElements;
 
   rootDatasets: Record<string, Dataset> = {};
@@ -77,6 +85,10 @@ export class PoolsDashboardComponent implements OnInit {
         this.cdr.markForCheck();
       });
 
+    // Prime the shared tier config so child cards (pool-usage-card, vdevs-card)
+    // can read tierService.tierEnabled directly without each subscribing.
+    this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+
     this.store.loadDashboard();
   }
 
@@ -86,5 +98,14 @@ export class PoolsDashboardComponent implements OnInit {
 
   protected onImportPool(): void {
     this.slideIn.open(ImportPoolComponent).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
+  }
+
+  protected onTiering(): void {
+    this.slideIn.open(TierConfigFormComponent).onSuccess(() => {
+      this.tierService.invalidate();
+      // Re-prime so tierService.tierEnabled reflects the new config for child cards.
+      this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+      this.store.loadDashboard();
+    }, this.destroyRef);
   }
 }

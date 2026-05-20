@@ -1,4 +1,5 @@
 import { PercentPipe } from '@angular/common';
+import { signal } from '@angular/core';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
@@ -6,10 +7,12 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SpaceManagementChartComponent } from './space-management-chart.component';
 
 describe('SpaceManagementChartComponent', () => {
   let spectator: Spectator<SpaceManagementChartComponent>;
+  const tierEnabledSignal = signal(false);
 
   const createComponent = createComponentFactory({
     component: SpaceManagementChartComponent,
@@ -21,10 +24,14 @@ describe('SpaceManagementChartComponent', () => {
       mockProvider(ThemeService, {
         getRgbBackgroundColorByIndex: jest.fn((index) => `rgb(${index * 10}, ${index * 10}, ${index * 10})`),
       }),
+      mockProvider(SharingTierService, {
+        tierEnabled: tierEnabledSignal.asReadonly(),
+      }),
     ],
   });
 
   beforeEach(() => {
+    tierEnabledSignal.set(false);
     spectator = createComponent({
       props: {
         dataset: {
@@ -64,5 +71,13 @@ describe('SpaceManagementChartComponent', () => {
 
     expect(legendLabels[1]).toHaveText('Children');
     expect(legendSwatches[1].getAttribute('style')).toContain('background-color: rgba(10, 10, 10, 0.85)');
+  });
+
+  it('renames "Data Written" to "Aggregate Data Written" when tiering is enabled', () => {
+    tierEnabledSignal.set(true);
+    spectator.detectChanges();
+
+    const legendLabels = spectator.queryAll('.legend-label');
+    expect(legendLabels[0]).toHaveText('Aggregate Data Written');
   });
 });

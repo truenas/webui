@@ -28,6 +28,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
@@ -113,6 +114,7 @@ describe('SmbListComponent', () => {
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
+      mockSharingTierService({ enabled: false }),
     ],
   });
 

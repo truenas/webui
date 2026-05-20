@@ -2641,6 +2641,29 @@
   {
     "hierarchy": [
       "Storage",
+      "Tiering"
+    ],
+    "synonyms": [
+      "Tiering Configuration",
+      "ZFS Tiering",
+      "Performance Tier",
+      "Storage Tier"
+    ],
+    "requiredRoles": [
+      "POOL_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "tiering",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Create Pool"
     ],
     "synonyms": [
