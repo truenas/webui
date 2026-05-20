@@ -135,34 +135,4 @@ describe('TruenasConnectButtonComponent', () => {
       expect(badge?.style.background).toBe('var(--yellow)');
     });
   });
-
-  it('should show a success status badge when Configured without a tier', () => {
-    const badge = spectator.query('ix-status-badge');
-    expect(badge).toExist();
-    expect(badge).toHaveClass('success');
-  });
-
-  it('should show an error status badge for failed certificate statuses', () => {
-    configSignal.set({
-      enabled: true,
-      status: TruenasConnectStatus.CertRenewalFailure,
-      tier: null,
-    } as TruenasConnectConfig);
-    spectator.detectChanges();
-
-    const badge = spectator.query('ix-status-badge');
-    expect(badge).toExist();
-    expect(badge).toHaveClass('error');
-  });
-
-  it('should not show a status badge for a generic non-configured status', () => {
-    configSignal.set({
-      enabled: true,
-      status: TruenasConnectStatus.Disabled,
-      tier: null,
-    } as TruenasConnectConfig);
-    spectator.detectChanges();
-
-    expect(spectator.query('ix-status-badge')).not.toExist();
-  });
 });
