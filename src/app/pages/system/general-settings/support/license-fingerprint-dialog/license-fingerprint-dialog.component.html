@@ -6,11 +6,33 @@
       <mat-spinner [diameter]="36"></mat-spinner>
       <span>{{ 'Loading thumbprint…' | translate }}</span>
     </div>
-  } @else if (fingerprintDecoded()) {
+  } @else {
     <p class="hint">
-      {{ 'This identifies your system to the licensing service. Share it with iX support to request or update a license.' | translate }}
+      {{ 'This identifies your system to the licensing service. Share it with TrueNAS support to request or update a license.' | translate }}
     </p>
-    <pre class="fingerprint-decoded">{{ fingerprintDecoded() }}</pre>
+
+    @if (fingerprintFields(); as fields) {
+      <dl class="fingerprint-fields">
+        @for (field of fields; track field.key) {
+          <div class="field">
+            <dt class="field-label">{{ field.label | translate }}</dt>
+            <dd class="field-value">
+              @if (field.values.length === 1) {
+                {{ field.values[0] }}
+              } @else {
+                <ul class="field-list">
+                  @for (item of field.values; track $index) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              }
+            </dd>
+          </div>
+        }
+      </dl>
+    } @else if (fingerprintFallback()) {
+      <pre class="fingerprint-raw">{{ fingerprintFallback() }}</pre>
+    }
   }
 </div>
 
