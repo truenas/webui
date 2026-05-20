@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService, WebshellType } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
@@ -181,6 +181,100 @@ const middlewareEntries = {
       description: 'Delete files',
     },
   } as AuditEntry,
+  webshellAuthenticationApp: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        app_name: 'syncthing',
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellAuthenticationVm: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.Vm,
+      target: {
+        vm_name: 'ubuntu',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellFailedAuthentication: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        app_name: 'syncthing',
+      },
+      username: 'root',
+      error: 'Invalid token',
+    },
+  } as AuditEntry,
+  webshellAuthenticationContainer: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.Container,
+      target: {
+        app_name: 'syncthing',
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellAuthenticationContainerWithoutApp: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.Container,
+      target: {
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellAuthenticationAppWithoutAppName: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellLogoutHost: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellLogout,
+    event_data: {
+      shell_type: WebshellType.Host,
+      target: null,
+      username: 'root',
+    },
+  } as AuditEntry,
+  webshellLogoutApp: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellLogout,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        app_name: 'syncthing',
+      },
+      username: 'root',
+    },
+  } as AuditEntry,
 };
 
 const sudoEntries = {
@@ -289,6 +383,46 @@ describe('get important data from log', () => {
 
     it('returns value for MethodCall type', () => {
       expect(getLogImportantData(middlewareEntries.methodCall, translate)).toBe('Delete files');
+    });
+
+    it('returns value for WebshellAuthentication type with target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationApp, translate))
+        .toBe('Shell: App (syncthing) | User: root');
+    });
+
+    it('returns value for WebshellAuthentication type with VM target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationVm, translate))
+        .toBe('Shell: VM (ubuntu) | User: root');
+    });
+
+    it('prefers app_name over container_id for Container shell type', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainer, translate))
+        .toBe('Shell: Container (syncthing) | User: root');
+    });
+
+    it('falls back to container_id for Container shell type when app_name is missing', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainerWithoutApp, translate))
+        .toBe('Shell: Container (f8edb5170814) | User: root');
+    });
+
+    it('falls back to container_id for App shell type when app_name is missing', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationAppWithoutAppName, translate))
+        .toBe('Shell: App (f8edb5170814) | User: root');
+    });
+
+    it('returns value for failed webshell authentication', () => {
+      expect(getLogImportantData(middlewareEntries.webshellFailedAuthentication, translate))
+        .toBe('Failed Shell Authentication: App (syncthing) | User: root');
+    });
+
+    it('returns value for WebshellLogout type without target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellLogoutHost, translate))
+        .toBe('Shell Logout: Host | User: root');
+    });
+
+    it('returns value for WebshellLogout type with target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellLogoutApp, translate))
+        .toBe('Shell Logout: App (syncthing) | User: root');
     });
   });
 
