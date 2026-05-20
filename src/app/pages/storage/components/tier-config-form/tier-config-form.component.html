@@ -22,11 +22,13 @@
           formControlName="max_concurrent_jobs"
           type="number"
           [label]="'Max Concurrent Jobs' | translate"
+          [hint]="helptext.maxConcurrentJobs | translate"
         ></ix-input>
         <ix-input
           formControlName="max_used_percentage"
           type="number"
           [label]="'Max Used Percentage' | translate"
+          [hint]="helptext.maxUsedPercentage | translate"
         ></ix-input>
       </ix-fieldset>
 
