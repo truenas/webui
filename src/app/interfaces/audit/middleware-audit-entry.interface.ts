@@ -47,7 +47,7 @@ export interface MiddlewareWebshellEventData {
   shell_type: WebshellType;
   target: MiddlewareWebshellTarget | null;
   username: string;
-  error: unknown;
+  error?: unknown;
 }
 
 export interface MiddlewareWebshellEntry extends BaseMiddlewareAuditEntry {
