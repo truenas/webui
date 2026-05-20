@@ -1,0 +1,71 @@
+.status-badge {
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-left: 8px;
+  padding: 0 8px;
+  vertical-align: middle;
+}
+
+.dataset-name {
+  margin-bottom: 16px;
+}
+
+.migration-direction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+
+  .arrow {
+    font-size: 18px;
+  }
+}
+
+.time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--fg2);
+}
+
+mat-progress-bar {
+  margin-bottom: 16px;
+}
+
+.stats-placeholder {
+  color: var(--fg2);
+  font-size: 13px;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.stats-cards {
+  display: flex;
+  gap: 16px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--fg2);
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+}

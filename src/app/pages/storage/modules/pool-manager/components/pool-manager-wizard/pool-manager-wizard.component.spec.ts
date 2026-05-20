@@ -173,7 +173,7 @@ describe('PoolManagerWizardComponent', () => {
     expect(store.initialize).toHaveBeenCalled();
   });
 
-  it('always shows steps: General, Data, Log, Spare, Cache, Metadata, Review', async () => {
+  it('always shows steps: General, Data, Log, Spare, Cache, Special, Review', async () => {
     const steps = await wizard.getSteps();
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
     expect(stepLabels).toEqual([
@@ -182,7 +182,7 @@ describe('PoolManagerWizardComponent', () => {
       'Log (Optional)',
       'Spare (Optional)',
       'Cache (Optional)',
-      'Metadata (Optional)',
+      'Special (Optional)',
       'Dedup (Optional)',
       'Review',
     ]);
@@ -209,7 +209,7 @@ describe('PoolManagerWizardComponent', () => {
       'Log (Optional)',
       'Spare (Optional)',
       'Cache (Optional)',
-      'Metadata (Optional)',
+      'Special (Optional)',
       'Dedup (Optional)',
       'Review',
     ]);

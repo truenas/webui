@@ -5,11 +5,13 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -21,6 +23,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -89,6 +92,7 @@ describe('NfsListComponent', () => {
         mockCall('sharing.nfs.update'),
         mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
       ]),
+      mockSharingTierService({ enabled: false }),
     ],
   });
 
@@ -196,6 +200,105 @@ describe('NfsListComponent', () => {
     it('should disable toggle when share is locked', async () => {
       const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
       expect(await toggle.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('tier refresh integration', () => {
+    const jobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
+
+    const createTierComponent = createComponentFactory({
+      component: NfsListComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.nfs.query', shares as NfsShare[]),
+          mockCall('sharing.nfs.delete'),
+          mockCall('sharing.nfs.update'),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+        mockSharingTierService({ enabled: true, jobUpdates$ }),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createTierComponent();
+      spectator.detectChanges();
+    });
+
+    it('reloads shares when a tier job update is emitted', () => {
+      const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
+      jobUpdates$.next({ tier_job_id: 'job-1' } as ZfsTierRewriteJobEntry);
+      expect(loadSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Change Storage Tier action hidden when tier missing', () => {
+    const createNoTierComponent = createComponentFactory({
+      component: NfsListComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.nfs.query', [{
+            ...shares[0],
+            path: '/mnt/pool/data',
+            tier: null,
+          }] as NfsShare[]),
+          mockCall('sharing.nfs.delete'),
+          mockCall('sharing.nfs.update'),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+        mockSharingTierService({ enabled: true }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createNoTierComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+    });
+
+    it('does not show Change Storage Tier in the action menu', async () => {
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+      const items = await menu.getItems({ text: /Change Storage Tier/ });
+      expect(items).toHaveLength(0);
+    });
+  });
+
+  describe('Change Storage Tier action hidden when row is locked', () => {
+    const createLockedTierComponent = createComponentFactory({
+      component: NfsListComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('sharing.nfs.query', [{
+            ...shares[0],
+            path: '/mnt/pool/data',
+            locked: true,
+            tier: { tier_type: DatasetTier.Performance, tier_job: null },
+          }] as NfsShare[]),
+          mockCall('sharing.nfs.delete'),
+          mockCall('sharing.nfs.update'),
+          mockCall('pool.query', [{ path: '/mnt/pool' }] as Pool[]),
+        ]),
+        mockSharingTierService({ enabled: true }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createLockedTierComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+    });
+
+    it('does not show Change Storage Tier in the action menu', async () => {
+      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+      await menu.open();
+      const items = await menu.getItems({ text: /Change Storage Tier/ });
+      expect(items).toHaveLength(0);
     });
   });
 });

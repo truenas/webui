@@ -71,16 +71,32 @@
       <div class="details-item">
         <div class="label">
           @if (isFilesystem()) {
-            {{ 'Available Space' | translate }}:
+            @if (tierEnabled()) {
+              {{ 'Available to Dataset (Regular Tier)' | translate }}:
+            } @else {
+              {{ 'Available Space' | translate }}:
+            }
           }
           @if (isZvol()) {
-            {{ 'Space Available to Zvol' | translate }}:
+            @if (tierEnabled()) {
+              {{ 'Available to Zvol (Regular Tier)' | translate }}:
+            } @else {
+              {{ 'Space Available to Zvol' | translate }}:
+            }
           }
         </div>
         <div class="value">
           {{ dataset().available.parsed | ixFileSize }}
         </div>
       </div>
+      @if (showPerformanceTierAvailable()) {
+        <div class="details-item">
+          <div class="label">{{ 'Pool Performance Tier Available' | translate }}:</div>
+          <div class="value">
+            {{ performanceTierAvailable() | ixFileSize }}
+          </div>
+        </div>
+      }
       @if ((isFilesystem() && hasQuota()) || hasRefQuota()) {
         <div class="details-item">
           <div class="label">{{ 'Applied Dataset Quota' | translate }}:</div>

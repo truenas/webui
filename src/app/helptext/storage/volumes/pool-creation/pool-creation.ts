@@ -1,21 +1,19 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextPoolCreation = {
-  exportedDisksWarning: T(`The following disks have exported pools on them.
-  Using those disks will make existing pools on them unable to be imported.
-  You will lose any and all data in selected disks.`),
+  exportedDisksWarning: T('The following disks have exported pools on them.\nUsing those disks will make existing pools on them unable to be imported.\nYou will lose any and all data in selected disks.'),
 
   exportedSelectedDisksWarning: T('Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.'),
 
   encryptionMessage: T('Encryption is for users storing sensitive data.\
-  Pool-level encryption does not apply to the storage pool or disks in the pool. It applies\
-  to the root dataset that shares the pool name and any child datasets created unless you change\
-  the encryption at the time you create the child dataset. For more information on encryption please\
-  refer to the <a href="http://TrueNAS.com/docs/" target="_blank">TrueNAS Documentation hub</a>.'),
+ Pool-level encryption does not apply to the storage pool or disks in the pool. It applies\
+ to the root dataset that shares the pool name and any child datasets created unless you change\
+ the encryption at the time you create the child dataset. For more information on encryption please\
+ refer to the <a href="http://TrueNAS.com/docs/" target="_blank">TrueNAS Documentation hub</a>.'),
 
   diskSelectionMessage: T('VDEVs have been created through manual disk selection. To view or\
-  edit your selections, press the "Edit Manual Disk Selection" button below. To start again with the\
-  automated disk selection, hit the "Reset" button.'),
+ edit your selections, press the "Edit Manual Disk Selection" button below. To start again with the\
+ automated disk selection, hit the "Reset" button.'),
 
   enclosureOptionsDescription: T('Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.'),
 
@@ -38,7 +36,7 @@ export const helptextPoolCreation = {
 
   dRaidChildrenExplanation: T('The number of children must at the minimum accommodate the total number of disks required for the previous configuration options including parity drives.'),
 
-  addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
+  addVdevStripeSpecialWarning: T('Adding a stripe special VDEV introduces a single point of failure to your pool.'),
   addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
 
   specialRedundancyMismatchWarning: T('The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),

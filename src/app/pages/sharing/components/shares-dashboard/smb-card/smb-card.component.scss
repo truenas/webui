@@ -1,3 +1,7 @@
+@import '../../storage-tier-cell/tier-cell-host';
+
+@include tier-cell-host;
+
 mat-card {
   height: 100%;
 }
@@ -8,5 +12,15 @@ mat-card {
 
   tn-icon {
     margin-left: 5px;
+  }
+}
+
+:host ::ng-deep {
+  .tight-actions {
+    width: 80px;
+  }
+
+  .tight-toggle {
+    width: 70px;
   }
 }
