@@ -105,11 +105,13 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   protected onTiering(): void {
-    this.slideIn.open(TierConfigFormComponent).onSuccess(() => {
+    this.slideIn.open(TierConfigFormComponent).pipe(
+      filter((response) => !!response.response),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
       this.tierService.invalidate();
-      // Re-prime so tierService.tierEnabled reflects the new config for child cards.
       this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
       this.store.loadDashboard();
-    }, this.destroyRef);
+    });
   }
 }
