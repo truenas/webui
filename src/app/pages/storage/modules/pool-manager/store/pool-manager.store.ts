@@ -310,16 +310,14 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     };
   });
 
-  readonly setEncryptionOptions = this.updater((state, options: {
+  setEncryptionOptions(options: {
     encryptionType: EncryptionType;
     encryption: string | null;
     sedPassword: string | null;
-  }) => {
-    return {
-      ...state,
-      ...options,
-    };
-  });
+  }): void {
+    this.patchState(options);
+    this.resetTopologyIfNotEnoughDisks();
+  }
 
   readonly setHasSedCapableDisks = this.updater((state, hasSedCapableDisks: boolean) => {
     return {
