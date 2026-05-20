@@ -1,0 +1,13 @@
+<tn-dialog-shell [title]="'{app} Notes' | translate: { app: data.name }">
+  <div class="notes">
+    <markdown [data]="data.notes"></markdown>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      [label]="'Close' | translate"
+      (onClick)="close()"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

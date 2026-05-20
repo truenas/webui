@@ -15,6 +15,7 @@
       || app().metadata.run_as_context.length
     ) {
       <ix-app-metadata-card
+        [app]="app()"
         [appMetadata]="app().metadata"
         [maxHeight]="180"
       ></ix-app-metadata-card>
