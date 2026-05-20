@@ -21,18 +21,16 @@
   </a>
 
   @if (!(hasTruenasConnect$ | async)) {
-    <div
-      class="info-message clickable"
+    <tn-banner
+      class="clickable"
       role="button"
       tabindex="0"
-      aria-live="polite"
+      [heading]="'WebShares unavailable' | translate"
+      [message]="'WebShare service requires TrueNAS Connect to be configured and active.' | translate"
       (click)="openTruenasConnectDialog()"
       (keydown.enter)="openTruenasConnectDialog()"
       (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
-    >
-      <tn-icon name="information" library="mdi"></tn-icon>
-      <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
-    </div>
+    ></tn-banner>
   }
 
   @if (showNoWebshareUsersNotice$ | async) {

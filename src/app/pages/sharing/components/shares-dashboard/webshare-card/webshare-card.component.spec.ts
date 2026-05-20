@@ -191,9 +191,8 @@ describe('WebShareCardComponent', () => {
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
-  it('does not show info message when TrueNAS Connect is configured', () => {
-    const infoMessage = spectator.query('.info-message');
-    expect(infoMessage).not.toExist();
+  it('does not show the TrueNAS Connect banner when TrueNAS Connect is configured', () => {
+    expect(spectator.query('tn-banner')).not.toExist();
   });
 });
 
@@ -269,16 +268,17 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
     spectator = createComponent();
   });
 
-  it('shows info message when TrueNAS Connect is not configured', () => {
-    const infoMessage = spectator.query('.info-message');
-    expect(infoMessage).toExist();
-    expect(infoMessage).toHaveText('WebShare service requires TrueNAS Connect to be configured and active.');
+  it('shows the TrueNAS Connect banner when TrueNAS Connect is not configured', () => {
+    const banner = spectator.query('tn-banner');
+    expect(banner).toExist();
+    expect(banner).toHaveText('WebShares unavailable');
+    expect(banner).toHaveText('WebShare service requires TrueNAS Connect to be configured and active.');
   });
 
-  it('opens TrueNAS Connect dialog when info message is clicked', () => {
+  it('opens TrueNAS Connect dialog when the banner is clicked', () => {
     const truenasConnectService = spectator.inject(TruenasConnectService);
 
-    spectator.click('.info-message');
+    spectator.click('tn-banner');
 
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });

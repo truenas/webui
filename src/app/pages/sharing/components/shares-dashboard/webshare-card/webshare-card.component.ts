@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   tnIconMarker,
+  TnBannerComponent,
   TnButtonComponent,
   TnCardComponent,
   TnCardHeaderDirective,
@@ -65,6 +66,7 @@ import { selectService } from 'app/store/services/services.selectors';
   standalone: true,
   imports: [
     AsyncPipe,
+    TnBannerComponent,
     TnButtonComponent,
     TnCardComponent,
     TnCardHeaderDirective,
