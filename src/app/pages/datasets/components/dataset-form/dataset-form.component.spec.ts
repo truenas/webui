@@ -16,6 +16,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -48,11 +49,12 @@ describe('DatasetFormComponent', () => {
     smb_name: new FormControl('new_sbm_name', { nonNullable: true }),
   });
 
-  MockInstance(NameAndOptionsSectionComponent, 'form', new FormGroup({
+  const nameAndOptionsForm = new FormGroup({
     name: new FormControl('', { nonNullable: true }),
     parent: new FormControl('', { nonNullable: true }),
     share_type: new FormControl(DatasetPreset.Generic, { nonNullable: true }),
-  }));
+  });
+  MockInstance(NameAndOptionsSectionComponent, 'form', nameAndOptionsForm);
   MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', datasetPresetForm);
   MockInstance(NameAndOptionsSectionComponent, 'canCreateSmb', true);
   MockInstance(NameAndOptionsSectionComponent, 'canCreateNfs', true);
@@ -194,6 +196,21 @@ describe('DatasetFormComponent', () => {
       expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(
         checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
       );
+    });
+
+    it('sets purpose to MultiProtocolShare on SMB create when Multiprotocol preset is selected', async () => {
+      nameAndOptionsForm.controls.share_type.setValue(DatasetPreset.Multiprotocol);
+
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+        name: 'new_sbm_name',
+        path: '/mnt/saved-id',
+        purpose: SmbSharePurpose.MultiProtocolShare,
+      }]);
+
+      nameAndOptionsForm.controls.share_type.setValue(DatasetPreset.Generic);
     });
 
     it('skips creation new SMB and NFS when checkboxes are set to false', async () => {
