@@ -58,4 +58,17 @@ describe('AppMetadataListComponent', () => {
     expect(spectator.query('#capabilities')).toExist();
     expect(spectator.query('#runAsContext')).toExist();
   });
+
+  it('omits sections that have no entries in the expandable layout', () => {
+    spectator = createComponent({
+      props: {
+        appMetadata: { ...appMetadata, host_mounts: [], capabilities: [] } as AppMetadata,
+        expandable: true,
+      },
+    });
+
+    expect(spectator.query('#hostMounts')).not.toExist();
+    expect(spectator.query('#capabilities')).not.toExist();
+    expect(spectator.query('#runAsContext')).toExist();
+  });
 });

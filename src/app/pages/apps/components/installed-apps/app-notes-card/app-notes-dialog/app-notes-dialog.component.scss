@@ -1,4 +1,8 @@
+@import 'mixins/markdown';
+
 .notes {
   min-width: 60vw;
   word-break: break-word;
+
+  @include markdown-notes();
 }
