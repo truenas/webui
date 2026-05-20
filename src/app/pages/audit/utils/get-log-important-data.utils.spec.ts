@@ -243,6 +243,18 @@ const middlewareEntries = {
       error: null,
     },
   } as AuditEntry,
+  webshellAuthenticationAppWithoutAppName: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
   webshellLogoutHost: {
     service: AuditService.Middleware,
     event: AuditEvent.WebshellLogout,
@@ -391,6 +403,11 @@ describe('get important data from log', () => {
     it('falls back to container_id for Container shell type when app_name is missing', () => {
       expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainerWithoutApp, translate))
         .toBe('Shell: Container (f8edb5170814) | User: root');
+    });
+
+    it('falls back to container_id for App shell type when app_name is missing', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationAppWithoutAppName, translate))
+        .toBe('Shell: App (f8edb5170814) | User: root');
     });
 
     it('returns value for failed webshell authentication', () => {
