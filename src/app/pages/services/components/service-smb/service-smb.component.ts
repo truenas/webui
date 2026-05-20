@@ -1,11 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, output, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -51,8 +50,6 @@ interface BindIp {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -65,7 +62,7 @@ interface BindIp {
     IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, output, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   combineLatest, finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
@@ -47,8 +46,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
@@ -56,11 +53,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TooltipComponent,
     TranslateModule,
-
   ],
 })
 export class ServiceNfsComponent implements OnInit {
