@@ -56,32 +56,38 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
     }
     case AuditEvent.WebshellAuthentication:
     case AuditEvent.WebshellLogout:
-      return getWebshellImportantData(log.event_data, translate);
+      return getWebshellImportantData(log.event_data, event, translate);
     default:
       assertUnreachable(event);
       return ' - ';
   }
 }
 
-function getWebshellImportantData(eventData: MiddlewareWebshellEventData, translate: TranslateService): string {
+function getWebshellImportantData(
+  eventData: MiddlewareWebshellEventData,
+  event: AuditEvent.WebshellAuthentication | AuditEvent.WebshellLogout,
+  translate: TranslateService,
+): string {
   const shellType = eventData.shell_type;
   const shellTypeLabel = translate.instant(webshellTypeLabels.get(shellType) ?? shellType);
   const targetIdentifier = getWebshellTargetIdentifier(shellType, eventData.target);
-  const isFailed = Boolean(eventData.error);
+  const params = { shellType: shellTypeLabel, target: targetIdentifier };
 
-  if (targetIdentifier) {
-    return translate.instant(
-      isFailed
-        ? T('Failed Shell Authentication: {shellType} ({target})')
-        : T('Shell: {shellType} ({target})'),
-      { shellType: shellTypeLabel, target: targetIdentifier },
-    );
+  if (event === AuditEvent.WebshellLogout) {
+    return targetIdentifier
+      ? translate.instant(T('Shell Logout: {shellType} ({target})'), params)
+      : translate.instant(T('Shell Logout: {shellType}'), params);
   }
 
-  return translate.instant(
-    isFailed ? T('Failed Shell Authentication: {shellType}') : T('Shell: {shellType}'),
-    { shellType: shellTypeLabel },
-  );
+  if (eventData.error) {
+    return targetIdentifier
+      ? translate.instant(T('Failed Shell Authentication: {shellType} ({target})'), params)
+      : translate.instant(T('Failed Shell Authentication: {shellType}'), params);
+  }
+
+  return targetIdentifier
+    ? translate.instant(T('Shell: {shellType} ({target})'), params)
+    : translate.instant(T('Shell: {shellType}'), params);
 }
 
 function getWebshellTargetIdentifier(
@@ -94,7 +100,7 @@ function getWebshellTargetIdentifier(
     case WebshellType.Vm:
       return target?.vm_name;
     case WebshellType.Container:
-      return target?.container_id;
+      return target?.app_name ?? target?.container_id;
     case WebshellType.Host:
       return undefined;
     default:

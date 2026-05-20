@@ -218,12 +218,48 @@ const middlewareEntries = {
       error: 'Invalid token',
     },
   } as AuditEntry,
+  webshellAuthenticationContainer: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.Container,
+      target: {
+        app_name: 'syncthing',
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
+  webshellAuthenticationContainerWithoutApp: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellAuthentication,
+    event_data: {
+      shell_type: WebshellType.Container,
+      target: {
+        container_id: 'f8edb5170814',
+      },
+      username: 'root',
+      error: null,
+    },
+  } as AuditEntry,
   webshellLogoutHost: {
     service: AuditService.Middleware,
     event: AuditEvent.WebshellLogout,
     event_data: {
       shell_type: WebshellType.Host,
       target: null,
+      username: 'root',
+    },
+  } as AuditEntry,
+  webshellLogoutApp: {
+    service: AuditService.Middleware,
+    event: AuditEvent.WebshellLogout,
+    event_data: {
+      shell_type: WebshellType.App,
+      target: {
+        app_name: 'syncthing',
+      },
       username: 'root',
     },
   } as AuditEntry,
@@ -347,13 +383,28 @@ describe('get important data from log', () => {
         .toBe('Shell: VM (ubuntu)');
     });
 
+    it('prefers app_name over container_id for Container shell type', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainer, translate))
+        .toBe('Shell: Container (syncthing)');
+    });
+
+    it('falls back to container_id for Container shell type when app_name is missing', () => {
+      expect(getLogImportantData(middlewareEntries.webshellAuthenticationContainerWithoutApp, translate))
+        .toBe('Shell: Container (f8edb5170814)');
+    });
+
     it('returns value for failed webshell authentication', () => {
       expect(getLogImportantData(middlewareEntries.webshellFailedAuthentication, translate))
         .toBe('Failed Shell Authentication: App (syncthing)');
     });
 
     it('returns value for WebshellLogout type without target', () => {
-      expect(getLogImportantData(middlewareEntries.webshellLogoutHost, translate)).toBe('Shell: Host');
+      expect(getLogImportantData(middlewareEntries.webshellLogoutHost, translate)).toBe('Shell Logout: Host');
+    });
+
+    it('returns value for WebshellLogout type with target', () => {
+      expect(getLogImportantData(middlewareEntries.webshellLogoutApp, translate))
+        .toBe('Shell Logout: App (syncthing)');
     });
   });
 
