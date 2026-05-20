@@ -96,11 +96,10 @@ function getWebshellTargetIdentifier(
 ): string | undefined {
   switch (shellType) {
     case WebshellType.App:
+    case WebshellType.Container:
       return target?.app_name ?? target?.container_id;
     case WebshellType.Vm:
       return target?.vm_name;
-    case WebshellType.Container:
-      return target?.app_name ?? target?.container_id;
     case WebshellType.Host:
       return undefined;
     default:
