@@ -3,13 +3,15 @@
     <h3 mat-card-title>
       <span>{{ 'Application Metadata' | translate }}</span>
     </h3>
-    <tn-icon-button
-      name="open-in-new"
-      library="mdi"
-      [tooltip]="'Expand' | translate"
-      [ariaLabel]="'Expand Application Metadata' | translate"
-      (onClick)="openInDialog()"
-    ></tn-icon-button>
+    @if (app()) {
+      <tn-icon-button
+        name="open-in-new"
+        library="mdi"
+        [tooltip]="'Expand' | translate"
+        [ariaLabel]="'Expand Application Metadata' | translate"
+        (onClick)="openInDialog()"
+      ></tn-icon-button>
+    }
   </mat-card-header>
   <mat-card-content>
     <ix-app-metadata-list

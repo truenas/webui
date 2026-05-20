@@ -16,21 +16,15 @@ describe('AppMetadataCardComponent', () => {
   let loader: HarnessLoader;
 
   const appMetadata = {
-    capabilities: Array.from({ length: 2 }).map((value, index) => ({
-      name: `X${index}`,
-      description: `This is being used to do X${index} thing`,
-    })),
-    host_mounts: Array.from({ length: 3 }).map((value, index) => ({
-      hostPath: `/dev/proc${index}`,
-      description: 'Required by netdata for xyz',
-    })),
-    run_as_context: Array.from({ length: 4 }).map((value, index) => ({
-      uid: index,
-      gid: index,
-      user_name: `ix-test-${index}`,
-      group_name: `ix-test-${index}`,
-      description: 'Why this needs to be done',
-    })),
+    capabilities: [{ name: 'CHOWN', description: 'Change file ownership.' }],
+    host_mounts: [{ hostPath: '/dev/dri', description: 'Needed for GPU access.' }],
+    run_as_context: [{
+      uid: 0,
+      gid: 0,
+      user_name: 'root',
+      group_name: 'root',
+      description: 'Runs as root.',
+    }],
   } as AppMetadata;
 
   const app = { name: 'app-name' } as App;
@@ -53,45 +47,23 @@ describe('AppMetadataCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  function getDetails(selector: string): Record<string, string> {
-    return spectator.queryAll(selector).reduce((acc, item: HTMLElement) => {
-      const key = item.querySelector('.label')!.textContent!;
-      const value = item.querySelector('.value')!.textContent!;
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
-  }
-
   it('shows header', () => {
     expect(spectator.query('mat-card-header h3')).toHaveText('Application Metadata');
   });
 
-  it('checks hostMounts entries', () => {
-    const hostMounts = getDetails('#hostMounts .details-item');
+  it('renders the metadata list with the expandable layout', () => {
+    const list = spectator.query(AppMetadataListComponent);
 
-    expect(spectator.query('#hostMounts h4')).toHaveText('Host Mounts');
-    expect(hostMounts).toEqual({
-      '/dev/proc0': 'Required by netdata for xyz',
-      '/dev/proc1': 'Required by netdata for xyz',
-      '/dev/proc2': 'Required by netdata for xyz',
-    });
+    expect(list).toBeTruthy();
+    expect(list!.appMetadata()).toBe(appMetadata);
+    expect(list!.expandable()).toBe(true);
   });
 
-  it('checks capabilities entries', () => {
-    const capabilities = getDetails('#capabilities .details-item');
+  it('does not render the expand button when no app is provided', async () => {
+    spectator.setInput('app', null);
 
-    expect(spectator.query('#capabilities h4')).toHaveText('Capabilities');
-    expect(capabilities).toEqual({
-      X0: 'This is being used to do X0 thing',
-      X1: 'This is being used to do X1 thing',
-    });
-  });
-
-  it('checks runAsContext entries', () => {
-    expect(spectator.query('#runAsContext h4')).toHaveText('Run As Context');
-
-    const runAsContextEntries = spectator.queryAll('#runAsContext .details-entry');
-    expect(runAsContextEntries).toHaveLength(4);
+    const buttons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'open-in-new' }));
+    expect(buttons).toHaveLength(0);
   });
 
   it('opens metadata in a larger dialog when expand button is clicked', async () => {

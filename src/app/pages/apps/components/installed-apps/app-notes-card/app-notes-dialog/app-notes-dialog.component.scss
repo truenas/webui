@@ -1,7 +1,8 @@
 @import 'mixins/markdown';
 
 .notes {
-  min-width: 60vw;
+  max-width: 90vw;
+  width: 800px;
   word-break: break-word;
 
   @include markdown-notes();
