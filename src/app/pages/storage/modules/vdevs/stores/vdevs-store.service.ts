@@ -5,10 +5,11 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { enrichWithEffectiveStatus } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
+import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -182,14 +183,10 @@ export class VDevsStore extends ComponentStore<VDevsState> {
         guid: VDevType.Dedup,
       });
     }
-    return dataNodes.map((node: VDevNestedDataNode) => {
-      return {
-        ...node,
-        children: node.children.map((child: VDevItem) => {
-          return { ...child, isRoot: true };
-        }) as TopologyDisk[],
-      };
-    });
+    return dataNodes.map((node) => ({
+      ...node,
+      children: node.children.map((child) => ({ ...enrichWithEffectiveStatus(child), isRoot: true })),
+    } as VDevNestedDataNode));
   }
 
   getDisk(node: VDevNestedDataNode): Disk | undefined {

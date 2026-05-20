@@ -1,13 +1,12 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { getStatusThemeClass } from 'app/helpers/topology-status.helper';
 import { Disk } from 'app/interfaces/disk.interface';
 import {
-  TopologyDisk, VDevItem,
+  VDevItemEnriched, TopologyDisk,
 } from 'app/interfaces/storage.interface';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 
@@ -21,7 +20,9 @@ import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/compo
 export class TopologyItemNodeComponent {
   protected translate = inject(TranslateService);
 
-  readonly topologyItem = input.required<VDevItem>();
+  // The store enriches every item via topology-status.helper, so this component just renders
+  // what it's given — no per-render recursion.
+  readonly topologyItem = input.required<VDevItemEnriched>();
   readonly disk = input.required<Disk>();
 
   protected readonly name = computed(() => {
@@ -34,9 +35,7 @@ export class TopologyItemNodeComponent {
     return this.topologyItem().type;
   });
 
-  protected readonly status = computed(() => {
-    return this.topologyItem()?.status ? this.topologyItem().status : '';
-  });
+  protected readonly status = computed(() => this.topologyItem().effectiveStatus);
 
   protected readonly capacity = computed(() => {
     return this.isDisk() && this.disk()?.size ? buildNormalizedFileSize(this.disk().size) : '';
@@ -51,18 +50,7 @@ export class TopologyItemNodeComponent {
     return '';
   });
 
-  protected readonly statusClass = computed(() => {
-    switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
-      case PoolStatus.Faulted:
-        return 'fn-theme-red';
-      case PoolStatus.Degraded:
-      case PoolStatus.Offline:
-      case TopologyItemStatus.Offline:
-        return 'fn-theme-yellow';
-      default:
-        return '';
-    }
-  });
+  protected readonly statusClass = computed(() => getStatusThemeClass(this.topologyItem().effectiveStatus));
 
   private readonly isDisk = computed(() => {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);

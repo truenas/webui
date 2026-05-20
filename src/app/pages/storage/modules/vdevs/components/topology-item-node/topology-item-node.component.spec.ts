@@ -5,7 +5,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
-import { TopologyDisk } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDevItemEnriched } from 'app/interfaces/storage.interface';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
 
@@ -16,6 +16,7 @@ describe('TopologyItemNodeComponent', () => {
     path: '/path/to/disk',
     guid: '123',
     status: TopologyItemStatus.Offline,
+    effectiveStatus: TopologyItemStatus.Offline,
     stats: {
       read_errors: 1,
       write_errors: 2,
@@ -23,7 +24,7 @@ describe('TopologyItemNodeComponent', () => {
     },
     children: [] as TopologyDisk[],
     disk: 'sdf',
-  } as TopologyDisk;
+  } as unknown as VDevItemEnriched;
   const disk = {
     type: DiskType.Hdd,
     size: 16 * MiB,
@@ -42,13 +43,13 @@ describe('TopologyItemNodeComponent', () => {
   });
 
   it('shows "VDEV Name"', () => {
-    expect(spectator.query('.name')).toHaveText(topologyDisk.disk);
+    expect(spectator.query('.name')).toHaveText('sdf');
     expect(spectator.query(TopologyItemIconComponent)!.disk).toBe(disk);
     expect(spectator.query(TopologyItemIconComponent)!.topologyItem).toBe(topologyDisk);
   });
 
   it('shows "Status"', () => {
-    expect(spectator.query('.cell-status span')).toHaveText(topologyDisk.status);
+    expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Offline);
     expect(spectator.query('.cell-status')).toHaveClass('fn-theme-yellow');
   });
 
@@ -58,5 +59,17 @@ describe('TopologyItemNodeComponent', () => {
 
   it('shows "Errors"', () => {
     expect(spectator.query('.cell-errors')).toHaveText('6 Errors');
+  });
+
+  it('renders the store-supplied effectiveStatus, not the item\'s own raw status', () => {
+    spectator.setInput('topologyItem', {
+      type: TopologyItemType.Raidz3,
+      status: TopologyItemStatus.Online,
+      effectiveStatus: TopologyItemStatus.Faulted,
+      children: [],
+    } as unknown as VDevItemEnriched);
+
+    expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Faulted);
+    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
   });
 });
