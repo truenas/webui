@@ -55,6 +55,11 @@ export class TierConfigFormComponent implements OnInit {
   protected readonly enabledWarningHeading = T('Shares will be locked to a single dataset');
   protected readonly enabledWarningMessage = T('Once tiering is on, SMB shares and Webshares stop following nested datasets. Each share will expose only its own dataset, and any child datasets under it will no longer be visible to clients through that share. Create a separate share for each dataset you want to expose.');
 
+  protected readonly helptext = {
+    maxConcurrentJobs: T('Maximum number of tiering rewrite jobs that can run in parallel. Higher values speed up data movement between tiers but increase CPU and I/O load on the system.'),
+    maxUsedPercentage: T('Pool capacity threshold (in percent) above which tiering will move data off the performance tier to keep free space available. Lower values reserve more free space; higher values let the performance tier fill more before data is migrated.'),
+  };
+
   private static readonly defaultMaxConcurrentJobs = 1;
 
   formGroup = this.fb.nonNullable.group({
