@@ -443,7 +443,7 @@ describe('PoolManagerValidationService', () => {
             {
               severity: PoolCreationSeverity.ErrorWarning,
               step: PoolCreationWizardStep.Metadata,
-              text: 'Adding a stripe metadata VDEV introduces a single point of failure to your pool.',
+              text: 'Adding a stripe special VDEV introduces a single point of failure to your pool.',
             },
           ],
         });
@@ -567,7 +567,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
-          text: 'Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+          text: 'Special VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
         });
       });
     });
@@ -636,7 +636,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
-          text: 'Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+          text: 'Special VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
         });
       });
     });
@@ -670,7 +670,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
-          text: 'Metadata VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
+          text: 'Special VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.',
         });
       });
     });
@@ -1345,7 +1345,7 @@ describe('PoolManagerValidationService', () => {
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.ErrorWarning,
           step: PoolCreationWizardStep.Metadata,
-          text: 'Adding a stripe metadata VDEV introduces a single point of failure to your pool.',
+          text: 'Adding a stripe special VDEV introduces a single point of failure to your pool.',
         });
       });
     });

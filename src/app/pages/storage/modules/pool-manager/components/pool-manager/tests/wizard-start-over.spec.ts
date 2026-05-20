@@ -190,8 +190,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     });
     await wizard.clickNext();
 
-    // METADATA step activated
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
+    // Special step activated
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Special (Optional)');
     await wizard.fillStep({
       Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
@@ -282,8 +282,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     });
     await wizard.clickNext();
 
-    // METADATA step activated and reset to default
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
+    // Special step activated and reset to default
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Special (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
       Layout: '',
       'Disk Size': '',

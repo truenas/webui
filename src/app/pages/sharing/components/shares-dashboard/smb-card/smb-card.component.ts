@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, DestroyRef, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -26,6 +28,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -43,6 +46,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
@@ -90,6 +95,8 @@ export class SmbCardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<ServicesState>>(Store);
   private poolStoreService = inject(poolStore);
+  private cdr = inject(ChangeDetectorRef);
+  private tierService = inject(SharingTierService);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
@@ -101,6 +108,12 @@ export class SmbCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmbShare>;
   /** null = pools not yet loaded; string[] once pool.query completes */
   private activePoolPaths = signal<string[] | null>(null);
+
+  private tierAction: IconActionConfig<SmbShare> = this.tierService.createChangeTierAction<SmbShare>({
+    destroyRef: this.destroyRef,
+    reload: () => this.dataProvider.load(),
+    requiredRoles: this.requiredRoles,
+  });
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -118,6 +131,7 @@ export class SmbCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      cssClass: 'tight-toggle',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
       isDisabled: (row: SmbShare) => isShareUnavailable(row, this.activePoolPaths()),
@@ -127,7 +141,12 @@ export class SmbCardComponent implements OnInit {
       title: this.translate.instant('Audit Logging'),
       getValue: (row) => Boolean(row.audit?.enable),
     }),
+    storageTierColumn({
+      title: this.translate.instant('Storage Tier'),
+      hidden: true,
+    }),
     actionsWithMenuColumn({
+      cssClass: 'tight-actions',
       actions: [
         {
           iconName: tnIconMarker('pencil', 'mdi'),
@@ -151,6 +170,7 @@ export class SmbCardComponent implements OnInit {
           ),
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
+        this.tierAction,
         {
           iconName: tnIconMarker('delete', 'mdi'),
           tooltip: this.translate.instant('Delete'),
@@ -179,6 +199,14 @@ export class SmbCardComponent implements OnInit {
       error: () => {
         this.dataProvider.load();
       },
+    });
+
+    this.tierService.attachTierToShareList<SmbShare>({
+      destroyRef: this.destroyRef,
+      cdr: this.cdr,
+      getColumns: () => this.columns,
+      setColumns: (columns) => { this.columns = columns; },
+      reload: () => this.dataProvider.load(),
     });
   }
 
@@ -231,11 +259,22 @@ export class SmbCardComponent implements OnInit {
   }
 
   private doFilesystemAclEdit(row: SmbShare): void {
-    this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-      queryParams: {
-        path: row.path,
-        returnUrl: this.router.url,
-      },
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+        queryParams: {
+          path: row.path,
+          returnUrl: this.router.url,
+        },
+      });
+    }
+  }
+
+  private showLockedPathDialog(path: string): void {
+    this.dialogService.error({
+      title: this.translate.instant('Error'),
+      message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
     });
   }
 

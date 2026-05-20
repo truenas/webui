@@ -75,6 +75,19 @@
         </div>
       </div>
     }
+    @if (dataset().tier) {
+      <div class="details-item tier-item">
+        <div class="label">{{ 'Storage Tier' | translate }}:</div>
+        <div class="value tier-value">
+          <ix-tier-status [tier]="dataset().tier" />
+        </div>
+        @if (!dataset().locked) {
+          <button type="button" class="change-tier-link" ixTest="change-tier" (click)="changeTier()">
+            {{ 'Change' | translate }}
+          </button>
+        }
+      </div>
+    }
     <div class="details-item">
       <div class="label">{{ 'Path' | translate }}:</div>
       <div

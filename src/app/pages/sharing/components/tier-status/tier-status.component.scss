@@ -1,0 +1,55 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+.job-status-icon {
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &.spinning {
+    animation: spin 2s infinite linear;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.job-status-text {
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 12px;
+  white-space: nowrap;
+
+  &.fn-theme-primary {
+    color: var(--primary);
+  }
+
+  &.fn-theme-grey {
+    color: var(--fg2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+.tier-label {
+  white-space: nowrap;
+}

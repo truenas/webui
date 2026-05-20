@@ -95,7 +95,7 @@ export enum VDevType {
 export const vdevTypeLabels = new Map<VDevType, string>([
   [VDevType.Data, T('Data')],
   [VDevType.Log, T('Log')],
-  [VDevType.Special, T('Metadata')],
+  [VDevType.Special, T('Special')],
   [VDevType.Spare, T('Spare')],
   [VDevType.Dedup, T('Dedup')],
   [VDevType.Cache, T('Cache')],
