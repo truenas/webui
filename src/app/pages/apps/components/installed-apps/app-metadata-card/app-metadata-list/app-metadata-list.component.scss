@@ -1,0 +1,54 @@
+@import 'mixins/animations';
+
+:host {
+  display: block;
+}
+
+.card-subtitle {
+  margin-bottom: 12px;
+}
+
+.details-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+section,
+ix-card-expand-collapse {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.details-item {
+  @include fade-in();
+
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  .label {
+    font-weight: bold;
+    margin-right: 5px;
+    white-space: normal;
+  }
+
+  .value {
+    font-weight: normal;
+    margin-right: 5px;
+    white-space: normal;
+  }
+}
+
+.details-entry {
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--lines);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+}

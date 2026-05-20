@@ -3,11 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnDialog, TnIconButtonHarness } from '@truenas/ui-components';
 import { App, AppMetadata } from 'app/interfaces/app.interface';
-import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import {
   AppMetadataDialog,
 } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-dialog/app-metadata-dialog.component';
+import {
+  AppMetadataListComponent,
+} from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-list/app-metadata-list.component';
 
 describe('AppMetadataCardComponent', () => {
   let spectator: Spectator<AppMetadataCardComponent>;
@@ -35,7 +37,7 @@ describe('AppMetadataCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppMetadataCardComponent,
-    imports: [CardExpandCollapseComponent],
+    imports: [AppMetadataListComponent],
     providers: [
       mockProvider(TnDialog),
     ],
