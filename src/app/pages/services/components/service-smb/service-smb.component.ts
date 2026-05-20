@@ -1,13 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, output, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
@@ -51,8 +50,6 @@ interface BindIp {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -65,7 +62,7 @@ interface BindIp {
     IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -81,9 +78,12 @@ export class ServiceSmbComponent implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
+  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
+  readonly closed = output<boolean>();
 
-  protected isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
@@ -116,7 +116,7 @@ export class ServiceSmbComponent implements OnInit {
    * incompatible shares, and SMB1 status.
    */
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
 
@@ -171,7 +171,16 @@ export class ServiceSmbComponent implements OnInit {
     stateful_failover: [false, []],
   });
 
-  protected readonly requiredRoles = [Role.SharingSmbWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite];
+
+  private formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
+
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.netbiosnameTooltip,
@@ -273,6 +282,19 @@ export class ServiceSmbComponent implements OnInit {
     this.openTruenasConnectModal();
   }
 
+  private close(saved: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: saved });
+    } else {
+      this.closed.emit(saved);
+    }
+  }
+
+  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
+  submit(): void {
+    this.onSubmit();
+  }
+
   protected onSubmit(): void {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();
     const values: SmbConfigUpdate = {
@@ -288,7 +310,7 @@ export class ServiceSmbComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

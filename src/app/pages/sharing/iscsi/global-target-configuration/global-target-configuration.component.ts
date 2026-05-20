@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed, output, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
-  forkJoin, of, take,
+  forkJoin, of, startWith, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -37,8 +36,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './global-target-configuration.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -46,7 +43,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
     ModalHeaderComponent,
@@ -63,9 +60,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
+  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
+  readonly closed = output<boolean>();
 
-  protected isLoading = signal(false);
+  readonly isLoading = signal(false);
   isHaSystem = false;
   private originalBasename: string | null = null;
 
@@ -93,12 +93,33 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     iser: helptextIscsi.config.iserTooltip,
   };
 
-  protected readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
+  readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
+
+  private formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+  }
+
+  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
+  submit(): void {
+    this.onSubmit();
+  }
+
+  private close(saved: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: saved });
+    } else {
+      this.closed.emit(saved);
+    }
   }
 
   ngOnInit(): void {
@@ -118,7 +139,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {

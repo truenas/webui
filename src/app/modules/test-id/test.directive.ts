@@ -82,6 +82,8 @@ export class TestDirective {
       case 'textarea':
       case 'table':
         return tagName;
+      case 'tn-button':
+        return 'button';
       case 'a':
         return 'link';
       case 'ix-icon':

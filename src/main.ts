@@ -25,7 +25,7 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TN_TEST_ATTR, TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -54,6 +54,11 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // Align @truenas/ui-components with webui's long-standing data-test attribute convention
+    // (see the [ixTest] directive). Library default is data-testid; this single provider
+    // routes every component-level testId input and TnTestIdDirective binding through data-test
+    // so existing automated tests keep matching their selectors.
+    { provide: TN_TEST_ATTR, useValue: 'data-test' },
     importProvidersFrom(
       BrowserModule,
       TranslateModule.forRoot({

@@ -1,32 +1,39 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, inject, OnInit, DestroyRef,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, viewChild, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnBannerComponent,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnEmptyComponent,
+  TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
+  type TnCardAction,
+  type TnCardHeaderStatus,
+  type TnMenuItem,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -41,8 +48,10 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { webShareNameColumn, WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
@@ -57,24 +66,24 @@ import { selectService } from 'app/store/services/services.selectors';
   standalone: true,
   imports: [
     AsyncPipe,
-    MatCard,
-    MatToolbarRow,
-    MatButton,
-    MatTooltip,
+    TnBannerComponent,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     RouterLink,
     TnIconComponent,
-    RequiresRolesDirective,
-    ServiceStateButtonComponent,
-    ServiceExtraActionsComponent,
     TestDirective,
     TranslateModule,
-    EmptyComponent,
+    TnEmptyComponent,
     IxTableComponent,
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTableEmptyDirective,
     IxTablePagerShowMoreComponent,
     CardAlertBadgeComponent,
+    ServiceWebshareComponent,
   ],
 })
 export class WebShareCardComponent implements OnInit {
@@ -91,8 +100,12 @@ export class WebShareCardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
+  private authService = inject(AuthService);
+  private actionsMenu = inject(ServiceActionsMenuService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
+  private service = toSignal(this.service$);
+  private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected dataProvider: AsyncDataProvider<WebShareTableRow>;
 
   private refreshConfig$ = new Subject<void>();
@@ -115,6 +128,8 @@ export class WebShareCardComponent implements OnInit {
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
+  private hasTruenasConnect = toSignal(this.hasTruenasConnect$, { initialValue: false });
+
   showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
     combineLatestWith(this.webShareService.hasWebshareUsers$),
     map(([hasTruenasConnect, hasWebshareUsers]) => hasTruenasConnect && !hasWebshareUsers),
@@ -122,15 +137,78 @@ export class WebShareCardComponent implements OnInit {
 
   protected readonly helptext = helptextSharingWebshare;
 
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: '',
-    message: this.translate.instant(
-      'WebShare service provides web-based file access.<br><br>Users can access these shares if they have the WebShare Enabled option set on their account.',
-    ),
-    icon: tnIconMarker('webshare', 'custom'),
-    large: true,
-  };
+  protected serviceStatus = computed<TnCardHeaderStatus | undefined>(() => {
+    const svc = this.service();
+    if (!svc) {
+      return undefined;
+    }
+    const label = this.translate.instant(this.titleCase(svc.state));
+    const testId = `button-service-status-${kebabCase(svc.service)}`;
+    switch (svc.state) {
+      case ServiceStatus.Running:
+        return { label, type: 'success', testId };
+      case ServiceStatus.Stopped:
+        return { label, type: 'neutral', testId };
+      default:
+        return { label, type: 'warning', testId };
+    }
+  });
+
+  protected headerMenuTriggerTestId = computed<string | undefined>(() => {
+    const svc = this.service();
+    return svc ? `button-${svc.id}-actions-menu` : undefined;
+  });
+
+  protected openAction = computed<TnCardAction | undefined>(() => {
+    return {
+      label: this.translate.instant('Open WebShare'),
+      disabled: !this.canOpenWebShare(),
+      testId: 'button-webshare-open',
+      handler: () => this.openWebShare(),
+    };
+  });
+
+  protected addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAddRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      disabled: !this.hasTruenasConnect(),
+      testId: 'button-webshare-add',
+      handler: () => this.onAddClicked(),
+    };
+  });
+
+  protected configOpen = signal(false);
+  protected configForm = viewChild(ServiceWebshareComponent);
+
+  protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
+    const svc = this.service();
+    if (!svc) {
+      return undefined;
+    }
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      testId: this.actionsMenu.menuItemTestId(svc, 'Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasAddRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
+  });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
+
+  private titleCase(value: string): string {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
+  }
 
   columns = createTable<WebShareTableRow>([
     webShareNameColumn({

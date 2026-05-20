@@ -1,27 +1,36 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardHeaderDirective,
+  TnEmptyComponent,
+  TnIconComponent,
+  TnSidePanelActionDirective,
+  TnSidePanelComponent,
+  TnTooltipDirective,
+  type TnCardAction,
+  type TnCardHeaderStatus,
+  type TnMenuItem,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, startWith, tap,
 } from 'rxjs';
-import { iscsiCardEmptyConfig } from 'app/constants/empty-configs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -37,8 +46,12 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
+import {
+  GlobalTargetConfigurationComponent,
+} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
@@ -53,15 +66,15 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./iscsi-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnSidePanelComponent,
+    TnSidePanelActionDirective,
     TestDirective,
     TnIconComponent,
-    ServiceStateButtonComponent,
-    RequiresRolesDirective,
-    MatButton,
+    TnTooltipDirective,
     UiSearchDirective,
-    ServiceExtraActionsComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -70,9 +83,9 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
-    MatTooltip,
-    EmptyComponent,
+    TnEmptyComponent,
     CardAlertBadgeComponent,
+    GlobalTargetConfigurationComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
@@ -86,13 +99,18 @@ export class IscsiCardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
+  private authService = inject(AuthService);
+  private actionsMenu = inject(ServiceActionsMenuService);
 
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
+  private service = toSignal(this.service$);
   requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
   ];
+
+  private hasWriteRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
   targets = signal<IscsiTarget[] | null>(null);
 
@@ -101,8 +119,70 @@ export class IscsiCardComponent implements OnInit {
   );
 
   protected readonly searchableElements = iscsiCardElements;
-  protected readonly emptyConfig = iscsiCardEmptyConfig;
   protected readonly cardMenuPath = ['sharing', 'iscsi'];
+
+  protected serviceStatus = computed<TnCardHeaderStatus | undefined>(() => {
+    const svc = this.service();
+    if (!svc) {
+      return undefined;
+    }
+    const label = this.translate.instant(this.titleCase(svc.state));
+    const testId = `button-service-status-${kebabCase(svc.service)}`;
+    switch (svc.state) {
+      case ServiceStatus.Running:
+        return { label, type: 'success', testId };
+      case ServiceStatus.Stopped:
+        return { label, type: 'neutral', testId };
+      default:
+        return { label, type: 'warning', testId };
+    }
+  });
+
+  protected headerMenuTriggerTestId = computed<string | undefined>(() => {
+    const svc = this.service();
+    return svc ? `button-${svc.id}-actions-menu` : undefined;
+  });
+
+  protected wizardAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasWriteRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Wizard'),
+      testId: 'button-iscsi-share-wizard',
+      handler: () => this.openForm(undefined, true),
+    };
+  });
+
+  protected configOpen = signal(false);
+  protected configForm = viewChild(GlobalTargetConfigurationComponent);
+
+  protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
+    const svc = this.service();
+    if (!svc) {
+      return undefined;
+    }
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      testId: this.actionsMenu.menuItemTestId(svc, 'Config Service'),
+      action: () => this.configOpen.set(true),
+    };
+    return [
+      this.actionsMenu.buildToggleItem(svc, this.hasWriteRole()),
+      localConfigItem,
+      this.actionsMenu.buildSessionsItem(svc),
+      this.actionsMenu.buildLogsItem(svc),
+    ].filter((item): item is TnMenuItem => item !== null);
+  });
+
+  protected onConfigClosed(): void {
+    this.configOpen.set(false);
+  }
+
+  private titleCase(value: string): string {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
+  }
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
 

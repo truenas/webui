@@ -1,87 +1,57 @@
-<mat-card>
-  <mat-toolbar-row>
-    <div class="toolbar-row-title">
-      <a [ixTest]="['webshare', 'open-in-new']" [routerLink]="['/sharing', 'webshare']">
-        <h3 class="card-title">
-          {{ 'WebShare' | translate }}
-          <tn-icon name="open-in-new" library="mdi"></tn-icon>
-          <ix-card-alert-badge [menuPath]="cardMenuPath" />
-        </h3>
-      </a>
-
-      <ix-service-state-button
-        [service]="service$ | async"
-        [count]="+(dataProvider.currentPageCount$ | async)"
-      ></ix-service-state-button>
-    </div>
-
-    <div class="actions">
-      <button
-        mat-button
-        [ixTest]="['webshare', 'open']"
-        [attr.aria-label]="'Open WebShare' | translate"
-        [disabled]="!canOpenWebShare()"
-        [matTooltip]="canOpenWebShare()
-          ? ('Open WebShare' | translate)
-          : ('WebShare can only be opened when accessed via a .truenas.direct domain' | translate)"
-        (click)="openWebShare()"
-      >
-        {{ 'Open WebShare' | translate }}
-      </button>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['webshare', 'add']"
-        [attr.aria-label]="'Add WebShare' | translate"
-        [disabled]="!(hasTruenasConnect$ | async)"
-        [matTooltip]="(hasTruenasConnect$ | async)
-          ? ''
-          : ('TrueNAS Connect must be configured to add WebShare shares' | translate)"
-        (click)="onAddClicked()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-
-      <ix-service-extra-actions
-        [service]="service$ | async"
-        [requiredRoles]="requiredRoles"
-      ></ix-service-extra-actions>
-    </div>
-  </mat-toolbar-row>
+<tn-card
+  padding="small"
+  [bordered]="true"
+  [headerStatus]="serviceStatus()"
+  [headerMenu]="serviceMenu()"
+  [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
+  [primaryAction]="addAction()"
+  [secondaryAction]="openAction()"
+>
+  <a
+    tnCardHeader
+    class="card-title-link"
+    [ixTest]="['webshare', 'open-in-new']"
+    [routerLink]="['/sharing', 'webshare']"
+  >
+    <h3 class="card-title">
+      {{ 'WebShare' | translate }}
+      <tn-icon name="open-in-new" library="mdi"></tn-icon>
+      <ix-card-alert-badge [menuPath]="cardMenuPath" />
+    </h3>
+  </a>
 
   @if (!(hasTruenasConnect$ | async)) {
-    <div
-      class="info-message clickable"
+    <tn-banner
+      class="clickable"
       role="button"
       tabindex="0"
-      aria-live="polite"
+      [heading]="'WebShares unavailable' | translate"
+      [message]="'WebShare service requires TrueNAS Connect to be configured and active.' | translate"
       (click)="openTruenasConnectDialog()"
       (keydown.enter)="openTruenasConnectDialog()"
       (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
-    >
-      <tn-icon name="information" library="mdi"></tn-icon>
-      <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
-    </div>
+    ></tn-banner>
   }
 
   @if (showNoWebshareUsersNotice$ | async) {
-    <div
-      class="info-message clickable"
+    <tn-banner
+      class="clickable"
       role="button"
       tabindex="0"
-      aria-live="polite"
+      [heading]="'No WebShare users' | translate"
+      [message]="'It appears you have no users configured to access WebShare.' | translate"
       (click)="navigateToUsers()"
       (keydown.enter)="navigateToUsers()"
       (keydown.space)="navigateToUsers(); $event.preventDefault()"
-    >
-      <tn-icon name="information" library="mdi"></tn-icon>
-      <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
-    </div>
+    ></tn-banner>
   }
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="webshare"
+      iconLibrary="custom"
+      [title]="'WebShare service provides web-based file access. Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"
@@ -108,4 +78,23 @@
     [ixTestOverride]="['webshare']"
     [routerLink]="['/sharing', 'webshare']"
   ></ix-table-pager-show-more>
-</mat-card>
+</tn-card>
+
+<tn-side-panel
+  [title]="'WebShare' | translate"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-service-webshare (closed)="onConfigClosed()"></ix-service-webshare>
+  }
+  @if (configForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [ixTest]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize, forkJoin, of } from 'rxjs';
+import { TnButtonComponent } from '@truenas/ui-components';
+import { finalize, forkJoin, of, startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -39,19 +38,20 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxFieldsetComponent,
     IxInputComponent,
     IxRadioGroupComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
     MatTooltip,
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {
-  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
+  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef, { optional: true });
+  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
+  readonly closed = output<boolean>();
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -61,8 +61,8 @@ export class NvmeOfConfigurationComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
-  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-  protected isLoading = signal(false);
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+  readonly isLoading = signal(false);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
@@ -87,10 +87,31 @@ export class NvmeOfConfigurationComponent implements OnInit {
     },
   ]);
 
+  private formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isLoading());
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+  }
+
+  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
+  submit(): void {
+    this.onSubmit();
+  }
+
+  private close(saved: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: saved });
+    } else {
+      this.closed.emit(saved);
+    }
   }
 
   ngOnInit(): void {
@@ -137,9 +158,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Global configuration updated.'));
-      this.slideInRef.close({
-        response: true,
-      });
+      this.close(true);
     });
   }
 }

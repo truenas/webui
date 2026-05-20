@@ -1,49 +1,36 @@
-<mat-card>
-  <mat-toolbar-row>
-    <div class="toolbar-row-title">
-      <a
-        [ixTest]="['nfs-share', 'open-in-new']"
-        [routerLink]="['/sharing', 'nfs']"
-        [matTooltip]="'Open NFS list in full page' | translate"
-      >
-        <h3 class="card-title">
-          {{ 'UNIX (NFS) Shares' | translate }}
-          <tn-icon
-            name="open-in-new"
-            library="mdi"
-            class="title-icon"
-            [attr.aria-label]="'Open NFS list in full page' | translate"
-          ></tn-icon>
-          <ix-card-alert-badge [menuPath]="cardMenuPath" />
-        </h3>
-      </a>
-
-      <ix-service-state-button
-        [service]="(service$ | async) || undefined"
-        [count]="+(dataProvider.currentPageCount$ | async)"
-      ></ix-service-state-button>
-    </div>
-
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['nfs-share', 'add']"
-        [attr.aria-label]="'Add NFS Share' | translate"
-        (click)="openForm()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-
-      <ix-service-extra-actions
-        [service]="service$ | async"
-        [requiredRoles]="requiredRoles"
-      ></ix-service-extra-actions>
-    </div>
-  </mat-toolbar-row>
+<tn-card
+  padding="small"
+  [bordered]="true"
+  [headerStatus]="serviceStatus()"
+  [headerMenu]="serviceMenu()"
+  [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
+  [primaryAction]="addAction()"
+>
+  <a
+    tnCardHeader
+    class="card-title-link"
+    [ixTest]="['nfs-share', 'open-in-new']"
+    [routerLink]="['/sharing', 'nfs']"
+    [tnTooltip]="'Open NFS list in full page' | translate"
+  >
+    <h3 class="card-title">
+      {{ 'UNIX (NFS) Shares' | translate }}
+      <tn-icon
+        name="open-in-new"
+        library="mdi"
+        class="title-icon"
+        [attr.aria-label]="'Open NFS list in full page' | translate"
+      ></tn-icon>
+      <ix-card-alert-badge [menuPath]="cardMenuPath" />
+    </h3>
+  </a>
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="nfs-share"
+      iconLibrary="custom"
+      [title]="'Optimized for Linux and Unix systems, offering deeper integration in those environments. Choose NFS if you\'re working primarily with Linux servers or need efficient file access in Unix-based workflows.' | translate"
+    ></tn-empty>
   } @else {
     <ix-table
       class="table"
@@ -70,4 +57,23 @@
     [ixTestOverride]="['nfs']"
     [routerLink]="['/sharing', 'nfs']"
   ></ix-table-pager-show-more>
-</mat-card>
+</tn-card>
+
+<tn-side-panel
+  [title]="'NFS' | translate"
+  [(open)]="configOpen"
+>
+  @if (configOpen()) {
+    <ix-service-nfs (closed)="onConfigClosed()"></ix-service-nfs>
+  }
+  @if (configForm(); as form) {
+    <tn-button
+      tnSidePanelAction
+      color="primary"
+      [ixTest]="'save'"
+      [label]="'Save' | translate"
+      [disabled]="!form.canSubmit()"
+      (onClick)="form.submit()"
+    ></tn-button>
+  }
+</tn-side-panel>

@@ -1,56 +1,54 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'NVMe-oF Global Configuration' | translate"
-  [loading]="isLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'NVMe-oF Global Configuration' | translate"
+    [loading]="isLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          formControlName="basenqn"
-          [label]="'Base NQN' | translate"
-          [tooltip]="helptext.baseNqnTooltip | translate"
-        ></ix-input>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <ix-input
+      formControlName="basenqn"
+      [label]="'Base NQN' | translate"
+      [tooltip]="helptext.baseNqnTooltip | translate"
+    ></ix-input>
 
-        @if (isEnterprise()) {
-          <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
-            <ix-radio-group
-              formControlName="kernel"
-              [label]="'Implementation (Experimental)' | translate"
-              [options]="implementationOptions$"
-              [tooltip]="helptext.implementationTooltip | translate"
-            ></ix-radio-group>
-          </div>
-        }
+    @if (isEnterprise()) {
+      <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
+        <ix-radio-group
+          formControlName="kernel"
+          [label]="'Implementation (Experimental)' | translate"
+          [options]="implementationOptions$"
+          [tooltip]="helptext.implementationTooltip | translate"
+        ></ix-radio-group>
+      </div>
+    }
 
-        <ix-checkbox
-          formControlName="ana"
-          [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
-          [matTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
-        ></ix-checkbox>
+    <ix-checkbox
+      formControlName="ana"
+      [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
+      [matTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
+    ></ix-checkbox>
 
-        <ix-checkbox
-          formControlName="rdma"
-          [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
-          [tooltip]="helptext.rdmaTooltip"
-          [matTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
-        ></ix-checkbox>
-      </ix-fieldset>
+    <ix-checkbox
+      formControlName="rdma"
+      [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
+      [tooltip]="helptext.rdmaTooltip"
+      [matTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
+    ></ix-checkbox>
+  </ix-fieldset>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  @if (slideInRef) {
+    <ix-form-actions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [ixTest]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isLoading()"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </ix-form-actions>
+  }
+</form>

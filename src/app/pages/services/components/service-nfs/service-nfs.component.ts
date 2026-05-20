@@ -1,15 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, OnInit, computed, output, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   combineLatest, finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, startWith, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
@@ -47,8 +46,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
@@ -56,11 +53,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TooltipComponent,
     TranslateModule,
-
   ],
 })
 export class ServiceNfsComponent implements OnInit {
@@ -75,9 +71,12 @@ export class ServiceNfsComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  // Optional: present when opened via legacy SlideIn host. Absent when hosted in <tn-side-panel>.
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef, { optional: true });
+  // Emitted when the form should close (true = saved, false = cancelled). Only relevant for tn-side-panel hosts.
+  readonly closed = output<boolean>();
 
-  protected readonly isFormLoading = signal(false);
+  readonly isFormLoading = signal(false);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
@@ -129,14 +128,35 @@ export class ServiceNfsComponent implements OnInit {
   );
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
-  protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
+  private formStatus = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status)),
+    { initialValue: this.form.status },
+  );
+
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = computed(() => this.formStatus() === 'VALID' && !this.isFormLoading());
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+  }
+
+  /** Public entry point for hosts (e.g. tn-side-panel) to trigger form submission. */
+  submit(): void {
+    this.onSubmit();
+  }
+
+  private close(saved: boolean): void {
+    if (this.slideInRef) {
+      this.slideInRef.close({ response: saved });
+    } else {
+      this.closed.emit(saved);
+    }
   }
 
   ngOnInit(): void {
@@ -172,7 +192,7 @@ export class ServiceNfsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
