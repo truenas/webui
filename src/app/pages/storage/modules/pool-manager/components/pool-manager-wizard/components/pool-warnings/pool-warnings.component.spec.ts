@@ -4,7 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
@@ -85,5 +86,53 @@ describe('PoolWarningsComponent', () => {
     const [nonUnique, exportedDisks] = spectator.queryAll('ix-warning');
     expect(nonUnique).toHaveText('There are 2 disks available that have non-unique serial numbers');
     expect(exportedDisks).toHaveText('You will lose any and all data in selected disks.');
+  });
+
+  describe('SED filtering of exported pool disks', () => {
+    const sedExportedPoolDisk = {
+      identifier: '{uuid}sed-exported',
+      duplicate_serial: [] as string[],
+      exported_zpool: 'SED_POOL',
+      devname: 'sdw',
+      sed_status: SedStatus.Uninitialized,
+    } as DetailsDisk;
+
+    const nonSedExportedPoolDisk = {
+      identifier: '{uuid}non-sed-exported',
+      duplicate_serial: [] as string[],
+      exported_zpool: 'NON_SED_POOL',
+      devname: 'sdi',
+    } as DetailsDisk;
+
+    let encryptionType$: BehaviorSubject<EncryptionType>;
+    const createSedComponent = createComponentFactory({
+      component: PoolWarningsComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(PoolManagerStore, {
+          setDiskWarningOptions: jest.fn(),
+          get encryptionType$() { return encryptionType$; },
+        }),
+        mockProvider(DiskStore, {
+          selectableDisks$: of([sedExportedPoolDisk, nonSedExportedPoolDisk]),
+        }),
+      ],
+    });
+
+    it('clears stale exported pool entries when encryption type switches to SED', async () => {
+      encryptionType$ = new BehaviorSubject<EncryptionType>(EncryptionType.None);
+      const sedSpectator = createSedComponent();
+      const sedLoader = TestbedHarnessEnvironment.loader(sedSpectator.fixture);
+
+      let checkboxes = await sedLoader.getAllHarnesses(MatCheckboxHarness);
+      expect(checkboxes).toHaveLength(2);
+
+      encryptionType$.next(EncryptionType.Sed);
+      sedSpectator.detectChanges();
+
+      checkboxes = await sedLoader.getAllHarnesses(MatCheckboxHarness);
+      expect(checkboxes).toHaveLength(1);
+      expect(await checkboxes[0].getLabelText()).toContain('SED_POOL');
+    });
   });
 });
