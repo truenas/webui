@@ -71,27 +71,23 @@ function getWebshellImportantData(
   const shellType = eventData.shell_type;
   const shellTypeLabel = translate.instant(webshellTypeLabels.get(shellType) ?? shellType);
   const targetIdentifier = getWebshellTargetIdentifier(shellType, eventData.target);
-  const params = { shellType: shellTypeLabel, target: targetIdentifier };
+  const params = { shellType: shellTypeLabel, target: targetIdentifier, username: eventData.username };
 
-  let message: string;
   if (event === AuditEvent.WebshellLogout) {
-    message = targetIdentifier
-      ? translate.instant(T('Shell Logout: {shellType} ({target})'), params)
-      : translate.instant(T('Shell Logout: {shellType}'), params);
-  } else if (eventData.error) {
-    message = targetIdentifier
-      ? translate.instant(T('Failed Shell Authentication: {shellType} ({target})'), params)
-      : translate.instant(T('Failed Shell Authentication: {shellType}'), params);
-  } else {
-    message = targetIdentifier
-      ? translate.instant(T('Shell: {shellType} ({target})'), params)
-      : translate.instant(T('Shell: {shellType}'), params);
+    return targetIdentifier
+      ? translate.instant(T('Shell Logout: {shellType} ({target}) | User: {username}'), params)
+      : translate.instant(T('Shell Logout: {shellType} | User: {username}'), params);
   }
 
-  if (eventData.username) {
-    return `${message} | ${translate.instant(T('User: {username}'), { username: eventData.username })}`;
+  if (eventData.error) {
+    return targetIdentifier
+      ? translate.instant(T('Failed Shell Authentication: {shellType} ({target}) | User: {username}'), params)
+      : translate.instant(T('Failed Shell Authentication: {shellType} | User: {username}'), params);
   }
-  return message;
+
+  return targetIdentifier
+    ? translate.instant(T('Shell: {shellType} ({target}) | User: {username}'), params)
+    : translate.instant(T('Shell: {shellType} | User: {username}'), params);
 }
 
 function getWebshellTargetIdentifier(
@@ -100,7 +96,7 @@ function getWebshellTargetIdentifier(
 ): string | undefined {
   switch (shellType) {
     case WebshellType.App:
-      return target?.app_name;
+      return target?.app_name ?? target?.container_id;
     case WebshellType.Vm:
       return target?.vm_name;
     case WebshellType.Container:
