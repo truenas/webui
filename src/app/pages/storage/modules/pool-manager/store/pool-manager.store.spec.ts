@@ -364,6 +364,19 @@ describe('PoolManagerStore', () => {
         expect(state.encryption).toBeNull();
         expect(state.sedPassword).toBeNull();
       });
+
+      it('resets topology categories holding non-SED-capable disks when switching to SED', async () => {
+        spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
+
+        spectator.service.setEncryptionOptions({
+          encryptionType: EncryptionType.Sed,
+          encryption: null,
+          sedPassword: 'mypassword',
+        });
+
+        const state = await firstValueFrom(spectator.service.state$);
+        expect(state.topology[VDevType.Data].vdevs).toEqual([]);
+      });
     });
 
     describe('setHasSedCapableDisks', () => {
