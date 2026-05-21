@@ -3,10 +3,10 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, forkJoin, of,
+  EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
+  catchError, map, mergeMap, pairwise, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -20,7 +20,7 @@ import {
   alertAdded,
   alertsLoaded,
   alertChanged,
-  alertsDismissedChanged,
+  alertDismissedReverted,
 } from 'app/modules/alerts/store/alert.actions';
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
@@ -29,6 +29,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
+
+type AlertCallResult = { id: string; ok: true } | { id: string; ok: false; error: unknown };
 
 @Injectable()
 export class AlertEffects {
@@ -85,108 +87,79 @@ export class AlertEffects {
   // TODO: Action errors are not handled. Standardize on how to report on errors and show them.
   dismissAlert$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAlertPressed),
-    withLatestFrom(this.store$.select(selectUnreadAlerts)),
-    mergeMap(([{ id }, unreadAlerts]) => {
-      // Find the alert being dismissed
-      const alert = unreadAlerts.find((a) => a.id === id);
-      if (!alert) {
-        return EMPTY;
-      }
-
-      // Find all alerts with the same key (duplicate instances)
-      const alertsToDismiss = unreadAlerts.filter((a) => a.key === alert.key);
-      const dismissRequests = alertsToDismiss.map((a) => this.api.call('alert.dismiss', [a.id]));
-
-      return forkJoin(dismissRequests).pipe(
-        catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          // Restore all alerts if dismiss fails
-          alertsToDismiss.forEach((a) => {
-            this.store$.dispatch(alertChanged({ alert: { id: a.id, dismissed: false } as Alert }));
-          });
-          return of(EMPTY);
-        }),
-      );
-    }),
+    mergeMap(({ ids }) => this.runPerIdRequests('alert.dismiss', ids, false)),
   ), { dispatch: false });
 
   reopenAlert$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAlertPressed),
-    withLatestFrom(this.store$.select(selectDismissedAlerts)),
-    mergeMap(([{ id }, dismissedAlerts]) => {
-      // Find the alert being reopened
-      const alert = dismissedAlerts.find((a) => a.id === id);
-      if (!alert) {
-        return EMPTY;
-      }
-
-      // Find all alerts with the same key (duplicate instances)
-      const alertsToReopen = dismissedAlerts.filter((a) => a.key === alert.key);
-      const reopenRequests = alertsToReopen.map((a) => this.api.call('alert.restore', [a.id]));
-
-      return forkJoin(reopenRequests).pipe(
-        catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          // Restore dismissed state if reopen fails
-          alertsToReopen.forEach((a) => {
-            this.store$.dispatch(alertChanged({ alert: { id: a.id, dismissed: true } as Alert }));
-          });
-          return of(EMPTY);
-        }),
-      );
-    }),
+    mergeMap(({ ids }) => this.runPerIdRequests('alert.restore', ids, true)),
   ), { dispatch: false });
 
   dismissAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAllAlertsPressed),
     withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
     mergeMap(([action, [unreadAlerts]]) => {
-      // If alertIds is undefined, dismiss all; if empty array, dismiss nothing; if has values, dismiss those
       const alertIds = action.alertIds;
       const alertsToDismiss = alertIds === undefined
         ? unreadAlerts
         : unreadAlerts.filter((alert) => alertIds.includes(alert.id));
-
-      // If no alerts to dismiss, return empty
-      if (alertsToDismiss.length === 0) {
-        return of(EMPTY);
-      }
-
-      const requests = alertsToDismiss.map((alert) => this.api.call('alert.dismiss', [alert.id]));
-      return forkJoin(requests).pipe(
-        catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.store$.dispatch(alertsDismissedChanged({ dismissed: false }));
-          return of(EMPTY);
-        }),
-      );
+      const ids = alertsToDismiss.map((alert) => alert.id);
+      return this.runPerIdRequests('alert.dismiss', ids, false);
     }),
-    this.errorHandler.withErrorHandler(),
   ), { dispatch: false });
 
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAllAlertsPressed),
     withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
     mergeMap(([action, [dismissedAlerts]]) => {
-      // If alertIds is undefined, reopen all; if empty array, reopen nothing; if has values, reopen those
       const alertIds = action.alertIds;
       const alertsToReopen = alertIds === undefined
         ? dismissedAlerts
         : dismissedAlerts.filter((alert: Alert) => alertIds.includes(alert.id));
-
-      // If no alerts to reopen, return empty
-      if (alertsToReopen.length === 0) {
-        return of(EMPTY);
-      }
-
-      const requests = alertsToReopen.map((alert: Alert) => this.api.call('alert.restore', [alert.id]));
-      return forkJoin(requests).pipe(
-        catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.store$.dispatch(alertsDismissedChanged({ dismissed: true }));
-          return of(EMPTY);
-        }),
-      );
+      const ids = alertsToReopen.map((alert: Alert) => alert.id);
+      return this.runPerIdRequests('alert.restore', ids, true);
     }),
   ), { dispatch: false });
+
+  // Per-id error handling: only revert the ids whose server call failed, so a
+  // partial failure doesn't roll back ids the backend has already accepted.
+  private runPerIdRequests(
+    method: 'alert.dismiss' | 'alert.restore',
+    ids: string[],
+    revertedDismissed: boolean,
+  ): Observable<AlertCallResult[]> {
+    if (ids.length === 0) {
+      return EMPTY;
+    }
+    const requests: Observable<AlertCallResult>[] = ids.map((id) => this.callPerIdResult(method, id));
+    return forkJoin(requests).pipe(
+      tap((results) => this.handlePartialFailures(results, revertedDismissed)),
+    );
+  }
+
+  private callPerIdResult(
+    method: 'alert.dismiss' | 'alert.restore',
+    id: string,
+  ): Observable<AlertCallResult> {
+    return this.api.call(method, [id]).pipe(
+      map((): AlertCallResult => ({ id, ok: true })),
+      catchError((error: unknown): Observable<AlertCallResult> => of({ id, ok: false, error })),
+    );
+  }
+
+  private handlePartialFailures(
+    results: AlertCallResult[],
+    revertedDismissed: boolean,
+  ): void {
+    const failures = results.filter(
+      (result): result is Extract<AlertCallResult, { ok: false }> => !result.ok,
+    );
+    if (failures.length === 0) {
+      return;
+    }
+    this.errorHandler.showErrorModal(failures[0].error);
+    failures.forEach(({ id }) => {
+      this.store$.dispatch(alertDismissedReverted({ id, dismissed: revertedDismissed }));
+    });
+  }
 }

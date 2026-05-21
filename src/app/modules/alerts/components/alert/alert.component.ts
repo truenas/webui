@@ -9,7 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -56,7 +56,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   private translate = inject(TranslateService);
   private smartAlertService = inject(SmartAlertService);
 
-  readonly alert = input.required<Alert & { duplicateCount?: number }>();
+  readonly alert = input.required<AlertWithDuplicates>();
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
 
@@ -67,20 +67,9 @@ export class AlertComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  /**
-   * Indicates if this alert has multiple instances (duplicates)
-   */
-  protected readonly hasDuplicates = computed(() => {
-    const count = this.alert().duplicateCount;
-    return count !== undefined && count > 1;
-  });
+  protected readonly hasDuplicates = computed(() => this.alert().duplicateCount > 1);
 
-  /**
-   * The number of duplicate instances of this alert
-   */
-  protected readonly duplicateCount = computed(() => {
-    return this.alert().duplicateCount || 1;
-  });
+  protected readonly duplicateCount = computed(() => this.alert().duplicateCount);
 
   @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
 
@@ -158,11 +147,11 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   }
 
   onDismiss(): void {
-    this.store$.dispatch(dismissAlertPressed({ id: this.alert().id }));
+    this.store$.dispatch(dismissAlertPressed({ ids: this.alert().allIds }));
   }
 
   onReopen(): void {
-    this.store$.dispatch(reopenAlertPressed({ id: this.alert().id }));
+    this.store$.dispatch(reopenAlertPressed({ ids: this.alert().allIds }));
   }
 
   onSmartActionClick(handler: (() => void) | undefined): void {
