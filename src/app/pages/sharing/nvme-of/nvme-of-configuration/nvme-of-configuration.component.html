@@ -15,7 +15,7 @@
     ></ix-input>
 
     @if (isEnterprise()) {
-      <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
+      <div [tnTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
         <ix-radio-group
           formControlName="kernel"
           [label]="'Implementation (Experimental)' | translate"
@@ -28,14 +28,14 @@
     <ix-checkbox
       formControlName="ana"
       [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
-      [matTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
+      [tnTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
     ></ix-checkbox>
 
     <ix-checkbox
       formControlName="rdma"
       [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
       [tooltip]="helptext.rdmaTooltip"
-      [matTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
+      [tnTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
     ></ix-checkbox>
   </ix-fieldset>
 

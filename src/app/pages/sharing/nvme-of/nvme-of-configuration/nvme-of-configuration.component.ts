@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { finalize, forkJoin, of, startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -44,7 +43,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnButtonComponent,
     RequiresRolesDirective,
     TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {
