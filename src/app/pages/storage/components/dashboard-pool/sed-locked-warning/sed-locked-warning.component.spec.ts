@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SedLockedWarningComponent } from './sed-locked-warning.component';
@@ -20,7 +20,7 @@ describe('SedLockedWarningComponent', () => {
     name: 'tank',
     status_code: 'SED_LOCKED_DISKS',
     all_sed: true,
-  } as Pool;
+  } as Zpool;
 
   const createComponent = createComponentFactory({
     component: SedLockedWarningComponent,

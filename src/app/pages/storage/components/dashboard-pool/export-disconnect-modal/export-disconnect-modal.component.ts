@@ -25,9 +25,9 @@ import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { isServicesToBeRestartedInfo, ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -88,7 +88,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private store = inject(Store);
-  pool = inject<Pool>(MAT_DIALOG_DATA);
+  pool = inject<Zpool>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   readonly helptext = helptextVolumes;
@@ -278,7 +278,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.attachments', [this.pool.id]),
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
-      this.api.call('pool.query', [[], { count: true }]),
+      this.api.call('zpool.query'),
       this.store.select(selectIsHaEnabled).pipe(take(1)),
       this.api.call('failover.config'),
     ])
@@ -287,12 +287,12 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(([attachments, processes, systemConfig, poolCount, isHaEnabled, failoverConfig]) => {
+      .subscribe(([attachments, processes, systemConfig, pools, isHaEnabled, failoverConfig]) => {
         this.attachments = attachments;
         this.processes = processes;
         this.organizeProcesses(processes);
         this.systemConfig = systemConfig;
-        this.totalPoolCount = poolCount as unknown as number;
+        this.totalPoolCount = pools.length;
         this.isHaEnabled = isHaEnabled;
         this.failoverConfig = failoverConfig;
         this.prepareForm();

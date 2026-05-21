@@ -10,7 +10,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { Pool, UpdatePool } from 'app/interfaces/pool.interface';
+import { UpdatePool } from 'app/interfaces/pool.interface';
+import { getZpoolPropertyString, Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -58,7 +59,7 @@ export class SetDedupQuotaComponent {
   private errorHandler = inject(ErrorHandlerService);
   private dialogRef = inject<MatDialogRef<SetDedupQuotaComponent>>(MatDialogRef);
   protected formatter = inject(IxFormatterService);
-  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  protected pool = inject<Zpool>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({
@@ -69,8 +70,9 @@ export class SetDedupQuotaComponent {
   protected quotaTypeOptions$ = of(mapToOptions(quotaTypeLabels, this.translate));
 
   constructor() {
+    const dedupTableQuota = getZpoolPropertyString(this.pool, 'dedup_table_quota');
     let quotaType: QuotaType;
-    switch (this.pool.dedup_table_quota) {
+    switch (dedupTableQuota) {
       case 'auto':
         quotaType = QuotaType.Auto;
         break;
@@ -83,7 +85,7 @@ export class SetDedupQuotaComponent {
 
     this.form.patchValue({
       quotaType,
-      quotaValue: parseInt(this.pool.dedup_table_quota || '', 10) || null,
+      quotaValue: parseInt(dedupTableQuota || '', 10) || null,
     });
   }
 

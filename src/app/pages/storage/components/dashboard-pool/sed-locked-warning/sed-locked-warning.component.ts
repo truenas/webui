@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -32,7 +32,7 @@ export class SedLockedWarningComponent {
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  readonly pool = input.required<Pool>();
+  readonly pool = input.required<Zpool>();
 
   readonly importSuccess = output();
 

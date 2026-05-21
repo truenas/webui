@@ -11,7 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { getZpoolPropertyNumber, Zpool } from 'app/interfaces/zpool.interface';
 import { GaugeChartComponent, GaugeSegment } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -48,7 +48,7 @@ export class PoolUsageCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private tierService = inject(SharingTierService);
 
-  readonly poolState = input.required<Pool>();
+  readonly poolState = input.required<Zpool>();
 
   protected readonly tierEnabled = this.tierService.tierEnabled;
 
@@ -131,23 +131,33 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected performanceUsed = computed(() => {
-    return this.poolState().special_class_used || 0;
+    return getZpoolPropertyNumber(this.poolState(), 'class_special_used');
   });
 
   protected performanceAvailable = computed(() => {
-    return this.poolState().special_class_available || 0;
+    return getZpoolPropertyNumber(this.poolState(), 'class_special_available');
   });
 
   protected performanceReserved = computed(() => {
-    return Math.max(0, this.poolState().special_class_reserved || 0);
+    const pool = this.poolState();
+    const usable = pool.properties?.class_special_usable?.value;
+    if (usable === undefined || usable === null) {
+      return 0;
+    }
+    return Math.max(
+      0,
+      Number(usable)
+      - getZpoolPropertyNumber(pool, 'class_special_available')
+      - getZpoolPropertyNumber(pool, 'class_special_used'),
+    );
   });
 
   protected regularUsed = computed(() => {
-    return this.poolState().used ?? 0;
+    return getZpoolPropertyNumber(this.poolState(), 'class_normal_used');
   });
 
   protected regularAvailable = computed(() => {
-    return this.poolState().available ?? 0;
+    return getZpoolPropertyNumber(this.poolState(), 'class_normal_available');
   });
 
   protected tierBreakdown = computed(() => {

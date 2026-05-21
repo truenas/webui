@@ -6,8 +6,8 @@ import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import {
   mockSharingTierService,
 } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
@@ -306,7 +306,7 @@ describe('VDevsCardComponent', () => {
         },
       ] as Disk[];
 
-      const mockPoolState: Pool = {
+      const mockPoolState = {
         id: 1,
         name: 'MOCK_POOL',
         healthy: true,
@@ -942,14 +942,14 @@ describe('VDevsCardComponent', () => {
             },
           ],
           log: [] as VDevItem[],
-          spare: [] as VDevItem[],
+          spares: [] as VDevItem[],
           cache: [] as VDevItem[],
           dedup: [] as VDevItem[],
         },
-        autotrim: {
-          value: 'off',
+        properties: {
+          autotrim: { raw: 'off', source: null, value: 'off' },
         },
-      } as Pool;
+      } as unknown as Zpool;
 
       spectator = createComponent({
         props: {
@@ -1568,7 +1568,7 @@ describe('VDevsCardComponent', () => {
               name: 'MIRROR-1',
             },
           ],
-          spare: [
+          spares: [
             {
               type: 'DISK',
               status: 'ONLINE',
@@ -1665,10 +1665,10 @@ describe('VDevsCardComponent', () => {
             },
           ] as VDevItem[],
         },
-        autotrim: {
-          value: 'off',
+        properties: {
+          autotrim: { raw: 'off', source: null, value: 'off' },
         },
-      } as Pool;
+      } as unknown as Zpool;
       spectator = createComponent({
         props: {
           poolState: mockPoolState,
@@ -1710,19 +1710,19 @@ describe('VDevsCardComponent', () => {
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Safe);
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Everything is fine');
 
-      spectator.setInput('poolState', { healthy: false, status: PoolStatus.Online } as Pool);
+      spectator.setInput('poolState', { healthy: false, status: PoolStatus.Online } as Zpool);
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is not healthy');
 
-      spectator.setInput('poolState', { healthy: true, status: PoolStatus.Offline } as Pool);
+      spectator.setInput('poolState', { healthy: true, status: PoolStatus.Offline } as Zpool);
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool contains OFFLINE Data VDEVs');
 
-      spectator.setInput('poolState', { healthy: true, status: PoolStatus.Removed } as Pool);
+      spectator.setInput('poolState', { healthy: true, status: PoolStatus.Removed } as Zpool);
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool contains REMOVED Data VDEVs');
 
-      spectator.setInput('poolState', { healthy: true, status: PoolStatus.Faulted } as Pool);
+      spectator.setInput('poolState', { healthy: true, status: PoolStatus.Faulted } as Zpool);
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
       expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool contains FAULTED Data VDEVs');
     });
@@ -2112,7 +2112,7 @@ describe('VDevsCardComponent', () => {
               name: 'MIRROR-1',
             },
           ],
-          spare: [
+          spares: [
             {
               type: 'DISK',
               status: 'ONLINE',
@@ -2168,10 +2168,10 @@ describe('VDevsCardComponent', () => {
           ],
           dedup: [] as VDevItem[],
         },
-        autotrim: {
-          value: 'off',
+        properties: {
+          autotrim: { raw: 'off', source: null, value: 'off' },
         },
-      } as Pool;
+      } as unknown as Zpool;
 
       const mockDisks = [
         {
@@ -2393,7 +2393,7 @@ describe('VDevsCardComponent', () => {
       ],
     });
 
-    function makePool(withSpecial: boolean): Pool {
+    function makePool(withSpecial: boolean): Zpool {
       const disk = (name: string): unknown => ({
         type: 'DISK',
         disk: name,
@@ -2411,10 +2411,10 @@ describe('VDevsCardComponent', () => {
           special: withSpecial ? [disk('nvme0')] : [],
           log: [],
           cache: [],
-          spare: [],
+          spares: [],
           dedup: [],
-        } as Pool['topology'],
-      } as Pool;
+        } as Zpool['topology'],
+      } as Zpool;
     }
 
     it('renders Regular Tier and Performance Tier labels when tier is enabled and pool has a special vdev', () => {

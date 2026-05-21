@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, filter, tap } from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { getZpoolPropertyNumber, Zpool } from 'app/interfaces/zpool.interface';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ExistingConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
@@ -52,7 +52,7 @@ export class AddVdevsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected hasConfigurationPreview = true;
-  protected existingPool: Pool | null = null;
+  protected existingPool: Zpool | null = null;
   protected poolDisks: DetailsDisk[] = [];
   protected topology: PoolManagerTopology | null = null;
 
@@ -79,5 +79,9 @@ export class AddVdevsComponent implements OnInit {
 
   onStepChanged(step: PoolCreationWizardStep): void {
     this.hasConfigurationPreview = step !== PoolCreationWizardStep.Review;
+  }
+
+  protected getPoolSize(pool: Zpool): number {
+    return getZpoolPropertyNumber(pool, 'size');
   }
 }

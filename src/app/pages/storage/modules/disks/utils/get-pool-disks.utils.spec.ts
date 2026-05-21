@@ -1,5 +1,6 @@
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { PoolTopology } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 const mockPool = {
@@ -18,7 +19,7 @@ const mockPool = {
       }],
     }],
   } as PoolTopology,
-} as Pool;
+} as Zpool;
 
 describe('GetPoolDisks', () => {
   it('returns list of disks from given pool', () => {

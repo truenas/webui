@@ -5,6 +5,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 
 /**
  * Directory of compatible API call and subscribe methods.
@@ -13,6 +14,7 @@ export interface ApiCallAndSubscribeEventDirectory {
   'vm.query': { response: VirtualMachine };
   'user.query': { response: User };
   'pool.query': { response: Pool };
+  'zpool.query': { response: Zpool };
   'group.query': { response: Group };
   'app.image.query': { response: ContainerImage };
   'app.query': { response: App };

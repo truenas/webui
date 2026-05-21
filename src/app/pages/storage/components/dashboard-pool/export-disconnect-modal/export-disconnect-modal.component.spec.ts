@@ -17,9 +17,9 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -38,7 +38,7 @@ const fakePool = {
   id: 9999,
   name: 'fakePool',
   status: PoolStatus.Healthy,
-} as Pool;
+} as Zpool;
 
 const fakeSystemConfig = {
   pool: 'fakeSystemPool',
@@ -48,7 +48,7 @@ const fakeUnknownPool = {
   id: 8888,
   name: 'unknownPool',
   status: PoolStatus.Unknown,
-} as Pool;
+} as Zpool;
 
 const fakeAttachments = [
   { type: 'SMB', attachments: ['share1,share2', 'share3'] },
@@ -92,7 +92,11 @@ describe('ExportDisconnectModalComponent', () => {
         mockCall('pool.attachments', fakeAttachments),
         mockCall('pool.processes', fakeProcesses),
         mockCall('systemdataset.config', fakeSystemConfig),
-        mockCall('pool.query', () => 3 as unknown as Pool[]), // Mock count response
+        mockCall('zpool.query', [
+          { id: 1, name: 'pool1' },
+          { id: 2, name: 'pool2' },
+          { id: 9999, name: 'fakePool' },
+        ] as unknown as Zpool[]),
         mockCall('pool.dataset.query', []),
         mockCall('failover.config', fakeFailoverConfigDisabled), // Default to disabled
         mockJob('pool.export'),
@@ -702,7 +706,7 @@ describe('ExportDisconnectModalComponent', () => {
           mockCall('pool.attachments', []),
           mockCall('pool.processes', []),
           mockCall('systemdataset.config', { pool: 'fakePool' } as SystemDatasetConfig),
-          mockCall('pool.query', () => 1 as unknown as Pool[]), // Only one pool count
+          mockCall('zpool.query', [{ id: 9999, name: 'fakePool' }] as unknown as Zpool[]),
           mockCall('failover.config', fakeFailoverConfigDisabled), // Disabled failover for this test
           mockJob('pool.export'),
         ]),

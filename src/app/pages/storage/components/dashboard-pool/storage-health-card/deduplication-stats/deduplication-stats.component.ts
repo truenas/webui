@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { getZpoolPropertyNumber, getZpoolPropertyString, Zpool } from 'app/interfaces/zpool.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -34,18 +34,22 @@ export class DeduplicationStatsComponent {
   private store = inject(PoolsDashboardStore);
   private destroyRef = inject(DestroyRef);
 
-  pool = input.required<Pool>();
+  pool = input.required<Zpool>();
 
   protected readonly Role = Role;
 
+  protected dedupTableSize = computed(() => getZpoolPropertyNumber(this.pool(), 'dedup_table_size'));
+
   protected deduplicationStats = computed(() => {
-    if (this.pool().dedup_table_quota !== 'auto' && this.pool().dedup_table_quota !== '0') {
-      const value = this.fileSizePipe.transform(this.pool().dedup_table_size);
-      const quota = this.fileSizePipe.transform(parseInt(this.pool().dedup_table_quota || '', 10));
+    const dedupTableSize = this.dedupTableSize();
+    const dedupTableQuota = getZpoolPropertyString(this.pool(), 'dedup_table_quota');
+    if (dedupTableQuota !== 'auto' && dedupTableQuota !== '0') {
+      const value = this.fileSizePipe.transform(dedupTableSize);
+      const quota = this.fileSizePipe.transform(parseInt(dedupTableQuota || '', 10));
       return `${value} / ${quota}`;
     }
 
-    return this.fileSizePipe.transform(this.pool().dedup_table_size);
+    return this.fileSizePipe.transform(dedupTableSize);
   });
 
   protected onPruneDedupTable(): void {

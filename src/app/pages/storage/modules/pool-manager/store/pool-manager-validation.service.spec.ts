@@ -105,7 +105,7 @@ describe('PoolManagerValidationService', () => {
             log: null,
             metadata: null,
             review: null,
-            spare: null,
+            spares: null,
           },
         });
       });
@@ -240,7 +240,7 @@ describe('PoolManagerValidationService', () => {
             log: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
             metadata: null,
             review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
-            spare: null,
+            spares: null,
           },
         });
       });

@@ -921,7 +921,7 @@ describe('StorageService', () => {
       ],
       special: [],
       log: [],
-      spare: [],
+      spares: [],
       cache: [
         {
           type: 'DISK',
@@ -1085,7 +1085,7 @@ describe('StorageService', () => {
       ],
       special: [],
       log: [],
-      spare: [],
+      spares: [],
       cache: [],
       dedup: [
         {
@@ -1376,7 +1376,7 @@ describe('StorageService', () => {
         },
       ],
       log: [],
-      spare: [],
+      spares: [],
       cache: [],
       dedup: [
         {
@@ -2134,7 +2134,7 @@ describe('StorageService', () => {
         },
       ],
       log: [],
-      spare: [],
+      spares: [],
       cache: [],
       dedup: [],
     } as PoolTopology;
@@ -2221,7 +2221,7 @@ describe('StorageService', () => {
         ],
         special: [],
         log: [],
-        spare: [],
+        spares: [],
         cache: [],
         dedup: [],
       } as PoolTopology;
@@ -2590,7 +2590,7 @@ describe('StorageService', () => {
         ],
         special: [],
         log: [],
-        spare: [],
+        spares: [],
         cache: [],
         dedup: [],
       } as PoolTopology;
@@ -2872,7 +2872,7 @@ describe('StorageService', () => {
         ],
         special: [],
         log: [],
-        spare: [],
+        spares: [],
         cache: [],
         dedup: [],
       } as PoolTopology;
@@ -3190,7 +3190,7 @@ describe('StorageService', () => {
         ],
         special: [],
         log: [],
-        spare: [],
+        spares: [],
         cache: [],
         dedup: [],
       } as PoolTopology;
@@ -3545,7 +3545,7 @@ describe('StorageService', () => {
         ],
         special: [],
         log: [],
-        spare: [],
+        spares: [],
         cache: [],
         dedup: [],
       } as PoolTopology;

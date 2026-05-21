@@ -10,7 +10,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -92,7 +92,7 @@ export class PoolsDashboardComponent implements OnInit {
     this.store.loadDashboard();
   }
 
-  protected getDisksByPool(pool: Pool): StorageDashboardDisk[] {
+  protected getDisksByPool(pool: Zpool): StorageDashboardDisk[] {
     return this.store.disksByPool()[pool.name] || [];
   }
 

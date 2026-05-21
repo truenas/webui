@@ -11,6 +11,7 @@ export interface ZpoolProperty {
 }
 
 export interface Zpool {
+  id: number;
   name: string;
   guid: number;
   status: PoolStatus;
@@ -18,9 +19,26 @@ export interface Zpool {
   warning: boolean;
   status_code: string;
   status_detail: string | null;
-  properties: Record<string, ZpoolProperty>;
+  is_upgraded: boolean;
+  all_sed?: boolean;
+  properties: Record<string, ZpoolProperty> | null;
   topology: PoolTopology | null;
   scan: PoolScanUpdate | null;
   // `expand` and `features` are present on the wire but not consumed in the
   // UI — re-add them with concrete types when a consumer actually needs them.
 }
+
+export function getZpoolPropertyNumber(zpool: Zpool, key: string): number {
+  const raw = zpool.properties?.[key]?.value;
+  if (raw === undefined || raw === null) {
+    return 0;
+  }
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0;
+}
+
+export function getZpoolPropertyString(zpool: Zpool, key: string): string | null {
+  const raw = zpool.properties?.[key]?.value;
+  return raw === undefined || raw === null ? null : String(raw);
+}
+

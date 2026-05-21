@@ -3,12 +3,13 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
+import { adaptZpoolTopology } from 'app/interfaces/zpool-topology-adapter';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -84,19 +85,28 @@ export class VDevsStore extends ComponentStore<VDevsState> {
         });
       }),
       switchMap((poolId) => {
-        return this.api.call('pool.query', [[['id', '=', poolId]]]).pipe(
+        return this.api.call('zpool.query').pipe(
           switchMap((pools) => {
-            if (!pools?.length) {
+            const poolName = pools.find((zpool) => zpool.id === poolId)?.name;
+            if (!poolName) {
+              return of(null);
+            }
+            return this.api.call('zpool.query', [{ pool_names: [poolName], topology: true }]).pipe(
+              map((targeted) => (targeted[0] ? adaptZpoolTopology(targeted[0]) : null)),
+            );
+          }),
+          switchMap((pool) => {
+            if (!pool) {
               return of([]);
             }
-            return this.api.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+            return this.api.call('disk.query', [[['pool', '=', pool.name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({
                   isLoading: false,
                   error: null,
-                  poolName: pools[0].name,
+                  poolName: pool.name,
                   diskDictionary: keyBy(disks, (disk) => disk.devname),
-                  nodes: this.createDataNodes(pools[0].topology),
+                  nodes: this.createDataNodes(pool.topology),
                 });
               }),
               catchError((error: unknown) => {
@@ -138,7 +148,10 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     super(initialState);
   }
 
-  private createDataNodes(topology: PoolTopology): VDevNestedDataNode[] {
+  private createDataNodes(topology: PoolTopology | null): VDevNestedDataNode[] {
+    if (!topology) {
+      return [];
+    }
     const dataNodes: VDevNestedDataNode[] = [];
     if (topology.data.length) {
       dataNodes.push({
@@ -161,9 +174,9 @@ export class VDevsStore extends ComponentStore<VDevsState> {
         guid: VDevType.Log,
       });
     }
-    if (topology.spare.length) {
+    if (topology.spares.length) {
       dataNodes.push({
-        children: topology.spare,
+        children: topology.spares,
         group: this.translate.instant('Spare'),
         guid: VDevType.Spare,
       });

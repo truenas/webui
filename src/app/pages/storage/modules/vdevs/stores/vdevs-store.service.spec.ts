@@ -6,8 +6,8 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VDevsState, VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 
@@ -30,23 +30,28 @@ describe('VDevsStore', () => {
     testScheduler.run(({ cold, expectObservable }) => {
       const mockedApi = spectator.inject(ApiService);
       jest.spyOn(mockedApi, 'call').mockImplementation((method) => {
-        if (method === 'pool.query') {
+        if (method === 'zpool.query') {
           return cold('-b|', {
             b: [{
+              id: 4,
               name: 'tank',
               topology: {
                 data: [
-                  { name: 'raidz1-0', guid: 'guid1' },
+                  {
+                    name: 'raidz1-0', guid: 'guid1', vdev_type: 'raidz1', state: 'ONLINE', children: [],
+                  },
                 ],
                 cache: [
-                  { name: 'sdr', guid: 'guid2' },
+                  {
+                    name: '/dev/sdr1', guid: 'guid2', vdev_type: 'disk',
+                  },
                 ],
                 log: [] as VDevItem[],
-                spare: [] as VDevItem[],
+                spares: [] as VDevItem[],
                 special: [] as VDevItem[],
                 dedup: [] as VDevItem[],
               },
-            } as Pool],
+            } as unknown as Zpool],
           });
         }
 
@@ -58,7 +63,7 @@ describe('VDevsStore', () => {
       });
 
       spectator.service.loadNodes(4);
-      expectObservable(spectator.service.state$).toBe('a-b', {
+      expectObservable(spectator.service.state$).toBe('a--b', {
         a: {
           isLoading: true,
           error: null,
@@ -75,14 +80,18 @@ describe('VDevsStore', () => {
           nodes: [
             {
               children: [
-                { name: 'raidz1-0', guid: 'guid1', isRoot: true },
+                expect.objectContaining({
+                  name: 'raidz1-0', guid: 'guid1', isRoot: true, type: 'RAIDZ1',
+                }),
               ],
               group: 'Data VDEVs',
               guid: 'data',
             },
             {
               children: [
-                { name: 'sdr', guid: 'guid2', isRoot: true },
+                expect.objectContaining({
+                  name: 'sdr', guid: 'guid2', isRoot: true, type: 'DISK', disk: 'sdr',
+                }),
               ],
               group: 'Cache',
               guid: 'cache',
@@ -160,7 +169,7 @@ describe('VDevsStore', () => {
         },
         poolId: 4,
         selectedNodeGuid: null,
-      } as VDevsState);
+      } as unknown as VDevsState);
 
       const disk = spectator.service.getDisk({ name: 'sdr', type: TopologyItemType.Disk, disk: 'sdr' } as VDevNestedDataNode);
       expect(disk).toEqual({ devname: 'sdr' });

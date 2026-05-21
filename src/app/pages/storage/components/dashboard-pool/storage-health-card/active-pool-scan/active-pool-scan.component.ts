@@ -11,7 +11,8 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { Role } from 'app/enums/role.enum';
 import { secondsToDuration } from 'app/helpers/time.helpers';
-import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -39,7 +40,7 @@ export class ActivePoolScanComponent {
   private destroyRef = inject(DestroyRef);
 
   readonly scan = input.required<PoolScanUpdate>();
-  readonly pool = input.required<Pool>();
+  readonly pool = input.required<Zpool>();
 
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);
   protected readonly isScrubPaused = computed(() => Boolean(this.scan()?.pause));

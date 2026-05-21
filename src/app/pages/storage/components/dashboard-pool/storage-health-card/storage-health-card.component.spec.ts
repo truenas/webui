@@ -16,8 +16,8 @@ import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -56,8 +56,8 @@ describe('StorageHealthCardComponent', () => {
     name: 'tank',
     healthy: true,
     status: PoolStatus.Online,
-    autotrim: {
-      value: 'on',
+    properties: {
+      autotrim: { raw: 'on', source: null, value: 'on' },
     },
     scan: completedScrub,
     topology: {
@@ -75,7 +75,7 @@ describe('StorageHealthCardComponent', () => {
       ],
       dedup: [],
     },
-  } as Pool;
+  } as unknown as Zpool;
   const scrubTask = {
     id: 1,
     enabled: true,
@@ -150,23 +150,23 @@ describe('StorageHealthCardComponent', () => {
     const degradedPool = {
       ...pool,
       status: PoolStatus.Degraded,
-    } as Pool;
+    } as Zpool;
 
     const faultedPool = {
       ...pool,
       status: PoolStatus.Faulted,
-    } as Pool;
+    } as Zpool;
 
     const unhealthyPool = {
       ...pool,
       healthy: false,
-    } as Pool;
+    } as Zpool;
 
     const unhealthyUnknownPool = {
       ...pool,
       healthy: false,
       status: PoolStatus.Unknown,
-    } as Pool;
+    } as Zpool;
 
     it('shows an icon for pool status', () => {
       expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Safe);
@@ -358,8 +358,11 @@ describe('StorageHealthCardComponent', () => {
       it('hides Auto TRIM when disabled', () => {
         spectator.setInput('pool', {
           ...pool,
-          autotrim: { value: 'off' },
-        });
+          properties: {
+            ...pool.properties,
+            autotrim: { raw: 'off', source: null, value: 'off' },
+          },
+        } as Zpool);
         spectator.detectChanges();
 
         expect(spectator.query(byText('Auto TRIM:'))).toBeFalsy();
@@ -375,8 +378,11 @@ describe('StorageHealthCardComponent', () => {
     it('shows deduplication section when dedup_table_size is greater than 0', () => {
       spectator.setInput('pool', {
         ...pool,
-        dedup_table_size: 1024,
-      });
+        properties: {
+          ...pool.properties,
+          dedup_table_size: { raw: '1024', source: null, value: 1024 },
+        },
+      } as Zpool);
       spectator.detectChanges();
 
       expect(spectator.query(DeduplicationStatsComponent)).toExist();
@@ -385,12 +391,15 @@ describe('StorageHealthCardComponent', () => {
     it('shows deduplication section when dedup vdevs exist but dedup table is empty', () => {
       spectator.setInput('pool', {
         ...pool,
-        dedup_table_size: 0,
+        properties: {
+          ...pool.properties,
+          dedup_table_size: { raw: '0', source: null, value: 0 },
+        },
         topology: {
           ...pool.topology,
           dedup: [{ guid: 'dedup-vdev-1' }],
         },
-      });
+      } as unknown as Zpool);
       spectator.detectChanges();
 
       expect(spectator.query(DeduplicationStatsComponent)).toExist();

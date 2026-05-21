@@ -13,7 +13,7 @@ import { startWith, take } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Option } from 'app/interfaces/option.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -65,7 +65,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private destroyRef = inject(DestroyRef);
 
   readonly isAddingVdevs = input(false);
-  readonly pool = input<Pool | undefined>(undefined);
+  readonly pool = input<Zpool | undefined>(undefined);
 
   form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
@@ -87,8 +87,8 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextPoolCreation;
 
   isLoading$ = this.store.isLoading$;
-  poolNames$ = this.api.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
-    map((pools) => pools.map((pool) => pool.name)),
+  poolNames$ = this.api.call('zpool.query').pipe(
+    map((pools) => pools.map((pool) => pool.name).sort((a, b) => a.localeCompare(b))),
   );
 
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);

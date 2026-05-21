@@ -6,7 +6,7 @@ import {
   Subscription, debounceTime, distinctUntilChanged,
 } from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManageUnusedDiskDialog } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -26,7 +26,7 @@ export class UnusedResourcesComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
-  readonly pools = input.required<Pool[]>();
+  readonly pools = input.required<Zpool[]>();
 
   noPoolsDisks: DetailsDisk[] = [];
   exportedPoolsDisks: DetailsDisk[] = [];

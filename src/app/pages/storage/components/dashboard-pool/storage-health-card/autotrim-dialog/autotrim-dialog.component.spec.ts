@@ -8,7 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { OnOff } from 'app/enums/on-off.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -31,10 +31,10 @@ describe('AutotrimDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: {
           id: 47,
-          autotrim: {
-            value: 'on',
+          properties: {
+            autotrim: { raw: 'on', source: null, value: 'on' },
           },
-        } as Pool,
+        } as unknown as Zpool,
       },
       mockApi([
         mockJob('pool.update', fakeSuccessfulJob()),

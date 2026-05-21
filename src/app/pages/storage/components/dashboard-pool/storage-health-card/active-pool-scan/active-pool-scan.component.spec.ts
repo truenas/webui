@@ -8,7 +8,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
-import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ActivePoolScanComponent } from './active-pool-scan.component';
@@ -35,7 +36,7 @@ describe('ActivePoolScanComponent', () => {
         scan,
         pool: {
           id: 1,
-        } as Pool,
+        } as Zpool,
       },
     });
 

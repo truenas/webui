@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -36,7 +36,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
             { id: 1, name: 'DEV' },
             { id: 2, name: 'TEST' },
             { id: 3, name: 'POOL', status: PoolStatus.Offline },
-          ] as Pool[],
+          ] as Zpool[],
           unusedDisks: [
             { devname: 'sdb', size: 102400000, identifier: '{serial_lunid}BBBBB1' },
             { devname: 'sdc', size: 204800000, identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },

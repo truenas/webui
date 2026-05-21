@@ -24,6 +24,7 @@ import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
@@ -41,6 +42,7 @@ export interface ApiEventDirectory {
   'filesystem.file_tail_follow': { response: { data: string } };
   'group.query': { response: Group };
   'pool.query': { response: Pool };
+  'zpool.query': { response: Zpool };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
   'system.reboot.info': { response: SystemRebootInfo };

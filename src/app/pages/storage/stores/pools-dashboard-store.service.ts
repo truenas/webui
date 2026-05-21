@@ -9,14 +9,14 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { adaptZpoolTopology } from 'app/interfaces/zpool-topology-adapter';
 import { Zpool } from 'app/interfaces/zpool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
 export interface PoolsDashboardState {
-  pools: Pool[];
+  pools: Zpool[];
   arePoolsLoading: boolean;
 
   isLoadingPoolDetails: boolean;
@@ -51,7 +51,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     return groupBy(this.state().disks, (disk) => disk.pool);
   });
 
-  scrubForPool(pool: Pool): ScrubTask | undefined {
+  scrubForPool(pool: Zpool): ScrubTask | undefined {
     return this.state().scrubs.find((scrub) => scrub.pool === pool.id);
   }
 
@@ -87,53 +87,28 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     );
   });
 
-  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], Zpool[]]> {
+  private loadPoolsAndRootDatasets(): Observable<[Zpool[], Dataset[]]> {
     return combineLatest([
-      this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]),
-      this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
-      // TODO: `zpool.query` is not in the events-subscribable directory (see ApiEventDirectory),
-      // so it cannot use callAndSubscribe. When `pool.query` re-emits via its live subscription,
-      // combineLatest reuses this stale `zpool.query` value, meaning tier numbers
-      // (class_normal_*, class_special_*) won't reflect the current state until the next
-      // loadDashboard() call. Revisit once `zpool.query` events are supported.
-      this.api.call('zpool.query', [{
+      this.api.callAndSubscribe('zpool.query', [{
+        topology: true,
+        scan: true,
         properties: [
-          'class_normal_usable',
+          'autotrim',
           'class_normal_used',
           'class_normal_available',
-          'class_special_usable',
           'class_special_used',
           'class_special_available',
+          'class_special_usable',
+          'dedup_table_size',
+          'dedup_table_quota',
         ],
       }]),
+      this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
     ]).pipe(
-      tap(([pools, rootDatasets, zpools]) => {
-        const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
-        const poolsWithTierData = pools.map((pool) => {
-          const zpool = zpoolsByName[pool.name];
-          if (!zpool) return pool;
-          const toBytes = (raw: number | string | undefined | null): number => Number(raw ?? 0);
-          const specialUsable = zpool.properties.class_special_usable?.value;
-          const specialReserved = specialUsable === undefined || specialUsable === null
-            ? 0
-            : Math.max(
-                0,
-                Number(specialUsable)
-                - toBytes(zpool.properties.class_special_available?.value)
-                - toBytes(zpool.properties.class_special_used?.value),
-              );
-          return {
-            ...pool,
-            used: toBytes(zpool.properties.class_normal_used?.value) || pool.used,
-            available: toBytes(zpool.properties.class_normal_available?.value) || pool.available,
-            special_class_used: toBytes(zpool.properties.class_special_used?.value),
-            special_class_available: toBytes(zpool.properties.class_special_available?.value),
-            special_class_reserved: specialReserved,
-          };
-        });
+      tap(([pools, rootDatasets]) => {
         this.patchState({
           arePoolsLoading: false,
-          pools: sortBy(poolsWithTierData, (pool) => pool.name),
+          pools: sortBy(pools.map(adaptZpoolTopology), (pool) => pool.name),
           rootDatasets: keyBy(rootDatasets, (dataset) => dataset.id),
         });
       }),

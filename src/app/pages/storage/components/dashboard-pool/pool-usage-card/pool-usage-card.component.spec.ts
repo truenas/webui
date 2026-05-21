@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -75,8 +75,10 @@ describe('PoolUsageCardComponent', () => {
           healthy: true,
           name: 'bingo',
           status: 'ONLINE',
-          used: 3384541603,
-          available: 899688274,
+          properties: {
+            class_normal_used: { raw: '3384541603', source: null, value: 3384541603 },
+            class_normal_available: { raw: '899688274', source: null, value: 899688274 },
+          },
 
           topology: {
             data: [{
@@ -87,7 +89,7 @@ describe('PoolUsageCardComponent', () => {
               type: TopologyItemType.Disk,
             }],
           },
-        } as Pool,
+        } as unknown as Zpool,
       },
     });
   });
@@ -107,8 +109,10 @@ describe('PoolUsageCardComponent', () => {
       healthy: true,
       name: 'bingo',
       status: 'ONLINE',
-      used: 2199792913690,
-      available: 516000806915,
+      properties: {
+        class_normal_used: { raw: '2199792913690', source: null, value: 2199792913690 },
+        class_normal_available: { raw: '516000806915', source: null, value: 516000806915 },
+      },
 
       topology: {
         data: [{
@@ -116,7 +120,7 @@ describe('PoolUsageCardComponent', () => {
           type: TopologyItemType.Disk,
         }],
       },
-    } as Pool);
+    } as unknown as Zpool);
 
     expect(spectator.query('.capacity-caption')).toHaveText('Usable Capacity: 2.47 TiB');
     expect(spectator.query('.used-caption')).toHaveText('Used: 2 TiB');
@@ -136,8 +140,10 @@ describe('PoolUsageCardComponent', () => {
       healthy: true,
       name: 'bingo',
       status: 'ONLINE',
-      used: 2199792913690,
-      available: 516000806915,
+      properties: {
+        class_normal_used: { raw: '2199792913690', source: null, value: 2199792913690 },
+        class_normal_available: { raw: '516000806915', source: null, value: 516000806915 },
+      },
 
       topology: {
         data: [{
@@ -145,7 +151,7 @@ describe('PoolUsageCardComponent', () => {
           type: TopologyItemType.Disk,
         }],
       },
-    } as Pool);
+    } as unknown as Zpool);
 
     expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
     expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 80% of available space');
@@ -180,11 +186,13 @@ describe('PoolUsageCardComponent', () => {
       healthy: true,
       name: 'bingo',
       status: 'ONLINE',
-      used: 3384541603,
-      available: 2510301010,
-      special_class_used: 536870912,
-      special_class_available: 1610612736,
-      special_class_reserved: 268435456,
+      properties: {
+        class_normal_used: { raw: '3384541603', source: null, value: 3384541603 },
+        class_normal_available: { raw: '2510301010', source: null, value: 2510301010 },
+        class_special_used: { raw: '536870912', source: null, value: 536870912 },
+        class_special_available: { raw: '1610612736', source: null, value: 1610612736 },
+        class_special_usable: { raw: '2415919104', source: null, value: 2415919104 },
+      },
       topology: {
         data: [{
           disk: 'sda',
@@ -195,7 +203,7 @@ describe('PoolUsageCardComponent', () => {
           type: TopologyItemType.Disk,
         }],
       },
-    } as Pool);
+    } as unknown as Zpool);
 
     spectator.component.ngOnInit();
     spectator.detectChanges();

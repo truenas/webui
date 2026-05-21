@@ -10,7 +10,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { diskHealthCardElements } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.elements';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -46,7 +46,7 @@ interface DiskState {
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   translate = inject(TranslateService);
 
-  readonly poolState = input.required<Pool>();
+  readonly poolState = input.required<Zpool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly searchableElements = diskHealthCardElements;

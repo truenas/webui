@@ -3,9 +3,10 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
-  DataPoolTopologyUpdate, Pool, PoolTopology, UpdatePoolTopology,
+  DataPoolTopologyUpdate, PoolTopology, UpdatePoolTopology,
 } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
@@ -277,12 +278,12 @@ export function resolveParityLock(
  * pool data layout, wizard data layout) in the same way.
  */
 export function parityLock$(
-  pool$: Observable<Pool | null>,
+  pool$: Observable<Zpool | null>,
   topology$: Observable<PoolManagerTopology>,
 ): Observable<ParityLock> {
   return combineLatest([pool$, topology$]).pipe(
     map(([pool, topology]) => resolveParityLock(
-      pool?.topology[VDevType.Data],
+      pool?.topology?.[VDevType.Data],
       { layout: topology[VDevType.Data].layout },
     )),
     distinctUntilChanged((a, b) => (

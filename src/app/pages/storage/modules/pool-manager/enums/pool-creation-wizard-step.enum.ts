@@ -3,7 +3,7 @@ export enum PoolCreationWizardStep {
   EnclosureOptions = 'enclosure',
   Data = 'data',
   Log = 'log',
-  Spare = 'spare',
+  Spare = 'spares',
   Cache = 'cache',
   Metadata = 'metadata',
   Dedup = 'dedup',

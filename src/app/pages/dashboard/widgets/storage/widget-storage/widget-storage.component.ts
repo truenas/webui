@@ -14,10 +14,11 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
-import { isTopologyDisk } from 'app/interfaces/storage.interface';
+import { Pool, PoolScanUpdate, PoolTopology } from 'app/interfaces/pool.interface';
+import { isTopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
@@ -75,7 +76,7 @@ export class WidgetStorageComponent {
       pools.forEach((pool) => {
         poolsInfo.push({
           name: pool.name,
-          topology: pool.topology,
+          topology: this.adaptPoolTopology(pool.topology),
           status: this.getStatusItemInfo(pool),
           usedSpace: this.getUsedSpaceItemInfo(pool),
           disksWithError: this.getDiskWithErrorsItemInfo(pool),
@@ -128,6 +129,20 @@ export class WidgetStorageComponent {
     }
 
     return 3;
+  }
+
+  // `pool.query` returns the spare category as `spare` (singular); the rest of
+  // the UI keys it as `spares` to match ZFS and `zpool.query`. Rename here.
+  private adaptPoolTopology(topology: PoolTopology): PoolTopology {
+    const wire = topology as PoolTopology & { spare?: VDevItem[] };
+    if (!wire.spare) {
+      return topology;
+    }
+    const { spare, ...rest } = wire;
+    return {
+      ...rest,
+      [VDevType.Spare]: spare,
+    };
   }
 
   private getStatusItemInfo(pool: Pool): ItemInfo {

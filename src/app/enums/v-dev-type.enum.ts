@@ -88,7 +88,7 @@ export enum VDevType {
   Data = 'data',
   Dedup = 'dedup',
   Log = 'log',
-  Spare = 'spare',
+  Spare = 'spares',
   Special = 'special',
 }
 

@@ -19,8 +19,8 @@ import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -83,7 +83,7 @@ export class DashboardPoolComponent implements OnChanges {
   private searchDirectives = inject(UiSearchDirectivesService);
   private destroyRef = inject(DestroyRef);
 
-  readonly pool = input<Pool>();
+  readonly pool = input<Zpool>();
   readonly rootDataset = input<Dataset>();
   readonly isLoading = input<boolean>();
   readonly disks = input<StorageDashboardDisk[]>([]);

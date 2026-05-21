@@ -5,7 +5,7 @@ import {
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import {
   DeduplicationStatsComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/deduplication-stats/deduplication-stats.component';
@@ -36,9 +36,11 @@ describe('DeduplicationStatsComponent', () => {
     spectator = createComponent({
       props: {
         pool: {
-          dedup_table_quota: 'auto',
-          dedup_table_size: 100 * KiB,
-        } as Pool,
+          properties: {
+            dedup_table_quota: { raw: 'auto', source: null, value: 'auto' },
+            dedup_table_size: { raw: String(100 * KiB), source: null, value: 100 * KiB },
+          },
+        } as unknown as Zpool,
       },
     });
   });
@@ -46,59 +48,69 @@ describe('DeduplicationStatsComponent', () => {
   it('shows deduplication stats for various quota settings', () => {
     // Auto
     spectator.setInput('pool', {
-      dedup_table_quota: 'auto',
-      dedup_table_size: 100 * KiB,
-    } as Pool);
+      properties: {
+        dedup_table_quota: { raw: 'auto', source: null, value: 'auto' },
+        dedup_table_size: { raw: String(100 * KiB), source: null, value: 100 * KiB },
+      },
+    } as unknown as Zpool);
     expect(spectator.query(byText('Deduplication Table:'))!.parentElement!.querySelector('.value')).toHaveText('100 KiB');
 
     // Custom
     spectator.setInput('pool', {
-      dedup_table_quota: String(200 * KiB),
-      dedup_table_size: 100 * KiB,
-    } as Pool);
+      properties: {
+        dedup_table_quota: { raw: String(200 * KiB), source: null, value: String(200 * KiB) },
+        dedup_table_size: { raw: String(100 * KiB), source: null, value: 100 * KiB },
+      },
+    } as unknown as Zpool);
     expect(spectator.query(byText('Deduplication Table:'))!.parentElement!.querySelector('.value')).toHaveText('100 KiB / 200 KiB');
 
     // None
     spectator.setInput('pool', {
-      dedup_table_quota: '0',
-      dedup_table_size: 100 * KiB,
-    } as Pool);
+      properties: {
+        dedup_table_quota: { raw: '0', source: null, value: '0' },
+        dedup_table_size: { raw: String(100 * KiB), source: null, value: 100 * KiB },
+      },
+    } as unknown as Zpool);
     expect(spectator.query(byText('Deduplication Table:'))!.parentElement!.querySelector('.value')).toHaveText('100 KiB');
   });
 
   it('opens SetDedupQuotaComponent when Set Quota is pressed', () => {
-    spectator.setInput('pool', {
-      dedup_table_size: 100 * KiB,
-    } as Pool);
+    const pool = {
+      properties: {
+        dedup_table_size: { raw: String(100 * KiB), source: null, value: 100 * KiB },
+      },
+    } as unknown as Zpool;
+    spectator.setInput('pool', pool);
 
     spectator.click(spectator.query(byText('Set Quota'))!);
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetDedupQuotaComponent, {
-      data: {
-        dedup_table_size: 100 * KiB,
-      } as Pool,
+      data: pool,
     });
   });
 
   it('opens PruneDedupTableDialogComponent when Prune is pressed', () => {
-    spectator.setInput('pool', {
-      dedup_table_size: 100 * KiB,
-    } as Pool);
+    const pool = {
+      properties: {
+        dedup_table_size: { raw: String(100 * KiB), source: null, value: 100 * KiB },
+      },
+    } as unknown as Zpool;
+    spectator.setInput('pool', pool);
 
     spectator.click(spectator.query(byText('Prune'))!);
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PruneDedupTableDialog, {
-      data: {
-        dedup_table_size: 100 * KiB,
-      } as Pool,
+      data: pool,
     });
   });
 
   it('hides Prune link when dedup table is empty', () => {
     spectator.setInput('pool', {
-      dedup_table_quota: 'auto',
-      dedup_table_size: 0,
-    } as Pool);
+      properties: {
+        dedup_table_quota: { raw: 'auto', source: null, value: 'auto' },
+        dedup_table_size: { raw: '0', source: null, value: 0 },
+      },
+    } as unknown as Zpool);
 
     expect(spectator.query(byText('Prune'))).not.toExist();
     expect(spectator.query(byText('Set Quota'))).toExist();

@@ -7,7 +7,7 @@ import { uniqBy } from 'lodash-es';
 import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import {
   AddVdevsStore,
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -212,7 +212,7 @@ export class PoolManagerValidationService {
   }
 
   private validateMinVdevsLimit(
-    existingPool: Pool | null,
+    existingPool: Zpool | null,
     topology: PoolManagerTopology,
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
@@ -478,7 +478,7 @@ export class PoolManagerValidationService {
    */
   private validateRedundancyMismatch(
     topology: PoolManagerTopology,
-    existingPool: Pool | null,
+    existingPool: Zpool | null,
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
     const dataParity = this.resolveDataParity(topology, existingPool);
@@ -524,7 +524,7 @@ export class PoolManagerValidationService {
    */
   private validateMixedAllocClassLayout(
     topology: PoolManagerTopology,
-    existingPool: Pool | null,
+    existingPool: Zpool | null,
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
     if (!existingPool) {
@@ -558,7 +558,7 @@ export class PoolManagerValidationService {
     return errors;
   }
 
-  private resolveDataParity(topology: PoolManagerTopology, existingPool: Pool | null): number | null {
+  private resolveDataParity(topology: PoolManagerTopology, existingPool: Zpool | null): number | null {
     const existingDataVdevs = existingPool?.topology?.[VDevType.Data];
     if (existingDataVdevs?.length) {
       const layout = resolveTopologyLayout(existingDataVdevs);

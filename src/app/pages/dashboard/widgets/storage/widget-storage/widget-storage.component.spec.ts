@@ -59,7 +59,7 @@ function makeFakePool(name: string, id: number, scan: PoolScanUpdate): Pool {
       ],
       log: [],
       cache: [],
-      spare: [{
+      spares: [{
         children: [],
       }],
       special: [],

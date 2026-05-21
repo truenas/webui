@@ -3,7 +3,7 @@
   <div class="label">{{ 'Deduplication Table' | translate }}:</div>
   <div class="value">{{ deduplicationStats() }}</div>
   <div class="dedup-actions">
-    @if (pool().dedup_table_size > 0) {
+    @if (dedupTableSize() > 0) {
       <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="prune-dedup" (click)="onPruneDedupTable()">
         {{ 'Prune' | translate }}
       </a>

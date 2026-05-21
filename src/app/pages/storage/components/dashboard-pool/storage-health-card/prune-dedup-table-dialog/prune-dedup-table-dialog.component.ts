@@ -10,7 +10,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { Pool, PruneDedupTableParams } from 'app/interfaces/pool.interface';
+import { PruneDedupTableParams } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -59,7 +60,7 @@ export class PruneDedupTableDialog {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogRef = inject<MatDialogRef<PruneDedupTableDialog>>(MatDialogRef);
-  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  protected pool = inject<Zpool>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({

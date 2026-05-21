@@ -8,7 +8,7 @@ import { MiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -37,15 +37,17 @@ describe('SetDedupQuotaComponent', () => {
     ],
   });
 
-  async function setupTest(pool: Partial<Pool>): Promise<void> {
+  async function setupTest(dedupTableQuota: string): Promise<void> {
     spectator = createComponent({
       providers: [
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
             id: 2,
-            ...pool,
-          },
+            properties: {
+              dedup_table_quota: { raw: dedupTableQuota, source: null, value: dedupTableQuota },
+            },
+          } as unknown as Zpool,
         },
       ],
     });
@@ -55,9 +57,7 @@ describe('SetDedupQuotaComponent', () => {
 
   describe('auto', () => {
     beforeEach(async () => {
-      await setupTest({
-        dedup_table_quota: 'auto',
-      });
+      await setupTest('auto');
     });
 
     it('shows current settings', async () => {
@@ -85,9 +85,7 @@ describe('SetDedupQuotaComponent', () => {
 
   describe('custom', () => {
     beforeEach(async () => {
-      await setupTest({
-        dedup_table_quota: String(100 * MiB),
-      });
+      await setupTest(String(100 * MiB));
     });
 
     it('shows current settings', async () => {
@@ -118,9 +116,7 @@ describe('SetDedupQuotaComponent', () => {
 
   describe('none', () => {
     beforeEach(async () => {
-      await setupTest({
-        dedup_table_quota: '0',
-      });
+      await setupTest('0');
     });
 
     it('shows current settings', async () => {

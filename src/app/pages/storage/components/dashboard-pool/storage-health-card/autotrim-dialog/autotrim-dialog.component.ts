@@ -10,7 +10,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { Pool } from 'app/interfaces/pool.interface';
+import { getZpoolPropertyString, Zpool } from 'app/interfaces/zpool.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -43,7 +43,7 @@ export class AutotrimDialog implements OnInit {
   private dialogRef = inject<MatDialogRef<AutotrimDialog>>(MatDialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  pool = inject<Pool>(MAT_DIALOG_DATA);
+  pool = inject<Zpool>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PoolWrite];
@@ -53,7 +53,7 @@ export class AutotrimDialog implements OnInit {
   readonly helptext = helptextVolumes;
 
   ngOnInit(): void {
-    this.autotrimControl.setValue(this.pool.autotrim.value === 'on');
+    this.autotrimControl.setValue(getZpoolPropertyString(this.pool, 'autotrim') === 'on');
   }
 
   onSubmit(event: SubmitEvent): void {

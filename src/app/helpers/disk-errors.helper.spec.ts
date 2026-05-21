@@ -66,7 +66,7 @@ describe('flattenDiskTopology', () => {
       data: [disk1, disk2],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -86,7 +86,7 @@ describe('flattenDiskTopology', () => {
       data: [mirror],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -107,7 +107,7 @@ describe('flattenDiskTopology', () => {
       data: [dataDisk],
       log: [logDisk],
       cache: [cacheDisk],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -147,7 +147,7 @@ describe('flattenDiskTopology', () => {
       data: [outerMirror],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -171,7 +171,7 @@ describe('getDisksWithErrors', () => {
       data: [diskWithErrors, diskWithoutErrors],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -189,7 +189,7 @@ describe('getDisksWithErrors', () => {
       data: [diskWithErrors, diskWithoutErrors],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -207,7 +207,7 @@ describe('getDisksWithErrors', () => {
       data: [diskWithErrors, diskWithoutErrors],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -228,7 +228,7 @@ describe('getDisksWithErrors', () => {
       data: [disk1, disk2, disk3, disk4, diskOk],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -250,7 +250,7 @@ describe('getDisksWithErrors', () => {
       data: [mirrorWithErrors],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -269,7 +269,7 @@ describe('getDisksWithErrors', () => {
       data: [disk1, disk2],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -286,7 +286,7 @@ describe('getDisksWithErrors', () => {
       data: [diskWithoutStats],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -305,7 +305,7 @@ describe('countTopologyErrors', () => {
       data: [disk1, disk2],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -323,7 +323,7 @@ describe('countTopologyErrors', () => {
       data: [mirror],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -344,7 +344,7 @@ describe('countTopologyErrors', () => {
       data: [mirror],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -364,7 +364,7 @@ describe('countTopologyErrors', () => {
       data: [disk1, disk2],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -381,7 +381,7 @@ describe('countTopologyErrors', () => {
       data: [disk1, disk2],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };
@@ -398,7 +398,7 @@ describe('countTopologyErrors', () => {
       data: [disk],
       log: [],
       cache: [],
-      spare: [],
+      spares: [],
       special: [],
       dedup: [],
     };

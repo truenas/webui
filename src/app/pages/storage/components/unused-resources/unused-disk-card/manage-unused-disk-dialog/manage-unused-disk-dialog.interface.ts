@@ -1,9 +1,9 @@
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 
 export interface ManageUnusedDiskDialogResource {
   unusedDisks: DetailsDisk[];
-  pools: Pool[];
+  pools: Zpool[];
 }
 
 export enum AddToPoolType {

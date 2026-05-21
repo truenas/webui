@@ -3,7 +3,7 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
 import { UnusedResourcesComponent } from './unused-resources.component';
 
@@ -36,7 +36,7 @@ describe('UnusedResourcesComponent', () => {
         pools: [
           { id: 1, name: 'DEV' },
           { id: 2, name: 'TEST' },
-        ] as Pool[],
+        ] as Zpool[],
       },
     });
   });

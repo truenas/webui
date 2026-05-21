@@ -12,7 +12,7 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -44,7 +44,7 @@ describe('DashboardPoolComponent', () => {
     id: 4,
     status: PoolStatus.Online,
     all_sed: false,
-  } as Pool;
+  } as Zpool;
   const createComponent = createComponentFactory({
     component: DashboardPoolComponent,
     declarations: [

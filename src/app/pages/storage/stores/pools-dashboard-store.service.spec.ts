@@ -11,7 +11,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
@@ -58,7 +58,7 @@ const dashboardDisks: StorageDashboardDisk[] = [
 ];
 
 describe('PoolsDashboardStore', () => {
-  const websocketSubscription$ = new Subject<ApiEvent<Pool>>();
+  const websocketSubscription$ = new Subject<ApiEvent<Zpool>>();
   let spectator: SpectatorService<PoolsDashboardStore>;
   let testScheduler: TestScheduler;
   const createService = createServiceFactory({
@@ -86,7 +86,7 @@ describe('PoolsDashboardStore', () => {
       const pools = [
         { id: 1, name: 'pool1' },
         { id: 2, name: 'pool2' },
-      ] as Pool[];
+      ] as Zpool[];
       const rootDatasets = [
         { id: 'pool1' },
         { id: 'pool2' },
@@ -99,8 +99,6 @@ describe('PoolsDashboardStore', () => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: rootDatasets });
-          case 'zpool.query':
-            return cold('-a|', { a: [] });
           case 'pool.scrub.query':
             return cold('-a|', { a: scrubs });
           case 'disk.query':
@@ -114,7 +112,7 @@ describe('PoolsDashboardStore', () => {
         }
       });
       jest.spyOn(mockedApi, 'callAndSubscribe').mockImplementation((method: string) => {
-        if (method === 'pool.query') {
+        if (method === 'zpool.query') {
           return cold('-a|', { a: pools });
         }
         throw new Error(`Unexpected method: ${method}`);
@@ -163,12 +161,9 @@ describe('PoolsDashboardStore', () => {
     });
   });
 
-  it('returns 0 for special_class_reserved when class_special_usable is absent', () => {
+  it('stores zpools as returned from API without server-side derivation', () => {
     testScheduler.run(({ cold, expectObservable }) => {
       const mockedApi = spectator.inject(ApiService);
-      const pools = [
-        { id: 1, name: 'pool1' },
-      ] as Pool[];
       const zpools = [
         {
           name: 'pool1',
@@ -177,14 +172,12 @@ describe('PoolsDashboardStore', () => {
             class_special_used: { value: 50 },
           },
         },
-      ];
+      ] as unknown as Zpool[];
 
       jest.spyOn(mockedApi, 'call').mockImplementation((method: string) => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: [] });
-          case 'zpool.query':
-            return cold('-a|', { a: zpools });
           case 'pool.scrub.query':
             return cold('-a|', { a: [] });
           case 'disk.query':
@@ -198,8 +191,8 @@ describe('PoolsDashboardStore', () => {
         }
       });
       jest.spyOn(mockedApi, 'callAndSubscribe').mockImplementation((method: string) => {
-        if (method === 'pool.query') {
-          return cold('-a|', { a: pools });
+        if (method === 'zpool.query') {
+          return cold('-a|', { a: zpools });
         }
         throw new Error(`Unexpected method: ${method}`);
       });
@@ -213,7 +206,10 @@ describe('PoolsDashboardStore', () => {
         b: [
           expect.objectContaining({
             name: 'pool1',
-            special_class_reserved: 0,
+            properties: expect.objectContaining({
+              class_special_available: { value: 100 },
+              class_special_used: { value: 50 },
+            }),
           }),
         ],
       });

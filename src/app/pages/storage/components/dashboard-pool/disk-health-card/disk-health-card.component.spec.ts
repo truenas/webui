@@ -10,7 +10,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -61,7 +61,7 @@ describe('DiskHealthCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        poolState: { id: 1, name: 'DEV' } as Pool,
+        poolState: { id: 1, name: 'DEV' } as Zpool,
         disks,
       },
     });

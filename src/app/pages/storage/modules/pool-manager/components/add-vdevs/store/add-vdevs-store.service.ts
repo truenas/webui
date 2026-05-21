@@ -3,16 +3,18 @@ import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { cloneDeep } from 'lodash-es';
 import {
-  combineLatest, filter, switchMap, tap,
+  combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { PoolTopology } from 'app/interfaces/pool.interface';
+import { adaptZpoolTopology } from 'app/interfaces/zpool-topology-adapter';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface AddVdevsState {
-  pool: Pool | null;
+  pool: Zpool | null;
   topology: PoolTopology | null;
   isLoading: boolean;
 }
@@ -58,12 +60,24 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     return triggers$.pipe(
       tap(() => this.patchState({ isLoading: true })),
       switchMap((poolId) => {
-        return this.api.call('pool.query', [[['id', '=', +poolId]]]);
+        return this.api.call('zpool.query').pipe(
+          map((pools) => pools.find((zpool) => zpool.id === +poolId)?.name),
+          switchMap((poolName) => {
+            if (!poolName) {
+              return of(null);
+            }
+            return this.api.call('zpool.query', [{
+              pool_names: [poolName],
+              topology: true,
+              properties: ['size'],
+            }]).pipe(map((targeted) => (targeted[0] ? adaptZpoolTopology(targeted[0]) : null)));
+          }),
+        );
       }),
       tapResponse({
-        next: (pools) => {
+        next: (pool) => {
           this.patchState({
-            pool: cloneDeep(pools[0]),
+            pool: pool ? cloneDeep(pool) : null,
             isLoading: false,
           });
         },
@@ -74,7 +88,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
           this.errorHandler.showErrorModal(error);
         },
       }),
-      filter((pools) => !!pools),
+      filter((pool) => !!pool),
     );
   });
 }

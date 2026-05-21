@@ -18,8 +18,9 @@ import {
 } from 'rxjs/operators';
 import { StepActivationDirective } from 'app/directives/step-activation.directive';
 import {
-  CreatePool, Pool, UpdatePool,
+  CreatePool, UpdatePool,
 } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UseIconsInStepperComponent,
@@ -103,7 +104,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   @ViewChild('generalStep') generalStep: GeneralWizardStepComponent;
   @ViewChild('enclosureStep') enclosureStep: EnclosureWizardStepComponent;
 
-  protected existingPool: Pool | null = null;
+  protected existingPool: Zpool | null = null;
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 

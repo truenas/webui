@@ -34,7 +34,7 @@ describe('DisksWithZfsErrorsComponent', () => {
         ] as VDevItem[],
         cache: [] as VDevItem[],
         log: [] as VDevItem[],
-        spare: [] as VDevItem[],
+        spares: [] as VDevItem[],
         special: [] as VDevItem[],
       },
     } as Pool;

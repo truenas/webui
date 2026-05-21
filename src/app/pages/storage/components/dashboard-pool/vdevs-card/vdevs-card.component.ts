@@ -16,12 +16,13 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { PoolTopology } from 'app/interfaces/pool.interface';
 import {
   EnclosureAndSlot,
   TopologyDisk,
   VDevItem,
 } from 'app/interfaces/storage.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -44,7 +45,7 @@ interface TopologyState {
   special: VdevTypeState;
   log: VdevTypeState;
   cache: VdevTypeState;
-  spare: VdevTypeState;
+  spares: VdevTypeState;
   dedup: VdevTypeState;
 }
 
@@ -56,7 +57,7 @@ interface TopologyWarningState {
   special: string;
   log: string;
   cache: string;
-  spare: string;
+  spares: string;
   dedup: string;
 }
 
@@ -90,7 +91,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   storageService = inject(StorageService);
   private tierService = inject(SharingTierService);
 
-  readonly poolState = input.required<Pool>();
+  readonly poolState = input.required<Zpool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly tierEnabled = this.tierService.tierEnabled;
@@ -109,7 +110,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     special: this.emptyVdevState,
     log: this.emptyVdevState,
     cache: this.emptyVdevState,
-    spare: this.emptyVdevState,
+    spares: this.emptyVdevState,
     dedup: this.emptyVdevState,
   };
 
@@ -118,7 +119,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     special: '',
     log: '',
     cache: '',
-    spare: '',
+    spares: '',
     dedup: '',
   };
 
@@ -127,7 +128,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
    * it has a unique "Offline VDEVs" branch driven by isPoolOffline().
    */
   protected readonly otherVdevRows: {
-    key: 'special' | 'log' | 'cache' | 'spare' | 'dedup';
+    key: 'special' | 'log' | 'cache' | 'spares' | 'dedup';
     titleKey: string;
     tierLabelKey?: string;
     hidden?: () => boolean;
@@ -135,7 +136,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     { key: 'special', titleKey: T('Special VDEVs'), tierLabelKey: T('Performance Tier') },
     { key: 'log', titleKey: T('Log VDEVs') },
     { key: 'cache', titleKey: T('Cache VDEVs') },
-    { key: 'spare', titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs },
+    { key: 'spares', titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs },
     { key: 'dedup', titleKey: T('Dedup VDEVs') },
   ];
 
@@ -164,7 +165,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
       this.topologyState.special,
       this.topologyState.log,
       this.topologyState.cache,
-      this.topologyState.spare,
+      this.topologyState.spares,
       this.topologyState.dedup,
     ];
 
@@ -185,7 +186,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     this.parseTopology(this.poolState().topology);
   }
 
-  parseTopology(topology: PoolTopology): void {
+  parseTopology(topology: PoolTopology | null): void {
     if (!topology) {
       return;
     }
@@ -193,14 +194,14 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VDevType.Data);
     this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VDevType.Log);
     this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VDevType.Cache);
-    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VDevType.Spare);
+    this.topologyWarningsState.spares = this.parseDevsWarnings(topology.spares, VDevType.Spare);
     this.topologyWarningsState.special = this.parseDevsWarnings(topology.special, VDevType.Special);
     this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VDevType.Dedup);
 
     this.topologyState.data = this.parseDevs(topology.data, VDevType.Data, this.topologyWarningsState.data);
     this.topologyState.log = this.parseDevs(topology.log, VDevType.Log, this.topologyWarningsState.log);
     this.topologyState.cache = this.parseDevs(topology.cache, VDevType.Cache, this.topologyWarningsState.cache);
-    this.topologyState.spare = this.parseDevs(topology.spare, VDevType.Spare, this.topologyWarningsState.spare);
+    this.topologyState.spares = this.parseDevs(topology.spares, VDevType.Spare, this.topologyWarningsState.spares);
     this.topologyState.special = this.parseDevs(
       topology.special,
       VDevType.Special,
@@ -267,7 +268,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     return outputString;
   }
 
-  private isStatusError(poolState: Pool): boolean {
+  private isStatusError(poolState: Zpool): boolean {
     return [
       PoolStatus.Faulted,
       PoolStatus.Unavailable,
@@ -275,7 +276,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
-  private isStatusWarning(poolState: Pool): boolean {
+  private isStatusWarning(poolState: Zpool): boolean {
     return [
       PoolStatus.Locked,
       PoolStatus.Unknown,

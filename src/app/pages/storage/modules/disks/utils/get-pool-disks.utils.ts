@@ -1,7 +1,7 @@
-import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk } from 'app/interfaces/storage.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 
-export function getPoolDisks(pool: Pool): string[] {
+export function getPoolDisks(pool: Zpool): string[] {
   if (!pool?.topology) {
     return [];
   }

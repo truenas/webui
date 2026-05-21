@@ -66,7 +66,7 @@
       }
     </div>
 
-    @if (pool().autotrim.value === AutoTrimValue.On) {
+    @if (autotrimValue() === AutoTrimValue.On) {
       <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
         <span class="blank-spacer"></span>
         <div class="label">{{ 'Auto TRIM' | translate }}:</div>
@@ -85,7 +85,7 @@
       }
     }
 
-    @if (pool().dedup_table_size > 0 || pool().topology?.dedup?.length > 0) {
+    @if (dedupTableSize() > 0 || (pool().topology?.dedup?.length ?? 0) > 0) {
       <ix-deduplication-stats [pool]="pool()"></ix-deduplication-stats>
     }
   </mat-card-content>

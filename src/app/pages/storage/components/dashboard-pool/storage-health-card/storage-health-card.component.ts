@@ -19,7 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { Pool } from 'app/interfaces/pool.interface';
+import { getZpoolPropertyNumber, getZpoolPropertyString, Zpool } from 'app/interfaces/zpool.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -90,7 +90,10 @@ export class StorageHealthCardComponent {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
-  readonly pool = input.required<Pool>();
+  readonly pool = input.required<Zpool>();
+
+  protected autotrimValue = computed(() => getZpoolPropertyString(this.pool(), 'autotrim'));
+  protected dedupTableSize = computed(() => getZpoolPropertyNumber(this.pool(), 'dedup_table_size'));
 
   readonly scrub = computed(() => this.store.scrubForPool(this.pool()));
 
