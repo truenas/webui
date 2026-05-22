@@ -18,7 +18,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditEventLabels, auditServiceLabels } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
@@ -36,7 +36,7 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
   imports: [
     AsyncPipe,
     AuditSearchComponent,
-    FormatDateTimePipe,
+    IxDateComponent,
     GetLogImportantDataPipe,
     IxTablePagerComponent,
     TnCellDefDirective,

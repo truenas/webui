@@ -4,6 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonToggleHarness,
+  TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,13 +15,7 @@ import { AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
-import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -35,13 +33,10 @@ describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: AuditComponent,
     imports: [
-      IxTableCellDirective,
-      IxButtonGroupComponent,
       ReactiveFormsModule,
     ],
     declarations: [
@@ -51,7 +46,6 @@ describe('AuditComponent', () => {
         FakeProgressBarComponent,
         PageHeaderComponent,
         MockMasterDetailViewComponent,
-        IxSelectComponent,
       ),
     ],
     componentMocks: [SearchInputComponent],
@@ -98,12 +92,10 @@ describe('AuditComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    // Do it in this weird way because table header is outside the table element.
-    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
   it('checks used components on page', () => {
@@ -114,7 +106,6 @@ describe('AuditComponent', () => {
   });
 
   it('makes only 2 API calls during initialization (count + data)', () => {
-    // Count all audit.query calls made during component initialization
     const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
       (call) => call[0] === 'audit.query',
     );
@@ -122,7 +113,6 @@ describe('AuditComponent', () => {
     // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
     expect(auditQueryCalls).toHaveLength(2);
 
-    // Verify the calls
     const countCall = auditQueryCalls.find((call) => call[1][0]['query-options']?.count);
     const dataCall = auditQueryCalls.find((call) => !call[1][0]['query-options']?.count);
 
@@ -131,14 +121,11 @@ describe('AuditComponent', () => {
   });
 
   it('prevents duplicate API calls when controller type changes', async () => {
-    // Clear previous calls
     jest.clearAllMocks();
 
-    // Get the button group harness and change controller type
-    const buttonGroup = await loader.getHarness(IxButtonGroupHarness);
-    await buttonGroup.setValue('Standby');
+    const standbyToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Standby' }));
+    await standbyToggle.check();
 
-    // Count audit.query calls after controller type change
     const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
       (call) => call[0] === 'audit.query',
     );
@@ -146,7 +133,6 @@ describe('AuditComponent', () => {
     // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
     expect(auditQueryCalls).toHaveLength(2);
 
-    // Verify the call includes the remote_controller flag for Standby
     const dataCall = auditQueryCalls.find((call) => !call[1][0]['query-options']?.count);
     expect(dataCall?.[1][0]).toHaveProperty('remote_controller', true);
   });
@@ -193,8 +179,8 @@ describe('AuditComponent', () => {
     });
 
     it('runs search when controller type is changed', async () => {
-      const buttonGroup = await loader.getHarness(IxButtonGroupHarness);
-      await buttonGroup.setValue('Standby');
+      const standbyToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Standby' }));
+      await standbyToggle.check();
 
       spectator.detectChanges();
 
@@ -234,12 +220,11 @@ describe('AuditComponent', () => {
     it('filters by selected service', async () => {
       jest.clearAllMocks();
 
-      const serviceSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Service' }));
-      await serviceSelect.setValue('SMB');
+      const serviceSelect = await loader.getHarness(TnSelectHarness);
+      await serviceSelect.selectOption('SMB');
 
       spectator.detectChanges();
 
-      // Count audit.query calls after service change
       const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
         (call) => call[0] === 'audit.query',
       );
@@ -262,16 +247,13 @@ describe('AuditComponent', () => {
       const urlOptionsService = spectator.inject(UrlOptionsService);
       const setUrlOptionsSpy = jest.spyOn(urlOptionsService, 'setUrlOptions');
 
-      // Clear previous calls
       jest.clearAllMocks();
 
-      // Change service selection
-      const serviceSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Service' }));
-      await serviceSelect.setValue('SMB');
+      const serviceSelect = await loader.getHarness(TnSelectHarness);
+      await serviceSelect.selectOption('SMB');
 
       spectator.detectChanges();
 
-      // Verify setUrlOptions was called with the service in the options
       expect(setUrlOptionsSpy).toHaveBeenCalledWith(
         '/system/audit',
         expect.objectContaining({
@@ -323,13 +305,17 @@ describe('AuditComponent', () => {
 
   describe('details panel', () => {
     it('checks card title', () => {
-      spectator.detectChanges(); // Ensure the view is updated
+      spectator.detectChanges();
       const title = spectator.query('h3');
       expect(title).toHaveText('Log Details');
     });
 
-    it('shows details for the selected audit entry', async () => {
-      await table.clickRow(1);
+    it('shows details for the selected audit entry', () => {
+      spectator.detectChanges();
+      const cells = spectator.queryAll<HTMLElement>('.clickable-cell');
+      // 5 columns × 2 rows = 10 cells; second row starts at index 5.
+      cells[5].click();
+      spectator.detectChanges();
 
       const details = spectator.query(LogDetailsPanelComponent)!;
       expect(details.log).toEqual(auditEntries[1]);

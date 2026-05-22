@@ -3,8 +3,6 @@
 @import 'mixins/text';
 
 .audit-table {
-  cursor: pointer;
-
   ::ng-deep {
     .tn-table__table {
       table-layout: fixed;
@@ -17,12 +15,30 @@
     .tn-table__cell {
       white-space: normal;
       overflow: hidden;
+      padding: 0;
     }
 
     .cell-clamp {
       @include line-clamp(2);
     }
   }
+}
+
+.clickable-cell {
+  cursor: pointer;
+  display: block;
+  height: 100%;
+  padding: 0 16px;
+
+  &.active {
+    background-color: var(--tn-alt-bg1);
+  }
+}
+
+.user-avatar.clickable-cell,
+.event-data.clickable-cell {
+  align-items: center;
+  display: flex;
 }
 
 .event-data {
