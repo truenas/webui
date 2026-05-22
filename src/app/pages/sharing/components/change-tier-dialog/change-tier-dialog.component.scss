@@ -1,0 +1,85 @@
+:host {
+  display: block;
+  min-width: min(360px, 100%);
+  max-width: min(420px, 90vw);
+}
+
+.dataset-name {
+  margin-bottom: 16px;
+}
+
+.share-usage {
+  margin-bottom: 16px;
+
+  .services {
+    list-style-type: none;
+    margin: 8px 0 0;
+    padding: 0;
+
+    > li + li {
+      margin-top: 6px;
+    }
+
+    .service-name {
+      font-weight: bold;
+    }
+
+    .service-shares {
+      list-style-type: disc;
+      margin: 2px 0 0;
+      padding-left: 20px;
+    }
+  }
+}
+
+.tier-change {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .arrow {
+    font-size: 18px;
+    margin-top: 4px;
+  }
+}
+
+.tier-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tier-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+
+  &.current {
+    background: var(--alt-bg2);
+  }
+
+  &.new {
+    background: var(--primary);
+    color: var(--primary-txt);
+  }
+}
+
+.tier-space {
+  font-size: 12px;
+  color: var(--fg2);
+}
+
+.rewrite-size {
+  margin-bottom: 8px;
+}
+
+.snapshot-note {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--orange);
+}

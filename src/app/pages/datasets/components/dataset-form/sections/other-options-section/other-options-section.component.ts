@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -48,6 +48,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -76,7 +77,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   protected formatter = inject(IxFormatterService);
   private api = inject(ApiService);
   private datasetFormService = inject(DatasetFormService);
+  private tierService = inject(SharingTierService);
   private destroyRef = inject(DestroyRef);
+
+  protected tierEnabled = signal(false);
 
   readonly parent = input<Dataset>();
   readonly existing = input<Dataset>();
@@ -193,6 +197,12 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.checkIfDedupIsSupported();
 
+    this.tierService.getTierConfig().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((config) => {
+      this.tierEnabled.set(config.enabled);
+    });
+
     this.form.controls.acltype.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.updateAclMode();
     });
@@ -231,14 +241,19 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       snapdir: values.snapdir ?? inherit,
     } as Record<string, unknown>;
 
-    // Handle special_small_block_size transformation
-    payload.special_small_block_size = transformSpecialSmallBlockSizeForPayload(
-      values.special_small_block_size,
-      values.special_small_block_size_custom,
-    );
+    if (this.tierEnabled()) {
+      delete payload.special_small_block_size;
+      delete payload.special_small_block_size_custom;
+    } else {
+      // Handle special_small_block_size transformation
+      payload.special_small_block_size = transformSpecialSmallBlockSizeForPayload(
+        values.special_small_block_size,
+        values.special_small_block_size_custom,
+      );
 
-    // Remove UI-only field
-    delete payload.special_small_block_size_custom;
+      // Remove UI-only field
+      delete payload.special_small_block_size_custom;
+    }
 
     if (values.acltype && [DatasetAclType.Posix, DatasetAclType.Off].includes(values.acltype)) {
       payload.aclmode = AclMode.Discard;

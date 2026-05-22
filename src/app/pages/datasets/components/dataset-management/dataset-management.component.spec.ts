@@ -13,6 +13,7 @@ import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/t
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('DatasetsManagementComponent', () => {
@@ -46,6 +47,10 @@ describe('DatasetsManagementComponent', () => {
         selectedBranch$: of(false),
         isLoading$: of(false),
         selectDatasetById: () => {},
+      }),
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+        tierEnabled: () => false,
       }),
     ],
   });

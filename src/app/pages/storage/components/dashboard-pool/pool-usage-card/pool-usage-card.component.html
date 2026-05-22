@@ -21,6 +21,8 @@
           class="gauge"
           [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
           [colorBlank]="chartBlankColor"
+          [segments]="chartSegments()"
+          [sublabel]="showTierBreakdown() ? ('Used' | translate) : ''"
           [width]="150"
           [height]="150"
           [label]="(usedPercentage() / 100 | percent: '1.0-1') || ''"
@@ -46,25 +48,123 @@
           </span>
         </div>
 
-        <ul class="list-caption">
-          <li class="item-caption">
-            <span class="used-caption">
-              <b>{{ 'Used' | translate }}:</b>
-              <span class="value-caption">
-                {{ ((poolStats()?.used || rootDataset().used.parsed) | ixFileSize) || ('Unknown' | translate) }}
+        @if (!showTierBreakdown()) {
+          <ul class="list-caption">
+            <li class="item-caption">
+              <span class="used-caption">
+                <b>{{ 'Used' | translate }}:</b>
+                <span class="value-caption">
+                  {{ used() | ixFileSize }}
+                </span>
               </span>
-            </span>
-          </li>
-          <li class="item-caption">
-            <span class="available-caption">
-              <b>{{ 'Available' | translate }}:</b>
-              <span class="value-caption">
-                {{ ((poolStats()?.available || rootDataset().available.parsed) | ixFileSize) || ('Unknown' | translate) }}
+            </li>
+            <li class="item-caption">
+              <span class="available-caption">
+                <b>{{ 'Available' | translate }}:</b>
+                <span class="value-caption">
+                  {{ available() | ixFileSize }}
+                </span>
               </span>
-            </span>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        }
       </div>
+
+      @if (showTierBreakdown()) {
+        <div class="tier-breakdown">
+          @if (tierBreakdown().performance.hasData) {
+            <div class="tier-row">
+              <div class="tier-header">
+                <span class="tier-name">{{ 'Performance' | translate }}</span>
+              </div>
+              <div
+                class="tier-bar-container"
+                role="img"
+                [attr.aria-label]="'Performance tier: {used} used, {available} available, {reserved} reserved' | translate: {
+                  used: performanceUsed() | ixFileSize,
+                  available: performanceAvailable() | ixFileSize,
+                  reserved: performanceReserved() | ixFileSize
+                }"
+              >
+                <div
+                  aria-hidden="true"
+                  class="tier-bar performance-used"
+                  [style.width.%]="tierBreakdown().performance.usedPercent"
+                ></div>
+                <div
+                  aria-hidden="true"
+                  class="tier-bar performance-available"
+                  [style.width.%]="tierBreakdown().performance.availablePercent"
+                ></div>
+                <div
+                  aria-hidden="true"
+                  class="tier-bar performance-reserved"
+                  [style.width.%]="tierBreakdown().performance.reservedPercent"
+                ></div>
+              </div>
+              <div class="tier-stats-detail">
+                <span class="stat-item">
+                  <span aria-hidden="true" class="stat-dot used"></span>
+                  {{ performanceUsed() | ixFileSize }} {{ 'Used' | translate }}
+                </span>
+                <span class="stat-item">
+                  <span aria-hidden="true" class="stat-dot available"></span>
+                  {{ performanceAvailable() | ixFileSize }} {{ 'Available' | translate }}
+                </span>
+                <span class="stat-item">
+                  <span aria-hidden="true" class="stat-dot reserved"></span>
+                  {{ performanceReserved() | ixFileSize }} {{ 'Reserved' | translate }}
+                </span>
+              </div>
+            </div>
+          } @else {
+            <div class="tier-row tier-empty">
+              <div class="tier-header">
+                <span class="tier-name">{{ 'Performance' | translate }}</span>
+              </div>
+              <span class="tier-empty-note">{{ 'No allocation yet' | translate }}</span>
+            </div>
+          }
+
+          @if (tierBreakdown().regular.hasData) {
+            <div class="tier-row">
+              <div class="tier-header">
+                <span class="tier-name">{{ 'Regular' | translate }}</span>
+              </div>
+              <div
+                class="tier-bar-container"
+                role="img"
+                [attr.aria-label]="'Regular tier: {used} used, {available} available' | translate: {
+                  used: regularUsed() | ixFileSize,
+                  available: regularAvailable() | ixFileSize
+                }"
+              >
+                <div
+                  aria-hidden="true"
+                  class="tier-bar regular-used"
+                  [style.width.%]="tierBreakdown().regular.usedPercent"
+                ></div>
+                <div
+                  aria-hidden="true"
+                  class="tier-bar regular-available"
+                  [style.width.%]="tierBreakdown().regular.availablePercent"
+                ></div>
+              </div>
+              <div class="tier-stats-detail">
+                <span class="stat-item">
+                  <span aria-hidden="true" class="stat-dot regular-used"></span>
+                  {{ regularUsed() | ixFileSize }} {{ 'Used' | translate }}
+                </span>
+                <span class="stat-item">
+                  <span aria-hidden="true" class="stat-dot regular-available"></span>
+                  {{ regularAvailable() | ixFileSize }} {{ 'Available' | translate }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
       <a
         class="link"
         [ixTest]="[poolState().name, 'view-disk-reports']"
