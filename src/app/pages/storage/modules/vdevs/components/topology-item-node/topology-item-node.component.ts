@@ -75,23 +75,27 @@ export class TopologyItemNodeComponent {
     }
   });
 
-  // Worst-severity status reached by walking this item's descendants (not the item itself).
-  // Drives the warning icon next to the VDEV name on collapsed parent rows so a failing
-  // child disk doesn't get hidden behind a DEGRADED parent badge in the tree view.
-  // The parent's own `status` text/badge stays exactly as reported by `pool.query` /
-  // `zpool status` — this is purely a visual scannability hint.
-  private readonly worstDescendantSeverity = computed(() => {
-    return computeWorstDescendantSeverity(this.topologyItem());
-  });
+  // Walks this item's descendants (not the item itself) to find the worst-status leaf and the
+  // total count of non-optimal leaves. Drives the warning icon next to the VDEV name on
+  // collapsed parent rows so a failing child disk doesn't get hidden behind a DEGRADED parent
+  // badge in the tree view. The parent's own `status` text/badge stays exactly as reported by
+  // `pool.query` / `zpool status` — this is purely a visual scannability hint.
+  private readonly descendantWarning = computed(() => collectDescendantWarning(this.topologyItem()));
 
-  protected readonly hasDescendantWarning = computed(() => this.worstDescendantSeverity() > 0);
+  protected readonly hasDescendantWarning = computed(() => this.descendantWarning().count > 0);
 
   protected readonly descendantWarningClass = computed(() => {
-    return this.worstDescendantSeverity() >= criticalSeverity ? 'severity-critical' : 'severity-warning';
+    return statusSeverity(this.descendantWarning().worst) >= criticalSeverity
+      ? 'severity-critical'
+      : 'severity-warning';
   });
 
   protected readonly descendantWarningTooltip = computed(() => {
-    return this.translate.instant('A disk inside this VDEV is not optimal. Expand to see details.');
+    const { count, worst } = this.descendantWarning();
+    return this.translate.instant(
+      '{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal.}} Expand for details.',
+      { count, worst },
+    );
   });
 
   private readonly isDisk = computed(() => {
@@ -114,10 +118,26 @@ function statusSeverity(status: TopologyItemStatus | undefined): number {
   }
 }
 
-function computeWorstDescendantSeverity(item: VDevItem): number {
-  let worst = 0;
+interface DescendantWarning {
+  count: number;
+  worst: TopologyItemStatus | undefined;
+}
+
+function collectDescendantWarning(item: VDevItem): DescendantWarning {
+  let count = 0;
+  let worst: TopologyItemStatus | undefined;
   for (const child of item.children ?? []) {
-    worst = Math.max(worst, statusSeverity(child.status), computeWorstDescendantSeverity(child));
+    if (child.status && statusSeverity(child.status) > 0) {
+      count += 1;
+      if (statusSeverity(child.status) > statusSeverity(worst)) {
+        worst = child.status;
+      }
+    }
+    const fromChild = collectDescendantWarning(child);
+    count += fromChild.count;
+    if (statusSeverity(fromChild.worst) > statusSeverity(worst)) {
+      worst = fromChild.worst;
+    }
   }
-  return worst;
+  return { count, worst };
 }
