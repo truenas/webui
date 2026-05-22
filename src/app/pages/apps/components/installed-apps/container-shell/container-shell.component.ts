@@ -30,7 +30,6 @@ export class ContainerShellComponent implements TerminalConfiguration {
     return {
       app_name: this.appName,
       container_id: this.containerId,
-      command: '/bin/sh',
     };
   }
 

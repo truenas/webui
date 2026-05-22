@@ -73,7 +73,7 @@ describe('LicenseComponent', () => {
     expect(api.call).toHaveBeenCalledWith('truenas.license.upload', ['test-license']);
   });
 
-  it('shows a warning that UI needs to be reloaded and reloads it after dialog is closed', async () => {
+  it('shows a confirmation dialog and reloads the page when the user confirms', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({} as DialogWithSecondaryCheckboxResult));
 
     const form = await loader.getHarness(IxFormHarness);
@@ -88,7 +88,7 @@ describe('LicenseComponent', () => {
       title: helptext.updateLicense.reloadDialogTitle,
       message: helptext.updateLicense.reloadDialogMessage,
     }));
-
+    expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
     expect(spectator.inject<Window>(WINDOW).location.reload).toHaveBeenCalled();
   });
 });

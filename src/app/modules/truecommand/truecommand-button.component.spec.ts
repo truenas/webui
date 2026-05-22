@@ -6,7 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -57,13 +57,6 @@ describe('TruecommandButtonComponent', () => {
           })),
         }),
         mockProvider(MatDialogRef),
-        mockProvider(TnSpriteLoaderService, {
-          ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
-          getIconUrl: jest.fn(),
-          getSafeIconUrl: jest.fn(),
-          isSpriteLoaded: jest.fn(() => true),
-          getSpriteConfig: jest.fn(),
-        }),
       ],
     });
   }
@@ -102,6 +95,16 @@ describe('TruecommandButtonComponent', () => {
           );
         }
       });
+
+      it(`shows the expected badge for ${status}`, () => {
+        const badge = spectator.query<HTMLElement>('ix-status-badge');
+        if (status === TrueCommandStatus.Connecting) {
+          expect(badge).toExist();
+          expect(badge?.style.background).toBe('var(--yellow)');
+        } else {
+          expect(badge).not.toExist();
+        }
+      });
     });
   });
 
@@ -134,6 +137,19 @@ describe('TruecommandButtonComponent', () => {
         expect(spectator.query(expectedButtonId)).toBeVisible();
         const icon = await loader.getHarness(TnIconHarness.with({ name: 'tn-truecommand-logo-mark' }));
         expect(icon).toBeTruthy();
+      });
+
+      it(`shows the expected status badge for status '${status}'`, () => {
+        const badge = spectator.query<HTMLElement>('ix-status-badge');
+        if (status === TrueCommandStatus.Connected) {
+          expect(badge).toExist();
+          expect(badge?.style.background).toBe('var(--green)');
+        } else if (status === TrueCommandStatus.Failed) {
+          expect(badge).toExist();
+          expect(badge?.style.background).toBe('var(--red)');
+        } else {
+          expect(badge).not.toExist();
+        }
       });
 
       it(`shows status modal when user clicks on the ${expectedButtonId} button`, () => {

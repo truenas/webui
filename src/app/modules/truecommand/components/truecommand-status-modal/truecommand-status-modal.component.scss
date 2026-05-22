@@ -3,8 +3,42 @@
   margin-top: 10px;
 }
 
+.status-header {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.status-label {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.status-reason {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.tc-ip {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.tc-ip-label {
+  font-weight: 500;
+}
+
+.tc-ip-icon {
+  flex-shrink: 0;
+  height: 21px;
+  width: 21px;
+}
+
 tn-icon.status-connected {
-  color: var(--blue);
+  color: var(--green);
 }
 
 tn-icon.status-failed {
@@ -13,16 +47,4 @@ tn-icon.status-failed {
 
 tn-icon.status-disabled {
   color: var(--grey);
-}
-
-tn-icon.tc-icon {
-  height: 21px;
-  padding: 2px 0 2px 2px;
-  width: 21px;
-}
-
-div.tc-dialog-content tn-icon {
-  margin-right: 10px;
-  position: relative;
-  top: 5px;
 }

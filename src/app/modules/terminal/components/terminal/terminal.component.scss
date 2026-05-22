@@ -2,11 +2,18 @@
   @import '@xterm/xterm/css/xterm';
 }
 
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .terminal-wrapper {
   background: black;
-  height: calc(100% - 105px);
+  flex: 1 1 auto;
   margin-left: 8px;
   margin-right: 8px;
+  min-height: 0;
   padding: 10px 0 10px 10px;
   position: relative;
 }

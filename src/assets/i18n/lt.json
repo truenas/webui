@@ -650,7 +650,7 @@
   "At least one network (IPv4 or IPv6) must be specified.": "",
   "At least one pool must be available to use apps": "",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "",
+  "At least {min} disk(s) are required for {vdevType} vdevs": "",
   "Attach": "",
   "Attach additional images": "",
   "Attach debug": "",

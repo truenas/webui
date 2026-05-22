@@ -20,7 +20,6 @@ export type TerminalConnectionData
   | {
     app_name: string;
     container_id: string;
-    command: string;
   }
   // No params
   | Record<string, never>;
