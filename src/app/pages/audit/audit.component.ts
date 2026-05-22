@@ -118,7 +118,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     this.dataProvider.setSorting({
       propertyName: 'message_timestamp',
       direction: SortDirection.Desc,
-      active: 1,
+      active: 2,
     }, true);
     this.dataProvider.currentPage$
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))

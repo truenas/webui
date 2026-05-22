@@ -108,6 +108,8 @@ export class AuditListComponent {
           description: T('No matching results found'),
           icon: 'mdi-magnify-scan',
         };
+      case EmptyType.FirstUse:
+      case EmptyType.NoPageData:
       default:
         return { title: T('No records have been added yet'), icon: 'mdi-format-list-text' };
     }

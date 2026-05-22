@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnIconButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnIconButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -423,8 +423,8 @@ describe('AuditSearchComponent', () => {
 
   describe('accessibility', () => {
     it('should have aria-label on format selector button', () => {
-      const button = spectator.query('[ixTest="export-format-selector"] button');
-      expect(button.getAttribute('aria-label')).toBe('Select Export Format');
+      const iconButton = spectator.query(TnIconButtonComponent)!;
+      expect(iconButton.ariaLabel()).toBe('Select Export Format');
     });
 
     it('should pass dynamic aria-label to ExportButtonComponent', () => {
