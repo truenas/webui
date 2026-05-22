@@ -42,6 +42,9 @@ export class SharingTierService {
   private tierEnabledSignal = signal(false);
   readonly tierEnabled = this.tierEnabledSignal.asReadonly();
 
+  private metadataReservePctSignal = signal(0);
+  readonly metadataReservePct = this.metadataReservePctSignal.asReadonly();
+
   getTierConfig(): Observable<ZfsTierConfig> {
     if (!this.tierConfig$) {
       // Auto-retry transient failures (websocket reconnect at boot, slow
@@ -53,7 +56,10 @@ export class SharingTierService {
         // 1s, 2s, 4s exponential backoff before giving up.
         retry({ count: 3, delay: (_err, attempt) => timer(2 ** (attempt - 1) * 1000) }),
         catchError(() => of({ enabled: false } as ZfsTierConfig)),
-        tap((config) => this.tierEnabledSignal.set(config.enabled)),
+        tap((config) => {
+          this.tierEnabledSignal.set(config.enabled);
+          this.metadataReservePctSignal.set(config.special_class_metadata_reserve_pct ?? 0);
+        }),
         shareReplay({ bufferSize: 1, refCount: false }),
       );
     }
@@ -63,6 +69,7 @@ export class SharingTierService {
   invalidate(): void {
     this.tierConfig$ = null;
     this.tierEnabledSignal.set(false);
+    this.metadataReservePctSignal.set(0);
   }
 
   subscribeTierJobUpdates(): Observable<ZfsTierRewriteJobEntry> {

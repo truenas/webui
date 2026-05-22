@@ -21,6 +21,7 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
   const tierEnabled = signal(false);
+  const metadataReservePct = signal(0);
 
   const createComponent = createComponentFactory({
     component: PoolUsageCardComponent,
@@ -36,7 +37,11 @@ describe('PoolUsageCardComponent', () => {
       ThemeService,
       mockProvider(SharingTierService, {
         tierEnabled,
-        getTierConfig: () => of({ enabled: tierEnabled() }),
+        metadataReservePct,
+        getTierConfig: () => of({
+          enabled: tierEnabled(),
+          special_class_metadata_reserve_pct: metadataReservePct(),
+        }),
       }),
       provideMockStore({
         selectors: [
@@ -58,6 +63,7 @@ describe('PoolUsageCardComponent', () => {
 
   beforeEach(() => {
     tierEnabled.set(false);
+    metadataReservePct.set(0);
     spectator = createComponent({
       props: {
         poolState: {
@@ -164,6 +170,9 @@ describe('PoolUsageCardComponent', () => {
 
   it('shows tier breakdown when tiering is enabled and pool has special vdev', () => {
     tierEnabled.set(true);
+    // usable 2 GiB, reserve 25% => 512 MiB reserved; display available =
+    // raw available (1.5 GiB) - reserve (512 MiB) = 1 GiB.
+    metadataReservePct.set(25);
 
     spectator.setInput('poolState', {
       healthy: true,
@@ -173,7 +182,7 @@ describe('PoolUsageCardComponent', () => {
       available: 2510301010,
       special_class_used: 536870912,
       special_class_available: 1610612736,
-      special_class_reserved: 268435456,
+      special_class_usable: 2147483648,
       topology: {
         data: [{
           disk: 'sda',
@@ -200,12 +209,58 @@ describe('PoolUsageCardComponent', () => {
     const performanceStatItems = tierRows[0].querySelectorAll('.stat-item');
     expect(performanceStatItems).toHaveLength(3);
     expect(performanceStatItems[0]).toHaveText('512 MiB Used');
-    expect(performanceStatItems[1]).toHaveText('1.5 GiB Available');
-    expect(performanceStatItems[2]).toHaveText('256 MiB Reserved');
+    expect(performanceStatItems[1]).toHaveText('1 GiB Available');
+    expect(performanceStatItems[2]).toHaveText('512 MiB Reserved');
 
     const regularStatItems = tierRows[1].querySelectorAll('.stat-item');
     expect(regularStatItems).toHaveLength(2);
     expect(regularStatItems[0]).toHaveText('3.15 GiB Used');
     expect(regularStatItems[1]).toHaveText('2.34 GiB Available');
+  });
+
+  it('shows used eating into the reserve when usage crosses the threshold', () => {
+    tierEnabled.set(true);
+    // usable 2 GiB, reserve 25% => threshold at 1.5 GiB. Used is 1.75 GiB, so it
+    // has crossed 0.25 GiB (12.5% of usable) into the reserve.
+    metadataReservePct.set(25);
+
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 3384541603,
+      available: 2510301010,
+      special_class_used: 1879048192,
+      special_class_available: 268435456,
+      special_class_usable: 2147483648,
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+        special: [{
+          disk: 'nvme0',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    // Reserve zone is a fixed-width striped overlay (25% of usable). The Used bar
+    // runs past the 75% threshold to 87.5%, so it slides under the reserve zone —
+    // that overlap is the usage eating into the reserve.
+    const reserveZone = spectator.query('.reserve-zone');
+    expect(reserveZone).toExist();
+    expect(reserveZone!.getAttribute('style')).toContain('width: 25%');
+
+    const usedBar = spectator.query('.performance-used');
+    expect(usedBar!.getAttribute('style')).toContain('width: 87.5%');
+
+    const performanceStatItems = spectator.queryAll('.tier-row')[0].querySelectorAll('.stat-item');
+    expect(performanceStatItems[0]).toHaveText('1.75 GiB Used');
+    expect(performanceStatItems[1]).toHaveText('0 B Available');
+    expect(performanceStatItems[2]).toHaveText('512 MiB Reserved');
   });
 });

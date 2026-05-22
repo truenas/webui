@@ -163,7 +163,7 @@ describe('PoolsDashboardStore', () => {
     });
   });
 
-  it('returns 0 for special_class_reserved when class_special_usable is absent', () => {
+  it('returns 0 for special_class_usable when class_special_usable is absent', () => {
     testScheduler.run(({ cold, expectObservable }) => {
       const mockedApi = spectator.inject(ApiService);
       const pools = [
@@ -213,7 +213,9 @@ describe('PoolsDashboardStore', () => {
         b: [
           expect.objectContaining({
             name: 'pool1',
-            special_class_reserved: 0,
+            special_class_usable: 0,
+            special_class_used: 50,
+            special_class_available: 100,
           }),
         ],
       });

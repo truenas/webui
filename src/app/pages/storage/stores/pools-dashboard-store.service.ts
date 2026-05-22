@@ -113,22 +113,16 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           const zpool = zpoolsByName[pool.name];
           if (!zpool) return pool;
           const toBytes = (raw: number | string | undefined | null): number => Number(raw ?? 0);
-          const specialUsable = zpool.properties.class_special_usable?.value;
-          const specialReserved = specialUsable === undefined || specialUsable === null
-            ? 0
-            : Math.max(
-                0,
-                Number(specialUsable)
-                - toBytes(zpool.properties.class_special_available?.value)
-                - toBytes(zpool.properties.class_special_used?.value),
-              );
+          // The metadata reserve is derived in the Usage card from
+          // zfs.tier.config (special_class_metadata_reserve_pct), so the raw
+          // ZFS values are passed through here untouched.
           return {
             ...pool,
             used: toBytes(zpool.properties.class_normal_used?.value) || pool.used,
             available: toBytes(zpool.properties.class_normal_available?.value) || pool.available,
             special_class_used: toBytes(zpool.properties.class_special_used?.value),
             special_class_available: toBytes(zpool.properties.class_special_available?.value),
-            special_class_reserved: specialReserved,
+            special_class_usable: toBytes(zpool.properties.class_special_usable?.value),
           };
         });
         this.patchState({

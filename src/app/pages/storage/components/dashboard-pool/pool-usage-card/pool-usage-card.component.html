@@ -80,12 +80,19 @@
               <div
                 class="tier-bar-container"
                 role="img"
-                [attr.aria-label]="'Performance tier: {used} used, {available} available, {reserved} reserved' | translate: {
+                [attr.aria-label]="'Performance tier: {used} used, {available} available, {reserved} reserved for metadata' | translate: {
                   used: performanceUsed() | ixFileSize,
                   available: performanceAvailable() | ixFileSize,
                   reserved: performanceReserved() | ixFileSize
                 }"
               >
+                @if (tierBreakdown().performance.reservedPercent > 0) {
+                  <div
+                    aria-hidden="true"
+                    class="reserve-zone"
+                    [style.width.%]="tierBreakdown().performance.reservedPercent"
+                  ></div>
+                }
                 <div
                   aria-hidden="true"
                   class="tier-bar performance-used"
@@ -95,11 +102,6 @@
                   aria-hidden="true"
                   class="tier-bar performance-available"
                   [style.width.%]="tierBreakdown().performance.availablePercent"
-                ></div>
-                <div
-                  aria-hidden="true"
-                  class="tier-bar performance-reserved"
-                  [style.width.%]="tierBreakdown().performance.reservedPercent"
                 ></div>
               </div>
               <div class="tier-stats-detail">
