@@ -23,9 +23,9 @@ import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
 import {
-  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
+  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler, TranslateService,
 } from '@ngx-translate/core';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TN_TABLE_PAGER_LABELS, TnSpriteLoaderService, type TnTablePagerLabels } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -120,6 +120,18 @@ bootstrapApplication(AppComponent, {
     {
       provide: WINDOW,
       useFactory: getWindow,
+    },
+    {
+      provide: TN_TABLE_PAGER_LABELS,
+      useFactory: (translate: TranslateService): TnTablePagerLabels => ({
+        itemsPerPage: translate.instant('Items per page'),
+        of: translate.instant('of'),
+        firstPage: translate.instant('First Page'),
+        previousPage: translate.instant('Previous Page'),
+        nextPage: translate.instant('Next Page'),
+        lastPage: translate.instant('Last Page'),
+      }),
+      deps: [TranslateService],
     },
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);

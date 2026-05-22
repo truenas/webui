@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -12,7 +12,6 @@ import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -34,7 +33,7 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     MatTooltip,
     UiSearchDirective,
     AuditSearchComponent,

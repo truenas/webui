@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnTablePagerComponent } from '@truenas/ui-components';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -11,7 +12,6 @@ import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/ce
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
@@ -32,7 +32,7 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     IxTableCellDirective,
     UsersSearchComponent,
     UserAccessCellComponent,

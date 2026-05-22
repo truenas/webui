@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   map, shareReplay, take,
@@ -29,7 +29,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -54,7 +53,7 @@ import { privilegesListElements } from 'app/pages/credentials/privileges/privile
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
