@@ -10,10 +10,12 @@
       <span>{{ name() }}</span>
       @if (hasDescendantWarning()) {
         <tn-icon
+          role="img"
           name="alert-circle"
           library="mdi"
           class="descendant-warning-icon"
           [ngClass]="descendantWarningClass()"
+          [attr.aria-label]="descendantWarningTooltip()"
           [matTooltip]="descendantWarningTooltip()"
         ></tn-icon>
       }

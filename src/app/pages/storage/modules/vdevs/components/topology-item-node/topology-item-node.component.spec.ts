@@ -76,29 +76,13 @@ describe('TopologyItemNodeComponent', () => {
   });
 
   describe('descendant warning icon', () => {
-    const onlineChild = {
+    const child = (status: TopologyItemStatus): TopologyDisk => ({
       type: TopologyItemType.Disk,
-      status: TopologyItemStatus.Online,
+      status,
       children: [] as TopologyDisk[],
-    } as TopologyDisk;
+    } as TopologyDisk);
 
-    const offlineChild = {
-      type: TopologyItemType.Disk,
-      status: TopologyItemStatus.Offline,
-      children: [] as TopologyDisk[],
-    } as TopologyDisk;
-
-    const unavailChild = {
-      type: TopologyItemType.Disk,
-      status: TopologyItemStatus.Unavail,
-      children: [] as TopologyDisk[],
-    } as TopologyDisk;
-
-    const faultedChild = {
-      type: TopologyItemType.Disk,
-      status: TopologyItemStatus.Faulted,
-      children: [] as TopologyDisk[],
-    } as TopologyDisk;
+    const onlineChild = child(TopologyItemStatus.Online);
 
     const buildVdev = (children: TopologyDisk[]): VDev => ({
       type: TopologyItemType.Raidz3,
@@ -116,32 +100,64 @@ describe('TopologyItemNodeComponent', () => {
       expect(spectator.query('.descendant-warning-icon')).toBeNull();
     });
 
-    it('shows a yellow warning icon when worst descendant is DEGRADED/OFFLINE/REMOVED', () => {
-      spectator.setInput('topologyItem', buildVdev([onlineChild, offlineChild]));
-      const icon = spectator.query('.descendant-warning-icon');
-      expect(icon).not.toBeNull();
-      expect(icon).toHaveClass('severity-warning');
-      expect(icon).not.toHaveClass('severity-critical');
+    // Locks in the severity table: critical (red) for FAULTED/UNAVAIL, warning (yellow) for
+    // DEGRADED/OFFLINE/REMOVED. If anyone touches statusSeverity these will catch the drift.
+    const severityTable: { status: TopologyItemStatus; expectedClass: string }[] = [
+      { status: TopologyItemStatus.Faulted, expectedClass: 'severity-critical' },
+      { status: TopologyItemStatus.Unavail, expectedClass: 'severity-critical' },
+      { status: TopologyItemStatus.Degraded, expectedClass: 'severity-warning' },
+      { status: TopologyItemStatus.Offline, expectedClass: 'severity-warning' },
+      { status: TopologyItemStatus.Removed, expectedClass: 'severity-warning' },
+    ];
+
+    severityTable.forEach(({ status, expectedClass }) => {
+      it(`renders a ${expectedClass} icon when a descendant is ${status}`, () => {
+        spectator.setInput('topologyItem', buildVdev([onlineChild, child(status)]));
+        const icon = spectator.query('.descendant-warning-icon');
+        expect(icon).not.toBeNull();
+        expect(icon).toHaveClass(expectedClass);
+        const otherClass = expectedClass === 'severity-critical' ? 'severity-warning' : 'severity-critical';
+        expect(icon).not.toHaveClass(otherClass);
+      });
     });
 
-    it('shows a red warning icon when any descendant is UNAVAIL', () => {
-      spectator.setInput('topologyItem', buildVdev([onlineChild, unavailChild]));
-      const icon = spectator.query('.descendant-warning-icon');
-      expect(icon).not.toBeNull();
-      expect(icon).toHaveClass('severity-critical');
-    });
-
-    it('shows a red warning icon when any descendant is FAULTED', () => {
-      spectator.setInput('topologyItem', buildVdev([onlineChild, faultedChild]));
+    it('escalates to critical when a mixed set of children contains FAULTED', () => {
+      spectator.setInput('topologyItem', buildVdev([
+        child(TopologyItemStatus.Degraded),
+        child(TopologyItemStatus.Faulted),
+        child(TopologyItemStatus.Offline),
+      ]));
       expect(spectator.query('.descendant-warning-icon')).toHaveClass('severity-critical');
     });
 
     it('does not change the parent status text/badge — that stays as reported by the API', () => {
       // The parent VDEV's own status (e.g. DEGRADED) must keep showing in the status cell.
       // The icon is a separate scannability hint and never modifies what zpool reports.
-      spectator.setInput('topologyItem', buildVdev([onlineChild, unavailChild]));
+      spectator.setInput('topologyItem', buildVdev([onlineChild, child(TopologyItemStatus.Unavail)]));
       expect(spectator.query('.cell-status span')).toHaveText(TopologyItemStatus.Degraded);
       expect(spectator.query('.cell-status')).toHaveClass('fn-theme-yellow');
+    });
+
+    it('exposes count + worst status in the tooltip and aria-label (single)', () => {
+      spectator.setInput('topologyItem', buildVdev([onlineChild, child(TopologyItemStatus.Faulted)]));
+      const icon = spectator.query('.descendant-warning-icon');
+      const tooltip = icon!.getAttribute('ng-reflect-message') || icon!.getAttribute('aria-label')!;
+      expect(tooltip).toContain('1 disk');
+      expect(tooltip).toContain(TopologyItemStatus.Faulted);
+      expect(icon!.getAttribute('aria-label')).toContain(TopologyItemStatus.Faulted);
+      expect(icon!.getAttribute('role')).toBe('img');
+    });
+
+    it('pluralizes the tooltip when multiple descendants are non-optimal', () => {
+      spectator.setInput('topologyItem', buildVdev([
+        child(TopologyItemStatus.Degraded),
+        child(TopologyItemStatus.Offline),
+        child(TopologyItemStatus.Faulted),
+      ]));
+      const icon = spectator.query('.descendant-warning-icon');
+      const aria = icon!.getAttribute('aria-label')!;
+      expect(aria).toContain('3 disks');
+      expect(aria).toContain('non-optimal');
     });
   });
 });
