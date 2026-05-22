@@ -51,6 +51,7 @@ export class PoolUsageCardComponent implements OnInit {
   readonly poolState = input.required<Pool>();
 
   protected readonly tierEnabled = this.tierService.tierEnabled;
+  protected readonly reservePct = this.tierService.metadataReservePct;
 
   chartLowCapacityColor: string;
   chartFillColor: string;
@@ -81,7 +82,9 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected capacity = computed(() => {
-    return this.used() + this.available() + this.performanceReserved();
+    // Usable Capacity excludes the metadata reserve: available() already has the
+    // reserve subtracted, and used() + available() is the space usable for data.
+    return this.used() + this.available();
   });
 
   protected usedPercentage = computed(() => {
@@ -134,12 +137,26 @@ export class PoolUsageCardComponent implements OnInit {
     return this.poolState().special_class_used || 0;
   });
 
-  protected performanceAvailable = computed(() => {
+  // Raw special-vdev free space from ZFS, before the metadata reserve is carved out.
+  private rawPerformanceAvailable = computed(() => {
     return this.poolState().special_class_available || 0;
   });
 
+  protected performanceUsable = computed(() => {
+    return this.poolState().special_class_usable || (this.performanceUsed() + this.rawPerformanceAvailable());
+  });
+
+  // Reserve set aside for metadata once usage crosses the threshold; derived from
+  // zfs.tier.config (special_class_metadata_reserve_pct), so it only applies when tiering is on.
   protected performanceReserved = computed(() => {
-    return Math.max(0, this.poolState().special_class_reserved || 0);
+    if (!this.tierEnabled()) {
+      return 0;
+    }
+    return Math.max(0, (this.performanceUsable() * this.reservePct()) / 100);
+  });
+
+  protected performanceAvailable = computed(() => {
+    return Math.max(0, this.rawPerformanceAvailable() - this.performanceReserved());
   });
 
   protected regularUsed = computed(() => {
@@ -151,15 +168,23 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected tierBreakdown = computed(() => {
-    const performanceTotal = this.performanceUsed() + this.performanceAvailable() + this.performanceReserved();
+    // Performance widths are relative to usable capacity so the reserve occupies
+    // a fixed rightmost zone (reservedPercent) that the used bar overlays as it
+    // grows past the threshold. Used is clamped so it can't overflow the bar.
+    const performanceUsable = this.performanceUsable();
     const regularTotal = this.regularUsed() + this.regularAvailable();
     const pct = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0);
+
+    // Widths are relative to usable so the reserve is a fixed-width striped zone
+    // pinned to the right. The Used bar runs the full usedPercent and slides
+    // under that zone, so green showing through the stripes is usage that has
+    // eaten into the reserve.
     return {
       performance: {
-        hasData: performanceTotal > 0,
-        usedPercent: pct(this.performanceUsed(), performanceTotal),
-        availablePercent: pct(this.performanceAvailable(), performanceTotal),
-        reservedPercent: pct(this.performanceReserved(), performanceTotal),
+        hasData: performanceUsable > 0,
+        usedPercent: Math.min(100, pct(this.performanceUsed(), performanceUsable)),
+        availablePercent: pct(this.performanceAvailable(), performanceUsable),
+        reservedPercent: Math.min(100, pct(this.performanceReserved(), performanceUsable)),
       },
       regular: {
         hasData: regularTotal > 0,
