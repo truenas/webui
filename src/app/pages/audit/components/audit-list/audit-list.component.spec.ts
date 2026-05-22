@@ -3,7 +3,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
@@ -24,7 +23,6 @@ describe('AuditListComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockProvider(EmptyService),
       provideMockStore({
         selectors: [
           {

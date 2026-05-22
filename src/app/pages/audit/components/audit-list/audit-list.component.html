@@ -1,9 +1,12 @@
 <ix-audit-search [dataProvider]="dataProvider()"></ix-audit-search>
 
 @if ((dataProvider().currentPageCount$ | async) === 0) {
-  <ix-empty
-    [conf]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
-  ></ix-empty>
+  @let emptyAttrs = getEmptyAttrs(dataProvider().emptyType$ | async);
+  <tn-empty
+    [title]="emptyAttrs.title | translate"
+    [description]="emptyAttrs.description ? (emptyAttrs.description | translate) : ''"
+    [icon]="emptyAttrs.icon"
+  ></tn-empty>
 } @else {
   <tn-table
     class="audit-table"

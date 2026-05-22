@@ -5,6 +5,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCellDefDirective,
+  TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
   TnTableColumnDirective,
@@ -14,10 +15,9 @@ import {
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditEventLabels, auditServiceLabels } from 'app/enums/audit.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
@@ -35,11 +35,11 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
   imports: [
     AsyncPipe,
     AuditSearchComponent,
-    EmptyComponent,
     FormatDateTimePipe,
     GetLogImportantDataPipe,
     IxTablePagerComponent,
     TnCellDefDirective,
+    TnEmptyComponent,
     TnHeaderCellDefDirective,
     TnIconComponent,
     TnTableColumnDirective,
@@ -51,7 +51,6 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
   ],
 })
 export class AuditListComponent {
-  protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
 
   readonly dataProvider = input.required<AuditApiDataProvider>();
@@ -89,5 +88,22 @@ export class AuditListComponent {
   protected onRowClick(row: AuditEntry): void {
     this.dataProvider().expandedRow = row;
     this.toggleShowMobileDetails.emit(true);
+  }
+
+  protected getEmptyAttrs(emptyType: EmptyType | null): { title: string; description?: string; icon: string } {
+    switch (emptyType) {
+      case EmptyType.Loading:
+        return { title: 'Loading...', icon: 'mdi-loading' };
+      case EmptyType.Errors:
+        return { title: 'Cannot retrieve response', icon: 'mdi-alert-octagon' };
+      case EmptyType.NoSearchResults:
+        return {
+          title: 'No Search Results.',
+          description: 'No matching results found',
+          icon: 'mdi-magnify-scan',
+        };
+      default:
+        return { title: 'No records have been added yet', icon: 'mdi-format-list-text' };
+    }
   }
 }

@@ -11,7 +11,6 @@ import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -47,7 +46,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 })
 export class AuditComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
-  protected emptyService = inject(EmptyService);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
