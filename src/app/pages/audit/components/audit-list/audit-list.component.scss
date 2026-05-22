@@ -1,8 +1,28 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
+@import 'mixins/text';
 
 .audit-table {
   cursor: pointer;
+
+  ::ng-deep {
+    .tn-table__table {
+      table-layout: fixed;
+    }
+
+    .tn-table__row {
+      height: 48px;
+    }
+
+    .tn-table__cell {
+      white-space: normal;
+      overflow: hidden;
+    }
+
+    .cell-clamp {
+      @include line-clamp(2);
+    }
+  }
 }
 
 .event-data {

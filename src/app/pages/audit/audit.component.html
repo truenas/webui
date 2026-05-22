@@ -1,12 +1,19 @@
 <ix-page-header>
   @if (isHaLicensed()) {
-    <ix-button-group
-      [formControl]="controllerTypeControl"
-      [label]="'Controller' | translate"
-      [options]="controllerTypeOptions$"
-      [inlineFields]="true"
-      [attr.aria-label]="'Controller Type' | translate"
-    ></ix-button-group>
+    <label class="controller-toggle">
+      <span class="controller-toggle__label">{{ 'Controller' | translate }}</span>
+      <tn-button-toggle-group
+        [formControl]="controllerTypeControl"
+        [ariaLabel]="'Controller Type' | translate"
+      >
+        @for (option of controllerTypeOptions; track option.value) {
+          <tn-button-toggle
+            [value]="option.value"
+            [ariaLabel]="option.label"
+          >{{ option.label }}</tn-button-toggle>
+        }
+      </tn-button-toggle-group>
+    </label>
   }
 
   <tn-button

@@ -2,19 +2,16 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, computed, inject, input, output,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCellDefDirective,
   TnHeaderCellDefDirective,
   TnIconComponent,
-  TnProgressBarComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditEventLabels, auditServiceLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -45,7 +42,6 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
     TnCellDefDirective,
     TnHeaderCellDefDirective,
     TnIconComponent,
-    TnProgressBarComponent,
     TnTableColumnDirective,
     TnTableComponent,
     TnTooltipDirective,
@@ -65,12 +61,6 @@ export class AuditListComponent {
   protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
-
-  // Mirror of the current page rows so a delegated click on a row index can resolve to the row object.
-  private readonly currentPage = toSignal(
-    toObservable(this.dataProvider).pipe(switchMap((dp) => dp.currentPage$)),
-    { initialValue: [] as AuditEntry[] },
-  );
 
   protected readonly trackByAuditId = (_: number, row: AuditEntry): string => row.audit_id;
 
@@ -96,14 +86,7 @@ export class AuditListComponent {
     } as TableSort<AuditEntry>);
   }
 
-  protected onTableClick(event: MouseEvent): void {
-    const tr = (event.target as HTMLElement).closest<HTMLTableRowElement>('tr.tn-table__row');
-    if (!tr) return;
-    const idx = Number(tr.getAttribute('data-row-index'));
-    if (Number.isNaN(idx)) return;
-    const row = this.currentPage()[idx];
-    if (!row) return;
-
+  protected onRowClick(row: AuditEntry): void {
     this.dataProvider().expandedRow = row;
     this.toggleShowMobileDetails.emit(true);
   }

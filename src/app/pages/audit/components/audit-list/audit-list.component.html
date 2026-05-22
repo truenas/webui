@@ -1,9 +1,5 @@
 <ix-audit-search [dataProvider]="dataProvider()"></ix-audit-search>
 
-@if (dataProvider().isLoading$ | async) {
-  <tn-progress-bar mode="indeterminate"></tn-progress-bar>
-}
-
 @if ((dataProvider().currentPageCount$ | async) === 0) {
   <ix-empty
     [conf]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
@@ -15,12 +11,18 @@
     [dataSource]="(dataProvider().currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByAuditId"
+    [activeRow]="dataProvider().expandedRow"
+    [loading]="!!(dataProvider().isLoading$ | async)"
+    [loadingMessage]="'Loading audit logs' | translate"
+    [clickable]="true"
     (sortChange)="onSortChange($event)"
-    (click)="onTableClick($event)"
+    (rowClick)="onRowClick($event)"
   >
     <ng-container [tnColumnDef]="'service'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ getServiceLabel(row) }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span class="cell-clamp">{{ getServiceLabel(row) }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'username'">
@@ -28,19 +30,23 @@
       <ng-template let-row tnCellDef>
         <div class="user-avatar" [tnTooltip]="row.username">
           <div [innerHTML]="row.username | userAvatar"></div>
-          <span>{{ row.username || '-' }}</span>
+          <span class="cell-clamp">{{ row.username || '-' }}</span>
         </div>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'message_timestamp'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Timestamp' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ row.message_timestamp * 1000 | formatDateTime }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span class="cell-clamp">{{ row.message_timestamp * 1000 | formatDateTime }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'event'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ getEventLabel(row) }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span class="cell-clamp">{{ getEventLabel(row) }}</span>
+      </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'event_data'">
@@ -52,7 +58,7 @@
           } @else {
             <tn-icon class="error-color" name="close-circle" library="mdi" customSize="15px"></tn-icon>
           }
-          <span>{{ row | getLogImportantData | translate }}</span>
+          <span class="cell-clamp">{{ row | getLogImportantData | translate }}</span>
         </div>
       </ng-template>
     </ng-container>

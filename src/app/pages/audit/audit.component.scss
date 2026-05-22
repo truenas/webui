@@ -40,3 +40,14 @@
   border-radius: 0;
   margin-bottom: 16px;
 }
+
+.controller-toggle {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+}
+
+.controller-toggle__label {
+  font-size: 14px;
+  font-weight: 500;
+}

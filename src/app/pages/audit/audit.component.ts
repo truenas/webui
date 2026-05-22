@@ -6,16 +6,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import {
-  filter,
-  of,
-} from 'rxjs';
+import { TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent } from '@truenas/ui-components';
+import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -39,11 +35,12 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     PageHeaderComponent,
     TestDirective,
     TnButtonComponent,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
     LogDetailsPanelComponent,
     TranslateModule,
     MasterDetailViewComponent,
     AuditListComponent,
-    IxButtonGroupComponent,
     ReactiveFormsModule,
     UiSearchDirective,
   ],
@@ -61,7 +58,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
-  protected readonly controllerTypeOptions$ = of(mapToOptions(controllerTypeLabels, this.translate));
+  protected readonly controllerTypeOptions = mapToOptions(controllerTypeLabels, this.translate);
   protected readonly controllerType = toSignal(this.controllerTypeControl.value$);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
