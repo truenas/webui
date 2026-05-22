@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import { catchError, EMPTY, switchMap } from 'rxjs';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
@@ -28,8 +27,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   styleUrls: ['./export-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatProgressBar,
-    MatButton,
+    TnButtonComponent,
+    TnProgressBarComponent,
     TranslateModule,
     TestDirective,
   ],

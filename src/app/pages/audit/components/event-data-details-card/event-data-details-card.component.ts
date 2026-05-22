@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { convertObjectKeysToHumanReadable } from 'app/helpers/object-keys-to-human-readable.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -15,9 +15,7 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CopyButtonComponent,
-    MatCard,
-    MatCardHeader,
-    MatCardContent,
+    TnCardComponent,
     TranslateModule,
   ],
 })

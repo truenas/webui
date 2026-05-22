@@ -1,17 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -24,6 +22,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 describe('AuditSearchComponent', () => {
   let spectator: Spectator<AuditSearchComponent>;
   let loader: HarnessLoader;
+  let rootLoader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: AuditSearchComponent,
@@ -66,6 +65,7 @@ describe('AuditSearchComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
   });
 
   describe('component initialization', () => {
@@ -112,32 +112,27 @@ describe('AuditSearchComponent', () => {
     });
 
     it('should open format menu when dropdown button is clicked', async () => {
-      const menuTrigger = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="export-format-selector"]' }));
+      const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      expect(await menu.isOpen()).toBe(true);
+      const menu = await rootLoader.getHarnessOrNull(TnMenuHarness);
+      expect(menu).not.toBeNull();
     });
 
     it('should have all three format options in menu', async () => {
-      const menuTrigger = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="export-format-selector"]' }));
+      const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      const items = await menu.getItems();
-
-      expect(items).toHaveLength(3);
-      expect(await items[0].getText()).toBe('CSV');
-      expect(await items[1].getText()).toBe('JSON');
-      expect(await items[2].getText()).toBe('YAML');
+      const menu = await rootLoader.getHarness(TnMenuHarness);
+      expect(await menu.getItemLabels()).toEqual(['CSV', 'JSON', 'YAML']);
     });
 
     it('should change format to JSON when JSON menu item is clicked', async () => {
-      const menuTrigger = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="export-format-selector"]' }));
+      const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.clickItem({ text: 'JSON' });
+      const menu = await rootLoader.getHarness(TnMenuHarness);
+      await menu.clickItem({ label: 'JSON' });
 
       spectator.detectChanges();
       const exportButton = spectator.query(ExportButtonComponent);
@@ -145,11 +140,11 @@ describe('AuditSearchComponent', () => {
     });
 
     it('should change format to YAML when YAML menu item is clicked', async () => {
-      const menuTrigger = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="export-format-selector"]' }));
+      const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.clickItem({ text: 'YAML' });
+      const menu = await rootLoader.getHarness(TnMenuHarness);
+      await menu.clickItem({ label: 'YAML' });
 
       spectator.detectChanges();
       const exportButton = spectator.query(ExportButtonComponent);
@@ -157,26 +152,22 @@ describe('AuditSearchComponent', () => {
     });
 
     it('should mark CSV as selected by default', async () => {
-      const menuTrigger = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="export-format-selector"]' }));
+      const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
 
-      spectator.detectChanges();
-      const selectedItems = spectator.queryAll('.mat-mdc-menu-item.selected');
-      expect(selectedItems).toHaveLength(1);
-      expect(selectedItems[0]).toHaveText('CSV');
+      const menu = await rootLoader.getHarness(TnMenuHarness);
+      expect(await menu.getSelectedItemLabel()).toBe('CSV');
     });
 
-    it('should update selected class when format changes', async () => {
+    it('should update selected item when format changes', async () => {
       spectator.component.onFormatChange(ExportFormat.Json);
       spectator.detectChanges();
 
-      const menuTrigger = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="export-format-selector"]' }));
+      const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
 
-      spectator.detectChanges();
-      const selectedItems = spectator.queryAll('.mat-mdc-menu-item.selected');
-      expect(selectedItems).toHaveLength(1);
-      expect(selectedItems[0]).toHaveText('JSON');
+      const menu = await rootLoader.getHarness(TnMenuHarness);
+      expect(await menu.getSelectedItemLabel()).toBe('JSON');
     });
   });
 
@@ -294,8 +285,8 @@ describe('AuditSearchComponent', () => {
     });
 
     it('should update customExportParams when service selection changes', async () => {
-      const serviceSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Service' }));
-      await serviceSelect.setValue('SMB');
+      const serviceSelect = await loader.getHarness(TnSelectHarness);
+      await serviceSelect.selectOption('SMB');
 
       const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.customExportParams()).toEqual({ services: [AuditService.Smb] });
@@ -432,7 +423,7 @@ describe('AuditSearchComponent', () => {
 
   describe('accessibility', () => {
     it('should have aria-label on format selector button', () => {
-      const button = spectator.query('[ixTest="export-format-selector"]');
+      const button = spectator.query('[ixTest="export-format-selector"] button');
       expect(button.getAttribute('aria-label')).toBe('Select Export Format');
     });
 

@@ -23,7 +23,8 @@
       "dom.Iterable"
     ],
     "useDefineForClassFields": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "preserveSymlinks": true
   },
   "angularCompilerOptions": {
     "allowEmptyCodegenFiles": true,

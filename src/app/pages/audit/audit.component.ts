@@ -3,11 +3,10 @@ import {
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatAnchor } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import {
   filter,
   of,
@@ -39,8 +38,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   imports: [
     PageHeaderComponent,
     TestDirective,
-    MatAnchor,
-    RouterLink,
+    TnButtonComponent,
     LogDetailsPanelComponent,
     TranslateModule,
     MasterDetailViewComponent,

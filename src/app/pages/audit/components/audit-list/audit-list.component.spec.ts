@@ -1,10 +1,9 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
@@ -14,12 +13,11 @@ import { AuditListComponent } from './audit-list.component';
 
 describe('AuditListComponent', () => {
   let spectator: Spectator<AuditListComponent>;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: AuditListComponent,
     imports: [
-      MockComponent(IxTableComponent),
       MockComponent(AuditSearchComponent),
     ],
     providers: [
@@ -45,7 +43,7 @@ describe('AuditListComponent', () => {
       },
     });
 
-    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
+    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, TnTableHarness);
   });
 
   it('checks search component is rendered', () => {
@@ -53,8 +51,8 @@ describe('AuditListComponent', () => {
   });
 
   it('loads and shows a table with audit entries', async () => {
-    expect(await table.getCellTexts()).toEqual([
-      ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
+    expect(await table.getHeaderTexts()).toEqual(['Service', 'User', 'Timestamp', 'Event', 'Event Data']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['SMB', 'Administrator', '2024-04-12 07:34:00', 'Authentication', 'Account: Administrator'],
       ['SMB', 'bob', '2024-04-12 07:42:32', 'Create', 'File: test.txt'],
     ]);

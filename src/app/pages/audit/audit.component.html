@@ -9,14 +9,12 @@
     ></ix-button-group>
   }
 
-  <a
+  <tn-button
     ixTest="audit-settings"
-    mat-button
     fragment="audit-card"
     [routerLink]="['/system/advanced']"
-  >
-    {{ 'Audit Settings' | translate }}
-  </a>
+    [label]="'Audit Settings' | translate"
+  ></tn-button>
 </ix-page-header>
 
 <ix-master-detail-view

@@ -4,10 +4,12 @@ import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
-  autocompletion, closeBrackets, CompletionContext, startCompletion,
+  autocompletion, closeBrackets, closeCompletion, CompletionContext, completionStatus, startCompletion,
 } from '@codemirror/autocomplete';
 import { Diagnostic, linter } from '@codemirror/lint';
-import { EditorState, StateEffect, StateField } from '@codemirror/state';
+import {
+  EditorState, Prec, StateEffect, StateField,
+} from '@codemirror/state';
 import {
   EditorView, keymap, placeholder,
 } from '@codemirror/view';
@@ -117,13 +119,37 @@ export class AdvancedSearchComponent<T> implements OnInit {
       icons: false,
     });
 
-    const customKeyMap = keymap.of([{
-      key: 'Enter',
-      run: () => {
-        this.runSearch.emit();
-        return true;
+    const customKeyMap = Prec.highest(keymap.of([
+      {
+        key: 'Enter',
+        run: () => {
+          this.runSearch.emit();
+          return true;
+        },
       },
-    }]);
+      {
+        key: 'Tab',
+        run: (view) => {
+          if (completionStatus(view.state) !== null) {
+            closeCompletion(view);
+            this.moveFocusToNextFocusable();
+            return true;
+          }
+          return false;
+        },
+      },
+      {
+        key: 'Shift-Tab',
+        run: (view) => {
+          if (completionStatus(view.state) !== null) {
+            closeCompletion(view);
+            this.moveFocusToPreviousFocusable();
+            return true;
+          }
+          return false;
+        },
+      },
+    ]));
 
     this.editorView = new EditorView({
       state: EditorState.create({
@@ -208,6 +234,28 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   private focusInput(): void {
     this.editorView.focus();
+  }
+
+  private moveFocusToNextFocusable(): void {
+    this.moveFocusInDirection(1);
+  }
+
+  private moveFocusToPreviousFocusable(): void {
+    this.moveFocusInDirection(-1);
+  }
+
+  private moveFocusInDirection(direction: 1 | -1): void {
+    const focusable = Array.from(document.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), '
+      + 'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+
+    const current = this.editorView.contentDOM;
+    const idx = focusable.indexOf(current);
+    if (idx === -1) return;
+
+    const target = focusable[idx + direction];
+    target?.focus();
   }
 
   private onInputChanged(): void {

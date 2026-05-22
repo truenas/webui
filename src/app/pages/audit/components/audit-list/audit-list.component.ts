@@ -1,21 +1,29 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
+import {
+  Component, ChangeDetectionStrategy, computed, inject, input, output,
+} from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnProgressBarComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
+import { auditEventLabels, auditServiceLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
@@ -29,18 +37,20 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    IxTableBodyComponent,
-    IxTableCellDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTablePagerComponent,
-    MatTooltip,
-    UiSearchDirective,
     AuditSearchComponent,
-    TranslateModule,
-    TnIconComponent,
+    EmptyComponent,
+    FormatDateTimePipe,
     GetLogImportantDataPipe,
+    IxTablePagerComponent,
+    TnCellDefDirective,
+    TnHeaderCellDefDirective,
+    TnIconComponent,
+    TnProgressBarComponent,
+    TnTableColumnDirective,
+    TnTableComponent,
+    TnTooltipDirective,
+    TranslateModule,
+    UiSearchDirective,
     UserAvatarPipe,
   ],
 })
@@ -54,44 +64,47 @@ export class AuditListComponent {
   protected readonly toggleShowMobileDetails = output<boolean>();
   protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
-  columns = createTable<AuditEntry>([
-    textColumn({
-      title: this.translate.instant('Service'),
-      propertyName: 'service',
-      getValue: (row) => {
-        const service = auditServiceLabels.get(row.service);
-        return service ? this.translate.instant(service) : row.service || '-';
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('User'),
-      propertyName: 'username',
-    }),
-    dateColumn({
-      title: this.translate.instant('Timestamp'),
-      propertyName: 'message_timestamp',
-      getValue: (row) => row.message_timestamp * 1000,
-    }),
-    textColumn({
-      title: this.translate.instant('Event'),
-      propertyName: 'event',
-      getValue: (row) => {
-        const event = auditEventLabels.get(row.event);
-        return event ? this.translate.instant(event) : row.event || '-';
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Event Data'),
-      disableSorting: true,
-    }),
-  ], {
-    uniqueRowTag: (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
-    ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
-  });
+  protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
 
-  expanded(row: AuditEntry): void {
+  // Mirror of the current page rows so a delegated click on a row index can resolve to the row object.
+  private readonly currentPage = toSignal(
+    toObservable(this.dataProvider).pipe(switchMap((dp) => dp.currentPage$)),
+    { initialValue: [] as AuditEntry[] },
+  );
+
+  protected readonly trackByAuditId = (_: number, row: AuditEntry): string => row.audit_id;
+
+  protected getServiceLabel(row: AuditEntry): string {
+    const service = auditServiceLabels.get(row.service);
+    return service ? this.translate.instant(service) : row.service || '-';
+  }
+
+  protected getEventLabel(row: AuditEntry): string {
+    const event = auditEventLabels.get(row.event);
+    return event ? this.translate.instant(event) : row.event || '-';
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    let direction: SortDirection | null = null;
+    if (event.direction === 'asc') direction = SortDirection.Asc;
+    else if (event.direction === 'desc') direction = SortDirection.Desc;
+
+    this.dataProvider().setSorting({
+      propertyName: direction ? (event.column as keyof AuditEntry) : null,
+      direction,
+      active: 1,
+    } as TableSort<AuditEntry>);
+  }
+
+  protected onTableClick(event: MouseEvent): void {
+    const tr = (event.target as HTMLElement).closest<HTMLTableRowElement>('tr.tn-table__row');
+    if (!tr) return;
+    const idx = Number(tr.getAttribute('data-row-index'));
+    if (Number.isNaN(idx)) return;
+    const row = this.currentPage()[idx];
     if (!row) return;
 
+    this.dataProvider().expandedRow = row;
     this.toggleShowMobileDetails.emit(true);
   }
 }

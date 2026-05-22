@@ -1,6 +1,18 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
 
+:host {
+  display: block;
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
 pre {
   font-family: var(--mdc-dialog-subhead-font);
   line-height: 32px;

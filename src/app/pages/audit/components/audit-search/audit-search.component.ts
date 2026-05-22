@@ -2,12 +2,17 @@ import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, DestroyRef, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatMenu, MatMenuTrigger, MatMenuItem } from '@angular/material/menu';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest,
   distinctUntilChanged,
@@ -25,7 +30,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
@@ -44,17 +48,16 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
   imports: [
     AsyncPipe,
     FakeProgressBarComponent,
-    MatButton,
-    MatIconButton,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
     SearchInputComponent,
     TranslateModule,
     ExportButtonComponent,
-    TnIconComponent,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
+    TnSelectComponent,
     TestDirective,
-    IxSelectComponent,
     ReactiveFormsModule,
   ],
 })
@@ -72,7 +75,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
   protected readonly basicSearchPlaceholder = this.translate.instant('Search by Event or Username');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
-  protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
+  protected readonly serviceOptions = mapToOptions(auditServiceLabels, this.translate);
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
 
   private readonly viewInitialized$ = new ReplaySubject<void>(1);

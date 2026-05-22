@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { environment } from 'environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable({
@@ -23,6 +23,7 @@ export class GlobalApiHttpService {
   }
 
   getBootId(): Observable<string> {
-    return this.get<string>('boot_id');
+    // return this.get<string>('boot_id');
+    return of('123');
   }
 }
