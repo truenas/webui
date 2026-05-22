@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { MiB } from 'app/constants/bytes.constant';
@@ -28,11 +29,15 @@ describe('TopologyItemNodeComponent', () => {
     type: DiskType.Hdd,
     size: 16 * MiB,
   } as Disk;
+  // NO_ERRORS_SCHEMA: MockComponent(TnIconComponent) crashes because ng-mocks tries
+  // to mirror TnIconComponent's signal-based view queries. The schema renders <tn-icon>
+  // as an unknown element so our attribute-only assertions still work.
   const createComponent = createComponentFactory({
     component: TopologyItemNodeComponent,
     declarations: [
       MockComponent(TopologyItemIconComponent),
     ],
+    schemas: [NO_ERRORS_SCHEMA],
   });
 
   beforeEach(() => {
@@ -130,6 +135,20 @@ describe('TopologyItemNodeComponent', () => {
       expect(spectator.query('.descendant-warning-icon')).toHaveClass('severity-critical');
     });
 
+    it('recurses through nested topology and surfaces a deeper FAULTED leaf', () => {
+      const nestedMirror = {
+        type: TopologyItemType.Mirror,
+        status: TopologyItemStatus.Degraded,
+        children: [onlineChild, child(TopologyItemStatus.Faulted)],
+      } as VDev;
+      spectator.setInput('topologyItem', buildVdev([nestedMirror, onlineChild]));
+      const icon = spectator.query('.descendant-warning-icon');
+      expect(icon).toHaveClass('severity-critical');
+      const aria = icon!.getAttribute('aria-label')!;
+      expect(aria).toContain('2 disks');
+      expect(aria).toContain(TopologyItemStatus.Faulted);
+    });
+
     it('does not change the parent status text/badge — that stays as reported by the API', () => {
       // The parent VDEV's own status (e.g. DEGRADED) must keep showing in the status cell.
       // The icon is a separate scannability hint and never modifies what zpool reports.
@@ -141,14 +160,13 @@ describe('TopologyItemNodeComponent', () => {
     it('exposes count + worst status in the tooltip and aria-label (single)', () => {
       spectator.setInput('topologyItem', buildVdev([onlineChild, child(TopologyItemStatus.Faulted)]));
       const icon = spectator.query('.descendant-warning-icon');
-      const tooltip = icon!.getAttribute('ng-reflect-message') || icon!.getAttribute('aria-label')!;
-      expect(tooltip).toContain('1 disk');
-      expect(tooltip).toContain(TopologyItemStatus.Faulted);
-      expect(icon!.getAttribute('aria-label')).toContain(TopologyItemStatus.Faulted);
+      const aria = icon!.getAttribute('aria-label')!;
+      expect(aria).toContain('1 disk');
+      expect(aria).toContain(TopologyItemStatus.Faulted);
       expect(icon!.getAttribute('role')).toBe('img');
     });
 
-    it('pluralizes the tooltip when multiple descendants are non-optimal', () => {
+    it('pluralizes the tooltip when multiple descendants are non-optimal and still names the worst', () => {
       spectator.setInput('topologyItem', buildVdev([
         child(TopologyItemStatus.Degraded),
         child(TopologyItemStatus.Offline),
@@ -158,6 +176,7 @@ describe('TopologyItemNodeComponent', () => {
       const aria = icon!.getAttribute('aria-label')!;
       expect(aria).toContain('3 disks');
       expect(aria).toContain('non-optimal');
+      expect(aria).toContain(TopologyItemStatus.Faulted);
     });
   });
 });

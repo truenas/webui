@@ -49,7 +49,7 @@ export class TopologyItemNodeComponent {
   private readonly errorCount = computed(() => {
     const stats = this.topologyItem().stats;
     if (!stats) return null;
-    return (stats.checksum_errors || 0) + (stats.read_errors || 0) + (stats.write_errors || 0);
+    return (stats.checksum_errors ?? 0) + (stats.read_errors ?? 0) + (stats.write_errors ?? 0);
   });
 
   protected readonly errors = computed(() => {
@@ -93,7 +93,7 @@ export class TopologyItemNodeComponent {
   protected readonly descendantWarningTooltip = computed(() => {
     const { count, worst } = this.descendantWarning();
     return this.translate.instant(
-      '{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal.}} Expand for details.',
+      '{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal (worst: {worst}).}} Expand for details.',
       { count, worst },
     );
   });
@@ -126,17 +126,22 @@ interface DescendantWarning {
 function collectDescendantWarning(item: VDevItem): DescendantWarning {
   let count = 0;
   let worst: TopologyItemStatus | undefined;
+  let worstSev = 0;
   for (const child of item.children ?? []) {
-    if (child.status && statusSeverity(child.status) > 0) {
+    const childSev = child.status ? statusSeverity(child.status) : 0;
+    if (childSev > 0) {
       count += 1;
-      if (statusSeverity(child.status) > statusSeverity(worst)) {
+      if (childSev > worstSev) {
         worst = child.status;
+        worstSev = childSev;
       }
     }
     const fromChild = collectDescendantWarning(child);
     count += fromChild.count;
-    if (statusSeverity(fromChild.worst) > statusSeverity(worst)) {
+    const fromChildSev = statusSeverity(fromChild.worst);
+    if (fromChildSev > worstSev) {
       worst = fromChild.worst;
+      worstSev = fromChildSev;
     }
   }
   return { count, worst };
