@@ -12,8 +12,9 @@ import {
   TopologyDisk, VDevItem,
 } from 'app/interfaces/storage.interface';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
-
-const criticalSeverity = 3;
+import {
+  collectDescendantWarning, criticalSeverity, statusSeverity,
+} from 'app/pages/storage/modules/vdevs/utils/descendant-warning';
 
 @Component({
   selector: 'ix-topology-item-node',
@@ -75,11 +76,6 @@ export class TopologyItemNodeComponent {
     }
   });
 
-  // Walks this item's descendants (not the item itself) to find the worst-status leaf and the
-  // total count of non-optimal leaves. Drives the warning icon next to the VDEV name on
-  // collapsed parent rows so a failing child disk doesn't get hidden behind a DEGRADED parent
-  // badge in the tree view. The parent's own `status` text/badge stays exactly as reported by
-  // `pool.query` / `zpool status` — this is purely a visual scannability hint.
   private readonly descendantWarning = computed(() => collectDescendantWarning(this.topologyItem()));
 
   protected readonly hasDescendantWarning = computed(() => this.descendantWarning().count > 0);
@@ -93,7 +89,7 @@ export class TopologyItemNodeComponent {
   protected readonly descendantWarningTooltip = computed(() => {
     const { count, worst } = this.descendantWarning();
     return this.translate.instant(
-      '{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal (worst: {worst}).}} Expand for details.',
+      '{count, plural, one {1 disk in this VDEV is {worst}.} other {# disks in this VDEV are non-optimal (worst: {worst}).}}',
       { count, worst },
     );
   });
@@ -101,48 +97,4 @@ export class TopologyItemNodeComponent {
   private readonly isDisk = computed(() => {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
-}
-
-function statusSeverity(status: TopologyItemStatus | undefined): number {
-  switch (status) {
-    case TopologyItemStatus.Faulted:
-    case TopologyItemStatus.Unavail:
-      return criticalSeverity;
-    case TopologyItemStatus.Degraded:
-      return 2;
-    case TopologyItemStatus.Offline:
-    case TopologyItemStatus.Removed:
-      return 1;
-    default:
-      return 0;
-  }
-}
-
-interface DescendantWarning {
-  count: number;
-  worst: TopologyItemStatus | undefined;
-}
-
-function collectDescendantWarning(item: VDevItem): DescendantWarning {
-  let count = 0;
-  let worst: TopologyItemStatus | undefined;
-  let worstSev = 0;
-  for (const child of item.children ?? []) {
-    const childSev = child.status ? statusSeverity(child.status) : 0;
-    if (childSev > 0) {
-      count += 1;
-      if (childSev > worstSev) {
-        worst = child.status;
-        worstSev = childSev;
-      }
-    }
-    const fromChild = collectDescendantWarning(child);
-    count += fromChild.count;
-    const fromChildSev = statusSeverity(fromChild.worst);
-    if (fromChildSev > worstSev) {
-      worst = fromChild.worst;
-      worstSev = fromChildSev;
-    }
-  }
-  return { count, worst };
 }

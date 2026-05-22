@@ -464,25 +464,23 @@ describe('VDevsListComponent', () => {
       NestedTreeNodeComponent,
       TnIconComponent,
     ],
-
-    providers: [
-      mockProvider(VDevsStore, {
-        selectedNode$: of(selectedNode),
-        isLoading$: of(false),
-        loadNodes: jest.fn(),
-        nodes$: of(nodes),
-        selectedBranch$: of(selectedBranch),
-      }),
-    ],
   });
 
   beforeEach(() => {
     jest.spyOn(console, 'warn').mockImplementation();
+  });
+
+  it('shows the devices of the pool', () => {
     spectator = createComponent({
-      props: {
-        poolId: 2,
-      },
+      props: { poolId: 2 },
       providers: [
+        mockProvider(VDevsStore, {
+          selectedNode$: of(selectedNode),
+          isLoading$: of(false),
+          loadNodes: jest.fn(),
+          nodes$: of(nodes),
+          selectedBranch$: of(selectedBranch),
+        }),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -491,9 +489,6 @@ describe('VDevsListComponent', () => {
         },
       ],
     });
-  });
-
-  it('shows the devices of the pool', () => {
     spectator.detectChanges();
     const vdevGroup = spectator.query('ix-vdev-group-node')!;
     const text = vdevGroup.querySelector('.caption-name')!;
@@ -506,5 +501,59 @@ describe('VDevsListComponent', () => {
     expect(treeNodes[0].textContent).toBe('MIRROR');
     expect(treeNodes[1].textContent).toBe('sdc');
     expect(treeNodes[2].textContent).toBe('sdd');
+  });
+
+  describe('auto-expand on descendant warning', () => {
+    // A minimal pool with a single mirror that contains one FAULTED disk. Without auto-expand
+    // the disk row stays hidden under the collapsed mirror; with auto-expand it should be
+    // rendered immediately after the store emits.
+    const faultedNodes = [
+      {
+        children: [
+          {
+            name: 'mirror-1',
+            type: 'MIRROR',
+            guid: 'mirror-1-guid',
+            status: 'DEGRADED',
+            children: [
+              {
+                name: 'faulted-disk',
+                type: 'DISK',
+                guid: 'faulted-disk-guid',
+                status: 'FAULTED',
+                disk: 'sde',
+                children: [],
+              },
+            ],
+            isRoot: true,
+          },
+        ],
+        group: 'Data VDEVs',
+        guid: 'data',
+      },
+    ] as VDevNestedDataNode[];
+
+    it('reveals a deeper FAULTED disk without requiring a click on the parent VDEV', () => {
+      spectator = createComponent({
+        props: { poolId: 2 },
+        providers: [
+          mockProvider(VDevsStore, {
+            selectedNode$: of(null),
+            isLoading$: of(false),
+            loadNodes: jest.fn(),
+            nodes$: of(faultedNodes),
+            selectedBranch$: of(null),
+          }),
+          {
+            provide: ActivatedRoute,
+            useValue: { params: of({}), snapshot: { paramMap: { get: () => null } } },
+          },
+        ],
+      });
+      spectator.detectChanges();
+
+      const rowTexts = spectator.queryAll('.cell-name').map((el) => el.textContent?.trim());
+      expect(rowTexts).toContain('sde');
+    });
   });
 });
