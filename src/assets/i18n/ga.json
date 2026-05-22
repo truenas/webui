@@ -1444,7 +1444,7 @@
   "At least one module must be defined in <a                href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or in the <b>Rsync Modules</b> of another                system.": "Ní mór modúl amháin ar a laghad a shainiú in <a                href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                target=\"_blank\">rsyncd.conf(5)</a> den fhreastalaí rsync nó i <b>Modúil Rsync</b> de chóras eile.",
   "At least one pool must be available to use apps": "Caithfidh comhthiomsú amháin ar a laghad a bheith ar fáil chun aipeanna a úsáid",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "Moltar spáráil amháin ar a laghad le haghaidh dRAID. Ní féidir spártha a chur leis níos déanaí.",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "Teastaíonn diosca(í) {min} ar a laghad le haghaidh vdevs {vdevType}",
+  "At least {min} disk(s) are required for {vdevType} vdevs": "Teastaíonn diosca(í) {min} ar a laghad le haghaidh vdevs {vdevType}",
   "Attach": "Ceangail",
   "Attach additional images": "Ceangail íomhánna breise",
   "Attach debug": "Ceangail debug",

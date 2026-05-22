@@ -689,7 +689,7 @@
   "At least one network (IPv4 or IPv6) must be specified.": "少なくとも 1 つのネットワーク (IPv4 または IPv6) を指定する必要があります。",
   "At least one pool must be available to use apps": "アプリを使用するには、少なくとも1つのプールが使用可能でなければなりません。",
   "At least one spare is recommended for dRAID. Spares cannot be added later.": "dRAID には最低 1 台のスペアを推奨します。スペアを後から追加することはできません。",
-  "Atleast {min} disk(s) are required for {vdevType} vdevs": "{vdevType} vdevを作成するには、少なくとも {min} 個のディスクが必要です。",
+  "At least {min} disk(s) are required for {vdevType} vdevs": "{vdevType} vdevを作成するには、少なくとも {min} 個のディスクが必要です。",
   "Attach": "アタッチ",
   "Attach additional images": "追加の画像を添付する",
   "Attach debug": "デバッグのアタッチ",
