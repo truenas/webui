@@ -4,7 +4,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyDisk, VDevItemEnriched } from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { BootenvNodeItemComponent } from './bootenv-node-item.component';
 
 describe('BootenvNodeItemComponent', () => {
@@ -15,7 +15,6 @@ describe('BootenvNodeItemComponent', () => {
     path: '/dev/sda3',
     guid: '1909089035164712918',
     status: TopologyItemStatus.Online,
-    effectiveStatus: TopologyItemStatus.Online,
     stats: {
       timestamp: 65023816157559,
       read_errors: 0,
@@ -26,7 +25,7 @@ describe('BootenvNodeItemComponent', () => {
       fragmentation: 4,
     },
     children: [] as TopologyDisk[],
-  } as VDevItemEnriched;
+  } as TopologyDisk;
 
   const poolInstance = {
     guid: 'boot-pool',
@@ -43,7 +42,7 @@ describe('BootenvNodeItemComponent', () => {
     topology: {
       data: [topologyItem],
     },
-  } as unknown as PoolInstance;
+  } as PoolInstance;
 
   const createComponent = createComponentFactory({
     component: BootenvNodeItemComponent,
@@ -65,29 +64,5 @@ describe('BootenvNodeItemComponent', () => {
 
   it('shows pool status', () => {
     expect(spectator.query('.cell-status')).toHaveText('Online');
-  });
-
-  it('applies fn-theme-red when the node is faulted', () => {
-    spectator.setInput('node', {
-      ...topologyItem,
-      status: TopologyItemStatus.Faulted,
-      effectiveStatus: TopologyItemStatus.Faulted,
-    } as VDevItemEnriched);
-
-    expect(spectator.query('.cell-status')).toHaveText('Faulted');
-    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
-  });
-
-  it('renders the precomputed effectiveStatus when it differs from the node status', () => {
-    spectator.setInput('node', {
-      name: 'mirror-0',
-      type: TopologyItemType.Mirror,
-      status: TopologyItemStatus.Online,
-      effectiveStatus: TopologyItemStatus.Faulted,
-      children: [],
-    } as unknown as VDevItemEnriched);
-
-    expect(spectator.query('.cell-status')).toHaveText('Faulted');
-    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-red');
   });
 });

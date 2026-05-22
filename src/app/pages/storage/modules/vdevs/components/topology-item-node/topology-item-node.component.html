@@ -8,6 +8,15 @@
     </div>
     <div class="name">
       <span>{{ name() }}</span>
+      @if (hasDescendantWarning()) {
+        <tn-icon
+          name="alert-circle"
+          library="mdi"
+          class="descendant-warning-icon"
+          [ngClass]="descendantWarningClass()"
+          [matTooltip]="descendantWarningTooltip()"
+        ></tn-icon>
+      }
     </div>
   </div>
   <div class="cell cell-status" [ngClass]="statusClass()">
@@ -16,7 +25,7 @@
   <div class="cell cell-capacity">
     <span>{{ capacity() }}</span>
   </div>
-  <div class="cell cell-errors">
+  <div class="cell cell-errors" [ngClass]="errorsClass()">
     <span>{{ errors() }}</span>
   </div>
 </div>

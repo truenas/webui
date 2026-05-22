@@ -12,8 +12,6 @@ import { TnIconComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { enrichWithEffectiveStatus } from 'app/helpers/topology-status.helper';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
@@ -174,20 +172,11 @@ export class BootStatusListComponent implements OnInit {
   }
 
   private createDataSource(poolInstance: PoolInstance): void {
-    // `PoolStatus` and `TopologyItemStatus` share their underlying string values for common
-    // states (ONLINE, FAULTED, …), so treat the pool as the synthetic root of the VDEV tree
-    // and let the helper compute the root's effective status from its children.
-    const rootEnriched = enrichWithEffectiveStatus({
-      ...poolInstance,
-      status: poolInstance.status as unknown as TopologyItemStatus,
-      children: poolInstance.topology.data,
-    } as unknown as VDevItem);
-
     const dataNodes = [{
       ...poolInstance,
-      ...rootEnriched,
       guid: poolInstance.guid,
       group: poolInstance.name,
+      children: poolInstance.topology.data,
     } as VDevNestedDataNode];
 
     this.dataSource = new NestedTreeDataSource<VDevNestedDataNode>(dataNodes);
