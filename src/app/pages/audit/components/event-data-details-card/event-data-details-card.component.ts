@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnCardHeaderDirective } from '@truenas/ui-components';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { convertObjectKeysToHumanReadable } from 'app/helpers/object-keys-to-human-readable.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -16,6 +16,7 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
   imports: [
     CopyButtonComponent,
     TnCardComponent,
+    TnCardHeaderDirective,
     TranslateModule,
   ],
 })

@@ -3,18 +3,19 @@
 
 :host {
   display: block;
-  position: relative;
 }
 
-.copy-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 1;
+.card-header {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 pre {
-  font-family: var(--tn-font-family-monospace);
+  font-family: var(--mdc-dialog-subhead-font);
   line-height: 32px;
   margin: 0;
   white-space: pre-wrap;

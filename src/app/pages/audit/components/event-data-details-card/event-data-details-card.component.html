@@ -1,4 +1,7 @@
-<tn-card class="card" padding="small" [padContent]="true" [title]="'Event Data' | translate">
-  <ix-copy-button class="copy-btn" [text]="yamlContent()" [jsonText]="eventData()"></ix-copy-button>
+<tn-card class="card" padding="small" [padContent]="true">
+  <div tnCardHeader class="card-header">
+    <h3 class="card-title">{{ 'Event Data' | translate }}</h3>
+    <ix-copy-button [text]="yamlContent()" [jsonText]="eventData()"></ix-copy-button>
+  </div>
   <pre>{{ yamlContent() }}</pre>
 </tn-card>

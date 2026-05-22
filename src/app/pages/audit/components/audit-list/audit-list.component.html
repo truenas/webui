@@ -28,7 +28,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'username'">
+    <ng-container [tnColumnDef]="'username'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'User' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <div class="user-avatar" [tnTooltip]="row.username">

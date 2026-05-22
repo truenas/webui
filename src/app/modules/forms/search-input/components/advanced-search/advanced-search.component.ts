@@ -248,7 +248,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     const focusable = Array.from(document.querySelectorAll<HTMLElement>(
       'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), '
       + 'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    )).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+    )).filter((el) => !el.hasAttribute('disabled') && el.getClientRects().length > 0);
 
     const current = this.editorView.contentDOM;
     const idx = focusable.indexOf(current);

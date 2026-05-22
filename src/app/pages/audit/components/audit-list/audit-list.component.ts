@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, computed, inject, input, output,
 } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCellDefDirective,
@@ -61,7 +62,7 @@ export class AuditListComponent {
 
   protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
 
-  protected readonly trackByAuditId = (_: number, row: AuditEntry): string => row.audit_id;
+  protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
   protected getServiceLabel(row: AuditEntry): string {
     const service = auditServiceLabels.get(row.service);
@@ -78,14 +79,19 @@ export class AuditListComponent {
     if (event.direction === 'asc') direction = SortDirection.Asc;
     else if (event.direction === 'desc') direction = SortDirection.Desc;
 
-    this.dataProvider().setSorting({
+    const columnIndex = this.displayedColumns.indexOf(event.column);
+    const sorting: TableSort<AuditEntry> = {
       propertyName: direction ? (event.column as keyof AuditEntry) : null,
       direction,
-      active: 1,
-    } as TableSort<AuditEntry>);
+      active: direction && columnIndex >= 0 ? columnIndex : null,
+    };
+    this.dataProvider().setSorting(sorting);
   }
 
   protected onRowClick(row: AuditEntry): void {
+    if (!row) {
+      return;
+    }
     this.dataProvider().expandedRow = row;
     this.toggleShowMobileDetails.emit(true);
   }
@@ -93,17 +99,17 @@ export class AuditListComponent {
   protected getEmptyAttrs(emptyType: EmptyType | null): { title: string; description?: string; icon: string } {
     switch (emptyType) {
       case EmptyType.Loading:
-        return { title: 'Loading...', icon: 'mdi-loading' };
+        return { title: T('Loading...'), icon: 'mdi-loading' };
       case EmptyType.Errors:
-        return { title: 'Cannot retrieve response', icon: 'mdi-alert-octagon' };
+        return { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' };
       case EmptyType.NoSearchResults:
         return {
-          title: 'No Search Results.',
-          description: 'No matching results found',
+          title: T('No Search Results.'),
+          description: T('No matching results found'),
           icon: 'mdi-magnify-scan',
         };
       default:
-        return { title: 'No records have been added yet', icon: 'mdi-format-list-text' };
+        return { title: T('No records have been added yet'), icon: 'mdi-format-list-text' };
     }
   }
 }

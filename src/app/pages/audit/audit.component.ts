@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -32,6 +33,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
+    RouterLink,
     TestDirective,
     TnButtonComponent,
     TnButtonToggleGroupComponent,

@@ -6,14 +6,18 @@
 
   <div class="actions-bar">
     <div class="top-row">
-      <label class="service-select">
-        <span class="service-label">{{ 'Service' | translate }}</span>
+      <div
+        class="service-select"
+        role="group"
+        [attr.aria-labelledby]="'audit-service-label'"
+      >
+        <span id="audit-service-label" class="service-label">{{ 'Service' | translate }}</span>
         <tn-select
           ixTest="audit-service"
           [formControl]="serviceControl"
           [options]="serviceOptions"
         ></tn-select>
-      </label>
+      </div>
       @if (dataProvider().totalRows) {
         <div class="export-container">
           <tn-icon-button
