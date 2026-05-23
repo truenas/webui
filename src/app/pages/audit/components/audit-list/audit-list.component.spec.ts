@@ -1,7 +1,8 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import { TnTablePagerHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -14,6 +15,7 @@ import { AuditListComponent } from './audit-list.component';
 
 describe('AuditListComponent', () => {
   let spectator: Spectator<AuditListComponent>;
+  let loader: HarnessLoader;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -45,6 +47,7 @@ describe('AuditListComponent', () => {
       },
     });
 
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
@@ -60,7 +63,8 @@ describe('AuditListComponent', () => {
     ]);
   });
 
-  it('checks table pager component is rendered', () => {
-    expect(spectator.query(TnTablePagerComponent)).toExist();
+  it('checks table pager component is rendered', async () => {
+    const pager = await loader.getHarnessOrNull(TnTablePagerHarness);
+    expect(pager).not.toBeNull();
   });
 });
