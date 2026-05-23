@@ -1,8 +1,9 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
-  computed, enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer, signal,
+  computed, DestroyRef, enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer, signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
@@ -52,6 +53,16 @@ import { CustomRouterStateSerializer } from 'app/store/router/custom-router-seri
 if (environment.production) {
   enableProdMode();
 }
+
+const pagerLabelKeys = {
+  itemsPerPage: T('Items per page'),
+  of: T('of'),
+  firstPage: T('First Page'),
+  previousPage: T('Previous Page'),
+  nextPage: T('Next Page'),
+  lastPage: T('Last Page'),
+  tablePagination: T('Table Pagination'),
+};
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -124,30 +135,28 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: TN_TABLE_PAGER_LABELS,
-      // Signal-based provider so the pager re-renders when translations load or
-      // the user switches language. A tick signal bumped on every `onLangChange`
-      // forces the `computed` to re-evaluate via `translate.instant()` — which
-      // by then has the freshly loaded translations available.
-      useFactory: (translate: TranslateService) => {
+      // Bump a tick signal on language change so the computed re-evaluates
+      // translate.instant() against the freshly loaded translations.
+      useFactory: () => {
+        const translate = inject(TranslateService);
+        const destroyRef = inject(DestroyRef);
         const tick = signal(0);
-        translate.onLangChange.subscribe(() => tick.update((n) => n + 1));
-        const translateOrKey = (key: string): string => {
-          const value = translate.instant(key);
-          return typeof value === 'string' && value ? value : key;
-        };
+        translate.onLangChange
+          .pipe(takeUntilDestroyed(destroyRef))
+          .subscribe(() => tick.update((n) => n + 1));
         return computed<TnTablePagerLabels>(() => {
           tick();
           return {
-            itemsPerPage: translateOrKey(T('Items per page')),
-            of: translateOrKey(T('of')),
-            firstPage: translateOrKey(T('First Page')),
-            previousPage: translateOrKey(T('Previous Page')),
-            nextPage: translateOrKey(T('Next Page')),
-            lastPage: translateOrKey(T('Last Page')),
+            itemsPerPage: translate.instant(pagerLabelKeys.itemsPerPage) as string,
+            of: translate.instant(pagerLabelKeys.of) as string,
+            firstPage: translate.instant(pagerLabelKeys.firstPage) as string,
+            previousPage: translate.instant(pagerLabelKeys.previousPage) as string,
+            nextPage: translate.instant(pagerLabelKeys.nextPage) as string,
+            lastPage: translate.instant(pagerLabelKeys.lastPage) as string,
+            tablePagination: translate.instant(pagerLabelKeys.tablePagination) as string,
           };
         });
       },
-      deps: [TranslateService],
     },
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
