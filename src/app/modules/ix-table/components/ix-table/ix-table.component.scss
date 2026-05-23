@@ -17,9 +17,7 @@ table {
 :host ::ng-deep {
   tr > th ng-component,
   tr > td span.mat-mdc-tooltip-trigger,
-  tr > td div.mat-mdc-tooltip-trigger span,
-  tr > td span[aria-describedby^='tn-tooltip-'],
-  tr > td div[aria-describedby^='tn-tooltip-'] span {
+  tr > td div.mat-mdc-tooltip-trigger span {
     @include line-clamp(2);
     margin: 0 0 -3px;
   }

@@ -101,24 +101,17 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       return [];
     }
     const pattern = this.convertToRegexPattern(searchTerm);
-
-    // Get all AuditEvent enum values
-    const allEventValues = Object.values(AuditEvent);
-
-    // Convert search term to uppercase with underscores/hyphens for event matching
     const eventPattern = pattern.replace(/\s+/g, '_').toUpperCase().replace(/_/g, '[_-]');
 
-    // Find all enum values that match the search pattern
-    const matchedEvents = allEventValues.filter((eventValue) => {
-      try {
-        const regex = new RegExp(eventPattern, 'i');
-        return regex.test(eventValue);
-      } catch {
-        return false;
-      }
-    });
+    let eventRegex: RegExp;
+    try {
+      eventRegex = new RegExp(eventPattern, 'i');
+    } catch {
+      return [['username', '~', pattern]] as QueryFilters<AuditEntry>;
+    }
 
-    // If we found matching events, search only by event
+    const matchedEvents = Object.values(AuditEvent).filter((eventValue) => eventRegex.test(eventValue));
+
     // Note: When multiple events match (e.g., "log" matches both LOGIN and LOGOUT),
     // we use only the first match to keep the search simple and predictable.
     // This prioritizes alphabetically first enum values.
@@ -126,7 +119,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       return [['event', '~', matchedEvents[0]]] as QueryFilters<AuditEntry>;
     }
 
-    // Otherwise search by username only
     return [['username', '~', pattern]] as QueryFilters<AuditEntry>;
   });
 
@@ -135,11 +127,9 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     return `audit_report.${format}`;
   });
 
-  // Note: The backend always returns a gzipped tarball (.tgz) regardless of the selected format.
-  // The format selection (CSV/JSON/YAML) determines the content inside the archive before compression.
-  protected readonly exportFileType = computed(() => 'tgz');
-
-  // MIME type is always application/gzip since the backend returns .tgz files
+  // The backend always returns a gzipped tarball (.tgz) regardless of the selected format —
+  // the format selection only changes the content inside the archive.
+  protected readonly exportFileType = 'tgz';
   protected readonly exportMimeType = 'application/gzip';
 
   protected readonly exportFormatDisplayLabel = computed(() => this.exportFormat().toUpperCase());

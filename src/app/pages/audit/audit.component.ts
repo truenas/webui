@@ -1,14 +1,16 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, inject, OnDestroy, OnInit, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit, viewChild,
 } from '@angular/core';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent } from '@truenas/ui-components';
-import { filter } from 'rxjs';
+import {
+  combineLatest, distinctUntilChanged, filter, map, tap,
+} from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -54,52 +56,16 @@ export class AuditComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
 
   protected dataProvider: AuditApiDataProvider;
-  private hasInitialized = false;
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
   protected readonly controllerTypeOptions = mapToOptions(controllerTypeLabels, this.translate);
-  protected readonly controllerType = toSignal(this.controllerTypeControl.value$);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
 
-  /**
-   * Effect to handle controller type and HA license changes.
-   * Initial load is handled by AuditSearchComponent.loadParamsFromRoute()
-   * to avoid duplicate API calls with empty search parameters.
-   */
-  constructor() {
-    effect(() => {
-      if (!this.dataProvider) {
-        return; // DataProvider not yet initialized
-      }
-
-      const controllerType = this.controllerType();
-      const isHaLicensed = this.isHaLicensed();
-
-      // Check if values actually changed from what's already set
-      const controllerTypeChanged = this.dataProvider.selectedControllerType !== controllerType;
-      const isHaLicensedChanged = this.dataProvider.isHaLicensed !== Boolean(isHaLicensed);
-
-      // Set the values on the data provider
-      this.dataProvider.selectedControllerType = controllerType;
-      this.dataProvider.isHaLicensed = Boolean(isHaLicensed);
-
-      // Skip the initial load - let AuditSearchComponent handle it
-      if (!this.hasInitialized) {
-        this.hasInitialized = true;
-        return;
-      }
-
-      // Only reload if values actually changed
-      if (controllerTypeChanged || isHaLicensedChanged) {
-        this.dataProvider.load();
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.createDataProvider();
+    this.syncControllerStateToDataProvider();
   }
 
   ngOnDestroy(): void {
@@ -126,5 +92,34 @@ export class AuditComponent implements OnInit, OnDestroy {
         this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
         this.cdr.markForCheck();
       });
+  }
+
+  /**
+   * Pushes controller type / HA license into the data provider, then reloads on subsequent changes.
+   * The first emission is consumed silently — AuditSearchComponent owns the initial fetch — and
+   * only subsequent changes trigger a reload.
+   */
+  private syncControllerStateToDataProvider(): void {
+    let isInitialEmission = true;
+
+    combineLatest([
+      this.controllerTypeControl.value$,
+      this.store$.select(selectIsHaLicensed).pipe(map(Boolean)),
+    ]).pipe(
+      distinctUntilChanged(
+        ([prevType, prevHa], [nextType, nextHa]) => prevType === nextType && prevHa === nextHa,
+      ),
+      tap(([controllerType, isHaLicensed]) => {
+        this.dataProvider.selectedControllerType = controllerType;
+        this.dataProvider.isHaLicensed = isHaLicensed;
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      if (isInitialEmission) {
+        isInitialEmission = false;
+        return;
+      }
+      this.dataProvider.load();
+    });
   }
 }

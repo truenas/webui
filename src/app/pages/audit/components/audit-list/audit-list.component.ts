@@ -61,6 +61,7 @@ export class AuditListComponent {
   protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
+  protected readonly statusIconSize = '15px';
 
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
@@ -76,8 +77,11 @@ export class AuditListComponent {
 
   protected onSortChange(event: TnSortEvent): void {
     let direction: SortDirection | null = null;
-    if (event.direction === 'asc') direction = SortDirection.Asc;
-    else if (event.direction === 'desc') direction = SortDirection.Desc;
+    if (event.direction === 'asc') {
+      direction = SortDirection.Asc;
+    } else if (event.direction === 'desc') {
+      direction = SortDirection.Desc;
+    }
 
     const columnIndex = this.displayedColumns.indexOf(event.column);
     const sorting: TableSort<AuditEntry> = {
@@ -96,22 +100,34 @@ export class AuditListComponent {
     this.toggleShowMobileDetails.emit(true);
   }
 
-  protected getEmptyAttrs(emptyType: EmptyType | null): { title: string; description?: string; icon: string } {
+  protected getEmptyAttrs(emptyType: EmptyType | null): { title: string; description: string; icon: string } {
     switch (emptyType) {
       case EmptyType.Loading:
-        return { title: T('Loading...'), icon: 'mdi-loading' };
+        return {
+          title: this.translate.instant(T('Loading...')),
+          description: '',
+          icon: 'mdi-loading',
+        };
       case EmptyType.Errors:
-        return { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' };
+        return {
+          title: this.translate.instant(T('Cannot retrieve response')),
+          description: '',
+          icon: 'mdi-alert-octagon',
+        };
       case EmptyType.NoSearchResults:
         return {
-          title: T('No Search Results.'),
-          description: T('No matching results found'),
+          title: this.translate.instant(T('No Search Results.')),
+          description: this.translate.instant(T('No matching results found')),
           icon: 'mdi-magnify-scan',
         };
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
       default:
-        return { title: T('No records have been added yet'), icon: 'mdi-format-list-text' };
+        return {
+          title: this.translate.instant(T('No records have been added yet')),
+          description: '',
+          icon: 'mdi-format-list-text',
+        };
     }
   }
 }

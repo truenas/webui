@@ -1,10 +1,13 @@
 <ix-audit-search [dataProvider]="dataProvider()"></ix-audit-search>
 
-@if ((dataProvider().currentPageCount$ | async) === 0) {
+@let isLoading = (dataProvider().isLoading$ | async) ?? false;
+@let count = (dataProvider().currentPageCount$ | async) ?? 0;
+
+@if (!isLoading && count === 0) {
   @let emptyAttrs = getEmptyAttrs(dataProvider().emptyType$ | async);
   <tn-empty
-    [title]="emptyAttrs.title | translate"
-    [description]="emptyAttrs.description ? (emptyAttrs.description | translate) : ''"
+    [title]="emptyAttrs.title"
+    [description]="emptyAttrs.description"
     [icon]="emptyAttrs.icon"
   ></tn-empty>
 } @else {
@@ -14,30 +17,24 @@
     [dataSource]="(dataProvider().currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByAuditId"
+    [clickable]="true"
+    [activeRow]="dataProvider().expandedRow"
+    [loading]="isLoading"
+    [loadingMessage]="'Loading audit entries…' | translate"
     (sortChange)="onSortChange($event)"
+    (rowClick)="onRowClick($event)"
   >
     <ng-container [tnColumnDef]="'service'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          class="cell-clamp clickable-cell"
-          [class.active]="dataProvider().expandedRow === row"
-          (click)="onRowClick(row)"
-          (keydown.enter)="onRowClick(row)"
-        >{{ getServiceLabel(row) }}</span>
+        <span class="cell-clamp">{{ getServiceLabel(row) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'username'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'User' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <div
-          class="user-avatar clickable-cell"
-          [class.active]="dataProvider().expandedRow === row"
-          [tnTooltip]="row.username"
-          (click)="onRowClick(row)"
-          (keydown.enter)="onRowClick(row)"
-        >
+        <div class="user-avatar" [tnTooltip]="row.username">
           <div [innerHTML]="row.username | userAvatar"></div>
           <span class="cell-clamp">{{ row.username || '-' }}</span>
         </div>
@@ -47,12 +44,7 @@
     <ng-container [tnColumnDef]="'message_timestamp'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Timestamp' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          class="cell-clamp clickable-cell"
-          [class.active]="dataProvider().expandedRow === row"
-          (click)="onRowClick(row)"
-          (keydown.enter)="onRowClick(row)"
-        >
+        <span class="cell-clamp">
           <ix-date [date]="row.message_timestamp * 1000"></ix-date>
         </span>
       </ng-template>
@@ -61,29 +53,18 @@
     <ng-container [tnColumnDef]="'event'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          class="cell-clamp clickable-cell"
-          [class.active]="dataProvider().expandedRow === row"
-          (click)="onRowClick(row)"
-          (keydown.enter)="onRowClick(row)"
-        >{{ getEventLabel(row) }}</span>
+        <span class="cell-clamp">{{ getEventLabel(row) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'event_data'">
       <ng-template tnHeaderCellDef>{{ 'Event Data' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <div
-          class="event-data clickable-cell"
-          [class.active]="dataProvider().expandedRow === row"
-          [tnTooltip]="row | getLogImportantData | translate"
-          (click)="onRowClick(row)"
-          (keydown.enter)="onRowClick(row)"
-        >
+        <div class="event-data" [tnTooltip]="row | getLogImportantData | translate">
           @if (row.success) {
-            <tn-icon name="check-circle" library="mdi" customSize="15px"></tn-icon>
+            <tn-icon name="check-circle" library="mdi" [customSize]="statusIconSize"></tn-icon>
           } @else {
-            <tn-icon class="error-color" name="close-circle" library="mdi" customSize="15px"></tn-icon>
+            <tn-icon class="error-color" name="close-circle" library="mdi" [customSize]="statusIconSize"></tn-icon>
           }
           <span class="cell-clamp">{{ row | getLogImportantData | translate }}</span>
         </div>

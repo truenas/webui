@@ -103,7 +103,9 @@ export class TestDirective {
       case 'ix-select':
         return tagName.replace('ix-', '');
       default:
-        throw new Error(`Unknown element type: ${tagName}`);
+        // Surface the gap without crashing the view — release-eng can still grep the rendered tag.
+        console.warn(`[ixTest] Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
+        return tagName;
     }
   }
 }

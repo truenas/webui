@@ -8,42 +8,33 @@
       table-layout: fixed;
     }
 
-    .tn-table__row {
-      height: 48px;
-    }
-
     .tn-table__cell {
       white-space: normal;
       overflow: hidden;
-      padding: 0;
     }
 
     .cell-clamp {
       @include line-clamp(2);
     }
+
+    // tn-tooltip wires up via aria-describedby. Keep the line-clamp + small bottom
+    // margin on the inner content span so tooltip-bearing cells render the same as
+    // plain ones. Coupled to tn-tooltip's attribute naming — revisit if upstream
+    // renames the prefix.
+    tr > td div[aria-describedby^='tn-tooltip-'] span {
+      @include line-clamp(2);
+      margin: 0 0 -3px;
+    }
   }
 }
 
-.clickable-cell {
-  cursor: pointer;
-  display: block;
-  height: 100%;
-  padding: 0 16px;
-
-  &.active {
-    background-color: var(--tn-alt-bg1);
-  }
-}
-
-.user-avatar.clickable-cell,
-.event-data.clickable-cell {
+.user-avatar,
+.event-data {
   align-items: center;
   display: flex;
 }
 
 .event-data {
-  align-items: center;
-  display: flex;
   gap: 8px;
 
   tn-icon {

@@ -40,6 +40,8 @@ export const auditEntries = [
 
 export const mockAuditApiDataProvider = {
   currentPage$: of(auditEntries),
+  currentPageCount$: of(auditEntries.length),
+  isLoading$: of(false),
   selectedControllerType: ControllerType.Active,
   load: jest.fn(),
   setPagination: jest.fn(),

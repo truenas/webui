@@ -69,11 +69,6 @@ describe('AuditSearchComponent', () => {
   });
 
   describe('component initialization', () => {
-    it('should initialize with CSV as default export format', () => {
-      const exportButton = spectator.query(ExportButtonComponent);
-      expect(exportButton.displayFormat()).toBe('CSV');
-    });
-
     it('should display export controls when data is available', () => {
       expect(spectator.query('.export-container')).toExist();
       expect(spectator.query(ExportButtonComponent)).toExist();
@@ -98,16 +93,14 @@ describe('AuditSearchComponent', () => {
   });
 
   describe('format selector', () => {
-    it('should display current format in export button', () => {
-      const exportButton = spectator.query(ExportButtonComponent);
+    it('defaults to CSV and reflects programmatic format changes in the export button', () => {
+      let exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.displayFormat()).toBe('CSV');
-    });
 
-    it('should change format in export button when format is changed', () => {
       spectator.component.onFormatChange(ExportFormat.Json);
       spectator.detectChanges();
 
-      const exportButton = spectator.query(ExportButtonComponent);
+      exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.displayFormat()).toBe('JSON');
     });
 

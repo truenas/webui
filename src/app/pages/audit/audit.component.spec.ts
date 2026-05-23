@@ -312,9 +312,8 @@ describe('AuditComponent', () => {
 
     it('shows details for the selected audit entry', () => {
       spectator.detectChanges();
-      const cells = spectator.queryAll<HTMLElement>('.clickable-cell');
-      // 5 columns × 2 rows = 10 cells; second row starts at index 5.
-      cells[5].click();
+      const rows = spectator.queryAll<HTMLElement>('.tn-table__row');
+      rows[1].click();
       spectator.detectChanges();
 
       const details = spectator.query(LogDetailsPanelComponent)!;
