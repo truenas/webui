@@ -6,8 +6,8 @@
 @if (!isLoading && count === 0) {
   @let emptyAttrs = getEmptyAttrs(dataProvider().emptyType$ | async);
   <tn-empty
-    [title]="emptyAttrs.title"
-    [description]="emptyAttrs.description"
+    [title]="emptyAttrs.title | translate"
+    [description]="emptyAttrs.description | translate"
     [icon]="emptyAttrs.icon"
   ></tn-empty>
 } @else {
@@ -17,24 +17,30 @@
     [dataSource]="(dataProvider().currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByAuditId"
-    [clickable]="true"
-    [activeRow]="dataProvider().expandedRow"
-    [loading]="isLoading"
-    [loadingMessage]="'Loading audit entries…' | translate"
     (sortChange)="onSortChange($event)"
-    (rowClick)="onRowClick($event)"
   >
     <ng-container [tnColumnDef]="'service'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span class="cell-clamp">{{ getServiceLabel(row) }}</span>
+        <span
+          class="cell-clamp clickable-cell"
+          [class.active]="dataProvider().expandedRow === row"
+          (click)="onRowClick(row)"
+          (keydown.enter)="onRowClick(row)"
+        >{{ getServiceLabel(row) | translate }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'username'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'User' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <div class="user-avatar" [tnTooltip]="row.username">
+        <div
+          class="user-avatar clickable-cell"
+          [class.active]="dataProvider().expandedRow === row"
+          [tnTooltip]="row.username"
+          (click)="onRowClick(row)"
+          (keydown.enter)="onRowClick(row)"
+        >
           <div [innerHTML]="row.username | userAvatar"></div>
           <span class="cell-clamp">{{ row.username || '-' }}</span>
         </div>
@@ -44,7 +50,12 @@
     <ng-container [tnColumnDef]="'message_timestamp'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Timestamp' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span class="cell-clamp">
+        <span
+          class="cell-clamp clickable-cell"
+          [class.active]="dataProvider().expandedRow === row"
+          (click)="onRowClick(row)"
+          (keydown.enter)="onRowClick(row)"
+        >
           <ix-date [date]="row.message_timestamp * 1000"></ix-date>
         </span>
       </ng-template>
@@ -53,14 +64,25 @@
     <ng-container [tnColumnDef]="'event'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span class="cell-clamp">{{ getEventLabel(row) }}</span>
+        <span
+          class="cell-clamp clickable-cell"
+          [class.active]="dataProvider().expandedRow === row"
+          (click)="onRowClick(row)"
+          (keydown.enter)="onRowClick(row)"
+        >{{ getEventLabel(row) | translate }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'event_data'">
       <ng-template tnHeaderCellDef>{{ 'Event Data' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <div class="event-data" [tnTooltip]="row | getLogImportantData | translate">
+        <div
+          class="event-data clickable-cell"
+          [class.active]="dataProvider().expandedRow === row"
+          [tnTooltip]="row | getLogImportantData | translate"
+          (click)="onRowClick(row)"
+          (keydown.enter)="onRowClick(row)"
+        >
           @if (row.success) {
             <tn-icon name="check-circle" library="mdi" [customSize]="statusIconSize"></tn-icon>
           } @else {

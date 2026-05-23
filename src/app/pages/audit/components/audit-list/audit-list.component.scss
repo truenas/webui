@@ -19,6 +19,15 @@
   @include line-clamp(2);
 }
 
+.clickable-cell {
+  cursor: pointer;
+  display: block;
+
+  &.active {
+    color: var(--tn-primary);
+  }
+}
+
 .user-avatar,
 .event-data {
   align-items: center;

@@ -1,10 +1,10 @@
 <ix-page-header>
   @if (isHaLicensed()) {
     <div class="controller-toggle">
-      <span id="controller-toggle-label" class="controller-toggle__label">{{ 'Controller' | translate }}</span>
+      <span class="controller-toggle__label" [id]="controllerToggleLabelId">{{ 'Controller' | translate }}</span>
       <tn-button-toggle-group
         [formControl]="controllerTypeControl"
-        [ariaLabelledby]="'controller-toggle-label'"
+        [ariaLabelledby]="controllerToggleLabelId"
       >
         @for (option of controllerTypeOptions; track option.value) {
           <tn-button-toggle [value]="option.value">{{ option.label }}</tn-button-toggle>

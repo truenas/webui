@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, computed, inject, input, output,
+  Component, ChangeDetectionStrategy, computed, input, output,
 } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   TnCellDefDirective,
   TnEmptyComponent,
@@ -15,7 +15,9 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { auditEventLabels, auditServiceLabels } from 'app/enums/audit.enum';
+import {
+  AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
+} from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
@@ -27,6 +29,34 @@ import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/au
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { GetLogImportantDataPipe } from 'app/pages/audit/utils/get-log-important-data.pipe';
 import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
+
+interface EmptyAttrs {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+const emptyTypeAttrs = new Map<EmptyType, EmptyAttrs>([
+  [EmptyType.Loading, { title: T('Loading…'), description: '', icon: 'mdi-loading' }],
+  [EmptyType.Errors, { title: T('Cannot retrieve response'), description: '', icon: 'mdi-alert-octagon' }],
+  [EmptyType.NoSearchResults, {
+    title: T('No Search Results.'),
+    description: T('No matching results found'),
+    icon: 'mdi-magnify-scan',
+  }],
+  [EmptyType.FirstUse, {
+    title: T('No records have been added yet'), description: '', icon: 'mdi-format-list-text',
+  }],
+  [EmptyType.NoPageData, {
+    title: T('No records have been added yet'), description: '', icon: 'mdi-format-list-text',
+  }],
+]);
+
+const defaultEmptyAttrs: EmptyAttrs = {
+  title: T('No records have been added yet'),
+  description: '',
+  icon: 'mdi-format-list-text',
+};
 
 @Component({
   selector: 'ix-audit-list',
@@ -52,8 +82,6 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
   ],
 })
 export class AuditListComponent {
-  private translate = inject(TranslateService);
-
   readonly dataProvider = input.required<AuditApiDataProvider>();
 
   protected readonly searchableElements = auditElements;
@@ -67,13 +95,11 @@ export class AuditListComponent {
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
   protected getServiceLabel(row: AuditEntry): string {
-    const service = auditServiceLabels.get(row.service);
-    return service ? this.translate.instant(service) : row.service || '-';
+    return auditServiceLabels.get(row.service as AuditService) || row.service || '-';
   }
 
   protected getEventLabel(row: AuditEntry): string {
-    const event = auditEventLabels.get(row.event);
-    return event ? this.translate.instant(event) : row.event || '-';
+    return auditEventLabels.get(row.event as AuditEvent) || row.event || '-';
   }
 
   protected onSortChange(event: TnSortEvent): void {
@@ -101,34 +127,7 @@ export class AuditListComponent {
     this.toggleShowMobileDetails.emit(true);
   }
 
-  protected getEmptyAttrs(emptyType: EmptyType | null): { title: string; description: string; icon: string } {
-    switch (emptyType) {
-      case EmptyType.Loading:
-        return {
-          title: this.translate.instant(T('Loading…')),
-          description: '',
-          icon: 'mdi-loading',
-        };
-      case EmptyType.Errors:
-        return {
-          title: this.translate.instant(T('Cannot retrieve response')),
-          description: '',
-          icon: 'mdi-alert-octagon',
-        };
-      case EmptyType.NoSearchResults:
-        return {
-          title: this.translate.instant(T('No Search Results.')),
-          description: this.translate.instant(T('No matching results found')),
-          icon: 'mdi-magnify-scan',
-        };
-      case EmptyType.FirstUse:
-      case EmptyType.NoPageData:
-      default:
-        return {
-          title: this.translate.instant(T('No records have been added yet')),
-          description: '',
-          icon: 'mdi-format-list-text',
-        };
-    }
+  protected getEmptyAttrs(emptyType: EmptyType | null): EmptyAttrs {
+    return emptyTypeAttrs.get(emptyType as EmptyType) ?? defaultEmptyAttrs;
   }
 }

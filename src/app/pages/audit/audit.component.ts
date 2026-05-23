@@ -62,6 +62,9 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly controllerTypeOptions = mapToOptions(controllerTypeLabels, this.translate);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
+  protected readonly controllerToggleLabelId = `controller-toggle-label-${AuditComponent.nextInstanceId++}`;
+
+  private static nextInstanceId = 0;
 
   ngOnInit(): void {
     this.createDataProvider();
