@@ -11,16 +11,28 @@
       (submit)="onSubmit()"
     >
       <div mat-dialog-content>
-        <p
-          [innerHTML]="
-            'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
-              : {
-                  snapshot: publicSnapshot.snapshot_name,
-                  dataset: publicSnapshot.dataset,
-                  datetime: publicSnapshot.properties?.creation?.parsed?.$date | formatDateTime
-                }
-            "
-        ></p>
+        @if (publicSnapshot.properties?.creation?.parsed?.$date) {
+          <p
+            [innerHTML]="
+              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
+                : {
+                    snapshot: publicSnapshot.snapshot_name,
+                    dataset: publicSnapshot.dataset,
+                    datetime: publicSnapshot.properties.creation.parsed.$date | formatDateTime
+                  }
+              "
+          ></p>
+        } @else {
+          <p
+            [innerHTML]="
+              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back?' | translate
+                : {
+                    snapshot: publicSnapshot.snapshot_name,
+                    dataset: publicSnapshot.dataset
+                  }
+              "
+          ></p>
+        }
 
         <ix-fieldset>
           <ix-radio-group

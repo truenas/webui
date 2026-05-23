@@ -113,7 +113,10 @@ export class SnapshotRollbackDialog implements OnInit {
    * Possibly can be removed
    */
   private getSnapshotCreationInfo(): void {
-    this.api.call('pool.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
+    this.api.call('pool.snapshot.query', [
+      [['id', '=', this.snapshotName]],
+      { extra: { properties: ['creation'] } },
+    ]).pipe(
       map((snapshots) => snapshots[0]),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
