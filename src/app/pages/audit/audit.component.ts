@@ -14,6 +14,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { generateUuid } from 'app/helpers/uuid.helper';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -62,9 +63,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly controllerTypeOptions = mapToOptions(controllerTypeLabels, this.translate);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
-  protected readonly controllerToggleLabelId = `controller-toggle-label-${AuditComponent.nextInstanceId++}`;
-
-  private static nextInstanceId = 0;
+  protected readonly controllerToggleLabelId = `controller-toggle-label-${generateUuid()}`;
 
   ngOnInit(): void {
     this.createDataProvider();

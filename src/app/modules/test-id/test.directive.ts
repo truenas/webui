@@ -108,7 +108,9 @@ export class TestDirective {
           throw new Error(`Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
         }
         console.warn(`[ixTest] Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
-        return tagName;
+        // Strip the framework prefix for parity with the explicit cases above so
+        // the generated data-test ID stays stable when a new tag falls through.
+        return tagName.replace(/^(ix|tn|mat)-/, '');
     }
   }
 }

@@ -1,5 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { OutputEmitterRef } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnTableHarness } from '@truenas/ui-components';
@@ -12,13 +11,6 @@ import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/au
 import { auditEntries, mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AuditListComponent } from './audit-list.component';
-
-interface AuditListInternals {
-  onRowClick: (row: AuditEntry | null) => void;
-  onSortChange: (event: { column: string; direction: 'asc' | 'desc' | '' }) => void;
-  rowSelected: OutputEmitterRef<AuditEntry>;
-  toggleShowMobileDetails: OutputEmitterRef<boolean>;
-}
 
 describe('AuditListComponent', () => {
   let spectator: Spectator<AuditListComponent>;
@@ -70,44 +62,50 @@ describe('AuditListComponent', () => {
     expect(spectator.query(IxTablePagerComponent)).toExist();
   });
 
-  describe('onRowClick', () => {
-    it('emits rowSelected and toggleShowMobileDetails when a row is clicked', () => {
-      const internals = spectator.component as unknown as AuditListInternals;
+  describe('row interaction', () => {
+    it('emits rowSelected and toggleShowMobileDetails when a row is clicked', async () => {
       const rowSelectedSpy = jest.fn();
       const toggleShowMobileDetailsSpy = jest.fn();
-      internals.rowSelected.subscribe(rowSelectedSpy);
-      internals.toggleShowMobileDetails.subscribe(toggleShowMobileDetailsSpy);
+      spectator.output<AuditEntry>('rowSelected').subscribe(rowSelectedSpy);
+      spectator.output<boolean>('toggleShowMobileDetails').subscribe(toggleShowMobileDetailsSpy);
 
-      internals.onRowClick(auditEntries[0]);
+      await table.clickRow(0);
 
       expect(rowSelectedSpy).toHaveBeenCalledWith(auditEntries[0]);
       expect(toggleShowMobileDetailsSpy).toHaveBeenCalledWith(true);
     });
 
-    it('does nothing when row is falsy', () => {
-      const internals = spectator.component as unknown as AuditListInternals;
+    it('activates a row when Enter is pressed on the focused row', async () => {
       const rowSelectedSpy = jest.fn();
-      const toggleShowMobileDetailsSpy = jest.fn();
-      internals.rowSelected.subscribe(rowSelectedSpy);
-      internals.toggleShowMobileDetails.subscribe(toggleShowMobileDetailsSpy);
+      spectator.output<AuditEntry>('rowSelected').subscribe(rowSelectedSpy);
 
-      internals.onRowClick(null);
+      await table.pressKeyOnRow(1, 'enter');
 
-      expect(rowSelectedSpy).not.toHaveBeenCalled();
-      expect(toggleShowMobileDetailsSpy).not.toHaveBeenCalled();
+      expect(rowSelectedSpy).toHaveBeenCalledWith(auditEntries[1]);
+    });
+
+    it('activates a row when Space is pressed on the focused row', async () => {
+      const rowSelectedSpy = jest.fn();
+      spectator.output<AuditEntry>('rowSelected').subscribe(rowSelectedSpy);
+
+      await table.pressKeyOnRow(1, 'space');
+
+      expect(rowSelectedSpy).toHaveBeenCalledWith(auditEntries[1]);
+    });
+
+    it('exposes each row as a single keyboard tab stop', async () => {
+      expect(await table.isRowFocusable(0)).toBe(true);
+      expect(await table.isRowFocusable(1)).toBe(true);
     });
   });
 
-  describe('onSortChange', () => {
+  describe('sorting', () => {
     beforeEach(() => {
       (mockAuditApiDataProvider.setSorting as jest.Mock).mockClear();
     });
 
-    it('translates "asc" direction with active column index', () => {
-      (spectator.component as unknown as AuditListInternals).onSortChange({
-        column: 'service',
-        direction: 'asc',
-      });
+    it('translates ascending sort to provider state with active column index', async () => {
+      await table.clickSortHeader('service');
 
       expect(mockAuditApiDataProvider.setSorting).toHaveBeenCalledWith({
         propertyName: 'service',
@@ -116,26 +114,23 @@ describe('AuditListComponent', () => {
       });
     });
 
-    it('translates "desc" direction with active column index', () => {
-      (spectator.component as unknown as AuditListInternals).onSortChange({
-        column: 'event',
-        direction: 'desc',
-      });
+    it('translates descending sort to provider state with active column index', async () => {
+      await table.clickSortHeader('event');
+      await table.clickSortHeader('event');
 
-      expect(mockAuditApiDataProvider.setSorting).toHaveBeenCalledWith({
+      expect(mockAuditApiDataProvider.setSorting).toHaveBeenLastCalledWith({
         propertyName: 'event',
         direction: SortDirection.Desc,
         active: 3,
       });
     });
 
-    it('clears propertyName and active when direction is empty', () => {
-      (spectator.component as unknown as AuditListInternals).onSortChange({
-        column: 'service',
-        direction: '',
-      });
+    it('clears propertyName and active when sort is cycled back to none', async () => {
+      await table.clickSortHeader('service');
+      await table.clickSortHeader('service');
+      await table.clickSortHeader('service');
 
-      expect(mockAuditApiDataProvider.setSorting).toHaveBeenCalledWith({
+      expect(mockAuditApiDataProvider.setSorting).toHaveBeenLastCalledWith({
         propertyName: null,
         direction: null,
         active: null,

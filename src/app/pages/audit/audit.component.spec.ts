@@ -317,11 +317,7 @@ describe('AuditComponent', () => {
       // Sanity check that the mock data rendered two rows.
       expect(rowCount).toBe(2);
 
-      // The published TnTableHarness has no row-click helper; use the per-cell
-      // click handlers on the second row's first cell directly.
-      const dataRows = spectator.queryAll<HTMLElement>('tr.tn-table__row');
-      const secondRowCells = dataRows[1].querySelectorAll<HTMLElement>('.clickable-cell');
-      spectator.click(secondRowCells[0]);
+      await table.clickRow(1);
       spectator.detectChanges();
 
       const details = spectator.query(LogDetailsPanelComponent)!;

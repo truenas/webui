@@ -1,3 +1,4 @@
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, output, signal, Signal, viewChild, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
@@ -48,6 +49,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   private queryToApi = inject<QueryToApiService<T>>(QueryToApiService);
   private advancedSearchAutocomplete = inject<AdvancedSearchAutocompleteService<T>>(AdvancedSearchAutocompleteService);
   private cdr = inject(ChangeDetectorRef);
+  private interactivityChecker = inject(InteractivityChecker);
 
   readonly query = input<QueryFilters<T>>([]);
   readonly filterPresets = input<FilterPreset<T>[]>([]);
@@ -132,10 +134,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
         run: (view) => {
           if (completionStatus(view.state) !== null) {
             closeCompletion(view);
-            this.moveFocusToNextFocusable();
-            return true;
           }
-          return false;
+          this.moveFocusToNextFocusable();
+          return true;
         },
       },
       {
@@ -143,10 +144,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
         run: (view) => {
           if (completionStatus(view.state) !== null) {
             closeCompletion(view);
-            this.moveFocusToPreviousFocusable();
-            return true;
           }
-          return false;
+          this.moveFocusToPreviousFocusable();
+          return true;
         },
       },
     ]));
@@ -252,10 +252,10 @@ export class AdvancedSearchComponent<T> implements OnInit {
       '.cdk-overlay-pane, [cdkTrapFocus], form, [role="dialog"]',
     ) ?? document.body;
 
-    const focusable = Array.from(scope.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), '
-      + 'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    )).filter((el) => !el.hasAttribute('disabled') && el.getClientRects().length > 0);
+    // Defer to CDK so visibility/inert/aria-hidden and disabled-ancestor
+    // edge cases are handled the same way as the rest of Angular Material.
+    const focusable = Array.from(scope.querySelectorAll<HTMLElement>('*'))
+      .filter((el) => this.interactivityChecker.isFocusable(el));
 
     const idx = focusable.indexOf(current);
     if (idx === -1) return;

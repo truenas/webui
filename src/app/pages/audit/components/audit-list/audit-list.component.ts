@@ -6,7 +6,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnCellDefDirective,
-  TnEmptyComponent,
   TnHeaderCellDefDirective,
   TnIconComponent,
   TnTableColumnDirective,
@@ -32,29 +31,19 @@ import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
 
 interface EmptyAttrs {
   title: string;
-  description: string;
   icon: string;
 }
 
 const emptyTypeAttrs = new Map<EmptyType, EmptyAttrs>([
-  [EmptyType.Loading, { title: T('Loading…'), description: '', icon: 'mdi-loading' }],
-  [EmptyType.Errors, { title: T('Cannot retrieve response'), description: '', icon: 'mdi-alert-octagon' }],
-  [EmptyType.NoSearchResults, {
-    title: T('No Search Results.'),
-    description: T('No matching results found'),
-    icon: 'mdi-magnify-scan',
-  }],
-  [EmptyType.FirstUse, {
-    title: T('No records have been added yet'), description: '', icon: 'mdi-format-list-text',
-  }],
-  [EmptyType.NoPageData, {
-    title: T('No records have been added yet'), description: '', icon: 'mdi-format-list-text',
-  }],
+  [EmptyType.Loading, { title: T('Loading…'), icon: 'mdi-loading' }],
+  [EmptyType.Errors, { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' }],
+  [EmptyType.NoSearchResults, { title: T('No Search Results.'), icon: 'mdi-magnify-scan' }],
+  [EmptyType.FirstUse, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
+  [EmptyType.NoPageData, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
 ]);
 
 const defaultEmptyAttrs: EmptyAttrs = {
   title: T('No records have been added yet'),
-  description: '',
   icon: 'mdi-format-list-text',
 };
 
@@ -70,7 +59,6 @@ const defaultEmptyAttrs: EmptyAttrs = {
     GetLogImportantDataPipe,
     IxTablePagerComponent,
     TnCellDefDirective,
-    TnEmptyComponent,
     TnHeaderCellDefDirective,
     TnIconComponent,
     TnTableColumnDirective,
@@ -85,8 +73,8 @@ export class AuditListComponent {
   readonly dataProvider = input.required<AuditApiDataProvider>();
 
   protected readonly searchableElements = auditElements;
-  protected readonly toggleShowMobileDetails = output<boolean>();
-  protected readonly rowSelected = output<AuditEntry>();
+  readonly toggleShowMobileDetails = output<boolean>();
+  readonly rowSelected = output<AuditEntry>();
   protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
@@ -119,15 +107,19 @@ export class AuditListComponent {
     this.dataProvider().setSorting(sorting);
   }
 
-  protected onRowClick(row: AuditEntry): void {
-    if (!row) {
+  protected onRowClick(row: unknown): void {
+    const entry = row as AuditEntry | null | undefined;
+    if (!entry) {
       return;
     }
-    this.rowSelected.emit(row);
+    this.rowSelected.emit(entry);
     this.toggleShowMobileDetails.emit(true);
   }
 
   protected getEmptyAttrs(emptyType: EmptyType | null): EmptyAttrs {
-    return emptyTypeAttrs.get(emptyType as EmptyType) ?? defaultEmptyAttrs;
+    if (emptyType === null) {
+      return defaultEmptyAttrs;
+    }
+    return emptyTypeAttrs.get(emptyType) ?? defaultEmptyAttrs;
   }
 }
