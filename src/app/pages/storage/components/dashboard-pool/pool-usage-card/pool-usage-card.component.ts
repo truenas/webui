@@ -143,7 +143,9 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected performanceUsable = computed(() => {
-    return this.poolState().special_class_usable || (this.performanceUsed() + this.rawPerformanceAvailable());
+    // Fall back to used + raw available only when usable is genuinely absent;
+    // ?? keeps a legitimate 0 (empty special vdev) from triggering the fallback.
+    return this.poolState().special_class_usable ?? (this.performanceUsed() + this.rawPerformanceAvailable());
   });
 
   // Reserve set aside for metadata once usage crosses the threshold; derived from
@@ -178,12 +180,14 @@ export class PoolUsageCardComponent implements OnInit {
     // Widths are relative to usable so the reserve is a fixed-width striped zone
     // pinned to the right. The Used bar runs the full usedPercent and slides
     // under that zone, so green showing through the stripes is usage that has
-    // eaten into the reserve.
+    // eaten into the reserve. Available is clamped to the space left after Used
+    // so data skew (used + available > usable) can't push it past the reserve.
+    const usedPercent = Math.min(100, pct(this.performanceUsed(), performanceUsable));
     return {
       performance: {
         hasData: performanceUsable > 0,
-        usedPercent: Math.min(100, pct(this.performanceUsed(), performanceUsable)),
-        availablePercent: pct(this.performanceAvailable(), performanceUsable),
+        usedPercent,
+        availablePercent: Math.min(pct(this.performanceAvailable(), performanceUsable), 100 - usedPercent),
         reservedPercent: Math.min(100, pct(this.performanceReserved(), performanceUsable)),
       },
       regular: {
