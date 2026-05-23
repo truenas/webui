@@ -19,6 +19,7 @@ import {
   withNavigationErrorHandler,
   NavigationError,
 } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
@@ -137,12 +138,12 @@ bootstrapApplication(AppComponent, {
         return computed<TnTablePagerLabels>(() => {
           tick();
           return {
-            itemsPerPage: translateOrKey('Items per page'),
-            of: translateOrKey('of'),
-            firstPage: translateOrKey('First Page'),
-            previousPage: translateOrKey('Previous Page'),
-            nextPage: translateOrKey('Next Page'),
-            lastPage: translateOrKey('Last Page'),
+            itemsPerPage: translateOrKey(T('Items per page')),
+            of: translateOrKey(T('of')),
+            firstPage: translateOrKey(T('First Page')),
+            previousPage: translateOrKey(T('Previous Page')),
+            nextPage: translateOrKey(T('Next Page')),
+            lastPage: translateOrKey(T('Last Page')),
           };
         });
       },
