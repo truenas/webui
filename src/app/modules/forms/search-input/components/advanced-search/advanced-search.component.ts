@@ -245,12 +245,18 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   private moveFocusInDirection(direction: 1 | -1): void {
-    const focusable = Array.from(document.querySelectorAll<HTMLElement>(
+    const current = this.editorView.contentDOM;
+    // Stay within the surrounding focus trap (dialog/overlay) or form so Tab
+    // from the CodeMirror editor doesn't escape into background content.
+    const scope = current.closest<HTMLElement>(
+      '.cdk-overlay-pane, [cdkTrapFocus], form, [role="dialog"]',
+    ) ?? document.body;
+
+    const focusable = Array.from(scope.querySelectorAll<HTMLElement>(
       'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), '
       + 'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
     )).filter((el) => !el.hasAttribute('disabled') && el.getClientRects().length > 0);
 
-    const current = this.editorView.contentDOM;
     const idx = focusable.indexOf(current);
     if (idx === -1) return;
 

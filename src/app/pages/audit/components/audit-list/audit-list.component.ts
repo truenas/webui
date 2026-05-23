@@ -58,6 +58,7 @@ export class AuditListComponent {
 
   protected readonly searchableElements = auditElements;
   protected readonly toggleShowMobileDetails = output<boolean>();
+  protected readonly rowSelected = output<AuditEntry>();
   protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
@@ -96,7 +97,7 @@ export class AuditListComponent {
     if (!row) {
       return;
     }
-    this.dataProvider().expandedRow = row;
+    this.rowSelected.emit(row);
     this.toggleShowMobileDetails.emit(true);
   }
 
@@ -104,7 +105,7 @@ export class AuditListComponent {
     switch (emptyType) {
       case EmptyType.Loading:
         return {
-          title: this.translate.instant(T('Loading...')),
+          title: this.translate.instant(T('Loading…')),
           description: '',
           icon: 'mdi-loading',
         };

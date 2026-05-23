@@ -7,6 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonToggleHarness,
   TnSelectHarness,
+  TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -310,10 +311,9 @@ describe('AuditComponent', () => {
       expect(title).toHaveText('Log Details');
     });
 
-    it('shows details for the selected audit entry', () => {
-      spectator.detectChanges();
-      const rows = spectator.queryAll<HTMLElement>('.tn-table__row');
-      rows[1].click();
+    it('shows details for the selected audit entry', async () => {
+      const table = await loader.getHarness(TnTableHarness);
+      await table.clickRow(1);
       spectator.detectChanges();
 
       const details = spectator.query(LogDetailsPanelComponent)!;

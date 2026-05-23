@@ -9,39 +9,36 @@
     }
 
     .tn-table__cell {
-      white-space: normal;
       overflow: hidden;
-    }
-
-    .cell-clamp {
-      @include line-clamp(2);
-    }
-
-    // tn-tooltip wires up via aria-describedby. Keep the line-clamp + small bottom
-    // margin on the inner content span so tooltip-bearing cells render the same as
-    // plain ones. Coupled to tn-tooltip's attribute naming — revisit if upstream
-    // renames the prefix.
-    tr > td div[aria-describedby^='tn-tooltip-'] span {
-      @include line-clamp(2);
-      margin: 0 0 -3px;
+      white-space: normal;
     }
   }
+}
+
+.cell-clamp {
+  @include line-clamp(2);
 }
 
 .user-avatar,
 .event-data {
   align-items: center;
   display: flex;
+
+  // Compensate for the line-height of the clamped inner span so tooltip-bearing
+  // cells line up vertically with plain cells.
+  .cell-clamp {
+    margin: 0 0 -3px;
+  }
 }
 
 .event-data {
   gap: 8px;
 
   tn-icon {
+    min-height: 15px;
+    min-width: 15px;
     position: relative;
     top: 2px;
-    min-width: 15px;
-    min-height: 15px;
 
     &.error-color {
       color: var(--tn-red);

@@ -7,10 +7,7 @@
         [ariaLabelledby]="'controller-toggle-label'"
       >
         @for (option of controllerTypeOptions; track option.value) {
-          <tn-button-toggle
-            [value]="option.value"
-            [ariaLabel]="option.label"
-          >{{ option.label }}</tn-button-toggle>
+          <tn-button-toggle [value]="option.value">{{ option.label }}</tn-button-toggle>
         }
       </tn-button-toggle-group>
     </div>
@@ -33,6 +30,7 @@
   <ix-audit-list
     master
     [dataProvider]="dataProvider"
+    (rowSelected)="dataProvider.expandedRow = $event"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-audit-list>
 

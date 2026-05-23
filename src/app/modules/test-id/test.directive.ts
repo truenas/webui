@@ -1,4 +1,5 @@
 import { Directive, ElementRef, HostBinding, input, inject } from '@angular/core';
+import { environment } from 'environments/environment';
 import { kebabCase } from 'lodash-es';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
@@ -103,7 +104,9 @@ export class TestDirective {
       case 'ix-select':
         return tagName.replace('ix-', '');
       default:
-        // Surface the gap without crashing the view — release-eng can still grep the rendered tag.
+        if (!environment.production) {
+          throw new Error(`Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
+        }
         console.warn(`[ixTest] Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
         return tagName;
     }
