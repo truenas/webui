@@ -116,13 +116,16 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           // The metadata reserve is derived in the Usage card from
           // zfs.tier.config (special_class_metadata_reserve_pct), so the raw
           // ZFS values are passed through here untouched.
+          const rawSpecialUsable = zpool.properties.class_special_usable?.value;
           return {
             ...pool,
             used: toBytes(zpool.properties.class_normal_used?.value) || pool.used,
             available: toBytes(zpool.properties.class_normal_available?.value) || pool.available,
             special_class_used: toBytes(zpool.properties.class_special_used?.value),
             special_class_available: toBytes(zpool.properties.class_special_available?.value),
-            special_class_usable: toBytes(zpool.properties.class_special_usable?.value),
+            // Left undefined (not 0) when ZFS doesn't report it, so the Usage card
+            // can tell "absent" from a genuine empty special vdev and fall back.
+            special_class_usable: rawSpecialUsable == null ? undefined : Number(rawSpecialUsable),
           };
         });
         this.patchState({

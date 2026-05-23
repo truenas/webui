@@ -43,6 +43,12 @@ export class SharingTierService {
   readonly tierEnabled = this.tierEnabledSignal.asReadonly();
 
   private metadataReservePctSignal = signal(0);
+  /**
+   * Percentage of special-vdev usable capacity reserved for metadata. Defaults to
+   * 0 and is only populated once `getTierConfig()` has been subscribed somewhere
+   * in the component tree (the pools dashboard primes it for the cards). Read it
+   * directly only from components that live under such a subscriber.
+   */
   readonly metadataReservePct = this.metadataReservePctSignal.asReadonly();
 
   getTierConfig(): Observable<ZfsTierConfig> {
