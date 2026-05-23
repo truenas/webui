@@ -1,7 +1,7 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
-  enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
+  computed, enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer, signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -123,14 +123,29 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: TN_TABLE_PAGER_LABELS,
-      useFactory: (translate: TranslateService): TnTablePagerLabels => ({
-        itemsPerPage: translate.instant('Items per page'),
-        of: translate.instant('of'),
-        firstPage: translate.instant('First Page'),
-        previousPage: translate.instant('Previous Page'),
-        nextPage: translate.instant('Next Page'),
-        lastPage: translate.instant('Last Page'),
-      }),
+      // Signal-based provider so the pager re-renders when translations load or
+      // the user switches language. A tick signal bumped on every `onLangChange`
+      // forces the `computed` to re-evaluate via `translate.instant()` — which
+      // by then has the freshly loaded translations available.
+      useFactory: (translate: TranslateService) => {
+        const tick = signal(0);
+        translate.onLangChange.subscribe(() => tick.update((n) => n + 1));
+        const translateOrKey = (key: string): string => {
+          const value = translate.instant(key);
+          return typeof value === 'string' && value ? value : key;
+        };
+        return computed<TnTablePagerLabels>(() => {
+          tick();
+          return {
+            itemsPerPage: translateOrKey('Items per page'),
+            of: translateOrKey('of'),
+            firstPage: translateOrKey('First Page'),
+            previousPage: translateOrKey('Previous Page'),
+            nextPage: translateOrKey('Next Page'),
+            lastPage: translateOrKey('Last Page'),
+          };
+        });
+      },
       deps: [TranslateService],
     },
     provideAppInitializer(() => {
