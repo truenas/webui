@@ -5,13 +5,17 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialog>;
@@ -51,7 +55,10 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('checks getting additional properties query is called', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [[['id', '=', 'test-dataset@first-snapshot']]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
+      [['id', '=', 'test-dataset@first-snapshot']],
+      { extra: { properties: ['creation'] } },
+    ]);
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
@@ -86,6 +93,25 @@ describe('SnapshotRollbackDialogComponent', () => {
       { force: true, recursive: true },
     ]);
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
+  });
+
+  it('omits the datetime fragment when the creation timestamp is unix epoch (0), so the dialog does not display 1969', () => {
+    const snapshotWithoutCreation: ZfsSnapshot = {
+      ...fakeZfsSnapshot,
+      properties: {
+        ...fakeZfsSnapshot.properties,
+        creation: {
+          parsed: { $date: 0 },
+        } as ZfsProperty<string, ApiTimestamp>,
+      },
+    } as ZfsSnapshot;
+
+    spectator.inject(MockApiService).mockCall('pool.snapshot.query', [snapshotWithoutCreation]);
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back?');
+    expect(spectator.fixture.nativeElement).not.toHaveText('1969');
   });
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {
