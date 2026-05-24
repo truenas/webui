@@ -489,7 +489,6 @@
     "./src/app/modules/forms/search-input/types/search-property.interface.ts",
     "./src/app/modules/forms/search-input/types/search-query.interface.ts",
     "./src/app/modules/snackbar/components/snackbar/snackbar-config.interface.ts",
-    "./src/app/modules/snackbar/components/snackbar/snackbar.component.ts",
     "./src/app/modules/snackbar/services/snackbar.service.spec.ts",
     "./src/app/modules/snackbar/services/snackbar.service.ts",
     "./src/app/modules/summary/summary.component.spec.ts",
