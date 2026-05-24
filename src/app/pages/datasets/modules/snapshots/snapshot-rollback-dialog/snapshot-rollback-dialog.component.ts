@@ -25,6 +25,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -75,8 +76,7 @@ export class SnapshotRollbackDialog implements OnInit {
   publicSnapshot: ZfsSnapshot;
 
   protected get creationTimestampMs(): number | undefined {
-    const parsed = this.publicSnapshot?.properties?.creation?.parsed;
-    return parsed != null ? parsed * 1000 : undefined;
+    return getSnapshotCreationMs(this.publicSnapshot);
   }
 
   readonly recursive = {
@@ -112,11 +112,6 @@ export class SnapshotRollbackDialog implements OnInit {
     this.getSnapshotCreationInfo();
   }
 
-  /**
-   * Gets snapshot creation info
-   * Needed only for 'snapshot.created' to use in text
-   * Possibly can be removed
-   */
   private getSnapshotCreationInfo(): void {
     this.api.call('pool.snapshot.query', [
       [['id', '=', this.snapshotName]],

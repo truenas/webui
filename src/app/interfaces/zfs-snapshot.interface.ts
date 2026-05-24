@@ -8,7 +8,7 @@ export interface ZfsSnapshot {
   id: string;
   pool: string;
   properties: {
-    [property: string]: ZfsProperty<string | number | boolean | ApiTimestamp>;
+    [property: string]: ZfsProperty<string | number | boolean>;
     creation: ZfsProperty<string, number>;
   };
   holds?: {
