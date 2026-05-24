@@ -8,7 +8,6 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,6 +15,16 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
+
+function snapshotWithCreation(parsedSeconds: number | undefined): ZfsSnapshot {
+  return {
+    ...fakeZfsSnapshot,
+    properties: {
+      ...fakeZfsSnapshot.properties,
+      creation: { parsed: parsedSeconds } as unknown as ZfsProperty<string, number>,
+    },
+  } as ZfsSnapshot;
+}
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialog>;
@@ -38,7 +47,7 @@ describe('SnapshotRollbackDialogComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockApi([
-        mockCall('pool.snapshot.query', [fakeZfsSnapshot]),
+        mockCall('pool.snapshot.query', [snapshotWithCreation(1634575914)]),
         mockCall('pool.snapshot.rollback'),
       ]),
     ],
@@ -57,7 +66,10 @@ describe('SnapshotRollbackDialogComponent', () => {
   it('checks getting additional properties query is called', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
       [['id', '=', 'test-dataset@first-snapshot']],
-      { extra: { properties: ['creation'] } },
+      {
+        select: ['snapshot_name', 'dataset', 'name', 'properties'],
+        extra: { properties: ['creation'] },
+      },
     ]);
   });
 
@@ -95,18 +107,8 @@ describe('SnapshotRollbackDialogComponent', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
   });
 
-  it('omits the datetime fragment when the creation timestamp is unix epoch (0), so the dialog does not display 1969', () => {
-    const snapshotWithoutCreation: ZfsSnapshot = {
-      ...fakeZfsSnapshot,
-      properties: {
-        ...fakeZfsSnapshot.properties,
-        creation: {
-          parsed: { $date: 0 },
-        } as ZfsProperty<string, ApiTimestamp>,
-      },
-    } as ZfsSnapshot;
-
-    spectator.inject(MockApiService).mockCall('pool.snapshot.query', [snapshotWithoutCreation]);
+  it('omits the datetime fragment when the creation timestamp is missing, so the dialog does not display 1969', () => {
+    spectator.inject(MockApiService).mockCall('pool.snapshot.query', [snapshotWithCreation(undefined)]);
     spectator.component.ngOnInit();
     spectator.detectChanges();
 

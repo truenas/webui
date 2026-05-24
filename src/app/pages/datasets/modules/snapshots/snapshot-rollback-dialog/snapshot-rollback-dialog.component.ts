@@ -74,6 +74,11 @@ export class SnapshotRollbackDialog implements OnInit {
 
   publicSnapshot: ZfsSnapshot;
 
+  protected get creationTimestampMs(): number | undefined {
+    const parsed = this.publicSnapshot?.properties?.creation?.parsed as unknown as number | undefined;
+    return parsed ? parsed * 1000 : undefined;
+  }
+
   readonly recursive = {
     fcName: 'recursive',
     tooltip: helptextSnapshots.stopRollbackTooltip,
@@ -115,7 +120,10 @@ export class SnapshotRollbackDialog implements OnInit {
   private getSnapshotCreationInfo(): void {
     this.api.call('pool.snapshot.query', [
       [['id', '=', this.snapshotName]],
-      { extra: { properties: ['creation'] } },
+      {
+        select: ['snapshot_name', 'dataset', 'name', 'properties'],
+        extra: { properties: ['creation'] },
+      },
     ]).pipe(
       map((snapshots) => snapshots[0]),
       takeUntilDestroyed(this.destroyRef),

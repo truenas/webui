@@ -11,14 +11,14 @@
       (submit)="onSubmit()"
     >
       <div mat-dialog-content>
-        @if (publicSnapshot.properties?.creation?.parsed?.$date) {
+        @if (creationTimestampMs) {
           <p
             [innerHTML]="
               'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
                 : {
                     snapshot: publicSnapshot.snapshot_name,
                     dataset: publicSnapshot.dataset,
-                    datetime: publicSnapshot.properties.creation.parsed.$date | formatDateTime
+                    datetime: creationTimestampMs | formatDateTime
                   }
               "
           ></p>
