@@ -68,7 +68,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
 
-  protected get creationDateMs(): number | undefined {
+  protected get creationTimestampMs(): number | undefined {
     return getSnapshotCreationMs(this.snapshotInfo);
   }
 

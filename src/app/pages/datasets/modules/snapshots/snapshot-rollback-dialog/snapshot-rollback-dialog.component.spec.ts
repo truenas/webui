@@ -67,7 +67,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
       [['id', '=', 'test-dataset@first-snapshot']],
       {
-        select: ['snapshot_name', 'dataset', 'name', 'properties'],
+        select: ['snapshot_name', 'dataset', 'properties'],
         extra: { properties: ['creation'] },
       },
     ]);

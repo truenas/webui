@@ -19,8 +19,8 @@
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
       <dd>
-        @if (creationDateMs) {
-          {{ creationDateMs | formatDateTime }}
+        @if (creationTimestampMs !== undefined) {
+          {{ creationTimestampMs | formatDateTime }}
         } @else {
           {{ 'N/A' | translate }}
         }
