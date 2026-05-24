@@ -19,8 +19,8 @@
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
       <dd>
-        @if (snapshotInfo?.properties?.creation?.parsed?.$date) {
-          {{ snapshotInfo.properties.creation.parsed.$date | formatDateTime }}
+        @if (creationDateMs) {
+          {{ creationDateMs | formatDateTime }}
         } @else {
           {{ 'N/A' | translate }}
         }
