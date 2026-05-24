@@ -344,6 +344,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           return;
         }
 
+        this.isSudoDialogShown = true;
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
@@ -351,7 +352,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
-          this.isSudoDialogShown = true;
         });
       });
   }
