@@ -11,27 +11,29 @@
       (submit)="onSubmit()"
     >
       <div mat-dialog-content>
-        @if (creationTimestampMs) {
-          <p
-            [innerHTML]="
-              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
-                : {
-                    snapshot: publicSnapshot.snapshot_name,
-                    dataset: publicSnapshot.dataset,
-                    datetime: creationTimestampMs | formatDateTime
-                  }
-              "
-          ></p>
-        } @else {
-          <p
-            [innerHTML]="
-              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back?' | translate
-                : {
-                    snapshot: publicSnapshot.snapshot_name,
-                    dataset: publicSnapshot.dataset
-                  }
-              "
-          ></p>
+        @if (publicSnapshot) {
+          @if (creationTimestampMs !== undefined) {
+            <p
+              [innerHTML]="
+                'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
+                  : {
+                      snapshot: publicSnapshot.snapshot_name,
+                      dataset: publicSnapshot.dataset,
+                      datetime: creationTimestampMs | formatDateTime
+                    }
+                "
+            ></p>
+          } @else {
+            <p
+              [innerHTML]="
+                'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back?' | translate
+                  : {
+                      snapshot: publicSnapshot.snapshot_name,
+                      dataset: publicSnapshot.dataset
+                    }
+                "
+            ></p>
+          }
         }
 
         <ix-fieldset>
@@ -78,7 +80,7 @@
     </form>
   } @else {
     <p mat-dialog-content>
-      {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot_name } }}
+      {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot?.snapshot_name ?? snapshotName } }}
     </p>
 
     <ix-form-actions mat-dialog-actions class="form-actions">

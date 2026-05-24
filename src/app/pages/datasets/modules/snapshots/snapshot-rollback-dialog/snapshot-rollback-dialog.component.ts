@@ -61,7 +61,7 @@ export class SnapshotRollbackDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
-  private snapshotName = inject(MAT_DIALOG_DATA);
+  protected snapshotName = inject<string>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -116,7 +116,7 @@ export class SnapshotRollbackDialog implements OnInit {
     this.api.call('pool.snapshot.query', [
       [['id', '=', this.snapshotName]],
       {
-        select: ['snapshot_name', 'dataset', 'name', 'properties'],
+        select: ['snapshot_name', 'dataset', 'properties'],
         extra: { properties: ['creation'] },
       },
     ]).pipe(
