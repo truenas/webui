@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -81,7 +80,6 @@ describe('DatasetDetailsCardComponent', () => {
         datasetUpdated: jest.fn(),
         selectedParentDataset$: of({ id: 'pool' }),
       }),
-      mockProvider(MatSnackBar),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),

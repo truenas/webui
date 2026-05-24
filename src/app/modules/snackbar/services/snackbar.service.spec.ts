@@ -43,6 +43,15 @@ describe('SnackbarService', () => {
       expect(toast.lastCall?.action).toBe('Close');
       expect(toast.lastCall?.config.type).toBe(TnToastType.Error);
     });
+
+    it('dismisses the toast when Close is triggered', () => {
+      const ref = spectator.service.error(ignoreTranslation('Boom'));
+      const dismissSpy = jest.spyOn(ref, 'dismiss');
+
+      toast.lastCall?.ref._triggerAction();
+
+      expect(dismissSpy).toHaveBeenCalled();
+    });
   });
 
   describe('open', () => {
@@ -74,6 +83,30 @@ describe('SnackbarService', () => {
       });
 
       expect(toast.lastCall?.config.position).toBe(TnToastPosition.Bottom);
+    });
+
+    it('maps red color to error type', () => {
+      spectator.service.open({
+        message: ignoreTranslation('Red alert'),
+        iconCssColor: 'var(--red)',
+      });
+
+      expect(toast.lastCall?.config.type).toBe(TnToastType.Error);
+    });
+
+    it('defaults to info type when no color is provided', () => {
+      spectator.service.open({ message: ignoreTranslation('FYI') });
+
+      expect(toast.lastCall?.config.type).toBe(TnToastType.Info);
+    });
+
+    it('defaults to info type for unknown colors', () => {
+      spectator.service.open({
+        message: ignoreTranslation('Mystery'),
+        iconCssColor: 'var(--magenta)',
+      });
+
+      expect(toast.lastCall?.config.type).toBe(TnToastType.Info);
     });
   });
 

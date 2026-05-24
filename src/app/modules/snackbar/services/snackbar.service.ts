@@ -6,6 +6,15 @@ import {
 import { SnackbarOptions } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
+// tn-toast picks its icon from the toast type, so legacy SnackbarOptions
+// color hints are mapped to the nearest semantic type.
+const colorToType: Record<string, TnToastType> = {
+  'var(--green)': TnToastType.Success,
+  'var(--red)': TnToastType.Error,
+  'var(--orange)': TnToastType.Warning,
+  'var(--yellow)': TnToastType.Warning,
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,7 +28,7 @@ export class SnackbarService {
     const config: TnToastConfig = {
       duration: options.duration ?? 4000,
       position: options.verticalPosition === 'bottom' ? TnToastPosition.Bottom : TnToastPosition.Top,
-      type: this.inferTypeFromColor(options.iconCssColor),
+      type: inferTypeFromColor(options.iconCssColor),
     };
 
     const ref = options.button
@@ -31,7 +40,7 @@ export class SnackbarService {
       ref.onAction().subscribe(() => buttonAction());
     }
 
-    this.trackActiveRef(ref);
+    this.activeRef = ref;
     return ref;
   }
 
@@ -41,49 +50,23 @@ export class SnackbarService {
   }
 
   success(message: TranslatedString): TnToastRef {
-    const ref = this.tnToast.open(message, {
-      type: TnToastType.Success,
-      duration: 4000,
-      position: TnToastPosition.Top,
-    });
-    this.trackActiveRef(ref);
-    return ref;
+    return this.open({ message, iconCssColor: 'var(--green)' });
   }
 
   error(message: TranslatedString): TnToastRef {
-    const ref = this.tnToast.open(message, this.translate.instant('Close'), {
-      type: TnToastType.Error,
-      duration: 4000,
-      position: TnToastPosition.Top,
-    });
-    this.trackActiveRef(ref);
-    return ref;
-  }
-
-  private trackActiveRef(ref: TnToastRef): void {
-    this.activeRef = ref;
-    ref.afterDismissed().subscribe(() => {
-      if (this.activeRef === ref) {
-        this.activeRef = null;
-      }
+    // The Close button only needs to dismiss the toast; tn-toast's action
+    // handler dismisses on click, so no `action` callback is required.
+    return this.open({
+      message,
+      iconCssColor: 'var(--red)',
+      button: { title: this.translate.instant('Close') },
     });
   }
+}
 
-  // tn-toast picks its icon from the toast type, so the SnackbarOptions
-  // icon/color hints from legacy callers are mapped to the nearest type.
-  private inferTypeFromColor(color: string | undefined): TnToastType {
-    if (!color) {
-      return TnToastType.Info;
-    }
-    if (color.includes('green')) {
-      return TnToastType.Success;
-    }
-    if (color.includes('red')) {
-      return TnToastType.Error;
-    }
-    if (color.includes('orange') || color.includes('yellow')) {
-      return TnToastType.Warning;
-    }
-    return TnToastType.Info;
+function inferTypeFromColor(color: string | undefined): TnToastType {
+  if (color && color in colorToType) {
+    return colorToType[color];
   }
+  return TnToastType.Info;
 }
