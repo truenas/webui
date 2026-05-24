@@ -50,6 +50,7 @@ import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshot
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
 import { snapshotPageEntered, snapshotsLoaded } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
+import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -170,10 +171,7 @@ export class SnapshotListComponent implements OnInit {
     dateColumn({
       title: this.translate.instant('Date created'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => {
-        const parsed = row?.properties?.creation?.parsed;
-        return parsed != null ? parsed * 1000 : undefined;
-      },
+      getValue: (row) => getSnapshotCreationMs(row),
     }),
     sizeColumn({
       title: this.translate.instant('Referenced'),

@@ -24,6 +24,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -68,8 +69,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   protected get creationDateMs(): number | undefined {
-    const parsed = this.snapshotInfo?.properties?.creation?.parsed;
-    return parsed != null ? parsed * 1000 : undefined;
+    return getSnapshotCreationMs(this.snapshotInfo);
   }
 
   ngOnInit(): void {
