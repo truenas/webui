@@ -21,7 +21,7 @@ function snapshotWithCreation(parsedSeconds: number | undefined): ZfsSnapshot {
     ...fakeZfsSnapshot,
     properties: {
       ...fakeZfsSnapshot.properties,
-      creation: { parsed: parsedSeconds } as unknown as ZfsProperty<string, number>,
+      creation: { parsed: parsedSeconds } as ZfsProperty<string, number>,
     },
   } as ZfsSnapshot;
 }
@@ -108,8 +108,8 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('omits the datetime fragment when the creation timestamp is missing, so the dialog does not display 1969', () => {
+    spectator = createComponent({ detectChanges: false });
     spectator.inject(MockApiService).mockCall('pool.snapshot.query', [snapshotWithCreation(undefined)]);
-    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back?');

@@ -75,8 +75,8 @@ export class SnapshotRollbackDialog implements OnInit {
   publicSnapshot: ZfsSnapshot;
 
   protected get creationTimestampMs(): number | undefined {
-    const parsed = this.publicSnapshot?.properties?.creation?.parsed as unknown as number | undefined;
-    return parsed ? parsed * 1000 : undefined;
+    const parsed = this.publicSnapshot?.properties?.creation?.parsed;
+    return parsed != null ? parsed * 1000 : undefined;
   }
 
   readonly recursive = {

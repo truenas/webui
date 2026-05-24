@@ -170,7 +170,10 @@ export class SnapshotListComponent implements OnInit {
     dateColumn({
       title: this.translate.instant('Date created'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => row?.properties?.creation?.parsed.$date,
+      getValue: (row) => {
+        const parsed = row?.properties?.creation?.parsed;
+        return parsed != null ? parsed * 1000 : undefined;
+      },
     }),
     sizeColumn({
       title: this.translate.instant('Referenced'),
