@@ -54,19 +54,6 @@ if (environment.production) {
   enableProdMode();
 }
 
-// Static strings extracted by ngx-translate-extract at module load. The values
-// are passed to translate.instant() inside the TN_TABLE_PAGER_LABELS factory
-// below — the indirection exists purely so the extractor sees them.
-const pagerLabelKeys = {
-  itemsPerPage: T('Items per page'),
-  of: T('of'),
-  firstPage: T('First Page'),
-  previousPage: T('Previous Page'),
-  nextPage: T('Next Page'),
-  lastPage: T('Last Page'),
-  tablePagination: T('Table Pagination'),
-};
-
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
@@ -144,13 +131,13 @@ bootstrapApplication(AppComponent, {
         return computed<TnTablePagerLabels>(() => {
           langChange();
           return {
-            itemsPerPage: translate.instant(pagerLabelKeys.itemsPerPage) as string,
-            of: translate.instant(pagerLabelKeys.of) as string,
-            firstPage: translate.instant(pagerLabelKeys.firstPage) as string,
-            previousPage: translate.instant(pagerLabelKeys.previousPage) as string,
-            nextPage: translate.instant(pagerLabelKeys.nextPage) as string,
-            lastPage: translate.instant(pagerLabelKeys.lastPage) as string,
-            tablePagination: translate.instant(pagerLabelKeys.tablePagination) as string,
+            itemsPerPage: translate.instant(T('Items per page')) as string,
+            of: translate.instant(T('of')) as string,
+            firstPage: translate.instant(T('First Page')) as string,
+            previousPage: translate.instant(T('Previous Page')) as string,
+            nextPage: translate.instant(T('Next Page')) as string,
+            lastPage: translate.instant(T('Last Page')) as string,
+            tablePagination: translate.instant(T('Table Pagination')) as string,
           };
         });
       },
