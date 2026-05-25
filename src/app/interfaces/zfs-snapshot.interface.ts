@@ -9,8 +9,7 @@ export interface ZfsSnapshot {
   pool: string;
   properties: {
     [property: string]: ZfsProperty<string | number | boolean>;
-    // `parsed` is widened so callers are forced through `getSnapshotCreationMs`.
-    creation: ZfsProperty<string, number | { $date: number } | undefined>;
+    creation: ZfsProperty<string, number>;
   };
   holds?: {
     truenas?: number;

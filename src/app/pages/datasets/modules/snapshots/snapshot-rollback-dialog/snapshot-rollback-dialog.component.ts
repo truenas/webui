@@ -73,11 +73,8 @@ export class SnapshotRollbackDialog implements OnInit {
     force: [null as (boolean | null), [Validators.requiredTrue]],
   });
 
-  publicSnapshot: ZfsSnapshot;
-
-  protected get creationTimestampMs(): number | undefined {
-    return getSnapshotCreationMs(this.publicSnapshot);
-  }
+  protected snapshot: ZfsSnapshot | undefined;
+  protected creationTimestampMs: number | undefined;
 
   readonly recursive = {
     fcName: 'recursive',
@@ -126,7 +123,8 @@ export class SnapshotRollbackDialog implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshot) => {
-        this.publicSnapshot = snapshot;
+        this.snapshot = snapshot;
+        this.creationTimestampMs = getSnapshotCreationMs(snapshot);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
