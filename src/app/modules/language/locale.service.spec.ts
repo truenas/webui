@@ -117,6 +117,17 @@ describe('LocaleService', () => {
     });
   });
 
+  describe('toMachineTime', () => {
+    it('returns an equivalent Date when the machine timezone matches the browser timezone', () => {
+      service.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const input = new Date('2024-08-14T14:14:27');
+
+      const machine = service.toMachineTime(input);
+
+      expect(machine.getTime()).toBe(input.getTime());
+    });
+  });
+
   describe('formatDateTimeToDateFns', () => {
     it('should correctly format date-time string to date-fns format', () => {
       const formatted = service.formatDateTimeToDateFns('YYYY-MM-DD A');

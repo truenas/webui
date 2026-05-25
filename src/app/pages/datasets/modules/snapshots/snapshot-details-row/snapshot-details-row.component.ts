@@ -73,6 +73,16 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
 
+  protected get usedBytes(): number | undefined {
+    const parsed = this.snapshotInfo?.properties?.used?.parsed;
+    return parsed == null ? undefined : +parsed;
+  }
+
+  protected get referencedBytes(): number | undefined {
+    const parsed = this.snapshotInfo?.properties?.referenced?.parsed;
+    return parsed == null ? undefined : +parsed;
+  }
+
   ngOnInit(): void {
     this.getSnapshotInfo();
     this.holdControl.valueChanges

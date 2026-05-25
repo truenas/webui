@@ -113,6 +113,14 @@ export class LocaleService {
     return [format(date, this.dateFormat), format(date, this.timeFormat)];
   }
 
+  // Treat `date` as wall-clock in the browser timezone and re-project it onto
+  // the configured machine timezone, so a UTC instant displays as the same
+  // wall-clock time the NAS would show.
+  toMachineTime(date: number | Date): Date {
+    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return toZonedTime(fromZonedTime(date, browserTz), this.timezone ?? browserTz);
+  }
+
   getShortTimeFormat(): string {
     switch (this.timeFormat) {
       case 'HH:mm:ss':

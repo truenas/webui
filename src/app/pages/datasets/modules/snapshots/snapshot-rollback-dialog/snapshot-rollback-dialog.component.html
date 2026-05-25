@@ -11,29 +11,27 @@
       (submit)="onSubmit()"
     >
       <div mat-dialog-content>
-        @if (snapshot) {
-          @if (creationMachineTime !== undefined) {
-            <p
-              [innerHTML]="
-                'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
-                  : {
-                      snapshot: snapshot.snapshot_name,
-                      dataset: snapshot.dataset,
-                      datetime: creationMachineTime | formatDateTime
-                    }
-                "
-            ></p>
-          } @else {
-            <p
-              [innerHTML]="
-                'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back?' | translate
-                  : {
-                      snapshot: snapshot.snapshot_name,
-                      dataset: snapshot.dataset
-                    }
-                "
-            ></p>
-          }
+        @if (creationMachineTime !== undefined) {
+          <p
+            [innerHTML]="
+              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
+                : {
+                    snapshot: snapshot.snapshot_name,
+                    dataset: snapshot.dataset,
+                    datetime: creationMachineTime | formatDateTime
+                  }
+              "
+          ></p>
+        } @else {
+          <p
+            [innerHTML]="
+              'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back?' | translate
+                : {
+                    snapshot: snapshot.snapshot_name,
+                    dataset: snapshot.dataset
+                  }
+              "
+          ></p>
         }
 
         <ix-fieldset>
@@ -80,7 +78,7 @@
     </form>
   } @else {
     <p mat-dialog-content>
-      {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: snapshot?.snapshot_name ?? snapshotName } }}
+      {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: snapshot.snapshot_name } }}
     </p>
 
     <ix-form-actions mat-dialog-actions class="form-actions">
