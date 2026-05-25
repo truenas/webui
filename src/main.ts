@@ -1,9 +1,9 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
-  computed, DestroyRef, enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer, signal,
+  computed, enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
@@ -35,7 +35,7 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
-import { filter, take } from 'rxjs';
+import { filter, startWith, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
@@ -54,6 +54,9 @@ if (environment.production) {
   enableProdMode();
 }
 
+// Static strings extracted by ngx-translate-extract at module load. The values
+// are passed to translate.instant() inside the TN_TABLE_PAGER_LABELS factory
+// below — the indirection exists purely so the extractor sees them.
 const pagerLabelKeys = {
   itemsPerPage: T('Items per page'),
   of: T('of'),
@@ -135,17 +138,11 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: TN_TABLE_PAGER_LABELS,
-      // Bump a tick signal on language change so the computed re-evaluates
-      // translate.instant() against the freshly loaded translations.
       useFactory: () => {
         const translate = inject(TranslateService);
-        const destroyRef = inject(DestroyRef);
-        const tick = signal(0);
-        translate.onLangChange
-          .pipe(takeUntilDestroyed(destroyRef))
-          .subscribe(() => tick.update((n) => n + 1));
+        const langChange = toSignal(translate.onLangChange.pipe(startWith(null)));
         return computed<TnTablePagerLabels>(() => {
-          tick();
+          langChange();
           return {
             itemsPerPage: translate.instant(pagerLabelKeys.itemsPerPage) as string,
             of: translate.instant(pagerLabelKeys.of) as string,

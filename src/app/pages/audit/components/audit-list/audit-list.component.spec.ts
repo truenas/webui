@@ -64,7 +64,7 @@ describe('AuditListComponent', () => {
   });
 
   it('checks table pager component is rendered', async () => {
-    const pager = await loader.getHarnessOrNull(TnTablePagerHarness);
-    expect(pager).not.toBeNull();
+    const pager = await loader.getHarness(TnTablePagerHarness);
+    expect(pager).toBeTruthy();
   });
 });
