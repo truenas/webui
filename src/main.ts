@@ -1,9 +1,8 @@
 import { OVERLAY_DEFAULT_CONFIG } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
-  computed, enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
+  enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
@@ -20,14 +19,13 @@ import {
   withNavigationErrorHandler,
   NavigationError,
 } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
 import {
-  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler, TranslateService,
+  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-import { TN_TABLE_PAGER_LABELS, TnSpriteLoaderService, type TnTablePagerLabels } from '@truenas/ui-components';
+import { TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -35,10 +33,11 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
-import { filter, startWith, take } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
@@ -123,25 +122,7 @@ bootstrapApplication(AppComponent, {
       provide: WINDOW,
       useFactory: getWindow,
     },
-    {
-      provide: TN_TABLE_PAGER_LABELS,
-      useFactory: () => {
-        const translate = inject(TranslateService);
-        const langChange = toSignal(translate.onLangChange.pipe(startWith(null)));
-        return computed<TnTablePagerLabels>(() => {
-          langChange();
-          return {
-            itemsPerPage: translate.instant(T('Items per page')) as string,
-            of: translate.instant(T('of')) as string,
-            firstPage: translate.instant(T('First Page')) as string,
-            previousPage: translate.instant(T('Previous Page')) as string,
-            nextPage: translate.instant(T('Next Page')) as string,
-            lastPage: translate.instant(T('Last Page')) as string,
-            tablePagination: translate.instant(T('Table Pagination')) as string,
-          };
-        });
-      },
-    },
+    provideTnTablePagerLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
