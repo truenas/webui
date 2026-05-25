@@ -30,7 +30,7 @@ export const fakeZfsSnapshot: ZfsSnapshot = {
 export const fakeZfsSnapshotDataSource: ZfsSnapshot[] = [
   fakeZfsSnapshot,
   {
-    id: 2,
+    id: '2',
     name: 'test-dataset@second-snapshot',
     dataset: 'test-dataset',
     snapshot_name: 'second-snapshot',
