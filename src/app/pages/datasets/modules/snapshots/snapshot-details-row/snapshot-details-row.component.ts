@@ -62,7 +62,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   isLoading = true;
   snapshotInfo: ZfsSnapshotUi | undefined;
-  protected creationTimestampMs: number | undefined;
   holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -79,6 +78,10 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   protected get referencedBytes(): number | undefined {
     const parsed = this.snapshotInfo?.properties?.referenced?.parsed;
     return parsed == null ? undefined : +parsed;
+  }
+
+  protected get creationTimestampMs(): number | undefined {
+    return getSnapshotCreationMs(this.snapshotInfo);
   }
 
   ngOnInit(): void {
@@ -112,7 +115,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (snapshot) => {
           this.snapshotInfo = snapshot;
-          this.creationTimestampMs = getSnapshotCreationMs(snapshot);
           this.holdControl.setValue(!isEmpty(snapshot.holds), { emitEvent: false });
           this.isLoading = false;
           this.cdr.markForCheck();
