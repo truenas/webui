@@ -1,9 +1,14 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import {
+  AuditEvent, AuditService, WebshellType, webshellTypeLabels,
+} from 'app/enums/audit.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
+import {
+  MiddlewareAuditEntry,
+  MiddlewareWebshellEventData,
+} from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
 import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
 import { SystemAuditEntry } from 'app/interfaces/audit/system-audit-entry.interface';
@@ -49,9 +54,57 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
         credentials: credentialType ? credentialTypeLabel : credentialType,
       });
     }
+    case AuditEvent.WebshellAuthentication:
+    case AuditEvent.WebshellLogout:
+      return getWebshellImportantData(log.event_data, event, translate);
     default:
       assertUnreachable(event);
       return ' - ';
+  }
+}
+
+function getWebshellImportantData(
+  eventData: MiddlewareWebshellEventData,
+  event: AuditEvent.WebshellAuthentication | AuditEvent.WebshellLogout,
+  translate: TranslateService,
+): string {
+  const shellType = eventData.shell_type;
+  const shellTypeLabel = translate.instant(webshellTypeLabels.get(shellType) ?? shellType);
+  const targetIdentifier = getWebshellTargetIdentifier(shellType, eventData.target);
+  const params = { shellType: shellTypeLabel, target: targetIdentifier, username: eventData.username };
+
+  if (event === AuditEvent.WebshellLogout) {
+    return targetIdentifier
+      ? translate.instant(T('Shell Logout: {shellType} ({target}) | User: {username}'), params)
+      : translate.instant(T('Shell Logout: {shellType} | User: {username}'), params);
+  }
+
+  if (eventData.error) {
+    return targetIdentifier
+      ? translate.instant(T('Failed Shell Authentication: {shellType} ({target}) | User: {username}'), params)
+      : translate.instant(T('Failed Shell Authentication: {shellType} | User: {username}'), params);
+  }
+
+  return targetIdentifier
+    ? translate.instant(T('Shell: {shellType} ({target}) | User: {username}'), params)
+    : translate.instant(T('Shell: {shellType} | User: {username}'), params);
+}
+
+function getWebshellTargetIdentifier(
+  shellType: WebshellType,
+  target: MiddlewareWebshellEventData['target'],
+): string | undefined {
+  switch (shellType) {
+    case WebshellType.App:
+    case WebshellType.Container:
+      return target?.app_name ?? target?.container_id;
+    case WebshellType.Vm:
+      return target?.vm_name;
+    case WebshellType.Host:
+      return undefined;
+    default:
+      assertUnreachable(shellType);
+      return undefined;
   }
 }
 
