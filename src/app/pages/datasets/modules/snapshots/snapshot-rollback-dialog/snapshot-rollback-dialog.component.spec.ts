@@ -26,7 +26,7 @@ function snapshotWithCreation(parsedSeconds: number | undefined): ZfsSnapshot {
   } as ZfsSnapshot;
 }
 
-describe('SnapshotRollbackDialogComponent', () => {
+describe('SnapshotRollbackDialog', () => {
   let spectator: Spectator<SnapshotRollbackDialog>;
   let loader: HarnessLoader;
 

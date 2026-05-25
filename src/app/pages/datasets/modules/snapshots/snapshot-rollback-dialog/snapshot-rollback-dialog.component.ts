@@ -116,6 +116,8 @@ export class SnapshotRollbackDialog implements OnInit {
     this.api.call('pool.snapshot.query', [
       [['id', '=', this.snapshotName]],
       {
+        // `select` projects the `properties` column; `extra.properties` tells
+        // middleware which ZFS properties to populate inside it. Both are required.
         select: ['snapshot_name', 'dataset', 'properties'],
         extra: { properties: ['creation'] },
       },
