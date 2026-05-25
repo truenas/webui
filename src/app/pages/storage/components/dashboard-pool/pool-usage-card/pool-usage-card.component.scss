@@ -45,7 +45,7 @@
 
   .left {
     align-items: center;
-    flex: 1 1 40%;
+    flex: 0 0 auto;
     flex-direction: column;
 
     > div {
@@ -55,7 +55,7 @@
 
   .right {
     display: flex;
-    flex: 1 1 60%;
+    flex: 1 1 auto;
     flex-direction: column;
   }
 }
