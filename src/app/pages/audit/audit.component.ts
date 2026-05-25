@@ -14,7 +14,6 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { generateUuid } from 'app/helpers/uuid.helper';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -23,7 +22,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { auditElements } from 'app/pages/audit/audit.elements';
-import { AuditListComponent } from 'app/pages/audit/components/audit-list/audit-list.component';
+import { auditDisplayedColumns, AuditListComponent } from 'app/pages/audit/components/audit-list/audit-list.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { AppState } from 'app/store';
@@ -63,7 +62,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly controllerTypeOptions = mapToOptions(controllerTypeLabels, this.translate);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
-  protected readonly controllerToggleLabelId = `controller-toggle-label-${generateUuid()}`;
+  protected readonly controllerToggleLabelId = 'audit-controller-toggle-label';
 
   ngOnInit(): void {
     this.createDataProvider();
@@ -86,7 +85,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     this.dataProvider.setSorting({
       propertyName: 'message_timestamp',
       direction: SortDirection.Desc,
-      active: 2,
+      active: auditDisplayedColumns.indexOf('message_timestamp'),
     }, true);
     this.dataProvider.currentPage$
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))

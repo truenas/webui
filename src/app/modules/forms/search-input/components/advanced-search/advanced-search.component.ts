@@ -246,15 +246,17 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   private moveFocusInDirection(direction: 1 | -1): void {
     const editorRoot = this.editorView.dom;
-    // Stay within the surrounding focus trap (dialog/overlay) or form so Tab
-    // from the CodeMirror editor doesn't escape into background content.
+    // Stay within the surrounding focus trap (dialog) so Tab from the CodeMirror
+    // editor doesn't escape into background content. Outside dialogs we fall back
+    // to the whole document — letting Tab walk freely is the expected behavior.
     const scope = editorRoot.closest<HTMLElement>(
-      '.cdk-overlay-pane, [cdkTrapFocus], form, [role="dialog"]',
+      '[cdkTrapFocus], [role="dialog"]',
     ) ?? document.body;
 
-    // Defer to CDK so visibility/inert/aria-hidden and disabled-ancestor
-    // edge cases are handled the same way as the rest of Angular Material.
-    // Exclude editor descendants so focus never bounces back into CodeMirror.
+    // isFocusable on its own accepts elements with tabindex="-1"; we want only
+    // elements the user can actually reach with Tab, hence the explicit
+    // isTabbable check. Editor descendants are excluded so focus never bounces
+    // back into CodeMirror.
     const tabbable = Array.from(scope.querySelectorAll<HTMLElement>('*'))
       .filter((el) => !editorRoot.contains(el)
         && this.interactivityChecker.isFocusable(el)

@@ -1,5 +1,4 @@
 import { Directive, ElementRef, HostBinding, input, inject } from '@angular/core';
-import { environment } from 'environments/environment';
 import { kebabCase } from 'lodash-es';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
@@ -104,19 +103,7 @@ export class TestDirective {
       case 'ix-select':
         return tagName.replace('ix-', '');
       default:
-        // Policy:
-        //   - In dev/test we still throw, so CI and local runs fail loudly on a missing
-        //     mapping and force contributors to add an explicit case below.
-        //   - In production we degrade to a console warning + prefix-stripped fallback
-        //     so a missing mapping never crashes user-facing pages over a test attribute.
-        // Always prefer adding an explicit `case 'tn-foo':` mapping to relying on the
-        // fallback — the fallback exists only to keep production resilient, not as the
-        // contract.
-        if (!environment.production) {
-          throw new Error(`Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
-        }
-        console.warn(`[ixTest] Unknown element type: ${tagName}. Add a mapping in test.directive.ts.`);
-        return tagName.replace(/^(ix|tn|mat)-/, '');
+        throw new Error(`Unknown element type: ${tagName}`);
     }
   }
 }

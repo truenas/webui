@@ -147,10 +147,74 @@ describe('AuditComponent', () => {
     expect(dataCall?.[1][0]).toHaveProperty('remote_controller', true);
   });
 
-  // Detailed basic/advanced query-shaping behavior lives in
-  // audit-search.component.spec.ts; here we only assert the audit page wires the
-  // controller toggle and service select through to the API.
+  // Detailed basic/advanced query-shaping behavior is covered in
+  // audit-search.component.spec.ts. The cases below are smoke tests of the
+  // wiring: search input → audit page → API call, plus the controller toggle
+  // and service select also reaching the API.
   describe('integration', () => {
+    it('sends empty filters when basic search has no query', () => {
+      const search = spectator.query(SearchInputComponent)!;
+      search.query.set({
+        isBasicQuery: true,
+        query: '',
+      });
+
+      search.runSearch.emit();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
+          remote_controller: false,
+        }],
+      );
+    });
+
+    it('applies basic search filters to the API query', () => {
+      const search = spectator.query(SearchInputComponent)!;
+      search.query.set({
+        isBasicQuery: true,
+        query: 'search',
+      });
+
+      search.runSearch.emit();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [['username', '~', 'search']],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
+          remote_controller: false,
+        }],
+      );
+    });
+
+    it('applies advanced search filters to the API query', () => {
+      const search = spectator.query<SearchInputComponent<AuditEntry>>(SearchInputComponent)!;
+      search.query.set({
+        isBasicQuery: false,
+        filters: [
+          ['event', '=', 'Authentication'],
+          ['username', '~', 'bob'],
+        ],
+      });
+
+      search.runSearch.emit();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
+          remote_controller: false,
+        }],
+      );
+    });
+
     it('runs search when controller type is changed', async () => {
       const standbyToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Standby' }));
       await standbyToggle.check();

@@ -9,7 +9,7 @@
   [clickable]="true"
   [activeRow]="dataProvider().expandedRow"
   [loading]="(dataProvider().isLoading$ | async) ?? false"
-  [loadingMessage]="'Loading…' | translate"
+  [loadingMessage]="loadingTitle | translate"
   [emptyMessage]="emptyAttrs().title | translate"
   [emptyIcon]="emptyAttrs().icon"
   (sortChange)="onSortChange($event)"
@@ -18,7 +18,7 @@
   <ng-container [tnColumnDef]="'service'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <span class="cell-clamp">{{ getServiceLabel(row) | translate }}</span>
+      <span class="cell-clamp">{{ row | auditServiceLabel }}</span>
     </ng-template>
   </ng-container>
 
@@ -44,7 +44,7 @@
   <ng-container [tnColumnDef]="'event'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <span class="cell-clamp">{{ getEventLabel(row) | translate }}</span>
+      <span class="cell-clamp">{{ row | auditEventLabel }}</span>
     </ng-template>
   </ng-container>
 
