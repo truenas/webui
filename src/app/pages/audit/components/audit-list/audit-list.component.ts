@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, computed, input, output,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -13,6 +14,7 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
+import { switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import {
   AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
@@ -78,7 +80,13 @@ export class AuditListComponent {
   protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   protected readonly displayedColumns = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
-  protected readonly statusIconSize = '15px';
+
+  private readonly emptyType = toSignal<EmptyType | null>(
+    toObservable(this.dataProvider).pipe(switchMap((provider) => provider.emptyType$)),
+    { initialValue: null },
+  );
+
+  protected readonly emptyAttrs = computed<EmptyAttrs>(() => this.getEmptyAttrs(this.emptyType() ?? null));
 
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
@@ -116,7 +124,7 @@ export class AuditListComponent {
     this.toggleShowMobileDetails.emit(true);
   }
 
-  protected getEmptyAttrs(emptyType: EmptyType | null): EmptyAttrs {
+  private getEmptyAttrs(emptyType: EmptyType | null): EmptyAttrs {
     if (emptyType === null) {
       return defaultEmptyAttrs;
     }

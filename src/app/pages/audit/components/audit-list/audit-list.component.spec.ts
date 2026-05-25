@@ -1,14 +1,17 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnTableHarness } from '@truenas/ui-components';
+import { TnTableComponent, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { auditEntries, mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
+import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AuditListComponent } from './audit-list.component';
 
@@ -135,6 +138,43 @@ describe('AuditListComponent', () => {
         direction: null,
         active: null,
       });
+    });
+  });
+
+  describe('empty state mapping', () => {
+    const emptyTypeCases: { emptyType: EmptyType; title: string; icon: string }[] = [
+      { emptyType: EmptyType.Loading, title: 'Loading…', icon: 'mdi-loading' },
+      { emptyType: EmptyType.Errors, title: 'Cannot retrieve response', icon: 'mdi-alert-octagon' },
+      { emptyType: EmptyType.NoSearchResults, title: 'No Search Results.', icon: 'mdi-magnify-scan' },
+      { emptyType: EmptyType.FirstUse, title: 'No records have been added yet', icon: 'mdi-format-list-text' },
+      { emptyType: EmptyType.NoPageData, title: 'No records have been added yet', icon: 'mdi-format-list-text' },
+    ];
+
+    it.each(emptyTypeCases)(
+      'maps $emptyType to "$title" / "$icon"',
+      ({ emptyType, title, icon }) => {
+        spectator.setInput('dataProvider', {
+          ...mockAuditApiDataProvider,
+          emptyType$: of(emptyType),
+        } as unknown as AuditApiDataProvider);
+        spectator.detectChanges();
+
+        const tableComponent = spectator.query(TnTableComponent)!;
+        expect(tableComponent.emptyMessage()).toBe(title);
+        expect(tableComponent.emptyIcon()).toBe(icon);
+      },
+    );
+
+    it('falls back to default empty attrs when emptyType is null', () => {
+      spectator.setInput('dataProvider', {
+        ...mockAuditApiDataProvider,
+        emptyType$: of(null),
+      } as unknown as AuditApiDataProvider);
+      spectator.detectChanges();
+
+      const tableComponent = spectator.query(TnTableComponent)!;
+      expect(tableComponent.emptyMessage()).toBe('No records have been added yet');
+      expect(tableComponent.emptyIcon()).toBe('mdi-format-list-text');
     });
   });
 });

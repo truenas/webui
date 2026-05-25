@@ -24,9 +24,11 @@ export class EventDataDetailsCardComponent {
   readonly log = input.required<AuditEntry>();
 
   protected eventData = computed(() => {
+    // Spread event_data first so an explicit `success` field always wins,
+    // even if the backend ever ships a colliding key inside event_data.
     return {
-      success: this.log().success,
       ...this.log().event_data,
+      success: this.log().success,
     };
   });
 

@@ -1,4 +1,4 @@
-<div class="header-card item-search">
+<div class="audit-search">
   <ix-fake-progress-bar
     class="loader-bar"
     [loading]="!!(dataProvider().isLoading$ | async)"
@@ -74,13 +74,13 @@
         [advancedSearchPlaceholder]="advancedSearchPlaceholder"
         [basicSearchPlaceholder]="basicSearchPlaceholder"
         [query]="searchQuery()"
-        (runSearch)="onSearch(searchInput.query()); searchInput.advancedSearch()?.hideDatePicker()"
+        (runSearch)="runSearchFromInput(searchInput)"
       ></ix-search-input>
       <tn-button
         ixTest="search"
         color="primary"
         [label]="'Search' | translate"
-        (onClick)="onSearch(searchInput.query()); searchInput.advancedSearch()?.hideDatePicker()"
+        (onClick)="runSearchFromInput(searchInput)"
       ></tn-button>
     </div>
   </div>

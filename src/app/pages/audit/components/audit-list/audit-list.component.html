@@ -1,7 +1,5 @@
 <ix-audit-search [dataProvider]="dataProvider()"></ix-audit-search>
 
-@let emptyAttrs = getEmptyAttrs(dataProvider().emptyType$ | async);
-
 <tn-table
   class="audit-table"
   [ixUiSearch]="searchableElements.elements.audit"
@@ -12,8 +10,8 @@
   [activeRow]="dataProvider().expandedRow"
   [loading]="(dataProvider().isLoading$ | async) ?? false"
   [loadingMessage]="'Loading…' | translate"
-  [emptyMessage]="emptyAttrs.title | translate"
-  [emptyIcon]="emptyAttrs.icon"
+  [emptyMessage]="emptyAttrs().title | translate"
+  [emptyIcon]="emptyAttrs().icon"
   (sortChange)="onSortChange($event)"
   (rowClick)="onRowClick($event)"
 >
@@ -55,9 +53,9 @@
     <ng-template let-row tnCellDef>
       <div class="event-data" [tnTooltip]="row | getLogImportantData | translate">
         @if (row.success) {
-          <tn-icon name="check-circle" library="mdi" [customSize]="statusIconSize"></tn-icon>
+          <tn-icon class="status-icon" name="check-circle" library="mdi"></tn-icon>
         } @else {
-          <tn-icon class="error-color" name="close-circle" library="mdi" [customSize]="statusIconSize"></tn-icon>
+          <tn-icon class="status-icon error-color" name="close-circle" library="mdi"></tn-icon>
         }
         <span class="cell-clamp">{{ row | getLogImportantData | translate }}</span>
       </div>

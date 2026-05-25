@@ -5,6 +5,9 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
+  TnButtonComponent,
+  TnButtonToggleComponent,
+  TnButtonToggleGroupComponent,
   TnButtonToggleHarness,
   TnSelectHarness,
   TnTableHarness,
@@ -39,6 +42,12 @@ describe('AuditComponent', () => {
     component: AuditComponent,
     imports: [
       ReactiveFormsModule,
+      // Force the real tn-button family so ng-mocks doesn't transitively try to
+      // mock TnButtonComponent (its signal-based viewChilds crash inside the
+      // generated mock during view-query binding).
+      TnButtonComponent,
+      TnButtonToggleComponent,
+      TnButtonToggleGroupComponent,
     ],
     declarations: [
       MockComponents(
@@ -47,9 +56,9 @@ describe('AuditComponent', () => {
         FakeProgressBarComponent,
         PageHeaderComponent,
         MockMasterDetailViewComponent,
+        SearchInputComponent,
       ),
     ],
-    componentMocks: [SearchInputComponent],
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
@@ -138,47 +147,10 @@ describe('AuditComponent', () => {
     expect(dataCall?.[1][0]).toHaveProperty('remote_controller', true);
   });
 
-  describe('search', () => {
-    it('sends empty filters when basic search has no query', () => {
-      const search = spectator.query(SearchInputComponent)!;
-      search.query.set({
-        isBasicQuery: true,
-        query: '',
-      });
-
-      search.runSearch.emit();
-
-      expect(api.call).toHaveBeenLastCalledWith(
-        'audit.query',
-        [{
-          'query-filters': [],
-          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-          services: ['MIDDLEWARE'],
-          remote_controller: false,
-        }],
-      );
-    });
-
-    it('searches by username when basic search term does not match any event', () => {
-      const search = spectator.query(SearchInputComponent)!;
-      search.query.set({
-        isBasicQuery: true,
-        query: 'search',
-      });
-
-      search.runSearch.emit();
-
-      expect(api.call).toHaveBeenLastCalledWith(
-        'audit.query',
-        [{
-          'query-filters': [['username', '~', 'search']],
-          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-          services: ['MIDDLEWARE'],
-          remote_controller: false,
-        }],
-      );
-    });
-
+  // Detailed basic/advanced query-shaping behavior lives in
+  // audit-search.component.spec.ts; here we only assert the audit page wires the
+  // controller toggle and service select through to the API.
+  describe('integration', () => {
     it('runs search when controller type is changed', async () => {
       const standbyToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Standby' }));
       await standbyToggle.check();
@@ -192,28 +164,6 @@ describe('AuditComponent', () => {
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
           services: ['MIDDLEWARE'],
           remote_controller: true,
-        }],
-      );
-    });
-
-    it('applies filters to API query when advanced search is used', () => {
-      const search = spectator.query<SearchInputComponent<AuditEntry>>(SearchInputComponent)!;
-      search.query.set({
-        isBasicQuery: false,
-        filters: [
-          ['event', '=', 'Authentication'],
-          ['username', '~', 'bob'],
-        ],
-      });
-      search.runSearch.emit();
-
-      expect(api.call).toHaveBeenLastCalledWith(
-        'audit.query',
-        [{
-          'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],
-          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-          services: ['MIDDLEWARE'],
-          remote_controller: false,
         }],
       );
     });
@@ -260,46 +210,6 @@ describe('AuditComponent', () => {
         expect.objectContaining({
           service: AuditService.Smb,
         }),
-      );
-    });
-
-    it('escapes special characters in basic search', () => {
-      const search = spectator.query(SearchInputComponent)!;
-      search.query.set({
-        isBasicQuery: true,
-        query: 'test-query',
-      });
-
-      search.runSearch.emit();
-
-      expect(api.call).toHaveBeenLastCalledWith(
-        'audit.query',
-        [{
-          'query-filters': [['username', '~', 'test\\-query']],
-          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-          services: ['MIDDLEWARE'],
-          remote_controller: false,
-        }],
-      );
-    });
-
-    it('searches by event only when basic search term matches an event', () => {
-      const search = spectator.query(SearchInputComponent)!;
-      search.query.set({
-        isBasicQuery: true,
-        query: 'method',
-      });
-
-      search.runSearch.emit();
-
-      expect(api.call).toHaveBeenLastCalledWith(
-        'audit.query',
-        [{
-          'query-filters': [['event', '~', 'METHOD_CALL']],
-          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-          services: ['MIDDLEWARE'],
-          remote_controller: false,
-        }],
       );
     });
   });

@@ -114,7 +114,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
     // Note: When multiple events match (e.g., "log" matches both LOGIN and LOGOUT),
     // we use only the first match to keep the search simple and predictable.
-    // This prioritizes alphabetically first enum values.
+    // Match order follows the declaration order of AuditEvent.
     if (matchedEvents.length > 0) {
       return [['event', '~', matchedEvents[0]]] as QueryFilters<AuditEntry>;
     }
@@ -141,6 +141,13 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
    * 1. Load URL params (pagination, sorting, search query, service)
    * 2. Wait for view initialization (ensures child components are ready)
    * 3. Perform initial search with loaded params
+   *
+   * Contract:
+   * - `viewInitialized$` is a ReplaySubject(1) that emits exactly once from `ngAfterViewInit`
+   *   and then completes, so any subscriber — regardless of order — sees the emission.
+   * - `shareReplay({ refCount: false, bufferSize: 1 })` keeps the side-effect `tap` from
+   *   running more than once across multiple subscriptions (initial trigger + serviceControl
+   *   gate below).
    */
   private readonly initialization$ = combineLatest([
     this.activatedRoute.params.pipe(take(1)),
@@ -217,6 +224,11 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       pagination: this.dataProvider().pagination,
       service: this.serviceControl.value,
     } as AuditUrlOptions<AuditEntry>);
+  }
+
+  protected runSearchFromInput(searchInput: SearchInputComponent<AuditEntry>): void {
+    this.onSearch(searchInput.query());
+    searchInput.advancedSearch()?.hideDatePicker();
   }
 
   onSearch(query: SearchQuery<AuditEntry>): void {
