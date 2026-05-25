@@ -245,22 +245,25 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   private moveFocusInDirection(direction: 1 | -1): void {
-    const current = this.editorView.contentDOM;
+    const editorRoot = this.editorView.dom;
     // Stay within the surrounding focus trap (dialog/overlay) or form so Tab
     // from the CodeMirror editor doesn't escape into background content.
-    const scope = current.closest<HTMLElement>(
+    const scope = editorRoot.closest<HTMLElement>(
       '.cdk-overlay-pane, [cdkTrapFocus], form, [role="dialog"]',
     ) ?? document.body;
 
     // Defer to CDK so visibility/inert/aria-hidden and disabled-ancestor
     // edge cases are handled the same way as the rest of Angular Material.
-    const focusable = Array.from(scope.querySelectorAll<HTMLElement>('*'))
-      .filter((el) => this.interactivityChecker.isFocusable(el));
+    // Exclude editor descendants so focus never bounces back into CodeMirror.
+    const tabbable = Array.from(scope.querySelectorAll<HTMLElement>('*'))
+      .filter((el) => !editorRoot.contains(el)
+        && this.interactivityChecker.isFocusable(el)
+        && this.interactivityChecker.isTabbable(el));
 
-    const idx = focusable.indexOf(current);
-    if (idx === -1) return;
+    const target = direction === 1
+      ? tabbable.find((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0)
+      : tabbable.findLast((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_PRECEDING) !== 0);
 
-    const target = focusable[idx + direction];
     target?.focus();
   }
 
