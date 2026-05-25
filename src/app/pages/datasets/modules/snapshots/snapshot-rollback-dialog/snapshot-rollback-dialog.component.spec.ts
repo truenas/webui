@@ -49,6 +49,7 @@ describe('SnapshotRollbackDialog', () => {
       mockProvider(DialogService),
       mockProvider(LocaleService, {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        toMachineTime: (date: number | Date) => new Date(date),
       }),
       mockApi([
         mockCall('pool.snapshot.query', [snapshotWithCreation(1634575914)]),
@@ -118,6 +119,14 @@ describe('SnapshotRollbackDialog', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back?');
     expect(spectator.fixture.nativeElement).not.toHaveText('1969');
+  });
+
+  it('closes the dialog when the snapshot lookup returns no results, so the form is never shown without context', () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.inject(MockApiService).mockCall('pool.snapshot.query', []);
+    spectator.detectChanges();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {

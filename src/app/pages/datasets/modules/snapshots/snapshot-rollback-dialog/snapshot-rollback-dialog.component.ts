@@ -3,13 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle,
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
-import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -64,7 +63,8 @@ export class SnapshotRollbackDialog implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private localeService = inject(LocaleService);
-  protected snapshotName = inject<string>(MAT_DIALOG_DATA);
+  private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
+  private snapshotName = inject<string>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -76,8 +76,9 @@ export class SnapshotRollbackDialog implements OnInit {
     force: [null as (boolean | null), [Validators.requiredTrue]],
   });
 
-  protected snapshot: ZfsSnapshot | undefined;
-  protected creationTimestampMs: number | undefined;
+  // Assigned before `isLoading` flips to `false`; the template only references
+  // these fields once the loader has hidden, so the non-null types are safe.
+  protected snapshot!: ZfsSnapshot;
   protected creationMachineTime: Date | undefined;
 
   readonly recursive = {
@@ -123,33 +124,28 @@ export class SnapshotRollbackDialog implements OnInit {
         extra: { properties: ['creation'] },
       },
     ]).pipe(
-      map((snapshots) => snapshots[0]),
+      map((snapshots) => {
+        if (!snapshots[0]) {
+          throw new Error(`Snapshot ${this.snapshotName} not found.`);
+        }
+        return snapshots[0];
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshot) => {
         this.snapshot = snapshot;
-        this.creationTimestampMs = getSnapshotCreationMs(snapshot);
-        this.creationMachineTime = this.toMachineTime(this.creationTimestampMs);
+        const creationMs = getSnapshotCreationMs(snapshot);
+        this.creationMachineTime = creationMs === undefined
+          ? undefined
+          : this.localeService.toMachineTime(creationMs);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
         this.errorHandler.showErrorModal(error);
+        this.dialogRef.close();
       },
     });
-  }
-
-  // Mirrors `ix-date`: convert a UTC instant into the wall-clock time of the
-  // NAS machine timezone so the date displayed here matches the list column.
-  private toMachineTime(timestampMs: number | undefined): Date | undefined {
-    if (timestampMs === undefined) {
-      return undefined;
-    }
-    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const utc = fromZonedTime(timestampMs, browserTz);
-    return toZonedTime(utc, this.localeService.timezone);
   }
 
   onSubmit(): void {

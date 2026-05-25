@@ -5,8 +5,8 @@
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
       <dd>
-        @if (snapshotInfo?.properties?.used?.parsed !== undefined && snapshotInfo?.properties?.used?.parsed !== null) {
-          {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
+        @if (usedBytes !== undefined) {
+          {{ usedBytes | ixFileSize }}
         } @else {
           {{ 'N/A' | translate }}
         }
@@ -33,8 +33,8 @@
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
       <dd>
-        @if (snapshotInfo?.properties?.referenced?.parsed !== undefined && snapshotInfo?.properties?.referenced?.parsed !== null) {
-          {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
+        @if (referencedBytes !== undefined) {
+          {{ referencedBytes | ixFileSize }}
         } @else {
           {{ 'N/A' | translate }}
         }

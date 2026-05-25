@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { LocaleService } from 'app/modules/language/locale.service';
 
@@ -23,11 +22,9 @@ export class IxDateComponent {
   readonly date = input.required<number | Date>();
 
   machineTimezone: string;
-  defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   get machineTime(): Date {
-    const utc = fromZonedTime(this.date(), this.defaultTz);
-    return toZonedTime(utc, this.machineTimezone);
+    return this.localeService.toMachineTime(this.date());
   }
 
   get isTimezoneDifference(): boolean {
