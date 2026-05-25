@@ -9,6 +9,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,6 +23,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -61,6 +63,7 @@ export class SnapshotRollbackDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
   protected snapshotName = inject<string>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
@@ -75,6 +78,7 @@ export class SnapshotRollbackDialog implements OnInit {
 
   protected snapshot: ZfsSnapshot | undefined;
   protected creationTimestampMs: number | undefined;
+  protected creationMachineTime: Date | undefined;
 
   readonly recursive = {
     fcName: 'recursive',
@@ -125,6 +129,7 @@ export class SnapshotRollbackDialog implements OnInit {
       next: (snapshot) => {
         this.snapshot = snapshot;
         this.creationTimestampMs = getSnapshotCreationMs(snapshot);
+        this.creationMachineTime = this.toMachineTime(this.creationTimestampMs);
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -134,6 +139,17 @@ export class SnapshotRollbackDialog implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  // Mirrors `ix-date`: convert a UTC instant into the wall-clock time of the
+  // NAS machine timezone so the date displayed here matches the list column.
+  private toMachineTime(timestampMs: number | undefined): Date | undefined {
+    if (timestampMs === undefined) {
+      return undefined;
+    }
+    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const utc = fromZonedTime(timestampMs, browserTz);
+    return toZonedTime(utc, this.localeService.timezone);
   }
 
   onSubmit(): void {

@@ -12,6 +12,7 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
@@ -46,6 +47,9 @@ describe('SnapshotRollbackDialog', () => {
       },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(LocaleService, {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      }),
       mockApi([
         mockCall('pool.snapshot.query', [snapshotWithCreation(1634575914)]),
         mockCall('pool.snapshot.rollback'),

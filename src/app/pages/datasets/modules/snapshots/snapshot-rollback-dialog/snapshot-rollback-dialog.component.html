@@ -12,14 +12,14 @@
     >
       <div mat-dialog-content>
         @if (snapshot) {
-          @if (creationTimestampMs !== undefined) {
+          @if (creationMachineTime !== undefined) {
             <p
               [innerHTML]="
                 'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate
                   : {
                       snapshot: snapshot.snapshot_name,
                       dataset: snapshot.dataset,
-                      datetime: creationTimestampMs | formatDateTime
+                      datetime: creationMachineTime | formatDateTime
                     }
                 "
             ></p>

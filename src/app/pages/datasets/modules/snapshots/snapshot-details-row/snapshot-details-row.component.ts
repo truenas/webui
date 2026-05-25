@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -37,6 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FileSizePipe,
     FormatDateTimePipe,
+    IxDateComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     MatDivider,
@@ -88,6 +90,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
           extra: {
             retention: true,
             holds: true,
+            properties: ['creation', 'used', 'referenced'],
           },
         },
       ],
