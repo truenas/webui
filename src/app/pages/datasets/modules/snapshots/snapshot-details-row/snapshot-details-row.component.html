@@ -5,7 +5,7 @@
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
       <dd>
-        @if (snapshotInfo?.properties?.used?.parsed) {
+        @if (snapshotInfo?.properties?.used?.parsed !== undefined && snapshotInfo?.properties?.used?.parsed !== null) {
           {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
         } @else {
           {{ 'N/A' | translate }}
@@ -20,7 +20,7 @@
     } @else {
       <dd>
         @if (creationTimestampMs !== undefined) {
-          {{ creationTimestampMs | formatDateTime }}
+          <ix-date [date]="creationTimestampMs"></ix-date>
         } @else {
           {{ 'N/A' | translate }}
         }
@@ -33,7 +33,7 @@
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
       <dd>
-        @if (snapshotInfo?.properties?.referenced?.parsed) {
+        @if (snapshotInfo?.properties?.referenced?.parsed !== undefined && snapshotInfo?.properties?.referenced?.parsed !== null) {
           {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
         } @else {
           {{ 'N/A' | translate }}

@@ -5,10 +5,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -30,6 +32,7 @@ describe('SnapshotDetailsRowComponent', () => {
       ReactiveFormsModule,
       FileSizePipe,
       FormatDateTimePipe,
+      MockComponent(IxDateComponent),
     ],
     providers: [
       mockAuth(),
@@ -63,7 +66,9 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(rows).toHaveLength(4);
 
     expect(rows[0]).toHaveText('Used: 1.49 TiB');
-    expect(rows[1]).toHaveText('Date created: 2021-10-18 19:51:54');
+    expect(rows[1]).toHaveText('Date created:');
+    expect(spectator.query(IxDateComponent, { parentSelector: '.details-row:nth-child(2)' }).date)
+      .toBe(1634575914 * 1000);
     expect(rows[2]).toHaveText('Referenced: 1.49 TiB');
     expect(rows[3]).toHaveText('Retention: Will be automatically destroyed at 2022-06-07 07:25:14 by periodic snapshot task');
   });
