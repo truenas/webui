@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, computed, input, output,
+  Component, ChangeDetectionStrategy, input, output,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -14,7 +13,6 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { switchMap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -86,15 +84,9 @@ export class AuditListComponent {
   protected readonly displayedColumns = auditDisplayedColumns;
   protected readonly loadingTitle = loadingTitle;
 
-  private readonly emptyType = toSignal<EmptyType | null>(
-    toObservable(this.dataProvider).pipe(switchMap((provider) => provider.emptyType$)),
-    { initialValue: null },
-  );
-
-  protected readonly emptyAttrs = computed<EmptyAttrs>(() => {
-    const type = this.emptyType();
+  protected emptyAttrsFor(type: EmptyType | null | undefined): EmptyAttrs {
     return (type && emptyTypeAttrs.get(type)) ?? defaultEmptyAttrs;
-  });
+  }
 
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 

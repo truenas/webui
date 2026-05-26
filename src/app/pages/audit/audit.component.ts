@@ -28,6 +28,11 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
+let controllerToggleLabelIdCounter = 0;
+
+// Cache once at module scope — the column list is module-constant.
+const messageTimestampColumnIndex = auditDisplayedColumns.indexOf('message_timestamp');
+
 @Component({
   selector: 'ix-audit',
   templateUrl: './audit.component.html',
@@ -63,7 +68,9 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   private readonly isHaLicensed$ = toObservable(this.isHaLicensed);
   protected readonly searchableElements = auditElements;
-  protected readonly controllerToggleLabelId = 'audit-controller-toggle-label';
+  // Unique id per instance so the aria-labelledby relationship still works
+  // if multiple AuditComponent instances ever coexist (e.g. in tabs/dialogs).
+  protected readonly controllerToggleLabelId = `audit-controller-toggle-label-${++controllerToggleLabelIdCounter}`;
 
   ngOnInit(): void {
     this.createDataProvider();
@@ -86,7 +93,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     this.dataProvider.setSorting({
       propertyName: 'message_timestamp',
       direction: SortDirection.Desc,
-      active: auditDisplayedColumns.indexOf('message_timestamp'),
+      active: messageTimestampColumnIndex,
     }, true);
     this.dataProvider.currentPage$
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))

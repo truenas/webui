@@ -400,6 +400,21 @@ describe('AuditSearchComponent', () => {
       expect(flat.length).toBeLessThan(longQuery.length);
     });
 
+    it('falls back to username search when the query is too short to be a meaningful event match', () => {
+      const searchInput = spectator.query(SearchInputComponent);
+      searchInput.query.set({
+        query: 'a',
+        isBasicQuery: true,
+      });
+      searchInput.runSearch.emit();
+      spectator.detectChanges();
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      expect(exportButton.defaultFilters()).toEqual([
+        ['username', '~', 'a'],
+      ]);
+    });
+
     it('should call dataProvider load on search', () => {
       const searchInput = spectator.query(SearchInputComponent);
       searchInput.query.set({

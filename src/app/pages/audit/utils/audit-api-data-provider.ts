@@ -27,7 +27,18 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
    */
   setQueryFilters(filters: QueryFilters<AuditEntry>): void {
     this.queryFilters = filters;
-    this.setParams([filters] as unknown as ApiCallParams<'audit.query'>);
+    super.setParams([filters] as unknown as ApiCallParams<'audit.query'>);
+  }
+
+  /**
+   * Block direct callers — they would desync `this.queryFilters` and `this.params`,
+   * and the audit data provider's typed `setQueryFilters` is the supported entry
+   * point. The override keeps `super.setParams` reachable from `setQueryFilters`.
+   */
+  override setParams(): never {
+    throw new Error(
+      'AuditApiDataProvider.setParams() is not supported. Use setQueryFilters() instead.',
+    );
   }
 
   protected override countRows(): Observable<number> {

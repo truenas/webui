@@ -71,8 +71,8 @@
         #searchInput
         class="search-input"
         [properties]="searchProperties()"
-        [advancedSearchPlaceholder]="'Event = \'Close\' AND Username = \'admin\'' | translate"
-        [basicSearchPlaceholder]="'Search by Event or Username' | translate"
+        [advancedSearchPlaceholder]="advancedSearchPlaceholder()"
+        [basicSearchPlaceholder]="basicSearchPlaceholder()"
         [query]="searchQuery()"
         (runSearch)="runSearchFromInput(searchInput)"
       ></ix-search-input>

@@ -6,7 +6,7 @@ import { AuditService, auditServiceLabels } from 'app/enums/audit.enum';
   pure: true,
 })
 export class AuditServiceLabelPipe implements PipeTransform {
-  transform(service: string | undefined | null): string {
-    return auditServiceLabels.get(service as AuditService) || service || '-';
+  transform(service: AuditService | undefined | null): string {
+    return (service && auditServiceLabels.get(service)) || service || '-';
   }
 }

@@ -43,6 +43,15 @@ import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.ser
 // backtracking from patterns like "a*a*a*…".
 const maxBasicSearchLength = 128;
 
+// Short terms (e.g. a single letter) would match dozens of AuditEvent values
+// and explode into a huge OR filter on the server — require enough characters
+// for the match to be meaningful before treating the input as an event query.
+const minBasicEventSearchLength = 3;
+
+// Cap the number of matched events to keep the resulting OR filter bounded.
+// Above this we fall back to a username search instead.
+const maxBasicEventSearchMatches = 5;
+
 @Component({
   selector: 'ix-audit-search',
   templateUrl: './audit-search.component.html',
@@ -78,6 +87,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions = mapToOptions(auditServiceLabels, this.translate);
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
+  protected advancedSearchPlaceholder = signal('');
+  protected basicSearchPlaceholder = signal('');
 
   private readonly viewInitialized$ = new ReplaySubject<void>(1);
 
@@ -140,6 +151,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.refreshSearchPlaceholders();
+
     this.dataProvider().sortingOrPaginationUpdate
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -161,6 +174,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       )
       .subscribe((auditEntries) => {
         this.staticSearchProperties = null;
+        this.refreshSearchPlaceholders();
         this.setSearchProperties(auditEntries ?? []);
       });
 
@@ -248,87 +262,92 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.dataProvider().load();
   }
 
-  private staticSearchProperties: SearchProperty<AuditEntry>[] | null = null;
+  private staticSearchProperties: {
+    leading: SearchProperty<AuditEntry>[];
+    trailing: SearchProperty<AuditEntry>[];
+  } | null = null;
 
   /**
-   * Builds the slice of search properties that does not depend on the
-   * current page of audit entries. Cached on first call to avoid re-
-   * translating every event/credential label on each page change.
+   * Builds the slice of search properties whose translated labels do not
+   * depend on the current page of audit entries. Cached on first call to
+   * avoid re-translating every event/credential label on each page change.
+   *
+   * Returns leading/trailing halves so `setSearchProperties` can splice in
+   * page-dependent properties (`address`, user suggestions) without coupling
+   * to magic indexes.
    */
-  private getStaticSearchProperties(): SearchProperty<AuditEntry>[] {
+  private getStaticSearchProperties(): {
+    leading: SearchProperty<AuditEntry>[];
+    trailing: SearchProperty<AuditEntry>[];
+  } {
     if (this.staticSearchProperties) {
       return this.staticSearchProperties;
     }
 
-    this.staticSearchProperties = [
-      textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
-      dateProperty(
-        'message_timestamp',
-        this.translate.instant('Timestamp'),
-      ),
-      textProperty(
-        'username',
-        this.translate.instant('User'),
-        this.apiAndLocalUserSuggestions(),
-      ),
-      textProperty(
-        'event',
-        this.translate.instant('Event'),
-        of(Object.values(AuditEvent).map((key) => ({
-          label: this.translate.instant(auditEventLabels.get(key) || key),
-          value: `"${this.translate.instant(auditEventLabels.get(key) || key)}"`,
-        }))),
-        auditEventLabels,
-      ),
-      textProperty(
-        'event_data.clientAccount',
-        this.translate.instant('SMB - Client Account'),
-        this.apiAndLocalUserSuggestions(),
-      ),
-      textProperty('event_data.host', this.translate.instant('SMB - Host')),
-      textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
-      textProperty('event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
-      textProperty('event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
-      textProperty('event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
-      textProperty('event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
-      textProperty('event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
-      textProperty('event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
-      textProperty('event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
-      textProperty('event_data.result.type', this.translate.instant('SMB - Result Type')),
-      textProperty('event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
-      textProperty('event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
-      textProperty(
-        'event_data.vers.major',
-        this.translate.instant('SMB - Vers Major'),
-        of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
-      ),
-      textProperty(
-        'event_data.vers.minor',
-        this.translate.instant('SMB - Vers Minor'),
-        of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
-      ),
-      textProperty('event_data.operations.create', this.translate.instant('SMB - Operation Create')),
-      textProperty('event_data.operations.close', this.translate.instant('SMB - Operation Close')),
-      textProperty('event_data.operations.read', this.translate.instant('SMB - Operation Read')),
-      textProperty('event_data.operations.write', this.translate.instant('SMB - Operation Write')),
-      textProperty(
-        'event_data.credentials.credentials',
-        this.translate.instant('Middleware - Credentials'),
-        of(Object.values(CredentialType).map((key) => ({
-          label: this.translate.instant(credentialTypeLabels.get(key) || key),
-          value: `"${this.translate.instant(credentialTypeLabels.get(key) || key)}"`,
-        }))),
-        credentialTypeLabels,
-      ),
-      textProperty('event_data.method', this.translate.instant('Middleware - Method')),
-    ];
+    this.staticSearchProperties = {
+      leading: [
+        textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
+        dateProperty(
+          'message_timestamp',
+          this.translate.instant('Timestamp'),
+        ),
+      ],
+      trailing: [
+        textProperty(
+          'event',
+          this.translate.instant('Event'),
+          of(Object.values(AuditEvent).map((key) => ({
+            label: this.translate.instant(auditEventLabels.get(key) || key),
+            value: `"${this.translate.instant(auditEventLabels.get(key) || key)}"`,
+          }))),
+          auditEventLabels,
+        ),
+        textProperty('event_data.host', this.translate.instant('SMB - Host')),
+        textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
+        textProperty('event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
+        textProperty('event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
+        textProperty('event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
+        textProperty('event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
+        textProperty('event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
+        textProperty('event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
+        textProperty('event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
+        textProperty('event_data.result.type', this.translate.instant('SMB - Result Type')),
+        textProperty('event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
+        textProperty('event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
+        textProperty(
+          'event_data.vers.major',
+          this.translate.instant('SMB - Vers Major'),
+          of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
+        ),
+        textProperty(
+          'event_data.vers.minor',
+          this.translate.instant('SMB - Vers Minor'),
+          of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
+        ),
+        textProperty('event_data.operations.create', this.translate.instant('SMB - Operation Create')),
+        textProperty('event_data.operations.close', this.translate.instant('SMB - Operation Close')),
+        textProperty('event_data.operations.read', this.translate.instant('SMB - Operation Read')),
+        textProperty('event_data.operations.write', this.translate.instant('SMB - Operation Write')),
+        textProperty(
+          'event_data.credentials.credentials',
+          this.translate.instant('Middleware - Credentials'),
+          of(Object.values(CredentialType).map((key) => ({
+            label: this.translate.instant(credentialTypeLabels.get(key) || key),
+            value: `"${this.translate.instant(credentialTypeLabels.get(key) || key)}"`,
+          }))),
+          credentialTypeLabels,
+        ),
+        textProperty('event_data.method', this.translate.instant('Middleware - Method')),
+      ],
+    };
 
     return this.staticSearchProperties;
   }
 
   private setSearchProperties(auditEntries: AuditEntry[]): void {
-    // Only the `address` suggestions depend on the current page; other entries
-    // are static and reused across emissions.
+    // Page-dependent properties (address suggestions, user suggestions) are
+    // rebuilt every call so they reflect the current page. The static halves
+    // wrap them in the same order as the original list.
     const addressProperty = textProperty<AuditEntry>(
       'address',
       this.translate.instant('Address'),
@@ -338,10 +357,28 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       }))),
     );
 
+    const usernameProperty = textProperty<AuditEntry>(
+      'username',
+      this.translate.instant('User'),
+      this.apiAndLocalUserSuggestions(),
+    );
+
+    const clientAccountProperty = textProperty<AuditEntry>(
+      'event_data.clientAccount',
+      this.translate.instant('SMB - Client Account'),
+      this.apiAndLocalUserSuggestions(),
+    );
+
+    const { leading, trailing } = this.getStaticSearchProperties();
+    const [eventProperty, ...restTrailing] = trailing;
+
     this.searchProperties.set(searchProperties<AuditEntry>([
-      ...this.getStaticSearchProperties().slice(0, 2),
+      ...leading,
       addressProperty,
-      ...this.getStaticSearchProperties().slice(2),
+      usernameProperty,
+      eventProperty,
+      clientAccountProperty,
+      ...restTrailing,
     ]));
   }
 
@@ -349,6 +386,13 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     // Signal that view and child components (including ix-table-pager) are initialized
     this.viewInitialized$.next();
     this.viewInitialized$.complete();
+  }
+
+  private refreshSearchPlaceholders(): void {
+    this.advancedSearchPlaceholder.set(
+      this.translate.instant("Event = 'Close' AND Username = 'admin'"),
+    );
+    this.basicSearchPlaceholder.set(this.translate.instant('Search by Event or Username'));
   }
 
   private mapUsersForSuggestions(users: { username: string }[]): Option[] {
@@ -374,6 +418,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
    * backtracking exposure of `RegExp.test` against user-supplied patterns.
    */
   private findMatchingEvents(searchTerm: string): AuditEvent[] {
+    if (searchTerm.replace(/\*/g, '').length < minBasicEventSearchLength) {
+      return [];
+    }
+
     const normalize = (value: string): string => value
       .slice(0, maxBasicSearchLength)
       .toLowerCase()
@@ -385,7 +433,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       return [];
     }
 
-    return Object.values(AuditEvent).filter((eventValue) => {
+    const matches = Object.values(AuditEvent).filter((eventValue) => {
       const normalizedEvent = normalize(eventValue);
       let cursor = 0;
       for (const segment of segments) {
@@ -397,5 +445,12 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       }
       return true;
     });
+
+    // Too many matches likely mean the term was too generic; fall back to
+    // username search rather than emitting an unbounded OR filter.
+    if (matches.length > maxBasicEventSearchMatches) {
+      return [];
+    }
+    return matches;
   }
 }
