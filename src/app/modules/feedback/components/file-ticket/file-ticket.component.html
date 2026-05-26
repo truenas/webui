@@ -1,5 +1,4 @@
-<mat-dialog-content>
-  <form [formGroup]="form">
+<form [formGroup]="form">
     <ix-input
       formControlName="title"
       [label]="'Subject' | translate"
@@ -46,16 +45,13 @@
       ></ix-file-input>
     }
   </form>
-</mat-dialog-content>
 
-<mat-dialog-actions>
-  <ix-form-actions>
-    <ix-oauth-button
-      testId="login-to-jira"
-      [oauthType]="OauthButtonType.Jira"
-      [oauthUrl]="oauthUrl"
-      [disabled]="form.invalid || isLoading()"
-      (loggedIn)="onSubmit($event);"
-    ></ix-oauth-button>
-  </ix-form-actions>
-</mat-dialog-actions>
+<ix-form-actions>
+  <ix-oauth-button
+    testId="login-to-jira"
+    [oauthType]="OauthButtonType.Jira"
+    [oauthUrl]="oauthUrl"
+    [disabled]="form.invalid || isLoading()"
+    (loggedIn)="onSubmit($event);"
+  ></ix-oauth-button>
+</ix-form-actions>

@@ -12,7 +12,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -83,6 +83,7 @@ export class TopbarComponent implements OnInit {
   private router = inject(Router);
   private systemGeneralService = inject(SystemGeneralService);
   private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private store$ = inject<Store<AlertSlice>>(Store);
   private appStore$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
@@ -242,7 +243,7 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.matDialog.open(FeedbackDialog);
+    this.tnDialog.open(FeedbackDialog);
   }
 
   private checkRebootInfo(): Observable<unknown> {

@@ -1,8 +1,9 @@
 <button
   ixTest="tnc-show-status"
-  mat-icon-button
-  matTooltipClass="tooltip-multiline"
-  [matTooltip]="tooltip()"
+  type="button"
+  class="topbar-button-right topbar-icon-button"
+  tnTooltipClass="tooltip-multiline"
+  [tnTooltip]="tooltip()"
   [attr.aria-label]="tooltip()"
   (click)="showStatus()"
 >

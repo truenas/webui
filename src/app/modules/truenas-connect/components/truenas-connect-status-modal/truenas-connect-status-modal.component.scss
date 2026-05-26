@@ -1,12 +1,25 @@
-[mat-dialog-title] {
+// The TrueNAS Connect logo acts as the title inside the dialog content, so
+// collapse the empty shell header to just hold the close button.
+:host ::ng-deep .tn-dialog__header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+// Lay the action buttons out in a right-aligned row. The buttons live inside a
+// single [tnDialogAction] wrapper (control flow can't project multiple root
+// nodes into the shell footer slot), so the wrapper provides the flex row.
+.dialog-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.dialog-title-with-logo {
   align-items: center;
   display: flex;
+  justify-content: center;
+  padding: 8px 24px;
   position: relative;
-
-  &.dialog-title-with-logo {
-    justify-content: center;
-    padding: 8px 24px;
-  }
 
   .title-logo {
     height: 24px;

@@ -1,7 +1,4 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
@@ -12,7 +9,6 @@ import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-t
 
 describe('TruenasConnectButtonComponent', () => {
   let spectator: Spectator<TruenasConnectButtonComponent>;
-  let loader: HarnessLoader;
   const configSignal = signal<TruenasConnectConfig>({
     enabled: true,
     ips: ['10.220.36.85'],
@@ -40,15 +36,11 @@ describe('TruenasConnectButtonComponent', () => {
       tier: null,
     } as TruenasConnectConfig);
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('should popup the TNC service status', async () => {
+  it('should popup the TNC service status', () => {
     const truenasConnectService = spectator.inject(TruenasConnectService);
-    const statusBtn = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="tnc-show-status"]' }),
-    );
-    await statusBtn.click();
+    spectator.click('[ixTest="tnc-show-status"]');
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });
 

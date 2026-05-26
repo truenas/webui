@@ -1,14 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -17,19 +14,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./truecommand-signup-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    FormActionsComponent,
-    MatDialogActions,
-    MatButton,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class TruecommandSignupModalComponent {
-  private dialogRef = inject<MatDialogRef<TruecommandSignupModalComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<boolean, TruecommandSignupModalComponent>>(DialogRef);
   private window = inject<Window>(WINDOW);
 
   readonly helptext = helptextTopbar;

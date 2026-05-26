@@ -1,12 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, createSpyObject, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -21,9 +21,9 @@ describe('FileReviewComponent', () => {
   let spectator: Spectator<FileReviewComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let submitButton: MatButtonHarness;
+  let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
-  const dialogRef = createSpyObject(MatDialogRef);
+  const dialogRef = createSpyObject(DialogRef);
 
   const createComponent = createComponentFactory({
     component: FileReviewComponent,
@@ -56,7 +56,7 @@ describe('FileReviewComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+    submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     feedbackService = spectator.inject(FeedbackService);
   });
 

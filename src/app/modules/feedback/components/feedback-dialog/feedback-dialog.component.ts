@@ -1,12 +1,10 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, of,
@@ -21,7 +19,6 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -31,11 +28,8 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     FakeProgressBarComponent,
-    MatDialogTitle,
-    TnIconButtonComponent,
-    MatDialogClose,
-    TestDirective,
     NgxSkeletonLoaderModule,
     IxButtonGroupComponent,
     ReactiveFormsModule,
@@ -51,8 +45,8 @@ export class FeedbackDialog implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
-  protected dialogRef = inject<MatDialogRef<FeedbackDialog>>(MatDialogRef);
-  private requestedType = inject<FeedbackType>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, FeedbackDialog>>(DialogRef);
+  private requestedType = inject<FeedbackType | null>(DIALOG_DATA, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   protected isLoading = false;

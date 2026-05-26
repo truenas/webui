@@ -1,12 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import * as EmailValidator from 'email-validator';
 import { finalize, of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -41,7 +41,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './file-ticket-licensed.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
     ReactiveFormsModule,
     IxInputComponent,
     IxChipsComponent,
@@ -49,9 +48,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxTextareaComponent,
     IxCheckboxComponent,
     IxFileInputComponent,
-    MatDialogActions,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -68,7 +66,7 @@ export class FileTicketLicensedComponent {
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
-  readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
+  readonly dialogRef = input.required<DialogRef<unknown, FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();

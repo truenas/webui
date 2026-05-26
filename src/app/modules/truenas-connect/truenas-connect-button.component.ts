@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
@@ -40,9 +38,7 @@ function classifyStatus(status: TruenasConnectStatus): StatusKind {
   selector: 'ix-truenas-connect-button',
   imports: [
     TnIconComponent,
-    MatButtonModule,
-    MatIconButton,
-    MatTooltip,
+    TnTooltipDirective,
     StatusBadgeComponent,
     TestDirective,
   ],

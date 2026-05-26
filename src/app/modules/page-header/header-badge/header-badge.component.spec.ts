@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directive';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -19,7 +19,7 @@ describe('HeaderBadgeComponent', () => {
       IfNightlyDirective,
     ],
     providers: [
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
       provideMockStore({
         selectors: [
           {
@@ -47,7 +47,7 @@ describe('HeaderBadgeComponent', () => {
     it('shows leave feedback modal once feedback text pressed', async () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Feedback' }));
       await button.click();
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FeedbackDialog);
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(FeedbackDialog);
     });
   });
 });

@@ -2,12 +2,12 @@
 @if (status) {
   @if (status.status === TrueCommandStatus.Connecting) {
     <button
-      mat-icon-button
+      type="button"
       id="tc-connecting"
-      class="topbar-button-right truecommand-button"
+      class="topbar-button-right topbar-icon-button truecommand-button"
       ixTest="truecommand-indicator"
-      matTooltipClass="tooltip-multiline"
-      [matTooltip]="tooltip()"
+      tnTooltipClass="tooltip-multiline"
+      [tnTooltip]="tooltip()"
       [attr.aria-label]="tooltip()"
       (click)="stopTrueCommandConnecting()"
     >
@@ -15,11 +15,11 @@
     </button>
   } @else {
     <button
-      mat-icon-button
-      class="topbar-button-right truecommand-button"
+      type="button"
+      class="topbar-button-right topbar-icon-button truecommand-button"
       ixTest="truecommand-indicator"
-      matTooltipClass="tooltip-multiline"
-      [matTooltip]="tooltip()"
+      tnTooltipClass="tooltip-multiline"
+      [tnTooltip]="tooltip()"
       [attr.aria-label]="tooltip()"
       [ngClass]="[status.status]"
       [ixUiSearch]="searchableElements.elements.trueCommand"
