@@ -10,7 +10,6 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
@@ -124,15 +123,16 @@ export class SnapshotRollbackDialog implements OnInit {
         extra: { properties: ['creation'] },
       },
     ]).pipe(
-      map((snapshots) => {
-        if (!snapshots[0]) {
-          throw new Error(`Snapshot ${this.snapshotName} not found.`);
-        }
-        return snapshots[0];
-      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (snapshot) => {
+      next: (snapshots) => {
+        // The snapshot can disappear between the list page rendering and the
+        // dialog opening. Close silently — the list will refresh on its own.
+        const snapshot = snapshots[0];
+        if (!snapshot) {
+          this.dialogRef.close();
+          return;
+        }
         this.snapshot = snapshot;
         const creationMs = getSnapshotCreationMs(snapshot);
         this.creationMachineTime = creationMs === undefined

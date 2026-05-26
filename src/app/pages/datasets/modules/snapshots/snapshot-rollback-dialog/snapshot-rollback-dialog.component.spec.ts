@@ -16,6 +16,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 function snapshotWithCreation(parsedSeconds: number | undefined): ZfsSnapshot {
   return {
@@ -47,6 +48,7 @@ describe('SnapshotRollbackDialog', () => {
       },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(ErrorHandlerService),
       mockProvider(LocaleService, {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         toMachineTime: (date: number | Date) => new Date(date),
@@ -121,12 +123,13 @@ describe('SnapshotRollbackDialog', () => {
     expect(spectator.fixture.nativeElement).not.toHaveText('1969');
   });
 
-  it('closes the dialog when the snapshot lookup returns no results, so the form is never shown without context', () => {
+  it('closes the dialog when the snapshot lookup returns no results, without surfacing a developer-facing error', () => {
     spectator = createComponent({ detectChanges: false });
     spectator.inject(MockApiService).mockCall('pool.snapshot.query', []);
     spectator.detectChanges();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
   });
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {

@@ -21,17 +21,11 @@ export class IxDateComponent {
   /** Date must be in browser timezone */
   readonly date = input.required<number | Date>();
 
-  machineTimezone: string;
-
   get machineTime(): Date {
     return this.localeService.toMachineTime(this.date());
   }
 
   get isTimezoneDifference(): boolean {
     return this.machineTime < this.date() || this.machineTime > this.date();
-  }
-
-  constructor() {
-    this.machineTimezone = this.localeService.timezone;
   }
 }
