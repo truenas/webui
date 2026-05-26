@@ -4,7 +4,7 @@
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
 } @else {
-  @if (!wasDatasetRolledBack) {
+  @if (!wasDatasetRolledBack()) {
     <form
       class="ix-form-container"
       [formGroup]="form"
