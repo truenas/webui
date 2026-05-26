@@ -11,6 +11,10 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
+// Resolved once at module load: the browser's IANA timezone changes only when
+// the user changes their OS timezone, which won't take effect for a running
+// tab anyway (Date / Intl already snapshot it at startup). Cheap to read but
+// not free — kept in a constant so it doesn't run on every toMachineTime call.
 const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
