@@ -4,6 +4,16 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { TN_TABLE_PAGER_LABELS, type TnTablePagerLabels } from '@truenas/ui-components';
 
+const labelKeys: Record<keyof TnTablePagerLabels, string> = {
+  itemsPerPage: T('Items per page'),
+  of: T('of'),
+  firstPage: T('First Page'),
+  previousPage: T('Previous Page'),
+  nextPage: T('Next Page'),
+  lastPage: T('Last Page'),
+  tablePagination: T('Table Pagination'),
+};
+
 export function provideTnTablePagerLabels(): Provider {
   return {
     provide: TN_TABLE_PAGER_LABELS,
@@ -13,15 +23,9 @@ export function provideTnTablePagerLabels(): Provider {
       return computed<TnTablePagerLabels>(() => {
         // Read the lang-change signal so the computed re-runs after each language switch.
         langChange();
-        return {
-          itemsPerPage: translate.instant(T('Items per page')) as string,
-          of: translate.instant(T('of')) as string,
-          firstPage: translate.instant(T('First Page')) as string,
-          previousPage: translate.instant(T('Previous Page')) as string,
-          nextPage: translate.instant(T('Next Page')) as string,
-          lastPage: translate.instant(T('Last Page')) as string,
-          tablePagination: translate.instant(T('Table Pagination')) as string,
-        };
+        return Object.fromEntries(
+          Object.entries(labelKeys).map(([key, value]) => [key, translate.instant(value)]),
+        ) as TnTablePagerLabels;
       });
     },
   };
