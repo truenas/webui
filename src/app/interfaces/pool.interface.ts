@@ -53,8 +53,12 @@ export interface Pool {
   dedup_table_size: number;
   all_sed?: boolean;
   special_class_used?: number;
+  /**
+   * Raw special-vdev free space as reported by ZFS, before the metadata reserve
+   * is carved out. The Usage card subtracts the configured reserve for display.
+   */
   special_class_available?: number;
-  special_class_reserved?: number;
+  special_class_usable?: number;
 }
 
 export type PoolTopology = Record<VDevType, VDevItem[]>;
