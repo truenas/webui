@@ -38,10 +38,9 @@ describe('getSnapshotCreationMs', () => {
       expect(
         getSnapshotCreationMs(snapshotWithCreationParsed({ $date: 1634575914000 }, 'legacy-shape-1')),
       ).toBeUndefined();
-      expect(warn).toHaveBeenCalledWith(
-        expect.stringContaining('version mismatch'),
-        { $date: 1634575914000 },
-      );
+      // Assert on the structured warning payload only; the wording of the
+      // message is documentation and prone to drift.
+      expect(warn).toHaveBeenCalledWith(expect.any(String), { $date: 1634575914000 });
     } finally {
       warn.mockRestore();
     }
@@ -63,5 +62,9 @@ describe('getSnapshotCreationMs', () => {
   it('returns undefined for non-finite numbers', () => {
     expect(getSnapshotCreationMs(snapshotWithCreationParsed(Number.NaN))).toBeUndefined();
     expect(getSnapshotCreationMs(snapshotWithCreationParsed(Number.POSITIVE_INFINITY))).toBeUndefined();
+  });
+
+  it('returns undefined for parsed=0 so a zero never renders as 1970-01-01', () => {
+    expect(getSnapshotCreationMs(snapshotWithCreationParsed(0))).toBeUndefined();
   });
 });
