@@ -12,12 +12,14 @@ export function resetSnapshotCreationWarnings(): void {
 }
 
 /**
- * Returns the value when it's a finite number, otherwise `undefined`. Used by
- * `pool.snapshot` property getters where middleware may return `null`,
- * `undefined`, or non-numeric strings for size-like fields.
+ * Returns the value when it's a finite, non-negative number, otherwise
+ * `undefined`. Used by `pool.snapshot` property getters where middleware may
+ * return `null`, `undefined`, or non-numeric strings for size-like fields
+ * (`used`, `referenced`). A negative byte count is meaningless and would
+ * render incorrectly through `ixFileSize`, so reject those too.
  */
 export function getFiniteNumber(value: unknown): number | undefined {
-  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : undefined;
 }
 
 /**
@@ -28,7 +30,7 @@ export function getFiniteNumber(value: unknown): number | undefined {
  * UI/middleware version mismatch (legacy object, stringified seconds, NaN)
  * surfaces in dev tools instead of silently showing nothing.
  *
- * The `parsed >= 1` check also rejects `0` and any negative value, both of
+ * The `parsed > 0` check also rejects `0` and any negative value, both of
  * which would render as a 1970-or-earlier date — exactly the symptom this
  * util was added to prevent. ZFS won't realistically report those, but
  * rejecting them closes the door on the original bug class.
@@ -38,7 +40,7 @@ export function getSnapshotCreationMs(snapshot: ZfsSnapshot | null | undefined):
   // pre-rebase server can still send `{ $date: ms }`; treat the value as
   // `unknown` for the duration of the check so the legacy branch is reachable.
   const parsed: unknown = snapshot?.properties?.creation?.parsed;
-  if (typeof parsed === 'number' && Number.isFinite(parsed) && parsed >= 1) {
+  if (typeof parsed === 'number' && Number.isFinite(parsed) && parsed > 0) {
     return parsed * 1000;
   }
   if (parsed !== undefined && parsed !== null) {

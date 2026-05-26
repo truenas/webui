@@ -27,8 +27,9 @@ export class IxDateComponent {
   readonly machineTime = computed(() => this.localeService.toMachineTime(this.date()));
 
   readonly isTimezoneDifference = computed(() => {
-    const machineTime = this.machineTime();
+    const machineTime = this.machineTime().getTime();
     const date = this.date();
-    return machineTime < date || machineTime > date;
+    const dateMs = typeof date === 'number' ? date : date.getTime();
+    return machineTime !== dateMs;
   });
 }
