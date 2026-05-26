@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
@@ -72,7 +72,7 @@ export class SnapshotRollbackDialog implements OnInit {
   // caller already provided `properties.creation` (the common path) we skip the
   // round trip and render the form immediately.
   isLoading = false;
-  wasDatasetRolledBack = false;
+  protected readonly wasDatasetRolledBack = signal(false);
   form = this.fb.group({
     recursive: ['' as RollbackRecursiveType],
     force: [null as (boolean | null), [Validators.requiredTrue]],
@@ -176,8 +176,7 @@ export class SnapshotRollbackDialog implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        this.wasDatasetRolledBack = true;
-        this.cdr.markForCheck();
+        this.wasDatasetRolledBack.set(true);
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
