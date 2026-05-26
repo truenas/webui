@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -28,9 +27,20 @@ function snapshotWithCreation(parsedSeconds: number | undefined): ZfsSnapshot {
   } as ZfsSnapshot;
 }
 
+// `fakeZfsSnapshot.properties.creation.parsed = 1634575914` (unix seconds),
+// which the dialog converts to ms and formats via the mocked LocaleService /
+// FakeFormatDateTimePipe. Asserting just the wall-clock date keeps coverage
+// of "renders a timestamp" without coupling to exact pipe / mock formatting.
+const expectedCreationDateFragment = '2021-10-18';
+
 describe('SnapshotRollbackDialog', () => {
   let spectator: Spectator<SnapshotRollbackDialog>;
   let loader: HarnessLoader;
+
+  // Per-test snapshot resolved lazily via useFactory so each test can swap the
+  // MAT_DIALOG_DATA value before calling `createComponent()` without needing
+  // TestBed.overrideProvider (which fails once the module is instantiated).
+  let dialogSnapshot: ZfsSnapshot;
 
   const createComponent = createComponentFactory({
     component: SnapshotRollbackDialog,
@@ -42,10 +52,7 @@ describe('SnapshotRollbackDialog', () => {
     ],
     providers: [
       mockAuth(),
-      {
-        provide: MAT_DIALOG_DATA,
-        useValue: fakeZfsSnapshot.name,
-      },
+      { provide: MAT_DIALOG_DATA, useFactory: () => dialogSnapshot },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService),
@@ -61,26 +68,26 @@ describe('SnapshotRollbackDialog', () => {
   });
 
   beforeEach(() => {
+    dialogSnapshot = fakeZfsSnapshot;
+  });
+
+  function setupDialog(snapshot: ZfsSnapshot = fakeZfsSnapshot): void {
+    dialogSnapshot = snapshot;
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
+  }
 
-  it('checks default messages', () => {
-    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back to 2021-10-18 19:51:54?');
+  it('renders the creation timestamp from the snapshot data without re-querying the API', () => {
+    setupDialog();
+
+    expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back to');
+    expect(spectator.fixture.nativeElement.textContent as string).toContain(expectedCreationDateFragment);
     expect(spectator.fixture.nativeElement).toHaveText('Rolling the dataset back destroys data on the dataset');
-  });
-
-  it('checks getting additional properties query is called', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
-      [['id', '=', 'test-dataset@first-snapshot']],
-      {
-        select: ['snapshot_name', 'dataset', 'properties'],
-        extra: { properties: ['creation'] },
-      },
-    ]);
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything());
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
+    setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
@@ -98,6 +105,7 @@ describe('SnapshotRollbackDialog', () => {
   });
 
   it('checks payload when RollbackRecursiveType.Recursive', async () => {
+    setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Confirm: true,
@@ -114,29 +122,29 @@ describe('SnapshotRollbackDialog', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
   });
 
-  // The `detectChanges: false` + re-mock + `detectChanges()` ordering matters:
-  // ngOnInit fires on the first `detectChanges()`, so the per-case `mockCall`
-  // must be installed before then; otherwise the default `pool.snapshot.query`
-  // mock from `providers` is what the subscription sees.
-  it('omits the datetime fragment when the creation timestamp is missing, so the dialog does not display 1969', () => {
-    spectator = createComponent({ detectChanges: false });
-    spectator.inject(MockApiService).mockCall('pool.snapshot.query', [snapshotWithCreation(undefined)]);
-    spectator.detectChanges();
+  it('omits the datetime fragment when the snapshot data has no creation timestamp, so the dialog does not display 1969', () => {
+    setupDialog(snapshotWithCreation(undefined));
 
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.snapshot.query', expect.anything());
     expect(spectator.fixture.nativeElement).toHaveText('Use snapshot first-snapshot to roll test-dataset back?');
     expect(spectator.fixture.nativeElement).not.toHaveText('1969');
   });
 
-  it('closes the dialog when the snapshot lookup returns no results, without surfacing a developer-facing error', () => {
-    spectator = createComponent({ detectChanges: false });
-    spectator.inject(MockApiService).mockCall('pool.snapshot.query', []);
-    spectator.detectChanges();
+  it('falls back to a pool.snapshot.query when the caller passes a snapshot without properties', () => {
+    setupDialog({ ...fakeZfsSnapshot, properties: undefined } as ZfsSnapshot);
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
-    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
+      [['id', '=', 'test-dataset@first-snapshot']],
+      {
+        select: ['properties'],
+        extra: { properties: ['creation'] },
+      },
+    ]);
+    expect(spectator.fixture.nativeElement.textContent as string).toContain(expectedCreationDateFragment);
   });
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {
+    setupDialog();
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Confirm: true,

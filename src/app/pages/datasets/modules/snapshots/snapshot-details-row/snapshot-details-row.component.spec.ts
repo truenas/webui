@@ -91,7 +91,18 @@ describe('SnapshotDetailsRowComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, { data: fakeZfsSnapshot.name });
+    // The dialog now accepts the full snapshot so it can render the creation
+    // timestamp without a second pool.snapshot.query. By the time the user
+    // clicks Rollback, `pool.snapshot.query` (in ngOnInit) has populated
+    // `snapshotInfo` with `creation`, so the component passes that through.
+    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, {
+      data: expect.objectContaining({
+        name: fakeZfsSnapshot.name,
+        properties: expect.objectContaining({
+          creation: expect.objectContaining({ parsed: 1634575914 }),
+        }),
+      }),
+    });
   });
 
   it('should make websocket query when Hold is changed', async () => {

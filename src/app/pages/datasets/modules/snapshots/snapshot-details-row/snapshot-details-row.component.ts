@@ -144,7 +144,9 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   doRollback(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotRollbackDialog, { data: snapshot.name });
+    // Prefer the fetched `snapshotInfo` (which carries the `creation` property)
+    // so the dialog can render the timestamp without an extra round trip.
+    this.matDialog.open(SnapshotRollbackDialog, { data: this.snapshotInfo ?? snapshot });
   }
 
   doDelete(snapshot: ZfsSnapshot): void {
