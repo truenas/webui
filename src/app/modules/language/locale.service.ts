@@ -25,6 +25,24 @@ function getBrowserTimezone(): string {
   return cachedBrowserTimezone;
 }
 
+// Projects an instant onto the wall-clock of `machineTimezone`, returned as a
+// Date whose browser-local components (the ones date-fns-tz `format()` reads
+// when called without a timeZone option) equal that wall-clock. The
+// `fromZonedTime` hop normalizes the input to an absolute UTC instant whether
+// it arrived as unix-ms or as a Date already re-zoned into another timezone, so
+// the conversion holds in both cases.
+//
+// Pure — the timezone is passed in rather than read from the service — so
+// `<ix-date>` can share it driven by the mockable `LocaleService.timezone`
+// property. That keeps the component testable: a unit test stubbing only
+// `timezone` gets the real conversion without having to stub a service method
+// (an auto-mocked method returns `undefined` and would otherwise break render).
+export function getMachineTime(date: number | Date, machineTimezone: string | undefined): Date {
+  const browserTimezone = getBrowserTimezone();
+  const instant = fromZonedTime(date, browserTimezone);
+  return toZonedTime(instant, machineTimezone ?? browserTimezone);
+}
+
 export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
 
 @Injectable({ providedIn: 'root' })
@@ -127,18 +145,12 @@ export class LocaleService {
     return [format(date, this.dateFormat), format(date, this.timeFormat)];
   }
 
-  // Returns a Date whose browser-local components (the ones `format()` from
-  // date-fns-tz reads when called without a timeZone option) match the
-  // wall-clock as it would be in the configured machine timezone.
-  //
-  // The fromZonedTime hop normalizes the input to an absolute UTC instant
-  // regardless of whether it arrived as a unix-ms number or a Date already
-  // re-zoned into another timezone — so the conversion stays correct in both
-  // cases. This is the single source of truth used by <ix-date> as well.
+  // Converts an instant to the configured machine timezone's wall-clock. Thin
+  // wrapper over the shared `getMachineTime` so callers holding a `LocaleService`
+  // (e.g. the snapshot rollback dialog) don't have to read `timezone` themselves;
+  // `<ix-date>` calls `getMachineTime` directly. See `getMachineTime` above.
   toMachineTime(date: number | Date): Date {
-    const browserTimezone = getBrowserTimezone();
-    const instant = fromZonedTime(date, browserTimezone);
-    return toZonedTime(instant, this.timezone ?? browserTimezone);
+    return getMachineTime(date, this.timezone);
   }
 
   getShortTimeFormat(): string {

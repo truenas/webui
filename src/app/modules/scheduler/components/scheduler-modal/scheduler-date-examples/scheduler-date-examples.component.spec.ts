@@ -1,6 +1,5 @@
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -12,8 +11,6 @@ import { SchedulerDateExamplesComponent } from './scheduler-date-examples.compon
 
 describe('SchedulerDateExamplesComponent', () => {
   let spectator: Spectator<SchedulerDateExamplesComponent>;
-  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const machineTimezone = 'America/New_York';
   const createComponent = createComponentFactory({
     component: SchedulerDateExamplesComponent,
     imports: [
@@ -21,13 +18,7 @@ describe('SchedulerDateExamplesComponent', () => {
     ],
     providers: [
       mockProvider(LocaleService, {
-        timezone: machineTimezone,
-        // Mirror the real LocaleService conversion so <ix-date> renders the
-        // expected wall-clock when it delegates here.
-        toMachineTime: (date: number | Date) => toZonedTime(
-          fromZonedTime(date, browserTimezone),
-          machineTimezone,
-        ),
+        timezone: 'America/New_York',
       }),
       provideMockStore({
         selectors: [
