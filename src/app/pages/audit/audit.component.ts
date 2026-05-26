@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
@@ -61,6 +61,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
   protected readonly controllerTypeOptions = mapToOptions(controllerTypeLabels, this.translate);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  private readonly isHaLicensed$ = toObservable(this.isHaLicensed);
   protected readonly searchableElements = auditElements;
   protected readonly controllerToggleLabelId = 'audit-controller-toggle-label';
 
@@ -103,7 +104,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   private syncControllerStateToDataProvider(): void {
     combineLatest([
       this.controllerTypeControl.value$,
-      this.store$.select(selectIsHaLicensed).pipe(map(Boolean)),
+      this.isHaLicensed$.pipe(map(Boolean)),
     ]).pipe(
       distinctUntilChanged(
         ([prevType, prevHa], [nextType, nextHa]) => prevType === nextType && prevHa === nextHa,

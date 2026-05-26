@@ -18,7 +18,7 @@
   <ng-container [tnColumnDef]="'service'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <span class="cell-clamp">{{ row | auditServiceLabel }}</span>
+      <span class="cell-clamp">{{ row.service | auditServiceLabel | translate }}</span>
     </ng-template>
   </ng-container>
 
@@ -44,20 +44,21 @@
   <ng-container [tnColumnDef]="'event'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <span class="cell-clamp">{{ row | auditEventLabel }}</span>
+      <span class="cell-clamp">{{ row.event | auditEventLabel | translate }}</span>
     </ng-template>
   </ng-container>
 
   <ng-container [tnColumnDef]="'event_data'">
     <ng-template tnHeaderCellDef>{{ 'Event Data' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <div class="event-data" [tnTooltip]="row | getLogImportantData | translate">
+      @let importantData = row | getLogImportantData | translate;
+      <div class="event-data" [tnTooltip]="importantData">
         @if (row.success) {
           <tn-icon class="status-icon" name="check-circle" library="mdi"></tn-icon>
         } @else {
           <tn-icon class="status-icon error-color" name="close-circle" library="mdi"></tn-icon>
         }
-        <span class="cell-clamp">{{ row | getLogImportantData | translate }}</span>
+        <span class="cell-clamp">{{ importantData }}</span>
       </div>
     </ng-template>
   </ng-container>

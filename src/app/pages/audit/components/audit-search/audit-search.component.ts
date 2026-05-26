@@ -87,14 +87,14 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
-  private apiAndLocalUserSuggestions$ = computed<Observable<Option[]>>(() => {
+  private apiAndLocalUserSuggestions(): Observable<Option[]> {
     return combineLatest([
       this.userSuggestions$,
       this.dataProvider().currentPage$.pipe(take(1), map((users) => this.mapUsersForSuggestions(users))),
     ]).pipe(
       map(([apiUsers, localUsers]) => [...apiUsers, ...localUsers]),
     );
-  });
+  }
 
   basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
     const query = this.searchQuery();
@@ -106,16 +106,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       return [];
     }
     const pattern = this.convertToRegexPattern(searchTerm);
-    const eventPattern = pattern.replace(/\s+/g, '_').toUpperCase().replace(/_/g, '[_-]');
-
-    let eventRegex: RegExp;
-    try {
-      eventRegex = new RegExp(eventPattern, 'i');
-    } catch {
-      return [['username', '~', pattern]] as QueryFilters<AuditEntry>;
-    }
-
-    const matchedEvents = Object.values(AuditEvent).filter((eventValue) => eventRegex.test(eventValue));
+    const matchedEvents = this.findMatchingEvents(searchTerm);
 
     if (matchedEvents.length === 1) {
       return [['event', '~', matchedEvents[0]]] as QueryFilters<AuditEntry>;
@@ -159,6 +150,18 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((auditEntries) => {
         this.setSearchProperties(auditEntries);
+      });
+
+    // Translated labels are cached eagerly in `staticSearchProperties`; rebuild
+    // on language change so the suggestions reflect the active locale.
+    this.translate.onLangChange
+      .pipe(
+        switchMap(() => this.dataProvider().currentPage$.pipe(take(1))),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((auditEntries) => {
+        this.staticSearchProperties = null;
+        this.setSearchProperties(auditEntries ?? []);
       });
 
     // Wait for both URL params (resolved once) and view initialization (child
@@ -266,7 +269,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       textProperty(
         'username',
         this.translate.instant('User'),
-        this.apiAndLocalUserSuggestions$(),
+        this.apiAndLocalUserSuggestions(),
       ),
       textProperty(
         'event',
@@ -280,7 +283,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       textProperty(
         'event_data.clientAccount',
         this.translate.instant('SMB - Client Account'),
-        this.apiAndLocalUserSuggestions$(),
+        this.apiAndLocalUserSuggestions(),
       ),
       textProperty('event_data.host', this.translate.instant('SMB - Host')),
       textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
@@ -361,5 +364,38 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     const escaped = capped.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
     // Convert * to .* for wildcard support
     return escaped.replace(/\*/g, '.*');
+  }
+
+  /**
+   * Finds AuditEvent values that match the user's basic search term using
+   * a plain string scan (no regex). Treats spaces, hyphens, and underscores
+   * as interchangeable separators and supports `*` as a wildcard that matches
+   * zero or more characters between segments. Avoids the catastrophic-
+   * backtracking exposure of `RegExp.test` against user-supplied patterns.
+   */
+  private findMatchingEvents(searchTerm: string): AuditEvent[] {
+    const normalize = (value: string): string => value
+      .slice(0, maxBasicSearchLength)
+      .toLowerCase()
+      .replace(/[\s\-_]+/g, '_');
+
+    const normalizedTerm = normalize(searchTerm);
+    const segments = normalizedTerm.split('*').filter(Boolean);
+    if (segments.length === 0) {
+      return [];
+    }
+
+    return Object.values(AuditEvent).filter((eventValue) => {
+      const normalizedEvent = normalize(eventValue);
+      let cursor = 0;
+      for (const segment of segments) {
+        const idx = normalizedEvent.indexOf(segment, cursor);
+        if (idx === -1) {
+          return false;
+        }
+        cursor = idx + segment.length;
+      }
+      return true;
+    });
   }
 }
