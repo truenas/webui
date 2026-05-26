@@ -12,17 +12,21 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
   selectedControllerType: ControllerType;
   service: AuditService = AuditService.Middleware;
 
+  private queryFilters: QueryFilters<AuditEntry> = [];
+
   constructor(api: ApiService) {
     super(api, 'audit.query');
   }
 
   /**
-   * Typed entry point that hides the unsafe `ApiCallParams` cast. The base
-   * `setParams` expects the full audit.query arg shape, but the audit page
-   * only owns the filters portion — `prepareParams`/`countRows` rebuild the
-   * rest from internal state on each load.
+   * Typed entry point for filters. `this.queryFilters` is the source of truth used
+   * by `prepareParams`/`countRows` to build the actual request. `this.params` is
+   * kept in sync so the inherited `load()`'s `isEmpty(params[0])` check still
+   * distinguishes "no records" from "no search results"; the cast is local to
+   * this single line because the base treats `params[0]` as filters by convention.
    */
   setQueryFilters(filters: QueryFilters<AuditEntry>): void {
+    this.queryFilters = filters;
     this.setParams([filters] as unknown as ApiCallParams<'audit.query'>);
   }
 
@@ -34,7 +38,7 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
     this.lastParams = this.params;
 
     const params: ApiCallParams<'audit.query'> = [{
-      'query-filters': (this.params[0] || []) as QueryFilters<AuditEntry>,
+      'query-filters': this.queryFilters,
       'query-options': { count: true },
       services: [this.service],
       ...(this.isHaLicensed && this.selectedControllerType && {
@@ -45,11 +49,9 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
     return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
-  protected override prepareParams(params: ApiCallParams<'audit.query'>): ApiCallParams<'audit.query'> {
-    const [queryFilters = []] = params as [QueryFilters<AuditEntry>];
-
-    const apiCallParams: ApiCallParams<'audit.query'> = [{
-      'query-filters': queryFilters,
+  protected override prepareParams(): ApiCallParams<'audit.query'> {
+    return [{
+      'query-filters': this.queryFilters,
       'query-options': {
         ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
         ...this.sortingStrategy.getParams(this.sorting),
@@ -59,7 +61,5 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
         remote_controller: this.selectedControllerType === ControllerType.Standby,
       }),
     }];
-
-    return apiCallParams;
   }
 }

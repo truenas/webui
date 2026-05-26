@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,7 +35,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   private store$ = inject<Store<AppState>>(Store);
@@ -57,18 +56,17 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   readonly exportFormat = input<ExportFormat>(ExportFormat.Csv);
   readonly customExportParams = input<Record<string, unknown>>();
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   onExport(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.job(this.jobMethod(), this.getExportParams(
       this.getQueryFilters(this.searchQuery()),
       this.getQueryOptions(this.sorting()),
     )).pipe(
       switchMap((job) => {
-        this.cdr.markForCheck();
         if (job.state === JobState.Failed) {
           this.errorHandler.showErrorModal(job);
           return EMPTY;
@@ -93,15 +91,13 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         });
       }),
       catchError((error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.isLoading = false;
-      this.cdr.markForCheck();
+      this.isLoading.set(false);
     });
   }
 

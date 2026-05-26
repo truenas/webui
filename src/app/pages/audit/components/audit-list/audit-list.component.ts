@@ -82,7 +82,6 @@ export class AuditListComponent {
   protected readonly searchableElements = auditElements;
   readonly toggleShowMobileDetails = output<boolean>();
   readonly rowSelected = output<AuditEntry>();
-  protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   protected readonly displayedColumns = auditDisplayedColumns;
   protected readonly loadingTitle = loadingTitle;

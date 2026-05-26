@@ -17,7 +17,7 @@ import {
   combineLatest,
   distinctUntilChanged,
   filter,
-  map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take, tap,
+  map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take,
 } from 'rxjs';
 import {
   AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
@@ -39,6 +39,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
+// Cap user-supplied search input length to mitigate catastrophic regex
+// backtracking from patterns like "a*a*a*…".
 const maxBasicSearchLength = 128;
 
 @Component({
@@ -95,7 +97,11 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   });
 
   basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
-    const searchTerm = (this.searchQuery() as { query: string })?.query?.trim() || '';
+    const query = this.searchQuery();
+    if (!query?.isBasicQuery) {
+      return [];
+    }
+    const searchTerm = query.query?.trim() || '';
     if (!searchTerm) {
       return [];
     }
@@ -138,46 +144,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly ExportFormat = ExportFormat;
 
-  /**
-   * Coordinates initialization flow:
-   * 1. Load URL params (pagination, sorting, search query, service)
-   * 2. Wait for view initialization (ensures child components are ready)
-   * 3. Perform initial search with loaded params, then react to subsequent service changes
-   *
-   * `viewInitialized$` is a ReplaySubject(1) that emits exactly once from `ngAfterViewInit`
-   * and then completes, so subscribers see the emission regardless of subscription order.
-   */
-  private readonly initialization$ = combineLatest([
-    this.activatedRoute.params.pipe(take(1)),
-    this.viewInitialized$,
-  ]).pipe(
-    tap(([params]) => {
-      const options = this.urlOptionsService.parseUrlOptions<AuditEntry>(
-        params.options as string,
-      ) as AuditUrlOptions<AuditEntry>;
-
-      this.dataProvider().setPagination({
-        pageSize: options.pagination?.pageSize || 50,
-        pageNumber: options.pagination?.pageNumber || 1,
-      }, true);
-
-      if (options.sorting) {
-        this.dataProvider().setSorting(options.sorting, true);
-      }
-
-      if (options.searchQuery) {
-        this.searchQuery.set(options.searchQuery as SearchQuery<AuditEntry>);
-      }
-
-      if (options.service) {
-        this.serviceControl.setValue(options.service);
-      }
-
-      this.dataProvider().service = this.serviceControl.value;
-      this.onSearch(this.searchQuery());
-    }),
-  );
-
   onFormatChange(format: ExportFormat): void {
     this.exportFormat.set(format);
   }
@@ -195,16 +161,52 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
         this.setSearchProperties(auditEntries);
       });
 
-    // Run initialization once, then react to subsequent service changes.
-    // skip(1) drops the current value — the initialization tap already applied it.
-    this.initialization$.pipe(
-      switchMap(() => this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1))),
+    // Wait for both URL params (resolved once) and view initialization (child
+    // components ready), then apply the initial state and start reacting to
+    // subsequent service changes. `viewInitialized$` is a ReplaySubject(1) that
+    // emits once from `ngAfterViewInit`, so this subscription fires regardless
+    // of subscription timing. skip(1) drops the current service value —
+    // `applyInitialUrlOptions` already triggered the initial search.
+    combineLatest([
+      this.activatedRoute.params.pipe(take(1)),
+      this.viewInitialized$,
+    ]).pipe(
+      switchMap(([params]) => {
+        this.applyInitialUrlOptions(params.options as string);
+        return this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1));
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((service) => {
       this.dataProvider().service = service;
       this.updateUrlOptions();
       this.dataProvider().load();
     });
+  }
+
+  private applyInitialUrlOptions(rawOptions: string): void {
+    const options = this.urlOptionsService.parseUrlOptions<AuditEntry>(
+      rawOptions,
+    ) as AuditUrlOptions<AuditEntry>;
+
+    this.dataProvider().setPagination({
+      pageSize: options.pagination?.pageSize || 50,
+      pageNumber: options.pagination?.pageNumber || 1,
+    }, true);
+
+    if (options.sorting) {
+      this.dataProvider().setSorting(options.sorting, true);
+    }
+
+    if (options.searchQuery) {
+      this.searchQuery.set(options.searchQuery as SearchQuery<AuditEntry>);
+    }
+
+    if (options.service) {
+      this.serviceControl.setValue(options.service);
+    }
+
+    this.dataProvider().service = this.serviceControl.value;
+    this.onSearch(this.searchQuery());
   }
 
   updateUrlOptions(): void {
@@ -243,20 +245,23 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.dataProvider().load();
   }
 
-  private setSearchProperties(auditEntries: AuditEntry[]): void {
-    this.searchProperties.update(() => searchProperties<AuditEntry>([
+  private staticSearchProperties: SearchProperty<AuditEntry>[] | null = null;
+
+  /**
+   * Builds the slice of search properties that does not depend on the
+   * current page of audit entries. Cached on first call to avoid re-
+   * translating every event/credential label on each page change.
+   */
+  private getStaticSearchProperties(): SearchProperty<AuditEntry>[] {
+    if (this.staticSearchProperties) {
+      return this.staticSearchProperties;
+    }
+
+    this.staticSearchProperties = [
       textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
       dateProperty(
         'message_timestamp',
         this.translate.instant('Timestamp'),
-      ),
-      textProperty(
-        'address',
-        this.translate.instant('Address'),
-        of(auditEntries.map((log) => ({
-          label: log.address,
-          value: `"${log.address}"`,
-        }))),
       ),
       textProperty(
         'username',
@@ -313,6 +318,27 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
         credentialTypeLabels,
       ),
       textProperty('event_data.method', this.translate.instant('Middleware - Method')),
+    ];
+
+    return this.staticSearchProperties;
+  }
+
+  private setSearchProperties(auditEntries: AuditEntry[]): void {
+    // Only the `address` suggestions depend on the current page; other entries
+    // are static and reused across emissions.
+    const addressProperty = textProperty<AuditEntry>(
+      'address',
+      this.translate.instant('Address'),
+      of(auditEntries.map((log) => ({
+        label: log.address,
+        value: `"${log.address}"`,
+      }))),
+    );
+
+    this.searchProperties.set(searchProperties<AuditEntry>([
+      ...this.getStaticSearchProperties().slice(0, 2),
+      addressProperty,
+      ...this.getStaticSearchProperties().slice(2),
     ]));
   }
 
@@ -330,7 +356,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   }
 
   private convertToRegexPattern(term: string): string {
-    // Cap input length to mitigate catastrophic backtracking from patterns like "a*a*a*…".
     const capped = term.slice(0, maxBasicSearchLength);
     // Escape all regex special characters except *
     const escaped = capped.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');

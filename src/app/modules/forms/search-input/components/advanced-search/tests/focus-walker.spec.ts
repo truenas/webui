@@ -10,10 +10,6 @@ import { QueryParserService } from 'app/modules/forms/search-input/services/quer
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
 import { searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
 
-function moveFocus(component: AdvancedSearchComponent<AuditEntry>, direction: 1 | -1): void {
-  (component as unknown as { moveFocusInDirection: (dir: 1 | -1) => void }).moveFocusInDirection(direction);
-}
-
 describe('AdvancedSearchComponent – focus walker', () => {
   let spectator: Spectator<AdvancedSearchComponent<AuditEntry>>;
   let beforeOuter: HTMLButtonElement;
@@ -75,8 +71,23 @@ describe('AdvancedSearchComponent – focus walker', () => {
     }
   }
 
+  // CodeMirror renders its editor as a contenteditable rooted on `.cm-editor`
+  // (the outer wrapper that owns the keymap listener) with `.cm-content` inside.
   function getEditorRoot(): HTMLElement {
-    return (spectator.component as unknown as { editorView: { dom: HTMLElement } }).editorView.dom;
+    return spectator.fixture.nativeElement.querySelector('.cm-editor') as HTMLElement;
+  }
+
+  // Drives the public Tab/Shift-Tab keymap by dispatching a keydown on the
+  // editor's contenteditable, which is what CodeMirror's keymap listens to.
+  function pressTab(shift: boolean): void {
+    const content = spectator.fixture.nativeElement.querySelector('.cm-content') as HTMLElement;
+    content.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'Tab',
+      code: 'Tab',
+      shiftKey: shift,
+      bubbles: true,
+      cancelable: true,
+    }));
   }
 
   afterEach(() => {
@@ -90,13 +101,13 @@ describe('AdvancedSearchComponent – focus walker', () => {
     beforeEach(() => mount(false));
 
     it('moves focus off the editor when Tab is pressed', () => {
-      moveFocus(spectator.component, 1);
+      pressTab(false);
       expect(getEditorRoot().contains(document.activeElement)).toBe(false);
       expect(document.activeElement).not.toBe(document.body);
     });
 
     it('moves focus to the previous focusable element preceding the editor on Shift-Tab', () => {
-      moveFocus(spectator.component, -1);
+      pressTab(true);
       expect(document.activeElement).toBe(beforeOuter);
     });
   });
@@ -105,13 +116,13 @@ describe('AdvancedSearchComponent – focus walker', () => {
     beforeEach(() => mount(true));
 
     it('keeps forward focus walk inside the dialog', () => {
-      moveFocus(spectator.component, 1);
+      pressTab(false);
       expect(dialog!.contains(document.activeElement)).toBe(true);
       expect(document.activeElement).not.toBe(afterOuter);
     });
 
     it('keeps backward focus walk inside the dialog', () => {
-      moveFocus(spectator.component, -1);
+      pressTab(true);
       expect(document.activeElement).toBe(beforeInDialog);
       expect(document.activeElement).not.toBe(beforeOuter);
     });
