@@ -2,8 +2,9 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 
-function snapshotWithCreationParsed(parsed: unknown): ZfsSnapshot {
+function snapshotWithCreationParsed(parsed: unknown, id?: string): ZfsSnapshot {
   return {
+    id,
     properties: {
       creation: { parsed } as unknown as ZfsProperty<string, number>,
     },
@@ -28,11 +29,26 @@ describe('getSnapshotCreationMs', () => {
   it('returns undefined for the legacy { $date } object shape so we never render NaN', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     try {
-      expect(getSnapshotCreationMs(snapshotWithCreationParsed({ $date: 1634575914000 }))).toBeUndefined();
+      expect(
+        getSnapshotCreationMs(snapshotWithCreationParsed({ $date: 1634575914000 }, 'legacy-shape-1')),
+      ).toBeUndefined();
       expect(warn).toHaveBeenCalledWith(
         expect.stringContaining('version mismatch'),
         { $date: 1634575914000 },
       );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it('warns at most once per snapshot id so a stale middleware does not spam the console', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const legacy = { $date: 1634575914000 };
+      getSnapshotCreationMs(snapshotWithCreationParsed(legacy, 'legacy-shape-spam'));
+      getSnapshotCreationMs(snapshotWithCreationParsed(legacy, 'legacy-shape-spam'));
+      getSnapshotCreationMs(snapshotWithCreationParsed(legacy, 'legacy-shape-spam'));
+      expect(warn).toHaveBeenCalledTimes(1);
     } finally {
       warn.mockRestore();
     }
