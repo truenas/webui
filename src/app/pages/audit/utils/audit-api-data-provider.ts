@@ -19,6 +19,16 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
     super(api, 'audit.query');
   }
 
+  /**
+   * Typed entry point that hides the unsafe `ApiCallParams` cast. The base
+   * `setParams` expects the full audit.query arg shape, but the audit page
+   * only owns the filters portion — `prepareParams`/`countRows` rebuild the
+   * rest from internal state on each load.
+   */
+  setQueryFilters(filters: QueryFilters<AuditEntry>): void {
+    this.setParams([filters] as unknown as ApiCallParams<'audit.query'>);
+  }
+
   protected override countRows(): Observable<number> {
     if (this.avoidCountRowsRequest) {
       return of(this.totalRows);

@@ -92,7 +92,10 @@ export class AuditListComponent {
     { initialValue: null },
   );
 
-  protected readonly emptyAttrs = computed<EmptyAttrs>(() => this.getEmptyAttrs(this.emptyType() ?? null));
+  protected readonly emptyAttrs = computed<EmptyAttrs>(() => {
+    const type = this.emptyType();
+    return (type && emptyTypeAttrs.get(type)) ?? defaultEmptyAttrs;
+  });
 
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
@@ -116,12 +119,5 @@ export class AuditListComponent {
   protected onRowClick(row: AuditEntry): void {
     this.rowSelected.emit(row);
     this.toggleShowMobileDetails.emit(true);
-  }
-
-  private getEmptyAttrs(emptyType: EmptyType | null): EmptyAttrs {
-    if (emptyType === null) {
-      return defaultEmptyAttrs;
-    }
-    return emptyTypeAttrs.get(emptyType) ?? defaultEmptyAttrs;
   }
 }

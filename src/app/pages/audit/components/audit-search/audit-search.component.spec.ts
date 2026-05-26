@@ -266,9 +266,13 @@ describe('AuditSearchComponent', () => {
       spectator.detectChanges();
 
       const exportButton = spectator.query(ExportButtonComponent);
-      // "authentication" matches AUTHENTICATION event, so only searches by event
+      // "authentication" matches AUTHENTICATION and WEBSHELL_AUTHENTICATION,
+      // so the matches are OR'd together to keep result set faithful to the user's intent.
       expect(exportButton.defaultFilters()).toEqual([
-        ['event', '~', 'AUTHENTICATION'],
+        ['OR', [
+          [['event', '~', 'AUTHENTICATION']],
+          [['event', '~', 'WEBSHELL_AUTHENTICATION']],
+        ]],
       ]);
     });
 
@@ -358,9 +362,12 @@ describe('AuditSearchComponent', () => {
       spectator.detectChanges();
 
       const exportButton = spectator.query(ExportButtonComponent);
-      // "auth*" matches AUTHENTICATION event, so only searches by event
+      // "auth*" matches AUTHENTICATION and WEBSHELL_AUTHENTICATION — both are OR'd.
       expect(exportButton.defaultFilters()).toEqual([
-        ['event', '~', 'AUTHENTICATION'],
+        ['OR', [
+          [['event', '~', 'AUTHENTICATION']],
+          [['event', '~', 'WEBSHELL_AUTHENTICATION']],
+        ]],
       ]);
     });
 
@@ -378,6 +385,24 @@ describe('AuditSearchComponent', () => {
       expect(exportButton.defaultFilters()).toEqual([
         ['event', '~', 'METHOD_CALL'],
       ]);
+    });
+
+    it('should cap input length to mitigate catastrophic regex backtracking', () => {
+      const searchInput = spectator.query(SearchInputComponent);
+      const longQuery = 'a*'.repeat(200);
+      searchInput.query.set({
+        query: longQuery,
+        isBasicQuery: true,
+      });
+      searchInput.runSearch.emit();
+      spectator.detectChanges();
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      // First filter element is either ['username', '~', pattern] or ['OR', [...]];
+      // assert the captured pattern is truncated regardless of which branch fires.
+      const filters = exportButton.defaultFilters();
+      const flat = JSON.stringify(filters);
+      expect(flat.length).toBeLessThan(longQuery.length);
     });
 
     it('should call dataProvider load on search', () => {
@@ -402,11 +427,10 @@ describe('AuditSearchComponent', () => {
       });
       searchInput.runSearch.emit();
 
-      spectator.component.updateUrlOptions();
-
       expect(urlOptionsService.setUrlOptions).toHaveBeenCalledWith(
         '/system/audit',
         expect.objectContaining({
+          searchQuery: { query: 'test', isBasicQuery: true },
           sorting: mockAuditApiDataProvider.sorting,
           pagination: mockAuditApiDataProvider.pagination,
         }),

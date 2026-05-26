@@ -24,11 +24,10 @@ import {
 } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
@@ -39,6 +38,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
+
+const maxBasicSearchLength = 128;
 
 @Component({
   selector: 'ix-audit-search',
@@ -72,8 +73,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
-  protected readonly basicSearchPlaceholder = this.translate.instant('Search by Event or Username');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions = mapToOptions(auditServiceLabels, this.translate);
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
@@ -112,11 +111,14 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
     const matchedEvents = Object.values(AuditEvent).filter((eventValue) => eventRegex.test(eventValue));
 
-    // Note: When multiple events match (e.g., "log" matches both LOGIN and LOGOUT),
-    // we use only the first match to keep the search simple and predictable.
-    // Match order follows the declaration order of AuditEvent.
-    if (matchedEvents.length > 0) {
+    if (matchedEvents.length === 1) {
       return [['event', '~', matchedEvents[0]]] as QueryFilters<AuditEntry>;
+    }
+
+    if (matchedEvents.length > 1) {
+      return [
+        ['OR', matchedEvents.map((event) => [['event', '~', event]])],
+      ] as QueryFilters<AuditEntry>;
     }
 
     return [['username', '~', pattern]] as QueryFilters<AuditEntry>;
@@ -140,14 +142,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
    * Coordinates initialization flow:
    * 1. Load URL params (pagination, sorting, search query, service)
    * 2. Wait for view initialization (ensures child components are ready)
-   * 3. Perform initial search with loaded params
+   * 3. Perform initial search with loaded params, then react to subsequent service changes
    *
-   * Contract:
-   * - `viewInitialized$` is a ReplaySubject(1) that emits exactly once from `ngAfterViewInit`
-   *   and then completes, so any subscriber — regardless of order — sees the emission.
-   * - `shareReplay({ refCount: false, bufferSize: 1 })` keeps the side-effect `tap` from
-   *   running more than once across multiple subscriptions (initial trigger + serviceControl
-   *   gate below).
+   * `viewInitialized$` is a ReplaySubject(1) that emits exactly once from `ngAfterViewInit`
+   * and then completes, so subscribers see the emission regardless of subscription order.
    */
   private readonly initialization$ = combineLatest([
     this.activatedRoute.params.pipe(take(1)),
@@ -176,13 +174,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       }
 
       this.dataProvider().service = this.serviceControl.value;
-    }),
-    switchMap(() => {
-      // Perform initial search with loaded query
       this.onSearch(this.searchQuery());
-      return of(undefined);
     }),
-    shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
   onFormatChange(format: ExportFormat): void {
@@ -202,8 +195,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
         this.setSearchProperties(auditEntries);
       });
 
-    // Subscribe to service changes after initialization
-    // skip(1) prevents duplicate load - initial value was already handled during initialization
+    // Run initialization once, then react to subsequent service changes.
+    // skip(1) drops the current value — the initialization tap already applied it.
     this.initialization$.pipe(
       switchMap(() => this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1))),
       takeUntilDestroyed(this.destroyRef),
@@ -212,9 +205,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       this.updateUrlOptions();
       this.dataProvider().load();
     });
-
-    // Trigger initialization
-    this.initialization$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   updateUrlOptions(): void {
@@ -240,14 +230,12 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
     if (query?.isBasicQuery) {
       // Use the computed basicQueryFilters instead of duplicating the logic
-      // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
-      this.dataProvider().setParams([this.basicQueryFilters()] as unknown as [AuditQueryParams]);
+      this.dataProvider().setQueryFilters(this.basicQueryFilters());
     }
 
     if (query && !query.isBasicQuery) {
-      // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
-      this.dataProvider().setParams(
-        [(query as AdvancedSearchQuery<AuditEntry>).filters] as unknown as [AuditQueryParams],
+      this.dataProvider().setQueryFilters(
+        (query as AdvancedSearchQuery<AuditEntry>).filters as QueryFilters<AuditEntry>,
       );
     }
 
@@ -334,7 +322,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.viewInitialized$.complete();
   }
 
-  private mapUsersForSuggestions(users: User[] | AuditEntry[]): Option[] {
+  private mapUsersForSuggestions(users: { username: string }[]): Option[] {
     return users.map((user) => ({
       label: user.username,
       value: `"${user.username}"`,
@@ -342,8 +330,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   }
 
   private convertToRegexPattern(term: string): string {
+    // Cap input length to mitigate catastrophic backtracking from patterns like "a*a*a*…".
+    const capped = term.slice(0, maxBasicSearchLength);
     // Escape all regex special characters except *
-    const escaped = term.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
+    const escaped = capped.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
     // Convert * to .* for wildcard support
     return escaped.replace(/\*/g, '.*');
   }

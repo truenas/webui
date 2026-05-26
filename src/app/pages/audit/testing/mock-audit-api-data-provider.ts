@@ -47,6 +47,7 @@ export const mockAuditApiDataProvider = {
   load: jest.fn(),
   setPagination: jest.fn(),
   setParams: jest.fn(),
+  setQueryFilters: jest.fn(),
   setSorting: jest.fn(),
   sorting: {
     propertyName: 'message_timestamp',

@@ -28,6 +28,20 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
 
+const focusableSelector = [
+  'a[href]',
+  'area[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'iframe',
+  'audio[controls]',
+  'video[controls]',
+  '[contenteditable]:not([contenteditable="false"])',
+  '[tabindex]',
+].join(',');
+
 @Component({
   selector: 'ix-advanced-search',
   templateUrl: './advanced-search.component.html',
@@ -253,14 +267,17 @@ export class AdvancedSearchComponent<T> implements OnInit {
       '[cdkTrapFocus], [role="dialog"]',
     ) ?? document.body;
 
-    // isFocusable on its own accepts elements with tabindex="-1"; we want only
-    // elements the user can actually reach with Tab, hence the explicit
-    // isTabbable check. Editor descendants are excluded so focus never bounces
-    // back into CodeMirror.
-    const tabbable = Array.from(scope.querySelectorAll<HTMLElement>('*'))
-      .filter((el) => !editorRoot.contains(el)
-        && this.interactivityChecker.isFocusable(el)
-        && this.interactivityChecker.isTabbable(el));
+    // Narrow selector keeps this cheap on large pages — querying '*' and then
+    // filtering through isFocusable for every element walked the whole subtree
+    // on each Tab keystroke. isTabbable is still required because the selector
+    // can match elements with tabindex="-1" or disabled controls.
+    const candidates = scope.querySelectorAll<HTMLElement>(focusableSelector);
+    const tabbable: HTMLElement[] = [];
+    candidates.forEach((el) => {
+      if (!editorRoot.contains(el) && this.interactivityChecker.isTabbable(el)) {
+        tabbable.push(el);
+      }
+    });
 
     const target = direction === 1
       ? tabbable.find((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0)

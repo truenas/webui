@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent } from '@truenas/ui-components';
 import {
-  combineLatest, distinctUntilChanged, filter, map, tap,
+  combineLatest, distinctUntilChanged, filter, map, skip, tap,
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
@@ -101,8 +101,6 @@ export class AuditComponent implements OnInit, OnDestroy {
    * only subsequent changes trigger a reload.
    */
   private syncControllerStateToDataProvider(): void {
-    let isInitialEmission = true;
-
     combineLatest([
       this.controllerTypeControl.value$,
       this.store$.select(selectIsHaLicensed).pipe(map(Boolean)),
@@ -114,12 +112,9 @@ export class AuditComponent implements OnInit, OnDestroy {
         this.dataProvider.selectedControllerType = controllerType;
         this.dataProvider.isHaLicensed = isHaLicensed;
       }),
+      skip(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      if (isInitialEmission) {
-        isInitialEmission = false;
-        return;
-      }
       this.dataProvider.load();
     });
   }
