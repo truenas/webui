@@ -21,6 +21,7 @@ fails far from this change. That single failure mode is your whole job.
 **Out of your lane** (sibling agents own these — do not review them):
 - Structural recipe conformance → `tn-migration-conformance`
 - Spec / test-harness correctness → `tn-migration-harness`
+- Visual regressions → `tn-migration-visual`
 
 ## How test IDs work here
 
@@ -59,60 +60,21 @@ fails far from this change. That single failure mode is your whole job.
 
 ## Output format
 
-Produce a single content section — **Section 2: Test ID consistency** — used by the
-dispatcher and standalone runs alike. Lead with a before/after table, then code snippets
-that show the change at the call site.
+Be concise. Lead with the verdict.
 
-### 2. Test ID consistency
+```
+VERDICT: IDS PRESERVED | IDS DROPPED | DUPLICATES FOUND
 
-Severity policy: every dropped or renamed test ID is a **BLOCKER** by default. Devs may
-exercise discretion to accept a rename if the e2e selector cost is acceptable; flag it
-clearly so they can choose. Duplicates are **WARNINGS**.
+Dropped / mismatched (Blocker)
+- "<old resolved id>" — was on <old element> at path:line; not found in new file.
+  Fix: re-home as a `testId` input equal to "<old id>". <concrete change>
 
-Open with a compact before/after table covering every change (one row per finding):
+Duplicates (Warning)
+- "<id>" resolves on both path:line and path:line. Fix: <concrete change>.
 
-| Kind | Was | Now | Site |
-|---|---|---|---|
-| dropped | `button-format-csv` | `menu-item-format-csv` | `audit-search.component.html:33` |
-| renamed | `link-audit-settings` | `button-audit-settings` | `audit.component.html:16` |
-| duplicate | `button-save` | resolves at two sites | `service-smb.component.html:178` and `smb-card.component.html:79` |
-
-For each table row, expand below with a short code snippet showing the offending site,
-the severity, and a concrete fix. Prefer fixes that solve the pattern Epic-wide
-(`test.directive.ts` mapping updates) over per-call workarounds.
-
-~~~
-**`button-format-csv` → `menu-item-format-csv`** [BLOCKER]
-
-```html
-<!-- audit-search.component.html:32 (was) -->
-<button mat-menu-item ixTest="format-csv">CSV</button>
-
-<!-- audit-search.component.html:33 (now) -->
-<tn-menu-item ixTest="format-csv">CSV</tn-menu-item>
-<!-- resolves to "menu-item-format-csv" because test.directive.ts:93 maps tn-menu-item → "menu-item" -->
+Preserved
+- <count> IDs verified intact (list only the non-obvious re-homed ones).
 ```
 
-Fix (preferred — Epic-wide): map `tn-menu-item → "button"` in
-`src/app/modules/test-id/test.directive.ts` to align with the `tn-button → "button"`
-precedent. Preserves all three menu-item IDs in this PR and prevents the same regression
-on every other in-flight menu migration.
-
-Fix (local workaround): drop `[ixTest]` and pass `testId="button-format-csv"` as a string
-input on each `<tn-menu-item>`.
-~~~
-
-### Preserved
-
-A short list of non-obvious re-homed IDs you verified intact (e.g. an ID that moved from
-`[ixTest]` on a button into a `testId` string on a `TnMenuItem`). Skip obvious survivors.
-
-### Notes for sibling agents
-
-Brief one-liners:
-- "→ conformance: `<a [routerLink]>` semantically still a link but renders as button — confirm."
-
-### Summary
-
-One line:
-`IDS PRESERVED | IDS DROPPED (X blockers) | DUPLICATES FOUND (Y warnings)`
+If everything is preserved, say so in one line. Every finding needs the resolved ID
+string, both old and new locations, and a concrete fix.

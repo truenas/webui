@@ -268,94 +268,6 @@ closes, focus must return to the trigger element. Escape must close the panel. T
 silently regress. Verify each migrated panel on first use; if any of the three is missing,
 file a library bug rather than papering over it with imperative focus calls.
 
-## Recipe 6 — Table (`ix-table` / `mat-table` → `tn-table`)
-
-`tn-table` is intentionally a smaller surface than `ix-table` — verify every input/output
-you use against `node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts`.
-What's available in 0.1.60:
-
-- **Inputs:** `dataSource`, `displayedColumns`, `trackBy`, `emptyMessage`, `emptyIcon`,
-  `selectable`, `expandable`, `bordered`, `activeRow`, `activeBg`, `activeIndicator`,
-  `loading`, `loadingMessage`, `clickable`.
-- **Outputs:** `sortChange`, `selectionChange`, `rowClick`.
-- **Column defs:** `<ng-container *tnColumnDef="name" [width] [sortable]>` with
-  `<ng-template tnHeader>` / `<ng-template tnCell>` for header and cell content.
-
-```html
-<tn-table
-  [dataSource]="dataProvider().rows"
-  [displayedColumns]="displayedColumns"
-  [loading]="dataProvider().isLoading"
-  [emptyMessage]="emptyMessage()"
-  [emptyIcon]="emptyIcon()"
-  [activeRow]="selectedRowIndex()"
-  [clickable]="true"
-  (rowClick)="onRowClick($event)"
-  (sortChange)="onSortChange($event)"
->
-  <ng-container *tnColumnDef="'username'" [width]="'30%'">
-    <ng-template tnHeader>{{ 'User' | translate }}</ng-template>
-    <ng-template tnCell let-row>{{ row.username }}</ng-template>
-  </ng-container>
-  <!-- ... -->
-</tn-table>
-```
-
-- **Row interaction.** Prefer `(rowClick)` for navigation/details; use
-  `[selectable] + (selectionChange)` for multi-select. Do not wrap rows in a `<button>` —
-  `tn-table` handles row roles internally.
-- **Column widths.** Use `[width]` on `tnColumnDef`, not CSS. If you need fixed
-  table-layout or cell-wrap behaviour the library doesn't expose, a `::ng-deep tn-table
-  { ... }` block is permitted but **must carry a `// TEMP` marker and a library
-  follow-up reference** (same convention as the `tn-empty` icon-size workaround in
-  Recipe 3). A bare `::ng-deep` into `tn-table` internals is a finding.
-- **Specs.** Use `TnTableHarness` — `getRowCount`, `getHeaderTexts`, `getRowTexts`,
-  `getCellText`, `clickSortHeader`, `getSortDirection`, `toggleSelectAll`,
-  `toggleRowSelection`, `isRowSelected`, `clickRow`, `pressKeyOnRow`, `isRowFocusable`,
-  `isLoading`, `isRowActive`, `getActiveRowIndex`, `toggleRowExpansion`, `isRowExpanded`,
-  `getDetailRowContent`. Do not query `tn-table` internals with raw CSS — `.tn-table__*`
-  classes are not part of the public contract.
-
-## Recipe 7 — Button toggle group (`ix-button-group` → `tn-button-toggle-group`)
-
-`tn-button-toggle-group` is content-projection-based and has a smaller input surface than
-`ix-button-group`. Two things to get right:
-
-```html
-<span [id]="controllerToggleLabelId" class="visually-hidden-label">
-  {{ 'Controller Type' | translate }}
-</span>
-<tn-button-toggle-group
-  [value]="selectedController()"
-  [ariaLabelledby]="controllerToggleLabelId"
-  (valueChange)="selectController($event)"
->
-  @for (option of controllerOptions; track option.value) {
-    <tn-button-toggle
-      [value]="option.value"
-      [ixTest]="['controller', option.value]"
-    >{{ option.label | translate }}</tn-button-toggle>
-  }
-</tn-button-toggle-group>
-```
-
-- **Accessible name.** No `[label]` input. Either `[ariaLabel]="'Controller Type' |
-  translate"` (self-contained name), or a visible label `<span>` paired with
-  `[ariaLabelledby]` (used when the label is visually present on screen). Don't ship
-  without one.
-- **Per-instance label IDs.** If you use `[ariaLabelledby]` and the same component can
-  instantiate more than once, generate a unique id per instance — otherwise
-  `aria-labelledby` resolves to the wrong DOM node. Audit's pattern (a module-scope
-  counter incremented in a class field initializer; see `audit.component.ts`) is one
-  way; `crypto.randomUUID()` is another.
-- **Options are children, not an `[options]` array.** Use `@for` with `<tn-button-toggle>`
-  children. The previous `IxButtonGroupComponent` auto-synthesized per-option test IDs
-  from `[name]` + `option.value`; with `tn-button-toggle` you set `[ixTest]` on each
-  toggle yourself (or pass `testId` as a string input).
-- **`tn-button-toggle` is not yet mapped in `test.directive.ts`.** If you add `[ixTest]`
-  to a toggle, also add the element-type case to `test.directive.ts` — otherwise the
-  directive throws `Unknown element type`.
-
 ## Test IDs — do not drop them
 
 webui automated tests select on `data-test`. The library is configured once (already done
@@ -373,26 +285,6 @@ on `TnCardAction` / `TnMenuItem`, `headerMenuTriggerTestId` on `tn-card`. Match 
 value the old directive produced (it kebab-cases parts and prepends an element-type prefix
 like `button-`). `ServiceActionsMenuService.menuItemTestId()` is the reference for menu-item
 IDs — reuse it, don't hand-roll the string.
-
-**Element-prefix mutations to watch for.** The `[ixTest]` directive prefixes by element
-type, so changing the element type changes the resolved `data-test` value even when the
-`[ixTest]` input is identical:
-
-- `<a mat-button [ixTest]="'foo'">` resolved to `link-foo`. `<tn-button [ixTest]="'foo'">`
-  resolves to `button-foo`. This is an intentional element-type change (anchor → button)
-  but it is RE-visible. If the legacy `link-*` selector is referenced anywhere, either
-  pass `testId="link-foo"` literally on the `tn-button` or coordinate the rename.
-- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`. `<tn-menu-item
-  [ixTest]="'foo'">` currently resolves to `menu-item-foo` because `test.directive.ts`
-  maps `tn-menu-item → "menu-item"`. **This is a regression we recommend fixing in
-  `test.directive.ts`** by mapping `tn-menu-item → "button"` (aligns with the
-  `tn-button → "button"` precedent and preserves every menu-item ID across the Epic).
-  Until that fix lands, pass `testId="button-foo"` as a string input on each
-  `tn-menu-item` to preserve the legacy value.
-
-When the prefix would change against your will, prefer fixing the mapping in
-`test.directive.ts` over a per-call workaround — one mapping change fixes the pattern for
-the whole Epic.
 
 ## Spec / test updates
 
@@ -436,27 +328,11 @@ focus — none surface in a compile error or a visual review. Verify per recipe:
   focusable in source order, focus is visible at every step, Enter/Space activate as
   expected.
 
-**Complex editors inside a focus-trapped dialog/panel.** A built-in focus trap
-(`tn-side-panel`, `cdkTrapFocus`, or `role="dialog"`) assumes every focusable child
-participates in the standard Tab sequence. Editors that capture Tab themselves —
-CodeMirror, Monaco, embedded terminals — break that assumption: Tab inside the editor
-moves the cursor, and Shift+Tab can escape the trap to background DOM. The audit
-migration (NAS-141063) hit this in `advanced-search` and solved it with a hand-rolled
-focus-walker: `compareDocumentPosition` to find the next/previous focusable element
-relative to the editor's host, filtered through CDK `InteractivityChecker.isFocusable`,
-then `.focus()` directly. See
-`src/app/modules/forms/search-input/components/advanced-search/advanced-search.component.ts`
-(`moveFocusInDirection`) for the canonical implementation. Test the walker behavior with
-real DOM focus assertions (`document.activeElement`) as in
-`advanced-search/tests/focus-walker.spec.ts`. If your migration hosts a CodeMirror-class
-editor inside a panel, reuse that pattern rather than reinventing it.
-
-The harness agent (`tn-migration-harness`) mandates a `jest-axe` assertion in each
-migrated component's spec — that catches a meaningful subset of these automatically. Use
-it as the safety net, not the ceiling; keyboard and screen-reader smoke on first use of
-each new surface is irreplaceable. (Browser-driven smoke is not currently part of the
-review toolchain — Playwright MCP coverage was retired after two consecutive runs were
-blocked on dev-VM auth without producing useful findings.)
+The visual smoke agent (`tn-migration-visual`) runs an axe-core scan that catches a
+meaningful subset of these automatically; the harness agent (`tn-migration-harness`)
+mandates a `jest-axe` assertion in the spec. Use those as the safety net, not the
+ceiling — keyboard and screen-reader smoke on first use of each new surface is
+irreplaceable.
 
 ## Per-file verification checklist
 
