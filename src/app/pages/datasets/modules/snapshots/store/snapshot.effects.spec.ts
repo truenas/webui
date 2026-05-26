@@ -107,6 +107,13 @@ describe('SnapshotEffects', () => {
           order_by: ['name'],
         },
       ]);
+      // Also assert the absence of `extra` explicitly so an accidental
+      // `extra: undefined` (or any value) would fail the test — the deep
+      // equality above would otherwise pass with a stray undefined key.
+      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
+        [],
+        expect.not.objectContaining({ extra: expect.anything() }),
+      ]);
     });
 
     it('should make a new API call when snapshotPageEntered is dispatched again', async () => {

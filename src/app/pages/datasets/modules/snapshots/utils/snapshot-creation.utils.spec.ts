@@ -94,10 +94,13 @@ describe('getSnapshotCreationMs', () => {
 });
 
 describe('getFiniteNumber', () => {
-  it('returns finite numbers unchanged', () => {
+  it('returns finite non-negative numbers unchanged', () => {
     expect(getFiniteNumber(0)).toBe(0);
-    expect(getFiniteNumber(-1)).toBe(-1);
     expect(getFiniteNumber(1.5e12)).toBe(1.5e12);
+  });
+
+  it('returns undefined for negatives because byte counts cannot be negative', () => {
+    expect(getFiniteNumber(-1)).toBeUndefined();
   });
 
   it('returns undefined for non-finite or non-number values', () => {

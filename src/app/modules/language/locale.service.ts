@@ -11,11 +11,18 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-// Resolved once at module load: the browser's IANA timezone changes only when
-// the user changes their OS timezone, which won't take effect for a running
-// tab anyway (Date / Intl already snapshot it at startup). Cheap to read but
-// not free — kept in a constant so it doesn't run on every toMachineTime call.
-const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// Cached on first read instead of at module load: most environments snapshot
+// the IANA timezone at startup, but a few (embedded Chromium, the Chrome
+// DevTools "Sensors" panel) can re-resolve it at runtime. Re-resolving on
+// every toMachineTime call is wasteful for a long-lived admin tab, so cache
+// it lazily — first call pays the Intl cost, the rest are free.
+let cachedBrowserTimezone: string | undefined;
+function getBrowserTimezone(): string {
+  if (cachedBrowserTimezone === undefined) {
+    cachedBrowserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+  return cachedBrowserTimezone;
+}
 
 export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
 
@@ -128,6 +135,7 @@ export class LocaleService {
   // re-zoned into another timezone — so the conversion stays correct in both
   // cases. This is the single source of truth used by <ix-date> as well.
   toMachineTime(date: number | Date): Date {
+    const browserTimezone = getBrowserTimezone();
     const instant = fromZonedTime(date, browserTimezone);
     return toZonedTime(instant, this.timezone ?? browserTimezone);
   }
