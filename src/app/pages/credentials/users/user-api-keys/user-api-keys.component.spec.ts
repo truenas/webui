@@ -4,7 +4,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { toZonedTime } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -78,7 +77,6 @@ describe('UserApiKeysComponent', () => {
       mockAuth(),
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
-        toMachineTime: (date: number | Date) => toZonedTime(date, 'America/Los_Angeles'),
       }),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),

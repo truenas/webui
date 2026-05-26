@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { toZonedTime } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -26,7 +25,6 @@ describe('AuditListComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
-        toMachineTime: (date: number | Date) => toZonedTime(date, 'America/Los_Angeles'),
       }),
       mockProvider(EmptyService),
       provideMockStore({
