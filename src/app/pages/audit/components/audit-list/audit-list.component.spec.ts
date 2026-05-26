@@ -63,8 +63,8 @@ describe('AuditListComponent', () => {
     ]);
   });
 
-  it('checks table pager component is rendered', async () => {
+  it('renders the table pager reporting the current range', async () => {
     const pager = await loader.getHarness(TnTablePagerHarness);
-    expect(pager).toBeTruthy();
+    expect(await pager.getRangeText()).toBe('1 – 2 of 2');
   });
 });

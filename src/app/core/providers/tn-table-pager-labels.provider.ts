@@ -11,6 +11,7 @@ export function provideTnTablePagerLabels(): Provider {
       const translate = inject(TranslateService);
       const langChange = toSignal(translate.onLangChange, { initialValue: null });
       return computed<TnTablePagerLabels>(() => {
+        // Read the lang-change signal so the computed re-runs after each language switch.
         langChange();
         return {
           itemsPerPage: translate.instant(T('Items per page')) as string,
