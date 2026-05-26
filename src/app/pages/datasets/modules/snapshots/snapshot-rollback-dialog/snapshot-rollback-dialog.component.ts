@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
@@ -60,7 +60,6 @@ export class SnapshotRollbackDialog implements OnInit {
   private fb = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
-  private cdr = inject(ChangeDetectorRef);
   private localeService = inject(LocaleService);
   private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
   protected readonly snapshot = inject<ZfsSnapshot>(MAT_DIALOG_DATA);
@@ -71,14 +70,14 @@ export class SnapshotRollbackDialog implements OnInit {
   // Only true while we fall back to fetching the creation timestamp; when the
   // caller already provided `properties.creation` (the common path) we skip the
   // round trip and render the form immediately.
-  isLoading = false;
+  protected readonly isLoading = signal(false);
   protected readonly wasDatasetRolledBack = signal(false);
+  protected readonly creationMachineTime = signal<Date | undefined>(undefined);
+
   form = this.fb.group({
     recursive: ['' as RollbackRecursiveType],
     force: [null as (boolean | null), [Validators.requiredTrue]],
   });
-
-  protected creationMachineTime: Date | undefined;
 
   readonly recursive = {
     fcName: 'recursive',
@@ -116,17 +115,14 @@ export class SnapshotRollbackDialog implements OnInit {
     // empty, the server itself has nothing — re-querying won't help, so we
     // render the no-timestamp variant of the prompt.
     if (this.snapshot.properties) {
-      const creationMs = getSnapshotCreationMs(this.snapshot);
-      this.creationMachineTime = creationMs === undefined
-        ? undefined
-        : this.localeService.toMachineTime(creationMs);
+      this.creationMachineTime.set(this.computeCreationMachineTime(this.snapshot));
       return;
     }
     this.fetchCreationTime();
   }
 
   private fetchCreationTime(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api.call('pool.snapshot.query', [
       [['id', '=', this.snapshot.name]],
       {
@@ -139,23 +135,23 @@ export class SnapshotRollbackDialog implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshots) => {
-        const fetched = snapshots[0];
-        const creationMs = getSnapshotCreationMs(fetched);
         // Pre-compute the machine-time Date so it can be interpolated into the
         // translated sentence below. `<ix-date>` can't be embedded inside an
         // ngx-translate {datetime} placeholder, so we mirror its conversion via
         // toMachineTime + formatDateTime here.
-        this.creationMachineTime = creationMs === undefined
-          ? undefined
-          : this.localeService.toMachineTime(creationMs);
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.creationMachineTime.set(this.computeCreationMachineTime(snapshots[0]));
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         this.dialogRef.close();
       },
     });
+  }
+
+  private computeCreationMachineTime(snapshot: ZfsSnapshot | undefined): Date | undefined {
+    const creationMs = getSnapshotCreationMs(snapshot);
+    return creationMs === undefined ? undefined : this.localeService.toMachineTime(creationMs);
   }
 
   onSubmit(): void {
