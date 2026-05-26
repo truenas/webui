@@ -22,12 +22,35 @@ spec may still pass while testing nothing. That is the failure mode you catch.
 **Out of your lane** (sibling agents own these — do not review them):
 - Structural recipe conformance → `tn-migration-conformance`
 - Test-ID preservation → `tn-migration-testid`
-- Visual regressions → `tn-migration-visual`
 
 ## First step
 
 Read the playbook `.claude/skills/tn-migration/SKILL.md` ("Spec / test updates" section)
 and the testing rules in `CLAUDE.md`.
+
+## Pre-flight — install-freshness gate (do this before running any spec)
+
+A stale `node_modules` makes specs fail with cascading `'ɵcmp'` errors that look like spec
+bugs but are actually library-version drift. On the first NAS-141063 validation run, 60
+tests across 3 specs failed for this reason — every one passed after `yarn install`. Do
+not repeat that.
+
+```bash
+INSTALLED=$(awk -F'"' '/"version":/ {print $4; exit}' node_modules/@truenas/ui-components/package.json)
+LOCKED=$(awk '/^"@truenas\/ui-components@/ {f=1} f && /^  version:/ {print $2; exit}' yarn.lock)
+echo "installed=$INSTALLED locked=$LOCKED"
+```
+
+If `INSTALLED != LOCKED`, run `yarn install` and re-read both. If drift persists, stop and
+report:
+
+```
+VERDICT: BLOCKED — install drift unresolved
+Installed: <X>, locked: <Y>. Reconcile and re-run the agent.
+```
+
+Only after the gate passes should you `yarn test` any spec. A `'ɵcmp'` error after this
+gate is a real bug; before this gate it might be install drift.
 
 ## Review checklist
 
@@ -77,15 +100,72 @@ passes but — per the checklist — tests the wrong thing is still a finding; s
 
 ## Output format
 
+Produce a single content section — **Section 4: Test migrations** — used by the dispatcher
+and standalone runs alike. Lead with a per-spec pass/fail table; expand each finding with
+a code snippet showing the assertion and the suggested harness-based replacement.
+
+### 4. Test migrations
+
+Severity policy:
+- **BLOCKER**: a Material harness left in place against a tn-* surface; a
+  `spectator.query('.css-class')` / `spectator.query('h3')` / `spectator.query('button')`
+  on a migrated `tn-*` surface where a `tn-*` harness exists; a `MockComponents(...)` entry
+  for a now-deleted component; a passing spec that — per the checklist — tests the wrong
+  thing (e.g. asserts `<h3>` text on a `tn-card` whose title comes via `[title]` input).
+- **WARNING**: a white-box read of a tn-* signal input (e.g. `comp.label()`) used because
+  no harness method exists yet. Acceptable but annotate with a code comment and consider
+  filing a library request.
+- **WARNING**: `done` callbacks (use `async`/`await`); full-object mocks instead of
+  minimal `as Interface` casts.
+- **NIT**: a harness method exists but a simpler one would do.
+
+Open with a spec-run table covering every spec you executed:
+
+| Spec | Tests | Result |
+|---|---|---|
+| audit.component.spec.ts | 11/11 | PASS |
+| audit-list.component.spec.ts | 16/16 | PASS |
+| export-button.component.spec.ts | 9/9 | PASS |
+
+Then list findings grouped by spec. For each finding, include `file:line`, a code snippet
+showing the offending assertion, the severity, and a concrete harness-based replacement.
+
+~~~
+**`export-button.component.spec.ts:153` — native `<button>` aria-label query** [BLOCKER]
+
+```ts
+// now: queries the tn-button internal native button — white-box library coupling
+const button = spectator.query('button');
+expect(button.getAttribute('aria-label')).toBe('Export As CSV');
 ```
-VERDICT: SPEC OK | SPEC NEEDS CHANGES
-Spec run: PASS | FAIL | NOT RUN (reason)
 
-Blockers
-- path:line — <issue>. Fix: <concrete change>.
+Fix (BLOCKER — the input exists on TnButtonComponent and should be asserted directly):
 
-Warnings / Nits
-- ...
+```ts
+const button = spectator.query(TnButtonComponent)!;
+expect(button.ariaLabel()).toBe('Export As CSV');
 ```
 
-Omit empty sections. Every finding gets a `file:line` and a concrete fix.
+Or via the harness once `TnButtonHarness.getAriaLabel()` lands upstream.
+~~~
+
+### Project-wide a11y gap
+
+If `jest-axe` is not in `package.json` / `node_modules`, note it **once at the end** as
+a project-wide gap. Do not block individual migrations on it. Suggested entry:
+
+> Project-wide: `jest-axe` is not installed. The playbook mandates at least one
+> `toHaveNoViolations()` per migrated component spec. Track at the Epic level (NAS-141021)
+> rather than blocking individual tickets.
+
+### Notes for sibling agents
+
+Brief one-liners:
+- "→ conformance: spec import shape suggests …"
+- "→ testid: spec asserts on `data-test="foo"` which is also dropped at <site>."
+
+### Summary
+
+One line:
+`SPEC OK | SPEC NEEDS CHANGES (B blockers, W warnings, N nits)`
+`Spec runs: X passed / Y failed / Z not run (reason)`

@@ -18,17 +18,42 @@ apply the migration recipes?
 **Out of your lane** (sibling agents own these — do not deep-review them):
 - Test-ID preservation → `tn-migration-testid` agent
 - Spec / test-harness correctness → `tn-migration-harness` agent
-- Visual regressions → `tn-migration-visual` agent
 
 If you notice an obvious problem in an adjacent lane while reading (e.g. a `data-test`
-clearly dropped, a `MatButtonHarness` left in a spec), list it briefly under an "Adjacent
-(out of lane)" heading — flag, don't adjudicate.
+clearly dropped, a `MatButtonHarness` left in a spec), drop a one-line note under "Notes
+for sibling agents" at the end — flag, don't adjudicate.
 
 ## First step — always
 
 Read the playbook: `.claude/skills/tn-migration/SKILL.md`. It is the source of truth for
 the recipes and the mapping table. Your checklist below is the *review* counterpart to its
 *authoring* guidance — when the two disagree, the playbook wins; note the discrepancy.
+
+## Pre-flight — install-freshness gate (do this before any API claim)
+
+Before flagging anything as a `@truenas/ui-components` API mismatch, verify the installed
+library matches the lockfile. A stale `node_modules` will make you confidently flag symbols
+that exist in the pinned version. This happened on the first NAS-141063 validation run —
+three Blocker-tier findings evaporated after a `yarn install`. Do not repeat that failure.
+
+```bash
+INSTALLED=$(awk -F'"' '/"version":/ {print $4; exit}' node_modules/@truenas/ui-components/package.json)
+LOCKED=$(awk '/^"@truenas\/ui-components@/ {f=1} f && /^  version:/ {print $2; exit}' yarn.lock)
+echo "installed=$INSTALLED locked=$LOCKED"
+```
+
+If `INSTALLED != LOCKED`, run `yarn install` and re-read both. If drift persists, stop and
+report:
+
+```
+VERDICT: BLOCKED — install drift unresolved
+Installed: <X>, locked: <Y>. Reconcile and re-run the agent.
+```
+
+Only after this gate passes should you reason about whether a `tn-*` symbol or input
+exists. When in doubt about a specific API, `grep` the installed types directly —
+`node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts` is the source of
+truth, not your prior model of the library.
 
 ## Identifying what to review
 
@@ -131,28 +156,95 @@ agent.
   control. Prefer the control's `[tooltip]` input for the primary description; use
   `[tnTooltip]` only for hover-only context (e.g. the disabled-state hint pattern).
 - `aria-live` removed from a banner without verifying `tn-banner` announces is a Warning —
-  the playbook sanctions removal but requires verification. Flag for the visual agent if
-  the migration hasn't verified.
+  the playbook sanctions removal but requires verification. Flag explicitly and ask the
+  dev to confirm with a screen reader or restore the live region.
 
 ## Output format
 
-Be concise. No praise, no restating the diff. Lead with the verdict, then findings.
+Produce a structured report organized into the user-facing content sections below. Your
+§A–§H checklist is the *internal* review process; the *output* groups those findings by
+the audience-facing domain. Every finding must include `file:line`, a short code snippet
+(typically 3–5 lines) where the issue is clearer with code, a severity label, and a
+concrete fix. Omit any section with zero findings.
 
-```
-VERDICT: CONFORMS | NEEDS CHANGES | BLOCKED
+### 1. Leftover Material
 
-Blockers   (must fix before PR)
-- path/to/file.ts:42 — <issue>. Playbook §<recipe>. Fix: <concrete change>.
+Findings for `mat-*` elements in templates, `Mat*` symbols in `imports: […]`, and
+`@angular/material` imports remaining in **changed** components/specs/scss.
 
-Warnings   (should fix)
-- ...
+Severity policy (per Aaron's framing — Leftover Material is rarely a hard blocker):
+- **Info** by default — devs may be staging the migration across multiple PRs.
+- **Warning** when the leftover is on a surface the migration clearly DID convert (a
+  `<button mat-button>` *inside* a converted `<tn-card>` host is likely a miss, not
+  staged), OR when it sits in a file ownership scope the playbook says belongs to this
+  ticket.
+- Out-of-ticket leftovers in concerns owned by other tickets (`ix-forms`, `ix-table`,
+  `DialogService`, `SnackbarService` per playbook scope table) are NOT findings unless
+  the migration *modified* them — that's scope creep, flag as **Warning**.
 
-Nits       (optional)
-- ...
+Per-finding format:
+~~~
+- file.ts:42 — `MatTooltip` still imported and applied to <ix-checkbox>.  [Info]
+  ```ts
+  import { MatTooltip } from '@angular/material/tooltip';
+  ...
+  imports: [..., MatTooltip],
+  ```
+  Fix: swap to `TnTooltipDirective` from `@truenas/ui-components` per recipe table.
+~~~
 
-Adjacent (out of lane — route to sibling agent)
-- <brief flag>, e.g. "smb-card.component.spec.ts still imports MatButtonHarness → harness agent"
-```
+### 3. i18n & a11y regressions
 
-If a checklist section has no findings, omit it. If everything passes, say so in one line.
-A finding without a `file:line` and a concrete fix is not actionable — always include both.
+**i18n — BLOCKER.** Visible strings that are not translated, dropped `translate` pipe on
+a previously-translated string, banner headings or action labels added without
+`TranslateService.instant` or `| translate`.
+
+**a11y — WARNING.** Dropped `aria-label`/`aria-describedby`/`role`/`tabindex` across
+element→input conversions; required indicator silently dropped (e.g. no `[required]` on
+`tn-select`); color-only state signaling; `[tnTooltip]`-only descriptions on form
+controls; missing `[ariaLabel]` on new `tn-*` controls with no visible label; banner
+`aria-live` removed without verifying `tn-banner` announces; focus management gaps on
+`tn-side-panel`.
+
+Group findings under two subheadings: **i18n (Blockers)** and **a11y (Warnings)**.
+
+Per-finding format:
+~~~
+- file.html:18 — Service label has no accessible name; `tn-select` is missing `[ariaLabel]`.  [Warning]
+  ```html
+  <tn-select formControlName="service" [options]="serviceOptions$">
+    <!-- no [ariaLabel] — combobox has no self-contained accessible name -->
+  </tn-select>
+  ```
+  Fix: add `[ariaLabel]="'Service' | translate"`.
+~~~
+
+### 5. Other structural findings
+
+Catchall for migration-recipe compliance that doesn't fit sections 1, 3 — populated from
+your §B–§F internal checklist. Use the severities below.
+
+- Unsanctioned `::ng-deep` into a `tn-*` internal → **BLOCKER** unless marked `// TEMP`
+  per playbook §C / Recipe 3.
+- Side-panel dual-host contract violations (`slideInRef` not optional, no `?.` guard,
+  missing `closed` output, private `submit`/`canSubmit`, ungated in-form Save) → **BLOCKER**.
+- `| async` instead of `toSignal()` + `computed()` per Recipe 2 → **WARNING**.
+- Card-recipe deviations: `<mat-toolbar-row>` remaining, missing `tnCardHeader`, status
+  or menu rendered as a child element instead of the slot input → **WARNING**.
+- Identical mapper/helper duplicated across 3+ sibling components where a shared builder
+  exists or should → **WARNING**.
+- Modern-Angular hygiene (`OnPush`, `inject()`, `@if`/`@for`, `takeUntilDestroyed`,
+  scoping) → **NIT** unless behavioral.
+
+Per-finding format (same as above — `file:line`, snippet, severity, fix).
+
+### Notes for sibling agents
+
+Brief, one-line observations in adjacent lanes — flag, do not adjudicate.
+- "→ testid: `<old data-test value>` looks dropped at <file:line>."
+- "→ harness: `MatButtonHarness` still imported at <spec>:<line>."
+
+### Summary
+
+One line, agent-scoped:
+`CONFORMS | NEEDS CHANGES (B blockers, W warnings, I infos, N nits)`
