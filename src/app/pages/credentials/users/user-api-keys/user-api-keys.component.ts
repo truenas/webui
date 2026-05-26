@@ -37,7 +37,6 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -148,11 +147,6 @@ export class UserApiKeysComponent implements OnInit {
     uniqueRowTag: (row) => `api-key-${row.name}-${row.created_at.$date}`,
     ariaLabels: (row) => [row.id.toString(), this.translate.instant('API Key')],
   });
-
-  pagination: TablePagination = {
-    pageSize: 50,
-    pageNumber: 1,
-  };
 
   private readonly apiKeys$ = this.api.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
 

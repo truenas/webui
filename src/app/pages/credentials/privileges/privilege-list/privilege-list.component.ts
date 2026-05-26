@@ -30,7 +30,6 @@ import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -124,10 +123,6 @@ export class PrivilegeListComponent implements OnInit {
 
   searchQuery: SearchQuery<Privilege>;
   privileges: Privilege[] = [];
-  pagination: TablePagination = {
-    pageSize: 50,
-    pageNumber: 1,
-  };
 
   private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({

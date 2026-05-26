@@ -14,7 +14,6 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
@@ -47,11 +46,6 @@ export class UserListComponent {
   readonly userSelected = output<User>();
   protected readonly currentBatch = signal<User[]>([]);
   readonly dataProvider = input.required<UsersDataProvider>();
-
-  protected readonly pagination: TablePagination = {
-    pageSize: 50,
-    pageNumber: 1,
-  };
 
   protected columns = createTable<User>([
     textColumn({
