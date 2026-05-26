@@ -1,8 +1,15 @@
+import { environment } from 'environments/environment';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 // On a snapshot list with hundreds of rows a stale middleware would log the
 // version-mismatch warning per row; warn once per snapshot id per session.
 const warnedSnapshotIds = new Set<string>();
+
+// Exposed for tests so a `beforeEach` can clear the dedupe state between cases
+// that happen to reuse the same snapshot id.
+export function resetSnapshotCreationWarnings(): void {
+  warnedSnapshotIds.clear();
+}
 
 /**
  * Middleware returns `creation.parsed` as unix-seconds; UI date pipes work in
@@ -20,7 +27,11 @@ export function getSnapshotCreationMs(snapshot: ZfsSnapshot | null | undefined):
     const key = snapshot?.id ?? snapshot?.name ?? '<unknown>';
     if (!warnedSnapshotIds.has(key)) {
       warnedSnapshotIds.add(key);
-      console.warn('Snapshot creation.parsed is not a unix-seconds number; middleware/UI version mismatch?', parsed);
+      // The warning targets developers; end users on a stale middleware can't
+      // act on it, so don't spam production consoles.
+      if (!environment.production) {
+        console.warn('Snapshot creation.parsed is not a unix-seconds number; middleware/UI version mismatch?', parsed);
+      }
     }
   }
   return undefined;

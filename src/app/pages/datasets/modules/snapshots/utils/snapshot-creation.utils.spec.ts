@@ -1,6 +1,9 @@
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
+import {
+  getSnapshotCreationMs,
+  resetSnapshotCreationWarnings,
+} from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 
 function snapshotWithCreationParsed(parsed: unknown, id?: string): ZfsSnapshot {
   return {
@@ -12,6 +15,10 @@ function snapshotWithCreationParsed(parsed: unknown, id?: string): ZfsSnapshot {
 }
 
 describe('getSnapshotCreationMs', () => {
+  // Dedupe state is module-level; clear it so warn-once tests don't suppress
+  // each other when ids happen to collide across cases.
+  beforeEach(() => resetSnapshotCreationWarnings());
+
   it('converts unix-seconds to milliseconds', () => {
     expect(getSnapshotCreationMs(snapshotWithCreationParsed(1634575914))).toBe(1634575914000);
   });
