@@ -7,9 +7,13 @@ export interface ZfsSnapshot {
   dataset: string;
   id: string;
   pool: string;
-  properties: {
+  // Optional because `pool.snapshot.query` callers can opt out of the
+  // expensive `extra.properties` projection; `creation.parsed` is typed
+  // wide enough to also cover the legacy `{ $date }` shape from a stale
+  // middleware so `getSnapshotCreationMs` doesn't need to lie with `as`.
+  properties?: {
     [property: string]: ZfsProperty<string | number | boolean>;
-    creation: ZfsProperty<string, number>;
+    creation: ZfsProperty<string, number | { $date: number }>;
   };
   holds?: {
     truenas?: number;

@@ -1,4 +1,3 @@
-import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   getSnapshotCreationMs,
@@ -9,7 +8,7 @@ function snapshotWithCreationParsed(parsed: unknown, id?: string): ZfsSnapshot {
   return {
     id,
     properties: {
-      creation: { parsed } as unknown as ZfsProperty<string, number>,
+      creation: { parsed: parsed as number },
     },
   } as ZfsSnapshot;
 }
