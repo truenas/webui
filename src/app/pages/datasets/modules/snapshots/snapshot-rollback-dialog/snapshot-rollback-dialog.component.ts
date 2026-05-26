@@ -62,7 +62,10 @@ export class SnapshotRollbackDialog implements OnInit {
   private formErrorHandler = inject(FormErrorHandlerService);
   private localeService = inject(LocaleService);
   private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
-  protected readonly snapshot = inject<ZfsSnapshot>(MAT_DIALOG_DATA);
+  // `MAT_DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
+  // can be missing if invoked without data; type it honestly and guard in
+  // `ngOnInit` before touching any of its properties.
+  protected readonly snapshot = inject<ZfsSnapshot | undefined>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -109,6 +112,12 @@ export class SnapshotRollbackDialog implements OnInit {
   };
 
   ngOnInit(): void {
+    if (!this.snapshot) {
+      // Stray `dialog.open(SnapshotRollbackDialog)` without data — close
+      // immediately so the template never dereferences an undefined snapshot.
+      this.dialogRef.close();
+      return;
+    }
     // If `properties` is missing entirely the caller didn't fetch them (e.g.
     // extra columns hidden on the list); fall back to a query so we can still
     // show "back to {datetime}". If `properties` is present but `creation` is
@@ -122,9 +131,15 @@ export class SnapshotRollbackDialog implements OnInit {
   }
 
   private fetchCreationTime(): void {
+    // ngOnInit early-returns and closes the dialog when dialog data is
+    // missing, but narrow the type for the lint rule that forbids `!`.
+    const snapshot = this.snapshot;
+    if (!snapshot) {
+      return;
+    }
     this.isLoading.set(true);
     this.api.call('pool.snapshot.query', [
-      [['id', '=', this.snapshot.name]],
+      [['id', '=', snapshot.name]],
       {
         // `select` projects the `properties` column; `extra.properties` tells
         // middleware which ZFS properties to populate inside it. Both are required.
@@ -135,11 +150,19 @@ export class SnapshotRollbackDialog implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshots) => {
+        const fetched = snapshots[0];
+        if (!fetched) {
+          // The snapshot was deleted between list-render and this open; close
+          // the dialog rather than offering to roll back something that no
+          // longer exists. The list will refresh via collection events.
+          this.dialogRef.close();
+          return;
+        }
         // Pre-compute the machine-time Date so it can be interpolated into the
         // translated sentence below. `<ix-date>` can't be embedded inside an
         // ngx-translate {datetime} placeholder, so we mirror its conversion via
         // toMachineTime + formatDateTime here.
-        this.creationMachineTime.set(this.computeCreationMachineTime(snapshots[0]));
+        this.creationMachineTime.set(this.computeCreationMachineTime(fetched));
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
@@ -155,6 +178,10 @@ export class SnapshotRollbackDialog implements OnInit {
   }
 
   onSubmit(): void {
+    const snapshot = this.snapshot;
+    if (!snapshot) {
+      return;
+    }
     const body: ZfsRollbackParams[1] = {
       force: true,
     };
@@ -167,7 +194,7 @@ export class SnapshotRollbackDialog implements OnInit {
       body.recursive_clones = true;
     }
 
-    this.api.call('pool.snapshot.rollback', [this.snapshot.name, body]).pipe(
+    this.api.call('pool.snapshot.rollback', [snapshot.name, body]).pipe(
       this.loader.withLoader(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
