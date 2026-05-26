@@ -1,6 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { toZonedTime } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { IxCellDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -16,6 +17,7 @@ describe('IxCellDateComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
+        toMachineTime: (date: number | Date) => toZonedTime(date, 'America/Los_Angeles'),
       }),
       mockProvider(Store, {
         select: () => of(),
