@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -22,7 +21,7 @@ function snapshotWithCreation(parsedSeconds: number | undefined): ZfsSnapshot {
     ...fakeZfsSnapshot,
     properties: {
       ...fakeZfsSnapshot.properties,
-      creation: { parsed: parsedSeconds } as ZfsProperty<string, number>,
+      creation: { parsed: parsedSeconds as number },
     },
   } as ZfsSnapshot;
 }
@@ -131,7 +130,7 @@ describe('SnapshotRollbackDialog', () => {
   });
 
   it('falls back to a pool.snapshot.query when the caller passes a snapshot without properties', () => {
-    setupDialog({ ...fakeZfsSnapshot, properties: undefined } as ZfsSnapshot);
+    setupDialog({ ...fakeZfsSnapshot, properties: undefined });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.query', [
       [['id', '=', 'test-dataset@first-snapshot']],
