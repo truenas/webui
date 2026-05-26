@@ -1,6 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { IxCellDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -9,13 +10,21 @@ interface TestTableData { dateField: Date | string | null }
 
 describe('IxCellDateComponent', () => {
   let spectator: Spectator<IxCellDateComponent<TestTableData>>;
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const machineTimezone = 'America/Los_Angeles';
 
   const createComponent = createComponentFactory({
     component: IxCellDateComponent<TestTableData>,
     detectChanges: false,
     providers: [
       mockProvider(LocaleService, {
-        timezone: 'America/Los_Angeles',
+        timezone: machineTimezone,
+        // Mirror the real LocaleService conversion so <ix-date> renders the
+        // expected wall-clock when it delegates here.
+        toMachineTime: (date: number | Date) => toZonedTime(
+          fromZonedTime(date, browserTimezone),
+          machineTimezone,
+        ),
       }),
       mockProvider(Store, {
         select: () => of(),

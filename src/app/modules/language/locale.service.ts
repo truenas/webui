@@ -119,12 +119,17 @@ export class LocaleService {
     return [format(date, this.dateFormat), format(date, this.timeFormat)];
   }
 
-  // Given an absolute instant, returns a Date whose browser-local components
-  // (the ones `format()` from date-fns-tz reads when called without a timeZone
-  // option) match the wall-clock as it would be in the configured machine
-  // timezone.
+  // Returns a Date whose browser-local components (the ones `format()` from
+  // date-fns-tz reads when called without a timeZone option) match the
+  // wall-clock as it would be in the configured machine timezone.
+  //
+  // The fromZonedTime hop normalizes the input to an absolute UTC instant
+  // regardless of whether it arrived as a unix-ms number or a Date already
+  // re-zoned into another timezone — so the conversion stays correct in both
+  // cases. This is the single source of truth used by <ix-date> as well.
   toMachineTime(date: number | Date): Date {
-    return toZonedTime(date, this.timezone ?? browserTimezone);
+    const instant = fromZonedTime(date, browserTimezone);
+    return toZonedTime(instant, this.timezone ?? browserTimezone);
   }
 
   getShortTimeFormat(): string {
