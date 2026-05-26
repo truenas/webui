@@ -3,7 +3,7 @@
   <div mat-dialog-content class="loading">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
-} @else if (snapshot) {
+} @else {
   @if (!wasDatasetRolledBack) {
     <form
       class="ix-form-container"
@@ -12,6 +12,12 @@
     >
       <div mat-dialog-content>
         @if (creationMachineTime !== undefined) {
+          <!--
+            Translators: {datetime} is a pre-formatted machine-time string (the
+            snapshot's creation time, already converted to the configured
+            machine timezone and formatted per the user's preferences). Do not
+            re-format it; just interpolate it where you want the timestamp.
+          -->
           <p
             [innerHTML]="
               'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?' | translate

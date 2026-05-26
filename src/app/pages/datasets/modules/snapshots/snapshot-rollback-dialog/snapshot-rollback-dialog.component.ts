@@ -63,21 +63,21 @@ export class SnapshotRollbackDialog implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private localeService = inject(LocaleService);
   private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
-  private snapshotName = inject<string>(MAT_DIALOG_DATA);
+  protected readonly snapshot = inject<ZfsSnapshot>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
-  isLoading = true;
+  // Only true while we fall back to fetching the creation timestamp; when the
+  // caller already provided `properties.creation` (the common path) we skip the
+  // round trip and render the form immediately.
+  isLoading = false;
   wasDatasetRolledBack = false;
   form = this.fb.group({
     recursive: ['' as RollbackRecursiveType],
     force: [null as (boolean | null), [Validators.requiredTrue]],
   });
 
-  // The template guards on `snapshot` (and `creationMachineTime`) before
-  // dereferencing, so both are typed as optional rather than asserted non-null.
-  protected snapshot: ZfsSnapshot | undefined;
   protected creationMachineTime: Date | undefined;
 
   readonly recursive = {
@@ -110,35 +110,41 @@ export class SnapshotRollbackDialog implements OnInit {
   };
 
   ngOnInit(): void {
-    this.getSnapshotCreationInfo();
+    // If `properties` is missing entirely the caller didn't fetch them (e.g.
+    // extra columns hidden on the list); fall back to a query so we can still
+    // show "back to {datetime}". If `properties` is present but `creation` is
+    // empty, the server itself has nothing — re-querying won't help, so we
+    // render the no-timestamp variant of the prompt.
+    if (this.snapshot.properties) {
+      const creationMs = getSnapshotCreationMs(this.snapshot);
+      this.creationMachineTime = creationMs === undefined
+        ? undefined
+        : this.localeService.toMachineTime(creationMs);
+      return;
+    }
+    this.fetchCreationTime();
   }
 
-  private getSnapshotCreationInfo(): void {
+  private fetchCreationTime(): void {
+    this.isLoading = true;
     this.api.call('pool.snapshot.query', [
-      [['id', '=', this.snapshotName]],
+      [['id', '=', this.snapshot.name]],
       {
         // `select` projects the `properties` column; `extra.properties` tells
         // middleware which ZFS properties to populate inside it. Both are required.
-        select: ['snapshot_name', 'dataset', 'properties'],
+        select: ['properties'],
         extra: { properties: ['creation'] },
       },
     ]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshots) => {
-        // The snapshot can disappear between the list page rendering and the
-        // dialog opening. Close silently — the list will refresh on its own.
-        const snapshot = snapshots[0];
-        if (!snapshot) {
-          this.dialogRef.close();
-          return;
-        }
-        this.snapshot = snapshot;
+        const fetched = snapshots[0];
+        const creationMs = getSnapshotCreationMs(fetched);
         // Pre-compute the machine-time Date so it can be interpolated into the
         // translated sentence below. `<ix-date>` can't be embedded inside an
         // ngx-translate {datetime} placeholder, so we mirror its conversion via
         // toMachineTime + formatDateTime here.
-        const creationMs = getSnapshotCreationMs(snapshot);
         this.creationMachineTime = creationMs === undefined
           ? undefined
           : this.localeService.toMachineTime(creationMs);
@@ -165,7 +171,7 @@ export class SnapshotRollbackDialog implements OnInit {
       body.recursive_clones = true;
     }
 
-    this.api.call('pool.snapshot.rollback', [this.snapshotName, body]).pipe(
+    this.api.call('pool.snapshot.rollback', [this.snapshot.name, body]).pipe(
       this.loader.withLoader(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
