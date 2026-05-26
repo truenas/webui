@@ -134,6 +134,10 @@ export class SnapshotRollbackDialog implements OnInit {
           return;
         }
         this.snapshot = snapshot;
+        // Pre-compute the machine-time Date so it can be interpolated into the
+        // translated sentence below. `<ix-date>` can't be embedded inside an
+        // ngx-translate {datetime} placeholder, so we mirror its conversion via
+        // toMachineTime + formatDateTime here.
         const creationMs = getSnapshotCreationMs(snapshot);
         this.creationMachineTime = creationMs === undefined
           ? undefined
