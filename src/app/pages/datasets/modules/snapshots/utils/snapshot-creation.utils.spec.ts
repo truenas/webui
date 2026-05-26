@@ -26,7 +26,16 @@ describe('getSnapshotCreationMs', () => {
   });
 
   it('returns undefined for the legacy { $date } object shape so we never render NaN', () => {
-    expect(getSnapshotCreationMs(snapshotWithCreationParsed({ $date: 1634575914000 }))).toBeUndefined();
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      expect(getSnapshotCreationMs(snapshotWithCreationParsed({ $date: 1634575914000 }))).toBeUndefined();
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('version mismatch'),
+        { $date: 1634575914000 },
+      );
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('returns undefined for non-finite numbers', () => {

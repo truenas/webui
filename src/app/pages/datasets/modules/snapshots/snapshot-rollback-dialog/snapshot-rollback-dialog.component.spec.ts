@@ -114,6 +114,10 @@ describe('SnapshotRollbackDialog', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
   });
 
+  // The `detectChanges: false` + re-mock + `detectChanges()` ordering matters:
+  // ngOnInit fires on the first `detectChanges()`, so the per-case `mockCall`
+  // must be installed before then; otherwise the default `pool.snapshot.query`
+  // mock from `providers` is what the subscription sees.
   it('omits the datetime fragment when the creation timestamp is missing, so the dialog does not display 1969', () => {
     spectator = createComponent({ detectChanges: false });
     spectator.inject(MockApiService).mockCall('pool.snapshot.query', [snapshotWithCreation(undefined)]);
