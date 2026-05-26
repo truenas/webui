@@ -12,6 +12,15 @@ export function resetSnapshotCreationWarnings(): void {
 }
 
 /**
+ * Returns the value when it's a finite number, otherwise `undefined`. Used by
+ * `pool.snapshot` property getters where middleware may return `null`,
+ * `undefined`, or non-numeric strings for size-like fields.
+ */
+export function getFiniteNumber(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+/**
  * Middleware returns `creation.parsed` as unix-seconds; UI date pipes work in
  * milliseconds. The `typeof` guard defends against pre-rebase servers that
  * still return the legacy `{ $date }` object — those would format as "Invalid Date".
@@ -24,15 +33,6 @@ export function resetSnapshotCreationWarnings(): void {
  * util was added to prevent. ZFS won't realistically report those, but
  * rejecting them closes the door on the original bug class.
  */
-/**
- * Returns the value when it's a finite number, otherwise `undefined`. Used by
- * `pool.snapshot` property getters where middleware may return `null`,
- * `undefined`, or non-numeric strings for size-like fields.
- */
-export function getFiniteNumber(value: unknown): number | undefined {
-  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
-}
-
 export function getSnapshotCreationMs(snapshot: ZfsSnapshot | null | undefined): number | undefined {
   // `parsed` is typed as `number` (the current middleware contract), but a
   // pre-rebase server can still send `{ $date: ms }`; treat the value as
