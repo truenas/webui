@@ -145,20 +145,12 @@ describe('SnapshotRollbackDialog', () => {
 
   it('closes the dialog when the fallback query errors', () => {
     dialogSnapshot = { ...fakeZfsSnapshot, properties: undefined };
-    spectator = createComponent({
-      providers: [
-        mockApi([
-          mockCall('pool.snapshot.query', () => {
-            throw new Error('boom');
-          }),
-          mockCall('pool.snapshot.rollback'),
-        ]),
-      ],
-    });
-    // The mockCall response throws synchronously; ApiService.call rethrows
-    // via the Observable, so the dialog's `error:` branch handles it.
+    // detectChanges: false so ngOnInit hasn't fired yet — stub the query to
+    // error first, then trigger the single lifecycle pass via detectChanges().
+    spectator = createComponent({ detectChanges: false });
     jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => new Error('boom')));
-    spectator.component.ngOnInit();
+
+    spectator.detectChanges();
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
@@ -166,21 +158,23 @@ describe('SnapshotRollbackDialog', () => {
 
   it('closes the dialog when the fallback query returns no snapshot (deleted between list-render and click)', () => {
     dialogSnapshot = { ...fakeZfsSnapshot, properties: undefined };
-    spectator = createComponent();
-    // Override the factory-level mock so the query observable resolves with an
-    // empty array (the deleted-between-list-and-click scenario).
+    // Stub the query to resolve with an empty array (the deleted-between-list-
+    // and-click scenario) before the lifecycle runs.
+    spectator = createComponent({ detectChanges: false });
     jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of([]));
-    spectator.component.ngOnInit();
+
+    spectator.detectChanges();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
   it('closes the dialog when invoked without dialog data', () => {
     dialogSnapshot = undefined as unknown as ZfsSnapshot;
-    // Use detectChanges: false so the template never renders against an
-    // undefined snapshot — ngOnInit fires and closes the dialog explicitly.
+    // detectChanges: false so the template never renders against an undefined
+    // snapshot — the single detectChanges() fires ngOnInit, which closes early.
     spectator = createComponent({ detectChanges: false });
-    spectator.component.ngOnInit();
+
+    spectator.detectChanges();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });

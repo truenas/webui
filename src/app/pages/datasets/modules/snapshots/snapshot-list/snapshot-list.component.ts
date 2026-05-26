@@ -50,7 +50,7 @@ import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshot
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
 import { snapshotPageEntered, snapshotsLoaded } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
+import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -166,7 +166,7 @@ export class SnapshotListComponent implements OnInit {
     sizeColumn({
       title: this.translate.instant('Used'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => row?.properties?.used?.parsed,
+      getValue: (row) => getFiniteNumber(row?.properties?.used?.parsed),
     }),
     dateColumn({
       title: this.translate.instant('Date created'),
@@ -176,7 +176,7 @@ export class SnapshotListComponent implements OnInit {
     sizeColumn({
       title: this.translate.instant('Referenced'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => row?.properties?.referenced?.parsed,
+      getValue: (row) => getFiniteNumber(row?.properties?.referenced?.parsed),
     }),
   ], {
     uniqueRowTag: (row) => 'snapshot-' + row.id,
