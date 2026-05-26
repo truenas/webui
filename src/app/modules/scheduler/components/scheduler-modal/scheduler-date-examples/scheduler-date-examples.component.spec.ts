@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { toZonedTime } from 'date-fns-tz';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -19,6 +20,7 @@ describe('SchedulerDateExamplesComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
+        toMachineTime: (date: number | Date) => toZonedTime(date, 'America/New_York'),
       }),
       provideMockStore({
         selectors: [
