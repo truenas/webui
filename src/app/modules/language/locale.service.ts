@@ -11,11 +11,12 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-// Cached on first read instead of at module load: most environments snapshot
-// the IANA timezone at startup, but a few (embedded Chromium, the Chrome
-// DevTools "Sensors" panel) can re-resolve it at runtime. Re-resolving on
-// every toMachineTime call is wasteful for a long-lived admin tab, so cache
-// it lazily — first call pays the Intl cost, the rest are free.
+// Cached on first read instead of at module load. Re-resolving the IANA
+// timezone on every toMachineTime call is wasteful for a long-lived admin tab,
+// so cache it lazily — first call pays the Intl cost, the rest are free.
+// Trade-off: the rare environments that re-resolve the browser timezone at
+// runtime (embedded Chromium, the Chrome DevTools "Sensors" panel) won't be
+// picked up after the first read; a full reload reinitializes the cache.
 let cachedBrowserTimezone: string | undefined;
 function getBrowserTimezone(): string {
   if (cachedBrowserTimezone === undefined) {
