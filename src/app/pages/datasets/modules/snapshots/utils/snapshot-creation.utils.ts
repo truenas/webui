@@ -17,10 +17,18 @@ export function resetSnapshotCreationWarnings(): void {
  * still return the legacy `{ $date }` object — those would format as "Invalid Date".
  * When the legacy shape is detected we log a warning so a UI/middleware version
  * mismatch surfaces in dev tools instead of silently showing nothing.
+ *
+ * The `parsed > 0` check also rejects an explicit `0` which would render as
+ * 1970-01-01 — exactly the symptom this util was added to prevent. ZFS won't
+ * realistically report creation=0, but rejecting it closes the door on the
+ * original bug class.
  */
 export function getSnapshotCreationMs(snapshot: ZfsSnapshot | null | undefined): number | undefined {
-  const parsed = snapshot?.properties?.creation?.parsed;
-  if (typeof parsed === 'number' && Number.isFinite(parsed)) {
+  // `parsed` is typed as `number` (the current middleware contract), but a
+  // pre-rebase server can still send `{ $date: ms }`; treat the value as
+  // `unknown` for the duration of the check so the legacy branch is reachable.
+  const parsed: unknown = snapshot?.properties?.creation?.parsed;
+  if (typeof parsed === 'number' && Number.isFinite(parsed) && parsed > 0) {
     return parsed * 1000;
   }
   if (parsed != null && typeof parsed === 'object') {

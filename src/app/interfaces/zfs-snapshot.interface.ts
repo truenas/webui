@@ -8,12 +8,13 @@ export interface ZfsSnapshot {
   id: string;
   pool: string;
   // Optional because `pool.snapshot.query` callers can opt out of the
-  // expensive `extra.properties` projection; `creation.parsed` is typed
-  // wide enough to also cover the legacy `{ $date }` shape from a stale
-  // middleware so `getSnapshotCreationMs` doesn't need to lie with `as`.
+  // expensive `extra.properties` projection. `creation.parsed` is typed as
+  // unix-seconds (the current middleware contract); `getSnapshotCreationMs`
+  // detects pre-rebase servers still returning `{ $date }` at runtime so the
+  // type stays narrow for the 99% case.
   properties?: {
     [property: string]: ZfsProperty<string | number | boolean>;
-    creation: ZfsProperty<string, number | { $date: number }>;
+    creation: ZfsProperty<string, number>;
   };
   holds?: {
     truenas?: number;
