@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { LocaleService } from 'app/modules/language/locale.service';
-
-const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 @Component({
   selector: 'ix-date',
@@ -27,10 +24,7 @@ export class IxDateComponent {
   // computed() memoizes per-input so a snapshot list with hundreds of ix-date
   // cells under OnPush doesn't re-run the conversion on every change-detection
   // cycle — only when `date` actually changes.
-  readonly machineTime = computed(() => {
-    const utc = fromZonedTime(this.date(), browserTimezone);
-    return toZonedTime(utc, this.localeService.timezone ?? browserTimezone);
-  });
+  readonly machineTime = computed(() => this.localeService.toMachineTime(this.date()));
 
   readonly isTimezoneDifference = computed(() => {
     const machineTime = this.machineTime();
