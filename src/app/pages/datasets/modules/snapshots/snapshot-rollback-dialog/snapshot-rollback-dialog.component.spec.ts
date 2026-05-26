@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of, throwError } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -140,6 +141,48 @@ describe('SnapshotRollbackDialog', () => {
       },
     ]);
     expect(spectator.fixture.nativeElement.textContent as string).toContain(expectedCreationDateFragment);
+  });
+
+  it('closes the dialog when the fallback query errors', () => {
+    dialogSnapshot = { ...fakeZfsSnapshot, properties: undefined };
+    spectator = createComponent({
+      providers: [
+        mockApi([
+          mockCall('pool.snapshot.query', () => {
+            throw new Error('boom');
+          }),
+          mockCall('pool.snapshot.rollback'),
+        ]),
+      ],
+    });
+    // The mockCall response throws synchronously; ApiService.call rethrows
+    // via the Observable, so the dialog's `error:` branch handles it.
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => new Error('boom')));
+    spectator.component.ngOnInit();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+  });
+
+  it('closes the dialog when the fallback query returns no snapshot (deleted between list-render and click)', () => {
+    dialogSnapshot = { ...fakeZfsSnapshot, properties: undefined };
+    spectator = createComponent();
+    // Override the factory-level mock so the query observable resolves with an
+    // empty array (the deleted-between-list-and-click scenario).
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of([]));
+    spectator.component.ngOnInit();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+  });
+
+  it('closes the dialog when invoked without dialog data', () => {
+    dialogSnapshot = undefined as unknown as ZfsSnapshot;
+    // Use detectChanges: false so the template never renders against an
+    // undefined snapshot — ngOnInit fires and closes the dialog explicitly.
+    spectator = createComponent({ detectChanges: false });
+    spectator.component.ngOnInit();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
   it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {
