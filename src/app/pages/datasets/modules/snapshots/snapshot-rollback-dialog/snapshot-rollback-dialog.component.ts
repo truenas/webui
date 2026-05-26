@@ -75,9 +75,9 @@ export class SnapshotRollbackDialog implements OnInit {
     force: [null as (boolean | null), [Validators.requiredTrue]],
   });
 
-  // Assigned before `isLoading` flips to `false`; the template only references
-  // these fields once the loader has hidden, so the non-null types are safe.
-  protected snapshot!: ZfsSnapshot;
+  // The template guards on `snapshot` (and `creationMachineTime`) before
+  // dereferencing, so both are typed as optional rather than asserted non-null.
+  protected snapshot: ZfsSnapshot | undefined;
   protected creationMachineTime: Date | undefined;
 
   readonly recursive = {
