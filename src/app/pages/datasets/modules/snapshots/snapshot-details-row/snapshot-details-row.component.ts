@@ -74,12 +74,12 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   protected get usedBytes(): number | undefined {
     const parsed = this.snapshotInfo?.properties?.used?.parsed;
-    return parsed == null ? undefined : +parsed;
+    return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : undefined;
   }
 
   protected get referencedBytes(): number | undefined {
     const parsed = this.snapshotInfo?.properties?.referenced?.parsed;
-    return parsed == null ? undefined : +parsed;
+    return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : undefined;
   }
 
   protected get creationTimestampMs(): number | undefined {
