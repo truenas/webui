@@ -23,9 +23,15 @@ export function provideTnTablePagerLabels(): Provider {
       return computed<TnTablePagerLabels>(() => {
         // Read the lang-change signal so the computed re-runs after each language switch.
         langChange();
-        return Object.fromEntries(
-          Object.entries(labelKeys).map(([key, value]) => [key, translate.instant(value)]),
-        ) as TnTablePagerLabels;
+        return {
+          itemsPerPage: translate.instant(labelKeys.itemsPerPage),
+          of: translate.instant(labelKeys.of),
+          firstPage: translate.instant(labelKeys.firstPage),
+          previousPage: translate.instant(labelKeys.previousPage),
+          nextPage: translate.instant(labelKeys.nextPage),
+          lastPage: translate.instant(labelKeys.lastPage),
+          tablePagination: translate.instant(labelKeys.tablePagination),
+        };
       });
     },
   };
