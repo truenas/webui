@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
-import { toZonedTime } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -55,7 +54,6 @@ describe('BootEnvironmentListComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
-        toMachineTime: (date: number | Date) => toZonedTime(date, 'America/Los_Angeles'),
       }),
       mockApi([
         mockCall('boot.environment.query', bootEnvironmentsWithKeep),
