@@ -68,6 +68,14 @@ describe('AuditSearchComponent', () => {
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
   });
 
+  async function selectFormat(label: 'CSV' | 'JSON' | 'YAML'): Promise<void> {
+    const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
+    await menuTrigger.click();
+    const menu = await rootLoader.getHarness(TnMenuHarness);
+    await menu.clickItem({ label });
+    spectator.detectChanges();
+  }
+
   describe('component initialization', () => {
     it('should display export controls when data is available', () => {
       expect(spectator.query('.export-container')).toExist();
@@ -93,15 +101,9 @@ describe('AuditSearchComponent', () => {
   });
 
   describe('format selector', () => {
-    it('defaults to CSV and reflects programmatic format changes in the export button', () => {
-      let exportButton = spectator.query(ExportButtonComponent);
+    it('defaults to CSV', () => {
+      const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.displayFormat()).toBe('CSV');
-
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
-
-      exportButton = spectator.query(ExportButtonComponent);
-      expect(exportButton.displayFormat()).toBe('JSON');
     });
 
     it('should open format menu when dropdown button is clicked', async () => {
@@ -153,8 +155,7 @@ describe('AuditSearchComponent', () => {
     });
 
     it('should update selected item when format changes', async () => {
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
+      await selectFormat('JSON');
 
       const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu-down' }));
       await menuTrigger.click();
@@ -165,42 +166,37 @@ describe('AuditSearchComponent', () => {
   });
 
   describe('computed properties', () => {
-    it('should compute exportFilename based on selected format', () => {
+    it('should compute exportFilename based on selected format', async () => {
       let exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.filename()).toBe('audit_report.csv');
 
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
+      await selectFormat('JSON');
       exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.filename()).toBe('audit_report.json');
 
-      spectator.component.onFormatChange(ExportFormat.Yaml);
-      spectator.detectChanges();
+      await selectFormat('YAML');
       exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.filename()).toBe('audit_report.yaml');
     });
 
-    it('should always return tgz for exportFileType', () => {
+    it('should always return tgz for exportFileType', async () => {
       let exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.fileType()).toBe('tgz');
 
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
+      await selectFormat('JSON');
       exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.fileType()).toBe('tgz');
     });
 
-    it('should compute exportFormatDisplayLabel as uppercase format', () => {
+    it('should compute exportFormatDisplayLabel as uppercase format', async () => {
       let exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.displayFormat()).toBe('CSV');
 
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
+      await selectFormat('JSON');
       exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.displayFormat()).toBe('JSON');
 
-      spectator.component.onFormatChange(ExportFormat.Yaml);
-      spectator.detectChanges();
+      await selectFormat('YAML');
       exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.displayFormat()).toBe('YAML');
     });
@@ -224,9 +220,8 @@ describe('AuditSearchComponent', () => {
       expect(exportButton.fileMimeType()).toBe('application/gzip');
     });
 
-    it('should update ExportButtonComponent inputs when format changes', () => {
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
+    it('should update ExportButtonComponent inputs when format changes', async () => {
+      await selectFormat('JSON');
 
       const exportButton = spectator.query(ExportButtonComponent);
 
@@ -444,12 +439,11 @@ describe('AuditSearchComponent', () => {
       expect(iconButton.ariaLabel()).toBe('Select Export Format');
     });
 
-    it('should pass dynamic aria-label to ExportButtonComponent', () => {
+    it('should pass dynamic aria-label to ExportButtonComponent', async () => {
       const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.ariaLabel()).toContain('CSV');
 
-      spectator.component.onFormatChange(ExportFormat.Json);
-      spectator.detectChanges();
+      await selectFormat('JSON');
 
       expect(exportButton.ariaLabel()).toContain('JSON');
     });

@@ -8,9 +8,6 @@ import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/clas
 import { ApiService } from 'app/modules/websocket/api.service';
 
 export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<'audit.query'> {
-  private static instanceCounter = 0;
-  private instanceId = ++AuditApiDataProvider.instanceCounter;
-
   isHaLicensed: boolean;
   selectedControllerType: ControllerType;
   service: AuditService = AuditService.Middleware;
