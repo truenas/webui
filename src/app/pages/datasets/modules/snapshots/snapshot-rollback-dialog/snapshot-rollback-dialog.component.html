@@ -1,5 +1,5 @@
 <h1 matDialogTitle>{{ 'Dataset Rollback From Snapshot' | translate }}</h1>
-@if (isLoading) {
+@if (isLoading()) {
   <div mat-dialog-content class="loading">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
@@ -11,7 +11,7 @@
       (submit)="onSubmit()"
     >
       <div mat-dialog-content>
-        @if (creationMachineTime !== undefined) {
+        @if (creationMachineTime() !== undefined) {
           <!--
             Translators: {datetime} is a pre-formatted machine-time string (the
             snapshot's creation time, already converted to the configured
@@ -24,7 +24,7 @@
                 : {
                     snapshot: snapshot.snapshot_name,
                     dataset: snapshot.dataset,
-                    datetime: creationMachineTime | formatDateTime
+                    datetime: creationMachineTime() | formatDateTime
                   }
               "
           ></p>
