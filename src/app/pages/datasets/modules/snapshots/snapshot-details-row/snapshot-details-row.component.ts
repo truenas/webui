@@ -25,7 +25,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
+import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -71,13 +71,11 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   protected get usedBytes(): number | undefined {
-    const parsed = this.snapshotInfo?.properties?.used?.parsed;
-    return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : undefined;
+    return getFiniteNumber(this.snapshotInfo?.properties?.used?.parsed);
   }
 
   protected get referencedBytes(): number | undefined {
-    const parsed = this.snapshotInfo?.properties?.referenced?.parsed;
-    return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : undefined;
+    return getFiniteNumber(this.snapshotInfo?.properties?.referenced?.parsed);
   }
 
   protected get creationTimestampMs(): number | undefined {
@@ -145,7 +143,11 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   doRollback(snapshot: ZfsSnapshot): void {
     // Prefer the fetched `snapshotInfo` (which carries the `creation` property)
-    // so the dialog can render the timestamp without an extra round trip.
+    // so the dialog can render the timestamp without an extra round trip. The
+    // parent list only fetches `properties` when `showSnapshotExtraColumns` is
+    // on, so `snapshot` itself often won't have them and the dialog would have
+    // to query — passing `snapshotInfo` short-circuits that round trip in the
+    // common path.
     this.matDialog.open(SnapshotRollbackDialog, { data: this.snapshotInfo ?? snapshot });
   }
 
