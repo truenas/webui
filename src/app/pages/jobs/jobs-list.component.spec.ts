@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { toZonedTime } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -63,6 +64,7 @@ describe('JobsListComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'Europe/Kiev',
+        toMachineTime: (date: number | Date) => toZonedTime(date, 'Europe/Kiev'),
       }),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),

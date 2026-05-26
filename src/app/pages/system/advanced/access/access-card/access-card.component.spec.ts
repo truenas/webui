@@ -5,6 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnIconHarness } from '@truenas/ui-components';
+import { toZonedTime } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -59,6 +60,7 @@ describe('AccessCardComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
+        toMachineTime: (date: number | Date) => toZonedTime(date, 'America/Los_Angeles'),
       }),
       mockApi([
         mockCall('auth.sessions', sessions),
