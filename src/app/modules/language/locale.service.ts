@@ -11,6 +11,8 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
+const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
 
 @Injectable({ providedIn: 'root' })
@@ -116,12 +118,9 @@ export class LocaleService {
   // Given an absolute instant, returns a Date whose browser-local components
   // (the ones `format()` from date-fns-tz reads when called without a timeZone
   // option) match the wall-clock as it would be in the configured machine
-  // timezone. `fromZonedTime(date, browserTz)` is a no-op when browserTz is
-  // the actual browser timezone (we read its components in that same zone),
-  // and is kept so the implementation reads as the inverse of `toZonedTime`.
+  // timezone.
   toMachineTime(date: number | Date): Date {
-    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return toZonedTime(fromZonedTime(date, browserTz), this.timezone ?? browserTz);
+    return toZonedTime(date, this.timezone ?? browserTimezone);
   }
 
   getShortTimeFormat(): string {
