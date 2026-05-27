@@ -149,8 +149,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
           if (completionStatus(view.state) !== null) {
             closeCompletion(view);
           }
-          this.moveFocusToNextFocusable();
-          return true;
+          // Swallow Tab only when we actually moved focus; otherwise let the
+          // browser handle it so focus isn't stranded on the editor.
+          return this.moveFocusToNextFocusable();
         },
       },
       {
@@ -159,8 +160,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
           if (completionStatus(view.state) !== null) {
             closeCompletion(view);
           }
-          this.moveFocusToPreviousFocusable();
-          return true;
+          return this.moveFocusToPreviousFocusable();
         },
       },
     ]));
@@ -250,15 +250,16 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.editorView.focus();
   }
 
-  private moveFocusToNextFocusable(): void {
-    this.moveFocusInDirection(1);
+  private moveFocusToNextFocusable(): boolean {
+    return this.moveFocusInDirection(1);
   }
 
-  private moveFocusToPreviousFocusable(): void {
-    this.moveFocusInDirection(-1);
+  private moveFocusToPreviousFocusable(): boolean {
+    return this.moveFocusInDirection(-1);
   }
 
-  private moveFocusInDirection(direction: 1 | -1): void {
+  /** Returns true if a focusable target was found and focused, false otherwise. */
+  private moveFocusInDirection(direction: 1 | -1): boolean {
     const editorRoot = this.editorView.dom;
     // Stay within the surrounding focus trap (dialog) so Tab from the CodeMirror
     // editor doesn't escape into background content. Outside dialogs we fall back
@@ -283,7 +284,12 @@ export class AdvancedSearchComponent<T> implements OnInit {
       ? tabbable.find((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0)
       : tabbable.findLast((el) => (editorRoot.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_PRECEDING) !== 0);
 
-    target?.focus();
+    if (!target) {
+      return false;
+    }
+
+    target.focus();
+    return true;
   }
 
   private onInputChanged(): void {

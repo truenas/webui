@@ -59,6 +59,12 @@ describe('AuditListComponent', () => {
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, TnTableHarness);
   });
 
+  // globalKeep mutates ng-mocks state for the whole Jest worker; undo it so
+  // later specs in the same worker get TnSelectComponent mocked as usual.
+  afterAll(() => {
+    ngMocks.globalWipe(TnSelectComponent);
+  });
+
   it('checks search component is rendered', () => {
     expect(spectator.query(AuditSearchComponent)).toExist();
   });

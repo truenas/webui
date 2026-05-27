@@ -24,6 +24,7 @@ import {
 } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { generateUuid } from 'app/helpers/uuid.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -51,6 +52,11 @@ const minBasicEventSearchLength = 3;
 // Cap the number of matched events to keep the resulting OR filter bounded.
 // Above this we fall back to a username search instead.
 const maxBasicEventSearchMatches = 5;
+
+// Mirrors tn-table-pager's own default page size; used only as the fallback
+// when the URL carries no pagination of its own.
+const defaultAuditPageSize = 50;
+const defaultAuditPageNumber = 1;
 
 @Component({
   selector: 'ix-audit-search',
@@ -89,6 +95,9 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
   protected advancedSearchPlaceholder = signal('');
   protected basicSearchPlaceholder = signal('');
+  // Instance-scoped so the aria-labelledby relationship stays unique if this
+  // component is ever rendered more than once on a page (e.g. tabbed views).
+  protected readonly serviceLabelId = `audit-service-label-${generateUuid()}`;
 
   private readonly viewInitialized$ = new ReplaySubject<void>(1);
 
@@ -114,6 +123,12 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     }
     const searchTerm = query.query?.trim() || '';
     if (!searchTerm) {
+      return [];
+    }
+    // A term made up entirely of wildcards (e.g. "*" or "**") would expand to a
+    // `.*` regex run against every username. Treat it as "no filter" instead of
+    // emitting a match-everything query.
+    if (!searchTerm.replace(/\*/g, '').trim()) {
       return [];
     }
     const pattern = this.convertToRegexPattern(searchTerm);
@@ -206,8 +221,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     ) as AuditUrlOptions<AuditEntry>;
 
     this.dataProvider().setPagination({
-      pageSize: options.pagination?.pageSize || 50,
-      pageNumber: options.pagination?.pageNumber || 1,
+      pageSize: options.pagination?.pageSize || defaultAuditPageSize,
+      pageNumber: options.pagination?.pageNumber || defaultAuditPageNumber,
     }, true);
 
     if (options.sorting) {
@@ -274,14 +289,18 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
    *
    * Returns leading/trailing halves so `setSearchProperties` can splice in
    * page-dependent properties (`address`, user suggestions) without coupling
-   * to magic indexes.
+   * to magic indexes. The halves are returned as fresh arrays so callers can
+   * destructure/splice them without mutating the cached source.
    */
   private getStaticSearchProperties(): {
     leading: SearchProperty<AuditEntry>[];
     trailing: SearchProperty<AuditEntry>[];
   } {
     if (this.staticSearchProperties) {
-      return this.staticSearchProperties;
+      return {
+        leading: [...this.staticSearchProperties.leading],
+        trailing: [...this.staticSearchProperties.trailing],
+      };
     }
 
     this.staticSearchProperties = {
@@ -341,7 +360,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       ],
     };
 
-    return this.staticSearchProperties;
+    return {
+      leading: [...this.staticSearchProperties.leading],
+      trailing: [...this.staticSearchProperties.trailing],
+    };
   }
 
   private setSearchProperties(auditEntries: AuditEntry[]): void {

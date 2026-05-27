@@ -27,7 +27,8 @@
     <ng-template tnHeaderCellDef>{{ 'User' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
       <div class="user-avatar" [tnTooltip]="row.username">
-        <div [innerHTML]="row.username | userAvatar"></div>
+        <!-- Decorative identicon; the username is shown as text alongside it. -->
+        <div aria-hidden="true" [innerHTML]="row.username | userAvatar"></div>
         <span class="cell-clamp">{{ row.username || '-' }}</span>
       </div>
     </ng-template>

@@ -9,9 +9,9 @@
       <div
         class="service-select"
         role="group"
-        aria-labelledby="audit-service-label"
+        [attr.aria-labelledby]="serviceLabelId"
       >
-        <span id="audit-service-label" class="service-label">{{ 'Service' | translate }}</span>
+        <span class="service-label" [id]="serviceLabelId">{{ 'Service' | translate }}</span>
         <tn-select
           ixTest="audit-service"
           [formControl]="serviceControl"

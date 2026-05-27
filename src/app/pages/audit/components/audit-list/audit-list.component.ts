@@ -18,8 +18,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
@@ -91,20 +90,7 @@ export class AuditListComponent {
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
   protected onSortChange(event: TnSortEvent): void {
-    let direction: SortDirection | null = null;
-    if (event.direction === 'asc') {
-      direction = SortDirection.Asc;
-    } else if (event.direction === 'desc') {
-      direction = SortDirection.Desc;
-    }
-
-    const columnIndex = this.displayedColumns.indexOf(event.column);
-    const sorting: TableSort<AuditEntry> = {
-      propertyName: direction ? (event.column as keyof AuditEntry) : null,
-      direction,
-      active: direction && columnIndex >= 0 ? columnIndex : null,
-    };
-    this.dataProvider().setSorting(sorting);
+    this.dataProvider().setSorting(mapTnSortToTableSort<AuditEntry>(event, this.displayedColumns));
   }
 
   protected onRowClick(row: AuditEntry): void {

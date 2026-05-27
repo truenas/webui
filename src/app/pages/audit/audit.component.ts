@@ -14,6 +14,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { generateUuid } from 'app/helpers/uuid.helper';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -27,8 +28,6 @@ import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-
-let controllerToggleLabelIdCounter = 0;
 
 // Cache once at module scope — the column list is module-constant.
 const messageTimestampColumnIndex = auditDisplayedColumns.indexOf('message_timestamp');
@@ -70,7 +69,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly searchableElements = auditElements;
   // Unique id per instance so the aria-labelledby relationship still works
   // if multiple AuditComponent instances ever coexist (e.g. in tabs/dialogs).
-  protected readonly controllerToggleLabelId = `audit-controller-toggle-label-${++controllerToggleLabelIdCounter}`;
+  protected readonly controllerToggleLabelId = `audit-controller-toggle-label-${generateUuid()}`;
 
   ngOnInit(): void {
     this.createDataProvider();
