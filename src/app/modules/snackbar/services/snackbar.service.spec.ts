@@ -119,5 +119,16 @@ describe('SnackbarService', () => {
 
       expect(dismissSpy).toHaveBeenCalled();
     });
+
+    it('stops tracking a toast once it dismisses on its own', () => {
+      const firstRef = spectator.service.success(ignoreTranslation('Saved'));
+      firstRef.dismiss();
+      const firstDismissSpy = jest.spyOn(firstRef, 'dismiss');
+
+      spectator.service.dismiss();
+
+      // The stale ref must not be re-dismissed; only a live toast should be.
+      expect(firstDismissSpy).not.toHaveBeenCalled();
+    });
   });
 });

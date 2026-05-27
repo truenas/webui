@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   TnToastConfig, TnToastPosition, TnToastRef, TnToastService, TnToastType,
 } from '@truenas/ui-components';
+import { take } from 'rxjs/operators';
 import { SnackbarOptions } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -37,10 +38,19 @@ export class SnackbarService {
 
     const buttonAction = options.button?.action;
     if (buttonAction) {
-      ref.onAction().subscribe(() => buttonAction());
+      ref.onAction().pipe(take(1)).subscribe(() => buttonAction());
     }
 
+    // Track the active toast so dismiss() can close it, and stop tracking once
+    // it goes away on its own (auto-dismiss, action, or programmatic dismiss)
+    // to avoid holding a stale ref.
     this.activeRef = ref;
+    ref.afterDismissed().pipe(take(1)).subscribe(() => {
+      if (this.activeRef === ref) {
+        this.activeRef = null;
+      }
+    });
+
     return ref;
   }
 
@@ -65,8 +75,5 @@ export class SnackbarService {
 }
 
 function inferTypeFromColor(color: string | undefined): TnToastType {
-  if (color && color in colorToType) {
-    return colorToType[color];
-  }
-  return TnToastType.Info;
+  return (color && colorToType[color]) || TnToastType.Info;
 }

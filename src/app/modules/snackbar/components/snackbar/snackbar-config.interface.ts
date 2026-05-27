@@ -32,12 +32,6 @@ export interface SnackbarOptions {
   iconCssColor?: string;
 
   /**
-   * @deprecated `tn-toast` derives its icon from the toast type — this value is ignored.
-   * Use `iconCssColor` to hint at the toast type instead.
-   */
-  icon?: string;
-
-  /**
    * Optional action button. If `action` is omitted, the button only dismisses the toast.
    */
   button?: {

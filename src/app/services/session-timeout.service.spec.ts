@@ -149,7 +149,6 @@ describe('SessionTimeoutService', () => {
 
     expect(snackbar.open).toHaveBeenCalledWith({
       message: 'Session expired',
-      icon: 'mdi-clock-alert-outline',
       iconCssColor: 'var(--orange)',
       button: {
         title: 'Close',
