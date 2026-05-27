@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
@@ -36,7 +36,6 @@ import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -83,7 +82,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     IxTableBodyComponent,
     IxTableDetailsRowDirective,
     SnapshotDetailsRowComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     UiSearchDirective,
   ],
 })

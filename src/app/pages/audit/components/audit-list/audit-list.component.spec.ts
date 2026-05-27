@@ -1,11 +1,12 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnTablePagerHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
@@ -14,6 +15,7 @@ import { AuditListComponent } from './audit-list.component';
 
 describe('AuditListComponent', () => {
   let spectator: Spectator<AuditListComponent>;
+  let loader: HarnessLoader;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -45,6 +47,7 @@ describe('AuditListComponent', () => {
       },
     });
 
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
@@ -60,7 +63,8 @@ describe('AuditListComponent', () => {
     ]);
   });
 
-  it('checks table pager component is rendered', () => {
-    expect(spectator.query(IxTablePagerComponent)).toExist();
+  it('renders the table pager reporting the current range', async () => {
+    const pager = await loader.getHarness(TnTablePagerHarness);
+    expect(await pager.getRangeText()).toBe('1 – 2 of 2');
   });
 });
