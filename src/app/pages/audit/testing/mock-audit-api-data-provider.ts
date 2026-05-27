@@ -53,5 +53,6 @@ export const mockAuditApiDataProvider = {
     pageSize: 10,
     pageNumber: 1,
   },
+  totalRows: auditEntries.length,
   controlsStateUpdated: of(true),
 } as unknown as AuditApiDataProvider;
