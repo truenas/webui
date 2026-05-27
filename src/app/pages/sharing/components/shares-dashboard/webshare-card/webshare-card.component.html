@@ -12,10 +12,16 @@
     class="card-title-link"
     [ixTest]="['webshare', 'open-in-new']"
     [routerLink]="['/sharing', 'webshare']"
+    [tnTooltip]="'Open WebShare list in full page' | translate"
   >
     <h3 class="card-title">
       {{ 'WebShare' | translate }}
-      <tn-icon name="open-in-new" library="mdi"></tn-icon>
+      <tn-icon
+        name="open-in-new"
+        library="mdi"
+        class="title-icon"
+        [attr.aria-label]="'Open WebShare list in full page' | translate"
+      ></tn-icon>
       <ix-card-alert-badge [menuPath]="cardMenuPath" />
     </h3>
   </a>

@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import type { TnMenuItem } from '@truenas/ui-components';
+import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
@@ -98,6 +98,70 @@ export class ServiceActionsMenuService {
       testId: this.menuItemTestId(service, 'logs'),
       action: () => this.viewLogs(),
     };
+  }
+
+  /**
+   * Card-header status mapper shared by every service card. Maps `ServiceStatus`
+   * to the `TnCardHeaderStatus` shape consumed by `tn-card`'s `[headerStatus]`
+   * input. Kept here so all five service cards stay in sync on the `default`
+   * branch — divergence there is the easy, silent inconsistency the playbook
+   * warns about.
+   */
+  buildCardHeaderStatus(service: Service | undefined): TnCardHeaderStatus | undefined {
+    if (!service) {
+      return undefined;
+    }
+    const label = this.translate.instant(this.titleCase(service.state));
+    const testId = `button-service-status-${kebabCase(service.service)}`;
+    switch (service.state) {
+      case ServiceStatus.Running:
+        return { label, type: 'success', testId };
+      case ServiceStatus.Stopped:
+        return { label, type: 'neutral', testId };
+      default:
+        return { label, type: 'warning', testId };
+    }
+  }
+
+  /**
+   * Stable test ID for the card-header menu trigger. Matches the legacy
+   * `[ixTest]="[service.id, 'actions-menu']"` value the old icon-button used.
+   */
+  cardHeaderMenuTriggerTestId(service: Service | undefined): string | undefined {
+    return service ? `button-${service.id}-actions-menu` : undefined;
+  }
+
+  /**
+   * Compose the full card-header menu with the `Config Service` item replaced
+   * by a card-local action (so the card can open the config form inside its
+   * own `tn-side-panel` viewChild rather than the global slide-in). All other
+   * items (toggle, sessions, logs) are sourced from the shared builders so
+   * test IDs and labels stay identical across cards.
+   */
+  buildServiceCardMenu(
+    service: Service | undefined,
+    hasControlRole: boolean,
+    openLocalConfig: () => void,
+  ): TnMenuItem[] | undefined {
+    if (!service) {
+      return undefined;
+    }
+    const localConfigItem: TnMenuItem = {
+      id: 'service-config',
+      label: this.translate.instant('Config Service'),
+      testId: this.menuItemTestId(service, 'Config Service'),
+      action: openLocalConfig,
+    };
+    return [
+      this.buildToggleItem(service, hasControlRole),
+      localConfigItem,
+      this.buildSessionsItem(service),
+      this.buildLogsItem(service),
+    ].filter((item): item is TnMenuItem => item !== null);
+  }
+
+  private titleCase(value: string): string {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
   }
 
   /**

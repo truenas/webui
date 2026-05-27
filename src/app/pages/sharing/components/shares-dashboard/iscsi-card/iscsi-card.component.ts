@@ -16,10 +16,7 @@ import {
   TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
-  type TnCardHeaderStatus,
-  type TnMenuItem,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   filter, startWith, tap,
 } from 'rxjs';
@@ -27,7 +24,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -121,27 +117,9 @@ export class IscsiCardComponent implements OnInit {
   protected readonly searchableElements = iscsiCardElements;
   protected readonly cardMenuPath = ['sharing', 'iscsi'];
 
-  protected serviceStatus = computed<TnCardHeaderStatus | undefined>(() => {
-    const svc = this.service();
-    if (!svc) {
-      return undefined;
-    }
-    const label = this.translate.instant(this.titleCase(svc.state));
-    const testId = `button-service-status-${kebabCase(svc.service)}`;
-    switch (svc.state) {
-      case ServiceStatus.Running:
-        return { label, type: 'success', testId };
-      case ServiceStatus.Stopped:
-        return { label, type: 'neutral', testId };
-      default:
-        return { label, type: 'warning', testId };
-    }
-  });
+  protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
-  protected headerMenuTriggerTestId = computed<string | undefined>(() => {
-    const svc = this.service();
-    return svc ? `button-${svc.id}-actions-menu` : undefined;
-  });
+  protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
   protected wizardAction = computed<TnCardAction | undefined>(() => {
     if (!this.hasWriteRole()) {
@@ -157,31 +135,14 @@ export class IscsiCardComponent implements OnInit {
   protected configOpen = signal(false);
   protected configForm = viewChild(GlobalTargetConfigurationComponent);
 
-  protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
-    const svc = this.service();
-    if (!svc) {
-      return undefined;
-    }
-    const localConfigItem: TnMenuItem = {
-      id: 'service-config',
-      label: this.translate.instant('Config Service'),
-      testId: this.actionsMenu.menuItemTestId(svc, 'Config Service'),
-      action: () => this.configOpen.set(true),
-    };
-    return [
-      this.actionsMenu.buildToggleItem(svc, this.hasWriteRole()),
-      localConfigItem,
-      this.actionsMenu.buildSessionsItem(svc),
-      this.actionsMenu.buildLogsItem(svc),
-    ].filter((item): item is TnMenuItem => item !== null);
-  });
+  protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
+    this.service(),
+    this.hasWriteRole(),
+    () => this.configOpen.set(true),
+  ));
 
   protected onConfigClosed(): void {
     this.configOpen.set(false);
-  }
-
-  private titleCase(value: string): string {
-    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
   }
 
   dataProvider: AsyncDataProvider<IscsiTarget>;

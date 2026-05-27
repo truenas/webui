@@ -18,14 +18,10 @@ import {
   TnSidePanelComponent,
   TnTooltipDirective,
   type TnCardAction,
-  type TnCardHeaderStatus,
-  type TnMenuItem,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { BehaviorSubject } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
@@ -108,27 +104,9 @@ export class NfsCardComponent implements OnInit {
   private service = toSignal(this.service$);
   private hasAddRole = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
 
-  protected serviceStatus = computed<TnCardHeaderStatus | undefined>(() => {
-    const svc = this.service();
-    if (!svc) {
-      return undefined;
-    }
-    const label = this.translate.instant(this.titleCase(svc.state));
-    const testId = `button-service-status-${kebabCase(svc.service)}`;
-    switch (svc.state) {
-      case ServiceStatus.Running:
-        return { label, type: 'success', testId };
-      case ServiceStatus.Stopped:
-        return { label, type: 'neutral', testId };
-      default:
-        return { label, type: 'warning', testId };
-    }
-  });
+  protected serviceStatus = computed(() => this.actionsMenu.buildCardHeaderStatus(this.service()));
 
-  protected headerMenuTriggerTestId = computed<string | undefined>(() => {
-    const svc = this.service();
-    return svc ? `button-${svc.id}-actions-menu` : undefined;
-  });
+  protected headerMenuTriggerTestId = computed(() => this.actionsMenu.cardHeaderMenuTriggerTestId(this.service()));
 
   protected addAction = computed<TnCardAction | undefined>(() => {
     if (!this.hasAddRole()) {
@@ -144,31 +122,14 @@ export class NfsCardComponent implements OnInit {
   protected configOpen = signal(false);
   protected configForm = viewChild(ServiceNfsComponent);
 
-  protected serviceMenu = computed<TnMenuItem[] | undefined>(() => {
-    const svc = this.service();
-    if (!svc) {
-      return undefined;
-    }
-    const localConfigItem: TnMenuItem = {
-      id: 'service-config',
-      label: this.translate.instant('Config Service'),
-      testId: this.actionsMenu.menuItemTestId(svc, 'Config Service'),
-      action: () => this.configOpen.set(true),
-    };
-    return [
-      this.actionsMenu.buildToggleItem(svc, this.hasAddRole()),
-      localConfigItem,
-      this.actionsMenu.buildSessionsItem(svc),
-      this.actionsMenu.buildLogsItem(svc),
-    ].filter((item): item is TnMenuItem => item !== null);
-  });
+  protected serviceMenu = computed(() => this.actionsMenu.buildServiceCardMenu(
+    this.service(),
+    this.hasAddRole(),
+    () => this.configOpen.set(true),
+  ));
 
   protected onConfigClosed(): void {
     this.configOpen.set(false);
-  }
-
-  private titleCase(value: string): string {
-    return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : '';
   }
 
   dataProvider: AsyncDataProvider<NfsShare>;

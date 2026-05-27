@@ -1,22 +1,25 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Signal, WritableSignal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness, type TnMenuItem } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebShare } from 'app/interfaces/webshare-config.interface';
+import { WebShare, WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -25,6 +28,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -66,6 +70,12 @@ describe('WebShareCardComponent', () => {
     status: TruenasConnectStatus.Configured,
   } as TruenasConnectConfig;
 
+  const mockWebShareConfig: WebShareConfig = {
+    id: 1,
+    search: true,
+    passkey: WebSharePasskey.Enabled,
+  };
+
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
     imports: [IxTablePagerShowMoreComponent,
@@ -79,6 +89,7 @@ describe('WebShareCardComponent', () => {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
       mockProvider(SnackbarService),
+      mockProvider(FormErrorHandlerService),
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
         mockCall('sharing.webshare.delete'),
@@ -86,6 +97,8 @@ describe('WebShareCardComponent', () => {
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
         mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
+        mockCall('webshare.config', mockWebShareConfig),
+        mockCall('webshare.update', mockWebShareConfig),
       ]),
       provideMockStore({
         initialState: {
@@ -193,6 +206,82 @@ describe('WebShareCardComponent', () => {
 
   it('does not show the TrueNAS Connect banner when TrueNAS Connect is configured', async () => {
     expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
+  });
+
+  describe('Config Service side panel', () => {
+    /**
+     * Triggering "Config Service" from the card-header menu opens a host-controlled
+     * tn-side-panel that projects ServiceWebshareComponent and a tnSidePanelAction
+     * Save button. These tests cover the side-panel surface (viewChild + Save +
+     * close flow) so the dual-host migration is not silently uncovered. The menu
+     * trigger itself is exhaustively covered by service-extra-actions.component.spec.
+     */
+    interface CardInternals {
+      configOpen: WritableSignal<boolean>;
+      configForm: Signal<ServiceWebshareComponent | undefined>;
+      serviceMenu: Signal<TnMenuItem[] | undefined>;
+    }
+    function internals(): CardInternals {
+      return spectator.component as unknown as CardInternals;
+    }
+    function openConfigSidePanel(): void {
+      const menu = internals().serviceMenu();
+      const configItem = menu?.find((item) => item.id === 'service-config');
+      configItem?.action();
+      spectator.detectChanges();
+    }
+
+    it('exposes a Config Service menu item with the legacy test ID', () => {
+      const menu = internals().serviceMenu();
+      const configItem = menu?.find((item) => item.id === 'service-config');
+      expect(configItem).toBeDefined();
+      expect(configItem?.label).toBe('Config Service');
+      expect(configItem?.testId).toBe('button-webshare-actions-menu-config-service');
+    });
+
+    it('opens the side panel and renders the embedded form when Config Service is triggered', async () => {
+      openConfigSidePanel();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
+      expect(internals().configOpen()).toBe(true);
+      expect(internals().configForm()).toBeTruthy();
+    });
+
+    it('surfaces a side-panel Save button that submits the embedded form and closes the panel', async () => {
+      openConfigSidePanel();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
+      // tn-side-panel projects its content into a CDK overlay portal mounted on
+      // document.body, so the tnSidePanelAction Save button is not reachable
+      // via the component-scoped loader. Use the document-root loader instead.
+      const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
+      const saveButton = await rootLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'webshare.update',
+        [{ search: true, passkey: WebSharePasskey.Enabled }],
+      );
+      expect(internals().configOpen()).toBe(false);
+    });
+
+    it('clears configOpen when the embedded form emits closed', async () => {
+      openConfigSidePanel();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
+      const form = internals().configForm();
+      expect(form).toBeTruthy();
+
+      form?.closed.emit(false);
+      spectator.detectChanges();
+
+      expect(internals().configOpen()).toBe(false);
+    });
   });
 });
 
