@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, input, inject } from '@an
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -59,21 +58,18 @@ export class TopologyItemNodeComponent {
     return this.translate.instant('{n, plural, =0 {No errors} one {# Error} other {# Errors}}', { n: count });
   });
 
-  protected readonly errorsClass = computed(() => {
-    return (this.errorCount() ?? 0) > 0 ? 'fn-theme-red' : '';
-  });
-
   protected readonly statusClass = computed(() => {
-    switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
-      case PoolStatus.Faulted:
-        return 'fn-theme-red';
-      case PoolStatus.Degraded:
-      case PoolStatus.Offline:
-      case TopologyItemStatus.Offline:
-        return 'fn-theme-yellow';
-      default:
-        return '';
+    // Reuse the same severity model as the descendant warning icon so a row's own status cell
+    // and a parent's warning icon never disagree. UNAVAIL/FAULTED are critical (red); DEGRADED,
+    // OFFLINE and REMOVED are warnings (yellow). Anything optimal stays uncolored.
+    const severity = statusSeverity(this.topologyItem().status as TopologyItemStatus);
+    if (severity >= criticalSeverity) {
+      return 'fn-theme-red';
     }
+    if (severity > 0) {
+      return 'fn-theme-yellow';
+    }
+    return '';
   });
 
   private readonly descendantWarning = computed(() => collectDescendantWarning(this.topologyItem()));
