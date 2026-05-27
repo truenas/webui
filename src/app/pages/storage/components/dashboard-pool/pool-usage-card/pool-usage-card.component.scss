@@ -44,26 +44,143 @@
   }
 
   .left {
-    align-items: flex-end;
-    flex: 1 1 40%;
+    align-items: center;
+    flex: 0 0 auto;
     flex-direction: column;
 
     > div {
       text-align: center;
     }
-
-    .gauge {
-      margin-left: unset;
-      margin-right: 8px;
-    }
   }
 
   .right {
     display: flex;
-    flex: 1 1 60%;
+    flex: 1 1 auto;
     flex-direction: column;
   }
 }
+
+.tier-breakdown {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.tier-row {
+  margin-bottom: 12px;
+}
+
+.tier-header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.tier-name {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tier-bar-container {
+  background-color: var(--alt-bg2);
+  border-radius: 3px;
+  display: flex;
+  height: 6px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+// Metadata reserve zone: a fixed-width striped overlay pinned to the right of
+// the track, drawn on top of the bars. Its diagonal hatch marks the area as
+// reserved; the Used bar runs underneath, so green showing through the stripes
+// is usage that has eaten into the reserve, while the dark track showing through
+// is reserve still free. The solid left edge marks the reserve threshold.
+.reserve-zone {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--orange) 0,
+    var(--orange) 1.5px,
+    transparent 1.5px,
+    transparent 4px
+  );
+  border-left: 2px solid var(--orange);
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.tier-bar {
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  transition: width 0.3s ease;
+  z-index: 1;
+
+  &.performance-used {
+    background-color: var(--green);
+    border-radius: 3px 0 0 3px;
+  }
+
+  &.performance-available {
+    background-color: color-mix(in srgb, var(--green) 30%, transparent);
+  }
+
+  &.regular-used {
+    background-color: var(--primary);
+    border-radius: 3px 0 0 3px;
+  }
+
+  &.regular-available {
+    background-color: color-mix(in srgb, var(--primary) 30%, transparent);
+    border-radius: 0 3px 3px 0;
+  }
+}
+
+.tier-stats-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 4px;
+}
+
+.stat-item {
+  align-items: center;
+  display: flex;
+  font-size: 11px;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.stat-dot {
+  border-radius: 50%;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+
+  &.used {
+    background-color: var(--green);
+  }
+
+  &.available {
+    background-color: color-mix(in srgb, var(--green) 30%, transparent);
+  }
+
+  &.reserved {
+    background-color: var(--orange);
+  }
+
+  &.regular-used {
+    background-color: var(--primary);
+  }
+
+  &.regular-available {
+    background-color: color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+}
+
 
 .link {
   color: var(--primary);

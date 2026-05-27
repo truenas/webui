@@ -225,9 +225,9 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.clickNext();
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Cache (Optional)');
 
-    // Metadata step
+    // Special step
     await wizard.clickNext();
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Special (Optional)');
 
     // Dedup step
     await wizard.clickNext();

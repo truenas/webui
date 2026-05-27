@@ -10,6 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { Zpool } from 'app/interfaces/zpool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
@@ -86,15 +87,50 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     );
   });
 
-  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[]]> {
+  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], Zpool[]]> {
     return combineLatest([
       this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]),
       this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]),
+      // TODO: `zpool.query` is not in the events-subscribable directory (see ApiEventDirectory),
+      // so it cannot use callAndSubscribe. When `pool.query` re-emits via its live subscription,
+      // combineLatest reuses this stale `zpool.query` value, meaning tier numbers
+      // (class_normal_*, class_special_*) won't reflect the current state until the next
+      // loadDashboard() call. Revisit once `zpool.query` events are supported.
+      this.api.call('zpool.query', [{
+        properties: [
+          'class_normal_usable',
+          'class_normal_used',
+          'class_normal_available',
+          'class_special_usable',
+          'class_special_used',
+          'class_special_available',
+        ],
+      }]),
     ]).pipe(
-      tap(([pools, rootDatasets]) => {
+      tap(([pools, rootDatasets, zpools]) => {
+        const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
+        const poolsWithTierData = pools.map((pool) => {
+          const zpool = zpoolsByName[pool.name];
+          if (!zpool) return pool;
+          const toBytes = (raw: number | string | undefined | null): number => Number(raw ?? 0);
+          // The metadata reserve is derived in the Usage card from
+          // zfs.tier.config (special_class_metadata_reserve_pct), so the raw
+          // ZFS values are passed through here untouched.
+          const rawSpecialUsable = zpool.properties.class_special_usable?.value;
+          return {
+            ...pool,
+            used: toBytes(zpool.properties.class_normal_used?.value) || pool.used,
+            available: toBytes(zpool.properties.class_normal_available?.value) || pool.available,
+            special_class_used: toBytes(zpool.properties.class_special_used?.value),
+            special_class_available: toBytes(zpool.properties.class_special_available?.value),
+            // Left undefined (not 0) when ZFS doesn't report it, so the Usage card
+            // can tell "absent" from a genuine empty special vdev and fall back.
+            special_class_usable: rawSpecialUsable == null ? undefined : Number(rawSpecialUsable),
+          };
+        });
         this.patchState({
           arePoolsLoading: false,
-          pools: sortBy(pools, (pool) => pool.name),
+          pools: sortBy(poolsWithTierData, (pool) => pool.name),
           rootDatasets: keyBy(rootDatasets, (dataset) => dataset.id),
         });
       }),

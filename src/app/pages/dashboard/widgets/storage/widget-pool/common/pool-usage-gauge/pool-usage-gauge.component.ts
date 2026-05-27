@@ -5,6 +5,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap } from 'rxjs';
+import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -18,7 +19,6 @@ import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/w
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { StorageService } from 'app/services/storage.service';
 
-const maxPct = 80;
 
 @Component({
   selector: 'ix-pool-usage-gauge',
@@ -74,7 +74,7 @@ export class PoolUsageGaugeComponent implements OnInit {
   });
 
   protected isLowCapacity = computed(() => {
-    return this.usedPercentage() >= maxPct;
+    return this.usedPercentage() >= poolLowCapacityPercent;
   });
 
   protected dataTopology = computed(() => {

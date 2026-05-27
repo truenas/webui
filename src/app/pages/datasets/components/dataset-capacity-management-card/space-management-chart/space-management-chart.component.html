@@ -25,7 +25,11 @@
             class="legend-swatch"
             [style.background-color]="swatchColors?.usedbydataset?.backgroundColor"
           ></span>
-          {{ 'Data Written' | translate }}
+          @if (tierEnabled()) {
+            {{ 'Aggregate Data Written' | translate }}
+          } @else {
+            {{ 'Data Written' | translate }}
+          }
         </span>
         <span class="legend-value">
           {{ dataset().usedbydataset.parsed | ixFileSize }}

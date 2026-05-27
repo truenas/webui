@@ -4536,9 +4536,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.1.22":
-  version: 0.1.22
-  resolution: "@truenas/ui-components@npm:0.1.22"
+"@truenas/ui-components@npm:~0.1.60":
+  version: 0.1.60
+  resolution: "@truenas/ui-components@npm:0.1.60"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4553,11 +4553,12 @@ __metadata:
     "@angular/cdk": ^21.0.0
     "@angular/common": ^21.0.0
     "@angular/core": ^21.0.0
+    "@angular/router": ^21.0.0
     "@mdi/angular-material": ^7.2.96
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/d10d032b0228df42867069168e5c38be2c7c96381efd29738e15f57e2654947ba093154279b6bd12c2fc14b46f33399e58c3bf03b61d62167677b1b233600734
+  checksum: 10/eecfc8fee1c725e9ba444e732f4f2d8431ebe57a16bcabc743510f5d628ed4bdaa308dfba3338eeccd9331607ff91d565ac167d4d5083f2ad0f6b9c699ac90e1
   languageName: node
   linkType: hard
 
@@ -14152,11 +14153,11 @@ __metadata:
   linkType: hard
 
 "qs@npm:^6.14.0, qs@npm:^6.14.1":
-  version: 6.15.0
-  resolution: "qs@npm:6.15.0"
+  version: 6.15.2
+  resolution: "qs@npm:6.15.2"
   dependencies:
     side-channel: "npm:^1.1.0"
-  checksum: 10/a3458f2f389285c3512e0ebc55522ee370ac7cb720ba9f0eff3e30fb2bb07631caf556c08e2a3d4481a371ac14faa9ceb7442a0610c5a7e55b23a5bdee7b701c
+  checksum: 10/7a934b2dba40654cf9878dab7c1e7ad56c6186265509727fbece67dadc38fd5d67715b61b6ef938e5a0475faeee701d18ec0a7ce420ad64367caad7f1bdb66e2
   languageName: node
   linkType: hard
 
@@ -16006,7 +16007,7 @@ __metadata:
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.1.22"
+    "@truenas/ui-components": "npm:~0.1.60"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
@@ -17041,8 +17042,8 @@ __metadata:
   linkType: hard
 
 "ws@npm:^8.18.0":
-  version: 8.19.0
-  resolution: "ws@npm:8.19.0"
+  version: 8.20.1
+  resolution: "ws@npm:8.20.1"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -17051,7 +17052,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 10/26e4901e93abaf73af9f26a93707c95b4845e91a7a347ec8c569e6e9be7f9df066f6c2b817b2d685544e208207898a750b78461e6e8d810c11a370771450c31b
+  checksum: 10/8c4d2b06dc65381b6bfab1f2e584275dabd30a99a5ce058b4dc76f3d03fad1921cef3a21d8f53127d30a808cfd1864aa2fe6890a5d43359f682457315baec873
   languageName: node
   linkType: hard
 

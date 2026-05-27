@@ -31,6 +31,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -211,6 +212,9 @@ describe('OtherOptionsSectionComponent', () => {
         mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
       mockProvider(SystemGeneralService),
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -710,6 +714,34 @@ describe('OtherOptionsSectionComponent', () => {
 
         expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
         expect(spectator.component.form.value.special_small_block_size_custom).toBe(16777216);
+      });
+    });
+
+    describe('when tiering is enabled', () => {
+      beforeEach(() => {
+        const tierService = spectator.inject(SharingTierService);
+        jest.spyOn(tierService, 'getTierConfig').mockReturnValue(of({ enabled: true }));
+        spectator.component.ngOnInit();
+        spectator.detectChanges();
+      });
+
+      it('hides the Use Metadata (Special) VDEVs field', async () => {
+        spectator.setInput({ parent: parentDataset });
+
+        expect(await form.getLabels()).not.toContain('Use Metadata (Special) VDEVs');
+      });
+
+      it('omits special_small_block_size and special_small_block_size_custom from the payload', () => {
+        spectator.setInput({ parent: parentDataset });
+
+        spectator.component.form.patchValue({
+          special_small_block_size: OnOff.On,
+          special_small_block_size_custom: 131072,
+        });
+
+        const payload = spectator.component.getPayload();
+        expect(payload).not.toHaveProperty('special_small_block_size');
+        expect(payload).not.toHaveProperty('special_small_block_size_custom');
       });
     });
   });
