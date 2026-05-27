@@ -57,16 +57,41 @@ describe('TopologyItemNodeComponent', () => {
     expect(spectator.query('.cell-status')).toHaveClass('fn-theme-yellow');
   });
 
+  // The status cell color must follow the same severity model as the descendant warning icon.
+  // UNAVAIL is critical (red) — previously it was not flagged at all.
+  const statusColorTable: { status: TopologyItemStatus; expectedClass: string }[] = [
+    { status: TopologyItemStatus.Faulted, expectedClass: 'fn-theme-red' },
+    { status: TopologyItemStatus.Unavail, expectedClass: 'fn-theme-red' },
+    { status: TopologyItemStatus.Degraded, expectedClass: 'fn-theme-yellow' },
+    { status: TopologyItemStatus.Offline, expectedClass: 'fn-theme-yellow' },
+    { status: TopologyItemStatus.Removed, expectedClass: 'fn-theme-yellow' },
+  ];
+
+  statusColorTable.forEach(({ status, expectedClass }) => {
+    it(`colors the status cell ${expectedClass} when status is ${status}`, () => {
+      spectator.setInput('topologyItem', { ...topologyDisk, status });
+      expect(spectator.query('.cell-status')).toHaveClass(expectedClass);
+    });
+  });
+
+  // Optimal statuses leave the cell uncolored.
+  [TopologyItemStatus.Online, TopologyItemStatus.Inuse].forEach((status) => {
+    it(`leaves the status cell uncolored when status is ${status}`, () => {
+      spectator.setInput('topologyItem', { ...topologyDisk, status });
+      expect(spectator.query('.cell-status')).not.toHaveClass('fn-theme-red');
+      expect(spectator.query('.cell-status')).not.toHaveClass('fn-theme-yellow');
+    });
+  });
+
   it('shows "Capacity"', () => {
     expect(spectator.query('.cell-capacity')).toHaveText('16 MiB');
   });
 
-  it('shows "Errors" and highlights the cell when count > 0', () => {
+  it('shows "Errors" when count > 0', () => {
     expect(spectator.query('.cell-errors')).toHaveText('6 Errors');
-    expect(spectator.query('.cell-errors')).toHaveClass('fn-theme-red');
   });
 
-  it('does not highlight the errors cell when count is zero', () => {
+  it('shows "No errors" when count is zero', () => {
     spectator.setInput('topologyItem', {
       ...topologyDisk,
       stats: {
@@ -77,7 +102,6 @@ describe('TopologyItemNodeComponent', () => {
       },
     });
     expect(spectator.query('.cell-errors')).toHaveText('No errors');
-    expect(spectator.query('.cell-errors')).not.toHaveClass('fn-theme-red');
   });
 
   describe('descendant warning icon', () => {
