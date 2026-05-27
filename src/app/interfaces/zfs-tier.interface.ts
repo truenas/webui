@@ -5,6 +5,13 @@ export interface ZfsTierConfig {
   enabled: boolean;
   max_concurrent_jobs: number;
   max_used_percentage: number;
+  /**
+   * Percentage of special-vdev usable capacity reserved for metadata. Once usage
+   * crosses the resulting threshold, ZFS stops placing new data on the special
+   * vdevs and writes metadata only. Surfaced on the pool Usage card as a reserve
+   * zone behind the Performance tier bar.
+   */
+  special_class_metadata_reserve_pct: number;
 }
 
 export interface ZfsTierRewriteJobStats {

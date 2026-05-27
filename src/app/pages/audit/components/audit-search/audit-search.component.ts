@@ -383,7 +383,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Signal that view and child components (including ix-table-pager) are initialized
+    // Signal that view and child components (including tn-table-pager) are initialized
     this.viewInitialized$.next();
     this.viewInitialized$.complete();
   }

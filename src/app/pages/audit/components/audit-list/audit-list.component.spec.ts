@@ -1,12 +1,14 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnTableComponent, TnTableHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import {
+  TnSelectComponent, TnTableComponent, TnTableHarness, TnTablePagerHarness,
+} from '@truenas/ui-components';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { of } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
@@ -15,8 +17,15 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AuditListComponent } from './audit-list.component';
 
+// The real tn-table-pager renders a tn-select internally. Mocking the sibling
+// AuditSearchComponent (which imports TnSelectComponent) would otherwise replace
+// that select with a mock, so keep TnSelectComponent real for the pager to render.
+// Must run before MockComponent(AuditSearchComponent) below is evaluated.
+ngMocks.globalKeep(TnSelectComponent, true);
+
 describe('AuditListComponent', () => {
   let spectator: Spectator<AuditListComponent>;
+  let loader: HarnessLoader;
   let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
@@ -46,6 +55,7 @@ describe('AuditListComponent', () => {
       },
     });
 
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, TnTableHarness);
   });
 
@@ -61,8 +71,9 @@ describe('AuditListComponent', () => {
     ]);
   });
 
-  it('checks table pager component is rendered', () => {
-    expect(spectator.query(IxTablePagerComponent)).toExist();
+  it('renders the table pager reporting the current range', async () => {
+    const pager = await loader.getHarness(TnTablePagerHarness);
+    expect(await pager.getRangeText()).toBe('1 – 2 of 2');
   });
 
   describe('row interaction', () => {

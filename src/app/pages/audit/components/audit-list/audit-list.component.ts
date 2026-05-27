@@ -10,6 +10,7 @@ import {
   TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTablePagerComponent,
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
@@ -17,7 +18,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { auditElements } from 'app/pages/audit/audit.elements';
@@ -62,12 +62,12 @@ const defaultEmptyAttrs: EmptyAttrs = {
     AuditServiceLabelPipe,
     IxDateComponent,
     GetLogImportantDataPipe,
-    IxTablePagerComponent,
     TnCellDefDirective,
     TnHeaderCellDefDirective,
     TnIconComponent,
     TnTableColumnDirective,
     TnTableComponent,
+    TnTablePagerComponent,
     TnTooltipDirective,
     TranslateModule,
     UiSearchDirective,

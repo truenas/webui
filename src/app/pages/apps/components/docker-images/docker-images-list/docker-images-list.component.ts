@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import { tnIconMarker, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   filter, map, take, tap,
 } from 'rxjs/operators';
@@ -23,7 +23,6 @@ import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/ce
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -59,7 +58,7 @@ export interface ContainerImageUi extends ContainerImage {
     TnIconComponent,
     AsyncPipe,
     IxTableBodyComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
   ],
 })
 export class DockerImagesListComponent implements OnInit {

@@ -65,8 +65,5 @@
   </ng-container>
 </tn-table>
 
-<ix-table-pager
-  [dataProvider]="dataProvider()"
-  [pageSize]="dataProvider().pagination.pageSize"
-  [currentPage]="dataProvider().pagination.pageNumber"
-></ix-table-pager>
+<tn-table-pager [dataProvider]="dataProvider()"></tn-table-pager>
+
