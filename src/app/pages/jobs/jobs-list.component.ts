@@ -5,6 +5,7 @@ import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnTablePagerComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
@@ -21,7 +22,6 @@ import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
@@ -59,7 +59,7 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
     JobNameComponent,
     IxTableDetailsRowDirective,
     JobLogsRowComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
   ],

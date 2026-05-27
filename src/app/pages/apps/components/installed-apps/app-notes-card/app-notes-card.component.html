@@ -1,6 +1,13 @@
 <mat-card class="card" [id]="anchorId">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Notes' | translate }}</h3>
+    <tn-icon-button
+      name="open-in-new"
+      library="mdi"
+      [tooltip]="'Expand' | translate"
+      [ariaLabel]="'Expand Notes' | translate"
+      (onClick)="openInDialog()"
+    ></tn-icon-button>
   </mat-card-header>
   <mat-card-content>
     <ix-card-expand-collapse class="notes">

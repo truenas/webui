@@ -1,0 +1,13 @@
+<tn-dialog-shell [title]="'{app} Metadata' | translate: { app: data.name }">
+  <div class="metadata">
+    <ix-app-metadata-list [appMetadata]="data.metadata"></ix-app-metadata-list>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      [label]="'Close' | translate"
+      (onClick)="close()"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>
