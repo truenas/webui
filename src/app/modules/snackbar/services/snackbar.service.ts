@@ -1,20 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  TnToastConfig, TnToastPosition, TnToastRef, TnToastService, TnToastType,
+  TnToastConfig, TnToastRef, TnToastService, TnToastType,
 } from '@truenas/ui-components';
 import { take } from 'rxjs/operators';
 import { SnackbarOptions } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-
-// tn-toast picks its icon from the toast type, so legacy SnackbarOptions
-// color hints are mapped to the nearest semantic type.
-const colorToType: Record<string, TnToastType> = {
-  'var(--green)': TnToastType.Success,
-  'var(--red)': TnToastType.Error,
-  'var(--orange)': TnToastType.Warning,
-  'var(--yellow)': TnToastType.Warning,
-};
 
 @Injectable({
   providedIn: 'root',
@@ -28,8 +19,7 @@ export class SnackbarService {
   open(options: SnackbarOptions): TnToastRef {
     const config: TnToastConfig = {
       duration: options.duration ?? 4000,
-      position: options.verticalPosition === 'bottom' ? TnToastPosition.Bottom : TnToastPosition.Top,
-      type: inferTypeFromColor(options.iconCssColor),
+      type: options.type ?? TnToastType.Info,
     };
 
     const ref = options.button
@@ -60,7 +50,7 @@ export class SnackbarService {
   }
 
   success(message: TranslatedString): TnToastRef {
-    return this.open({ message, iconCssColor: 'var(--green)' });
+    return this.open({ message, type: TnToastType.Success });
   }
 
   error(message: TranslatedString): TnToastRef {
@@ -68,12 +58,8 @@ export class SnackbarService {
     // handler dismisses on click, so no `action` callback is required.
     return this.open({
       message,
-      iconCssColor: 'var(--red)',
+      type: TnToastType.Error,
       button: { title: this.translate.instant('Close') },
     });
   }
-}
-
-function inferTypeFromColor(color: string | undefined): TnToastType {
-  return (color && colorToType[color]) || TnToastType.Info;
 }

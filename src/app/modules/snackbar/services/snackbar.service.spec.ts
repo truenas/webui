@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import {
-  TnToastMock, TnToastPosition, TnToastTesting, TnToastType,
+  TnToastMock, TnToastTesting, TnToastType,
 } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -30,7 +30,6 @@ describe('SnackbarService', () => {
       expect(toast.lastCall?.config).toEqual({
         type: TnToastType.Success,
         duration: 4000,
-        position: TnToastPosition.Top,
       });
     });
   });
@@ -59,7 +58,7 @@ describe('SnackbarService', () => {
       const action = jest.fn();
       spectator.service.open({
         message: ignoreTranslation('Heads up'),
-        iconCssColor: 'var(--orange)',
+        type: TnToastType.Warning,
         duration: 5000,
         button: { title: ignoreTranslation('Undo'), action },
       });
@@ -69,42 +68,23 @@ describe('SnackbarService', () => {
       expect(toast.lastCall?.config).toEqual({
         type: TnToastType.Warning,
         duration: 5000,
-        position: TnToastPosition.Top,
       });
 
       toast.lastCall?.ref._triggerAction();
       expect(action).toHaveBeenCalled();
     });
 
-    it('honors verticalPosition: bottom', () => {
-      spectator.service.open({
-        message: ignoreTranslation('At the bottom'),
-        verticalPosition: 'bottom',
-      });
-
-      expect(toast.lastCall?.config.position).toBe(TnToastPosition.Bottom);
-    });
-
-    it('maps red color to error type', () => {
+    it('passes the requested toast type through', () => {
       spectator.service.open({
         message: ignoreTranslation('Red alert'),
-        iconCssColor: 'var(--red)',
+        type: TnToastType.Error,
       });
 
       expect(toast.lastCall?.config.type).toBe(TnToastType.Error);
     });
 
-    it('defaults to info type when no color is provided', () => {
+    it('defaults to info type when no type is provided', () => {
       spectator.service.open({ message: ignoreTranslation('FYI') });
-
-      expect(toast.lastCall?.config.type).toBe(TnToastType.Info);
-    });
-
-    it('defaults to info type for unknown colors', () => {
-      spectator.service.open({
-        message: ignoreTranslation('Mystery'),
-        iconCssColor: 'var(--magenta)',
-      });
 
       expect(toast.lastCall?.config.type).toBe(TnToastType.Info);
     });

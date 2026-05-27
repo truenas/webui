@@ -1,3 +1,4 @@
+import { TnToastType } from '@truenas/ui-components';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 /**
@@ -25,11 +26,11 @@ export interface SnackbarOptions {
   message: TranslatedString;
 
   /**
-   * Optional CSS color hint used to pick the toast style (success/error/warning/info).
-   * Common values: 'var(--green)', 'var(--red)', 'var(--orange)'. The icon itself
-   * is derived from the toast type by `tn-toast` and cannot be customized.
+   * Semantic toast style. Drives the icon and color picked by `tn-toast`.
+   *
+   * @default TnToastType.Info
    */
-  iconCssColor?: string;
+  type?: TnToastType;
 
   /**
    * Optional action button. If `action` is omitted, the button only dismisses the toast.
@@ -43,11 +44,4 @@ export interface SnackbarOptions {
 
   /** Duration in ms before auto-dismissing. Defaults to 4000ms. Set to 0 to disable. */
   duration?: number;
-
-  /**
-   * Vertical position of the toast on screen.
-   *
-   * @default 'top'
-   */
-  verticalPosition?: 'top' | 'bottom';
 }
