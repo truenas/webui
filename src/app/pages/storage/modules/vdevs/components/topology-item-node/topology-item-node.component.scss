@@ -54,11 +54,25 @@
     .name {
       align-items: center;
       display: inline-flex;
+      gap: 6px;
       padding-right: 15px;
+    }
+
+    .descendant-warning-icon {
+      font-size: 18px;
+
+      &.severity-critical {
+        color: var(--red);
+      }
+
+      &.severity-warning {
+        color: var(--yellow);
+      }
     }
   }
 
-  .cell-status {
+  .cell-status,
+  .cell-errors {
     padding: 0 8px;
   }
 }
