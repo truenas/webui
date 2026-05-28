@@ -1,5 +1,8 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TemplateRef, computed, inject, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -36,6 +39,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     FileReviewComponent,
     FileTicketLicensedComponent,
     FileTicketComponent,
+    NgTemplateOutlet,
     TranslateModule,
     CastPipe,
   ],
@@ -55,6 +59,17 @@ export class FeedbackDialog implements OnInit {
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypesLabels, this.translate));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected allowedTypes: FeedbackType[] = [];
+
+  private fileReviewForm = viewChild(FileReviewComponent);
+  private fileTicketForm = viewChild(FileTicketComponent);
+  private fileTicketLicensedForm = viewChild(FileTicketLicensedComponent);
+
+  // Action buttons live in the active form component; project them into the shell footer.
+  protected readonly actionsTemplate = computed<TemplateRef<unknown> | undefined>(() => {
+    return this.fileReviewForm()?.dialogActions()
+      ?? this.fileTicketForm()?.dialogActions()
+      ?? this.fileTicketLicensedForm()?.dialogActions();
+  });
 
   get isReview(): boolean {
     return this.typeControl.value === FeedbackType.Review;

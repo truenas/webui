@@ -145,6 +145,19 @@ describe('TruecommandConnectModalComponent', () => {
       api = spectator.inject(ApiService);
     });
 
+    it('disables the submit button when the API key is empty while enabled', async () => {
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
+      expect(await submitButton.isDisabled()).toBe(true);
+    });
+
+    it('enables the submit button once an API key is entered', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'API Key': '1234567890123456' });
+
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: expectedSubmitButtonText }));
+      expect(await submitButton.isDisabled()).toBe(false);
+    });
+
     it('sends an update payload', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({

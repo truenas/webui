@@ -1,8 +1,7 @@
-// The TrueNAS Connect logo acts as the title inside the dialog content, so
-// collapse the empty shell header to just hold the close button.
+// The logo acts as the title inside the dialog content, and (matching the
+// pre-migration dialog) there is no close button, so hide the shell's header.
 :host ::ng-deep .tn-dialog__header {
-  border-bottom: none;
-  padding-bottom: 0;
+  display: none;
 }
 
 // Lay the action buttons out in a right-aligned row. The buttons live inside a
@@ -18,13 +17,17 @@
   align-items: center;
   display: flex;
   justify-content: center;
-  padding: 8px 24px;
-  position: relative;
 
   .title-logo {
     height: 24px;
     width: auto;
   }
+}
+
+// Give the divider room to breathe between the logo above and the status below.
+tn-divider {
+  display: block;
+  margin: 24px 0 18px;
 }
 
 .waiting-state-content {
@@ -33,11 +36,11 @@
   flex-direction: column;
   padding: 20px 0;
   text-align: center;
-  
+
   ix-truenas-connect-spinner {
     margin-bottom: 20px;
   }
-  
+
   .waiting-state-text {
     line-height: 1.5;
     max-width: 400px;
@@ -70,17 +73,17 @@
   flex-direction: column;
   padding: 20px 0;
   text-align: center;
-  
+
   ix-truenas-connect-spinner {
     margin-bottom: 20px;
   }
-  
+
   .connecting-header {
     font-size: 16px;
     font-weight: 500;
     margin-bottom: 16px;
   }
-  
+
   .connecting-description {
     line-height: 1.5;
     max-width: 400px;

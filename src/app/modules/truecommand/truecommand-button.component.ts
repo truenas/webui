@@ -7,7 +7,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
 import { isObject } from 'lodash-es';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -16,7 +16,6 @@ import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   TruecommandConnectModalComponent,
   TruecommandSignupModalResult,
@@ -39,13 +38,10 @@ const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
 
 @Component({
   selector: 'ix-truecommand-button',
-  styleUrls: ['./truecommand-button.component.scss'],
   templateUrl: './truecommand-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
-    TnTooltipDirective,
-    TnIconComponent,
+    TnIconButtonComponent,
     NgClass,
     NgTemplateOutlet,
     StatusBadgeComponent,

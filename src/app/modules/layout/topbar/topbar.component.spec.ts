@@ -1,13 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
+import {
+  TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
+} from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -170,7 +171,7 @@ describe('TopbarComponent', () => {
 
   it('shows Reboot Info button', async () => {
     const rebootInfoButton = await loader.getHarnessOrNull(
-      MatButtonHarness.with({ selector: '[ixTest="reboot-info"]' }),
+      TnIconButtonHarness.with({ name: 'update' }),
     );
     expect(rebootInfoButton).not.toBeNull();
   });
@@ -265,9 +266,9 @@ describe('TopbarComponent', () => {
   });
 
   describe('feedback button', () => {
-    it('should not be disabled', () => {
-      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
-      expect(feedbackButton).not.toHaveAttribute('disabled');
+    it('should not be disabled', async () => {
+      const feedbackButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'emoticon' }));
+      expect(await feedbackButton.isDisabled()).toBe(false);
     });
   });
 
@@ -304,9 +305,7 @@ describe('TopbarComponent', () => {
     it('applies severity-critical class to alert button when severity is critical', async () => {
       setSeverity('critical');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label="Alerts - Critical alerts present"]' }),
-      );
+      const alertButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'bell' }));
       const host = await alertButton.host();
       expect(await host.hasClass('severity-critical')).toBe(true);
     });
@@ -314,31 +313,21 @@ describe('TopbarComponent', () => {
     it('applies severity-warning class to alert button when severity is warning', async () => {
       setSeverity('warning');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label="Alerts - Warnings present"]' }),
-      );
+      const alertButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'bell' }));
       const host = await alertButton.host();
       expect(await host.hasClass('severity-warning')).toBe(true);
     });
 
-    it('updates aria-label and tooltip on alert button when severity is critical', async () => {
+    it('updates aria-label on alert button when severity is critical', () => {
       setSeverity('critical');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label^="Alerts"]' }),
-      );
-      const host = await alertButton.host();
-      expect(await host.getAttribute('aria-label')).toBe('Alerts - Critical alerts present');
+      expect(spectator.query('[aria-label="Alerts - Critical alerts present"]')).not.toBeNull();
     });
 
-    it('updates aria-label and tooltip on alert button when severity is warning', async () => {
+    it('updates aria-label on alert button when severity is warning', () => {
       setSeverity('warning');
 
-      const alertButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[aria-label^="Alerts"]' }),
-      );
-      const host = await alertButton.host();
-      expect(await host.getAttribute('aria-label')).toBe('Alerts - Warnings present');
+      expect(spectator.query('[aria-label="Alerts - Warnings present"]')).not.toBeNull();
     });
   });
 });

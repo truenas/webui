@@ -1,5 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild, TemplateRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,7 +15,6 @@ import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -34,7 +35,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxTextareaComponent,
     IxCheckboxComponent,
     IxFileInputComponent,
-    FormActionsComponent,
     OauthButtonComponent,
     TranslateModule,
   ],
@@ -52,6 +52,9 @@ export class FileTicketComponent {
   readonly isLoading = input.required<boolean>();
 
   readonly isLoadingChange = output<boolean>();
+
+  // Exposed so the feedback dialog can project these actions into the shell footer.
+  readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
   private fileInputComponent = viewChild(IxFileInputComponent);
 

@@ -12,7 +12,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
@@ -62,6 +62,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatIconButton,
     MatTooltip,
     TnIconComponent,
+    TnIconButtonComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
@@ -126,6 +127,14 @@ export class TopbarComponent implements OnInit {
       case 'critical': return this.translate.instant(this.tooltips.alertsCritical);
       case 'warning': return this.translate.instant(this.tooltips.alertsWarning);
       default: return this.translate.instant(this.tooltips.alerts);
+    }
+  });
+
+  protected readonly alertIconClass = computed(() => {
+    switch (this.alertSeverity()) {
+      case 'critical': return 'alert-critical';
+      case 'warning': return 'alert-warning';
+      default: return '';
     }
   });
 

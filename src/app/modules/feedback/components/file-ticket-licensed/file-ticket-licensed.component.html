@@ -115,7 +115,7 @@
   }
 </form>
 
-<ix-form-actions>
+<ng-template #dialogActions>
   <tn-button
     ixTest="user-guide"
     [label]="'User Guide' | translate"
@@ -135,4 +135,4 @@
     [disabled]="form.invalid || isLoading()"
     (onClick)="onSubmit()"
   ></tn-button>
-</ix-form-actions>
+</ng-template>

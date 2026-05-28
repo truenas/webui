@@ -19,19 +19,18 @@
       <ix-truenas-logo></ix-truenas-logo>
 
       <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
-        <span
-          [matTooltip]="'Send Feedback' | translate"
-        >
-          <button
-            mat-icon-button
-            class="topbar-button-right"
-            ixTest="leave-feedback"
-            [ixUiSearch]="searchableElements.elements.sendFeedback"
-            (click)="onFeedbackIndicatorPressed()"
-          >
-            <tn-icon size="lg" name="emoticon" library="mdi"></tn-icon>
-          </button>
-        </span>
+        <tn-icon-button
+          class="topbar-button-right"
+          name="emoticon"
+          library="mdi"
+          size="lg"
+          testId="leave-feedback"
+          [dense]="true"
+          [tooltip]="'Send Feedback' | translate"
+          [ariaLabel]="'Send Feedback' | translate"
+          [ixUiSearch]="searchableElements.elements.sendFeedback"
+          (onClick)="onFeedbackIndicatorPressed()"
+        ></tn-icon-button>
 
         <ix-truecommand-button></ix-truecommand-button>
         @if (hasTncConfig()) {
@@ -39,29 +38,33 @@
         }
 
         @if (hasRebootRequiredReasons()) {
-          <button
-            mat-icon-button
+          <tn-icon-button
             class="topbar-button-right"
-            ixTest="reboot-info"
-            [matTooltip]="tooltips.rebootInfo | translate"
-            (click)="showRebootInfoDialog()"
-          >
-            <tn-icon size="lg" class="movement" name="update" library="mdi"></tn-icon>
-          </button>
+            name="update"
+            library="mdi"
+            size="lg"
+            iconClass="movement"
+            testId="reboot-info"
+            [dense]="true"
+            [tooltip]="tooltips.rebootInfo | translate"
+            (onClick)="showRebootInfoDialog()"
+          ></tn-icon-button>
         }
 
         <!-- finish update -->
         @if (updateIsRunning) {
-          <button
-            mat-icon-button
+          <tn-icon-button
             id="update-running"
             class="topbar-button-right"
-            ixTest="update-is-running"
-            [matTooltip]="tooltips.update | translate"
-            (click)="showUpdateDialog()"
-          >
-            <tn-icon size="lg" class="movement" name="download" library="mdi"></tn-icon>
-          </button>
+            name="download"
+            library="mdi"
+            size="lg"
+            iconClass="movement"
+            testId="update-is-running"
+            [dense]="true"
+            [tooltip]="tooltips.update | translate"
+            (onClick)="showUpdateDialog()"
+          ></tn-icon-button>
         }
         <ix-checkin-indicator></ix-checkin-indicator>
         <ix-resilvering-indicator></ix-resilvering-indicator>
@@ -69,30 +72,26 @@
         <ix-jobs-indicator></ix-jobs-indicator>
 
         <!-- Alert toggle button -->
-        <button
+        <tn-icon-button
           #alertIndicator
           matBadgeSize="small"
-          mat-icon-button
           class="topbar-button-right"
-          ixTest="alerts-indicator"
+          name="bell"
+          library="mdi"
+          size="lg"
+          testId="alerts-indicator"
+          [dense]="true"
           [class.severity-critical]="alertSeverity() === 'critical'"
           [class.severity-warning]="alertSeverity() === 'warning'"
+          [iconClass]="alertIconClass()"
           [matBadge]="alertBadgeCount()"
           [matBadgeHidden]="alertBadgeCount() === 0"
-          [attr.aria-expanded]="isAlertPanelOpen$ | async"
-          [attr.aria-label]="alertTooltip()"
-          [matTooltip]="alertTooltip()"
+          [ariaExpanded]="!!(isAlertPanelOpen$ | async)"
+          [tooltip]="alertTooltip()"
+          [ariaLabel]="alertTooltip()"
           [ixUiSearch]="searchableElements.elements.alerts"
-          (click)="onAlertIndicatorPressed()"
-        >
-          <tn-icon
-            size="lg"
-            name="bell"
-            library="mdi"
-            [class.alert-critical]="alertSeverity() === 'critical'"
-            [class.alert-warning]="alertSeverity() === 'warning'"
-          ></tn-icon>
-        </button>
+          (onClick)="onAlertIndicatorPressed()"
+        ></tn-icon-button>
 
         <ix-user-menu></ix-user-menu>
         <ix-power-menu></ix-power-menu>

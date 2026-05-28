@@ -25,7 +25,7 @@ import { provideStore } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TN_TEST_ATTR, TnSpriteLoaderService } from '@truenas/ui-components';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
@@ -121,6 +121,11 @@ bootstrapApplication(AppComponent, {
     {
       provide: WINDOW,
       useFactory: getWindow,
+    },
+    {
+      // Align the library's testId attribute with the app's ixTest (data-test) convention.
+      provide: TN_TEST_ATTR,
+      useValue: 'data-test',
     },
     provideTnTablePagerLabels(),
     provideAppInitializer(() => {

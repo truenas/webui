@@ -1,17 +1,15 @@
-<button
-  ixTest="tnc-show-status"
-  type="button"
-  class="topbar-button-right topbar-icon-button"
-  tnTooltipClass="tooltip-multiline"
-  [tnTooltip]="tooltip()"
-  [attr.aria-label]="tooltip()"
-  (click)="showStatus()"
+<tn-icon-button
+  class="topbar-button-right"
+  name="tn-truenas-connect-logo"
+  size="lg"
+  testId="tnc-show-status"
+  [dense]="true"
+  [tooltip]="tooltip()"
+  [ariaLabel]="tooltip()"
+  (onClick)="showStatus()"
 >
-  <span class="icon-wrapper">
-    <tn-icon size="lg" name="tn-truenas-connect-logo"></tn-icon>
-    @let currentBadge = badge();
-    @if (currentBadge) {
-      <ix-status-badge [badge]="currentBadge"></ix-status-badge>
-    }
-  </span>
-</button>
+  @let currentBadge = badge();
+  @if (currentBadge) {
+    <ix-status-badge [badge]="currentBadge"></ix-status-badge>
+  }
+</tn-icon-button>

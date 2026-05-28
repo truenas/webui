@@ -8,7 +8,6 @@
   } @else {
     @if (allowedTypes.length > 1) {
       <ix-button-group
-        class="feedback-type"
         [formControl]="typeControl"
         [label]="'I would like to' | translate"
         [options]="feedbackTypeOptions$"
@@ -39,4 +38,10 @@
       }
     }
   }
+
+  <div tnDialogAction class="feedback-actions">
+    @if (actionsTemplate(); as actions) {
+      <ng-container [ngTemplateOutlet]="actions"></ng-container>
+    }
+  </div>
 </tn-dialog-shell>

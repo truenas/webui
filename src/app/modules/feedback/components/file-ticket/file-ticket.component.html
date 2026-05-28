@@ -46,7 +46,7 @@
     }
   </form>
 
-<ix-form-actions>
+<ng-template #dialogActions>
   <ix-oauth-button
     testId="login-to-jira"
     [oauthType]="OauthButtonType.Jira"
@@ -54,4 +54,4 @@
     [disabled]="form.invalid || isLoading()"
     (loggedIn)="onSubmit($event);"
   ></ix-oauth-button>
-</ix-form-actions>
+</ng-template>

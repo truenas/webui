@@ -1,10 +1,11 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-  createComponentFactory, createSpyObject, mockProvider, Spectator,
+  createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -21,17 +22,18 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 
 describe('FileTicketLicensedFormComponent', () => {
-  let spectator: Spectator<FileTicketLicensedComponent>;
+  let spectator: SpectatorHost<FileTicketLicensedComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(DialogRef);
 
-  const createComponent = createComponentFactory({
+  const createHost = createHostFactory({
     component: FileTicketLicensedComponent,
     imports: [
       ReactiveFormsModule,
+      NgTemplateOutlet,
     ],
     declarations: [],
     providers: [
@@ -55,9 +57,12 @@ describe('FileTicketLicensedFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: { dialogRef },
-    });
+    // The dialog projects the form's actions into the shell footer; render that template here.
+    spectator = createHost(
+      `<ix-file-ticket-licensed #ticket [dialogRef]="dialogRef"></ix-file-ticket-licensed>
+       <ng-container [ngTemplateOutlet]="ticket.dialogActions() ?? null"></ng-container>`,
+      { hostProps: { dialogRef } },
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));

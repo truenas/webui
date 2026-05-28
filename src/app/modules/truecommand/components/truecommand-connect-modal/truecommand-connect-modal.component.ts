@@ -3,9 +3,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -83,6 +84,22 @@ export class TruecommandConnectModalComponent implements OnInit {
       });
       this.cdr.markForCheck();
     }
+
+    // The backend rejects an empty API key while the service is enabled, so require it here.
+    this.form.controls.enabled.valueChanges.pipe(
+      startWith(this.form.controls.enabled.value),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((enabled) => {
+      const apiKey = this.form.controls.api_key;
+
+      if (enabled) {
+        apiKey.addValidators(Validators.required);
+      } else {
+        apiKey.removeValidators(Validators.required);
+      }
+
+      apiKey.updateValueAndValidity();
+    });
   }
 
   onCancel(): void {

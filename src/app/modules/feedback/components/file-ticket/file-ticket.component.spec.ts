@@ -1,9 +1,11 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import {
-  createComponentFactory, createSpyObject, mockProvider, Spectator,
+  createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -21,17 +23,18 @@ import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/ima
 import { NewTicketResponse } from '../../interfaces/file-ticket.interface';
 
 describe('FileTicketComponent', () => {
-  let spectator: Spectator<FileTicketComponent>;
+  let spectator: SpectatorHost<FileTicketComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let loginToJiraButton: OauthButtonComponent;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(DialogRef);
 
-  const createComponent = createComponentFactory({
+  const createHost = createHostFactory({
     component: FileTicketComponent,
     imports: [
       ReactiveFormsModule,
+      NgTemplateOutlet,
     ],
     declarations: [
       MockComponent(OauthButtonComponent),
@@ -54,16 +57,23 @@ describe('FileTicketComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: {
-        dialogRef,
-        isLoading: false,
-        type: FeedbackType.Bug,
+    // The dialog projects the form's actions into the shell footer; render that template here.
+    spectator = createHost(
+      `<ix-file-ticket #ticket [type]="type" [dialogRef]="dialogRef" [isLoading]="isLoading"></ix-file-ticket>
+       <ng-container [ngTemplateOutlet]="ticket.dialogActions() ?? null"></ng-container>`,
+      {
+        hostProps: {
+          dialogRef,
+          isLoading: false,
+          type: FeedbackType.Bug,
+        },
       },
-    });
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    loginToJiraButton = spectator.query(OauthButtonComponent)!;
+    // The login button is projected into the dialog footer (host level), so query from the fixture root.
+    loginToJiraButton = spectator.fixture.debugElement.query(By.directive(OauthButtonComponent))
+      ?.componentInstance as OauthButtonComponent;
     feedbackService = spectator.inject(FeedbackService);
   });
 

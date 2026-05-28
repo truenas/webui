@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -78,8 +78,8 @@ describe('TruecommandButtonComponent', () => {
         expect(icon).toBeTruthy();
       });
 
-      it(`shows correct message when user clicks on the ${expectedButtonId} button`, () => {
-        spectator.click(spectator.query(expectedButtonId)!);
+      it(`shows correct message when user clicks on the ${expectedButtonId} button`, async () => {
+        await (await loader.getHarness(TnIconButtonHarness)).click();
 
         if (expectedDialogType === 'form') {
           expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(TruecommandSignupModalComponent);
@@ -150,8 +150,8 @@ describe('TruecommandButtonComponent', () => {
         }
       });
 
-      it(`shows status modal when user clicks on the ${expectedButtonId} button`, () => {
-        spectator.click(spectator.query(expectedButtonId)!);
+      it(`shows status modal when user clicks on the ${expectedButtonId} button`, async () => {
+        await (await loader.getHarness(TnIconButtonHarness)).click();
 
         if (expectedDialogType === 'status') {
           expect(tnDialogMock.open).toHaveBeenCalledWith(

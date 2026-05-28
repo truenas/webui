@@ -1,25 +1,25 @@
 @if ((loggedInUser$ | async); as user) {
   <div class="user-menu-wrapper">
-    <button
-      name="Settings"
-      mat-icon-button
+    @if (user.pw_name) {
+      <span
+        class="username"
+        [matTooltip]="user.pw_name"
+        [matMenuTriggerFor]="userMenu"
+      >
+        {{ user.pw_name }}
+      </span>
+    }
+    <tn-icon-button
       class="topbar-button-right"
-      ixTest="user-menu"
-      [matTooltip]="tooltips.settings | translate"
-      [ixUiSearch]="searchableElements.elements.userMenu"
+      name="account-circle"
+      library="mdi"
+      size="lg"
+      testId="user-menu"
+      [dense]="true"
+      [tooltip]="tooltips.settings | translate"
       [matMenuTriggerFor]="userMenu"
-    >
-      @if (user.pw_name) {
-        <span
-          class="username"
-          [matTooltip]="user.pw_name"
-          [matMenuTriggerFor]="userMenu"
-        >
-          {{ user.pw_name }}
-        </span>
-      }
-      <tn-icon size="lg" name="account-circle" library="mdi"></tn-icon>
-    </button>
+      [ixUiSearch]="searchableElements.elements.userMenu"
+    ></tn-icon-button>
 
     <mat-menu #userMenu="matMenu">
       @if (user.account_attributes?.includes(AccountAttribute.Local)) {

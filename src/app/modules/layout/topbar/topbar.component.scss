@@ -65,6 +65,15 @@
   outline-width: 0;
 }
 
+// Converted tn-icon-buttons render their own inner <button>, which the scoped
+// rule above can't reach. Give them the same branded topbar focus instead of
+// the library's default outline.
+:host ::ng-deep .tn-icon-button:focus-visible {
+  background: var(--focus-bg);
+  box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+  outline: none;
+}
+
 :host ::ng-deep .topbar-button-right {
   &.mat-badge.mat-badge-small.mat-badge-overlap.mat-badge-after {
     .mat-badge-content {
@@ -149,6 +158,8 @@ ix-truenas-logo {
 
   .topbar-button-right {
     margin-left: 0.5rem !important;
+    display: flex;
+    align-items: center;
   }
 }
 

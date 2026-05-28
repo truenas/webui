@@ -1,16 +1,17 @@
 @let jobBadgeCount = jobBadgeCount$ | async;
-<button
+<tn-icon-button
   matBadgeSize="small"
   matBadgeColor="warn"
-  mat-icon-button
   id="task-manager"
   class="topbar-button-right"
-  ixTest="jobs-manager"
+  name="clipboard-text"
+  library="mdi"
+  size="lg"
+  testId="jobs-manager"
+  [dense]="true"
   [matBadge]="jobBadgeCount"
   [matBadgeHidden]="jobBadgeCount === 0"
-  [matTooltip]="tooltips.taskManager | translate"
+  [tooltip]="tooltips.taskManager | translate"
   [ixUiSearch]="searchableElements.elements.jobs"
-  (click)="onIndicatorPressed()"
->
-  <tn-icon size="lg" name="clipboard-text" library="mdi"></tn-icon>
-</button>
+  (onClick)="onIndicatorPressed()"
+></tn-icon-button>

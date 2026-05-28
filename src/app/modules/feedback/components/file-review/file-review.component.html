@@ -43,7 +43,7 @@
   <p [innerHTML]="voteForNewFeaturesText"></p>
 }
 
-<ix-form-actions>
+<ng-template #dialogActions>
   <tn-button
     color="primary"
     ixTest="submit"
@@ -51,4 +51,4 @@
     [disabled]="form.invalid || isLoading()"
     (onClick)="onSubmit()"
   ></tn-button>
-</ix-form-actions>
+</ng-template>

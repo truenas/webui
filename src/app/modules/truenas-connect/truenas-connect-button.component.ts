@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
@@ -37,13 +36,10 @@ function classifyStatus(status: TruenasConnectStatus): StatusKind {
 @Component({
   selector: 'ix-truenas-connect-button',
   imports: [
-    TnIconComponent,
-    TnTooltipDirective,
+    TnIconButtonComponent,
     StatusBadgeComponent,
-    TestDirective,
   ],
   templateUrl: './truenas-connect-button.component.html',
-  styleUrl: './truenas-connect-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectButtonComponent {

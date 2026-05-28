@@ -1,9 +1,10 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgTemplateOutlet } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
-  createComponentFactory, createSpyObject, mockProvider, Spectator,
+  createHostFactory, createSpyObject, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
@@ -18,18 +19,19 @@ import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 
 describe('FileReviewComponent', () => {
-  let spectator: Spectator<FileReviewComponent>;
+  let spectator: SpectatorHost<FileReviewComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let submitButton: TnButtonHarness;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(DialogRef);
 
-  const createComponent = createComponentFactory({
+  const createHost = createHostFactory({
     component: FileReviewComponent,
     imports: [
       ReactiveFormsModule,
       IxStarRatingComponent,
+      NgTemplateOutlet,
     ],
     providers: [
       mockApi([
@@ -49,11 +51,12 @@ describe('FileReviewComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: {
-        dialogRef,
-      },
-    });
+    // The dialog projects the form's actions into the shell footer; render that template here.
+    spectator = createHost(
+      `<ix-file-review #review [dialogRef]="dialogRef"></ix-file-review>
+       <ng-container [ngTemplateOutlet]="review.dialogActions() ?? null"></ng-container>`,
+      { hostProps: { dialogRef } },
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));

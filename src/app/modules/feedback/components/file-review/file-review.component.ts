@@ -1,5 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild, TemplateRef,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -11,7 +13,6 @@ import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
@@ -38,7 +39,6 @@ export const maxFileSizeBytes = 5 * MiB;
     IxTextareaComponent,
     IxCheckboxComponent,
     IxFileInputComponent,
-    FormActionsComponent,
     TnButtonComponent,
     TestDirective,
     TranslateModule,
@@ -57,6 +57,9 @@ export class FileReviewComponent {
   readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();
+
+  // Exposed so the feedback dialog can project these actions into the shell footer.
+  readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 

@@ -2,11 +2,11 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -40,18 +40,13 @@ describe('FeedbackDialogComponent', () => {
       CastPipe,
       FakeProgressBarComponent,
     ],
-    declarations: [
-      MockComponents(
-        FileReviewComponent,
-        FileTicketLicensedComponent,
-      ),
-    ],
     providers: [
       mockProvider(FeedbackService, {
         checkIfReviewAllowed: () => isReviewAllowed$,
       }),
       mockProvider(SystemGeneralService),
       mockProvider(DialogRef),
+      mockProvider(Router),
       mockApi([
         mockCall('support.attach_ticket_max_size', 5),
       ]),
@@ -125,7 +120,7 @@ describe('FeedbackDialogComponent', () => {
 
         const visibleForm = spectator.query(FileReviewComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
 
         expect(spectator.query(FileTicketComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
@@ -163,7 +158,7 @@ describe('FeedbackDialogComponent', () => {
 
         const visibleForm = spectator.query(FileTicketLicensedComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef).toBe(spectator.inject(DialogRef));
+        expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketComponent)).not.toExist();
