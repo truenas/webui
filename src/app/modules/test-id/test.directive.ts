@@ -87,8 +87,13 @@ export class TestDirective {
       case 'ix-icon':
       case 'tn-icon':
         return 'icon';
+      case 'tn-button':
       case 'tn-icon-button':
         return 'button';
+      case 'tn-menu-item':
+        return 'menu-item';
+      case 'tn-select':
+        return 'select';
       case 'div':
       case 'p':
       case 'span':
@@ -98,7 +103,10 @@ export class TestDirective {
       case 'ix-select':
         return tagName.replace('ix-', '');
       default:
-        throw new Error(`Unknown element type: ${tagName}`);
+        // Fall back to the raw tag name rather than throwing. As more components
+        // migrate to tn-*, an unmapped element should degrade to a usable test id
+        // instead of crashing the page that renders it.
+        return tagName;
     }
   }
 }

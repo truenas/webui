@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ControllerType } from 'app/enums/controller-type.enum';
@@ -55,7 +55,7 @@ describe('ExportButtonComponent', () => {
   });
 
   it('downloads a file when Export As CSV button is pressed without options', async () => {
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As CSV' }));
     await exportButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
@@ -84,7 +84,7 @@ describe('ExportButtonComponent', () => {
     spectator.setInput('controllerType', ControllerType.Standby);
     spectator.detectChanges();
 
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As CSV' }));
     await exportButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
@@ -106,16 +106,16 @@ describe('ExportButtonComponent', () => {
     spectator.setInput('fileType', 'tgz');
     spectator.detectChanges();
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Export As JSON' }));
-    expect(await button.getText()).toContain('JSON');
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Export As JSON' }));
+    expect(await button.getLabel()).toContain('JSON');
   });
 
   it('should use fileType in button text when displayFormat is not provided', async () => {
     spectator.setInput('fileType', 'json');
     spectator.detectChanges();
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Export As JSON' }));
-    expect(await button.getText()).toContain('JSON');
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Export As JSON' }));
+    expect(await button.getLabel()).toContain('JSON');
   });
 
   it('should use exportFormat input for job params', async () => {
@@ -124,7 +124,7 @@ describe('ExportButtonComponent', () => {
     spectator.setInput('fileType', 'tgz');
     spectator.detectChanges();
 
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As JSON' }));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As JSON' }));
     await exportButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
@@ -140,7 +140,7 @@ describe('ExportButtonComponent', () => {
     spectator.setInput('fileType', 'tgz');
     spectator.detectChanges();
 
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As YAML' }));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As YAML' }));
     await exportButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
@@ -167,7 +167,7 @@ describe('ExportButtonComponent', () => {
     spectator.setInput('customExportParams', { services: ['MIDDLEWARE'] });
     spectator.detectChanges();
 
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As CSV' }));
     await exportButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{

@@ -14,7 +14,7 @@
 
 .header {
   @media (max-width: calc($breakpoint-hidden - 1px)) {
-    border-bottom: solid 1px var(--lines);
+    border-bottom: solid 1px var(--tn-lines);
     margin: 0 16px 16px 0;
   }
 }

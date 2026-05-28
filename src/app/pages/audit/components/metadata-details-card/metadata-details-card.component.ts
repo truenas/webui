@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 
 @Component({
@@ -11,9 +11,7 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
   styleUrls: ['./metadata-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCardContent,
-    MatCardHeader,
-    MatCard,
+    TnCardComponent,
     TranslateModule,
   ],
 })
