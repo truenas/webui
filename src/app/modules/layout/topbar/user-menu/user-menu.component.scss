@@ -5,24 +5,16 @@
   align-items: center;
   display: flex;
 
-  > button {
-    border-radius: 4px !important;
-    padding: 4px !important;
-    width: inherit !important;
-  }
-
   .username {
     @include line-clamp(2);
     cursor: pointer;
     display: inline-block;
     font-size: 14px;
-    margin-right: 0.5rem;
-    margin-top: 4px;
+    margin-left: 0.5rem;
     max-width: 105px;
     min-width: auto;
     overflow: hidden;
     text-overflow: ellipsis;
-    vertical-align: middle;
     white-space: nowrap;
 
     @media(max-width: $breakpoint-md) {
