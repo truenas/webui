@@ -27,7 +27,11 @@ import { AuditServiceLabelPipe } from 'app/pages/audit/utils/audit-service-label
 import { GetLogImportantDataPipe } from 'app/pages/audit/utils/get-log-important-data.pipe';
 import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
 
-export const auditDisplayedColumns: string[] = ['service', 'username', 'message_timestamp', 'event', 'event_data'];
+// Frozen so the module-scope index cached in audit.component.ts stays valid — the
+// declared `string[]` type is kept for tn-table's `displayedColumns` input.
+export const auditDisplayedColumns: string[] = Object.freeze([
+  'service', 'username', 'message_timestamp', 'event', 'event_data',
+]) as string[];
 
 interface EmptyAttrs {
   title: string;

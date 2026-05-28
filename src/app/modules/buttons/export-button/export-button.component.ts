@@ -3,7 +3,9 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
-import { catchError, EMPTY, switchMap } from 'rxjs';
+import {
+  catchError, EMPTY, finalize, switchMap,
+} from 'rxjs';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -67,10 +69,9 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       this.getQueryOptions(this.sorting()),
     )).pipe(
       switchMap((job) => {
-        if (job.state === JobState.Failed) {
-          this.errorHandler.showErrorModal(job);
-          return EMPTY;
-        }
+        // `api.job` emits intermediate (running) states too, and surfaces failures
+        // through `catchError` rather than as a `next`. Only act once the job has
+        // succeeded; ignore every other emission and wait for the next one.
         if (job.state !== JobState.Success) {
           return EMPTY;
         }
@@ -80,6 +81,8 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         const downloadMethod = this.downloadMethod() || this.jobMethod();
 
         if (this.addReportNameArgument()) {
+          // The export job's result is the generated report's download URL; the
+          // download endpoint expects that URL under the `report_name` argument.
           customArguments.report_name = url;
         }
 
@@ -91,14 +94,15 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         });
       }),
       catchError((error: unknown) => {
-        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),
+      // Clears the loader on every terminal path — success, failure, abort, error,
+      // or component teardown — including jobs that only ever emit non-success
+      // states and so never reach the `subscribe` callback.
+      finalize(() => this.isLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.isLoading.set(false);
-    });
+    ).subscribe();
   }
 
   private getExportParams(

@@ -39,7 +39,9 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
    * `setParams` through the base type still compiles and throws in production.
    * The type-safe fix is to make the base `setParams` `protected` (or rename it
    * to `setRawParams`) so this surface is enforced by the compiler instead; that
-   * touches every data provider, so it is deferred to a dedicated change.
+   * touches every data provider, so it is deferred to a dedicated change. Until
+   * then, audit-api-data-provider.spec.ts guards that no inherited lifecycle
+   * method routes through this throwing override.
    */
   override setParams(): never {
     throw new Error(

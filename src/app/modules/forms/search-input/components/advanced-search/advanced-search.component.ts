@@ -28,6 +28,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
 
+// Cheap CSS pre-filter only — it over-matches (e.g. tabindex="-1", disabled
+// controls), so every candidate is still run through CDK's InteractivityChecker
+// before being treated as tabbable. Kept as a coarse selector to avoid walking
+// the whole subtree with '*' on every Tab keystroke.
 const focusableSelector = [
   'a[href]',
   'area[href]',
@@ -264,6 +268,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
     // Stay within the surrounding focus trap (dialog) so Tab from the CodeMirror
     // editor doesn't escape into background content. Outside dialogs we fall back
     // to the whole document — letting Tab walk freely is the expected behavior.
+    // Scope detection is attribute-based: it matches the [cdkTrapFocus] directive
+    // and role="dialog" hosts, but not traps installed programmatically via
+    // FocusTrapFactory (which set no such attribute) — those fall back to document.
     const scope = editorRoot.closest<HTMLElement>(
       '[cdkTrapFocus], [role="dialog"]',
     ) ?? document.body;

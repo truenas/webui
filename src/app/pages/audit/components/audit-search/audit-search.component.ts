@@ -41,7 +41,9 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 // Cap user-supplied search input length to mitigate catastrophic regex
-// backtracking from patterns like "a*a*a*…".
+// backtracking from patterns like "a*a*a*…". Input beyond this is silently
+// truncated before matching; 128 chars is far longer than any realistic
+// event/username search term, so the truncation is not surfaced to the user.
 const maxBasicSearchLength = 128;
 
 // Short terms (e.g. a single letter) would match dozens of AuditEvent values
@@ -57,6 +59,12 @@ const maxBasicEventSearchMatches = 5;
 // when the URL carries no pagination of its own.
 const defaultAuditPageSize = 50;
 const defaultAuditPageNumber = 1;
+
+// Anything that exposes a `username` we can turn into a typeahead suggestion —
+// both `User` from `user.query` and `AuditEntry` from the current page qualify.
+interface UsernameSource {
+  username: string;
+}
 
 @Component({
   selector: 'ix-audit-search',
@@ -113,10 +121,13 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       this.dataProvider().currentPage$.pipe(take(1), map((users) => this.mapUsersForSuggestions(users))),
     ]).pipe(
       map(([apiUsers, localUsers]) => [...apiUsers, ...localUsers]),
+      // Shared so the username and client-account properties below subscribe to a
+      // single combineLatest instead of each rebuilding their own.
+      shareReplay({ refCount: true, bufferSize: 1 }),
     );
   }
 
-  basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
+  protected readonly basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
     const query = this.searchQuery();
     if (!query?.isBasicQuery) {
       return [];
@@ -159,9 +170,11 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly exportFormatDisplayLabel = computed(() => this.exportFormat().toUpperCase());
 
-  protected readonly ExportFormat = ExportFormat;
+  // The enum values double as the display labels (CSV/JSON/YAML), so the menu can
+  // render straight from this list — new formats appear without touching the template.
+  protected readonly exportFormats = Object.values(ExportFormat);
 
-  onFormatChange(format: ExportFormat): void {
+  protected onFormatChange(format: ExportFormat): void {
     this.exportFormat.set(format);
   }
 
@@ -241,7 +254,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.onSearch(this.searchQuery());
   }
 
-  updateUrlOptions(): void {
+  private updateUrlOptions(): void {
     this.urlOptionsService.setUrlOptions('/system/audit', {
       searchQuery: this.searchQuery(),
       sorting: this.dataProvider().sorting,
@@ -255,7 +268,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     searchInput.advancedSearch()?.hideDatePicker();
   }
 
-  onSearch(query: SearchQuery<AuditEntry>): void {
+  private onSearch(query: SearchQuery<AuditEntry>): void {
     if (!query) {
       return;
     }
@@ -379,16 +392,18 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       }))),
     );
 
+    const userSuggestions$ = this.apiAndLocalUserSuggestions();
+
     const usernameProperty = textProperty<AuditEntry>(
       'username',
       this.translate.instant('User'),
-      this.apiAndLocalUserSuggestions(),
+      userSuggestions$,
     );
 
     const clientAccountProperty = textProperty<AuditEntry>(
       'event_data.clientAccount',
       this.translate.instant('SMB - Client Account'),
-      this.apiAndLocalUserSuggestions(),
+      userSuggestions$,
     );
 
     const { leading, trailing } = this.getStaticSearchProperties();
@@ -417,7 +432,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.basicSearchPlaceholder.set(this.translate.instant('Search by Event or Username'));
   }
 
-  private mapUsersForSuggestions(users: { username: string }[]): Option[] {
+  private mapUsersForSuggestions(users: UsernameSource[]): Option[] {
     return users.map((user) => ({
       label: user.username,
       value: `"${user.username}"`,

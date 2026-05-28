@@ -3,6 +3,11 @@
 @import 'mixins/text';
 
 .audit-table {
+  // Reaches into @truenas/ui-components internals because tn-table currently
+  // exposes no public API (host class or CSS custom property) for fixed layout
+  // or per-cell overflow — only --tn-table-active-bg/-indicator are public.
+  // These selectors will break if the internal class names change; revisit once
+  // the library offers a supported hook.
   ::ng-deep {
     .tn-table__table {
       table-layout: fixed;

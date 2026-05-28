@@ -29,7 +29,8 @@ import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provi
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
-// Cache once at module scope — the column list is module-constant.
+// Cache once at module scope — `auditDisplayedColumns` is a frozen module constant,
+// so this index can never go stale.
 const messageTimestampColumnIndex = auditDisplayedColumns.indexOf('message_timestamp');
 
 @Component({
@@ -77,7 +78,9 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.dataProvider.unsubscribe();
+    // Guard against teardown running before `createDataProvider` assigned it
+    // (e.g. if ngOnInit threw), which would otherwise mask the original error.
+    this.dataProvider?.unsubscribe();
   }
 
   /**

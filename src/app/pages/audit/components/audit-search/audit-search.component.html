@@ -28,24 +28,14 @@
             [tnMenuTriggerFor]="formatMenu"
           ></tn-icon-button>
           <tn-menu #formatMenu>
-            <tn-menu-item
-              label="CSV"
-              ixTest="format-csv"
-              [selected]="exportFormat() === ExportFormat.Csv"
-              (itemClick)="onFormatChange(ExportFormat.Csv)"
-            ></tn-menu-item>
-            <tn-menu-item
-              label="JSON"
-              ixTest="format-json"
-              [selected]="exportFormat() === ExportFormat.Json"
-              (itemClick)="onFormatChange(ExportFormat.Json)"
-            ></tn-menu-item>
-            <tn-menu-item
-              label="YAML"
-              ixTest="format-yaml"
-              [selected]="exportFormat() === ExportFormat.Yaml"
-              (itemClick)="onFormatChange(ExportFormat.Yaml)"
-            ></tn-menu-item>
+            @for (format of exportFormats; track format) {
+              <tn-menu-item
+                [label]="format"
+                [ixTest]="['format', format]"
+                [selected]="exportFormat() === format"
+                (itemClick)="onFormatChange(format)"
+              ></tn-menu-item>
+            }
           </tn-menu>
           <ix-export-button
             jobMethod="audit.export"
