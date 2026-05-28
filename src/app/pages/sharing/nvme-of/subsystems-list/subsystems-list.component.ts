@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, i
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
 import { noSearchResultsConfig, nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -20,7 +20,6 @@ import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/ce
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -45,7 +44,7 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
     IxTableBodyComponent,
     IxTableCellDirective,
     IxTableEmptyDirective,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     SubSystemNameCellComponent,
     EmptyComponent,
   ],

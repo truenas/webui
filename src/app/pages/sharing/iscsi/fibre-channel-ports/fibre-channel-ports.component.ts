@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
 import {
   catchError,
@@ -22,7 +22,6 @@ import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -50,7 +49,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     MatCard,
     MatCardContent,
     MatToolbarRow,

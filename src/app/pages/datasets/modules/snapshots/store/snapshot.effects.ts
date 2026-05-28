@@ -28,12 +28,14 @@ export class SnapshotEffects {
     ofType(snapshotPageEntered),
     switchMap(() => this.store$.pipe(waitForPreferences, take(1))),
     switchMap((preferences) => {
-      const extraColumns = preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
+      const showExtraColumns = preferences.showSnapshotExtraColumns;
+      const extraColumns = showExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
       return this.api.call('pool.snapshot.query', [
         [],
         {
           select: ['snapshot_name', 'dataset', 'name', ...extraColumns],
           order_by: ['name'],
+          ...(showExtraColumns ? { extra: { properties: ['creation', 'used', 'referenced'] } } : {}),
         },
       ]).pipe(
         map((snapshots) => snapshotsLoaded({ snapshots })),

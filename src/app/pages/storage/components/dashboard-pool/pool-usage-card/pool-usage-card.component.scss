@@ -44,23 +44,18 @@
   }
 
   .left {
-    align-items: flex-end;
-    flex: 1 1 40%;
+    align-items: center;
+    flex: 0 0 auto;
     flex-direction: column;
 
     > div {
       text-align: center;
     }
-
-    .gauge {
-      margin-left: unset;
-      margin-right: 8px;
-    }
   }
 
   .right {
     display: flex;
-    flex: 1 1 60%;
+    flex: 1 1 auto;
     flex-direction: column;
   }
 }
@@ -92,13 +87,37 @@
   display: flex;
   height: 6px;
   overflow: hidden;
+  position: relative;
   width: 100%;
+}
+
+// Metadata reserve zone: a fixed-width striped overlay pinned to the right of
+// the track, drawn on top of the bars. Its diagonal hatch marks the area as
+// reserved; the Used bar runs underneath, so green showing through the stripes
+// is usage that has eaten into the reserve, while the dark track showing through
+// is reserve still free. The solid left edge marks the reserve threshold.
+.reserve-zone {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--orange) 0,
+    var(--orange) 1.5px,
+    transparent 1.5px,
+    transparent 4px
+  );
+  border-left: 2px solid var(--orange);
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
 }
 
 .tier-bar {
   height: 100%;
   min-width: 0;
+  position: relative;
   transition: width 0.3s ease;
+  z-index: 1;
 
   &.performance-used {
     background-color: var(--green);
@@ -107,11 +126,6 @@
 
   &.performance-available {
     background-color: color-mix(in srgb, var(--green) 30%, transparent);
-  }
-
-  &.performance-reserved {
-    background-color: var(--orange);
-    border-radius: 0 3px 3px 0;
   }
 
   &.regular-used {

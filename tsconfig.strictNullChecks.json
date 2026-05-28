@@ -442,7 +442,6 @@
     "./src/app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component.ts",
     "./src/app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component.ts",
     "./src/app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component.ts",
-    "./src/app/modules/ix-table/components/ix-table-pager/ix-table-pager.component.ts",
     "./src/app/modules/ix-table/components/ix-table/cell.harness.ts",
     "./src/app/modules/ix-table/components/ix-table/ix-table.component.ts",
     "./src/app/modules/ix-table/components/ix-table/ix-table.harness.ts",
