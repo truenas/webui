@@ -3,11 +3,14 @@ name: tn-migration
 description: >-
   Playbook for migrating webui feature-area page templates from Angular Material to
   @truenas/ui-components (tn-* components). Use when working on any child ticket of Epic
-  NAS-141021 — any "Migrate <area> to tn-*" task — or when replacing mat-card, mat-button,
-  mat-toolbar-row, matTooltip, ix-empty, info-message notices, or SlideIn-hosted forms with
-  their tn-* equivalents. Covers the card, side-panel dual-host, declarative-signal, banner,
-  empty-state, test-id, and spec-harness recipes established by the shares-dashboard pilot
-  (NAS-141074).
+  NAS-141021 — any "Migrate <area> to tn-*" task — or when replacing any mat-* element
+  (card, button, button-toggle, menu, select, toolbar, tooltip, list, tabs, stepper,
+  expansion, slide-toggle, slider, checkbox, radio, datepicker, dialog, snackbar, table,
+  tree, divider, autocomplete, sidenav, progress-bar/spinner, etc.), ix-empty, info-message
+  notices, or SlideIn-hosted forms with their tn-* equivalents. Contains a comprehensive
+  Material → tn-* component map plus the card, side-panel dual-host, declarative-signal,
+  banner, empty-state, table, button-toggle, test-id, and spec-harness recipes established
+  by the shares-dashboard pilot (NAS-141074) and the audit-page migration (NAS-141063).
 ---
 
 # Angular Material → @truenas/ui-components migration playbook
@@ -46,16 +49,166 @@ declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never
 
 ## Component & directive mapping
 
+This is the first lookup for "what does `mat-X` become?" The map describes the library
+state at `@truenas/ui-components@0.1.60`. For any non-obvious API (input names,
+projection slots, default values), **always verify against the installed types**:
+`node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts`. The map can lag
+behind library releases; the `.d.ts` cannot.
+
+Rows in the **Notes** column flagged **⚠** are non-obvious gotchas — read them before
+swapping. Rows where the **tn-\*** column is *(no equivalent yet — hold)* mean the library
+hasn't shipped a replacement; do **not** silently leave the Material element in place —
+either keep the legacy surface and surface to NAS-141021 lead, or skip that surface in
+the ticket and document it in the PR.
+
+### Cards & layout
+
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
-| `<mat-card>` | `<tn-card>` | See card recipe. `mat-card { height: 100% }` SCSS is dropped. |
-| `<mat-card-content>` | *(removed)* | Content goes directly inside `tn-card`. |
-| `<mat-toolbar-row>` | *(removed)* | Header content moves to `tnCardHeader`; actions become inputs. |
-| `<button mat-button>` | `<tn-button>` | `[label]` input + `(onClick)` output; `color="primary"`. |
-| `[matTooltip]` | `[tnTooltip]` | `MatTooltip` → `TnTooltipDirective`. |
-| `<ix-empty [conf]>` | `<tn-empty>` | See empty-state recipe. Drop the `*EmptyConfig` constant. |
-| `info-message` notice `<div>` | `<tn-banner>` | See banner recipe. |
-| `MatButtonHarness` (specs) | `TnButtonHarness` | `.with({ text })` → `.with({ label })`. |
+| `<mat-card>` | `<tn-card>` | See **Recipe 1**. `mat-card { height: 100% }` SCSS is dropped. |
+| `<mat-card-content>` | *(remove)* | Content goes directly inside `tn-card`. `[padContent]="true"` (default) controls inner padding. |
+| `<mat-card-header>` | `[tnCardHeader]` projection directive | Projected `<ng-content select="[tnCardHeader]">` slot. ⚠ If you project, the library suppresses its own `<h3 class="tn-card__title">` — see Recipe 1's "four header patterns." |
+| `<mat-card-title>` | `[title]` input *or* `tnCardHeader` projection | ⚠ Mutually exclusive — picking projection means you own the title styling (use class `tn-card__title` on your `<h3>` to match library defaults). |
+| `<mat-card-subtitle>` | *(no equivalent)* | No subtitle slot on `tn-card`. Render inside `tnCardHeader` projection if needed. |
+| `<mat-card-actions>` | `[primaryAction]` / `[secondaryAction]` / `[footerLink]` typed inputs | Typed slot objects (`TnCardAction`/`TnCardFooterLink`), not projection. |
+| `<mat-toolbar>` | *(no equivalent — hold)* | Pages don't get a generic toolbar. If this is in-card, fold into `tnCardHeader`. If page-level, surface to lead. |
+| `<mat-toolbar-row>` | *(remove)* | Header content moves to `tnCardHeader`; actions become typed slot inputs. |
+| `<mat-divider>` | `<tn-divider>` *or* `[tnDivider]` directive | `TnDividerComponent` for standalone; `TnDividerDirective` for inline list separation. |
+| `<mat-grid-list>` / `<mat-grid-tile>` | *(no equivalent)* | Use CSS grid directly. |
+| `<mat-expansion-panel>` / `<mat-accordion>` | `<tn-expansion-panel>` | `TnExpansionPanelComponent`/`TnExpansionPanelHarness`. Verify input names against d.ts. |
+| `<mat-sidenav-container>` / `<mat-sidenav>` / `<mat-sidenav-content>` | `<tn-drawer-container>` / `<tn-drawer>` / `<tn-drawer-content>` | ⚠ For a page-level side panel hosting a *form*, use `<tn-side-panel>` (Recipe 5) instead — drawer is for persistent UI chrome. |
+
+### Buttons & toggles
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<button mat-button>` | `<tn-button>` | `[label]` input + `(onClick)` output. NOT content projection + `(click)`. |
+| `<button mat-raised-button>` | `<tn-button variant="filled">` | |
+| `<button mat-stroked-button>` | `<tn-button variant="outline">` | |
+| `<button mat-flat-button>` | `<tn-button variant="filled" color="default">` | |
+| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | ⚠ `tn-button` accepts `[routerLink]`/`[href]` but renders an internal `<button>`, not `<a>`. Verify middle-click "open in new tab," right-click context menu, and focus parity. The test-id prefix also shifts (`link-*` → `button-*`); see "Test IDs." |
+| `<button mat-icon-button>` | `<tn-icon-button>` | ⚠ Bare icon-only buttons MUST have `[ariaLabel]` — no accessible name otherwise. |
+| `<button mat-fab>` / `<button mat-mini-fab>` | *(no equivalent — hold)* | No FAB component. Rework to a primary action button or surface to lead. |
+| `<mat-button-toggle-group>` / `<mat-button-toggle>` | `<tn-button-toggle-group>` / `<tn-button-toggle>` | See **Recipe 7**. ⚠ No `[label]` input — must provide `[ariaLabel]` or `[ariaLabelledby]`. ⚠ Per-option test IDs are not auto-synthesized; add `[ixTest]` per `<tn-button-toggle>`. |
+| `[matRipple]` | *(remove)* | Ripple is built into tn-* components where appropriate. Drop the directive. |
+| `[matBadge]` / `[matBadgeHidden]` | *(no equivalent — hold)* | No badge component. Use `<tn-chip>` for static labels, or hold migration on the surface if notification-count semantics are needed. |
+
+### Menus & tooltips
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
+| `<button mat-menu-item>` | `<tn-menu-item>` | ⚠ `[ixTest]` resolves to `menu-item-*`, not `button-*`. Fix mapping in `test.directive.ts` (`tn-menu-item → "button"`) to preserve legacy IDs; until then pass `testId="button-foo"` literal. See "Test IDs." |
+| `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
+| `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
+
+### Form controls
+
+Forms are owned by **NAS-141028** — most form-field surfaces stay on the `ix-*` wrappers
+(`ix-input`, `ix-select`, `ix-checkbox`, `ix-chips`, `ix-fieldset`). The `tn-*` form
+primitives below are for **non-form display surfaces** (toolbar filters, selection cards,
+read-only views) unless a feature-ticket explicitly carries `ix-*` work.
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<mat-form-field>` / `<input matInput>` | *(use `ix-input` — NAS-141028 owns)* | Library does export `TnFormFieldComponent`/`TnInputComponent`/`TnInputDirective`, but feature tickets keep `ix-*`. |
+| `<mat-hint>` / `<mat-error>` | *(use `ix-input` hint/error inputs)* | Same — owned by `ix-forms`. |
+| `<mat-select>` / `<mat-option>` | `<tn-select>` *(non-form)* or `<ix-select>` *(forms)* | ⚠ `tn-select` has no `[required]` input — required indicator is silently dropped. ⚠ No `[ariaLabelledby]`; use `[ariaLabel]` for accessible name. For form contexts, keep `ix-select`. |
+| `<mat-select-trigger>` | *(use `tn-select`'s `[displayWith]` if available, else hold)* | Verify against d.ts; the trigger-template pattern may not be supported. |
+| `<mat-autocomplete>` / `[matAutocomplete]` | `<tn-autocomplete>` | `TnAutocompleteComponent`/`TnAutocompleteHarness`. Verify input shape against d.ts. |
+| `<mat-checkbox>` | `<tn-checkbox>` *(non-form)* or `<ix-checkbox>` *(forms)* | `TnCheckboxComponent`/`TnCheckboxLabelDirective`. Forms keep `ix-checkbox`. |
+| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio>` *(non-form)* or `<ix-radio>` *(forms)* | |
+| `<mat-slide-toggle>` | `<tn-slide-toggle>` *(non-form)* or `<ix-slide-toggle>` *(forms)* | |
+| `<mat-slider>` | `<tn-slider>` + `[tnSliderThumb]` | Also `TnSliderWithLabelDirective`. |
+| `<mat-chip-grid>` / `<mat-chip-row>` (input pattern) | *(use `ix-chips` — NAS-141028 owns)* | |
+| `<mat-chip>` (display only) | `<tn-chip>` | `TnChipComponent` for static display chips. |
+| `<mat-datepicker>` / `<input matDatepicker>` / `<mat-datepicker-toggle>` | `<tn-date-input>` | `TnDateInputComponent` plus `TnDateRangeInputComponent`, `TnCalendarComponent`, `TnCalendarHeaderComponent`, `TnMonthViewComponent`, `TnMultiYearViewComponent`. Verify against d.ts. |
+| `<mat-calendar>` | `<tn-calendar>` | Standalone; pair with `<tn-calendar-header>` if needed. |
+| *(none — new surface)* | `<tn-time-input>` | `TnTimeInputComponent` — no Material equivalent in webui; available if needed. |
+
+### Navigation
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<mat-tab-group>` / `<mat-tab>` | `<tn-tabs>` / `<tn-tab>` + `<tn-tab-panel>` | `TnTabsComponent`/`TnTabComponent`/`TnTabPanelComponent`. Verify input shapes against d.ts before swap — the tabs API often differs in subtle ways. |
+| `<mat-tab-nav-panel>` / `<mat-tab-link>` | *(no direct equivalent)* | Tab-nav (link-based) is not 1:1 mapped; use `<tn-tabs>` if appropriate or hold. |
+| `<mat-stepper>` / `<mat-step>` | `<tn-stepper>` / `<tn-step>` | `TnStepperComponent`/`TnStepComponent`. Verify against d.ts; horizontal/vertical mode may be expressed differently. |
+| `<mat-vertical-stepper>` / `<mat-horizontal-stepper>` | `<tn-stepper>` with orientation input | Verify input name. |
+
+### Tables, lists, trees
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<mat-table>` etc. | `<tn-table>` *(non-form)* or `<ix-table>` *(NAS-141029 owns)* | See **Recipe 6**. `tn-table` is intentionally smaller surface than `ix-table` — verify every input/output against d.ts. ⚠ `.tn-table__*` classes are NOT public; any `::ng-deep` into them requires a `// TEMP` marker + library follow-up. |
+| `[matSort]` / `[mat-sort-header]` | `[sortable]` on `*tnColumnDef` + `(sortChange)` | Built into `tn-table`'s column-def directive. |
+| `[matColumnDef]` | `*tnColumnDef` | Structural directive on `<ng-container>` with `<ng-template tnHeader>` / `<ng-template tnCell>`. |
+| `<mat-paginator>` | `<tn-table-pager>` | `TnTablePagerComponent`/`TnTablePagerHarness`. Use `TN_TABLE_PAGER_LABELS` provider for i18n (replacement for `MatPaginatorIntl`); default labels in `TN_TABLE_PAGER_DEFAULT_LABELS`. |
+| `<mat-list>` / `<mat-list-item>` | `<tn-list>` / `<tn-list-item>` | Plus `TnListItemTitleDirective`/`TnListItemPrimaryDirective`/`TnListItemSecondaryDirective`/`TnListItemLineDirective`/`TnListItemTrailingDirective`/`TnListAvatarDirective`/`TnListIconDirective`/`TnListSubheaderComponent` for slots. |
+| `<mat-nav-list>` | `<tn-list>` with `[routerLink]` on items | No dedicated nav-list — use list + per-item routerLink. |
+| `<mat-selection-list>` / `<mat-list-option>` | `<tn-selection-list>` / `<tn-list-option>` | `TnSelectionListComponent`/`TnListOptionComponent`. |
+| `<mat-tree>` / `<mat-tree-node>` / `<mat-nested-tree-node>` | `<tn-tree>` / `<tn-tree-node>` / `<tn-nested-tree-node>` | Plus `TnTreeFlatDataSource`, `TnTreeFlattener`, `TnTreeNodeOutletDirective`. |
+
+### Feedback & overlays
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<mat-progress-bar>` | `<tn-progress-bar>` *or* `<tn-particle-progress-bar>` | `TnProgressBarComponent` for standard; `TnParticleProgressBarComponent` for the animated variant. |
+| `<mat-progress-spinner>` / `<mat-spinner>` | `<tn-spinner>` *or* `<tn-branded-spinner>` | `TnSpinnerComponent` / `TnBrandedSpinnerComponent`. |
+| `MatSnackBar` (service) | `TnToastService` (via `SnackbarService` — NAS-141027 owns) | ⚠ Don't call `TnToastService` directly from feature pages — go through `SnackbarService`. Known a11y gap: no `politeness` input — `error()` no longer announces `assertive`. |
+| `MatDialog` (service) | (call `DialogService` — NAS-141022 owns) | Library exports `TnDialog`/`TnDialogShellComponent`/`TnConfirmDialogComponent`, but feature tickets call `DialogService`, not the library directly. |
+| `<mat-dialog-content>` / `<mat-dialog-actions>` / `[matDialogClose]` | *(via `DialogService` — NAS-141022 owns)* | |
+| `<mat-bottom-sheet>` | *(no equivalent — hold)* | Surface to lead; bottom-sheet pattern not present in tn-*. |
+| `info-message` notice `<div>` | `<tn-banner>` | See **Recipe 4**. Plus `TnBannerActionDirective` for action buttons inside a banner. |
+
+### Indicators
+
+| Angular Material | @truenas/ui-components | Notes |
+|---|---|---|
+| `<mat-icon>` | `<tn-icon>` | webui already migrated; always `tn-icon`, never `ix-icon`. |
+| `<ix-empty [conf]>` | `<tn-empty>` | See **Recipe 3**. Inline `icon`/`iconLibrary`/`[title]`; drop the `*EmptyConfig` constant. ⚠ No `iconSize` input — use the sanctioned `::ng-deep` workaround. |
+
+### Library-only (no Material counterpart)
+
+These tn-* components have no Material equivalent in webui but may be appropriate for new
+work or pattern replacements. Listed so the conformance agent recognizes them as valid
+surface area:
+
+- `TnSidePanelComponent` + `TnSidePanelActionDirective` + `TnSidePanelHeaderActionDirective` — see **Recipe 5**.
+- `TnFilePickerComponent` / `TnFilePickerPopupComponent` — file picker.
+- `TnKeyboardShortcutComponent` + `TnKeyboardShortcutService` — shortcut display & registration.
+- `TnConfirmDialogComponent` — confirmation dialog body (consumed via `DialogService`).
+
+### CDK / shared infra — keep
+
+The `@angular/cdk/*` packages are not migrated (they're framework-level primitives, not
+Material UI). Leave these alone:
+
+- `cdkTrapFocus`, `cdkAriaLive`, `Overlay`, `OverlayRef` (a11y/overlay primitives — the library uses them internally too)
+- `cdkScrollable`, `CdkVirtualScrollViewport`
+- `cdkDrag`, `cdkDropList`
+- `Portal`, `CdkPortalOutlet`
+
+### Specs / harnesses
+
+| Angular Material harness | @truenas/ui-components harness | Notes |
+|---|---|---|
+| `MatButtonHarness` | `TnButtonHarness` | `.with({ text })` → `.with({ label })`. |
+| `MatIconHarness` | `TnIconHarness` | |
+| `MatCheckboxHarness` | `TnCheckboxHarness` | |
+| `MatRadioHarness` | `TnRadioHarness` | |
+| `MatSlideToggleHarness` | `TnSlideToggleHarness` | |
+| `MatSelectHarness` | `TnSelectHarness` | |
+| `MatAutocompleteHarness` | `TnAutocompleteHarness` | |
+| `MatMenuHarness` | `TnMenuHarness` | |
+| `MatTableHarness` / `MatHeaderCellHarness` etc. | `TnTableHarness` | Smaller surface — see Recipe 6 for the full method list. |
+| `MatPaginatorHarness` | `TnTablePagerHarness` | |
+| `MatTabGroupHarness` | `TnTabsHarness` / `TnTabHarness` / `TnTabPanelHarness` | |
+| `MatExpansionPanelHarness` | `TnExpansionPanelHarness` | |
+| `MatFormFieldHarness` | `TnFormFieldHarness` | (rare — forms keep `IxFormHarness`) |
+| `MatInputHarness` | `TnInputHarness` | (rare — forms keep `IxInputHarness`) |
+| `MatDatepickerInputHarness` | `TnDateInputHarness` / `TnDateRangeInputHarness` | |
+| `MatDialogHarness` | `TnDialogHarness` + `TnDialogTesting` | |
+| `OverlayContainerHarness` (snackbar) | `TnToastMock` + `TnToastTesting.providers(...)` | See NAS-141027 spec for the pattern. |
 
 Keep `EmptyService` (used by data providers) — only `EmptyComponent` is replaced.
 
@@ -63,28 +216,112 @@ Keep `EmptyService` (used by data providers) — only `EmptyComponent` is replac
 
 `tn-card` is declarative: the toolbar row disappears and its contents become **inputs**.
 
+### Four header patterns — pick exactly one
+
+The library's `<tn-card>` template renders its header from this slot:
+
+```html
+<div class="tn-card__header">
+  <div class="tn-card__header-left">
+    <ng-content select="[tnCardHeader]" />
+    @if (!projectedHeader() && title()) {
+      <h3 class="tn-card__title">{{ title() }}</h3>      <!-- LIBRARY-OWNED -->
+    }
+  </div>
+  @if (hasHeaderRight()) {
+    <div class="tn-card__header-right">
+      @if (headerStatus()) { … }
+      @if (headerControl()) { <tn-slide-toggle … /> }
+      @if (headerMenu()) { <tn-icon-button [tnMenuTriggerFor]=… /> }
+    </div>
+  }
+</div>
+```
+
+⚠ **Projecting `[tnCardHeader]` suppresses the library's `<h3 class="tn-card__title">`.**
+You cannot combine `[title]` + `[tnCardHeader]` and get both — the library only renders
+its own `<h3>` when no projection is present. This is the audit-page Event Data card
+trap: the migration projected a custom `<h3 class="card-title">` with no styles,
+inherited browser-default h3 margins, and the divider drifted.
+
+The four valid patterns:
+
+**A. Text-only title + typed right-side slots.** Simplest. Use when the header is just a
+title plus an optional status badge, slide toggle, or kebab menu — nothing else.
+
+```html
+<tn-card
+  padding="small"
+  [title]="'Metadata' | translate"
+  [headerStatus]="serviceStatus()"
+  [headerMenu]="serviceMenu()"
+>
+  <!-- body -->
+</tn-card>
+```
+
+**B. Custom projection with library title styling.** Use when you need a trailing element
+the typed slots don't cover (copy button, custom action, link icon next to title). Apply
+class `tn-card__title` to your `<h3>` so it matches the library default; do not redo the
+flex layout — `.tn-card__header` is already `display: flex; justify-content: space-between`.
+
+```html
+<tn-card padding="small">
+  <h3 tnCardHeader class="tn-card__title">{{ 'Event Data' | translate }}</h3>
+  <ix-copy-button tnCardHeader [text]="yaml()"></ix-copy-button>
+  <!-- body -->
+</tn-card>
+```
+
+Both projected nodes match `[tnCardHeader]` and land in `.tn-card__header-left`; the
+library's outer flex separates them.
+
+**C. Title-link projection (shares-dashboard service-card pattern).** Use when the title
+is a navigation link with a trailing icon, paired with typed right-side slots.
+
 ```html
 <tn-card
   padding="small"
   [bordered]="true"
-  [headerStatus]="serviceStatus()"          <!-- was <ix-service-state-button> -->
-  [headerMenu]="serviceMenu()"              <!-- was <ix-service-extra-actions> -->
+  [headerStatus]="serviceStatus()"
+  [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="addAction()"             <!-- was the toolbar "Add" <button> -->
-  [secondaryAction]="openAction()"          <!-- optional second toolbar button -->
+  [primaryAction]="addAction()"
+  [secondaryAction]="openAction()"
 >
-  <a tnCardHeader class="card-title-link" [routerLink]="..." [ixTest]="[...]">
-    <h3 class="card-title">{{ 'Title' | translate }}<tn-icon .../></h3>
+  <a tnCardHeader class="card-title-link" [routerLink]="…" [ixTest]="[…]">
+    <h3 class="tn-card__title">{{ 'Title' | translate }}<tn-icon … /></h3>
   </a>
-
-  <!-- card body: empty state, ix-table, pager, etc. stay here -->
+  <!-- body -->
 </tn-card>
 ```
 
-- The title link gets the `tnCardHeader` directive instead of living in a `<div>`.
+SCSS for this pattern: `.card-title-link { color: inherit; display: inline-flex;
+text-decoration: none; }`. Use class `tn-card__title` (library) over a local `.card-title`
+where possible — drift between local and library title styling is the recurring source
+of divider/height inconsistencies.
+
+**D. No header at all.** Don't set `[title]`, don't project `tnCardHeader`, don't set
+the right-side slots. `hasHeader()` returns false and the entire `.tn-card__header` (and
+its divider) are not rendered.
+
+### Footer slots
+
+The footer mirrors the header — typed inputs only, no projection slot. Use `[primaryAction]`
+(filled button), `[secondaryAction]` (outline button), `[footerLink]` (text-button link).
+The library renders `.tn-card__footer` with its own top divider only when at least one
+footer input is set. Don't hand-roll a footer `<div>` inside the card body.
+
+### Imports & SCSS
+
 - `MatCard`/`MatToolbarRow` imports → `TnCardComponent`, `TnCardHeaderDirective`.
-- SCSS: delete `mat-card { height: 100% }`. Add `.card-title-link { color: inherit;
-  display: inline-flex; text-decoration: none; }` and `.card-title { margin: 0; }`.
+- Delete `mat-card { height: 100% }` SCSS.
+- Do not redefine `.tn-card__title` styling locally — use the library class. The only
+  sanctioned local card classes are `.card-title-link` (for pattern C) and any custom
+  body styles.
+- Do not call the legacy `details-card()` mixin from `src/assets/styles/mixins/cards.scss`
+  on a `tn-card` host — it targets `.mat-mdc-card-title` / `mat-card-header` / `mat-card-content`
+  internals and silently no-ops against `<tn-card>`.
 
 ## Recipe 2 — Imperative → declarative signals
 

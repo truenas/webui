@@ -77,22 +77,68 @@ Work through every item. Cite `file:line` for each finding.
   *modified* them (scope creep).
 - New SCSS the migration *adds* (layout helpers like `.card-title-link`, or a documented
   `// TEMP` library workaround) is fine — only leftover `mat-*` rules are findings.
+- **Unmapped Material surfaces.** If the migration leaves a `mat-*` element on a surface
+  the ticket clearly owns AND the playbook's mapping table lists no tn-* equivalent
+  (e.g. `mat-fab`, `mat-bottom-sheet`, `mat-badge`, `mat-grid-list`, `mat-toolbar`),
+  this is **NOT** silent acceptance territory — flag as **Warning** with "no tn-*
+  equivalent yet; either hold migration on this surface and document in PR, or rework
+  the UX." The playbook's mapping table calls these out explicitly with *(no equivalent
+  yet — hold)*. Silent retention of a Material element with no replacement is the most
+  dangerous failure mode — it ships as Material that quietly stays Material forever.
 
-### B. Directive / component swaps
-- `[matTooltip]` → `[tnTooltip]` (`TnTooltipDirective`).
-- `<button mat-button>` → `<tn-button>` with `[label]` input + `(onClick)` output (NOT
-  content projection + `(click)`).
-- `<ix-empty [conf]>` → `<tn-empty>` with inline `icon`/`iconLibrary`/`[title]`; the old
-  `*EmptyConfig` constant import and field removed. `EmptyService` is kept.
-- `info-message` notice `<div>` → `<tn-banner>` with `[heading]`/`[message]`; keyboard
-  handlers and `role`/`tabindex` preserved.
+### B. Component-map compliance (`mat-*` → `tn-*`)
+
+Consult the playbook's "Component & directive mapping" tables (Cards & layout / Buttons
+& toggles / Menus & tooltips / Form controls / Navigation / Tables, lists, trees /
+Feedback & overlays / Indicators). For every `tn-*` component the migration introduces:
+
+- **Right replacement?** The mapping table's tn-* column is the canonical choice. A
+  replacement that doesn't match the table (e.g. `<tn-drawer>` for a form panel where
+  the table specifies `<tn-side-panel>`) is a finding.
+- **Gotcha handled?** Any row flagged **⚠** in the Notes column is a known footgun that
+  the migration must explicitly address. Examples to spot-check:
+  - `<a mat-button [routerLink]>` → `<tn-button [routerLink]>` — verify the migration
+    confirms middle-click / context-menu / focus parity; flag if the dev hasn't.
+  - Icon-only `<tn-button>` / `<tn-icon-button>` — must have `[ariaLabel]`.
+  - `<tn-select>` — no `[required]` input; required indicator is silently dropped.
+  - `<tn-button-toggle-group>` — no `[label]`, must use `[ariaLabel]`/`[ariaLabelledby]`;
+    per-option `[ixTest]` is not auto-synthesized.
+  - `<tn-menu-item>` — test-id prefix changes from `button-` to `menu-item-` unless
+    `test.directive.ts` is updated.
+  - `tn-toast` (via `SnackbarService`) — `politeness: 'assertive'` is silently dropped
+    on `error()`; flag if the migration doesn't either restore or document the regression.
+- **Form-control swaps.** The mapping table is explicit that form-context controls stay
+  on `ix-*` (NAS-141028 owns). A migration that swaps `<mat-checkbox>` → `<tn-checkbox>`
+  inside a reactive form is a scope-creep finding — should have stayed `<ix-checkbox>`.
+- **API verification.** When in doubt about an input name, projection slot, or default
+  value, `grep` the installed types directly:
+  `node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts`. The mapping
+  table can lag behind library releases; the `.d.ts` cannot.
 
 ### C. Card recipe (`tn-card`)
 - `<mat-card>`/`<mat-toolbar-row>` replaced by `<tn-card>`; no toolbar row remains.
-- The title link carries the `tnCardHeader` directive (not a bare `<div>`).
+- **Pick exactly one of the four header patterns** (Recipe 1 §"Four header patterns"):
+  - **A.** Text-only `[title]` + typed right-side slots (`headerStatus`/`headerControl`/`headerMenu`).
+  - **B.** Custom `tnCardHeader` projection (typically title + a trailing action the
+    typed slots don't cover — copy button, custom link, etc.).
+  - **C.** Title-link `tnCardHeader` projection + typed right-side slots
+    (shares-dashboard service-card pattern).
+  - **D.** No header at all (don't set any header inputs).
+- ⚠ **Projecting `[tnCardHeader]` suppresses the library's `<h3 class="tn-card__title">`**
+  — combining `[title]` + projection is a finding (the `[title]` value is silently
+  dropped). For patterns B and C, the projected `<h3>` MUST carry class `tn-card__title`
+  (the library's own class) or styling drifts vs adjacent cards — this was the audit-page
+  Event Data card regression. A local `.card-title` class with no styles defined is a
+  finding (silent default-h3-margin inheritance shifts the divider position).
+- The title link (pattern C) carries the `tnCardHeader` directive (not a bare `<div>`).
 - Status badge and actions menu are `[headerStatus]` / `[headerMenu]` inputs, not child
   components inside the card body.
 - Toolbar buttons are `[primaryAction]` / `[secondaryAction]` inputs, not `<button>`s.
+- Footer hand-rolling: a `<div class="footer">` inside the card body where
+  `[primaryAction]` / `[secondaryAction]` / `[footerLink]` would do is a **Warning**.
+- Legacy mixin reuse: a call to `details-card()` (or any other `mat-card-*`-targeted
+  mixin in `src/assets/styles/mixins/cards.scss`) on a `tn-card` host is a **Warning** —
+  the mixin selectors silently no-op against the new DOM.
 - No new `::ng-deep` selector reaches into a `tn-*` component's internals. The one
   sanctioned exception is the `tn-empty` icon-size workaround (playbook Recipe 3) — and
   even that must carry a `// TEMP` marker. A bare or undocumented `::ng-deep` into a `tn-*`
@@ -181,6 +227,11 @@ Severity policy (per Aaron's framing — Leftover Material is rarely a hard bloc
 - Out-of-ticket leftovers in concerns owned by other tickets (`ix-forms`, `ix-table`,
   `DialogService`, `SnackbarService` per playbook scope table) are NOT findings unless
   the migration *modified* them — that's scope creep, flag as **Warning**.
+- **Unmapped surfaces** — a `mat-*` element the playbook mapping table calls out as
+  *(no equivalent yet — hold)* (e.g. `mat-fab`, `mat-bottom-sheet`, `mat-badge`,
+  `mat-grid-list`, `mat-toolbar`) is **Warning**, not Info. Silent retention with no
+  follow-up plan is the failure mode — the PR description should note the held surface,
+  or the migration should rework the UX. Cite the mapping table row in the fix.
 
 Per-finding format:
 ~~~
