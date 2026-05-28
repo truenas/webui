@@ -79,6 +79,43 @@ describe('SnapshotEffects', () => {
       expect(api.call).toHaveBeenCalledTimes(1);
     });
 
+    it('requests creation/used/referenced properties when extra columns are enabled', async () => {
+      store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: true } as Preferences);
+      store$.refreshState();
+
+      actions$.next(snapshotPageEntered());
+      await firstValueFrom(spectator.service.loadSnapshots$);
+
+      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
+        [],
+        {
+          select: ['snapshot_name', 'dataset', 'name', 'properties'],
+          order_by: ['name'],
+          extra: { properties: ['creation', 'used', 'referenced'] },
+        },
+      ]);
+    });
+
+    it('does not request extra properties when extra columns are hidden', async () => {
+      actions$.next(snapshotPageEntered());
+      await firstValueFrom(spectator.service.loadSnapshots$);
+
+      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
+        [],
+        {
+          select: ['snapshot_name', 'dataset', 'name'],
+          order_by: ['name'],
+        },
+      ]);
+      // Also assert the absence of `extra` explicitly so an accidental
+      // `extra: undefined` (or any value) would fail the test — the deep
+      // equality above would otherwise pass with a stray undefined key.
+      expect(api.call).toHaveBeenCalledWith('pool.snapshot.query', [
+        [],
+        expect.not.objectContaining({ extra: expect.anything() }),
+      ]);
+    });
+
     it('should make a new API call when snapshotPageEntered is dispatched again', async () => {
       actions$.next(snapshotPageEntered());
 
