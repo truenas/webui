@@ -14,6 +14,7 @@ import {
   map,
 } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
@@ -37,6 +38,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     MatButton,
     TitleCasePipe,
     RouterLink,
+    PageContentComponent,
   ],
 })
 export class CategoryViewComponent implements OnInit, OnDestroy {
@@ -69,7 +71,7 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
     this.appsFilterStore.resetFilters();
   }
 
-  trackByAppId(id: number, app: AvailableApp): string {
+  trackByAppId(_: number, app: AvailableApp): string {
     return `${app.latest_version}-${app.train}-${app.name}`;
   }
 }

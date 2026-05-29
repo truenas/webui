@@ -5,30 +5,31 @@
   <ix-custom-app-button></ix-custom-app-button>
 </ix-page-header>
 
-@if (isLoading$ | async) {
-  <ngx-skeleton-loader
-    class="fake-apps"
-    [count]="9"
-    [animation]="false"
-  ></ngx-skeleton-loader>
-} @else {
-  <div class="apps">
-    @for (app of apps$ | async; track trackByAppId($index, app)) {
-      <a
-        [routerLink]="['/apps', 'available', app.train, app.name]"
-        [ixTest]="['open', app.train, app.name]"
-      >
-        <ix-app-card [app]="app"></ix-app-card>
-      </a>
-    }
-  </div>
+<ix-page-content>
+  @if (isLoading$ | async) {
+    <ngx-skeleton-loader
+      class="fake-apps"
+      [count]="9"
+      [animation]="false"
+    ></ngx-skeleton-loader>
+  } @else {
+    <div class="apps">
+      @for (app of apps$ | async; track trackByAppId($index, app)) {
+        <a
+          [routerLink]="['/apps', 'available', app.train, app.name]"
+          [ixTest]="['open', app.train, app.name]"
+        >
+          <ix-app-card [app]="app"></ix-app-card>
+        </a>
+      }
+    </div>
 
-  <div class="view-all">
-    <button
-      mat-flat-button
-      [ixTest]="['back-to-discover-page']"
-      [routerLink]="['/apps', 'available']"
-    >{{ 'Back to Discover Page' | translate }}</button>
-  </div>
-}
-
+    <div class="view-all">
+      <button
+        mat-flat-button
+        [ixTest]="['back-to-discover-page']"
+        [routerLink]="['/apps', 'available']"
+      >{{ 'Back to Discover Page' | translate }}</button>
+    </div>
+  }
+</ix-page-content>
