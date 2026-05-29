@@ -102,23 +102,23 @@
     </div>
   }
 
-  @if (shouldShowUnread() && !enhancedUnreadAlerts()?.length) {
+  @if (shouldShowUnread() && !hasUnreadAlerts()) {
     <div class="no-alerts">
       <tn-icon class="icon" name="bell-outline" library="mdi"></tn-icon>
       <h3 class="title">{{ 'No alerts' | translate }}</h3>
     </div>
   }
 
-  @if (shouldShowDismissed() && !enhancedDismissedAlerts()?.length) {
+  @if (shouldShowDismissed() && !hasDismissedAlerts()) {
     <div class="no-alerts">
       <tn-icon class="icon" name="bell-outline" library="mdi"></tn-icon>
       <h3 class="title">{{ 'No dismissed alerts' | translate }}</h3>
     </div>
   }
 
-  @if (shouldShowUnread() && enhancedUnreadAlerts()?.length) {
+  @if (shouldShowUnread() && hasUnreadAlerts()) {
     <!-- Grouped by category view -->
-    @for (entry of getCategoryEntries(groupedUnreadAlerts()); track entry[0]) {
+    @for (entry of unreadCategoryEntries(); track entry[0]) {
       @let category = entry[0];
       @let alerts = entry[1];
       <div class="category-section">
@@ -140,6 +140,19 @@
         </div>
       </div>
     }
+    @if (!hasUnreadGroupedAlerts()) {
+      <div class="alert-list">
+        @for (alert of enhancedUnreadAlerts(); track alert.id; let last = $last) {
+          <div
+            class="alert"
+            role="listitem"
+            [class.alert-last]="last"
+          >
+            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+          </div>
+        }
+      </div>
+    }
     <button
       *ixRequiresRoles="requiredRoles"
       class="button-row"
@@ -150,9 +163,9 @@
     </button>
   }
 
-  @if (shouldShowDismissed() && enhancedDismissedAlerts()?.length) {
+  @if (shouldShowDismissed() && hasDismissedAlerts()) {
     <!-- Grouped by category view for dismissed alerts -->
-    @for (entry of getCategoryEntries(groupedDismissedAlerts()); track entry[0]) {
+    @for (entry of dismissedCategoryEntries(); track entry[0]) {
       @let category = entry[0];
       @let alerts = entry[1];
       <div class="category-section">
@@ -172,6 +185,19 @@
             </div>
           }
         </div>
+      </div>
+    }
+    @if (!hasDismissedGroupedAlerts()) {
+      <div class="alert-list">
+        @for (alert of enhancedDismissedAlerts(); track alert.id; let last = $last) {
+          <div
+            class="alert"
+            role="listitem"
+            [class.alert-last]="last"
+          >
+            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+          </div>
+        }
       </div>
     }
     <button

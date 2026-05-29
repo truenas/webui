@@ -129,6 +129,30 @@ export class AlertsPanelComponent implements OnInit {
     return this.smartAlertService.groupAlertsByCategory(this.enhancedDismissedAlerts());
   });
 
+  protected unreadCategoryEntries = computed(() => {
+    return this.getCategoryEntries(this.groupedUnreadAlerts());
+  });
+
+  protected dismissedCategoryEntries = computed(() => {
+    return this.getCategoryEntries(this.groupedDismissedAlerts());
+  });
+
+  protected hasUnreadAlerts = computed(() => {
+    return this.enhancedUnreadAlerts().length > 0;
+  });
+
+  protected hasDismissedAlerts = computed(() => {
+    return this.enhancedDismissedAlerts().length > 0;
+  });
+
+  protected hasUnreadGroupedAlerts = computed(() => {
+    return this.unreadCategoryEntries().some(([, alerts]) => alerts.length > 0);
+  });
+
+  protected hasDismissedGroupedAlerts = computed(() => {
+    return this.dismissedCategoryEntries().some(([, alerts]) => alerts.length > 0);
+  });
+
   // Category labels for display
   protected readonly categoryLabels: Record<SmartAlertCategory, string> = {
     [SmartAlertCategory.Storage]: T('Storage'),

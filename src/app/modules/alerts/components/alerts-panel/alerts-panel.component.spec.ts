@@ -13,6 +13,7 @@ import { SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
+import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
@@ -146,6 +147,16 @@ describe('AlertsPanelComponent', () => {
       duplicateCount: 1,
       category: SmartAlertCategory.System,
     });
+  });
+
+  it('falls back to flat alert list when grouped unread alerts are empty', () => {
+    const smartAlertService = spectator.inject(SmartAlertService);
+    jest.spyOn(smartAlertService, 'groupAlertsByCategory').mockReturnValue(new Map());
+
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(2);
+    expect(spectator.query('.no-alerts')).not.toExist();
   });
 
   it('shows a list of dismissed alerts', () => {
