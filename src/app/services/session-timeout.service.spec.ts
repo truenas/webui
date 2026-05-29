@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnToastType } from '@truenas/ui-components';
 import { BehaviorSubject, of, Subject } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -149,8 +150,7 @@ describe('SessionTimeoutService', () => {
 
     expect(snackbar.open).toHaveBeenCalledWith({
       message: 'Session expired',
-      icon: 'mdi-clock-alert-outline',
-      iconCssColor: 'var(--orange)',
+      type: TnToastType.Warning,
       button: {
         title: 'Close',
       },

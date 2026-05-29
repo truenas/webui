@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnDialog } from '@truenas/ui-components';
@@ -70,7 +69,6 @@ describe('SupportCardComponent', () => {
       mockProvider(MatDialog),
       mockProvider(TnDialog),
       mockProvider(DialogService),
-      mockProvider(MatSnackBar),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),

@@ -1,7 +1,10 @@
+import { type TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
+import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 
 export function convertStringToId(inputString: string): string {
   let result = inputString;
@@ -31,6 +34,31 @@ export function createTable<T>(
       ariaLabels,
     };
   });
+}
+
+/**
+ * Translates a tn-table `(sortChange)` event into the `TableSort` shape our
+ * data providers expect. `active` is the index of the sorted column within the
+ * displayed column list (or `null` when sorting is cleared). Shared so every
+ * tn-table migration maps sort state the same way.
+ */
+export function mapTnSortToTableSort<T>(
+  event: TnSortEvent,
+  displayedColumns: string[],
+): TableSort<T> {
+  let direction: SortDirection | null = null;
+  if (event.direction === 'asc') {
+    direction = SortDirection.Asc;
+  } else if (event.direction === 'desc') {
+    direction = SortDirection.Desc;
+  }
+
+  const columnIndex = displayedColumns.indexOf(event.column);
+  return {
+    propertyName: direction ? (event.column as keyof T) : null,
+    direction,
+    active: direction && columnIndex >= 0 ? columnIndex : null,
+  };
 }
 
 export function filterTableRows<T>(filter: TableFilter<T>): T[] {

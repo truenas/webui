@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { tnIconMarker } from '@truenas/ui-components';
+import { TnToastType } from '@truenas/ui-components';
 import {
   filter, tap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
@@ -120,8 +120,7 @@ export class WebSocketDebugEffects {
     tap(([method, , isPanelOpen]) => {
       this.snackbar.open({
         message: ignoreTranslation(`Duplicate API call: "${method}"`),
-        icon: tnIconMarker('alert', 'mdi'),
-        iconCssColor: 'var(--orange)',
+        type: TnToastType.Warning,
         duration: 5000,
         button: isPanelOpen
           ? undefined

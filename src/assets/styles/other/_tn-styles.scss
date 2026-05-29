@@ -57,11 +57,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     @include variable(background, --bg1, $bg1);
   }
 
-  .mat-snack-bar-container {
-    background-color: var(--bg1);
-    color: var(--fg1);
-  }
-
   /////////////////// Typography (egret overrides)
 
   html,
