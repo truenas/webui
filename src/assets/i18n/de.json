@@ -4468,7 +4468,7 @@
   "Tier: {tier}": "Tier: {tier}",
   "Tiering": "Tiering",
   "Tiering Configuration": "Tiering-Konfiguration",
-  "Time": Zeit",
+  "Time": "Zeit",
   "Time Change": "Zeitänderung",
   "Time Configuration": "Zeitkonfiguration",
   "Time in seconds after creation in which write access is allowed. After the grace period is up, the share will become read-only. Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).": "Zeit in Sekunden nach der Erstellung, in der ein Schreibzugriff erlaubt ist. Nach Ablauf dieser Frist wird die Freigabe schreibgeschützt. Der Wert muss zwischen 60 Sekunden (1 Minute) und 15552000 Sekunden (180 Tagen) liegen.",
