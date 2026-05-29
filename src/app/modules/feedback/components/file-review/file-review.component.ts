@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild, TemplateRef,
+  ChangeDetectionStrategy, Component, DestroyRef, forwardRef, input, output, inject, viewChild, TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
@@ -43,8 +44,11 @@ export const maxFileSizeBytes = 5 * MiB;
     TestDirective,
     TranslateModule,
   ],
+  providers: [
+    { provide: FeedbackForm, useExisting: forwardRef(() => FileReviewComponent) },
+  ],
 })
-export class FileReviewComponent {
+export class FileReviewComponent implements FeedbackForm {
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private imageValidator = inject(ImageValidatorService);

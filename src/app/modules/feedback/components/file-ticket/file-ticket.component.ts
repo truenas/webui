@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild, TemplateRef,
+  ChangeDetectionStrategy, Component, DestroyRef, forwardRef, input, output, inject, viewChild, TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oau
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
+import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -38,8 +39,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
     OauthButtonComponent,
     TranslateModule,
   ],
+  providers: [
+    { provide: FeedbackForm, useExisting: forwardRef(() => FileTicketComponent) },
+  ],
 })
-export class FileTicketComponent {
+export class FileTicketComponent implements FeedbackForm {
   private formBuilder = inject(FormBuilder);
   private feedbackService = inject(FeedbackService);
   private imageValidator = inject(ImageValidatorService);

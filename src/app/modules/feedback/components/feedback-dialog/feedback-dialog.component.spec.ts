@@ -7,6 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -81,8 +82,9 @@ describe('FeedbackDialogComponent', () => {
       await setupTest();
     });
 
-    it('shows the header', () => {
-      expect(spectator.query('.tn-dialog__title')).toHaveText('Send Feedback');
+    it('shows the header', async () => {
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe('Send Feedback');
     });
 
     describe('type selector', () => {
@@ -124,6 +126,10 @@ describe('FeedbackDialogComponent', () => {
 
         expect(spectator.query(FileTicketComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
+
+        // The active form's actions are projected into the shell footer.
+        const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
+        expect(submitButton).toBeTruthy();
       });
 
       it('shows FileTicket form when Bug is selected on a non-enterprise system', async () => {

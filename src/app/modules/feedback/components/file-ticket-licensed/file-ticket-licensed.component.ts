@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, input, output, inject, viewChild, TemplateRef,
+  ChangeDetectionStrategy, Component, DestroyRef, forwardRef, input, output, inject, viewChild, TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -22,6 +22,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -53,8 +54,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TestDirective,
     TranslateModule,
   ],
+  providers: [
+    { provide: FeedbackForm, useExisting: forwardRef(() => FileTicketLicensedComponent) },
+  ],
 })
-export class FileTicketLicensedComponent {
+export class FileTicketLicensedComponent implements FeedbackForm {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);

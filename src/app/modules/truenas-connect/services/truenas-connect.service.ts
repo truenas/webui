@@ -115,6 +115,9 @@ export class TruenasConnectService {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
+      // The dialog's visible title slot holds the logo, so the shell renders no
+      // heading text. Give assistive tech an accessible name for the dialog.
+      ariaLabel: 'TrueNAS Connect',
       positionStrategy: this.overlay.position().global().top('48px').right('16px'),
     });
   }

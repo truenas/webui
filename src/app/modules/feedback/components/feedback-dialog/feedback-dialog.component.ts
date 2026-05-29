@@ -17,6 +17,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
+import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
@@ -60,15 +61,13 @@ export class FeedbackDialog implements OnInit {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected allowedTypes: FeedbackType[] = [];
 
-  private fileReviewForm = viewChild(FileReviewComponent);
-  private fileTicketForm = viewChild(FileTicketComponent);
-  private fileTicketLicensedForm = viewChild(FileTicketLicensedComponent);
+  // Only one feedback form is rendered at a time; each provides the FeedbackForm
+  // token, so a single query resolves to whichever is active.
+  private activeForm = viewChild(FeedbackForm);
 
   // Action buttons live in the active form component; project them into the shell footer.
   protected readonly actionsTemplate = computed<TemplateRef<unknown> | undefined>(() => {
-    return this.fileReviewForm()?.dialogActions()
-      ?? this.fileTicketForm()?.dialogActions()
-      ?? this.fileTicketLicensedForm()?.dialogActions();
+    return this.activeForm()?.dialogActions();
   });
 
   get isReview(): boolean {
