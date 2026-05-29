@@ -17,6 +17,7 @@
 
 .login-form {
   background-image: url("assets/images/backgrounds/new-bg.png");
+  background-size: cover;
   min-height: 100vh; // Fallback for browsers without dvh support
   min-height: 100dvh;
 }
