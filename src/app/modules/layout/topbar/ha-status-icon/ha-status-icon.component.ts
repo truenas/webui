@@ -1,9 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -21,52 +23,50 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   imports: [
     TnIconButtonComponent,
     AsyncPipe,
-    TranslateModule,
   ],
 })
 export class HaStatusIconComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
-  private cdr = inject(ChangeDetectorRef);
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
+  protected readonly isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
 
-  failoverDisabledReasons: FailoverDisabledReason[] = [];
+  private readonly failoverDisabledReasons = signal<FailoverDisabledReason[]>([]);
 
   private isStatusPanelOpen = false;
   private statusPanelRef: MatDialogRef<HaStatusPopoverComponent>;
 
-  get isReconnecting(): boolean {
-    return this.failoverDisabledReasons[0] === FailoverDisabledReason.NoSystemReady;
-  }
+  private readonly isReconnecting = computed(() => {
+    return this.failoverDisabledReasons()[0] === FailoverDisabledReason.NoSystemReady;
+  });
 
-  get isDisabled(): boolean {
-    return this.failoverDisabledReasons.length > 0 && !this.isReconnecting;
-  }
+  protected readonly isDisabled = computed(() => {
+    return this.failoverDisabledReasons().length > 0 && !this.isReconnecting();
+  });
 
-  get iconName(): string {
+  protected readonly iconName = computed(() => {
     switch (true) {
-      case this.isReconnecting:
+      case this.isReconnecting():
         return 'tn-ha-reconnecting';
-      case this.isDisabled:
+      case this.isDisabled():
         return 'tn-ha-disabled';
       default:
         return 'tn-ha-enabled';
     }
-  }
+  });
 
-  get statusText(): string {
+  protected readonly statusText = computed(() => {
     switch (true) {
-      case this.isReconnecting:
+      case this.isReconnecting():
         return this.translate.instant('HA is reconnecting');
-      case this.isDisabled:
+      case this.isDisabled():
         return this.translate.instant('HA is disabled');
       default:
         return this.translate.instant('HA is enabled');
     }
-  }
+  });
 
   ngOnInit(): void {
     this.listenForHaStatus();
@@ -80,7 +80,7 @@ export class HaStatusIconComponent implements OnInit {
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,
-        data: this.failoverDisabledReasons,
+        data: this.failoverDisabledReasons(),
       });
     }
   }
@@ -90,8 +90,7 @@ export class HaStatusIconComponent implements OnInit {
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((haStatus) => {
-      this.failoverDisabledReasons = haStatus.reasons || [];
-      this.cdr.markForCheck();
+      this.failoverDisabledReasons.set(haStatus.reasons || []);
     });
   }
 }

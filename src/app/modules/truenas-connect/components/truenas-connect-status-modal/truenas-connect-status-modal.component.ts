@@ -65,8 +65,12 @@ export class TruenasConnectStatusModalComponent {
       case TruenasConnectStatus.CertRenewalFailure:
         return TncStatus.Failed;
       case TruenasConnectStatus.Disabled:
+        // Surface the actionable "Get Connected" CTA rather than a dead-end "disabled" message.
+        return TncStatus.Waiting;
       default:
-        // Show "Get Connected" button for disabled state instead of dead-end "disabled" message
+        // Unknown/unhandled statuses fall back to the actionable "Get Connected" state.
+        // We deliberately avoid assertNever here: a new backend status should not throw
+        // inside a status modal, and "Get Connected" is the safest neutral action.
         return TncStatus.Waiting;
     }
   });

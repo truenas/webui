@@ -1,13 +1,13 @@
-@if ((isFailoverLicensed$ | async) && statusText) {
+@if ((isFailoverLicensed$ | async) && statusText()) {
   <tn-icon-button
     id="ha"
     class="topbar-button-right"
     size="lg"
-    [name]="iconName"
+    [name]="iconName()"
     [dense]="true"
-    [testId]="isDisabled ? 'ha-indicator-disabled' : 'ha-indicator-enabled'"
-    [tooltip]="statusText | translate"
-    [ariaLabel]="statusText | translate"
+    [testId]="isDisabled() ? 'ha-indicator-disabled' : 'ha-indicator-enabled'"
+    [tooltip]="statusText()"
+    [ariaLabel]="statusText()"
     (onClick)="showHaPopover()"
   ></tn-icon-button>
 }

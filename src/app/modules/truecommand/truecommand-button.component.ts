@@ -64,7 +64,7 @@ export class TruecommandButtonComponent implements OnInit {
   protected tcStatus = signal<TrueCommandConfig | null>(null);
   private tcConnected = false;
   private isTcStatusOpened = false;
-  private tcStatusDialogRef: DialogRef<unknown, TruecommandStatusModalComponent>;
+  private tcStatusDialogRef: DialogRef<boolean, TruecommandStatusModalComponent>;
 
   protected statusBadge = computed<StatusBadge | null>(() => {
     switch (this.tcStatus()?.status) {
