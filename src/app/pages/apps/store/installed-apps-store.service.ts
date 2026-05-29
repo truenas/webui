@@ -182,21 +182,32 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       return;
     }
 
+    const appId = apiEvent.id.toString();
+
     this.patchState((state: InstalledAppsState): InstalledAppsState => {
-      if (apiEvent.msg === CollectionChangeType.Added) {
+      const existingAppIndex = state.installedApps.findIndex((installedApp) => {
+        return installedApp.id === appId || installedApp.name === appId;
+      });
+
+      if (apiEvent.msg === CollectionChangeType.Added || existingAppIndex === -1) {
         return { ...state, installedApps: [...state.installedApps, app] };
       }
 
       return {
         ...state,
         installedApps: state.installedApps.map(
-          (installedApp) => (installedApp.name === apiEvent.id ? { ...installedApp, ...app } : installedApp),
+          (installedApp) => (
+            installedApp.id === appId || installedApp.name === appId
+              ? { ...installedApp, ...app }
+              : installedApp
+          ),
         ),
       };
     });
 
+    const availableAppName = app.metadata?.name || app.name || app.id || appId;
     const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map(
-      (availableApp) => (availableApp.name === app.id ? { ...availableApp, installed: true } : availableApp),
+      (availableApp) => (availableApp.name === availableAppName ? { ...availableApp, installed: true } : availableApp),
     );
 
     this.appsStore.patchState((state) => ({
