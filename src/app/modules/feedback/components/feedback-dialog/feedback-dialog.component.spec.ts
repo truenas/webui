@@ -11,6 +11,7 @@ import { TnButtonHarness, TnDialogHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
@@ -136,7 +137,7 @@ describe('FeedbackDialogComponent', () => {
         await typeButtonGroup!.setValue('Report a bug');
         spectator.detectChanges();
 
-        let visibleForm = spectator.query(FileTicketComponent);
+        const visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
         expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
         expect(visibleForm!.type()).toBe(FeedbackType.Bug);
@@ -144,13 +145,8 @@ describe('FeedbackDialogComponent', () => {
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
 
-        visibleForm = spectator.query(FileTicketComponent);
-        expect(visibleForm).toExist();
-        expect(visibleForm!.dialogRef()).toBe(spectator.inject(DialogRef));
-        expect(visibleForm!.type()).toBe(FeedbackType.Bug);
-
-        expect(spectator.query(FileReviewComponent)).not.toExist();
-        expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
+        // The bug form projects its JIRA login action into the shell footer.
+        expect(spectator.query(OauthButtonComponent)).toExist();
       });
 
       it('shows FileTicketLicensed form when Bug is selected on an enterprise system', async () => {
@@ -168,6 +164,10 @@ describe('FeedbackDialogComponent', () => {
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketComponent)).not.toExist();
+
+        // The licensed form projects its Submit action into the shell footer.
+        const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
+        expect(submitButton).toBeTruthy();
       });
 
       it('disables dialog close when loading is set to true', async () => {
