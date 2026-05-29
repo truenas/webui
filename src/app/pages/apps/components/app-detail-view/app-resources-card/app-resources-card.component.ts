@@ -5,7 +5,8 @@ import {
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { map, throttleTime } from 'rxjs';
+import { distinctUntilChanged, map, of, switchMap, throttleTime } from 'rxjs';
+import { PoolInstance } from 'app/interfaces/pool.interface';
 import { MemoryUpdate } from 'app/interfaces/reporting.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -32,7 +33,19 @@ export class AppResourcesCardComponent implements OnInit {
   readonly cpuPercentage = signal(0);
   readonly memoryUsed = signal(0);
   readonly memoryTotal = signal(0);
-  readonly availableSpace$ = this.api.call('app.available_space');
+  readonly availableSpace$ = this.dockerStore.selectedPool$.pipe(
+    distinctUntilChanged(),
+    switchMap((selectedPool) => {
+      if (!selectedPool) {
+        return of(null);
+      }
+
+      return this.api.call('pool.query', [[['name', '=', selectedPool]]]).pipe(
+        map((pools) => ((pools as unknown as PoolInstance[])[0]?.free ?? null)),
+      );
+    }),
+  );
+
   readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   ngOnInit(): void {

@@ -1,7 +1,6 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
@@ -17,9 +16,16 @@ describe('AppResourcesCardComponent', () => {
       FileSizePipe,
     ],
     providers: [
-      mockApi([
-        mockCall('app.available_space', 2500),
-      ]),
+      mockProvider(ApiService, {
+        call: jest.fn((method: string) => {
+          if (method === 'pool.query') {
+            return of([{ name: 'pool', free: 2500 }]);
+          }
+
+          return of(null);
+        }),
+        subscribe: jest.fn(() => of({ fields: {} })),
+      }),
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
       }),
@@ -48,7 +54,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('loads and reports available space on apps dataset', () => {
-    expect(api.call).toHaveBeenCalledWith('app.available_space');
+    expect(api.call).toHaveBeenCalledWith('pool.query', [[['name', '=', 'pool']]]);
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });
