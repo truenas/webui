@@ -2,12 +2,6 @@
 // logo where the title text would sit (via a background image). The shell header
 // lays the title out flex:1 with the close (X) button after it, so the logo lands
 // on the left and the X on the right — one row, matching the TrueCommand header.
-// Drop the header border so the tn-divider below is the single separator (it's a
-// real element, so it shows regardless of the theme's border color).
-// The shell's `title` input only accepts a string, so render the TrueNAS Connect
-// logo where the title text would sit (via a background image). The shell header
-// lays the title out flex:1 with the close (X) button after it, so the logo lands
-// on the left and the X on the right — one row, matching the TrueCommand header.
 // The header's own border-bottom is the separator: it spans the full dialog width
 // (edge to edge), unlike a tn-divider, which sits inside the content padding.
 :host ::ng-deep .tn-dialog__title {
@@ -25,31 +19,6 @@
   display: flex;
   gap: 16px;
   justify-content: flex-end;
-}
-
-tn-icon {
-  height: 21px;
-  margin-right: 10px;
-  padding: 2px 0 2px 2px;
-  position: relative;
-  top: 5px;
-  width: 21px;
-
-  &.status-connected {
-    color: var(--blue);
-  }
-
-  &.status-failed {
-    color: var(--red);
-  }
-
-  &.status-disabled {
-    color: var(--grey);
-  }
-
-  &.status-connecting {
-    color: var(--blue);
-  }
 }
 
 .documentation-link {

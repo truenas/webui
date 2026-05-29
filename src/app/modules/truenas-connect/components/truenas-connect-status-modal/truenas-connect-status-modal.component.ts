@@ -45,7 +45,12 @@ export class TruenasConnectStatusModalComponent {
   protected isRetrying = signal(false);
 
   protected status = computed(() => {
-    switch (this.tnc.config()?.status) {
+    const raw = this.tnc.config()?.status;
+    // Config not loaded yet — show the actionable "Get Connected" state.
+    if (raw === undefined) {
+      return TncStatus.Waiting;
+    }
+    switch (raw) {
       case TruenasConnectStatus.Configured:
         return TncStatus.Active;
       case TruenasConnectStatus.ClaimTokenMissing:
@@ -67,9 +72,10 @@ export class TruenasConnectStatusModalComponent {
         // Surface the actionable "Get Connected" CTA rather than a dead-end "disabled" message.
         return TncStatus.Waiting;
       default:
-        // Unknown/unhandled statuses fall back to the actionable "Get Connected" state.
-        // We deliberately avoid assertNever here: a new backend status should not throw
-        // inside a status modal, and "Get Connected" is the safest neutral action.
+        // Exhaustive guard — a new TruenasConnectStatus enum member will fail this
+        // `satisfies never` check at compile time, forcing us to revisit the mapping
+        // above. At runtime we still fall back to the safe "Get Connected" state.
+        raw satisfies never;
         return TncStatus.Waiting;
     }
   });

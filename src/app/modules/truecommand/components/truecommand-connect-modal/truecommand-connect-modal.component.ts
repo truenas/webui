@@ -91,14 +91,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((enabled) => {
       const apiKey = this.form.controls.api_key;
-
-      // Clear `required` first, then re-add it when enabled. This avoids
-      // stacking duplicate `required` validators as `enabled` toggles while
-      // leaving any other validators on the control intact.
-      apiKey.removeValidators(Validators.required);
-      if (enabled) {
-        apiKey.addValidators(Validators.required);
-      }
+      apiKey.setValidators(enabled ? [Validators.required] : []);
       apiKey.updateValueAndValidity();
     });
   }

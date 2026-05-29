@@ -64,7 +64,7 @@ export class TruecommandButtonComponent implements OnInit {
   protected tcStatus = signal<TrueCommandConfig | null>(null);
   private tcConnected = false;
   private isTcStatusOpened = false;
-  private tcStatusDialogRef: DialogRef<boolean, TruecommandStatusModalComponent>;
+  private tcStatusDialogRef: DialogRef<boolean, TruecommandStatusModalComponent> | undefined;
 
   protected statusBadge = computed<StatusBadge | null>(() => {
     switch (this.tcStatus()?.status) {
@@ -170,26 +170,27 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   private openStatusDialog(): void {
-    const data = {
-      parent: this,
-      data: this.tcStatus(),
-    };
     if (this.isTcStatusOpened) {
-      this.tcStatusDialogRef.close(true);
-    } else {
-      this.isTcStatusOpened = true;
-      this.tcStatusDialogRef = this.tnDialog.open(TruecommandStatusModalComponent, {
-        width: '400px',
-        hasBackdrop: true,
-        positionStrategy: this.overlay.position().global().top('48px').right('0px'),
-        data,
-      });
+      this.tcStatusDialogRef?.close(true);
+      return;
     }
 
-    this.tcStatusDialogRef.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
-      () => {
-        this.isTcStatusOpened = false;
+    this.isTcStatusOpened = true;
+    this.tcStatusDialogRef = this.tnDialog.open(TruecommandStatusModalComponent, {
+      width: '400px',
+      hasBackdrop: true,
+      positionStrategy: this.overlay.position().global().top('48px').right('0px'),
+      data: {
+        parent: this,
+        data: this.tcStatus(),
       },
-    );
+    });
+
+    // Clear our reference once the dialog is gone so a stale ref isn't carried
+    // into the next open and we don't try to call .update on a destroyed component.
+    this.tcStatusDialogRef.closed.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.isTcStatusOpened = false;
+      this.tcStatusDialogRef = undefined;
+    });
   }
 }

@@ -7,14 +7,27 @@
 
   .username {
     @include line-clamp(2);
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
     display: inline-block;
+    font-family: inherit;
     font-size: 14px;
     margin-left: 0.5rem;
     max-width: 105px;
     min-width: auto;
     overflow: hidden;
+    padding: 0;
+    text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    &:focus-visible {
+      background: var(--focus-bg);
+      box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+      outline: none;
+    }
 
     @media(max-width: $breakpoint-md) {
       display: none;

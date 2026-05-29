@@ -47,25 +47,23 @@ export class HaStatusIconComponent implements OnInit {
   });
 
   protected readonly iconName = computed(() => {
-    switch (true) {
-      case this.isReconnecting():
-        return 'tn-ha-reconnecting';
-      case this.isDisabled():
-        return 'tn-ha-disabled';
-      default:
-        return 'tn-ha-enabled';
+    if (this.isReconnecting()) {
+      return 'tn-ha-reconnecting';
     }
+    if (this.isDisabled()) {
+      return 'tn-ha-disabled';
+    }
+    return 'tn-ha-enabled';
   });
 
   protected readonly statusText = computed(() => {
-    switch (true) {
-      case this.isReconnecting():
-        return this.translate.instant('HA is reconnecting');
-      case this.isDisabled():
-        return this.translate.instant('HA is disabled');
-      default:
-        return this.translate.instant('HA is enabled');
+    if (this.isReconnecting()) {
+      return this.translate.instant('HA is reconnecting');
     }
+    if (this.isDisabled()) {
+      return this.translate.instant('HA is disabled');
+    }
+    return this.translate.instant('HA is enabled');
   });
 
   ngOnInit(): void {

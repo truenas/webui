@@ -1,7 +1,7 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, TemplateRef, computed, inject, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, TemplateRef, computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -32,7 +32,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.loading]': 'isLoading',
+    '[class.loading]': 'isLoading()',
   },
   imports: [
     TnDialogShellComponent,
@@ -51,18 +51,20 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class FeedbackDialog implements OnInit {
   private feedbackService = inject(FeedbackService);
   private translate = inject(TranslateService);
-  private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<DialogRef<unknown, FeedbackDialog>>(DialogRef);
   private requestedType = inject<FeedbackType | null>(DIALOG_DATA, { optional: true });
   private destroyRef = inject(DestroyRef);
 
-  protected isLoading = false;
-  protected isLoadingTypes = false;
+  protected readonly isLoading = signal(false);
+  protected readonly isLoadingTypes = signal(false);
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
-  protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypesLabels, this.translate));
+  protected readonly feedbackTypeOptions$ = signal<Observable<Option[]>>(
+    of(mapToOptions(feedbackTypesLabels, this.translate)),
+  );
+
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected allowedTypes: FeedbackType[] = [];
+  protected readonly allowedTypes = signal<FeedbackType[]>([]);
 
   // Only one feedback form is rendered at a time; each provides the FeedbackForm
   // token, so a single query resolves to whichever is active.
@@ -82,7 +84,7 @@ export class FeedbackDialog implements OnInit {
   }
 
   onIsLoadingChange(isLoading: boolean): void {
-    this.isLoading = isLoading;
+    this.isLoading.set(isLoading);
 
     if (isLoading) {
       this.typeControl.disable();
@@ -91,46 +93,43 @@ export class FeedbackDialog implements OnInit {
       this.typeControl.enable();
       this.dialogRef.disableClose = false;
     }
-
-    this.cdr.markForCheck();
   }
 
   private loadFeedbackTypes(): void {
-    this.isLoading = true;
-    this.isLoadingTypes = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
+    this.isLoadingTypes.set(true);
 
     this.feedbackService.checkIfReviewAllowed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isReviewAllowed) => {
-        this.allowedTypes = [];
+        const allowed: FeedbackType[] = [];
 
         if (isReviewAllowed) {
-          this.allowedTypes.push(FeedbackType.Review);
+          allowed.push(FeedbackType.Review);
         }
 
-        this.allowedTypes.push(FeedbackType.Bug);
+        allowed.push(FeedbackType.Bug);
 
-        const allowedOptions = this.allowedTypes.map((type) => ({
+        this.allowedTypes.set(allowed);
+
+        this.feedbackTypeOptions$.set(of(allowed.map((type) => ({
           label: this.translate.instant(feedbackTypesLabels.get(type) || type),
           value: type,
-        }));
-
-        this.feedbackTypeOptions$ = of(allowedOptions);
+        }))));
 
         this.pickType();
 
-        this.isLoading = false;
-        this.isLoadingTypes = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
+        this.isLoadingTypes.set(false);
       });
   }
 
   private pickType(): void {
-    if (this.requestedType && this.allowedTypes.includes(this.requestedType)) {
+    const allowed = this.allowedTypes();
+    if (this.requestedType && allowed.includes(this.requestedType)) {
       this.typeControl.setValue(this.requestedType);
     } else {
-      this.typeControl.setValue(this.allowedTypes[0]);
+      this.typeControl.setValue(allowed[0]);
     }
   }
 }
