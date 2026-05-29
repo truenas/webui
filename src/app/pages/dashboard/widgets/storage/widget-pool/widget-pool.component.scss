@@ -10,7 +10,8 @@
 .card-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .header {
@@ -22,11 +23,16 @@
   }
 }
 
-.mat-mdc-card .mat-mdc-card-content > div.container {
+.mat-mdc-card .mat-mdc-card-content>div.container {
   padding-top: 0;
 }
 
 .container {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+
   &.full,
   &.half {
     &::ng-deep {
@@ -51,6 +57,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-width: 0;
 
     @media (max-width: $breakpoint-xs) {
       gap: 10px;
@@ -59,13 +66,16 @@
     .pool-info-bottom {
       display: flex;
       gap: 12px;
+      min-width: 0;
 
       @media (max-width: $breakpoint-xs) {
         gap: 10px;
       }
 
-      > * {
+      >* {
         display: block;
+        flex: 1;
+        min-width: 0;
         width: 100%;
       }
 

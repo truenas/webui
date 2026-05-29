@@ -43,7 +43,8 @@
 .card-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding-bottom: 0;
   padding-right: 10px;
 
@@ -57,12 +58,15 @@
   }
 
   .container {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
     padding-top: 0;
 
     .container-content {
       display: flex;
       flex-direction: column;
-      height: calc(100% + 10px);
+      min-height: 100%;
       justify-content: space-between;
 
       .banner {

@@ -15,9 +15,11 @@
 }
 
 .card {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 
-  ::ng-deep > ix-with-loading-state-loader {
+  ::ng-deep>ix-with-loading-state-loader {
     align-items: center;
     box-sizing: border-box;
     display: flex;
@@ -37,19 +39,23 @@
   .card-content {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
   }
 }
 
 .container {
-  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   &.grid {
     display: grid;
     gap: 6px;
     grid-template-columns: 25% 75%;
     grid-template-rows: auto;
-    height: 100%;
+    min-height: 100%;
     padding-bottom: 6px;
     padding-top: 6px;
   }
