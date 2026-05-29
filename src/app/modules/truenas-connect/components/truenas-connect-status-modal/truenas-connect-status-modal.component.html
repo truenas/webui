@@ -1,9 +1,4 @@
 <tn-dialog-shell [title]="''">
-  <div class="dialog-title-with-logo">
-    <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" [alt]="'TrueNAS Connect' | translate" />
-  </div>
-  <tn-divider></tn-divider>
-
   <ix-truenas-connect-status-display
     [status]="status()"
     [rawStatus]="tnc.config()?.status"

@@ -5,7 +5,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnDividerComponent, TnIconComponent,
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent,
 } from '@truenas/ui-components';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -22,7 +22,6 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    TnDividerComponent,
     TnIconComponent,
     TnButtonComponent,
     TestDirective,

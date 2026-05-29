@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnDividerComponent, TnIconComponent,
+  TnButtonComponent, TnDialogShellComponent, TnIconComponent,
 } from '@truenas/ui-components';
 import {
   EMPTY, catchError, finalize, of, switchMap, Observable,
@@ -21,7 +21,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    TnDividerComponent,
     TnIconComponent,
     TranslateModule,
     TestDirective,

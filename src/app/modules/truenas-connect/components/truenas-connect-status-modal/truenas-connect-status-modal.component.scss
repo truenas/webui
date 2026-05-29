@@ -1,7 +1,21 @@
-// The logo acts as the title inside the dialog content, and (matching the
-// pre-migration dialog) there is no close button, so hide the shell's header.
-:host ::ng-deep .tn-dialog__header {
-  display: none;
+// The shell's `title` input only accepts a string, so render the TrueNAS Connect
+// logo where the title text would sit (via a background image). The shell header
+// lays the title out flex:1 with the close (X) button after it, so the logo lands
+// on the left and the X on the right — one row, matching the TrueCommand header.
+// Drop the header border so the tn-divider below is the single separator (it's a
+// real element, so it shows regardless of the theme's border color).
+// The shell's `title` input only accepts a string, so render the TrueNAS Connect
+// logo where the title text would sit (via a background image). The shell header
+// lays the title out flex:1 with the close (X) button after it, so the logo lands
+// on the left and the X on the right — one row, matching the TrueCommand header.
+// The header's own border-bottom is the separator: it spans the full dialog width
+// (edge to edge), unlike a tn-divider, which sits inside the content padding.
+:host ::ng-deep .tn-dialog__title {
+  height: 24px;
+  background-image: url('assets/images/truenas-connect-logo-horizontal.svg');
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: auto 24px;
 }
 
 // Lay the action buttons out in a right-aligned row. The buttons live inside a
@@ -11,23 +25,6 @@
   display: flex;
   gap: 16px;
   justify-content: flex-end;
-}
-
-.dialog-title-with-logo {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-
-  .title-logo {
-    height: 24px;
-    width: auto;
-  }
-}
-
-// Give the divider room to breathe between the logo above and the status below.
-tn-divider {
-  display: block;
-  margin: 24px 0 18px;
 }
 
 tn-icon {
