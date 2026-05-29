@@ -174,6 +174,26 @@ describe('TruecommandConnectModalComponent', () => {
         enabled: true,
       }]);
     });
+
+    it('submits the form when it is submitted (e.g. via Enter) while valid', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'API Key': '1234567890123456',
+        Enable: true,
+      });
+
+      spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
+
+      expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
+        api_key: '1234567890123456',
+        enabled: true,
+      }]);
+    });
+
+    it('does not submit when the form is submitted while invalid', () => {
+      spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
+      expect(api.call).not.toHaveBeenCalled();
+    });
   });
 
   const caseWhenSaveClicked = {

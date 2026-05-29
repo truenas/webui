@@ -107,6 +107,12 @@ export class TruecommandConnectModalComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // The submit button is disabled when the form is invalid, but Enter can still
+    // trigger (ngSubmit), so guard here as well.
+    if (this.form.invalid) {
+      return;
+    }
+
     this.loader.open();
 
     const params = {} as UpdateTrueCommand;

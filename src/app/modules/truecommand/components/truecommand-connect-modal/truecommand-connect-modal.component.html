@@ -1,5 +1,5 @@
 <tn-dialog-shell [title]="title | translate">
-  <form class="ix-form-container truecommand-connect-modal-form-content" [formGroup]="form">
+  <form class="ix-form-container truecommand-connect-modal-form-content" [formGroup]="form" (ngSubmit)="onSubmit()">
     <ix-input
       formControlName="api_key"
       [label]="helptext.updateDialog.apiKey | translate"
