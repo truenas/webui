@@ -92,12 +92,9 @@ export class TruecommandConnectModalComponent implements OnInit {
     ).subscribe((enabled) => {
       const apiKey = this.form.controls.api_key;
 
-      if (enabled) {
-        apiKey.addValidators(Validators.required);
-      } else {
-        apiKey.removeValidators(Validators.required);
-      }
-
+      // api_key carries no other validators, so set the full list to avoid
+      // stacking duplicate `required` validators as `enabled` toggles.
+      apiKey.setValidators(enabled ? [Validators.required] : []);
       apiKey.updateValueAndValidity();
     });
   }

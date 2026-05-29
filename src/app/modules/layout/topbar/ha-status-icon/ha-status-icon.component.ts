@@ -1,19 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -22,12 +19,9 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   templateUrl: './ha-status-icon.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    MatTooltip,
-    TnIconComponent,
+    TnIconButtonComponent,
     AsyncPipe,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class HaStatusIconComponent implements OnInit {
@@ -50,6 +44,17 @@ export class HaStatusIconComponent implements OnInit {
 
   get isDisabled(): boolean {
     return this.failoverDisabledReasons.length > 0 && !this.isReconnecting;
+  }
+
+  get iconName(): string {
+    switch (true) {
+      case this.isReconnecting:
+        return 'tn-ha-reconnecting';
+      case this.isDisabled:
+        return 'tn-ha-disabled';
+      default:
+        return 'tn-ha-enabled';
+    }
   }
 
   get statusText(): string {

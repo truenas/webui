@@ -86,6 +86,17 @@
   }
 
   /*
+   * The TrueCommand / TrueNAS Connect status badges are projected into the
+   * tn-icon-button and anchor to its inner button, whereas the Material badges
+   * (jobs / alerts) anchor to this outer host at top/right 0. Pin the status
+   * badges to the same corner so every topbar badge lines up at the same size.
+   */
+  ix-status-badge {
+    top: 0;
+    right: 0;
+  }
+
+  /*
    * When the bell icon is already colored red/orange, keep the badge neutral
    * so the icon remains the primary severity indicator.
    * !important is required to override Material's inline badge styles.

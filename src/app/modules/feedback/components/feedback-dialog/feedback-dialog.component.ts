@@ -31,6 +31,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './feedback-dialog.component.html',
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.loading]': 'isLoading',
+  },
   imports: [
     TnDialogShellComponent,
     FakeProgressBarComponent,

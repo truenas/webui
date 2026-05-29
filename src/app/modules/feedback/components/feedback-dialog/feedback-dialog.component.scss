@@ -19,6 +19,15 @@
   gap: 8px;
 }
 
+// The shell renders its own close (X) button, which calls dialogRef.close()
+// directly and so bypasses dialogRef.disableClose. Block it while a request is
+// in flight so the dialog can't be dismissed mid-submit (disableClose still
+// covers Escape and backdrop clicks).
+:host(.loading) ::ng-deep .tn-dialog__close {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .placeholder {
   min-height: 350px;
 }

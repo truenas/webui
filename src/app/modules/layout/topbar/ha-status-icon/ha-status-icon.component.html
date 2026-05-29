@@ -1,22 +1,13 @@
 @if ((isFailoverLicensed$ | async) && statusText) {
-  <button
-    mat-icon-button
+  <tn-icon-button
     id="ha"
     class="topbar-button-right"
-    [ixTest]="isDisabled ? 'ha-indicator-disabled' : 'ha-indicator-enabled'"
-    [matTooltip]="statusText | translate"
-    (click)="showHaPopover()"
-  >
-    @switch (true) {
-      @case (isReconnecting) {
-        <tn-icon size="lg" name="tn-ha-reconnecting"></tn-icon>
-      }
-      @case (isDisabled) {
-        <tn-icon size="lg" name="tn-ha-disabled"></tn-icon>
-      }
-      @default {
-        <tn-icon size="lg" name="tn-ha-enabled"></tn-icon>
-      }
-    }
-  </button>
+    size="lg"
+    [name]="iconName"
+    [dense]="true"
+    [testId]="isDisabled ? 'ha-indicator-disabled' : 'ha-indicator-enabled'"
+    [tooltip]="statusText | translate"
+    [ariaLabel]="statusText | translate"
+    (onClick)="showHaPopover()"
+  ></tn-icon-button>
 }
