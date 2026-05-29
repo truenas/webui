@@ -29,6 +29,7 @@ import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -62,6 +63,7 @@ import { ReplicationService } from 'app/services/replication.service';
     IxSelectComponent,
     SshCredentialsSelectComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxCheckboxComponent,
     IxRadioGroupComponent,
     IxInputComponent,
@@ -175,6 +177,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get isRemoteTarget(): boolean {
     return this.form.value.target_dataset_from === DatasetSource.Remote;
+  }
+
+  get isSourceLocal(): boolean {
+    return !this.isRemoteSource;
+  }
+
+  get isTargetLocal(): boolean {
+    return !this.isRemoteTarget;
   }
 
   get schemaOrRegexLabel(): string {
@@ -344,6 +354,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           return;
         }
 
+        this.isSudoDialogShown = true;
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
@@ -351,7 +362,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
-          this.isSudoDialogShown = true;
         });
       });
   }

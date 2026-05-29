@@ -28,6 +28,8 @@ import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-datase
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -49,6 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CopyButtonComponent,
     MatCardActions,
     TooltipComponent,
+    TierStatusComponent,
   ],
 })
 export class DatasetDetailsCardComponent {
@@ -61,6 +64,7 @@ export class DatasetDetailsCardComponent {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
+  private tierService = inject(SharingTierService);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -121,6 +125,24 @@ export class DatasetDetailsCardComponent {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
         this.datasetStore.datasetUpdated();
       });
+  }
+
+  changeTier(): void {
+    const currentTier = this.dataset().tier?.tier_type;
+    if (!currentTier) {
+      this.errorHandler.showErrorModal(
+        new Error(this.translate.instant('Current storage tier is unknown for this dataset.')),
+      );
+      return;
+    }
+
+    this.tierService.openChangeTierDialogForDataset({
+      datasetName: this.dataset().name,
+      currentTier,
+      poolName: this.dataset().name.split('/')[0],
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editDataset(): void {

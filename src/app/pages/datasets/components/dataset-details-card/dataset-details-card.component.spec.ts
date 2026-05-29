@@ -2,12 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -23,6 +23,8 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 
 const dataset = {
   id: 'pool/child',
@@ -48,6 +50,7 @@ const dataset = {
     value: DatasetCaseSensitivity.Insensitive,
     source: ZfsPropertySource.Local,
   },
+  tier: { tier_type: DatasetTier.Regular, tier_job: null },
   user_properties: {
     comments: {
       parsed: 'Test comment',
@@ -77,7 +80,6 @@ describe('DatasetDetailsCardComponent', () => {
         datasetUpdated: jest.fn(),
         selectedParentDataset$: of({ id: 'pool' }),
       }),
-      mockProvider(MatSnackBar),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -91,6 +93,7 @@ describe('DatasetDetailsCardComponent', () => {
       ]),
       mockProvider(Router),
       mockProvider(DialogService),
+      mockSharingTierService(),
       mockAuth(),
     ],
   });
@@ -132,6 +135,7 @@ describe('DatasetDetailsCardComponent', () => {
         'Enable Atime:': 'ON',
         'ZFS Deduplication:': 'OFF',
         'Case Sensitivity:': 'OFF',
+        'Storage Tier:': 'Regular',
         'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });
@@ -147,6 +151,47 @@ describe('DatasetDetailsCardComponent', () => {
         DatasetFormComponent,
         { wide: true, data: { datasetId: 'pool/child', isNew: false } },
       );
+    });
+
+    it('opens change tier dialog when Change link is clicked', () => {
+      setupTest({ dataset });
+
+      spectator.click('.change-tier-link');
+
+      expect(spectator.inject(SharingTierService).openChangeTierDialogForDataset).toHaveBeenCalledWith({
+        datasetName: 'pool/child',
+        currentTier: DatasetTier.Regular,
+        poolName: 'pool',
+      });
+    });
+
+    it('hides the Change link when the dataset is locked', () => {
+      setupTest({
+        dataset: {
+          ...dataset,
+          locked: true,
+        } as DatasetDetails,
+      });
+
+      expect(spectator.query('.change-tier-link')).toBeNull();
+    });
+
+    it('shows tier job status icon when a tier job is running', () => {
+      setupTest({
+        dataset: {
+          ...dataset,
+          tier: {
+            tier_type: DatasetTier.Performance,
+            tier_job: {
+              status: 'RUNNING',
+            },
+          },
+        } as DatasetDetails,
+      });
+
+      const icon = spectator.query('.job-status-icon');
+      expect(icon).toBeTruthy();
+      expect(icon).toHaveClass('spinning');
     });
 
     it('opens delete dataset dialog when Delete button is clicked', async () => {
@@ -168,6 +213,7 @@ describe('DatasetDetailsCardComponent', () => {
         'Sync:': 'STANDARD',
         'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',
+        'Storage Tier:': 'Regular',
         'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });

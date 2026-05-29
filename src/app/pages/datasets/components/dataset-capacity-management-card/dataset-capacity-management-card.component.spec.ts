@@ -7,6 +7,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -20,6 +21,7 @@ import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/compo
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 
 const datasetQuotas = {
   refreservation: {
@@ -98,6 +100,10 @@ describe('DatasetCapacityManagementCardComponent', () => {
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockProvider(SharingTierService, {
+        getTierConfig: () => of({ enabled: false }),
+        tierEnabled: () => false,
       }),
     ],
   });
@@ -206,5 +212,82 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetFilesystem, wide: true });
+  });
+
+  describe('tiering', () => {
+    const createTieredComponent = createComponentFactory({
+      component: DatasetCapacityManagementCardComponent,
+      imports: [
+        FileSizePipe,
+      ],
+      componentProviders: [
+        MockModule(NgxSkeletonLoaderModule),
+      ],
+      declarations: [
+        MockComponents(SpaceManagementChartComponent),
+      ],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('pool.dataset.get_quota', []),
+          mockCall('zpool.query', [{
+            name: 'dozer',
+            properties: {
+              class_special_available: { value: 1024 * 1024 * 1024 * 5 },
+            },
+          }] as never),
+        ]),
+        mockProvider(DialogService),
+        mockProvider(DatasetTreeStore, {
+          datasetUpdated: jest.fn(),
+          selectedBranch$: of([]),
+        }),
+        mockProvider(SlideIn, { open: jest.fn(() => SlideInResult.empty()) }),
+        mockProvider(SharingTierService, {
+          getTierConfig: () => of({ enabled: true }),
+          tierEnabled: () => true,
+        }),
+      ],
+    });
+
+    it('uses "Available to Dataset (Regular Tier)" label when tiering is enabled', () => {
+      spectator = createTieredComponent({
+        props: {
+          dataset: { ...datasetFilesystem, pool: 'dozer', tier: { tier_type: DatasetTier.Regular } } as DatasetDetails,
+        },
+      });
+      const label = spectator.queryAll('.details .details-item .label')[0];
+      expect(label).toHaveText('Available to Dataset (Regular Tier):');
+    });
+
+    it('shows "Pool Performance Tier Available" when dataset is on the Performance tier', () => {
+      spectator = createTieredComponent({
+        props: {
+          dataset: {
+            ...datasetFilesystem,
+            pool: 'dozer',
+            tier: { tier_type: DatasetTier.Performance },
+          } as DatasetDetails,
+        },
+      });
+      const labels = Array.from(spectator.queryAll('.details .details-item .label'));
+      const perfRow = labels.find((el) => el.textContent?.includes('Pool Performance Tier Available'));
+      expect(perfRow).toBeTruthy();
+      expect(perfRow!.nextElementSibling).toHaveText('5 GiB');
+    });
+
+    it('does not show Pool Performance Tier row when dataset is on the Regular tier', () => {
+      spectator = createTieredComponent({
+        props: {
+          dataset: {
+            ...datasetFilesystem,
+            pool: 'dozer',
+            tier: { tier_type: DatasetTier.Regular },
+          } as DatasetDetails,
+        },
+      });
+      const labels = Array.from(spectator.queryAll('.details .details-item .label'));
+      expect(labels.find((el) => el.textContent?.includes('Pool Performance Tier Available'))).toBeFalsy();
+    });
   });
 });

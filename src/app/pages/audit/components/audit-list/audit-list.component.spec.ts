@@ -1,32 +1,42 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
-import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import {
+  TnSelectComponent, TnTableComponent, TnTableHarness, TnTablePagerHarness,
+} from '@truenas/ui-components';
+import { MockComponent, ngMocks } from 'ng-mocks';
+import { of } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
-import { mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
+import { auditEntries, mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
+import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AuditListComponent } from './audit-list.component';
 
+// The real tn-table-pager renders a tn-select internally. Mocking the sibling
+// AuditSearchComponent (which imports TnSelectComponent) would otherwise replace
+// that select with a mock, so keep TnSelectComponent real for the pager to render.
+// Must run before MockComponent(AuditSearchComponent) below is evaluated.
+ngMocks.globalKeep(TnSelectComponent, true);
+
 describe('AuditListComponent', () => {
   let spectator: Spectator<AuditListComponent>;
-  let table: IxTableHarness;
+  let loader: HarnessLoader;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: AuditListComponent,
     imports: [
-      MockComponent(IxTableComponent),
       MockComponent(AuditSearchComponent),
     ],
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockProvider(EmptyService),
       provideMockStore({
         selectors: [
           {
@@ -45,7 +55,14 @@ describe('AuditListComponent', () => {
       },
     });
 
-    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, TnTableHarness);
+  });
+
+  // globalKeep mutates ng-mocks state for the whole Jest worker; undo it so
+  // later specs in the same worker get TnSelectComponent mocked as usual.
+  afterAll(() => {
+    ngMocks.globalWipe(TnSelectComponent);
   });
 
   it('checks search component is rendered', () => {
@@ -53,14 +70,128 @@ describe('AuditListComponent', () => {
   });
 
   it('loads and shows a table with audit entries', async () => {
-    expect(await table.getCellTexts()).toEqual([
-      ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
+    expect(await table.getHeaderTexts()).toEqual(['Service', 'User', 'Timestamp', 'Event', 'Event Data']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['SMB', 'Administrator', '2024-04-12 07:34:00', 'Authentication', 'Account: Administrator'],
       ['SMB', 'bob', '2024-04-12 07:42:32', 'Create', 'File: test.txt'],
     ]);
   });
 
-  it('checks table pager component is rendered', () => {
-    expect(spectator.query(IxTablePagerComponent)).toExist();
+  it('renders the table pager reporting the current range', async () => {
+    const pager = await loader.getHarness(TnTablePagerHarness);
+    expect(await pager.getRangeText()).toBe('1 – 2 of 2');
+  });
+
+  describe('row interaction', () => {
+    it('emits rowSelected and toggleShowMobileDetails when a row is clicked', async () => {
+      const rowSelectedSpy = jest.fn();
+      const toggleShowMobileDetailsSpy = jest.fn();
+      spectator.output<AuditEntry>('rowSelected').subscribe(rowSelectedSpy);
+      spectator.output<boolean>('toggleShowMobileDetails').subscribe(toggleShowMobileDetailsSpy);
+
+      await table.clickRow(0);
+
+      expect(rowSelectedSpy).toHaveBeenCalledWith(auditEntries[0]);
+      expect(toggleShowMobileDetailsSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('activates a row when Enter is pressed on the focused row', async () => {
+      const rowSelectedSpy = jest.fn();
+      spectator.output<AuditEntry>('rowSelected').subscribe(rowSelectedSpy);
+
+      await table.pressKeyOnRow(1, 'enter');
+
+      expect(rowSelectedSpy).toHaveBeenCalledWith(auditEntries[1]);
+    });
+
+    it('activates a row when Space is pressed on the focused row', async () => {
+      const rowSelectedSpy = jest.fn();
+      spectator.output<AuditEntry>('rowSelected').subscribe(rowSelectedSpy);
+
+      await table.pressKeyOnRow(1, 'space');
+
+      expect(rowSelectedSpy).toHaveBeenCalledWith(auditEntries[1]);
+    });
+
+    it('exposes each row as a single keyboard tab stop', async () => {
+      expect(await table.isRowFocusable(0)).toBe(true);
+      expect(await table.isRowFocusable(1)).toBe(true);
+    });
+  });
+
+  describe('sorting', () => {
+    beforeEach(() => {
+      (mockAuditApiDataProvider.setSorting as jest.Mock).mockClear();
+    });
+
+    it('translates ascending sort to provider state with active column index', async () => {
+      await table.clickSortHeader('service');
+
+      expect(mockAuditApiDataProvider.setSorting).toHaveBeenCalledWith({
+        propertyName: 'service',
+        direction: SortDirection.Asc,
+        active: 0,
+      });
+    });
+
+    it('translates descending sort to provider state with active column index', async () => {
+      await table.clickSortHeader('event');
+      await table.clickSortHeader('event');
+
+      expect(mockAuditApiDataProvider.setSorting).toHaveBeenLastCalledWith({
+        propertyName: 'event',
+        direction: SortDirection.Desc,
+        active: 3,
+      });
+    });
+
+    it('clears propertyName and active when sort is cycled back to none', async () => {
+      await table.clickSortHeader('service');
+      await table.clickSortHeader('service');
+      await table.clickSortHeader('service');
+
+      expect(mockAuditApiDataProvider.setSorting).toHaveBeenLastCalledWith({
+        propertyName: null,
+        direction: null,
+        active: null,
+      });
+    });
+  });
+
+  describe('empty state mapping', () => {
+    const emptyTypeCases: { emptyType: EmptyType; title: string; icon: string }[] = [
+      { emptyType: EmptyType.Loading, title: 'Loading…', icon: 'mdi-loading' },
+      { emptyType: EmptyType.Errors, title: 'Cannot retrieve response', icon: 'mdi-alert-octagon' },
+      { emptyType: EmptyType.NoSearchResults, title: 'No Search Results.', icon: 'mdi-magnify-scan' },
+      { emptyType: EmptyType.FirstUse, title: 'No records have been added yet', icon: 'mdi-format-list-text' },
+      { emptyType: EmptyType.NoPageData, title: 'No records have been added yet', icon: 'mdi-format-list-text' },
+    ];
+
+    it.each(emptyTypeCases)(
+      'maps $emptyType to "$title" / "$icon"',
+      ({ emptyType, title, icon }) => {
+        spectator.setInput('dataProvider', {
+          ...mockAuditApiDataProvider,
+          emptyType$: of(emptyType),
+        } as unknown as AuditApiDataProvider);
+        spectator.detectChanges();
+
+        const tableComponent = spectator.query(TnTableComponent)!;
+        expect(tableComponent.emptyMessage()).toBe(title);
+        expect(tableComponent.emptyIcon()).toBe(icon);
+      },
+    );
+
+    it('falls back to default empty attrs when emptyType is null', () => {
+      spectator.setInput('dataProvider', {
+        ...mockAuditApiDataProvider,
+        emptyType$: of(null),
+      } as unknown as AuditApiDataProvider);
+      spectator.detectChanges();
+
+      const tableComponent = spectator.query(TnTableComponent)!;
+      expect(tableComponent.emptyMessage()).toBe('No records have been added yet');
+      expect(tableComponent.emptyIcon()).toBe('mdi-format-list-text');
+    });
   });
 });

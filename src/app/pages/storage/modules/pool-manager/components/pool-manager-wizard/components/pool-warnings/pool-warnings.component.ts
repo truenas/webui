@@ -105,6 +105,7 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   private setExportedPoolOptions(): void {
+    this.poolAndDisks.clear();
     const exportedPools = this.disksWithExportedPools
       .map((disk) => disk.exported_zpool)
       .filter((pool): pool is string => !!pool);

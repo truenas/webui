@@ -1,22 +1,24 @@
 <ix-page-header>
   @if (isHaLicensed()) {
-    <ix-button-group
-      [formControl]="controllerTypeControl"
-      [label]="'Controller' | translate"
-      [options]="controllerTypeOptions$"
-      [inlineFields]="true"
-      [attr.aria-label]="'Controller Type' | translate"
-    ></ix-button-group>
+    <div class="controller-toggle">
+      <span class="controller-toggle__label" [id]="controllerToggleLabelId">{{ 'Controller' | translate }}</span>
+      <tn-button-toggle-group
+        [formControl]="controllerTypeControl"
+        [ariaLabelledby]="controllerToggleLabelId"
+      >
+        @for (option of controllerTypeOptions; track option.value) {
+          <tn-button-toggle [value]="option.value">{{ option.label }}</tn-button-toggle>
+        }
+      </tn-button-toggle-group>
+    </div>
   }
 
-  <a
+  <tn-button
     ixTest="audit-settings"
-    mat-button
     fragment="audit-card"
     [routerLink]="['/system/advanced']"
-  >
-    {{ 'Audit Settings' | translate }}
-  </a>
+    [label]="'Audit Settings' | translate"
+  ></tn-button>
 </ix-page-header>
 
 <ix-master-detail-view
@@ -28,6 +30,7 @@
   <ix-audit-list
     master
     [dataProvider]="dataProvider"
+    (rowSelected)="dataProvider.expandedRow = $event"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-audit-list>
 

@@ -1,6 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
+import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 
 export interface BaseShare {
   id: number;
@@ -18,6 +19,7 @@ export interface BaseShare {
     watch_list?: string[];
     ignore_list?: string[];
   };
+  tier?: SharingTierInfo | null;
 }
 
 export type SmbShare

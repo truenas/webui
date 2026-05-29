@@ -1,6 +1,7 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
+import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 import { TruenasConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
 
 describe('TruenasConnectStatusDisplayComponent', () => {
@@ -33,11 +34,22 @@ describe('TruenasConnectStatusDisplayComponent', () => {
 
   it('should display failed state correctly', () => {
     spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
     spectator.detectChanges();
 
     expect(spectator.query('.status-failed')).toBeTruthy();
     expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('Connection Failed...');
     expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
+  });
+
+  it('shows a timeout-specific message when the user did not finish authorization in time', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationTimeout);
+    spectator.detectChanges();
+
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText(
+      "Registration wasn't completed in time. Click Retry Connection and finish authorization in the TrueNAS Connect window.",
+    );
   });
 
   it('should display active state correctly', () => {
@@ -81,9 +93,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.setInput('tier', TruenasConnectTier.Foundation);
     spectator.detectChanges();
 
-    const badge = spectator.query('.tier-badge');
+    const badge = spectator.query<HTMLElement>('.tier-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('tier-foundation');
+    expect(badge?.style.background).toBe(tierDisplayConfig[TruenasConnectTier.Foundation].background);
     expect(badge).toContainText('Tier: Foundation');
   });
 
@@ -92,9 +104,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.setInput('tier', TruenasConnectTier.Plus);
     spectator.detectChanges();
 
-    const badge = spectator.query('.tier-badge');
+    const badge = spectator.query<HTMLElement>('.tier-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('tier-plus');
+    expect(badge?.style.background).toBe(tierDisplayConfig[TruenasConnectTier.Plus].background);
     expect(badge).toContainText('Tier: Plus');
   });
 
@@ -103,9 +115,9 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.setInput('tier', TruenasConnectTier.Business);
     spectator.detectChanges();
 
-    const badge = spectator.query('.tier-badge');
+    const badge = spectator.query<HTMLElement>('.tier-badge');
     expect(badge).toExist();
-    expect(badge).toHaveClass('tier-business');
+    expect(badge?.style.background).toBe(tierDisplayConfig[TruenasConnectTier.Business].background);
     expect(badge).toContainText('Tier: Business');
   });
 });

@@ -163,13 +163,13 @@ export class GuiFormComponent implements OnInit {
       }),
       switchMap(() => {
         this.isFormLoading.set(true);
-        return this.api.call('system.general.update', [params as SystemGeneralConfigUpdate]);
+        return this.api.call('system.general.update', [params]);
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.isFormLoading.set(false);
-        this.handleServiceRestart(params as SystemGeneralConfigUpdate);
+        this.handleServiceRestart(params);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

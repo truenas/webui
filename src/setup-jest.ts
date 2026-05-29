@@ -30,7 +30,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnIconComponent, TnIconTesting } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnIconComponent, TnIconTesting, TnTablePagerComponent } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
 import { MockComponent, MockProvider } from 'ng-mocks';
@@ -76,7 +76,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import {
@@ -158,7 +157,7 @@ defineGlobalsInjections({
     UiSearchDirective,
     RequiresRolesDirective,
     IxTableComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,

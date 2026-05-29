@@ -36,8 +36,13 @@ export const helptextPoolCreation = {
 
   dRaidChildrenExplanation: T('The number of children must at the minimum accommodate the total number of disks required for the previous configuration options including parity drives.'),
 
-  addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
+  addVdevStripeSpecialWarning: T('Adding a stripe special VDEV introduces a single point of failure to your pool.'),
   addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
+
+  specialRedundancyMismatchWarning: T('The metadata VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),
+  dedupRedundancyMismatchWarning: T('The dedup VDEV redundancy is lower than the data VDEV redundancy. Losing this VDEV will destroy the pool.'),
+  specialMixedLayoutWarning: T('Mixing layouts within the metadata class is not recommended.'),
+  dedupMixedLayoutWarning: T('Mixing layouts within the dedup class is not recommended.'),
 
   // SED Encryption
   sedInfoMessage: T('SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.'),

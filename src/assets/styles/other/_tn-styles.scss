@@ -57,11 +57,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     @include variable(background, --bg1, $bg1);
   }
 
-  .mat-snack-bar-container {
-    background-color: var(--bg1);
-    color: var(--fg1);
-  }
-
   /////////////////// Typography (egret overrides)
 
   html,
@@ -368,7 +363,7 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
         .mat-mdc-dialog-content,
         .mat-mdc-dialog-actions {
-          padding: 0;
+          padding: 0 0 5px;
         }
       }
     }
@@ -883,6 +878,11 @@ ix-nested-tree-node[aria-level='2'] {
   ix-bootenv-node-item {
     padding-left: 33px;
   }
+}
+
+// Preserves explicit \n line breaks in matTooltip content.
+.tooltip-multiline {
+  white-space: pre-line;
 }
 
 .input-container {

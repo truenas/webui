@@ -158,6 +158,14 @@ export class ReplicationFormComponent implements OnInit {
     return this.generalSection().form.controls.direction.value === Direction.Push;
   }
 
+  get isSourceLocal(): boolean {
+    return this.isPush || this.isLocal;
+  }
+
+  get isTargetLocal(): boolean {
+    return !this.isPush || this.isLocal;
+  }
+
   get usesNameRegex(): boolean {
     return this.sourceSection().form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
@@ -342,6 +350,7 @@ export class ReplicationFormComponent implements OnInit {
           return;
         }
 
+        this.isSudoDialogShown = true;
         this.dialog.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: this.translate.instant(helptextReplicationWizard.sudoWarning),
@@ -349,7 +358,6 @@ export class ReplicationFormComponent implements OnInit {
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((useSudo) => {
           this.generalSection().form.controls.sudo.setValue(useSudo);
-          this.isSudoDialogShown = true;
         });
       });
   }

@@ -4,6 +4,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
+import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 
@@ -28,4 +29,5 @@ export class DatasetRolesCellComponent {
   readonly containerNames = computed(() => uniq(this.dataset().containers?.map((container) => container.name))?.join(', ') || '');
 
   readonly hasShares = computed(() => doesDatasetHaveShares(this.dataset()));
+  readonly isPerformanceTier = computed(() => this.dataset().tier?.tier_type === DatasetTier.Performance);
 }

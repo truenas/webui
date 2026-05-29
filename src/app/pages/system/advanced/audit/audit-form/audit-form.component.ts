@@ -15,7 +15,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -98,7 +97,7 @@ export class AuditFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const configUpdate = this.form.value as AuditConfig;
+    const configUpdate = this.form.value;
     this.isFormLoading.set(true);
     this.api.call('audit.update', [configUpdate]).pipe(
       tap(() => {

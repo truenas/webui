@@ -1,63 +1,65 @@
 import { Injectable, inject } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnToastConfig, TnToastRef, TnToastService, TnToastType,
+} from '@truenas/ui-components';
+import { take } from 'rxjs/operators';
 import { SnackbarOptions } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
-import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
-/**
- * If you need more options for your custom case,
- * use SnackbarComponent or even MatSnackBar directly.
- */
 @Injectable({
   providedIn: 'root',
 })
 export class SnackbarService {
-  private matSnackBar = inject(MatSnackBar);
+  private tnToast = inject(TnToastService);
   private translate = inject(TranslateService);
 
-  open(options: SnackbarOptions): MatSnackBarRef<SnackbarComponent> {
-    const config: MatSnackBarConfig = {
-      announcementMessage: options.message,
-      politeness: options.politeness ?? 'polite',
+  private activeRef: TnToastRef | null = null;
+
+  open(options: SnackbarOptions): TnToastRef {
+    const config: TnToastConfig = {
       duration: options.duration ?? 4000,
-      verticalPosition: options.verticalPosition ?? 'top',
-      panelClass: options.panelClass || 'ix-snackbar-high-priority',
-      data: {
-        message: options.message,
-        icon: options.icon ?? tnIconMarker('information', 'mdi'),
-        iconCssColor: options.iconCssColor || 'var(--primary)',
-        button: options.button,
-      },
+      type: options.type ?? TnToastType.Info,
     };
 
-    return this.matSnackBar.openFromComponent(SnackbarComponent, config);
+    const ref = options.button
+      ? this.tnToast.open(options.message, options.button.title, config)
+      : this.tnToast.open(options.message, config);
+
+    const buttonAction = options.button?.action;
+    if (buttonAction) {
+      ref.onAction().pipe(take(1)).subscribe(() => buttonAction());
+    }
+
+    // Track the active toast so dismiss() can close it, and stop tracking once
+    // it goes away on its own (auto-dismiss, action, or programmatic dismiss)
+    // to avoid holding a stale ref.
+    this.activeRef = ref;
+    ref.afterDismissed().pipe(take(1)).subscribe(() => {
+      if (this.activeRef === ref) {
+        this.activeRef = null;
+      }
+    });
+
+    return ref;
   }
 
   dismiss(): void {
-    this.matSnackBar.dismiss();
+    this.activeRef?.dismiss();
+    this.activeRef = null;
   }
 
-  success(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
-    return this.open({
-      message,
-      icon: tnIconMarker('check', 'mdi'),
-      iconCssColor: 'var(--green)',
-      politeness: 'assertive',
-      verticalPosition: 'top',
-    });
+  success(message: TranslatedString): TnToastRef {
+    return this.open({ message, type: TnToastType.Success });
   }
 
-  error(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
+  error(message: TranslatedString): TnToastRef {
+    // The Close button only needs to dismiss the toast; tn-toast's action
+    // handler dismisses on click, so no `action` callback is required.
     return this.open({
       message,
-      icon: tnIconMarker('alert-circle', 'mdi'),
-      iconCssColor: 'var(--red)',
-      politeness: 'assertive',
-      button: {
-        title: this.translate.instant('Close'),
-      },
+      type: TnToastType.Error,
+      button: { title: this.translate.instant('Close') },
     });
   }
 }

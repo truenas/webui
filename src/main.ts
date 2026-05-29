@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
 } from '@angular/material/core';
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import {
   withPreloading,
@@ -37,6 +36,7 @@ import { filter, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
@@ -107,13 +107,6 @@ bootstrapApplication(AppComponent, {
       useValue: { usePopover: false },
     },
     {
-      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
-      useValue: {
-        verticalPosition: 'top',
-        duration: 3000,
-      } as MatSnackBarConfig,
-    },
-    {
       provide: ErrorHandler,
       useClass: ErrorHandlerService,
     },
@@ -121,6 +114,7 @@ bootstrapApplication(AppComponent, {
       provide: WINDOW,
       useFactory: getWindow,
     },
+    provideTnTablePagerLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

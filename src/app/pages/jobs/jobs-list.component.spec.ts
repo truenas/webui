@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -65,7 +64,6 @@ describe('JobsListComponent', () => {
         timezone: 'Europe/Kiev',
       }),
       mockProvider(DialogService),
-      mockProvider(MatSnackBar),
       mockProvider(ActivatedRoute, {
         queryParams: of({}),
       }),

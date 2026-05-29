@@ -1,62 +1,77 @@
-<ix-form
-  [formGroup]="form"
-  [isEditMode]="!isNew()"
-  [addTitle]="'Add Namespace' | translate"
-  [editTitle]="'Edit Namespace' | translate"
-  [requiredRoles]="requiredRoles"
-  [submitHandler]="handleSubmit"
-  [suppressSuccessSnackbar]="suppressSuccessSnackbar()"
->
-  <ix-fieldset>
-    <ix-button-group
-      formControlName="device_type"
-      [options]="typeOptions$"
-      [label]="'Type' | translate"
-    ></ix-button-group>
+<ix-modal-header
+  [title]="isNew() ? ('Add Namespace' | translate) : ('Edit Namespace' | translate)"
+></ix-modal-header>
 
-    @switch (form.value.device_type) {
-      @case (FormNamespaceType.Zvol) {
-        <ix-explorer
-          formControlName="device_path"
-          [label]="'Path To Zvol' | translate"
-          [rootNodes]="zvolsRootNode"
-          [nodeProvider]="zvolProvider"
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-button-group
+          formControlName="device_type"
+          [options]="typeOptions$"
+          [label]="'Type' | translate"
+        ></ix-button-group>
+
+        @switch (form.value.device_type) {
+          @case (FormNamespaceType.Zvol) {
+            <ix-explorer
+              formControlName="device_path"
+              [label]="'Path To Zvol' | translate"
+              [rootNodes]="zvolsRootNode"
+              [nodeProvider]="zvolProvider"
+            >
+              <ix-explorer-create-zvol></ix-explorer-create-zvol>
+            </ix-explorer>
+          }
+
+          @case (FormNamespaceType.ExistingFile) {
+            <ix-explorer
+              formControlName="device_path"
+              [label]="'Path To File' | translate"
+              [rootNodes]="datasetsRootNode"
+              [nodeProvider]="fileProvider"
+            ></ix-explorer>
+          }
+
+          @case (FormNamespaceType.NewFile) {
+            <ix-explorer
+              formControlName="device_path"
+              [label]="'Parent Directory' | translate"
+              [rootNodes]="datasetsRootNode"
+              [nodeProvider]="directoryProvider"
+            >
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            </ix-explorer>
+
+            <ix-input
+              formControlName="filename"
+              [label]="'Filename' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <ix-input
+              formControlName="filesize"
+              [label]="'File Size' | translate"
+              [required]="true"
+              [parse]="formatter.memorySizeParsing"
+              [format]="formatter.memorySizeFormatting"
+            ></ix-input>
+          }
+        }
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="primary"
+          type="submit"
+          ixTest="save"
+          [disabled]="form.invalid"
         >
-          <ix-explorer-create-zvol></ix-explorer-create-zvol>
-        </ix-explorer>
-      }
-
-      @case (FormNamespaceType.ExistingFile) {
-        <ix-explorer
-          formControlName="device_path"
-          [label]="'Path To File' | translate"
-          [rootNodes]="datasetsRootNode"
-          [nodeProvider]="fileProvider"
-        ></ix-explorer>
-      }
-
-      @case (FormNamespaceType.NewFile) {
-        <ix-explorer
-          formControlName="device_path"
-          [label]="'Parent Directory' | translate"
-          [rootNodes]="datasetsRootNode"
-          [nodeProvider]="directoryProvider"
-        ></ix-explorer>
-
-        <ix-input
-          formControlName="filename"
-          [label]="'Filename' | translate"
-          [required]="true"
-        ></ix-input>
-
-        <ix-input
-          formControlName="filesize"
-          [label]="'File Size' | translate"
-          [required]="true"
-          [parse]="formatter.memorySizeParsing"
-          [format]="formatter.memorySizeFormatting"
-        ></ix-input>
-      }
-    }
-  </ix-fieldset>
-</ix-form>
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

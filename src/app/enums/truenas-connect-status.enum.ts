@@ -27,6 +27,13 @@ export const TncStatus = {
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
+export const TruenasConnectFailureDescription: Partial<Record<TruenasConnectStatus, string>> = {
+  [TruenasConnectStatus.RegistrationFinalizationTimeout]: T(
+    "Registration wasn't completed in time. Click Retry Connection and finish authorization in the TrueNAS Connect window.",
+  ),
+};
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = {
   [TruenasConnectStatus.Disabled]: T('TrueNAS Connect is disabled'),
   [TruenasConnectStatus.ClaimTokenMissing]: T('Waiting for claim token to be generated'),

@@ -1,4 +1,3 @@
 <ix-base-namespace-form
-  [submitHandler]="handleSubmit"
-  [suppressSuccessSnackbar]="true"
+  (submitted)="onSubmit($event)"
 ></ix-base-namespace-form>

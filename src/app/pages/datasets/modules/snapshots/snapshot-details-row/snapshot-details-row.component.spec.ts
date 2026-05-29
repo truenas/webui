@@ -5,10 +5,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -30,6 +32,7 @@ describe('SnapshotDetailsRowComponent', () => {
       ReactiveFormsModule,
       FileSizePipe,
       FormatDateTimePipe,
+      MockComponent(IxDateComponent),
     ],
     providers: [
       mockAuth(),
@@ -64,7 +67,9 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(rows).toHaveLength(4);
 
     expect(rows[0]).toHaveText('Used: 1.49 TiB');
-    expect(rows[1]).toHaveText('Date created: 2021-10-18 19:51:54');
+    expect(rows[1]).toHaveText('Date created:');
+    expect(spectator.query(IxDateComponent, { parentSelector: '.details-row:nth-child(2)' }).date)
+      .toBe(1634575914 * 1000);
     expect(rows[2]).toHaveText('Referenced: 1.49 TiB');
     expect(rows[3]).toHaveText('Retention: Will be automatically destroyed at 2022-06-07 07:25:14 by periodic snapshot task');
   });
@@ -86,7 +91,18 @@ describe('SnapshotDetailsRowComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, { data: fakeZfsSnapshot.name });
+    // The dialog now accepts the full snapshot so it can render the creation
+    // timestamp without a second pool.snapshot.query. By the time the user
+    // clicks Rollback, `pool.snapshot.query` (in ngOnInit) has populated
+    // `snapshotInfo` with `creation`, so the component passes that through.
+    expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialog, {
+      data: expect.objectContaining({
+        name: fakeZfsSnapshot.name,
+        properties: expect.objectContaining({
+          creation: expect.objectContaining({ parsed: 1634575914 }),
+        }),
+      }),
+    });
   });
 
   it('should make websocket query when Hold is changed', async () => {

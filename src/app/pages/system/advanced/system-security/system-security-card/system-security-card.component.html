@@ -1,4 +1,4 @@
-<mat-card id="email-card">
+<mat-card [ixUiSearch]="searchableElements.elements.card">
   <mat-toolbar-row>
     <h3>{{ 'System Security' | translate }}</h3>
     <div *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="actions action-icon">
@@ -7,6 +7,7 @@
         mat-button
         color="default"
         [ixTest]="['system-security', 'settings']"
+        [ixUiSearch]="searchableElements.elements.settings"
         [attr.aria-label]="'System Security Settings' | translate"
         (click)="openSystemSecuritySettings(systemSecurityConfig)"
       >
@@ -17,21 +18,21 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.enableFips">
         <span class="label">{{ 'Enable FIPS' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
         </span>
       </mat-list-item>
 
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.enableGposStig">
         <span class="label">{{ 'Enable General Purpose OS STIG compatibility mode' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           {{ systemSecurityConfig?.enable_gpos_stig ? ('Yes' | translate) : ('No' | translate) }}
         </span>
       </mat-list-item>
 
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.minPasswordAge">
         <span class="label">{{ 'Min Password Age' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           @if (systemSecurityConfig?.min_password_age) {
@@ -42,7 +43,7 @@
         </span>
       </mat-list-item>
 
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.maxPasswordAge">
         <span class="label">{{ 'Max Password Age' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           @if (systemSecurityConfig?.max_password_age) {
@@ -53,7 +54,7 @@
         </span>
       </mat-list-item>
 
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.passwordComplexityRuleset">
         <span class="label">{{ 'Password Complexity Ruleset' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           @if (systemSecurityConfig?.password_complexity_ruleset?.$set?.length) {
@@ -66,7 +67,7 @@
         </span>
       </mat-list-item>
 
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.minPasswordLength">
         <span class="label">{{ 'Min Password Length' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           @if (systemSecurityConfig?.min_password_length) {
@@ -77,7 +78,7 @@
         </span>
       </mat-list-item>
 
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.passwordHistoryLength">
         <span class="label">{{ 'Password History Length' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           @if (systemSecurityConfig?.password_history_length) {

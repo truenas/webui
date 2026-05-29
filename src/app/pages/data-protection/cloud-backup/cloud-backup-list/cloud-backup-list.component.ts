@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, output, signal, inject, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
@@ -11,7 +11,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -30,7 +30,6 @@ import {
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -51,7 +50,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableBodyComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     IxTableHeadComponent,
     TranslateModule,
     AsyncPipe,
@@ -214,7 +213,7 @@ export class CloudBackupListComponent {
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.api
-      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
+      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.dataProvider().load(),

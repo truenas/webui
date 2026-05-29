@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
-import { SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseNamespaceFormComponent,
@@ -25,35 +28,55 @@ export interface NamespaceFormParams {
 export class NamespaceFormComponent {
   slideInRef = inject<SlideInRef<NamespaceFormParams, NamespaceChanges>>(SlideInRef);
   private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
+  private baseForm = viewChild(BaseNamespaceFormComponent);
 
-  protected existingNamespace = signal<NvmeOfNamespace | undefined>(undefined);
+  protected existingNamespace = signal<NvmeOfNamespace>(undefined);
+  protected error = signal<unknown>(null);
 
   constructor() {
     this.existingNamespace.set(this.slideInRef.getData().namespace);
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.baseForm()?.isFormDirty || false);
+    });
   }
 
   protected get subsystemId(): number {
     return this.slideInRef.getData().subsystemId;
   }
 
-  handleSubmit = (changes: NamespaceChanges): SubmitResult => {
+  protected onSubmit(newNamespace: NamespaceChanges): void {
     const payload = {
-      ...changes,
+      ...newNamespace,
       subsys_id: this.subsystemId,
     };
-    const existing = this.existingNamespace();
 
-    return {
-      request$: existing
-        ? this.api.call('nvmet.namespace.update', [existing.id, payload])
-        : this.api.call('nvmet.namespace.create', [payload]),
-      successMessage: existing
-        ? this.translate.instant('Namespace updated.')
-        : this.translate.instant('Namespace created.'),
-      // Slide-in callers want the form's `NamespaceChanges`, not the raw API
-      // response object (which is the full NvmeOfNamespace row).
-      closeWith: () => changes,
-    };
-  };
+    const request$ = this.existingNamespace()
+      ? this.api.call('nvmet.namespace.update', [this.existingNamespace().id, payload])
+      : this.api.call('nvmet.namespace.create', [payload]);
+
+    request$.pipe(
+      this.loader.withLoader(),
+      takeUntilDestroyed(this.destroyRef),
+    )
+      .subscribe({
+        next: () => {
+          const message = this.existingNamespace()
+            ? this.translate.instant('Namespace updated.')
+            : this.translate.instant('Namespace created.');
+
+          this.snackbar.success(message);
+
+          this.slideInRef.close({
+            response: newNamespace,
+          });
+        },
+        error: (error: unknown) => {
+          this.error.set(error);
+        },
+      });
+  }
 }

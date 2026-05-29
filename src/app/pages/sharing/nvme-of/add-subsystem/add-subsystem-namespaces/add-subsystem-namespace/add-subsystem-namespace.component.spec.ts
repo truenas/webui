@@ -1,6 +1,5 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { firstValueFrom } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
@@ -19,7 +18,10 @@ describe('AddSubsystemNamespaceComponent', () => {
       MockComponent(BaseNamespaceFormComponent),
     ],
     providers: [
-      mockProvider(SlideInRef),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
+      }),
     ],
   });
 
@@ -27,24 +29,23 @@ describe('AddSubsystemNamespaceComponent', () => {
     spectator = createComponent();
   });
 
-  it('renders BaseNamespaceFormComponent and wires submitHandler + suppressSuccessSnackbar', () => {
-    const baseForm = spectator.query(BaseNamespaceFormComponent);
-    expect(baseForm).toBeTruthy();
-    expect(baseForm.submitHandler).toBeDefined();
-    expect(baseForm.suppressSuccessSnackbar).toBe(true);
+  it('renders BaseNamespaceFormComponent', () => {
+    expect(spectator.query(BaseNamespaceFormComponent)).toBeTruthy();
   });
 
-  it('passes the NamespaceChanges through as-is so the wrapper closes with that payload', async () => {
+  it('closes the slide-in when BaseNamespaceFormComponent is submitted', () => {
+    const component = spectator.query(BaseNamespaceFormComponent);
+    const slideInRef = spectator.inject(SlideInRef);
+
     const newNamespace: NamespaceChanges = {
       device_path: '/mnt/dozer/file',
       device_type: NvmeOfNamespaceType.File,
       filesize: 1024,
     };
+    component.submitted.emit(newNamespace);
 
-    const result = spectator.component.handleSubmit(newNamespace);
-    // The wrapper subscribes to request$ on submit; emitted value is what
-    // it then closes the slide-in with (no closeWith override).
-    await expect(firstValueFrom(result.request$)).resolves.toEqual(newNamespace);
-    expect(result.successMessage).toBe('');
+    expect(slideInRef.close).toHaveBeenCalledWith({
+      response: newNamespace,
+    });
   });
 });

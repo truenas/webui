@@ -191,7 +191,7 @@ export class VmEditFormComponent implements OnInit {
     const gpusIds = this.form.getRawValue().gpus;
     this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       switchMap(() => forkJoin([
-        this.api.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+        this.api.call('vm.update', [this.existingVm.id, vmPayload]),
         this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       ])),
       takeUntilDestroyed(this.destroyRef),

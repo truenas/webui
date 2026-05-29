@@ -116,7 +116,7 @@ describe('EventDataDetailsCardComponent', () => {
   });
 
   it('renders Event Data in Yaml format', () => {
-    const cardContent = spectator.query('mat-card pre')!;
+    const cardContent = spectator.query('tn-card pre')!;
     expect(cardContent.textContent).toBe(yamlContent);
   });
 

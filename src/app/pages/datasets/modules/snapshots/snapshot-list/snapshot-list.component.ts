@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
@@ -36,7 +36,6 @@ import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -50,6 +49,7 @@ import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshot
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
 import { snapshotPageEntered, snapshotsLoaded } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
+import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -83,7 +83,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     IxTableBodyComponent,
     IxTableDetailsRowDirective,
     SnapshotDetailsRowComponent,
-    IxTablePagerComponent,
+    TnTablePagerComponent,
     UiSearchDirective,
   ],
 })
@@ -165,17 +165,17 @@ export class SnapshotListComponent implements OnInit {
     sizeColumn({
       title: this.translate.instant('Used'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => row?.properties?.used?.parsed,
+      getValue: (row) => getFiniteNumber(row?.properties?.used?.parsed),
     }),
     dateColumn({
       title: this.translate.instant('Date created'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => row?.properties?.creation?.parsed.$date,
+      getValue: (row) => getSnapshotCreationMs(row),
     }),
     sizeColumn({
       title: this.translate.instant('Referenced'),
       hidden: !this.showExtraColumnsControl.value,
-      getValue: (row) => row?.properties?.referenced?.parsed,
+      getValue: (row) => getFiniteNumber(row?.properties?.referenced?.parsed),
     }),
   ], {
     uniqueRowTag: (row) => 'snapshot-' + row.id,

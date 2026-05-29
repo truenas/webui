@@ -25,6 +25,73 @@
       white-space: nowrap;
     }
 
+    &.tier-item {
+      align-items: center;
+    }
+
+    .change-tier-link {
+      background: none;
+      border: none;
+      color: var(--link);
+      cursor: pointer;
+      font: inherit;
+      padding: 0;
+      text-decoration: underline;
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+    }
+
+    .tier-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .job-status-icon {
+      cursor: pointer;
+
+      &.spinning {
+        animation: spin 2s infinite linear;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+    }
+
+    .job-status-text {
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+
+      &.fn-theme-primary {
+        color: var(--primary);
+      }
+
+      &.fn-theme-grey {
+        color: var(--fg2);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(359deg);
+      }
+    }
+
     .value.dataset-comments {
       flex: 1;
       margin: 0;

@@ -1,41 +1,57 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
+@import 'mixins/text';
 
-:host ::ng-deep .sticky-header {
-  height: inherit;
-  min-height: 48px;
-  top: 50px;
+.audit-table {
+  // Reaches into @truenas/ui-components internals because tn-table currently
+  // exposes no public API (host class or CSS custom property) for fixed layout
+  // or per-cell overflow — only --tn-table-active-bg/-indicator are public.
+  // These selectors will break if the internal class names change; revisit once
+  // the library offers a supported hook.
+  ::ng-deep {
+    .tn-table__table {
+      table-layout: fixed;
+    }
 
-  @media(max-width: $breakpoint-md) {
-    position: static;
-  }
-
-  >thead {
-    align-items: center;
-    display: flex;
-    width: 100%;
-
-    th {
-      align-items: center;
-      display: flex;
+    .tn-table__cell {
+      overflow: hidden;
+      white-space: normal;
     }
   }
 }
 
+.cell-clamp {
+  @include line-clamp(2);
+}
+
+.user-avatar,
 .event-data {
   align-items: center;
   display: flex;
-  gap: 8px;
-  margin-top: -5px;
 
-  tn-icon {
+  // The line-clamp mixin wraps text in -webkit-inline-box, whose bottom edge
+  // sits ~3px below the text baseline. With `align-items: center` the clamped
+  // span ends up nudged down relative to the leading icon/avatar; the negative
+  // bottom margin re-centers it. Switching to baseline alignment offsets the
+  // icon instead, so this targeted offset is the lowest-blast-radius fix.
+  .cell-clamp {
+    margin: 0 0 -3px;
+  }
+}
+
+.event-data {
+  gap: 8px;
+
+  .status-icon {
+    height: 15px;
+    min-height: 15px;
+    min-width: 15px;
     position: relative;
     top: 2px;
-    min-width: 15px;
-    min-height: 15px;
+    width: 15px;
 
     &.error-color {
-      color: var(--red);
+      color: var(--tn-red);
     }
   }
 }

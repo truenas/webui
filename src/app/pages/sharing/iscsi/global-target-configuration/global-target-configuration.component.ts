@@ -14,7 +14,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { helptextIscsi } from 'app/helptext/sharing';
-import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -111,7 +110,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading.set(true);
-    const values = { ...this.form.value } as IscsiGlobalConfigUpdate;
+    const values = { ...this.form.value };
 
     this.api.call('iscsi.global.update', [values])
       .pipe(takeUntilDestroyed(this.destroyRef))

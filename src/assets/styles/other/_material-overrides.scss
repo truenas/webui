@@ -6,6 +6,7 @@ html .ix-dark {
   --mdc-list-list-item-label-text-color: var(--fg2);
   --mdc-list-list-item-disabled-label-text-color: var(--fg2);
   --mdc-list-list-item-hover-label-text-color: var(--fg2);
+  --mdc-list-list-item-focus-label-text-color: var(--fg2);
   --mdc-list-list-item-label-text-font: var(--font-family-body);
   --mdc-list-list-item-one-line-container-height: 48px;
   --mdc-list-list-item-selected-container-color: var(--bg2);
@@ -41,7 +42,6 @@ html .ix-dark {
   --mat-button-filled-label-text-color: var(--fg2);
   --mat-icon-button-disabled-icon-color: var(--alt-fg1);
   --mat-list-list-item-disabled-label-text-color: var(--fg2);
-  --mat-snack-bar-container-color: var(--bg2);
   --mat-slide-toggle-selected-hover-handle-color: var(--primary);
   --mdc-switch-selected-handle-color: var(--primary);
   --mdc-switch-selected-track-color: var(--primary);
@@ -450,33 +450,5 @@ html .ix-dark {
   .mat-mdc-slide-toggle .mdc-switch--disabled+label {
     color: var(--fg2);
     opacity: var(--disabled-opacity);
-  }
-}
-
-// Fix for snackbar z-index to ensure it appears above other overlays like dialogs
-// Apply high z-index to the overlay wrapper that contains snackbars
-.cdk-global-overlay-wrapper {
-  &:has(.mat-mdc-snack-bar-container),
-  &:has(.ix-snackbar-high-priority) {
-    z-index: 3000 !important;
-  }
-}
-
-// Fallback approach for browsers that don't support :has()
-// Target the snackbar container directly
-.mat-mdc-snack-bar-container.ix-snackbar-high-priority {
-  // Force the parent overlay wrapper to have higher z-index
-  position: relative;
-
-  // Use a pseudo-element to push the z-index up
-  &::before {
-    bottom: 0;
-    content: '';
-    left: 0;
-    pointer-events: none;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: -1;
   }
 }

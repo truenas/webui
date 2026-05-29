@@ -805,18 +805,121 @@ body {
     outline: 1.5px solid var(--primary);
   }
 
-  .search-element-highlighted {
-    @include pulse-box-shadow();
+  // Both variants paint the highlight via an absolutely-positioned ::after
+  // overlay so the visual is on top of the element's content (outline /
+  // box-shadow on the host gets hidden under child backgrounds in cards).
+  .ix-highlight-target,
+  .ix-highlight-target-inset {
+    // CSS multi-column layouts (master-detail .scroll-window uses `columns:`)
+    // can fragment a tall block across columns, splitting the card and the
+    // ::after overlay in half. Keep the highlight target atomic.
+    break-inside: avoid;
+    // `!important` is needed because some hosts (e.g. `.details-item a` from
+    // shared card mixins) set `overflow: hidden` with equal-or-higher
+    // specificity, which clips the ::after pulse outline so the user only
+    // sees a color flash on the link with no animated border.
+    overflow: visible !important;
+    position: relative !important;
 
-    background-color: var(--contrast-darkest) !important;
-    box-shadow: none;
-    outline: 0;
-    overflow: visible;
+    // The service focuses the highlighted host (adding tabindex=-1 if it
+    // isn't natively focusable). Suppress the browser's default focus ring,
+    // the cdk-focused background-tint, AND any focus-driven color change so
+    // the only visual is our pulse — the ::after IS the focus indicator.
+    // Note: MDC list items pull their focus-state text colour from
+    // --mdc-list-list-item-focus-label-text-color which defaults to a dark
+    // value; reset it so the row keeps its normal foreground colour.
+    // `<tr>` is excluded because the highlight is painted via outline +
+    // box-shadow ON THE HOST for table rows (the ::after overlay isn't
+    // reliable on `<tr>`); zeroing those out here would erase the pulse.
+    &:not(tr) {
+      &:focus,
+      &:focus-visible,
+      &.cdk-focused,
+      &.cdk-keyboard-focused,
+      &.cdk-mouse-focused {
+        --mdc-list-list-item-focus-label-text-color: inherit;
+        --mdc-list-list-item-focus-state-layer-color: transparent;
+
+        background-color: inherit !important;
+        box-shadow: none !important;
+        color: inherit !important;
+        outline: none !important;
+      }
+    }
+
+    // mat-list-item pushes its focused-state colour down to inner spans via
+    // MDC styling, so the host-level `color: inherit` above isn't enough.
+    // Scope the descendant override to list items only — applying it to every
+    // highlighted host would stomp on legitimate child colours elsewhere.
+    &.mat-mdc-list-item {
+      &:focus,
+      &:focus-visible,
+      &.cdk-focused,
+      &.cdk-keyboard-focused,
+      &.cdk-mouse-focused {
+        *,
+        *::before,
+        *::after {
+          color: inherit !important;
+        }
+      }
+    }
+
+    &::after {
+      border-radius: inherit;
+      bottom: 0;
+      content: '';
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 999;
+    }
+  }
+
+  // Default outset variant — outline + glow drawn OUTSIDE the element edge.
+  .ix-highlight-target::after {
+    animation: ix-highlight-pulse 1.5s infinite;
 
     @media (prefers-reduced-motion) {
-      &::after {
-        animation: none;
-      }
+      animation: none;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+  }
+
+  // Inset variant — solid border drawn at the element's edges, painted from
+  // inside via the ::after overlay. Use for elements whose surrounding
+  // overflow:hidden parent would clip an outset outline (master-detail cards).
+  .ix-highlight-target-inset::after {
+    animation: ix-highlight-pulse-inset 1.5s ease-in-out infinite;
+    border: 2px solid var(--primary);
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+    }
+  }
+
+  // `<tr>` does not establish a reliable containing block for an absolutely
+  // positioned ::after — the `top/right/bottom/left: 0` overlay escapes the
+  // row's box and stretches across the table's positioned ancestor, visibly
+  // distorting the page. Paint the pulse directly on the row (skip the
+  // ::after overlay) and always use the outset variant — `border-collapse`
+  // makes a `border` on `<tr>` unreliable, and tables don't have the
+  // overflow-hidden parents that motivated the inset variant.
+  tr.ix-highlight-target,
+  tr.ix-highlight-target-inset {
+    animation: ix-highlight-pulse 1.5s infinite;
+
+    &::after {
+      content: none;
+    }
+
+    @media (prefers-reduced-motion) {
+      animation: none;
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
     }
   }
 }
@@ -826,7 +929,8 @@ body .mat-calendar-next-button::after {
   margin: 10px;
 }
 
-.mat-mdc-menu-panel:has(.search-element-highlighted) {
+.mat-mdc-menu-panel:has(.ix-highlight-target),
+.mat-mdc-menu-panel:has(.ix-highlight-target-inset) {
   overflow: visible;
 
   .mat-mdc-menu-content {
@@ -904,7 +1008,7 @@ div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
 }
 
 mat-tab-nav-panel {
-  .search-element-highlighted {
+  :is(.ix-highlight-target, .ix-highlight-target-inset) {
     &:not(button) {
       display: block;
     }

@@ -20,7 +20,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
@@ -189,7 +188,7 @@ export class AppsSettingsComponent implements OnInit {
 
     this.isFormLoading.set(true);
     forkJoin([
-      this.api.call('catalog.update', [{ preferred_trains: values.preferred_trains } as CatalogUpdate]),
+      this.api.call('catalog.update', [{ preferred_trains: values.preferred_trains }]),
       this.api.job('docker.update', [{
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,

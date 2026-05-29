@@ -1,62 +1,70 @@
-<ix-audit-search
-  [dataProvider]="dataProvider()"
-></ix-audit-search>
+<ix-audit-search [dataProvider]="dataProvider()"></ix-audit-search>
 
-<div class="sticky-header">
-  <thead
-    class="audit-header-row"
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider()"
-  ></thead>
-</div>
-
-<ix-table
+@let emptyAttrs = emptyAttrsFor(dataProvider().emptyType$ | async);
+<tn-table
+  class="audit-table"
   [ixUiSearch]="searchableElements.elements.audit"
-  [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
+  [dataSource]="(dataProvider().currentPage$ | async) ?? []"
+  [displayedColumns]="displayedColumns"
+  [trackBy]="trackByAuditId"
+  [clickable]="true"
+  [activeRow]="dataProvider().expandedRow"
+  [loading]="(dataProvider().isLoading$ | async) ?? false"
+  [loadingMessage]="loadingTitle | translate"
+  [emptyMessage]="emptyAttrs.title | translate"
+  [emptyIcon]="emptyAttrs.icon"
+  (sortChange)="onSortChange($event)"
+  (rowClick)="onRowClick($event)"
 >
-  <tbody
-    ix-table-body
-    detailsRowIdentifier="audit_id"
-    [columns]="columns"
-    [dataProvider]="dataProvider()"
-    [isLoading]="!!(dataProvider().isLoading$ | async)"
-    (expanded)="expanded($event)"
-  >
-    <ng-template
-      let-audit
-      ix-table-cell
-      [columnIndex]="1"
-      [dataProvider]="dataProvider()"
-    >
-      <div class="user-avatar" [matTooltip]="audit.username">
-        <div [innerHTML]="audit.username | userAvatar"></div>
-        <span>{{ audit.username || '-' }}</span>
+  <ng-container [tnColumnDef]="'service'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Service' | translate }}</ng-template>
+    <ng-template let-row tnCellDef>
+      <span class="cell-clamp">{{ row.service | auditServiceLabel | translate }}</span>
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'username'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'User' | translate }}</ng-template>
+    <ng-template let-row tnCellDef>
+      <div class="user-avatar" [tnTooltip]="row.username">
+        <!-- Decorative identicon; the username is shown as text alongside it. -->
+        <div aria-hidden="true" [innerHTML]="row.username | userAvatar"></div>
+        <span class="cell-clamp">{{ row.username || '-' }}</span>
       </div>
     </ng-template>
+  </ng-container>
 
-    <ng-template
-      let-audit
-      ix-table-cell
-      [columnIndex]="4"
-      [dataProvider]="dataProvider()"
-    >
-      <div class="event-data" [matTooltip]="audit | getLogImportantData | translate">
-        @if (audit.success) {
-          <tn-icon name="check-circle" library="mdi" customSize="15px"></tn-icon>
+  <ng-container [tnColumnDef]="'message_timestamp'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Timestamp' | translate }}</ng-template>
+    <ng-template let-row tnCellDef>
+      <span class="cell-clamp">
+        <ix-date [date]="row.message_timestamp * 1000"></ix-date>
+      </span>
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'event'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
+    <ng-template let-row tnCellDef>
+      <span class="cell-clamp">{{ row.event | auditEventLabel | translate }}</span>
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'event_data'">
+    <ng-template tnHeaderCellDef>{{ 'Event Data' | translate }}</ng-template>
+    <ng-template let-row tnCellDef>
+      @let importantData = row | getLogImportantData | translate;
+      <div class="event-data" [tnTooltip]="importantData">
+        @if (row.success) {
+          <tn-icon class="status-icon" name="check-circle" library="mdi"></tn-icon>
         } @else {
-          <tn-icon class="error-color" name="close-circle" library="mdi" customSize="15px"></tn-icon>
+          <tn-icon class="status-icon error-color" name="close-circle" library="mdi"></tn-icon>
         }
-        <span>{{ audit | getLogImportantData | translate }}</span>
+        <span class="cell-clamp">{{ importantData }}</span>
       </div>
     </ng-template>
-  </tbody>
-</ix-table>
+  </ng-container>
+</tn-table>
 
-<ix-table-pager
-  [dataProvider]="dataProvider()"
-  [pageSize]="dataProvider().pagination.pageSize"
-  [currentPage]="dataProvider().pagination.pageNumber"
-></ix-table-pager>
+<tn-table-pager [dataProvider]="dataProvider()"></tn-table-pager>
 

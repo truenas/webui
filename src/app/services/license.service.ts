@@ -1,7 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, shareReplay } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  catchError, combineLatest, defer, of, shareReplay,
+} from 'rxjs';
+import { first, map, switchMap } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -57,6 +59,46 @@ export class LicenseService {
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
   readonly hasSed$ = this.store$.select(selectHasSedFeature);
+
+  /**
+   * Mirrors `showSedCard` in `AdvancedSettingsComponent` — the SED card is
+   * rendered when either the system is licensed as Enterprise (which always
+   * exposes SED config) or a global SED password has already been set.
+   *
+   * Short-circuits on Enterprise so we don't burn a backend call for the
+   * password-set check when the answer is already true. `catchError` falls
+   * back to `false` so a transient API failure hides SED entries rather than
+   * tearing down the search filter chain. `refCount: true` ensures the
+   * fallback isn't permanently cached: the next subscribe after the chain
+   * goes idle re-runs `defer` and gets a fresh answer once the backend is
+   * healthy again.
+   */
+  readonly hasSedFeature$ = defer(() => this.store$.select(selectIsEnterprise).pipe(
+    first(),
+    switchMap((isEnterprise) => (
+      isEnterprise
+        ? of(true)
+        : this.api.call('system.advanced.sed_global_password_is_set').pipe(map(Boolean))
+    )),
+  )).pipe(
+    catchError(() => of(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /**
+   * Gates visibility of the System Security card (FIPS / STIG / password
+   * policy). True when the backend reports FIPS hardware support — that's
+   * the same condition `AdvancedSettingsComponent.isSystemLicensed` uses to
+   * render the card. `catchError` falls back to `false` so a transient
+   * `fips_available` failure hides the System Security entries rather than
+   * crashing the search filter chain. `refCount: true` ensures the fallback
+   * isn't permanently cached.
+   */
+  readonly hasSystemSecurity$ = defer(() => this.api.call('system.security.info.fips_available')).pipe(
+    map(Boolean),
+    catchError(() => of(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   readonly shouldShowContainers$ = combineLatest([
     this.store$.select(selectIsEnterprise),

@@ -1076,6 +1076,242 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "System Security"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "system-security-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "System Security Settings"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security",
+      "Configure System Security"
+    ],
+    "requiredRoles": [
+      "SYSTEM_SECURITY_WRITE"
+    ],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "system-security-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Enable FIPS"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "enable-fips",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Enable General Purpose OS STIG compatibility mode"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "enable-general-purpose-os-stig-compatibility-mode",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Min Password Age"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "min-password-age",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Max Password Age"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "max-password-age",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Password Complexity Ruleset"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "password-complexity-ruleset",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Min Password Length"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "min-password-length",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
+      "Password History Length"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "password-history-length",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "Syslog"
     ],
     "synonyms": [],
@@ -1286,7 +1522,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1309,7 +1547,9 @@
     "requiredRoles": [
       "SYSTEM_ADVANCED_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1328,7 +1568,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -2399,6 +2641,29 @@
   {
     "hierarchy": [
       "Storage",
+      "Tiering"
+    ],
+    "synonyms": [
+      "Tiering Configuration",
+      "ZFS Tiering",
+      "Performance Tier",
+      "Storage Tier"
+    ],
+    "requiredRoles": [
+      "POOL_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "tiering",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
       "Create Pool"
     ],
     "synonyms": [
@@ -2915,6 +3180,7 @@
     "routerLink": null,
     "anchor": "details",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -2933,6 +3199,7 @@
     "routerLink": null,
     "anchor": "namespaces",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -2951,6 +3218,7 @@
     "routerLink": null,
     "anchor": "ports",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -2969,6 +3237,7 @@
     "routerLink": null,
     "anchor": "associated-hosts",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4060,7 +4329,8 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "add-zvol",
@@ -4083,7 +4353,8 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "add-dataset",
@@ -4102,11 +4373,13 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "details",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4121,11 +4394,13 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "space-management",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4140,11 +4415,13 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "encryption",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4159,11 +4436,13 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "data-protection",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4178,11 +4457,13 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "roles",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4198,11 +4479,13 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "permissions",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4217,7 +4500,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/",
@@ -4241,7 +4525,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/",
@@ -4267,7 +4552,8 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": null,
     "anchor": "take-snapshot",
@@ -4286,7 +4572,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/datasets/snapshots",
@@ -4308,7 +4595,8 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/datasets"
+      "/datasets",
+      "*"
     ],
     "routerLink": [
       "/data-protection/snapshot",
@@ -4709,6 +4997,7 @@
     "routerLink": null,
     "anchor": "profile",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4726,6 +5015,7 @@
     "routerLink": null,
     "anchor": "access-card",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4743,6 +5033,7 @@
     "routerLink": null,
     "anchor": "password-card",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -4934,7 +5225,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "KMIP"
+    ],
     "anchorRouterLink": [
       "/credentials",
       "kmip"
@@ -5330,6 +5623,7 @@
     "routerLink": null,
     "anchor": "general-info",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5348,6 +5642,7 @@
     "routerLink": null,
     "anchor": "usb-devices",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5366,6 +5661,7 @@
     "routerLink": null,
     "anchor": "gpu-devices",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5384,6 +5680,7 @@
     "routerLink": null,
     "anchor": "disks",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5402,6 +5699,7 @@
     "routerLink": null,
     "anchor": "nic",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {
@@ -5420,6 +5718,7 @@
     "routerLink": null,
     "anchor": "tools",
     "triggerAnchor": null,
+    "inset": true,
     "section": "ui"
   },
   {

@@ -106,6 +106,11 @@ function createUiSearchElement(
       routerLink,
       anchor: child.anchor || parent.anchor || generateIdFromHierarchy(child.hierarchy || parent.hierarchy || []),
       triggerAnchor,
+      // `inset` controls whether the highlight outline is drawn inside the
+      // host (used for master-detail cards clipped by their scroll container).
+      // Without forwarding it here, the JSON loses the flag and the runtime
+      // highlight clips at the container edge — see Space Management card.
+      inset: child.inset ?? parent.inset,
       section: GlobalSearchSection.Ui,
     };
   } catch (error) {

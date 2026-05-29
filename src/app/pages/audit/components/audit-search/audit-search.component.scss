@@ -14,11 +14,19 @@
     justify-content: space-between;
 
     .service-select {
+      align-items: center;
+      display: flex;
       flex-shrink: 0;
-      margin-bottom: 0;
-      margin-top: 0;
-      min-width: 130px;
-      padding: 0;
+      gap: 8px;
+
+      .service-label {
+        font-size: 15px;
+        white-space: nowrap;
+      }
+
+      tn-select {
+        min-width: 130px;
+      }
     }
 
     .export-container {
@@ -40,34 +48,6 @@
 
     button {
       flex-shrink: 0;
-    }
-  }
-}
-
-:host ::ng-deep .mat-mdc-menu-panel .mat-mdc-menu-item.selected {
-  background-color: var(--alt-bg2);
-  font-weight: 500;
-}
-
-// Extracted to reduce nesting depth
-// Note: !important is required here to override Material's highly specific default styles
-.actions-bar .top-row .service-select {
-  ::ng-deep {
-    .label {
-      font-size: 15px !important;
-
-      .required {
-        display: none;
-      }
-    }
-
-    .input-container {
-      background: rgba(0, 0, 0, 0.1);
-      min-width: 130px;
-
-      .mat-mdc-select-trigger {
-        font-size: 15px !important;
-      }
     }
   }
 }
