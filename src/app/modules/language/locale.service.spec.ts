@@ -1,6 +1,7 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { format } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { LocaleService, SupportedTimeFormat } from 'app/modules/language/locale.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -114,6 +115,29 @@ describe('LocaleService', () => {
       const [date, time] = service.getDateAndTime();
       expect(date).toBe('2024-08-14');
       expect(time).toBe('10:14:27');
+    });
+  });
+
+  describe('toMachineTime', () => {
+    it('returns an equivalent Date when the machine timezone matches the browser timezone', () => {
+      service.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const input = new Date('2024-08-14T14:14:27');
+
+      const machine = service.toMachineTime(input);
+
+      expect(machine.getTime()).toBe(input.getTime());
+    });
+
+    it('projects a UTC instant onto the machine timezone wall-clock when it differs from the browser', () => {
+      // Asia/Tokyo is +09:00 year-round, Europe/Kiev (browser, see jest.config.cjs) is +03:00 in August.
+      // 14:14:27 UTC is 17:14:27 in Kiev and 23:14:27 in Tokyo — the returned Date,
+      // when formatted in browser-local (as FormatDateTimePipe does), must show the Tokyo wall-clock.
+      service.timezone = 'Asia/Tokyo';
+      const input = new Date('2024-08-14T14:14:27Z');
+
+      const machine = service.toMachineTime(input);
+
+      expect(format(machine, 'yyyy-MM-dd HH:mm:ss')).toBe('2024-08-14 23:14:27');
     });
   });
 

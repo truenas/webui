@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -25,6 +26,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -37,6 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FileSizePipe,
     FormatDateTimePipe,
+    IxDateComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
     MatDivider,
@@ -69,6 +72,18 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
 
+  protected get usedBytes(): number | undefined {
+    return getFiniteNumber(this.snapshotInfo?.properties?.used?.parsed);
+  }
+
+  protected get referencedBytes(): number | undefined {
+    return getFiniteNumber(this.snapshotInfo?.properties?.referenced?.parsed);
+  }
+
+  protected get creationTimestampMs(): number | undefined {
+    return getSnapshotCreationMs(this.snapshotInfo);
+  }
+
   ngOnInit(): void {
     this.getSnapshotInfo();
     this.holdControl.valueChanges
@@ -88,6 +103,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
           extra: {
             retention: true,
             holds: true,
+            properties: ['creation', 'used', 'referenced'],
           },
         },
       ],
@@ -128,7 +144,13 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   doRollback(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotRollbackDialog, { data: snapshot.name });
+    // Prefer the fetched `snapshotInfo` (which carries the `creation` property)
+    // so the dialog can render the timestamp without an extra round trip. The
+    // parent list only fetches `properties` when `showSnapshotExtraColumns` is
+    // on, so `snapshot` itself often won't have them and the dialog would have
+    // to query — passing `snapshotInfo` short-circuits that round trip in the
+    // common path.
+    this.matDialog.open(SnapshotRollbackDialog, { data: this.snapshotInfo ?? snapshot });
   }
 
   doDelete(snapshot: ZfsSnapshot): void {

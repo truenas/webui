@@ -1,8 +1,8 @@
 <span
   class="date-spanner"
-  [class.has-time-difference]="isTimezoneDifference"
+  [class.has-time-difference]="isTimezoneDifference()"
   [matTooltip]="'Browser time: {time}' | translate: { time: (date() | formatDateTime) }"
-  [matTooltipDisabled]="!isTimezoneDifference"
+  [matTooltipDisabled]="!isTimezoneDifference()"
 >
-  {{ machineTime | formatDateTime }}
+  {{ machineTime() | formatDateTime }}
 </span>
