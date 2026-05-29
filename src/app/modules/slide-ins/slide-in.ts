@@ -16,7 +16,7 @@ import { cloneDeep } from 'lodash-es';
 import {
   delay,
   filter, Observable, of, share, Subject, switchMap,
-  take,
+  take, tap,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
@@ -120,7 +120,16 @@ export class SlideIn {
     if (!topComponent) {
       return of(undefined);
     }
-    return topComponent.containerRef.instance.slideOut();
+
+    return topComponent.containerRef.instance.slideOut().pipe(
+      // Ensure the component is completely hidden after animation
+      tap(() => {
+        const hostElement = topComponent.containerRef.location.nativeElement as HTMLElement;
+        if (hostElement) {
+          hostElement.style.display = 'none';
+        }
+      }),
+    );
   }
 
   private animateInTopComponent(): Observable<void> {
@@ -137,6 +146,7 @@ export class SlideIn {
     const hostElement = topComponent.containerRef.location.nativeElement as HTMLElement;
     if (hostElement) {
       // Reset any inline styles and ensure correct classes
+      hostElement.style.display = '';
       hostElement.style.transform = '';
       hostElement.classList.add('slide-in-visible');
       hostElement.classList.remove('slide-in-hidden');
