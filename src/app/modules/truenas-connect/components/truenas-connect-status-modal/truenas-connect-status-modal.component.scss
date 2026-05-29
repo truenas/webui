@@ -30,66 +30,6 @@ tn-divider {
   margin: 24px 0 18px;
 }
 
-.waiting-state-content {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  text-align: center;
-
-  ix-truenas-connect-spinner {
-    margin-bottom: 20px;
-  }
-
-  .waiting-state-text {
-    line-height: 1.5;
-    max-width: 400px;
-  }
-}
-
-.failed-header {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.failed-description {
-  line-height: 1.5;
-  margin-top: 16px;
-}
-
-.active-header {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.active-description {
-  line-height: 1.5;
-  margin-top: 16px;
-}
-
-.connecting-state-content {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  text-align: center;
-
-  ix-truenas-connect-spinner {
-    margin-bottom: 20px;
-  }
-
-  .connecting-header {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 16px;
-  }
-
-  .connecting-description {
-    line-height: 1.5;
-    max-width: 400px;
-  }
-}
-
 tn-icon {
   height: 21px;
   margin-right: 10px;
