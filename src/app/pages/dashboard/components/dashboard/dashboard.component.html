@@ -15,7 +15,7 @@
 
 <ix-page-content>
 @if (isEditing()) {
-  <div class="space-x-4 absolute top-4 right-46 z-50">
+  <div class="edit-actions space-x-4 absolute top-4 right-46 z-50">
     @if (customLayout()) {
       <button
         mat-button
@@ -49,6 +49,7 @@
     </button>
     <button
       matButton="outlined"
+      class="cancel-button"
       ixTest="cancel"
       [disabled]="isLoading()"
       (click)="onCancelConfigure()"

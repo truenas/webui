@@ -14,6 +14,15 @@
   }
 }
 
+.edit-actions {
+  display: flex;
+  align-items: center;
+}
+
+.cancel-button {
+  margin-right: 56px;
+}
+
 .groups {
   display: grid;
   gap: $widget-gap;
