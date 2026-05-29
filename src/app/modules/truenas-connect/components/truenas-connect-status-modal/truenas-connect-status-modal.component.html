@@ -1,42 +1,30 @@
 <tn-dialog-shell [title]="''">
   <div class="dialog-title-with-logo">
-    <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" alt="TrueNAS Connect" />
+    <img class="title-logo" src="assets/images/truenas-connect-logo-horizontal.svg" [alt]="'TrueNAS Connect' | translate" />
   </div>
   <tn-divider></tn-divider>
 
-  @if (isLoading()) {
-    <div class="loading-state-content">
-      <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
-      <div class="loading-state-text">
-        {{ "Initializing TrueNAS Connect service..." | translate }}
-      </div>
-    </div>
-  } @else {
-    <ix-truenas-connect-status-display
-      [status]="status()"
-      [rawStatus]="tnc.config()?.status"
-      [tier]="tnc.config()?.tier"
-    ></ix-truenas-connect-status-display>
-  }
-  @if (!isLoading()) {
-    <div class="documentation-link">
-      <a
-        href="https://connect.truenas.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        ixTest="tnc-documentation-link"
-      >
-        {{ "Learn more about TrueNAS Connect" | translate }}
-        <tn-icon name="open-in-new" library="mdi" size="sm" aria-hidden="true" style="margin-top: -2px"></tn-icon>
-        <span class="sr-only">{{ "opens in a new tab" | translate }}</span>
-      </a>
-    </div>
-  }
+  <ix-truenas-connect-status-display
+    [status]="status()"
+    [rawStatus]="tnc.config()?.status"
+    [tier]="tnc.config()?.tier"
+  ></ix-truenas-connect-status-display>
+
+  <div class="documentation-link">
+    <a
+      href="https://connect.truenas.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      ixTest="tnc-documentation-link"
+    >
+      {{ "Learn more about TrueNAS Connect" | translate }}
+      <tn-icon name="open-in-new" library="mdi" size="sm" aria-hidden="true" style="margin-top: -2px"></tn-icon>
+      <span class="sr-only">{{ "opens in a new tab" | translate }}</span>
+    </a>
+  </div>
 
   <div tnDialogAction class="dialog-actions">
-    @if (isLoading()) {
-      <tn-button ixTest="tnc-loading" [disabled]="true" [label]="'Loading...' | translate"></tn-button>
-    } @else if (status() === TncStatus.Active) {
+    @if (status() === TncStatus.Active) {
       <tn-button
         color="warn"
         ixTest="tnc-disable-service"

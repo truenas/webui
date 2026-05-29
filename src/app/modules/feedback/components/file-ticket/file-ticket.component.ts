@@ -57,7 +57,6 @@ export class FileTicketComponent implements FeedbackForm {
 
   readonly isLoadingChange = output<boolean>();
 
-  // Exposed so the feedback dialog can project these actions into the shell footer.
   readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
   private fileInputComponent = viewChild(IxFileInputComponent);

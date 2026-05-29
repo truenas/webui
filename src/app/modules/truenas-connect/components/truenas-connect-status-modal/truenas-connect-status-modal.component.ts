@@ -13,7 +13,6 @@ import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
@@ -26,7 +25,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     TnIconComponent,
     TranslateModule,
     TestDirective,
-    TruenasConnectSpinnerComponent,
     TruenasConnectStatusDisplayComponent,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
@@ -43,7 +41,6 @@ export class TruenasConnectStatusModalComponent {
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
 
-  protected isLoading = signal(false);
   protected isConnecting = signal(false);
   protected isDisabling = signal(false);
   protected isRetrying = signal(false);

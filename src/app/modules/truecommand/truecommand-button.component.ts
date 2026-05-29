@@ -119,7 +119,9 @@ export class TruecommandButtonComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((dialogResult: TruecommandSignupModalResult) => {
         if (isObject(dialogResult) && dialogResult?.deregistered) {
-          this.tcStatusDialogRef.close(true);
+          // The status dialog is only open when the update flow was launched from it.
+          // Reached via the signup flow it is undefined, so guard the close.
+          this.tcStatusDialogRef?.close(true);
         }
       });
   }

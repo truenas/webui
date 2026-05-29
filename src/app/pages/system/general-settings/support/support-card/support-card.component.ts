@@ -74,6 +74,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class SupportCardComponent implements OnInit {
   protected api = inject(ApiService);
   private loader = inject(LoaderService);
+  // SetProductionStatusDialog is not migrated yet, so MatDialog stays alongside
+  // TnDialog (used for the migrated FeedbackDialog).
   private matDialog = inject(MatDialog);
   private tnDialog = inject(TnDialog);
   private slideIn = inject(SlideIn);

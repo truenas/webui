@@ -1,6 +1,7 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, switchMap, tap,
@@ -23,6 +24,7 @@ export class TruenasConnectService {
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private overlay = inject(Overlay);
+  private translate = inject(TranslateService);
   private wsStatus = inject(WebSocketStatusService);
 
   /**

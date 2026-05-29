@@ -318,6 +318,9 @@ describe('TopbarComponent', () => {
       expect(await host.hasClass('severity-warning')).toBe(true);
     });
 
+    // The bell's tooltip and aria-label are both bound to the same alertTooltip()
+    // computed, and TnIconButtonHarness exposes no tooltip getter, so asserting the
+    // aria-label here also covers the tooltip text.
     it('updates aria-label on alert button when severity is critical', () => {
       setSeverity('critical');
 

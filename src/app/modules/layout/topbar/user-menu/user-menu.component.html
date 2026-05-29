@@ -1,11 +1,9 @@
 @if ((loggedInUser$ | async); as user) {
   <div class="user-menu-wrapper">
     @if (user.pw_name) {
-      <span
-        class="username"
-        [matTooltip]="user.pw_name"
-        [matMenuTriggerFor]="userMenu"
-      >
+      <!-- Plain label only; the icon-button beside it is the menu trigger. A bare
+           span can't be focused or announced as a button, so it must not be a trigger. -->
+      <span class="username" [matTooltip]="user.pw_name">
         {{ user.pw_name }}
       </span>
     }

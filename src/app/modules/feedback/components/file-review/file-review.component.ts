@@ -62,7 +62,6 @@ export class FileReviewComponent implements FeedbackForm {
 
   readonly isLoadingChange = output<boolean>();
 
-  // Exposed so the feedback dialog can project these actions into the shell footer.
   readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));

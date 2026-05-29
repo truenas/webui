@@ -7,5 +7,10 @@ import { Signal, TemplateRef } from '@angular/core';
  * each concrete form type, so adding a new form only requires providing it.
  */
 export abstract class FeedbackForm {
+  /**
+   * Action buttons (Submit, etc.) the form exposes so FeedbackDialog can project
+   * them into the dialog shell footer. Typically a `viewChild` over an
+   * `<ng-template #dialogActions>` in the form's template.
+   */
   abstract readonly dialogActions: Signal<TemplateRef<unknown> | undefined>;
 }
