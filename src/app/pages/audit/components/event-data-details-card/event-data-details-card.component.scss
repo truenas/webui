@@ -8,3 +8,16 @@ pre {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.log-scroll {
+  max-height: min(60vh, 640px);
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    overflow-y: auto;
+  }
+}

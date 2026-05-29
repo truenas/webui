@@ -21,6 +21,7 @@ import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-prov
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -48,6 +49,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     IxButtonGroupComponent,
     ReactiveFormsModule,
     UiSearchDirective,
+    PageContentComponent,
   ],
 })
 export class AuditComponent implements OnInit, OnDestroy {
