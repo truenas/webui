@@ -632,7 +632,7 @@ export class HarborAssistantCameraComponent implements OnInit {
     if (cameraSnapshotUrl?.startsWith('/ui/assets/')) {
       return this.withRefreshToken(cameraSnapshotUrl);
     }
-    return this.withRefreshToken(`/api/harbor-beacon/cameras/${encodeURIComponent(deviceId)}/snapshot.jpg`);
+    return this.withRefreshToken(`/api/beacon/cameras/${encodeURIComponent(deviceId)}/snapshot.jpg`);
   }
 
   handleLiveError(): void {

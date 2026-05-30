@@ -78,7 +78,7 @@ describe('Harbor Assistant component', () => {
     (spectator.component as unknown as { endpointErrors: { set: (errors: Record<string, string>) => void } })
       .endpointErrors
       .set({
-        knowledgeIndexStatus: 'knowledge-index-status: Http failure response for /api/harbor-beacon/knowledge/index/status: 500 OK',
+        knowledgeIndexStatus: 'knowledge-index-status: Http failure response for /api/beacon/knowledge/index/status: 500 OK',
       });
     spectator.detectChanges();
 
@@ -328,6 +328,67 @@ describe('Harbor Assistant component', () => {
     expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({
       queryParams: { tab: 'settings', section: 'ai', focus: 'models', node: null },
     }));
+  });
+
+  it('summarizes healthy models only and still shows degraded current model names', () => {
+    const degradedCurrentModel = (capabilityId: string, modelKind: string, modelName: string): Record<string, unknown> => ({
+      capability_id: capabilityId,
+      label: capabilityId,
+      model_kind: modelKind,
+      status: 'degraded',
+      runtime_model_id: modelName,
+      current_model: {
+        model_endpoint_id: `${capabilityId}-local`,
+        model_name: modelName,
+        provider_key: 'openai_compatible',
+        status: 'degraded',
+      },
+      installed_models: [],
+      installable_models: [],
+      download_jobs: [],
+      next_action: '模型服务需要检查',
+      runtime_ready: false,
+    });
+    const modelCapabilities = {
+      generated_at: '1',
+      checked_at: '1',
+      status: 'degraded',
+      capabilities: [
+        degradedCurrentModel('semantic_router', 'llm', 'harbor-local-chat'),
+        degradedCurrentModel('embedder', 'embedder', 'harbor-local-embed'),
+        degradedCurrentModel('retrieval_answer', 'llm', 'harbor-local-chat'),
+        degradedCurrentModel('vlm', 'vlm', 'vision'),
+      ],
+      blockers: [],
+      warnings: [],
+    };
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      modelCapabilitiesResponse: { set: (response: unknown) => void };
+      aiSettingsTabs: () => Array<{ id: string; summary: string; tone: string }>;
+      workflowCurrentModelName: (kind: string) => string;
+      workflowCurrentModelDetail: (kind: string) => string;
+    };
+    component.modelCapabilitiesResponse.set(modelCapabilities);
+    spectator.detectChanges();
+
+    expect(component.aiSettingsTabs().find((tab) => tab.id === 'models')).toMatchObject({
+      summary: '0/4 Ready',
+      tone: 'danger',
+    });
+    expect(component.workflowCurrentModelName('semantic_router')).toBe('harbor-local-chat');
+    expect(component.workflowCurrentModelDetail('semantic_router')).toBe('模型服务需要检查');
+    expect(spectator.query('.ai-settings-subtabs')).toHaveText('0/4 Ready');
+    expect(spectator.query('.ai-settings-subtabs')).not.toHaveText('4/4 Configured');
+
+    spectator.click(spectator.queryAll('.ai-settings-subtab')[1]);
+    spectator.detectChanges();
+
+    const questionRow = spectator.queryAll('.model-capability-row')[0];
+    expect(questionRow).toHaveText('harbor-local-chat');
+    expect(questionRow).toHaveText('模型服务需要检查');
+    expect(questionRow).not.toHaveText('No model selected yet');
   });
 
   it('shows installed models only after opening the vector retrieval model chooser', () => {
@@ -1150,6 +1211,7 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
     getDeviceEvidence: jest.fn(() => of({ results: [] })),
     getGatewayStatus: jest.fn(() => of({ status: 'ready', channels: [] })),
     getInferenceHealth: jest.fn(() => of({ status: 'ready', ready: true })),
+    getAutomationReviews: jest.fn(() => of({ reviews: [] })),
     getNotificationTargets: jest.fn(() => of({ targets: [] })),
     setDefaultNotificationTarget: jest.fn(() => of({ ok: true })),
     deleteNotificationTarget: jest.fn(() => of({ ok: true })),
@@ -1174,6 +1236,17 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
     createModelEndpoint: jest.fn((payload) => of({ endpoints: [payload] })),
     updateModelEndpoint: jest.fn((id, payload) => of({ endpoints: [{ ...payload, model_endpoint_id: id }] })),
     testModelEndpoint: jest.fn(() => of({ ok: true, status: 'active', summary: 'ok' })),
+    getModelRuntimes: jest.fn(() => of(defaultRuntimeManager())),
+    installModelRuntime: jest.fn((runtimeId) => of({
+      runtime: {
+        ...(defaultRuntimeManager().runtimes.find((runtime) => runtime.runtime_id === runtimeId) ?? {}),
+        installed: true,
+        enabled: true,
+        status: 'installed',
+      },
+      runtime_manager: defaultRuntimeManager(),
+      message: 'enabled',
+    })),
     getModelCapabilities: jest.fn(() => of({
       generated_at: '1',
       checked_at: '1',
@@ -1497,6 +1570,59 @@ function modelCapabilitiesWithEmbedder(embedderOverrides: Record<string, unknown
         download_jobs: [],
         next_action: '选择或安装模型',
         runtime_ready: false,
+      },
+    ],
+    blockers: [],
+    warnings: [],
+  };
+}
+
+function defaultRuntimeManager(): {
+  generated_at: string;
+  checked_at: string;
+  status: string;
+  runtimes: Array<Record<string, unknown>>;
+  blockers: string[];
+  warnings: string[];
+} {
+  return {
+    generated_at: '1',
+    checked_at: '1',
+    status: 'ready',
+    runtimes: [
+      {
+        runtime_id: 'harbor-candle',
+        display_name: 'Harbor Candle Runtime',
+        runtime_kind: 'embedded_candle',
+        provider_key: 'harbor',
+        status: 'active',
+        managed: true,
+        installable: true,
+        enabled: true,
+        capabilities: ['llm', 'embedding'],
+        runtime_profiles: ['harbor-candle', 'harbor-model-api-candle'],
+        model_store_path: '/mnt/software/harborbeacon-agent-ci/model-store/runtimes/harbor-candle',
+        message: 'Runtime 已安装，并正在服务 Harbor-managed 推理路径。',
+        installed: true,
+        active: true,
+        next_action: '可以使用',
+      },
+      {
+        runtime_id: 'harbor-vlm-sidecar',
+        display_name: 'Harbor Vision Runtime',
+        runtime_kind: 'managed_sidecar',
+        provider_key: 'harbor',
+        status: 'not_available',
+        managed: true,
+        installable: false,
+        enabled: false,
+        capabilities: ['vlm'],
+        runtime_profiles: ['harbor-vlm-sidecar'],
+        model_store_path: '/mnt/software/harborbeacon-agent-ci/model-store/runtimes/harbor-vlm-sidecar',
+        message: 'Harbor Vision Runtime is reserved for managed VLM packages.',
+        installed: false,
+        active: false,
+        next_action: '当前 ISO 未包含该 runtime 包，可在高级设置接入 OpenAI-compatible endpoint',
       },
     ],
     blockers: [],

@@ -1,7 +1,7 @@
 @import 'scss-imports/variables';
 
 $hd-bg-canvas: #f8fafc;
-$hd-bg-surface: #ffffff;
+$hd-bg-surface: #fff;
 $hd-bg-hover: #f1f5f9;
 $hd-border-subtle: rgba(0, 0, 0, 0.06);
 $hd-border-default: rgba(0, 0, 0, 0.10);
@@ -1070,6 +1070,65 @@ $hd-space-5: 20px;
   margin-bottom: $hd-space-4;
 }
 
+.runtime-manager-panel {
+  border: 1px solid $hd-border-subtle;
+  border-radius: 8px;
+  margin-bottom: $hd-space-4;
+  padding: $hd-space-4;
+}
+
+.runtime-manager-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: $hd-space-4;
+  justify-content: space-between;
+
+  strong {
+    display: block;
+    font-size: 16px;
+    line-height: 1.35;
+  }
+}
+
+.runtime-card-grid {
+  display: grid;
+  gap: $hd-space-3;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.runtime-card {
+  align-items: center;
+  border: 1px solid $hd-border-subtle;
+  border-radius: 6px;
+  display: grid;
+  gap: $hd-space-3;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: $hd-space-3;
+
+  strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  p {
+    margin: 4px 0 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.runtime-card-actions {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: $hd-space-2;
+}
+
+.mono-text {
+  font-family: var(--font-family-monospace, monospace);
+}
+
 .model-store-line {
   align-items: center;
   display: grid;
@@ -1818,6 +1877,8 @@ $hd-space-5: 20px;
   .ai-settings-subtabs,
   .settings-section-strip,
   .model-recommendation-panel,
+  .runtime-card-grid,
+  .runtime-card,
   .hardware-summary-grid,
   .model-picker-row,
   .model-choice-panel,
@@ -1854,6 +1915,7 @@ $hd-space-5: 20px;
   }
 
   .ai-status-toolbar,
+  .runtime-manager-heading,
   .app-status-line,
   .empty-state.inline-empty-action {
     flex-direction: column;

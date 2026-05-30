@@ -82,6 +82,8 @@ import {
   ModelEndpointsResponse,
   ModelPoliciesResponse,
   ModelRoutePolicyRecord,
+  ModelRuntimeManagerResponse,
+  ModelRuntimeStatus,
   NotificationTargetRecord,
   NotificationTargetsResponse,
   RagReadinessComponent,
@@ -98,6 +100,7 @@ interface HarborAssistantPageData {
   notificationTargets: EndpointResult<NotificationTargetsResponse>;
   modelEndpoints: EndpointResult<ModelEndpointsResponse>;
   modelCapabilities: EndpointResult<ModelCapabilitiesResponse>;
+  modelRuntimes: EndpointResult<ModelRuntimeManagerResponse>;
   modelPolicies: EndpointResult<ModelPoliciesResponse>;
   localCatalog: EndpointResult<LocalModelCatalogResponse>;
   localDownloads: EndpointResult<LocalModelDownloadsResponse>;
@@ -156,7 +159,11 @@ interface EventIntelligenceStatusCard {
 }
 
 type CustomerModelSection = 'downloading' | 'installed' | 'available';
-type CustomerModelAction = 'download' | 'downloading' | 'set-current' | 'current' | 'retry' | 'configure-cloud' | 'manual-source';
+type CustomerModelAction = 'download' | 'downloading' | 'set-current' | 'current' | 'retry' | 'configure-cloud' | 'configure-external-runtime' | 'manual-source';
+
+interface RuntimeManagerCard extends ModelRuntimeStatus {
+  tone: HarborAssistantStatusTone;
+}
 
 interface CurrentModelCard {
   kind: string;
@@ -347,14 +354,19 @@ export const harborAssistantI18nMarkers = [
   T('Add Endpoint'),
   T('Capturing'),
   T('Configured; leave blank to keep'),
+  T('Configure endpoint'),
   T('Core capability'),
   T('Edit Endpoint'),
   T('Finalizing'),
   T('Health Test'),
+  T('Install runtime'),
+  T('Installing...'),
   T('Indexing...'),
   T('No target path'),
   T('Optional capability'),
+  T('Package unavailable'),
   T('Record'),
+  T('Runtime Manager'),
   T('Refresh cameras'),
   T('Save Endpoint'),
   T('Searching'),
@@ -440,6 +452,7 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly notificationTargetsResponse = signal<NotificationTargetsResponse | null>(null);
   protected readonly modelEndpointsResponse = signal<ModelEndpointsResponse | null>(null);
   protected readonly modelCapabilitiesResponse = signal<ModelCapabilitiesResponse | null>(null);
+  protected readonly modelRuntimeManagerResponse = signal<ModelRuntimeManagerResponse | null>(null);
   protected readonly modelPoliciesResponse = signal<ModelPoliciesResponse | null>(null);
   protected readonly localCatalog = signal<LocalModelCatalogResponse | null>(null);
   protected readonly localDownloads = signal<LocalModelDownloadsResponse | null>(null);
@@ -671,6 +684,7 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly defaults = computed(() => this.state()?.defaults ?? {});
   protected readonly dvrTimelineSegments = computed(() => this.dvrTimeline()?.segments ?? []);
   protected readonly modelEndpoints = computed(() => this.modelEndpointsResponse()?.endpoints ?? []);
+  protected readonly modelRuntimeCards = computed<RuntimeManagerCard[]>(() => this.buildModelRuntimeCards());
   protected readonly modelPolicies = computed(() => this.modelPoliciesResponse()?.route_policies ?? []);
   protected readonly catalogModels = computed(() => this.localCatalog()?.models ?? []);
   protected readonly downloadJobs = computed(() => this.latestDownloadJobs(
@@ -1289,7 +1303,7 @@ export class HarborAssistantComponent implements OnInit {
 
   protected openDvrReplay(segment: DvrTimelineSegment): void {
     const replayUrl = this.sameOriginAdminUrl(segment.replay_url)
-      ?? `/api/harbor-beacon/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`;
+      ?? `/api/beacon/knowledge/preview?path=${encodeURIComponent(segment.file_path)}`;
     window.open(replayUrl, '_blank', 'noopener');
   }
 
@@ -1454,6 +1468,51 @@ export class HarborAssistantComponent implements OnInit {
     );
   }
 
+  protected installModelRuntime(runtime: ModelRuntimeStatus): void {
+    if (runtime.installed || runtime.active || !runtime.installable) {
+      return;
+    }
+    this.runAction(
+      `model-runtime-install:${runtime.runtime_id}`,
+      this.harborAssistantApi.installModelRuntime(runtime.runtime_id),
+      `${runtime.display_name} ${T('is enabled for Harbor-managed models.')}`,
+    );
+  }
+
+  protected runtimeActionLabel(runtime: ModelRuntimeStatus): string {
+    if (runtime.active) {
+      return T('Ready');
+    }
+    if (runtime.installed) {
+      return T('Installed');
+    }
+    if (runtime.installable) {
+      return T('Install runtime');
+    }
+    return T('Package unavailable');
+  }
+
+  protected runtimeActionDisabled(runtime: ModelRuntimeStatus): boolean {
+    return this.isBusy() || runtime.active || runtime.installed || !runtime.installable;
+  }
+
+  protected runtimeCapabilitiesLabel(runtime: ModelRuntimeStatus): string {
+    return (runtime.capabilities ?? []).join(' / ') || runtime.runtime_kind;
+  }
+
+  protected runtimeToneClass(runtime: ModelRuntimeStatus): string {
+    if (runtime.active) {
+      return 'tone-good';
+    }
+    if (runtime.installed) {
+      return 'tone-warn';
+    }
+    if (runtime.installable) {
+      return 'tone-danger';
+    }
+    return 'tone-neutral';
+  }
+
   protected handleModelCardAction(card: CustomerModelCard): void {
     switch (card.action) {
       case 'download':
@@ -1465,6 +1524,9 @@ export class HarborAssistantComponent implements OnInit {
         return;
       case 'configure-cloud':
         this.openCloudModelSettings(card.endpoint ?? null);
+        return;
+      case 'configure-external-runtime':
+        this.prepareEndpointFormForModel(card);
         return;
       case 'manual-source':
         this.selectModelCardForManualDownload(card);
@@ -2166,15 +2228,20 @@ export class HarborAssistantComponent implements OnInit {
 
   protected workflowCurrentModelName(kind: string): string {
     const capability = this.workflowCapabilityForKind(kind);
-    if (capability?.current_model?.model_name && capability.status === 'ready') {
-      return capability.current_model.model_name;
-    }
     if (capability?.selected_model_id) {
       const selected = [
         ...(capability.installed_models ?? []),
         ...(capability.installable_models ?? []),
       ].find((model) => model.model_id === capability.selected_model_id);
       return selected?.display_name ?? capability.selected_model_id;
+    }
+    const runtimeModel = capability?.runtime_model_id?.trim();
+    if (runtimeModel) {
+      return runtimeModel;
+    }
+    const currentModelName = capability?.current_model?.model_name?.trim();
+    if (currentModelName) {
+      return currentModelName;
     }
     const current = this.currentModelCards().find((card) => card.kind === kind);
     if (!current?.endpoint || current.modelName === T('Not configured')) {
@@ -2196,6 +2263,29 @@ export class HarborAssistantComponent implements OnInit {
       return current.localPath;
     }
     return T('Local model service');
+  }
+
+  protected workflowRuntimeNotice(kind: string): string | null {
+    const capability = this.workflowCapabilityForKind(kind);
+    if (!capability?.required_runtime_profile || capability.runtime_installed) {
+      return null;
+    }
+    return capability.runtime_next_action
+      || capability.next_action
+      || T('Install the required Harbor-managed runtime before selecting this model.');
+  }
+
+  protected workflowRuntimeInstallCandidate(kind: string): ModelRuntimeStatus | null {
+    const capability = this.workflowCapabilityForKind(kind);
+    const profile = capability?.required_runtime_profile;
+    if (!profile || capability?.runtime_installed) {
+      return null;
+    }
+    return this.modelRuntimeCards().find((runtime) => {
+      return runtime.installable
+        && !runtime.installed
+        && (runtime.runtime_id === profile || (runtime.runtime_profiles ?? []).includes(profile));
+    }) ?? null;
   }
 
   protected workflowCurrentEndpoint(kind: string): ModelEndpointRecord | null {
@@ -2694,9 +2784,11 @@ export class HarborAssistantComponent implements OnInit {
     const sourceSummary = this.ragValidationSourceSummary();
     const indexState = this.knowledgeIndexStatus();
     const modelRows = this.aiModelCapabilities();
-    const configuredRequiredModels = modelRows
-      .filter((row) => !row.optional)
-      .filter((row) => this.workflowCurrentEndpoint(row.kind));
+    const requiredModelRows = modelRows.filter((row) => !row.optional);
+    const readyRequiredModels = requiredModelRows
+      .filter((row) => this.modelCapabilityTone(row.capabilityId) === 'good');
+    const hasModelWarnings = requiredModelRows
+      .some((row) => this.modelCapabilityTone(row.capabilityId) === 'warn');
     const cloudMode = this.cloudApiForm.controls.usageMode.value as CloudUsageMode;
 
     return [
@@ -2713,8 +2805,8 @@ export class HarborAssistantComponent implements OnInit {
       {
         id: 'models',
         label: T('Model'),
-        summary: `${configuredRequiredModels.length}/${modelRows.filter((row) => !row.optional).length} ${T('Configured')}`,
-        tone: configuredRequiredModels.length >= modelRows.filter((row) => !row.optional).length ? 'good' : 'warn',
+        summary: `${readyRequiredModels.length}/${requiredModelRows.length} ${T('Ready')}`,
+        tone: readyRequiredModels.length >= requiredModelRows.length ? 'good' : hasModelWarnings ? 'warn' : 'danger',
       },
       {
         id: 'cloud-api',
@@ -2799,8 +2891,11 @@ export class HarborAssistantComponent implements OnInit {
     const runtimeActive = this.capabilityRuntimeMatchesModel(capability, model.model_id, model.local_path ?? catalogModel?.local_path ?? null);
     const selected = capability?.selected_model_id === model.model_id;
     const isCurrent = runtimeActive;
+    const runtimeProfiles = model.runtime_profiles ?? catalogModel?.runtime_profiles ?? [];
+    const externalRuntimeOnly = this.modelUsesExternalRuntime(runtimeProfiles)
+      && !this.modelUsesManagedRuntime(runtimeProfiles);
     const action: CustomerModelAction = section === 'installed'
-      ? (isCurrent ? 'current' : 'set-current')
+      ? (isCurrent ? 'current' : externalRuntimeOnly ? 'configure-external-runtime' : 'set-current')
       : this.isFailedStatus(model.status) ? 'retry' : 'download';
     return {
       key: `${capabilityId}:${section}:${model.model_id}`,
@@ -2824,6 +2919,8 @@ export class HarborAssistantComponent implements OnInit {
       action,
       actionLabel: action === 'current'
         ? T('Selected')
+        : action === 'configure-external-runtime'
+          ? T('Configure endpoint')
         : action === 'set-current'
           ? (selected ? T('Restart') : T('Select'))
           : action === 'retry'
@@ -2833,7 +2930,7 @@ export class HarborAssistantComponent implements OnInit {
       bytesLabel: null,
       speedLabel: null,
       errorMessage: null,
-      runtimeGuidance: null,
+      runtimeGuidance: this.modelRuntimeGuidance(runtimeProfiles),
       evidence: [],
       section,
       catalogModel,
@@ -2872,7 +2969,7 @@ export class HarborAssistantComponent implements OnInit {
       bytesLabel: this.downloadBytesLabel(job),
       speedLabel: this.downloadSpeedLabel(job),
       errorMessage: job.error_message ?? null,
-      runtimeGuidance: null,
+      runtimeGuidance: this.modelRuntimeGuidance(catalogModel?.runtime_profiles),
       evidence: [],
       section: failed ? 'available' : 'downloading',
       catalogModel,
@@ -3045,6 +3142,8 @@ export class HarborAssistantComponent implements OnInit {
         return T('Available');
       case 'downloading':
         return T('Downloading model');
+      case 'needs_runtime':
+        return capability.runtime_next_action || capability.next_action || T('Harbor-managed runtime is required');
       case 'installed_not_running':
         return T('Model is installed and the local model service needs to start');
       case 'unsupported':
@@ -3061,6 +3160,46 @@ export class HarborAssistantComponent implements OnInit {
       return card.source === 'huggingface' || Boolean(card.capabilityId);
     }
     return card.catalogModel.installable === true && card.catalogModel.manual_only !== true;
+  }
+
+  private modelRuntimeGuidance(runtimeProfiles?: string[] | null): string | null {
+    const profiles = runtimeProfiles ?? [];
+    if (profiles.length === 0) {
+      return null;
+    }
+    const managedRuntime = this.modelRuntimeCards().find((runtime) => {
+      const runtimeProfileSet = new Set([runtime.runtime_id, ...(runtime.runtime_profiles ?? [])]);
+      return profiles.some((profile) => runtimeProfileSet.has(profile));
+    });
+    if (managedRuntime && !managedRuntime.active) {
+      return `${managedRuntime.display_name}: ${managedRuntime.next_action}`;
+    }
+    const externalOnly = profiles.some((profile) => {
+      const normalized = profile.toLowerCase();
+      return normalized.includes('openai-compatible')
+        || normalized.includes('vllm')
+        || normalized.includes('sglang');
+    });
+    return externalOnly
+      ? T('Uses an external OpenAI-compatible runtime; configure it in advanced settings.')
+      : null;
+  }
+
+  private modelUsesManagedRuntime(runtimeProfiles?: string[] | null): boolean {
+    const profiles = runtimeProfiles ?? [];
+    return this.modelRuntimeCards().some((runtime) => {
+      const runtimeProfileSet = new Set([runtime.runtime_id, ...(runtime.runtime_profiles ?? [])]);
+      return profiles.some((profile) => runtimeProfileSet.has(profile));
+    });
+  }
+
+  private modelUsesExternalRuntime(runtimeProfiles?: string[] | null): boolean {
+    return (runtimeProfiles ?? []).some((profile) => {
+      const normalized = profile.toLowerCase();
+      return normalized.includes('openai-compatible')
+        || normalized.includes('vllm')
+        || normalized.includes('sglang');
+    });
   }
 
   private modelSelectionSuccessMessage(card: CustomerModelCard): string {
@@ -3156,6 +3295,14 @@ export class HarborAssistantComponent implements OnInit {
       return 'neutral';
     }
     return indexedCount >= totalCount ? 'good' : indexedCount > 0 ? 'warn' : 'danger';
+  }
+
+  private buildModelRuntimeCards(): RuntimeManagerCard[] {
+    const manager = this.modelRuntimeManagerResponse() ?? this.modelCapabilitiesResponse()?.runtime_manager ?? null;
+    return (manager?.runtimes ?? []).map((runtime) => ({
+      ...runtime,
+      tone: runtime.active ? 'good' : runtime.installed ? 'warn' : runtime.installable ? 'danger' : 'neutral',
+    }));
   }
 
   private buildCurrentModelCards(): CurrentModelCard[] {
@@ -3281,7 +3428,7 @@ export class HarborAssistantComponent implements OnInit {
       bytesLabel: latestJob ? this.downloadBytesLabel(latestJob) : null,
       speedLabel: latestJob ? this.downloadSpeedLabel(latestJob) : null,
       errorMessage: latestJob?.error_message ?? null,
-      runtimeGuidance: null,
+      runtimeGuidance: this.modelRuntimeGuidance(model.runtime_profiles),
       evidence: model.evidence ?? [],
       section: activeJob ? 'downloading' : installed ? 'installed' : 'available',
       catalogModel: model,
@@ -3364,6 +3511,8 @@ export class HarborAssistantComponent implements OnInit {
         return T('Download again');
       case 'manual-source':
         return T('Enter download URL');
+      case 'configure-external-runtime':
+        return T('Configure endpoint');
       case 'configure-cloud':
         return T('Configure API key');
       case 'download':
@@ -3649,6 +3798,7 @@ export class HarborAssistantComponent implements OnInit {
         notificationTargets: this.result('notification-targets', this.harborAssistantApi.getNotificationTargets()),
         modelEndpoints: this.result('models', this.harborAssistantApi.getModelEndpoints()),
         modelCapabilities: this.result('model-capabilities', this.harborAssistantApi.getModelCapabilities()),
+        modelRuntimes: this.result('model-runtimes', this.harborAssistantApi.getModelRuntimes()),
         modelPolicies: this.result('model-policies', this.harborAssistantApi.getModelPolicies()),
         localCatalog: of<EndpointResult<LocalModelCatalogResponse>>({ data: this.localCatalog(), error: null }),
         localDownloads: this.result('local-downloads', this.harborAssistantApi.getLocalModelDownloads()),
@@ -3685,6 +3835,7 @@ export class HarborAssistantComponent implements OnInit {
             notificationTargets: payload.notificationTargets,
             modelEndpoints: payload.modelEndpoints,
             modelCapabilities: payload.modelCapabilities,
+            modelRuntimes: payload.modelRuntimes,
             modelPolicies: payload.modelPolicies,
             localCatalog: payload.localCatalog,
             localDownloads: payload.localDownloads,
@@ -3786,6 +3937,9 @@ export class HarborAssistantComponent implements OnInit {
     this.notificationTargetsResponse.set(pageData.notificationTargets.data);
     this.modelEndpointsResponse.set(pageData.modelEndpoints.data);
     this.modelCapabilitiesResponse.set(pageData.modelCapabilities.data);
+    this.modelRuntimeManagerResponse.set(
+      pageData.modelRuntimes.data ?? pageData.modelCapabilities.data?.runtime_manager ?? null,
+    );
     this.modelPoliciesResponse.set(pageData.modelPolicies.data);
     this.localCatalog.set(pageData.localCatalog.data);
     this.localDownloads.set(pageData.localDownloads.data);
@@ -3811,6 +3965,7 @@ export class HarborAssistantComponent implements OnInit {
         notificationTargets: pageData.notificationTargets.error,
         models: pageData.modelEndpoints.error,
         modelCapabilities: pageData.modelCapabilities.error,
+        modelRuntimes: pageData.modelRuntimes.error,
         modelPolicies: pageData.modelPolicies.error,
         localCatalog: pageData.localCatalog.error,
         localDownloads: pageData.localDownloads.error,
@@ -3849,6 +4004,7 @@ export class HarborAssistantComponent implements OnInit {
     this.notificationTargetsResponse.set(null);
     this.modelEndpointsResponse.set(null);
     this.modelCapabilitiesResponse.set(null);
+    this.modelRuntimeManagerResponse.set(null);
     this.modelPoliciesResponse.set(null);
     this.localCatalog.set(null);
     this.localDownloads.set(null);
@@ -4573,11 +4729,14 @@ export class HarborAssistantComponent implements OnInit {
     try {
       const parsed = new URL(url, 'http://harbor.local');
       const path = `${parsed.pathname}${parsed.search}`;
-      if (path.startsWith('/api/harbor-beacon/')) {
+      if (path.startsWith('/api/beacon/')) {
         return path;
       }
+      if (path.startsWith('/api/harbor-beacon/')) {
+        return `/api/beacon${path.slice('/api/harbor-beacon'.length)}`;
+      }
       if (path.startsWith('/api/')) {
-        return `/api/harbor-beacon${path.slice(4)}`;
+        return `/api/beacon${path.slice(4)}`;
       }
       return path.startsWith('/') ? path : null;
     } catch {
@@ -4601,7 +4760,7 @@ export class HarborAssistantComponent implements OnInit {
       {
         label: T('Admin API'),
         value: state ? T('Connected') : T('Offline'),
-        detail: T('Harbor Assistant reads HarborBeacon through the /api/harbor-beacon/* service entry.'),
+        detail: T('Harbor Assistant reads HarborBeacon through the /api/beacon/* service entry.'),
         tone: state ? 'good' : 'danger',
       },
       {

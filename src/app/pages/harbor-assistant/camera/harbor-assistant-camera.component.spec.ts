@@ -44,7 +44,7 @@ describe('Harbor Assistant camera component', () => {
       startDvrRecording: jest.fn(() => of(dvrStatus('recording'))),
       stopDvrRecording: jest.fn(() => of(dvrStatus('stopped'))),
       search: jest.fn(() => of(searchResponse())),
-      previewUrl: jest.fn((path: string) => `/api/harbor-beacon/knowledge/preview?path=${encodeURIComponent(path)}`),
+      previewUrl: jest.fn((path: string) => `/api/beacon/knowledge/preview?path=${encodeURIComponent(path)}`),
     };
   });
 
@@ -57,7 +57,7 @@ describe('Harbor Assistant camera component', () => {
 
     const liveUrl = spectator.component.selectedLiveUrl();
 
-    expect(liveUrl).toContain('/api/harbor-beacon/cameras/cam-1/snapshot.jpg?ts=');
+    expect(liveUrl).toContain('/api/beacon/cameras/cam-1/snapshot.jpg?ts=');
     expect(liveUrl).not.toContain('live.mjpeg');
     discardPeriodicTasks();
   }));
