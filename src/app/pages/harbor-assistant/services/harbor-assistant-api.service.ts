@@ -39,6 +39,7 @@ import {
   KnowledgeIndexRunResponse,
   KnowledgeIndexStatusResponse,
   KnowledgeSettings,
+  LocalVisionEventsResponse,
   LocalModelCatalogResponse,
   LocalModelDownloadJobResponse,
   LocalModelDownloadsResponse,
@@ -388,6 +389,12 @@ export class HarborAssistantApiService {
 
   getShareLinks(): Observable<ShareLinkSummary[]> {
     return this.http.get<ShareLinkSummary[]>('/api/harbor-beacon/share-links');
+  }
+
+  getLocalVisionEvents(limit = 5): Observable<LocalVisionEventsResponse> {
+    return this.http.get<LocalVisionEventsResponse>(
+      `/api/harbor-beacon/vision/events?limit=${encodeURIComponent(String(limit))}`,
+    );
   }
 
   private readString(record: Record<string, unknown>, key: string): string | null {

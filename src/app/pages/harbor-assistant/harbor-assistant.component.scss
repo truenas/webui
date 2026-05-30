@@ -167,6 +167,68 @@ $hd-space-5: 20px;
   padding: 0;
 }
 
+.assistant-camera-tab {
+  gap: $hd-space-4;
+}
+
+.event-intelligence-panel {
+  margin: 0 $hd-space-5 $hd-space-5;
+}
+
+.event-intelligence-status-grid {
+  display: grid;
+  gap: $hd-space-3;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: $hd-space-4;
+}
+
+.event-intelligence-list {
+  display: grid;
+  gap: $hd-space-3;
+}
+
+.event-intelligence-row {
+  align-items: flex-start;
+  border: 1px solid $hd-border-subtle;
+  border-radius: 8px;
+  display: grid;
+  gap: $hd-space-4;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.35fr);
+  padding: $hd-space-4;
+}
+
+.event-intelligence-main {
+  min-width: 0;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: $hd-space-2 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.event-intelligence-meta,
+.event-intelligence-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $hd-space-2;
+}
+
+.event-intelligence-metrics {
+  justify-content: flex-end;
+
+  span {
+    min-width: 92px;
+    text-align: right;
+  }
+
+  strong {
+    display: block;
+  }
+}
+
 .settings-section-strip {
   align-items: center;
   border-bottom: 1px solid $hd-border-subtle;
@@ -1725,6 +1787,23 @@ $hd-space-5: 20px;
 
   .rule-review-card {
     flex-direction: column;
+  }
+
+  .event-intelligence-panel {
+    margin: 0;
+  }
+
+  .event-intelligence-row,
+  .event-intelligence-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-intelligence-metrics {
+    justify-content: flex-start;
+
+    span {
+      text-align: left;
+    }
   }
 
   .device-main,

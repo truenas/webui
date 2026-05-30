@@ -609,6 +609,64 @@ export interface ShareLinkSummary {
   can_revoke: boolean;
 }
 
+export interface LocalVisionEventArtifact {
+  artifact_id?: string | null;
+  role: string;
+  mime_type?: string | null;
+  byte_size?: number | null;
+  sha256?: string | null;
+  source?: string | null;
+}
+
+export interface LocalVisionEventVlmSummary {
+  status: string;
+  summary: string;
+  tags?: string[];
+  labels?: string[];
+  derived_text?: string;
+  artifacts?: LocalVisionEventArtifact[];
+  ingest_metadata?: Record<string, unknown>;
+  vlm_metrics?: Record<string, unknown>;
+  error?: string | null;
+}
+
+export interface LocalVisionSnapshotArtifact {
+  artifact_id?: string | null;
+  path?: string | null;
+  mime_type?: string | null;
+  byte_size?: number | null;
+  sha256?: string | null;
+  source?: string | null;
+}
+
+export interface LocalVisionEvent {
+  event_id: string;
+  camera_id: string;
+  event_type: string;
+  confidence: number;
+  labels: string[];
+  summary: string;
+  snapshot_artifact: LocalVisionSnapshotArtifact;
+  started_at: string;
+  analyzer: string;
+  latency_ms: number;
+  metrics?: Record<string, unknown>;
+  vlm?: LocalVisionEventVlmSummary | null;
+}
+
+export interface StoredLocalVisionEvent {
+  received_at: string;
+  event: LocalVisionEvent;
+  audit_record?: Record<string, unknown>;
+  ha_mqtt_payload?: Record<string, unknown>;
+}
+
+export interface LocalVisionEventsResponse {
+  generated_at: string;
+  limit: number;
+  events: StoredLocalVisionEvent[];
+}
+
 export interface ModelEndpointRecord {
   model_endpoint_id: string;
   workspace_id?: string | null;

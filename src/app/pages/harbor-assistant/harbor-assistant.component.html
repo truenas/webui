@@ -143,6 +143,63 @@
   @if (isTab('camera')) {
     <section class="tab-panel assistant-camera-tab">
       <ix-harbor-assistant-camera></ix-harbor-assistant-camera>
+      <mat-card class="settings-card native-panel event-intelligence-panel">
+        <mat-card-header>
+          <mat-card-title>{{ 'Event intelligence' | translate }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (endpointError('localVisionEvents')) {
+            <div class="notice error">{{ endpointErrorNotice('localVisionEvents') | translate }}</div>
+          }
+          <div class="event-intelligence-status-grid">
+            @for (card of eventIntelligenceStatusCards(); track card.id) {
+              <article class="status-block" [ngClass]="'tone-' + card.tone">
+                <span>{{ card.label | translate }}</span>
+                <strong>{{ card.status | translate }}</strong>
+                <p>{{ card.detail | translate }}</p>
+              </article>
+            }
+          </div>
+
+          @if (localVisionEvents().length === 0) {
+            <div class="empty-state">{{ 'No local vision events yet.' | translate }}</div>
+          } @else {
+            <div class="event-intelligence-list">
+              @for (stored of localVisionEvents(); track stored.event.event_id) {
+                <article class="event-intelligence-row">
+                  <div class="event-intelligence-main">
+                    <div class="event-intelligence-meta">
+                      <span class="pill" [ngClass]="toneClass(stored.event.event_type)">{{ stored.event.event_type }}</span>
+                      <span class="pill">{{ stored.event.camera_id }}</span>
+                      <span class="pill">{{ eventConfidenceLabel(stored) }}</span>
+                    </div>
+                    <h2>{{ eventVlmSummary(stored) }}</h2>
+                    <p class="muted">{{ eventLabelPreview(stored) }}</p>
+                  </div>
+                  <div class="event-intelligence-metrics">
+                    <span>
+                      <strong>{{ eventLatencyLabel(stored) }}</strong>
+                      {{ 'event' | translate }}
+                    </span>
+                    <span>
+                      <strong>{{ eventMetricLabel(stored, 'capture_read_ms') }}</strong>
+                      {{ 'capture' | translate }}
+                    </span>
+                    <span>
+                      <strong>{{ eventMetricLabel(stored, 'frame_age_ms') }}</strong>
+                      {{ 'frame age' | translate }}
+                    </span>
+                    <span>
+                      <strong [ngClass]="toneClass(eventVlmStatus(stored))">{{ eventVlmStatus(stored) | translate }}</strong>
+                      {{ 'VLM' | translate }}
+                    </span>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
     </section>
   }
 

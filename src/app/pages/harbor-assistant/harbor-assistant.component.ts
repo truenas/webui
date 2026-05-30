@@ -68,6 +68,8 @@ import {
   KnowledgeIndexStatusResponse,
   KnowledgeSettings,
   KnowledgeSourceRoot,
+  LocalVisionEventsResponse,
+  StoredLocalVisionEvent,
   LocalModelCatalogItem,
   LocalModelCatalogResponse,
   LocalModelDownloadJob,
@@ -110,6 +112,7 @@ interface HarborAssistantPageData {
   capabilityMap: EndpointResult<HarborOsImCapabilityMapResponse>;
   shareLinks: EndpointResult<ShareLinkSummary[]>;
   automationReviews: EndpointResult<AutomationReviewsResponse>;
+  localVisionEvents: EndpointResult<LocalVisionEventsResponse>;
   evidenceByDevice: Record<string, DeviceEvidenceResponse>;
   evidenceErrors: Record<string, string>;
 }
@@ -141,6 +144,14 @@ interface StatusBlock {
   summary: string;
   detail: string;
   evidence: string[];
+  tone: HarborAssistantStatusTone;
+}
+
+interface EventIntelligenceStatusCard {
+  id: string;
+  label: string;
+  status: string;
+  detail: string;
   tone: HarborAssistantStatusTone;
 }
 
@@ -445,6 +456,7 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly capabilityMap = signal<HarborOsImCapabilityMapResponse | null>(null);
   protected readonly shareLinks = signal<ShareLinkSummary[]>([]);
   protected readonly automationReviews = signal<AutomationRuleReview[]>([]);
+  protected readonly localVisionEvents = signal<StoredLocalVisionEvent[]>([]);
   protected readonly rulesDrawerOpen = signal(false);
   protected readonly evidenceByDevice = signal<Record<string, DeviceEvidenceResponse>>({});
   protected readonly selectedDeviceId = signal<string>('');
@@ -731,6 +743,8 @@ export class HarborAssistantComponent implements OnInit {
     return review.status === 'discarded' || review.status === 'expired';
   }));
   protected readonly pendingRuleCount = computed(() => this.pendingRuleReviews().length);
+  protected readonly latestVisionEvent = computed(() => this.localVisionEvents()[0] ?? null);
+  protected readonly eventIntelligenceStatusCards = computed<EventIntelligenceStatusCard[]>(() => this.buildEventIntelligenceStatusCards());
 
   ngOnInit(): void {
     this.route.queryParamMap
@@ -2525,6 +2539,8 @@ export class HarborAssistantComponent implements OnInit {
     switch (key) {
       case 'models':
         return T('The model list could not refresh. Try again later.');
+      case 'localVisionEvents':
+        return T('Event intelligence status could not refresh. Latest cached status is shown.');
       case 'knowledgeSettings':
         return T('Data source settings could not refresh. Try again later.');
       case 'knowledgeIndexStatus':
@@ -2532,6 +2548,44 @@ export class HarborAssistantComponent implements OnInit {
       default:
         return T('Some status data could not refresh. Try again later.');
     }
+  }
+
+  protected eventConfidenceLabel(event: StoredLocalVisionEvent): string {
+    const confidence = event.event.confidence;
+    if (!Number.isFinite(confidence)) {
+      return T('n/a');
+    }
+    return `${Math.round(confidence * 100)}%`;
+  }
+
+  protected eventMetricLabel(event: StoredLocalVisionEvent, key: string, suffix = 'ms'): string {
+    const value = this.metricNumber(event, key);
+    return value === null ? T('n/a') : `${Math.round(value)}${suffix}`;
+  }
+
+  protected eventLatencyLabel(event: StoredLocalVisionEvent): string {
+    return `${event.event.latency_ms}ms`;
+  }
+
+  protected eventVlmStatus(event: StoredLocalVisionEvent): string {
+    return event.event.vlm?.status || T('Not sampled');
+  }
+
+  protected eventVlmTone(event: StoredLocalVisionEvent): HarborAssistantStatusTone {
+    const status = event.event.vlm?.status;
+    if (!status) {
+      return 'neutral';
+    }
+    return this.statusTone(status);
+  }
+
+  protected eventVlmSummary(event: StoredLocalVisionEvent): string {
+    return event.event.vlm?.derived_text || event.event.vlm?.summary || event.event.summary;
+  }
+
+  protected eventLabelPreview(event: StoredLocalVisionEvent): string {
+    const labels = event.event.labels ?? [];
+    return labels.length > 0 ? labels.slice(0, 5).join(', ') : T('No labels');
   }
 
   protected inferenceHealthValue(): string {
@@ -2583,6 +2637,49 @@ export class HarborAssistantComponent implements OnInit {
       return `${(value / 1024).toFixed(1)} KiB`;
     }
     return `${value} B`;
+  }
+
+  private buildEventIntelligenceStatusCards(): EventIntelligenceStatusCard[] {
+    const latest = this.latestVisionEvent();
+    const beaconReady = this.state() !== null;
+    const vlmStatus = latest?.event.vlm?.status ?? 'not-sampled';
+    const vlmTone = latest?.event.vlm ? this.statusTone(vlmStatus) : 'neutral';
+
+    return [
+      {
+        id: 'beacon',
+        label: T('Beacon'),
+        status: beaconReady ? T('Ready') : T('Unknown'),
+        detail: beaconReady ? T('Event store is reachable') : T('Event store is unavailable'),
+        tone: beaconReady ? 'good' : 'neutral',
+      },
+      {
+        id: 'link',
+        label: T('Link payload'),
+        status: latest ? T('Ready') : T('Unknown'),
+        detail: latest ? T('Latest event has metadata-only payload') : T('No local event payload yet'),
+        tone: latest ? 'good' : 'neutral',
+      },
+      {
+        id: 'vlm',
+        label: T('VLM'),
+        status: this.userStatusLabel(vlmStatus),
+        detail: latest?.event.vlm ? this.eventMetricLabel(latest, 'vlm_ms') : T('No sampled frame yet'),
+        tone: vlmTone,
+      },
+    ];
+  }
+
+  private metricNumber(event: StoredLocalVisionEvent, key: string): number | null {
+    const value = event.event.metrics?.[key];
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+    if (typeof value === 'string' && value.trim()) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+    return null;
   }
 
   protected capabilitiesByClass(capabilityClass: string): HarborOsImCapabilityItem[] {
@@ -3566,6 +3663,7 @@ export class HarborAssistantComponent implements OnInit {
         capabilityMap: this.result('harboros-capabilities', this.harborAssistantApi.getHarborOsImCapabilityMap()),
         shareLinks: this.result('share-links', this.harborAssistantApi.getShareLinks()),
         automationReviews: this.result('automation-reviews', this.harborAssistantApi.getAutomationReviews()),
+        localVisionEvents: this.result('local-vision-events', this.harborAssistantApi.getLocalVisionEvents(5)),
         evidenceEntries: this.getDeviceEvidenceEntries(state.data?.devices ?? []),
       }).pipe(
         map((payload) => {
@@ -3601,6 +3699,7 @@ export class HarborAssistantComponent implements OnInit {
             capabilityMap: payload.capabilityMap,
             shareLinks: payload.shareLinks,
             automationReviews: payload.automationReviews,
+            localVisionEvents: payload.localVisionEvents,
             evidenceByDevice,
             evidenceErrors,
           };
@@ -3701,6 +3800,7 @@ export class HarborAssistantComponent implements OnInit {
     this.capabilityMap.set(pageData.capabilityMap.data);
     this.shareLinks.set(pageData.shareLinks.data ?? []);
     this.automationReviews.set(pageData.automationReviews.data?.reviews ?? []);
+    this.localVisionEvents.set(pageData.localVisionEvents.data?.events ?? []);
     this.evidenceByDevice.set(pageData.evidenceByDevice);
 
     const errors = Object.fromEntries(
@@ -3725,6 +3825,7 @@ export class HarborAssistantComponent implements OnInit {
         capabilityMap: pageData.capabilityMap.error,
         shareLinks: pageData.shareLinks.error,
         automationReviews: pageData.automationReviews.error,
+        localVisionEvents: pageData.localVisionEvents.error,
         ...pageData.evidenceErrors,
       }).filter((entry): entry is [string, string] => typeof entry[1] === 'string' && entry[1].length > 0),
     );
@@ -3763,6 +3864,7 @@ export class HarborAssistantComponent implements OnInit {
     this.capabilityMap.set(null);
     this.shareLinks.set([]);
     this.automationReviews.set([]);
+    this.localVisionEvents.set([]);
     this.evidenceByDevice.set({});
     this.endpointErrors.set({});
   }
