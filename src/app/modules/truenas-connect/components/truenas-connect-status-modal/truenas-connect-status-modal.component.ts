@@ -13,6 +13,7 @@ import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
@@ -24,6 +25,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
     TnIconComponent,
     TranslateModule,
     TestDirective,
+    TruenasConnectSpinnerComponent,
     TruenasConnectStatusDisplayComponent,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
@@ -44,9 +46,17 @@ export class TruenasConnectStatusModalComponent {
   protected isDisabling = signal(false);
   protected isRetrying = signal(false);
 
+  // While `tnc.config()` is undefined (e.g. the modal was opened before the
+  // service finished its first `tn_connect.config` round-trip, which happens
+  // when callers outside the topbar — webshare, service-smb, etc. — open the
+  // modal without their own load guard), surface a spinner instead of an
+  // actionable "Get Connected" button derived from a missing status.
+  protected isLoading = computed(() => this.tnc.config() === undefined);
+
   protected status = computed(() => {
     const raw = this.tnc.config()?.status;
-    // Config not loaded yet — show the actionable "Get Connected" state.
+    // Config not loaded yet — the template shows the spinner branch instead,
+    // so this fallback is only reached for type narrowing on the switch below.
     if (raw === undefined) {
       return TncStatus.Waiting;
     }

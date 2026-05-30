@@ -21,6 +21,24 @@
   justify-content: flex-end;
 }
 
+// Centered spinner shown while `tnc.config()` is still undefined.
+.loading-state-content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  text-align: center;
+
+  ix-truenas-connect-spinner {
+    margin-bottom: 20px;
+  }
+
+  .loading-state-text {
+    line-height: 1.5;
+    max-width: 400px;
+  }
+}
+
 .documentation-link {
   margin-top: 12px;
   text-align: center;

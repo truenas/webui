@@ -169,6 +169,11 @@ describe('TruecommandConnectModalComponent', () => {
       expect(await submitButton.isDisabled()).toBeFalsy();
       await submitButton.click();
 
+      // The save tn-button is projected via [tnDialogAction] into the shell footer,
+      // so in the rendered DOM it is *outside* the <form>. That keeps the (onClick)
+      // handler and the form's (ngSubmit) as independent paths — a single click
+      // must not trigger both and double-fire the API call.
+      expect(api.call).toHaveBeenCalledTimes(1);
       expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
         api_key: '1234567890123456',
         enabled: true,

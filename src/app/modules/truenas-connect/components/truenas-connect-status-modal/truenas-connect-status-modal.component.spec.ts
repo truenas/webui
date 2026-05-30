@@ -20,7 +20,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   let spectator: Spectator<TruenasConnectStatusModalComponent>;
   let loader: HarnessLoader;
 
-  const config = signal({
+  const initialConfig = {
     enabled: true,
     ips: ['10.220.36.85'],
     interfaces_ips: [],
@@ -28,7 +28,9 @@ describe('TruenasConnectStatusModalComponent', () => {
     account_service_base_url: 'https://account-service.dev.ixsystems.net/',
     leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',
     status: TruenasConnectStatus.Configured,
-  } as TruenasConnectConfig);
+  } as TruenasConnectConfig;
+
+  const config = signal<TruenasConnectConfig | undefined>(initialConfig);
 
   const createComponent = createComponentFactory({
     component: TruenasConnectStatusModalComponent,
@@ -57,10 +59,23 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   beforeEach(() => {
-    // Reset config to a known state before each test
-    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+    // Reset config to a known, fully populated state before each test so a
+    // previous test that cleared it can't leak into the next one.
+    config.set({ ...initialConfig });
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('shows the spinner and a disabled Loading button while tnc.config() is undefined', async () => {
+    config.set(undefined);
+    spectator.detectChanges();
+
+    expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
+    expect(spectator.query('.loading-state-text')?.textContent)
+      .toContain('Initializing TrueNAS Connect service...');
+
+    const loadingBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Loading...' }));
+    expect(await loadingBtn.isDisabled()).toBe(true);
   });
 
   it('should show Open TrueNAS Connect button when configured', async () => {

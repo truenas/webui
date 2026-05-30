@@ -20,13 +20,19 @@
 }
 
 // The shell renders its own close (X) button, which calls dialogRef.close()
-// directly and so bypasses dialogRef.disableClose. Hide it while a request is
-// in flight so the dialog can't be dismissed mid-submit (disableClose still
-// covers Escape and backdrop clicks). `visibility: hidden` keeps the header
-// layout stable while removing the button from the tab order and the
-// accessibility tree, so neither mouse nor keyboard can trigger it (unlike
-// `pointer-events: none`, which leaves it keyboard-focusable).
+// directly and so bypasses dialogRef.disableClose (which still covers Escape
+// and backdrop clicks). Until @truenas/ui-components exposes a supported
+// `disableClose` / `showCloseButton` input on tn-dialog-shell, we hide the
+// button while a request is in flight by targeting its internal class.
+//
+// `visibility: hidden` keeps the header layout stable and removes the button
+// from the tab order and accessibility tree (unlike `pointer-events: none`,
+// which leaves it keyboard-focusable). The `pointer-events: none` is a
+// belt-and-braces guard so even a synthetic click from extensions/tests can't
+// fire it.
+// TODO: replace with a supported library input once available (NAS-XXXXXX).
 :host(.loading) ::ng-deep .tn-dialog__close {
+  pointer-events: none;
   visibility: hidden;
 }
 
