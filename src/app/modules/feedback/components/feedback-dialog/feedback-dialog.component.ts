@@ -59,7 +59,11 @@ export class FeedbackDialog implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly isLoadingTypes = signal(false);
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
-  protected readonly feedbackTypeOptions$ = signal<Observable<Option[]>>(
+  // Holds an Observable because `ix-button-group`'s `options` input is typed
+  // `Observable<Option[]>` and consumes it via `| async`. The signal layer
+  // lets us reassign the stream after the allowed types resolve and have
+  // OnPush change detection pick it up without a manual markForCheck.
+  protected readonly feedbackTypeOptions = signal<Observable<Option[]>>(
     of(mapToOptions(feedbackTypesLabels, this.translate)),
   );
 
@@ -112,7 +116,7 @@ export class FeedbackDialog implements OnInit {
 
         this.allowedTypes.set(allowed);
 
-        this.feedbackTypeOptions$.set(of(allowed.map((type) => ({
+        this.feedbackTypeOptions.set(of(allowed.map((type) => ({
           label: this.translate.instant(feedbackTypesLabels.get(type) || type),
           value: type,
         }))));

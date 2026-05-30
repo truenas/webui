@@ -7,7 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
+  TnIconButtonComponent, TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -331,6 +331,26 @@ describe('TopbarComponent', () => {
       setSeverity('warning');
 
       expect(spectator.query('[aria-label="Alerts - Warnings present"]')).not.toBeNull();
+    });
+  });
+
+  describe('focusAlertIndicator', () => {
+    // Guards against TnIconButtonComponent losing its public `focus()` method
+    // in a future library version — the call site uses `?.` and would silently
+    // become a no-op, breaking keyboard focus restoration after the alert
+    // panel closes.
+    it('focuses the alert indicator button via the library component', () => {
+      // `alertIndicator` is a private viewChild; reach it through a permissive
+      // type rather than bracket access to satisfy @typescript-eslint/dot-notation.
+      const indicator = (spectator.component as unknown as {
+        alertIndicator: () => TnIconButtonComponent | undefined;
+      }).alertIndicator();
+      expect(indicator).toBeDefined();
+      const focusSpy = jest.spyOn(indicator!, 'focus');
+
+      spectator.component.focusAlertIndicator();
+
+      expect(focusSpy).toHaveBeenCalled();
     });
   });
 });
