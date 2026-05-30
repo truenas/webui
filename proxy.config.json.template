@@ -5,6 +5,18 @@
         "changeOrigin": true,
         "logLevel": "debug"
     },
+    "/api/beacon": {
+        "target": "http://127.0.0.1:4174",
+        "secure": false,
+        "changeOrigin": true,
+        "loglevel": "debug"
+    },
+    "/api/beacon/**": {
+        "target": "http://127.0.0.1:4174",
+        "secure": false,
+        "changeOrigin": true,
+        "loglevel": "debug"
+    },
     "/api/harbor-beacon": {
         "target": "http://127.0.0.1:4174",
         "secure": false,
