@@ -6,10 +6,19 @@
   align-items: center;
   display: flex;
   min-height: 40px;
+  min-width: 200px;
   padding: 0 16px;
 }
 
 .menu-checkbox-group {
   max-height: 240px;
   overflow: auto;
+}
+
+.menu-reset-button {
+  padding: 4px 0;
+
+  button {
+    height: 40px;
+  }
 }

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inpu
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -26,6 +27,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   imports: [
     MatButton,
     MatCheckboxModule,
+    MatDivider,
     MatMenuTrigger,
     TnIconComponent,
     MatMenu,
