@@ -139,6 +139,119 @@ describe('Harbor Assistant component', () => {
     expect(spectator.query('.system-tab')).not.toExist();
   });
 
+  it('shows read-only local vision events in the camera tab', () => {
+    api.getLocalVisionEvents = jest.fn(() => of({
+      generated_at: 'epoch_ms:1',
+      limit: 5,
+      events: [
+        {
+          received_at: 'epoch_ms:1',
+          event: {
+            event_id: 'lve_1',
+            camera_id: 'cam-real-231',
+            event_type: 'person_detected',
+            confidence: 0.92,
+            labels: ['person', 'local_vision_event'],
+            summary: 'Front door has a person.',
+            snapshot_artifact: {
+              artifact_id: 'artifact_1',
+              path: null,
+              mime_type: 'image/jpeg',
+              byte_size: 12345,
+              sha256: 'sha256-redacted',
+              source: 'k3-local-snapshot',
+            },
+            started_at: 'epoch_ms:1',
+            analyzer: 'yolov8n-cpu',
+            latency_ms: 1370,
+            metrics: {
+              capture_read_ms: 80,
+              frame_age_ms: 450,
+              vlm_ms: 3200,
+            },
+            vlm: {
+              status: 'active',
+              summary: 'A person is standing near the front door.',
+              derived_text: 'A person is standing near the front door.',
+              tags: ['vlm'],
+              labels: ['person'],
+              artifacts: [],
+              ingest_metadata: { frame_path_redacted: true },
+              vlm_metrics: { elapsed_ms: 3200 },
+            },
+          },
+          audit_record: {},
+          ha_mqtt_payload: {},
+        },
+      ],
+    }));
+    spectator = createComponent({
+      providers: [
+        mockProvider(ActivatedRoute, {
+          queryParamMap: of(convertToParamMap({ tab: 'camera' })),
+        }),
+      ],
+    });
+    spectator.detectChanges();
+    (spectator.component as unknown as {
+      state: { set: (value: unknown) => void };
+      localVisionEvents: { set: (value: unknown[]) => void };
+    }).state.set({ devices: [], defaults: {}, writable_root: '/var/lib/harbor' });
+    (spectator.component as unknown as {
+      localVisionEvents: { set: (value: unknown[]) => void };
+    }).localVisionEvents.set([
+      {
+        received_at: 'epoch_ms:1',
+        event: {
+          event_id: 'lve_1',
+          camera_id: 'cam-real-231',
+          event_type: 'person_detected',
+          confidence: 0.92,
+          labels: ['person', 'local_vision_event'],
+          summary: 'Front door has a person.',
+          snapshot_artifact: {
+            artifact_id: 'artifact_1',
+            path: null,
+            mime_type: 'image/jpeg',
+            byte_size: 12345,
+            sha256: 'sha256-redacted',
+            source: 'k3-local-snapshot',
+          },
+          started_at: 'epoch_ms:1',
+          analyzer: 'yolov8n-cpu',
+          latency_ms: 1370,
+          metrics: {
+            capture_read_ms: 80,
+            frame_age_ms: 450,
+            vlm_ms: 3200,
+          },
+          vlm: {
+            status: 'active',
+            summary: 'A person is standing near the front door.',
+            derived_text: 'A person is standing near the front door.',
+            tags: ['vlm'],
+            labels: ['person'],
+            artifacts: [],
+            ingest_metadata: { frame_path_redacted: true },
+            vlm_metrics: { elapsed_ms: 3200 },
+          },
+        },
+        audit_record: {},
+        ha_mqtt_payload: {},
+      },
+    ]);
+    spectator.detectChanges();
+
+    expect(spectator.query('.event-intelligence-panel')).toExist();
+    expect(spectator.query('.event-intelligence-panel')).toHaveText('Event intelligence');
+    expect(spectator.query('.event-intelligence-panel')).toHaveText('A person is standing near the front door.');
+    expect(spectator.query('.event-intelligence-panel')).toHaveText('cam-real-231');
+    expect(spectator.query('.event-intelligence-panel')).toHaveText('92%');
+    expect(spectator.element.textContent).not.toContain('rtsp://');
+    expect(spectator.element.textContent).not.toContain('/tmp/');
+    expect(spectator.element.textContent).not.toContain('camera_credential');
+  });
+
   it('ignores removed tab aliases even when an old focus parameter is present', () => {
     spectator = createComponent({
       providers: [
@@ -1317,6 +1430,7 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       },
     })),
     getShareLinks: jest.fn(() => of([])),
+    getLocalVisionEvents: jest.fn(() => of({ generated_at: 'epoch_ms:0', limit: 5, events: [] })),
   };
 }
 

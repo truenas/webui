@@ -122,6 +122,20 @@ describe('Harbor Assistant API service', () => {
     await stopPromise;
   });
 
+  it('keeps local vision event observability read-only under /api/harbor-beacon', async () => {
+    const eventsPromise = firstValueFrom(spectator.service.getLocalVisionEvents(3));
+    const eventsReq = httpMock.expectOne('/api/harbor-beacon/vision/events?limit=3');
+    expect(eventsReq.request.method).toBe('GET');
+    eventsReq.flush({
+      generated_at: 'epoch_ms:1',
+      limit: 3,
+      events: [],
+    });
+    const response = await eventsPromise;
+    expect(response.limit).toBe(3);
+    expect(response.events).toEqual([]);
+  });
+
   it('does not send credential reads or secrets to HarborGate paths', async () => {
     const promise = firstValueFrom(spectator.service.saveDeviceCredentials('cam-1', {
       username: 'admin',
