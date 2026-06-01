@@ -31,57 +31,42 @@
     }
   </div>
 
-  <div class="form-actions">
-    <div class="form-actions-cell">
-      @if (!isJobCompleted) {
-        <ix-checkbox
-          formControlName="confirm"
-          [label]="'Confirm' | translate"
-          [required]="true"
-        ></ix-checkbox>
-        <ix-checkbox
-          formControlName="force"
-          [label]="'Force' | translate"
-          [tooltip]="forceCheckboxTooltip | translate"
-        ></ix-checkbox>
-      }
-    </div>
-
-    <div class="form-actions-cell">
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (!isJobCompleted) {
-          <button
-            mat-button
-            type="submit"
-            color="warn"
-            ixTest="delete"
-            [disabled]="form.invalid || !!runningCount"
-          >
-            {{ 'Delete' | translate }}
-          </button>
-        }
-      </ng-container>
-
-      @if (isJobCompleted) {
-        <button
-          mat-button
-          type="button"
-          ixTest="close"
-         
-        >
-          {{ 'Close' | translate }}
-        </button>
-      } @else {
-        <button
-          mat-button
-          type="button"
-         
-          ixTest="cancel"
-        >
-          {{ 'Cancel' | translate }}
-        </button>
-      }
-    </div>
-  </div>
+  @if (!isJobCompleted) {
+    <ix-checkbox
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+      [required]="true"
+    ></ix-checkbox>
+    <ix-checkbox
+      formControlName="force"
+      [label]="'Force' | translate"
+      [tooltip]="forceCheckboxTooltip | translate"
+    ></ix-checkbox>
+  }
 </form>
+<ix-form-actions tnDialogAction>
+  @if (isJobCompleted) {
+    <tn-button
+      variant="outline"
+      ixTest="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+  } @else {
+    <tn-button
+      variant="outline"
+      ixTest="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="warn"
+      ixTest="delete"
+      [label]="'Delete' | translate"
+      [disabled]="form.invalid || !!runningCount"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  }
+</ix-form-actions>
 </tn-dialog-shell>

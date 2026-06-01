@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { DIALOG_DATA } from '@angular/cdk/dialog';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -29,12 +28,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-MatCard,
+    MatCard,
     MatCardContent,
     MatNavList,
     MatListItem,
     MatDivider,
-    MatIconButton,
     TestDirective,
     TnIconComponent,
     ManualSelectionVdevComponent,

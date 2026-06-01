@@ -95,8 +95,8 @@ describe('InspectVdevsDialogComponent', () => {
     });
   });
 
-  it('closes the dialog when X icon is pressed', () => {
-    spectator.click('.close-icon');
+  it('closes the dialog when the shell close button is pressed', () => {
+    spectator.click('.tn-dialog__close');
 
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });

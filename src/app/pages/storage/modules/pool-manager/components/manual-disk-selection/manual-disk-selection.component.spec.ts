@@ -1,8 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -123,7 +124,7 @@ describe('ManualDiskSelectionComponent', () => {
 
     describe('saving', () => {
       it('returns false when resulting vdevs are the same as incoming vdevs', async () => {
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Selection' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Selection' }));
         await saveButton.click();
 
         expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith(false);
@@ -136,14 +137,14 @@ describe('ManualDiskSelectionComponent', () => {
             disks: [{ devname: 'sda' }],
           },
         ] as ManualSelectionVdev[]);
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Selection' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save Selection' }));
         await saveButton.click();
 
         expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith([[{ devname: 'sda' }]]);
       });
 
       it('returns false when Cancel button is pressed', async () => {
-        const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+        const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
         await cancelButton.click();
 
         expect(spectator.inject(DialogRef, true).close).toHaveBeenCalledWith(false);

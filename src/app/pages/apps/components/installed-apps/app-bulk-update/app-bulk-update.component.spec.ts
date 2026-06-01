@@ -1,9 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -138,7 +138,7 @@ describe('AppBulkUpdateComponent', () => {
       ['test-app-three'],
     ]];
 
-    const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
+    const updatedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update' }));
     await updatedButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);

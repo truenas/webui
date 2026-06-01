@@ -1,10 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnDialogShellComponent, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
+import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnDialogShellComponent, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
@@ -43,9 +43,8 @@ interface NvmeOfHostAndUsage extends NvmeOfHost {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TnIconComponent,
+    TnIconComponent,
     MatButton,
-    MatIconButton,
     TranslateModule,
     TestDirective,
     AsyncPipe,

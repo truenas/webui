@@ -1,20 +1,20 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, TrackByFunction,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
@@ -29,11 +29,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-ReactiveFormsModule,
+    ReactiveFormsModule,
     BulkListItemComponent,
     IxCheckboxComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
+    FormActionsComponent,
     TranslateModule,
     TestDirective,
     KeyValuePipe,
@@ -44,7 +45,7 @@ export class DockerImageDeleteDialog {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<DialogRef<unknown, DockerImageDeleteDialog>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DockerImageDeleteDialog>>(DialogRef);
   images = inject<ContainerImage[]>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 

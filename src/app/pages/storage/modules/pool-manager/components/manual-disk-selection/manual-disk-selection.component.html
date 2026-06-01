@@ -48,19 +48,20 @@
         </div>
         <mat-divider class="divider actions-divider"></mat-divider>
         <div class="actions">
-          <button
+          <tn-button
+            variant="outline"
+            ixTest="cancel"
+            [label]="'Cancel' | translate"
+            (onClick)="dialogRef.close(false)"
+          ></tn-button>
+          <tn-button
             *ixRequiresRoles="requiredRoles"
-            mat-button
             color="primary"
             ixTest="save-selection"
+            [label]="'Save Selection' | translate"
             [disabled]="isSaveDisabled$ | async"
-            (click)="onSaveSelection()"
-          >{{ 'Save Selection' | translate }}</button>
-          <button
-            mat-button
-            ixTest="cancel"
-           
-          >{{ 'Cancel' | translate }}</button>
+            (onClick)="onSaveSelection()"
+          ></tn-button>
         </div>
       </div>
     </div>

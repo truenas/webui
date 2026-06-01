@@ -1,12 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { combineLatest, filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -45,12 +44,12 @@ export interface ManualDiskSelectionParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-MatCard,
+    MatCard,
     MatCardContent,
     ManualSelectionDisksComponent,
     MatDivider,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
     ManualSelectionVdevComponent,
     TranslateModule,
@@ -63,7 +62,7 @@ MatCard,
 })
 export class ManualDiskSelectionComponent implements OnInit {
   protected data = inject<ManualDiskSelectionParams>(DIALOG_DATA);
-  private dialogRef = inject<DialogRef<unknown, ManualDiskSelectionComponent>>(DialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ManualDiskSelectionComponent>>(DialogRef);
   private manualDiskSelectionStore = inject(ManualDiskSelectionStore);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);

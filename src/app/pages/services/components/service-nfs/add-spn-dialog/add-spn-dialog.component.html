@@ -13,26 +13,22 @@
     [required]="true"
   ></ix-input>
 
-  <div class="form-actions">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      type="submit"
-      ixTest="save"
-      [disabled]="form.invalid"
-    >
-      {{ 'Submit' | translate }}
-    </button>
-
-    <button
-      mat-button
-      type="button"
-      ixTest="cancel"
-     
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    ixTest="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    ixTest="save"
+    [label]="'Submit' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
 </tn-dialog-shell>

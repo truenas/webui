@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -42,7 +42,7 @@ describe('AddSpnDialogComponent', () => {
       Password: 'password',
     });
 
-    const save = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+    const save = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     await save.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nfs.add_principal', [{

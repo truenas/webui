@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
@@ -28,13 +28,16 @@ import { ApiService } from 'app/modules/websocket/api.service';
     ReactiveFormsModule,
     IxInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
     TestDirective,
     AsyncPipe,
   ],
 })
 export class ChangePasswordFormComponent {
+  /** When false, the form omits its inline submit button so a parent (e.g. a dialog footer) can provide it. */
+  readonly showActions = input(true);
+
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
   private api = inject(ApiService);

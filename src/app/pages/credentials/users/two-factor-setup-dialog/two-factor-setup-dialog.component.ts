@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -16,7 +16,7 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TranslateModule,
+    TranslateModule,
     TwoFactorComponent,
     MatButton,
     TestDirective,
@@ -24,7 +24,7 @@ TranslateModule,
 })
 export class TwoFactorSetupDialog {
   private authService = inject(AuthService);
-  private dialogRef = inject(DialogRef<unknown, TwoFactorSetupDialog>);
+  protected dialogRef = inject(DialogRef<unknown, TwoFactorSetupDialog>);
 
   protected canFinish = toSignal(
     this.authService.userTwoFactorConfig$.pipe(map((config) => config.secret_configured)),

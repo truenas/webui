@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnDialogShellComponent, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnDialogShellComponent, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { Role } from 'app/enums/role.enum';
@@ -40,9 +40,8 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-TnIconComponent,
+    TnIconComponent,
     MatButton,
-    MatIconButton,
     TranslateModule,
     TestDirective,
     AsyncPipe,
