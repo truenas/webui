@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ title | translate }}</h1>
-<div mat-dialog-content id="unlock-msg">
+<tn-dialog-shell [title]="title | translate">
+<div id="unlock-msg">
   <div class="message-content">
     @if (errorDatasets.length > 0) {
       <div class="errors-content">
@@ -69,3 +69,4 @@
     }
   </ix-form-actions>
 </div>
+</tn-dialog-shell>

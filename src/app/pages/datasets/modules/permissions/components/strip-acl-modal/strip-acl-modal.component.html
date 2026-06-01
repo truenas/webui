@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ helptext.stripAclDialog.title | translate }}</h1>
-<div mat-dialog-content class="modal-body">
+<tn-dialog-shell [title]="helptext.stripAclDialog.title | translate">
+<div class="modal-body">
   <p>{{ helptext.stripAclDialog.message | translate }}</p>
 
   <ix-checkbox
@@ -8,8 +8,8 @@
     [label]="helptext.stripAclDialog.traverseCheckbox | translate"
   ></ix-checkbox>
 </div>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" matDialogClose>{{ 'Cancel' | translate }}</button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <button mat-button ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button
     mat-button
     color="warn"
@@ -19,3 +19,4 @@
     {{ 'Strip ACLs' | translate }}
   </button>
 </ix-form-actions>
+</tn-dialog-shell>

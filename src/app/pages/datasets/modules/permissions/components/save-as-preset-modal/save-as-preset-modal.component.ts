@@ -1,3 +1,4 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
@@ -5,11 +6,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { cloneDeep, concat } from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
@@ -38,18 +36,15 @@ import { UserService } from 'app/services/user.service';
   styleUrls: ['./save-as-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogContent,
     NgClass,
     MatIconButton,
     TestDirective,
     TnIconComponent,
     IxInputComponent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
-    MatDialogClose,
     TranslateModule,
   ],
 })
@@ -60,10 +55,10 @@ export class SaveAsPresetModalComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private userService = inject(UserService);
-  private dialogRef = inject<MatDialogRef<SaveAsPresetModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private store = inject(DatasetAclEditorStore);
   private destroyRef = inject(DestroyRef);
-  data = inject<SaveAsPresetModalConfig>(MAT_DIALOG_DATA);
+  data = inject<SaveAsPresetModalConfig>(DIALOG_DATA);
 
   form = this.fb.group({
     presetName: ['', Validators.required],

@@ -1,14 +1,15 @@
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
 } from '@angular/material/expansion';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { filter, finalize, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -29,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
     MatAccordion,
@@ -41,7 +42,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
     TestDirective,
     MatButton,
-    MatDialogClose,
     FormActionsComponent,
     RouterLink,
     MatAnchor,
@@ -52,7 +52,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
-  private snapshots = inject<ZfsSnapshot[]>(MAT_DIALOG_DATA);
+  private snapshots = inject<ZfsSnapshot[]>(DIALOG_DATA);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 

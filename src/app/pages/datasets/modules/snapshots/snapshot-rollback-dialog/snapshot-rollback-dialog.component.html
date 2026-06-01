@@ -1,6 +1,6 @@
-<h1 matDialogTitle>{{ 'Dataset Rollback From Snapshot' | translate }}</h1>
+<tn-dialog-shell [title]="'Dataset Rollback From Snapshot' | translate">
 @if (isLoading()) {
-  <div mat-dialog-content class="loading">
+  <div class="loading">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
 } @else if (snapshot) {
@@ -10,7 +10,7 @@
       [formGroup]="form"
       (submit)="onSubmit()"
     >
-      <div mat-dialog-content>
+      <div>
         @if (creationMachineTime() !== undefined) {
           <!--
             Translators: {datetime} is a pre-formatted machine-time string (the
@@ -58,7 +58,7 @@
         ></tn-banner>
       </div>
 
-      <div mat-dialog-actions class="form-actions">
+      <div tnDialogAction class="form-actions">
         <ix-checkbox
           [formControlName]="force.fcName"
           [label]="force.label"
@@ -76,36 +76,35 @@
           >
             {{ 'Rollback' | translate }}
           </button>
-          <button mat-button type="button" matDialogClose ixTest="cancel">
+          <button mat-button type="button" ixTest="cancel">
             {{ 'Cancel' | translate }}
           </button>
         </div>
       </div>
     </form>
   } @else {
-    <p mat-dialog-content>
+    <p>
       {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: snapshot.snapshot_name } }}
     </p>
 
-    <ix-form-actions mat-dialog-actions class="form-actions">
+    <ix-form-actions tnDialogAction class="form-actions">
       <div class="form-buttons">
         <a
           mat-button
           type="submit"
           color="primary"
           ixTest="go-to-storage"
-          matDialogClose
+         
           [routerLink]="['/storage']"
         >
           {{ 'Go to Storage' | translate }}
         </a>
 
-        <button mat-button type="button" matDialogClose ixTest="close">
+        <button mat-button type="button" ixTest="close">
           {{ 'Close' | translate }}
         </button>
       </div>
     </ix-form-actions>
   }
 }
-
-
+</tn-dialog-shell>

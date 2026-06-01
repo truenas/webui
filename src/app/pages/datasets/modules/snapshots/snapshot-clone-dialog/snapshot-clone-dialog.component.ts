@@ -1,12 +1,11 @@
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -23,7 +22,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrls: ['./snapshot-clone-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
     IxInputComponent,
@@ -31,10 +30,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatButton,
     RequiresRolesDirective,
     TestDirective,
-    MatDialogClose,
     RouterLink,
     MatAnchor,
-    MatDialogContent,
   ],
 })
 export class SnapshotCloneDialog implements OnInit {
@@ -43,7 +40,7 @@ export class SnapshotCloneDialog implements OnInit {
   private fb = inject(FormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
-  private snapshotName = inject<string>(MAT_DIALOG_DATA);
+  private snapshotName = inject<string>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];

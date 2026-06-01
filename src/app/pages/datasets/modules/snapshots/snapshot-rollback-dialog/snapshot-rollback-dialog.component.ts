@@ -1,14 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent } from '@truenas/ui-components';
+import { TnBannerComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -34,9 +32,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./snapshot-rollback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
-    MatDialogContent,
     MatProgressSpinner,
     ReactiveFormsModule,
     IxFieldsetComponent,
@@ -46,10 +43,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormatDateTimePipe,
     RequiresRolesDirective,
     TestDirective,
-    MatDialogClose,
     FormActionsComponent,
     RouterLink,
-    MatDialogActions,
     MatAnchor,
     TnBannerComponent,
   ],
@@ -61,11 +56,11 @@ export class SnapshotRollbackDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private localeService = inject(LocaleService);
-  private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
-  // `MAT_DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
+  private dialogRef = inject(DialogRef);
+  // `DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
   // can be missing if invoked without data; type it honestly and guard in
   // `ngOnInit` before touching any of its properties.
-  protected readonly snapshot = inject<ZfsSnapshot | undefined>(MAT_DIALOG_DATA);
+  protected readonly snapshot = inject<ZfsSnapshot | undefined>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];

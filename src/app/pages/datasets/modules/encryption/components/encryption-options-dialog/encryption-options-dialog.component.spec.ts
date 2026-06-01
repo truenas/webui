@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -21,18 +21,18 @@ describe('EncryptionOptionsDialogComponent', () => {
   let api: ApiService;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let dialogRef: MatDialogRef<EncryptionOptionsDialog>;
+  let dialogRef: DialogRef;
   const createComponent = createComponentFactory({
     component: EncryptionOptionsDialog,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      { provide: MAT_DIALOG_DATA, useValue: {} },
-      mockProvider(MatDialogRef),
+      { provide: DIALOG_DATA, useValue: {} },
+      mockProvider(DialogRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          closed: of(undefined),
         })),
       }),
       mockApi([
@@ -66,12 +66,12 @@ describe('EncryptionOptionsDialogComponent', () => {
   async function setupTest(dialogData: EncryptionOptionsDialogData = defaultDialogData): Promise<void> {
     spectator = createComponent({
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: dialogData },
+        { provide: DIALOG_DATA, useValue: dialogData },
       ],
     });
     api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    dialogRef = spectator.inject(MatDialogRef);
+    dialogRef = spectator.inject(DialogRef);
     form = await loader.getHarness(IxFormHarness);
   }
 

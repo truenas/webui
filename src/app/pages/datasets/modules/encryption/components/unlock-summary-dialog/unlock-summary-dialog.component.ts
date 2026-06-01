@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,9 +19,8 @@ import {
   styleUrls: ['./unlock-summary-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
-    MatDialogContent,
     MatDivider,
     TestDirective,
     TnIconComponent,
@@ -30,7 +29,7 @@ import {
   ],
 })
 export class UnlockSummaryDialog {
-  dialogRef = inject<MatDialogRef<UnlockSummaryDialog>>(MatDialogRef);
+  dialogRef = inject<DialogRef>(DialogRef);
   private dialogService = inject(DialogService);
 
   title: string = helptextUnlock.unlockDatasetDialog.title;

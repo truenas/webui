@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -26,7 +26,7 @@ describe('SaveAsPresetModalComponent', () => {
     ],
     providers: [
       DatasetAclEditorStore,
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(UserService, {
         getUserByNameCached: jest.fn(() => of({ username: 'testuser', uid: 1000 } as User)),
@@ -57,7 +57,7 @@ describe('SaveAsPresetModalComponent', () => {
         mockCall('filesystem.acltemplate.create'),
       ]),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {},
       },
     ],
@@ -67,7 +67,7 @@ describe('SaveAsPresetModalComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             aclType: AclType.Posix1e,
             datasetPath: '/mnt/pool/dataset',
@@ -126,7 +126,7 @@ describe('SaveAsPresetModalComponent', () => {
       acl: [],
     }]);
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('removes a non-builtin preset when Remove icon is pressed', () => {

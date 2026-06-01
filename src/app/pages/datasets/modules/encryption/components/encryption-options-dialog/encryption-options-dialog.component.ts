@@ -1,3 +1,4 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject,
@@ -5,11 +6,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
@@ -49,7 +48,7 @@ enum EncryptionType {
   styleUrls: ['./encryption-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -60,7 +59,6 @@ enum EncryptionType {
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
   ],
 })
@@ -70,11 +68,11 @@ export class EncryptionOptionsDialog implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private dialog = inject(DialogService);
-  private dialogRef = inject<MatDialogRef<EncryptionOptionsDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  data = inject<EncryptionOptionsDialogData>(MAT_DIALOG_DATA);
+  data = inject<EncryptionOptionsDialogData>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   form = this.fb.group({

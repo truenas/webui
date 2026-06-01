@@ -1,6 +1,6 @@
-<h1 mat-dialog-title>{{ 'Save As Preset' | translate }}</h1>
+<tn-dialog-shell [title]="'Save As Preset' | translate">
 <form [formGroup]="form" (submit)="onSubmit()">
-  <div mat-dialog-content>
+  <div>
     <p>{{ 'Save current ACL entries as a preset for future use.' | translate }}</p>
 
     <div class="exist-content">
@@ -36,8 +36,8 @@
     </div>
   </div>
 
-  <ix-form-actions mat-dialog-actions class="form-actions">
-    <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
+  <ix-form-actions tnDialogAction class="form-actions">
+    <button mat-button ixTest="cancel">{{ 'Cancel' | translate }}</button>
     <button
       mat-button
       color="primary"
@@ -49,3 +49,4 @@
     </button>
   </ix-form-actions>
 </form>
+</tn-dialog-shell>

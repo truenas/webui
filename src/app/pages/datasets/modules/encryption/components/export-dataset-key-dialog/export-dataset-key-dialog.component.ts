@@ -1,10 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -20,24 +19,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./export-dataset-key-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
-    MatDialogContent,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
   ],
 })
 export class ExportDatasetKeyDialog implements OnInit {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<ExportDatasetKeyDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private download = inject(DownloadService);
   private cdr = inject(ChangeDetectorRef);
-  dataset = inject<Dataset>(MAT_DIALOG_DATA);
+  dataset = inject<Dataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   key: string;

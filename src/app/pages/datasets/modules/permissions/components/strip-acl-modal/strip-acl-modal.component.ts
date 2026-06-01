@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -24,15 +23,12 @@ export interface StripAclModalData {
   styleUrls: ['./strip-acl-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     IxCheckboxComponent,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatDialogActions,
     MatButton,
     TestDirective,
-    MatDialogClose,
     TranslateModule,
   ],
 })
@@ -40,9 +36,9 @@ export class StripAclModalComponent {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<StripAclModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private translate = inject(TranslateService);
-  data = inject<StripAclModalData>(MAT_DIALOG_DATA);
+  data = inject<StripAclModalData>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   traverseCheckbox = new FormControl(false);

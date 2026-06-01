@@ -3,14 +3,13 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
@@ -93,7 +92,7 @@ export class SnapshotListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private store$ = inject<Store<AppState>>(Store);
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
@@ -299,8 +298,8 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doBatchDelete(data: ZfsSnapshotUi[]): void {
-    this.matDialog.open(SnapshotBatchDeleteDialog, { data, disableClose: true })
-      .afterClosed()
+    this.tnDialog.open(SnapshotBatchDeleteDialog, { data, disableClose: true })
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.selectedSnapshots.forEach((snapshot) => snapshot.selected = false);

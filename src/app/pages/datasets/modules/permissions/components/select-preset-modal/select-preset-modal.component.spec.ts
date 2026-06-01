@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -54,13 +54,13 @@ describe('SelectPresetModalComponent', () => {
       mockProvider(DatasetAclEditorStore, {
         usePreset: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockApi([
         mockCall('filesystem.acltemplate.by_path', presets),
       ]),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {},
       },
     ],
@@ -70,7 +70,7 @@ describe('SelectPresetModalComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             allowCustom: true,
             datasetPath: '/mnt/pool/dataset',
@@ -111,7 +111,7 @@ describe('SelectPresetModalComponent', () => {
     const continueButton = await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
     await continueButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(DatasetAclEditorStore).usePreset).not.toHaveBeenCalled();
   });
 
@@ -126,6 +126,6 @@ describe('SelectPresetModalComponent', () => {
     await continueButton.click();
 
     expect(spectator.inject(DatasetAclEditorStore).usePreset).toHaveBeenCalledWith(presets[0]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

@@ -1,11 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
@@ -24,14 +23,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./lock-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
   ],
 })
@@ -40,9 +38,9 @@ export class LockDatasetDialog {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<MatDialogRef<LockDatasetDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private dialogService = inject(DialogService);
-  dataset = inject<Dataset>(MAT_DIALOG_DATA);
+  dataset = inject<Dataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];

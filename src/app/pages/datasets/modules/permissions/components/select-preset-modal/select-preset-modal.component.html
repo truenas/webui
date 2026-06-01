@@ -1,5 +1,5 @@
-<h1 mat-dialog-title>{{ helptext.selectPreset | translate }}</h1>
-<div mat-dialog-content>
+<tn-dialog-shell [title]="helptext.selectPreset | translate">
+<div>
   <p>{{ helptext.selectPresetTooltip | translate }}</p>
 
   @if (!data.allowCustom) {
@@ -24,11 +24,11 @@
   </form>
 
   <ix-form-actions>
-    <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
+    <button mat-button ixTest="cancel">{{ 'Cancel' | translate }}</button>
     <button
       mat-button
       color="primary"
-      matDialogClose
+     
       ixTest="continue"
       [disabled]="form.invalid"
       (click)="onContinuePressed()"
@@ -37,3 +37,4 @@
     </button>
   </ix-form-actions>
 </div>
+</tn-dialog-shell>

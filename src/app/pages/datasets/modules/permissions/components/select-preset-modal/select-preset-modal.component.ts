@@ -1,12 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
@@ -30,27 +28,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: 'select-preset-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
     ReactiveFormsModule,
     IxRadioGroupComponent,
     IxSelectComponent,
     FormActionsComponent,
     MatButton,
-    MatDialogClose,
     TestDirective,
     TranslateModule,
   ],
 })
 export class SelectPresetModalComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<SelectPresetModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private aclEditorStore = inject(DatasetAclEditorStore);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
-  data = inject<SelectPresetModalConfig>(MAT_DIALOG_DATA);
+  data = inject<SelectPresetModalConfig>(DIALOG_DATA);
 
   form = new FormGroup({
     presetName: new FormControl('', this.validatorsService.validateOnCondition(

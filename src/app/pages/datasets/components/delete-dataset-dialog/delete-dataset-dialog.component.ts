@@ -1,10 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -35,16 +33,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./delete-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
     TranslateModule,
     ReactiveFormsModule,
-    MatDialogContent,
     IxInputComponent,
     IxCheckboxComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
-    MatDialogClose,
     RequiresRolesDirective,
   ],
 })
@@ -54,11 +49,11 @@ export class DeleteDatasetDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
-  private dialogRef = inject<MatDialogRef<DeleteDatasetDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef>(DialogRef);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private validators = inject(IxValidatorsService);
-  dataset = inject<VolumesListDataset>(MAT_DIALOG_DATA);
+  dataset = inject<VolumesListDataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetDelete];
