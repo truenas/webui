@@ -27,7 +27,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -68,7 +67,6 @@ describe('NfsCardComponent', () => {
   const commonDeclarations = [
     MockComponents(
       ServiceStateButtonComponent,
-      ServiceExtraActionsComponent,
     ),
   ];
 

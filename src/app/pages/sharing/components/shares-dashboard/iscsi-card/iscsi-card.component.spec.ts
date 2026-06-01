@@ -24,9 +24,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import {
-  ServiceExtraActionsComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import {
   ServiceStateButtonComponent,
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
@@ -70,7 +67,6 @@ describe('IscsiCardComponent', () => {
     declarations: [
       MockComponents(
         ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
       ),
     ],
     providers: [

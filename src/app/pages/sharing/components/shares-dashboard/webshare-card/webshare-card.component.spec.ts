@@ -214,7 +214,7 @@ describe('WebShareCardComponent', () => {
      * tn-side-panel that projects ServiceWebshareComponent and a tnSidePanelAction
      * Save button. These tests cover the side-panel surface (viewChild + Save +
      * close flow) so the dual-host migration is not silently uncovered. The menu
-     * trigger itself is exhaustively covered by service-extra-actions.component.spec.
+     * items themselves are built by ServiceActionsMenuService.buildServiceCardMenu.
      */
     interface CardInternals {
       configOpen: WritableSignal<boolean>;
