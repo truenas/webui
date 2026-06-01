@@ -1,13 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
@@ -215,7 +215,7 @@ describe('InstalledAppsListComponent', () => {
   it('removes several applications', async () => {
     jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
       closed: of({ removeVolumes: true, removeImages: true }),
-    } as DialogRef<unknown, unknown>);
+    } as DialogRef);
 
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();

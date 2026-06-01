@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TnDialog } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';

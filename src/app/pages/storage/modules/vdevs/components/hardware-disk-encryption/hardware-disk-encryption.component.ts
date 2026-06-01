@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject } from '@angular/core';
-import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';

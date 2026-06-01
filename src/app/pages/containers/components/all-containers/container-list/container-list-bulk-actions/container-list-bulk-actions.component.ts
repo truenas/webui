@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy, computed, input, output, inject, DestroyRef } from '@angular/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter,
   forkJoin,

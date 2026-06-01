@@ -1,5 +1,4 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { AsyncPipe, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, output,
@@ -13,6 +12,7 @@ import {
 } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';

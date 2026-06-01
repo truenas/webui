@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs';
 import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';

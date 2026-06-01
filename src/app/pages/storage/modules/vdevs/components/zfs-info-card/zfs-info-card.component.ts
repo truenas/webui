@@ -1,5 +1,4 @@
 import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
-import { TnDialog } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -7,6 +6,7 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';

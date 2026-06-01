@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable */
+ 
 /**
  * Codemod: migrate Angular Material dialog usage to TnDialog / cdk Dialog.
  *

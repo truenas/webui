@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, input, OnInit, inject } from '@angular/core';
-import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   Subscription, debounceTime, distinctUntilChanged,
 } from 'rxjs';

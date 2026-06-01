@@ -1,6 +1,6 @@
 import { computed, Injectable, signal, inject } from '@angular/core';
-import { TnDialog } from '@truenas/ui-components';
 import { ComponentStore } from '@ngrx/component-store';
+import { TnDialog } from '@truenas/ui-components';
 import { merge } from 'lodash-es';
 import {
   combineLatest, Observable, of, switchMap, tap,

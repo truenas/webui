@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, DestroyRef } from '@angular/core';
-import { TnDialog } from '@truenas/ui-components';
 import {
   createServiceFactory, mockProvider, SpectatorService,
 } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';

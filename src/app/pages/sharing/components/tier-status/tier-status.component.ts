@@ -1,10 +1,10 @@
 import { NgClass } from '@angular/common';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import {
   DataMigrationStatusDialogComponent,

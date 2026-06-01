@@ -1,13 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { NgClass } from '@angular/common';
-import { TnDialogShellComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialogShellComponent } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';

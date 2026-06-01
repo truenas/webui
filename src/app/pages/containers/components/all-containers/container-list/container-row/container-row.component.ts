@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, input, computed, output, inject, DestroyRef } from '@angular/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, switchMap,
 } from 'rxjs';

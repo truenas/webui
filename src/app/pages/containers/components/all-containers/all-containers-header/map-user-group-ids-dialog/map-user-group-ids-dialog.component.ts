@@ -1,11 +1,10 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
-import { DialogRef } from '@angular/cdk/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import {
   MatCell,
@@ -21,6 +20,7 @@ import {
 } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 import {
   finalize, map, Observable, of,
 } from 'rxjs';
@@ -54,7 +54,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   standalone: true,
   imports: [
     TnDialogShellComponent,
-FakeProgressBarComponent,
+    FakeProgressBarComponent,
     TnIconComponent,
     MatIconButton,
     MatProgressSpinner,

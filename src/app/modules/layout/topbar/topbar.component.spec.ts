@@ -1,5 +1,4 @@
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TnDialog, TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -7,6 +6,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnDialog, TnIconComponent, TnIconHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';

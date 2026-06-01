@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, ViewContainerRef,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialog } from '@truenas/ui-components';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   filter, Observable, of, switchMap, take,
 } from 'rxjs';

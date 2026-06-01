@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, ViewContainerRef,
 } from '@angular/core';
@@ -9,6 +8,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import {
   filter, forkJoin, switchMap,
 } from 'rxjs';

@@ -1,8 +1,8 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { TnDialog } from '@truenas/ui-components';
 import { MatStepperModule } from '@angular/material/stepper';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';

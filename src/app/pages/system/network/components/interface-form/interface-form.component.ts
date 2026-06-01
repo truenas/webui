@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -9,6 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,

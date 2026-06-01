@@ -1,8 +1,8 @@
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { TnDialog } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Pool } from 'app/interfaces/pool.interface';

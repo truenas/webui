@@ -1,5 +1,4 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
-import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, viewChild, inject,
@@ -12,6 +11,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   forkJoin,
 } from 'rxjs';

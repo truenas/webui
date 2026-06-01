@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
-import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   filter,
   tap,

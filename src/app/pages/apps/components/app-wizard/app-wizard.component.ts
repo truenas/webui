@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit,
 } from '@angular/core';
@@ -11,6 +10,7 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';

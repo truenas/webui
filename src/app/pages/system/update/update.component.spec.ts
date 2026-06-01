@@ -1,13 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { DialogRef } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -104,7 +104,7 @@ describe('UpdateComponent', () => {
         open: jest.fn(() => ({
           close: jest.fn(),
           closed: of(true),
-        } as unknown as DialogRef<unknown, unknown>)),
+        } as unknown as DialogRef)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

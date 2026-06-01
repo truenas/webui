@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { TnDialog } from '@truenas/ui-components';
 import {
   FormArray,
   FormControl,
@@ -15,6 +14,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   filter, map, Observable, of, take, tap,
 } from 'rxjs';

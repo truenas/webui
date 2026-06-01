@@ -1,7 +1,7 @@
 import { A11yModule } from '@angular/cdk/a11y';
+import { DialogRef } from '@angular/cdk/dialog';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DialogRef } from '@angular/cdk/dialog';
 import { provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';

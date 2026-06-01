@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, TnTablePagerComponent, tnIconMarker } from '@truenas/ui-components';
 import {
   filter, map, take, tap,
 } from 'rxjs/operators';

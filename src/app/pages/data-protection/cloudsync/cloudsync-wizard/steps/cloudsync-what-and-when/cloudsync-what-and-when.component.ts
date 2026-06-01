@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
-import { TnDialog } from '@truenas/ui-components';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
@@ -8,6 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious } from '@angular/material/stepper';
 import { NavigationExtras, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
   BehaviorSubject,

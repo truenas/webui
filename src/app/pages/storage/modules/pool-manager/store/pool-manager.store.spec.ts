@@ -1,6 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { TnDialog } from '@truenas/ui-components';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
@@ -318,7 +318,7 @@ describe('PoolManagerStore', () => {
       openFnSpy.mockImplementation(() => {
         return {
           closed: of([]),
-        } as DialogRef<unknown, unknown>;
+        } as DialogRef;
       });
       spectator.service.openManualSelectionDialog(VDevType.Data);
       expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VDevType.Data);

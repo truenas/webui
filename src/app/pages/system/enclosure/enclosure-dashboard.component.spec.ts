@@ -3,8 +3,8 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { TnDialog } from '@truenas/ui-components';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';

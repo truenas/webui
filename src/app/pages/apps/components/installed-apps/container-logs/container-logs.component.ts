@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, OnInit, signal, Signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TnDialog } from '@truenas/ui-components';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import {
   combineLatest, filter, map, Subscription, switchMap, tap,
 } from 'rxjs';

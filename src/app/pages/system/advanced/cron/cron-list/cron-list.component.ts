@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { TnDialog, TnTablePagerComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog, TnTablePagerComponent } from '@truenas/ui-components';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';

@@ -1,5 +1,4 @@
 import { DecimalPipe } from '@angular/common';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
 import { MatIconAnchor, MatIconButton } from '@angular/material/button';
 import {
@@ -8,6 +7,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
